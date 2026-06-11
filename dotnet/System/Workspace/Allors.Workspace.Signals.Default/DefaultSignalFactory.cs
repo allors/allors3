@@ -17,8 +17,8 @@ namespace Allors.Workspace.Signals.Default
         public IStateSignal<T> State<T>(T initialValue, IEqualityComparer<T> comparer = null) =>
             new StateSignal<T>(initialValue, comparer ?? EqualityComparer<T>.Default);
 
-        public IComputedSignal<T> Computed<T>(Func<T> computation) =>
-            new ComputedSignalNode<T>(computation);
+        public IComputedSignal<T> Computed<T>(Func<T> computation, IEqualityComparer<T> comparer = null) =>
+            new ComputedSignalNode<T>(computation, comparer);
 
         public IEffect Effect(Action callback) => new EffectNode(callback, this.Scheduler);
 

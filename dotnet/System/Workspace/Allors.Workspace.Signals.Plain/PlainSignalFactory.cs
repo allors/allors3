@@ -13,7 +13,8 @@ namespace Allors.Workspace.Signals
         public IStateSignal<T> State<T>(T initialValue, IEqualityComparer<T> comparer = null) =>
             new PlainStateSignal<T>(initialValue, comparer ?? EqualityComparer<T>.Default);
 
-        public IComputedSignal<T> Computed<T>(Func<T> computation) =>
+        // The comparer is unused: plain computeds recompute on every read and never propagate.
+        public IComputedSignal<T> Computed<T>(Func<T> computation, IEqualityComparer<T> comparer = null) =>
             new PlainComputedSignal<T>(computation ?? throw new ArgumentNullException(nameof(computation)));
 
         public IEffect Effect(Action callback)

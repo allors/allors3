@@ -106,6 +106,11 @@ under a dated version heading.
 
 ### Fixed
 
+- Effects watching composites roles (or derived list roles) no longer rerun on every unrelated session
+  write. Those signals rebuild their list on every recompute, and the default reference-equality comparer
+  counted each fresh array as a change. `ISignalFactory.Computed` now accepts an optional
+  `IEqualityComparer<T>` (mirroring `State`), and the adapter passes element-wise comparers for composites
+  and derived role signals, restoring the value cutoff.
 - Effects no longer run between the record merges of a single pull, push response or reset. Every merged
   record bumped the session graph revision — and flushed effects — individually, so an effect reading roles
   of two pulled objects observed the first object updated while the second still held its stale values

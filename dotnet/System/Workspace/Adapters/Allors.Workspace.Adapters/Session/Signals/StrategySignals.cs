@@ -61,11 +61,13 @@ namespace Allors.Workspace.Adapters
         {
             this.strategy = strategy;
             this.roleType = roleType;
-            this.value = strategy.Session.SignalFactory.Computed<IReadOnlyList<T>>(() =>
-            {
-                _ = strategy.Session.GraphRevision.Value;
-                return strategy.GetCompositesRole<T>(roleType).ToArray();
-            });
+            this.value = strategy.Session.SignalFactory.Computed<IReadOnlyList<T>>(
+                () =>
+                {
+                    _ = strategy.Session.GraphRevision.Value;
+                    return strategy.GetCompositesRole<T>(roleType).ToArray();
+                },
+                CompositesComparer<T>.Instance);
 
             this.CanRead = strategy.GetCanReadSignal(roleType);
             this.CanWrite = strategy.GetCanWriteSignal(roleType);
@@ -99,11 +101,13 @@ namespace Allors.Workspace.Adapters
 
         internal DerivedRoleSignal(Strategy strategy, IRoleType roleType)
         {
-            this.value = strategy.Session.SignalFactory.Computed(() =>
-            {
-                _ = strategy.Session.GraphRevision.Value;
-                return ConvertValue(strategy.GetRole(roleType));
-            });
+            this.value = strategy.Session.SignalFactory.Computed(
+                () =>
+                {
+                    _ = strategy.Session.GraphRevision.Value;
+                    return ConvertValue(strategy.GetRole(roleType));
+                },
+                DerivedRoleValueComparer<T>.Instance);
 
             this.CanRead = strategy.GetCanReadSignal(roleType);
             this.Exists = strategy.GetExistRoleSignal(roleType);
@@ -188,11 +192,13 @@ namespace Allors.Workspace.Adapters
 
         internal CompositesAssociationSignal(Strategy strategy, IAssociationType associationType)
         {
-            this.value = strategy.Session.SignalFactory.Computed<IReadOnlyList<T>>(() =>
-            {
-                _ = strategy.Session.GraphRevision.Value;
-                return strategy.GetCompositesAssociation<T>(associationType).ToArray();
-            });
+            this.value = strategy.Session.SignalFactory.Computed<IReadOnlyList<T>>(
+                () =>
+                {
+                    _ = strategy.Session.GraphRevision.Value;
+                    return strategy.GetCompositesAssociation<T>(associationType).ToArray();
+                },
+                CompositesComparer<T>.Instance);
         }
 
         public IReadOnlyList<T> Value => this.value.Value;
@@ -212,5 +218,71 @@ namespace Allors.Workspace.Adapters
         public IMethodType MethodType { get; }
 
         public ISignal<bool> CanExecute { get; }
+    }
+
+    // Element-wise comparer for composites signal values. The signal computations
+    // rebuild the list on every recompute, so without this comparer every graph bump
+    // would count as a change. Object instances are cached per strategy, so reference
+    // equality identifies the same workspace object; role and association element
+    // order is stable (id-ordered ranges).
+    internal sealed class CompositesComparer<T> : IEqualityComparer<IReadOnlyList<T>> where T : class, IObject
+    {
+        internal static readonly CompositesComparer<T> Instance = new CompositesComparer<T>();
+
+        public bool Equals(IReadOnlyList<T> x, IReadOnlyList<T> y)
+        {
+            if (ReferenceEquals(x, y))
+            {
+                return true;
+            }
+
+            if (x == null || y == null || x.Count != y.Count)
+            {
+                return false;
+            }
+
+            for (var i = 0; i < x.Count; i++)
+            {
+                if (!ReferenceEquals(x[i], y[i]))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public int GetHashCode(IReadOnlyList<T> obj) => obj?.Count ?? 0;
+    }
+
+    // Comparer for derived role values: scalars compare by default equality; list
+    // values (rebuilt as fresh arrays by DerivedRoleSignal.ConvertValue on every
+    // recompute) compare element-wise.
+    internal sealed class DerivedRoleValueComparer<T> : IEqualityComparer<T>
+    {
+        internal static readonly DerivedRoleValueComparer<T> Instance = new DerivedRoleValueComparer<T>();
+
+        public bool Equals(T x, T y)
+        {
+            if (EqualityComparer<T>.Default.Equals(x, y))
+            {
+                return true;
+            }
+
+            if (x is string || y is string)
+            {
+                return false;
+            }
+
+            if (x is IEnumerable xs && y is IEnumerable ys)
+            {
+                return xs.Cast<object>().SequenceEqual(ys.Cast<object>());
+            }
+
+            return false;
+        }
+
+        public int GetHashCode(T obj) =>
+            obj is IEnumerable && !(obj is string) ? 0 : (obj?.GetHashCode() ?? 0);
     }
 }

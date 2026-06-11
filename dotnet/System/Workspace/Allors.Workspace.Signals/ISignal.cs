@@ -59,7 +59,12 @@ namespace Allors.Workspace.Signals
     {
         IStateSignal<T> State<T>(T initialValue, IEqualityComparer<T> comparer = null);
 
-        IComputedSignal<T> Computed<T>(Func<T> computation);
+        /// <summary>
+        /// Creates a computed signal. The optional <paramref name="comparer"/> decides
+        /// whether a recomputed value counts as changed; pass one when the computation
+        /// rebuilds equal values (e.g. collections) so unchanged results don't propagate.
+        /// </summary>
+        IComputedSignal<T> Computed<T>(Func<T> computation, IEqualityComparer<T> comparer = null);
 
         IEffect Effect(Action callback);
 

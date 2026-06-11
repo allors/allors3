@@ -79,6 +79,32 @@ namespace Tests.Workspace
         }
 
         [Fact]
+        public async Task CompositesRoleSignalCutsPropagationWhenUnchanged()
+        {
+            await this.Login("administrator");
+
+            var session = this.Workspace.CreateSession();
+            var c1a = session.Create<C1>();
+            var c1b = session.Create<C1>();
+            c1a.AddC1C1Many2Many(c1b);
+
+            var runs = 0;
+            using var effect = session.SignalFactory.Effect(() =>
+            {
+                _ = c1a.C1C1Many2Manies.Value;
+                runs++;
+            });
+
+            Assert.Equal(1, runs);
+
+            // An unrelated write bumps the graph; the composites signal recomputes to an
+            // equal list and must not propagate to the effect.
+            c1a.C1AllorsString.Set("unrelated");
+
+            Assert.Equal(1, runs);
+        }
+
+        [Fact]
         public async Task PullFlushesEffectsOncePerPull()
         {
             await this.Login("administrator");

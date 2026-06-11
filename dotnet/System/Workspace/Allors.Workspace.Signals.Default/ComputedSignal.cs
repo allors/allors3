@@ -17,10 +17,10 @@ namespace Allors.Workspace.Signals.Default
         private T value;
         private bool hasValue;
 
-        internal ComputedSignalNode(Func<T> computation)
+        internal ComputedSignalNode(Func<T> computation, IEqualityComparer<T> comparer)
         {
             this.computation = computation ?? throw new ArgumentNullException(nameof(computation));
-            this.comparer = EqualityComparer<T>.Default;
+            this.comparer = comparer ?? EqualityComparer<T>.Default;
         }
 
         public T Value
