@@ -313,12 +313,14 @@ namespace Tests
                 .WithInternalOrganisation(allors)
                 .WithName("Best selling gizmo's")
                 .WithLocalisedName(new LocalisedTextBuilder(this.Transaction).WithText("Meest verkochte gizmo's").WithLocale(dutchLocale).Build())
+                .WithProduct(good_3)
                 .Build();
 
             var productCategory_2 = new ProductCategoryBuilder(this.Transaction)
                 .WithInternalOrganisation(allors)
                 .WithName("Big Gizmo's")
                 .WithLocalisedName(new LocalisedTextBuilder(this.Transaction).WithText("Grote Gizmo's").WithLocale(dutchLocale).Build())
+                .WithProduct(good_3)
                 .Build();
 
             var productCategory_3 = new ProductCategoryBuilder(this.Transaction)

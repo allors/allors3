@@ -106,6 +106,13 @@ under a dated version heading.
 
 ### Fixed
 
+- The NonUnifiedGood edit form no longer drops product categories on save. `onPostPull` assigned the same
+  array reference to both `selectedCategories` and `originalCategories`, so `save()` iterated
+  `selectedCategories` while `splice`-ing the aliased `originalCategories` inside that loop — a
+  splice-during-iteration that skipped every other category, which the second loop then `removeProduct`-ed
+  from the good. Editing a good with two or more categories and saving dropped roughly half of them.
+  `selectedCategories` is now an independent copy (`[...originalCategories]`, with the source `?? []`-guarded
+  for the spread), so all categories are preserved.
 - Effects watching composites roles (or derived list roles) no longer rerun on every unrelated session
   write. Those signals rebuild their list on every recompute, and the default reference-equality comparer
   counted each fresh array as a change. `ISignalFactory.Computed` now accepts an optional
