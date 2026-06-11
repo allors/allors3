@@ -78,6 +78,11 @@ under a dated version heading.
 
 ### Fixed
 
+- The apps-intranet application's **production** bootstrap no longer crashes — the same `environment.prod.ts`
+  `APP_INITIALIZER` defect as the base app. The four-parameter `appInitFactory` had only
+  `deps: [WorkspaceService, HttpClient]`, so `createService`/`editService` were injected as `undefined` and
+  the initializer threw a `TypeError` at bootstrap. `deps` now also lists `AllorsMaterialCreateService` and
+  `AllorsMaterialEditDialogService`. Production-only: the dev `environment.ts` was already correct.
 - The base application's **production** bootstrap no longer crashes. The `environment.prod.ts`
   `APP_INITIALIZER` factory (`appInitFactory`) takes four parameters and assigns
   `createService.createControlByObjectTypeTag` / `editService.editControlByObjectTypeTag`, but its `deps`
