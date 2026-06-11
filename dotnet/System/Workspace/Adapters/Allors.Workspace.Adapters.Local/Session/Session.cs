@@ -132,23 +132,31 @@ namespace Allors.Workspace.Adapters.Local
 
                 databaseTracker.Changed = null;
 
-                if (result.ObjectByNewId?.Count > 0)
+                this.HoldGraph();
+                try
                 {
-                    foreach (var kvp in result.ObjectByNewId)
+                    if (result.ObjectByNewId?.Count > 0)
                     {
-                        var workspaceId = kvp.Key;
-                        var databaseId = kvp.Value.Id;
+                        foreach (var kvp in result.ObjectByNewId)
+                        {
+                            var workspaceId = kvp.Key;
+                            var databaseId = kvp.Value.Id;
 
-                        this.OnDatabasePushResponseNew(workspaceId, databaseId);
+                            this.OnDatabasePushResponseNew(workspaceId, databaseId);
+                        }
+                    }
+
+                    databaseTracker.Created = null;
+
+                    foreach (var @object in result.Objects)
+                    {
+                        var strategy = this.GetStrategy(@object.Id);
+                        strategy.OnDatabasePushed();
                     }
                 }
-
-                databaseTracker.Created = null;
-
-                foreach (var @object in result.Objects)
+                finally
                 {
-                    var strategy = this.GetStrategy(@object.Id);
-                    strategy.OnDatabasePushed();
+                    this.ReleaseGraph();
                 }
 
                 return Task.FromResult<IPushResult>(result);
@@ -164,16 +172,24 @@ namespace Allors.Workspace.Adapters.Local
             var syncObjects = this.Workspace.DatabaseConnection.ObjectsToSync(pull);
             this.Workspace.DatabaseConnection.Sync(syncObjects, pull.AccessControl);
 
-            foreach (var databaseObject in pull.DatabaseObjects)
+            this.HoldGraph();
+            try
             {
-                if (this.StrategyByWorkspaceId.TryGetValue(databaseObject.Id, out var strategy))
+                foreach (var databaseObject in pull.DatabaseObjects)
                 {
-                    strategy.DatabaseOriginState.OnPulled(pull);
+                    if (this.StrategyByWorkspaceId.TryGetValue(databaseObject.Id, out var strategy))
+                    {
+                        strategy.DatabaseOriginState.OnPulled(pull);
+                    }
+                    else
+                    {
+                        this.InstantiateDatabaseStrategy(databaseObject.Id);
+                    }
                 }
-                else
-                {
-                    this.InstantiateDatabaseStrategy(databaseObject.Id);
-                }
+            }
+            finally
+            {
+                this.ReleaseGraph();
             }
         }
     }

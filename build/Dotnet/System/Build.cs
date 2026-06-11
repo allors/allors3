@@ -54,4 +54,10 @@ partial class Build
         .DependsOn(DotnetSystemAdaptersTestMemory)
         .DependsOn(DotnetSystemAdaptersTestSqlClient)
         .DependsOn(DotnetSystemAdaptersTestNpgsql);
+
+    private Target DotnetSystemWorkspaceSignalsTest => _ => _
+        .Executes(() => DotNetTest(s => s
+            .SetProjectFile(Paths.DotnetSystemWorkspaceSignalsDefaultTests)
+            .AddLoggers("trx;LogFileName=DotnetSystemWorkspaceSignals.trx")
+            .SetResultsDirectory(Paths.ArtifactsTests)));
 }

@@ -14,6 +14,12 @@ under a dated version heading.
 
 ### Added
 
+- **Workspace signals** — reactive `state`/`computed`/`effect` primitives backported from allors4 core, as the
+  standard reactive mechanism of the C# workspace. New netstandard2.0 projects `Allors.Workspace.Signals`
+  (the `ISignal`/`IStateSignal`/`IComputedSignal`/`IEffect`/`IEffectScope`/`ISignalFactory` contract),
+  `Allors.Workspace.Signals.Default` (the push-pull dependency-tracking engine) and
+  `Allors.Workspace.Signals.Plain` (a non-reactive fallback), with xUnit tests gated by the new Nuke target
+  `DotnetSystemWorkspaceSignalsTest` (CI `CiDotnetSystemWorkspaceSignalsTest`).
 - Configuration is now delivered from outside the source tree via the **required** `ALLORS_CONFIG_ROOT`
   environment variable. Each server, command-line tool and integration test loads
   `$ALLORS_CONFIG_ROOT/<domain>/appsettings.json` (domain = `core`/`base`/`apps`) through the new
@@ -49,6 +55,24 @@ under a dated version heading.
 
 ### Changed
 
+- The Blazor workspace UI is migrated to the signal-based workspace surface. `RoleField`, `CustomValidator`
+  and the Bootstrap role controls use the signal accessors (`CanRead`/`CanWrite(…).Value`; `ScalarRole`/
+  `CompositeRole`/`CompositesRole` dispatched on the role's kind, mirroring the removed `GetRole`/`SetRole`;
+  `ExistRole` for the validators), the Bootstrap sites' workspace configurations pass a `DefaultSignalFactory`
+  builder instead of the removed `IRule[]`, and the site pages and image services read generated role signals
+  with `.Value`.
+- The C# workspace is now **signal-based** (allors4 parity). `IStrategy`/`ISession` expose signal-returning
+  members — `ISignal<…> Version/IsNew/HasChanges`, `ISignal<bool> CanRead/CanWrite/CanExecute/ExistRole/HasChanged`,
+  and `IRoleSignal<T>`/`ICompositesRoleSignal<T>`/`IDerivedRoleSignal<T>`/`IAssociationSignal<T>`/`IMethodSignal`
+  accessors — and generated workspace domain classes expose those signals (read with `.Value`, write with
+  `.Set(…)`). `IConfiguration` now requires a signal-factory builder (`Func<ISignalFactory>`, e.g.
+  `() => new DefaultSignalFactory()`; `Allors.Workspace.Adapters.Configuration` takes it instead of `IRule[]`).
+  The builder runs once per session: every `ISession` owns its signal factory (exposed as
+  `ISession.SignalFactory` — create UI effects there), keeping each session's reactive graph and its
+  single-threaded effect scheduler isolated from sessions on other threads (e.g. Blazor Server circuits).
+  Internally every signal recomputes off a session-wide graph revision bumped on role writes, pulls and
+  pushes. Workspace test suites were migrated to the signal surface accordingly. (TypeScript/Angular is a
+  later pass.)
 - The database provider (SqlClient / Npgsql) is now selected by which template populates
   `ALLORS_CONFIG_ROOT` rather than by the host operating system. The in-repo `config/<provider>/<domain>`
   files are templates (with development defaults) copied to the config root (e.g. `/opt/allors`); real
@@ -71,6 +95,10 @@ under a dated version heading.
 
 ### Removed
 
+- The workspace client-side `IRule` derivation engine (`ISession.Activate`, `IConfiguration.Rules`, the
+  `Allors.Workspace.Derivations` namespace and the workspace `Rule` base class). Derived workspace roles are
+  now exposed as `IDerivedRoleSignal<T>`; their values are computed server-side and arrive via pull (matching
+  allors4). The separate database-side derivation engine is unaffected.
 - The Windows-only `SqlLocalDB` build helper and the `MartinCostello.SqlLocalDb` build dependency; the build
   no longer provisions SQL LocalDB.
 - Legacy per-project `appSettings.json` and `appSettings.{development,osx,windows}.json` files next to the
@@ -78,6 +106,34 @@ under a dated version heading.
 
 ### Fixed
 
+- Effects watching composites roles (or derived list roles) no longer rerun on every unrelated session
+  write. Those signals rebuild their list on every recompute, and the default reference-equality comparer
+  counted each fresh array as a change. `ISignalFactory.Computed` now accepts an optional
+  `IEqualityComparer<T>` (mirroring `State`), and the adapter passes element-wise comparers for composites
+  and derived role signals, restoring the value cutoff.
+- Effects no longer run between the record merges of a single pull, push response or reset. Every merged
+  record bumped the session graph revision — and flushed effects — individually, so an effect reading roles
+  of two pulled objects observed the first object updated while the second still held its stale values
+  (and large pulls paid one full propagation per record). Multi-record operations now hold the revision and
+  bump once at the end (`Session.HoldGraph`/`ReleaseGraph`), so effects observe only the fully merged state.
+- Effects no longer observe torn state or run twice per change. The effect scheduler flushed as soon as
+  the first effect was enqueued, while the propagation walk was still marking the remaining subscribers —
+  an effect reading two computeds derived from the same signal ran once with one fresh and one stale value,
+  then again after the walk finished. `Propagation.Propagate` now holds every touched scheduler for the
+  duration of the walk and releases (flushes) them only after all reachable nodes are marked, so each
+  change produces exactly one consistent effect run.
+- A role write performed inside an effect no longer re-runs that effect forever. `Session.TouchGraph`
+  bumped the graph revision by reading the revision signal through its tracked getter, so the writing
+  effect subscribed itself to the session-wide revision — always recorded one version behind the bump —
+  and was re-scheduled after every flush. The bump now comes from an untracked backing counter, so
+  writers never become subscribers of the revision they bump.
+- Disposing a parent effect scope while a nested child scope was the active scope no longer leaves the
+  signals engine's active scope pointing at the disposed parent. `EffectScopeNode.Dispose` only restored the
+  active scope when it was exactly the disposed node, but disposal recurses into child scopes, so the child's
+  restore re-targeted its already-disposed (and already unlinked) parent — and effects created afterwards
+  registered under that disposed scope, where no outer scope could ever dispose them. `Dispose` now restores
+  the active scope whenever it lies anywhere in the disposed subtree, so it lands on the disposed scope's
+  outer scope.
 - The apps-intranet application's **production** bootstrap no longer crashes — the same `environment.prod.ts`
   `APP_INITIALIZER` defect as the base app. The four-parameter `appInitFactory` had only
   `deps: [WorkspaceService, HttpClient]`, so `createService`/`editService` were injected as `undefined` and

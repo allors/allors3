@@ -48,13 +48,13 @@ namespace Tests.Workspace
 
             var c2s = result.GetCollection<C2>();
 
-            var c2C = c2s.First(v => v.Name == "c2C");
+            var c2C = c2s.First(v => v.Name.Value == "c2C");
 
             var c1WhereC1C2One2Many = c2C.C1WhereC1C2One2Many;
 
             // One to One
-            Assert.NotNull(c1WhereC1C2One2Many);
-            Assert.Equal("c1C", c1WhereC1C2One2Many.Name);
+            Assert.NotNull(c1WhereC1C2One2Many.Value);
+            Assert.Equal("c1C", c1WhereC1C2One2Many.Value.Name.Value);
         }
 
         [Fact]
@@ -88,13 +88,13 @@ namespace Tests.Workspace
 
             var c2s = result.GetCollection<C2>();
 
-            var c2C = c2s.First(v => v.Name == "c2C");
+            var c2C = c2s.First(v => v.Name.Value == "c2C");
 
             var c1WhereC1C2One2One = c2C.C1WhereC1C2One2One;
 
             // One to One
-            Assert.NotNull(c1WhereC1C2One2One);
-            Assert.Equal("c1C", c1WhereC1C2One2One.Name);
+            Assert.NotNull(c1WhereC1C2One2One.Value);
+            Assert.Equal("c1C", c1WhereC1C2One2One.Value.Name.Value);
         }
     }
 }

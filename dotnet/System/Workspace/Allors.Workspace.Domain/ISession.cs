@@ -9,8 +9,8 @@ namespace Allors.Workspace
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Data;
-    using Derivations;
     using System;
+    using Signals;
 
     public interface ISession
     {
@@ -18,11 +18,16 @@ namespace Allors.Workspace
 
         event EventHandler OnChange;
 
-        bool HasChanges { get; }
+        ISignal<bool> HasChanges { get; }
+
+        /// <summary>
+        /// The session's own signal factory. Effects and signals created here share the
+        /// session's single-threaded reactive graph and effect scheduler, so they must be
+        /// used on the same thread/context as the session itself.
+        /// </summary>
+        ISignalFactory SignalFactory { get; }
 
         ISessionServices Services { get; }
-
-        public void Activate(IEnumerable<IRule> rules);
 
         void Reset();
 
@@ -59,6 +64,10 @@ namespace Allors.Workspace
         Task<IInvokeResult> InvokeAsync(Method method, InvokeOptions options = null);
 
         Task<IInvokeResult> InvokeAsync(Method[] methods, InvokeOptions options = null);
+
+        Task<IInvokeResult> InvokeAsync(IMethodSignal method, InvokeOptions options = null);
+
+        Task<IInvokeResult> InvokeAsync(IMethodSignal[] methods, InvokeOptions options = null);
 
         Task<IPullResult> CallAsync(Procedure procedure, params Pull[] pull);
 

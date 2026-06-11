@@ -55,37 +55,37 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation
                         await session1.PullAsync(new Pull { Object = c1 });
                     }
 
-                    c1.C1AllorsBinary = new byte[] { 1, 2 };
-                    c1.C1AllorsBoolean = true;
-                    c1.C1AllorsDateTime = new DateTime(1973, 3, 27, 12, 1, 2, 3, DateTimeKind.Utc);
-                    c1.C1AllorsDecimal = 10.10m;
-                    c1.C1AllorsDouble = 11.11d;
-                    c1.C1AllorsInteger = 12;
-                    c1.C1AllorsString = "a string";
-                    c1.C1AllorsUnique = new Guid("0208BB9B-E87B-4CED-8DEC-516E6778CD66");
+                    c1.C1AllorsBinary.Set(new byte[] { 1, 2 });
+                    c1.C1AllorsBoolean.Set(true);
+                    c1.C1AllorsDateTime.Set(new DateTime(1973, 3, 27, 12, 1, 2, 3, DateTimeKind.Utc));
+                    c1.C1AllorsDecimal.Set(10.10m);
+                    c1.C1AllorsDouble.Set(11.11d);
+                    c1.C1AllorsInteger.Set(12);
+                    c1.C1AllorsString.Set("a string");
+                    c1.C1AllorsUnique.Set(new Guid("0208BB9B-E87B-4CED-8DEC-516E6778CD66"));
 
-                    Assert.Equal(new byte[] { 1, 2 }, c1.C1AllorsBinary);
-                    Assert.True(c1.C1AllorsBoolean);
-                    Assert.Equal(new DateTime(1973, 3, 27, 12, 1, 2, 3, DateTimeKind.Utc), c1.C1AllorsDateTime);
-                    Assert.Equal(10.10m, c1.C1AllorsDecimal);
-                    Assert.Equal(11.11d, c1.C1AllorsDouble);
-                    Assert.Equal(12, c1.C1AllorsInteger);
-                    Assert.Equal("a string", c1.C1AllorsString);
-                    Assert.Equal(new Guid("0208BB9B-E87B-4CED-8DEC-516E6778CD66"), c1.C1AllorsUnique);
+                    Assert.Equal(new byte[] { 1, 2 }, c1.C1AllorsBinary.Value);
+                    Assert.True(c1.C1AllorsBoolean.Value);
+                    Assert.Equal(new DateTime(1973, 3, 27, 12, 1, 2, 3, DateTimeKind.Utc), c1.C1AllorsDateTime.Value);
+                    Assert.Equal(10.10m, c1.C1AllorsDecimal.Value);
+                    Assert.Equal(11.11d, c1.C1AllorsDouble.Value);
+                    Assert.Equal(12, c1.C1AllorsInteger.Value);
+                    Assert.Equal("a string", c1.C1AllorsString.Value);
+                    Assert.Equal(new Guid("0208BB9B-E87B-4CED-8DEC-516E6778CD66"), c1.C1AllorsUnique.Value);
 
                     if (c1.Strategy.Id > 0)
                     {
                         await session1.PullAsync(new Pull { Object = c1 });
                     }
 
-                    Assert.Equal(new byte[] { 1, 2 }, c1.C1AllorsBinary);
-                    Assert.True(c1.C1AllorsBoolean);
-                    Assert.Equal(new DateTime(1973, 3, 27, 12, 1, 2, 3, DateTimeKind.Utc), c1.C1AllorsDateTime);
-                    Assert.Equal(10.10m, c1.C1AllorsDecimal);
-                    Assert.Equal(11.11d, c1.C1AllorsDouble);
-                    Assert.Equal(12, c1.C1AllorsInteger);
-                    Assert.Equal("a string", c1.C1AllorsString);
-                    Assert.Equal(new Guid("0208BB9B-E87B-4CED-8DEC-516E6778CD66"), c1.C1AllorsUnique);
+                    Assert.Equal(new byte[] { 1, 2 }, c1.C1AllorsBinary.Value);
+                    Assert.True(c1.C1AllorsBoolean.Value);
+                    Assert.Equal(new DateTime(1973, 3, 27, 12, 1, 2, 3, DateTimeKind.Utc), c1.C1AllorsDateTime.Value);
+                    Assert.Equal(10.10m, c1.C1AllorsDecimal.Value);
+                    Assert.Equal(11.11d, c1.C1AllorsDouble.Value);
+                    Assert.Equal(12, c1.C1AllorsInteger.Value);
+                    Assert.Equal("a string", c1.C1AllorsString.Value);
+                    Assert.Equal(new Guid("0208BB9B-E87B-4CED-8DEC-516E6778CD66"), c1.C1AllorsUnique.Value);
                 }
             }
         }
@@ -109,14 +109,14 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation
                         await session1.PullAsync(new Pull { Object = c1 });
                     }
 
-                    c1.C1AllorsBinary = null;
-                    c1.C1AllorsBoolean = null;
-                    c1.C1AllorsDateTime = null;
-                    c1.C1AllorsDecimal = null;
-                    c1.C1AllorsDouble = null;
-                    c1.C1AllorsInteger = null;
-                    c1.C1AllorsString = null;
-                    c1.C1AllorsUnique = null;
+                    c1.C1AllorsBinary.Set(null);
+                    c1.C1AllorsBoolean.Set(null);
+                    c1.C1AllorsDateTime.Set(null);
+                    c1.C1AllorsDecimal.Set(null);
+                    c1.C1AllorsDouble.Set(null);
+                    c1.C1AllorsInteger.Set(null);
+                    c1.C1AllorsString.Set(null);
+                    c1.C1AllorsUnique.Set(null);
 
                     Assert.False(c1.ExistC1AllorsBinary);
                     Assert.False(c1.ExistC1AllorsBoolean);
@@ -127,14 +127,14 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation
                     Assert.False(c1.ExistC1AllorsString);
                     Assert.False(c1.ExistC1AllorsUnique);
 
-                    Assert.Null(c1.C1AllorsBinary);
-                    Assert.Null(c1.C1AllorsBoolean);
-                    Assert.Null(c1.C1AllorsDateTime);
-                    Assert.Null(c1.C1AllorsDecimal);
-                    Assert.Null(c1.C1AllorsDouble);
-                    Assert.Null(c1.C1AllorsInteger);
-                    Assert.Null(c1.C1AllorsString);
-                    Assert.Null(c1.C1AllorsUnique);
+                    Assert.Null(c1.C1AllorsBinary.Value);
+                    Assert.Null(c1.C1AllorsBoolean.Value);
+                    Assert.Null(c1.C1AllorsDateTime.Value);
+                    Assert.Null(c1.C1AllorsDecimal.Value);
+                    Assert.Null(c1.C1AllorsDouble.Value);
+                    Assert.Null(c1.C1AllorsInteger.Value);
+                    Assert.Null(c1.C1AllorsString.Value);
+                    Assert.Null(c1.C1AllorsUnique.Value);
 
                     if (c1.Strategy.Id > 0)
                     {
@@ -150,28 +150,28 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation
                     Assert.False(c1.ExistC1AllorsString);
                     Assert.False(c1.ExistC1AllorsUnique);
 
-                    Assert.Null(c1.C1AllorsBinary);
-                    Assert.Null(c1.C1AllorsBoolean);
-                    Assert.Null(c1.C1AllorsDateTime);
-                    Assert.Null(c1.C1AllorsDecimal);
-                    Assert.Null(c1.C1AllorsDouble);
-                    Assert.Null(c1.C1AllorsInteger);
-                    Assert.Null(c1.C1AllorsString);
-                    Assert.Null(c1.C1AllorsUnique);
+                    Assert.Null(c1.C1AllorsBinary.Value);
+                    Assert.Null(c1.C1AllorsBoolean.Value);
+                    Assert.Null(c1.C1AllorsDateTime.Value);
+                    Assert.Null(c1.C1AllorsDecimal.Value);
+                    Assert.Null(c1.C1AllorsDouble.Value);
+                    Assert.Null(c1.C1AllorsInteger.Value);
+                    Assert.Null(c1.C1AllorsString.Value);
+                    Assert.Null(c1.C1AllorsUnique.Value);
 
                     if (!c1.CanWriteC1C1One2One)
                     {
                         await session1.PullAsync(new Pull { Object = c1 });
                     }
 
-                    c1.C1AllorsBinary = new byte[] { 1, 2 };
-                    c1.C1AllorsBoolean = true;
-                    c1.C1AllorsDateTime = new DateTime(1973, 3, 27, 12, 1, 2, 3, DateTimeKind.Utc);
-                    c1.C1AllorsDecimal = 10.10m;
-                    c1.C1AllorsDouble = 11.11d;
-                    c1.C1AllorsInteger = 12;
-                    c1.C1AllorsString = "a string";
-                    c1.C1AllorsUnique = new Guid("0208BB9B-E87B-4CED-8DEC-516E6778CD66");
+                    c1.C1AllorsBinary.Set(new byte[] { 1, 2 });
+                    c1.C1AllorsBoolean.Set(true);
+                    c1.C1AllorsDateTime.Set(new DateTime(1973, 3, 27, 12, 1, 2, 3, DateTimeKind.Utc));
+                    c1.C1AllorsDecimal.Set(10.10m);
+                    c1.C1AllorsDouble.Set(11.11d);
+                    c1.C1AllorsInteger.Set(12);
+                    c1.C1AllorsString.Set("a string");
+                    c1.C1AllorsUnique.Set(new Guid("0208BB9B-E87B-4CED-8DEC-516E6778CD66"));
 
 
                     if (!c1.CanWriteC1C1One2One)
@@ -179,14 +179,14 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation
                         await session1.PullAsync(new Pull { Object = c1 });
                     }
 
-                    c1.C1AllorsBinary = null;
-                    c1.C1AllorsBoolean = null;
-                    c1.C1AllorsDateTime = null;
-                    c1.C1AllorsDecimal = null;
-                    c1.C1AllorsDouble = null;
-                    c1.C1AllorsInteger = null;
-                    c1.C1AllorsString = null;
-                    c1.C1AllorsUnique = null;
+                    c1.C1AllorsBinary.Set(null);
+                    c1.C1AllorsBoolean.Set(null);
+                    c1.C1AllorsDateTime.Set(null);
+                    c1.C1AllorsDecimal.Set(null);
+                    c1.C1AllorsDouble.Set(null);
+                    c1.C1AllorsInteger.Set(null);
+                    c1.C1AllorsString.Set(null);
+                    c1.C1AllorsUnique.Set(null);
 
                     Assert.False(c1.ExistC1AllorsBinary);
                     Assert.False(c1.ExistC1AllorsBoolean);
@@ -197,14 +197,14 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation
                     Assert.False(c1.ExistC1AllorsString);
                     Assert.False(c1.ExistC1AllorsUnique);
 
-                    Assert.Null(c1.C1AllorsBinary);
-                    Assert.Null(c1.C1AllorsBoolean);
-                    Assert.Null(c1.C1AllorsDateTime);
-                    Assert.Null(c1.C1AllorsDecimal);
-                    Assert.Null(c1.C1AllorsDouble);
-                    Assert.Null(c1.C1AllorsInteger);
-                    Assert.Null(c1.C1AllorsString);
-                    Assert.Null(c1.C1AllorsUnique);
+                    Assert.Null(c1.C1AllorsBinary.Value);
+                    Assert.Null(c1.C1AllorsBoolean.Value);
+                    Assert.Null(c1.C1AllorsDateTime.Value);
+                    Assert.Null(c1.C1AllorsDecimal.Value);
+                    Assert.Null(c1.C1AllorsDouble.Value);
+                    Assert.Null(c1.C1AllorsInteger.Value);
+                    Assert.Null(c1.C1AllorsString.Value);
+                    Assert.Null(c1.C1AllorsUnique.Value);
 
                     if (c1.Strategy.Id > 0)
                     {
@@ -220,14 +220,14 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation
                     Assert.False(c1.ExistC1AllorsString);
                     Assert.False(c1.ExistC1AllorsUnique);
 
-                    Assert.Null(c1.C1AllorsBinary);
-                    Assert.Null(c1.C1AllorsBoolean);
-                    Assert.Null(c1.C1AllorsDateTime);
-                    Assert.Null(c1.C1AllorsDecimal);
-                    Assert.Null(c1.C1AllorsDouble);
-                    Assert.Null(c1.C1AllorsInteger);
-                    Assert.Null(c1.C1AllorsString);
-                    Assert.Null(c1.C1AllorsUnique);
+                    Assert.Null(c1.C1AllorsBinary.Value);
+                    Assert.Null(c1.C1AllorsBoolean.Value);
+                    Assert.Null(c1.C1AllorsDateTime.Value);
+                    Assert.Null(c1.C1AllorsDecimal.Value);
+                    Assert.Null(c1.C1AllorsDouble.Value);
+                    Assert.Null(c1.C1AllorsInteger.Value);
+                    Assert.Null(c1.C1AllorsString.Value);
+                    Assert.Null(c1.C1AllorsUnique.Value);
                 }
             }
         }
@@ -269,14 +269,14 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation
                     Assert.False(c1.ExistC1AllorsString);
                     Assert.False(c1.ExistC1AllorsUnique);
 
-                    Assert.Null(c1.C1AllorsBinary);
-                    Assert.Null(c1.C1AllorsBoolean);
-                    Assert.Null(c1.C1AllorsDateTime);
-                    Assert.Null(c1.C1AllorsDecimal);
-                    Assert.Null(c1.C1AllorsDouble);
-                    Assert.Null(c1.C1AllorsInteger);
-                    Assert.Null(c1.C1AllorsString);
-                    Assert.Null(c1.C1AllorsUnique);
+                    Assert.Null(c1.C1AllorsBinary.Value);
+                    Assert.Null(c1.C1AllorsBoolean.Value);
+                    Assert.Null(c1.C1AllorsDateTime.Value);
+                    Assert.Null(c1.C1AllorsDecimal.Value);
+                    Assert.Null(c1.C1AllorsDouble.Value);
+                    Assert.Null(c1.C1AllorsInteger.Value);
+                    Assert.Null(c1.C1AllorsString.Value);
+                    Assert.Null(c1.C1AllorsUnique.Value);
 
                     if (c1.Strategy.Id > 0)
                     {
@@ -292,28 +292,28 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation
                     Assert.False(c1.ExistC1AllorsString);
                     Assert.False(c1.ExistC1AllorsUnique);
 
-                    Assert.Null(c1.C1AllorsBinary);
-                    Assert.Null(c1.C1AllorsBoolean);
-                    Assert.Null(c1.C1AllorsDateTime);
-                    Assert.Null(c1.C1AllorsDecimal);
-                    Assert.Null(c1.C1AllorsDouble);
-                    Assert.Null(c1.C1AllorsInteger);
-                    Assert.Null(c1.C1AllorsString);
-                    Assert.Null(c1.C1AllorsUnique);
+                    Assert.Null(c1.C1AllorsBinary.Value);
+                    Assert.Null(c1.C1AllorsBoolean.Value);
+                    Assert.Null(c1.C1AllorsDateTime.Value);
+                    Assert.Null(c1.C1AllorsDecimal.Value);
+                    Assert.Null(c1.C1AllorsDouble.Value);
+                    Assert.Null(c1.C1AllorsInteger.Value);
+                    Assert.Null(c1.C1AllorsString.Value);
+                    Assert.Null(c1.C1AllorsUnique.Value);
 
                     if (!c1.CanWriteC1C1One2One)
                     {
                         await session1.PullAsync(new Pull { Object = c1 });
                     }
 
-                    c1.C1AllorsBinary = new byte[] { 1, 2 };
-                    c1.C1AllorsBoolean = true;
-                    c1.C1AllorsDateTime = new DateTime(1973, 3, 27, 12, 1, 2, 3, DateTimeKind.Utc);
-                    c1.C1AllorsDecimal = 10.10m;
-                    c1.C1AllorsDouble = 11.11d;
-                    c1.C1AllorsInteger = 12;
-                    c1.C1AllorsString = "a string";
-                    c1.C1AllorsUnique = new Guid("0208BB9B-E87B-4CED-8DEC-516E6778CD66");
+                    c1.C1AllorsBinary.Set(new byte[] { 1, 2 });
+                    c1.C1AllorsBoolean.Set(true);
+                    c1.C1AllorsDateTime.Set(new DateTime(1973, 3, 27, 12, 1, 2, 3, DateTimeKind.Utc));
+                    c1.C1AllorsDecimal.Set(10.10m);
+                    c1.C1AllorsDouble.Set(11.11d);
+                    c1.C1AllorsInteger.Set(12);
+                    c1.C1AllorsString.Set("a string");
+                    c1.C1AllorsUnique.Set(new Guid("0208BB9B-E87B-4CED-8DEC-516E6778CD66"));
 
                     if (!c1.CanWriteC1C1One2One)
                     {
@@ -338,14 +338,14 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation
                     Assert.False(c1.ExistC1AllorsString);
                     Assert.False(c1.ExistC1AllorsUnique);
 
-                    Assert.Null(c1.C1AllorsBinary);
-                    Assert.Null(c1.C1AllorsBoolean);
-                    Assert.Null(c1.C1AllorsDateTime);
-                    Assert.Null(c1.C1AllorsDecimal);
-                    Assert.Null(c1.C1AllorsDouble);
-                    Assert.Null(c1.C1AllorsInteger);
-                    Assert.Null(c1.C1AllorsString);
-                    Assert.Null(c1.C1AllorsUnique);
+                    Assert.Null(c1.C1AllorsBinary.Value);
+                    Assert.Null(c1.C1AllorsBoolean.Value);
+                    Assert.Null(c1.C1AllorsDateTime.Value);
+                    Assert.Null(c1.C1AllorsDecimal.Value);
+                    Assert.Null(c1.C1AllorsDouble.Value);
+                    Assert.Null(c1.C1AllorsInteger.Value);
+                    Assert.Null(c1.C1AllorsString.Value);
+                    Assert.Null(c1.C1AllorsUnique.Value);
 
                     if (c1.Strategy.Id > 0)
                     {
@@ -361,14 +361,14 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation
                     Assert.False(c1.ExistC1AllorsString);
                     Assert.False(c1.ExistC1AllorsUnique);
 
-                    Assert.Null(c1.C1AllorsBinary);
-                    Assert.Null(c1.C1AllorsBoolean);
-                    Assert.Null(c1.C1AllorsDateTime);
-                    Assert.Null(c1.C1AllorsDecimal);
-                    Assert.Null(c1.C1AllorsDouble);
-                    Assert.Null(c1.C1AllorsInteger);
-                    Assert.Null(c1.C1AllorsString);
-                    Assert.Null(c1.C1AllorsUnique);
+                    Assert.Null(c1.C1AllorsBinary.Value);
+                    Assert.Null(c1.C1AllorsBoolean.Value);
+                    Assert.Null(c1.C1AllorsDateTime.Value);
+                    Assert.Null(c1.C1AllorsDecimal.Value);
+                    Assert.Null(c1.C1AllorsDouble.Value);
+                    Assert.Null(c1.C1AllorsInteger.Value);
+                    Assert.Null(c1.C1AllorsString.Value);
+                    Assert.Null(c1.C1AllorsUnique.Value);
                 }
             }
         }

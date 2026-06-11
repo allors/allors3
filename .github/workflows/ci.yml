@@ -46,6 +46,7 @@ jobs:
       matrix:
         target:
           - CiDotnetSystemAdaptersTestMemory
+          - CiDotnetSystemWorkspaceSignalsTest
     steps:
       - name: Checkout
         uses: actions/checkout@v6

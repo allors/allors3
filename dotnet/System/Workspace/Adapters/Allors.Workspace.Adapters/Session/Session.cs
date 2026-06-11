@@ -11,16 +11,18 @@ namespace Allors.Workspace.Adapters
     using System.Threading.Tasks;
     using Collections;
     using Data;
-    using Derivations;
     using Meta;
+    using Signals;
 
     public abstract class Session : ISession
     {
         private readonly Dictionary<IClass, ISet<Strategy>> strategiesByClass;
 
-        protected ISet<IDependency> dependencies;
-
-        private IDictionary<IRoleType, ISet<IRule>> activeRulesByRoleType;
+        private readonly IStateSignal<long> graphRevision;
+        private readonly ISignal<bool> hasChangesSignal;
+        private long revision;
+        private int graphHolds;
+        private bool graphTouchPending;
 
         protected Session(Workspace workspace, ISessionServices sessionServices)
         {
@@ -34,13 +36,29 @@ namespace Allors.Workspace.Adapters
             this.ChangeSetTracker = new ChangeSetTracker(this);
             this.PushToDatabaseTracker = new PushToDatabaseTracker();
 
+            // Each session gets its own factory: the default engine's reactive graph and
+            // effect scheduler are single-threaded, and sessions may live on different
+            // threads (e.g. one per Blazor Server circuit).
+            this.SignalFactory = workspace.Configuration.SignalFactoryBuilder();
+
+            this.graphRevision = this.SignalFactory.State(0L);
+            this.hasChangesSignal = this.SignalFactory.Computed(() =>
+            {
+                _ = this.graphRevision.Value;
+                return this.HasChanges;
+            });
+
             this.Services.OnInit(this);
         }
 
-        // TODO: push to concrete classes and implement
+        // The dependency-driven prefetch hook is no longer populated (the rule engine
+        // that fed it has been replaced by signals); kept as an empty set so the pull
+        // path remains source-compatible.
         public ISet<IDependency> Dependencies => EmptySet<IDependency>.Instance;
 
         public bool HasChanges => this.StrategyByWorkspaceId.Any(kvp => kvp.Value.HasChanges);
+
+        ISignal<bool> ISession.HasChanges => this.hasChangesSignal;
 
         public ISessionServices Services { get; }
 
@@ -48,7 +66,11 @@ namespace Allors.Workspace.Adapters
 
         public event EventHandler OnChange;
 
-        public virtual void OnChanged(EventArgs e) => this.OnChange?.Invoke(this, e);
+        public virtual void OnChanged(EventArgs e)
+        {
+            this.TouchGraph();
+            this.OnChange?.Invoke(this, e);
+        }
 
         public Workspace Workspace { get; }
 
@@ -58,60 +80,46 @@ namespace Allors.Workspace.Adapters
 
         public SessionOriginState SessionOriginState { get; }
 
+        public ISignalFactory SignalFactory { get; }
+
+        internal IStateSignal<long> GraphRevision => this.graphRevision;
+
         protected Dictionary<long, Strategy> StrategyByWorkspaceId { get; }
 
         public override string ToString() => $"session: {base.ToString()}";
 
         internal static bool IsNewId(long id) => id < 0;
 
-        public void Activate(IEnumerable<IRule> rules)
+        // Bumps the session-wide graph revision; every reactive signal depends on it
+        // and therefore recomputes on next read. The new value comes from an untracked
+        // backing counter: reading graphRevision.Value here would register the revision
+        // as a dependency of whichever effect or computed is performing the write,
+        // re-running it on every subsequent change, forever.
+        internal void TouchGraph()
         {
-            if (rules == null)
+            if (this.graphHolds > 0)
             {
+                this.graphTouchPending = true;
                 return;
             }
 
-
-            if (this.activeRulesByRoleType == null)
-            {
-                this.activeRulesByRoleType = new Dictionary<IRoleType, ISet<IRule>>();
-                this.dependencies = new HashSet<IDependency>();
-            }
-
-            foreach (var rule in rules)
-            {
-                if (!this.activeRulesByRoleType.TryGetValue(rule.RoleType, out var activeRules))
-                {
-                    activeRules = new HashSet<IRule>();
-                    this.activeRulesByRoleType.Add(rule.RoleType, activeRules);
-                }
-
-                activeRules.Add(rule);
-                if (rule.Dependencies == null)
-                {
-                    continue;
-                }
-
-                foreach (var dependency in rule.Dependencies)
-                {
-                    this.dependencies.Add(dependency);
-                }
-            }
+            this.graphRevision.Value = ++this.revision;
         }
 
-        public IRule Resolve(Strategy strategy, IRoleType roleType)
+        // Hold/Release bracket a multi-record operation (pull, push response, reset):
+        // TouchGraph calls in between coalesce into a single bump on the final Release,
+        // so effects observe only the fully merged state instead of every intermediate
+        // record merge.
+        protected internal void HoldGraph() => this.graphHolds++;
+
+        protected internal void ReleaseGraph()
         {
-            if (this.activeRulesByRoleType != null && this.activeRulesByRoleType.TryGetValue(roleType, out var activeRules) && activeRules.Count > 0)
+            this.graphHolds--;
+            if (this.graphHolds == 0 && this.graphTouchPending)
             {
-                var rule = this.Workspace.GetRule(roleType, strategy);
-
-                if (rule != null && activeRules.Contains(rule))
-                {
-                    return rule;
-                }
+                this.graphTouchPending = false;
+                this.graphRevision.Value = ++this.revision;
             }
-
-            return null;
         }
 
         public void Reset()
@@ -131,9 +139,17 @@ namespace Allors.Workspace.Adapters
             }
 
             //TODO: Koen, fix strategy = null
-            foreach (var strategy in strategies.Where(v => v != null))
+            this.HoldGraph();
+            try
             {
-                strategy.Reset();
+                foreach (var strategy in strategies.Where(v => v != null))
+                {
+                    strategy.Reset();
+                }
+            }
+            finally
+            {
+                this.ReleaseGraph();
             }
         }
 
@@ -268,6 +284,8 @@ namespace Allors.Workspace.Adapters
             {
                 strategies.Add(strategy);
             }
+
+            this.TouchGraph();
         }
 
         public void OnDatabasePushResponseNew(long workspaceId, long databaseId)
@@ -288,11 +306,16 @@ namespace Allors.Workspace.Adapters
 
         public abstract Task<IInvokeResult> InvokeAsync(Method method, InvokeOptions options = null);
         public abstract Task<IInvokeResult> InvokeAsync(Method[] methods, InvokeOptions options = null);
+
+        public Task<IInvokeResult> InvokeAsync(IMethodSignal method, InvokeOptions options = null) =>
+            this.InvokeAsync(new Method(method.Object, method.MethodType), options);
+
+        public Task<IInvokeResult> InvokeAsync(IMethodSignal[] methods, InvokeOptions options = null) =>
+            this.InvokeAsync(methods.Select(v => new Method(v.Object, v.MethodType)).ToArray(), options);
+
         public abstract Task<IPullResult> CallAsync(Procedure procedure, params Pull[] pull);
         public abstract Task<IPullResult> CallAsync(object args, string name);
         public abstract Task<IPullResult> PullAsync(params Pull[] pull);
         public abstract Task<IPushResult> PushAsync();
-
-
     }
 }

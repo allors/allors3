@@ -18,4 +18,7 @@ public partial class Paths
     public AbsolutePath DotnetSystemAdaptersStaticTests => DotnetSystemAdapters / "Tests.Static/Tests.Static.csproj";
 
     public AbsolutePath DotnetSystemWorkspaceTypescript => DotnetSystem / "Workspace/Typescript";
+
+    public AbsolutePath DotnetSystemWorkspace => DotnetSystem / "Workspace";
+    public AbsolutePath DotnetSystemWorkspaceSignalsDefaultTests => DotnetSystemWorkspace / "Allors.Workspace.Signals.Default.Tests/Allors.Workspace.Signals.Default.Tests.csproj";
 }

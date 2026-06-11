@@ -61,10 +61,10 @@ namespace Tests.Workspace.DatabaseAssociation.SessionRole
 
                         c1y_1.ShouldNotBeNull(ctx, mode1, mode2);
 
-                        c1x_1.SessionC1One2One = c1y_1;
+                        c1x_1.SessionC1One2One.Set(c1y_1);
 
-                        c1x_1.SessionC1One2One.ShouldEqual(c1y_1, ctx, mode1, mode2);
-                        c1y_1.C1WhereSessionC1One2One.ShouldEqual(c1x_1, ctx);
+                        c1x_1.SessionC1One2One.Value.ShouldEqual(c1y_1, ctx, mode1, mode2);
+                        c1y_1.C1WhereSessionC1One2One.Value.ShouldEqual(c1x_1, ctx);
                     }
                 }
             }
@@ -92,15 +92,15 @@ namespace Tests.Workspace.DatabaseAssociation.SessionRole
 
                         c1y_1.ShouldNotBeNull(ctx, mode1, mode2);
 
-                        c1x_1.SessionC1One2One = c1y_1;
+                        c1x_1.SessionC1One2One.Set(c1y_1);
 
-                        c1x_1.SessionC1One2One.ShouldEqual(c1y_1, ctx, mode1, mode2);
-                        c1y_1.C1WhereSessionC1One2One.ShouldEqual(c1x_1, ctx);
+                        c1x_1.SessionC1One2One.Value.ShouldEqual(c1y_1, ctx, mode1, mode2);
+                        c1y_1.C1WhereSessionC1One2One.Value.ShouldEqual(c1x_1, ctx);
 
                         c1x_1.RemoveSessionC1One2One();
 
-                        c1x_1.SessionC1One2One.ShouldNotEqual(c1y_1, ctx, mode1, mode2);
-                        c1y_1.C1WhereSessionC1One2One.ShouldNotEqual(c1x_1, ctx);
+                        c1x_1.SessionC1One2One.Value.ShouldNotEqual(c1y_1, ctx, mode1, mode2);
+                        c1y_1.C1WhereSessionC1One2One.Value.ShouldNotEqual(c1x_1, ctx);
                     }
                 }
             }

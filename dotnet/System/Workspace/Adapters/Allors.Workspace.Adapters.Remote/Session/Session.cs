@@ -75,16 +75,24 @@ namespace Allors.Workspace.Adapters.Remote
                 }
             }
 
-            foreach (var v in pullResponse.p)
+            this.HoldGraph();
+            try
             {
-                if (this.StrategyByWorkspaceId.TryGetValue(v.i, out var strategy))
+                foreach (var v in pullResponse.p)
                 {
-                    strategy.DatabaseOriginState.OnPulled(pullResult);
+                    if (this.StrategyByWorkspaceId.TryGetValue(v.i, out var strategy))
+                    {
+                        strategy.DatabaseOriginState.OnPulled(pullResult);
+                    }
+                    else
+                    {
+                        this.InstantiateDatabaseStrategy(v.i);
+                    }
                 }
-                else
-                {
-                    this.InstantiateDatabaseStrategy(v.i);
-                }
+            }
+            finally
+            {
+                this.ReleaseGraph();
             }
 
             return pullResult;

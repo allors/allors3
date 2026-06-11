@@ -17,7 +17,7 @@
             @foreach (var organisation in organisations)
             {
                 <tr>
-                    <td>@organisation.Name</td>
+                    <td>@organisation.Name.Value</td>
                     <td><a href="/organisation/edit/@organisation.Id">Edit</a></td>
                 </tr>
             }

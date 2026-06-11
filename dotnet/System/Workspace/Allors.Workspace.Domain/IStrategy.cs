@@ -7,6 +7,7 @@ namespace Allors.Workspace
 {
     using System.Collections.Generic;
     using Meta;
+    using Signals;
 
     public interface IStrategy
     {
@@ -18,52 +19,42 @@ namespace Allors.Workspace
 
         long Id { get; }
 
-        long Version { get; }
+        ISignal<long> Version { get; }
 
-        bool IsNew { get; }
+        ISignal<bool> IsNew { get; }
 
-        bool HasChanges { get; }
+        ISignal<bool> HasChanges { get; }
 
         void Reset();
 
         IReadOnlyList<IDiff> Diff();
 
-        bool CanRead(IRoleType roleType);
+        ISignal<bool> CanRead(IRoleType roleType);
 
-        bool CanWrite(IRoleType roleType);
+        ISignal<bool> CanWrite(IRoleType roleType);
 
-        bool CanExecute(IMethodType methodType);
+        ISignal<bool> CanExecute(IMethodType methodType);
 
-        bool ExistRole(IRoleType roleType);
+        ISignal<bool> ExistRole(IRoleType roleType);
 
-        bool HasChanged(IRoleType roleType);
+        ISignal<bool> HasChanged(IRoleType roleType);
 
         void RestoreRole(IRoleType roleType);
 
-        object GetRole(IRoleType roleType);
+        IRoleSignal<object> ScalarRole(IRoleType roleType);
 
-        void SetRole(IRoleType roleType, object value);
+        IRoleSignal<T> ScalarRole<T>(IRoleType roleType);
 
-        void RemoveRole(IRoleType roleType);
+        IRoleSignal<T> CompositeRole<T>(IRoleType roleType) where T : class, IObject;
 
-        object GetUnitRole(IRoleType roleType);
+        ICompositesRoleSignal<T> CompositesRole<T>(IRoleType roleType) where T : class, IObject;
 
-        void SetUnitRole(IRoleType roleType, object value);
+        IDerivedRoleSignal<T> DerivedRole<T>(IRoleType roleType);
 
-        T GetCompositeRole<T>(IRoleType roleType) where T : class, IObject;
+        IAssociationSignal<T> CompositeAssociation<T>(IAssociationType associationType) where T : class, IObject;
 
-        void SetCompositeRole<T>(IRoleType roleType, T value) where T : class, IObject;
+        ICompositesAssociationSignal<T> CompositesAssociation<T>(IAssociationType associationType) where T : class, IObject;
 
-        IEnumerable<T> GetCompositesRole<T>(IRoleType roleType) where T : class, IObject;
-
-        void AddCompositesRole<T>(IRoleType roleType, T value) where T : class, IObject;
-
-        void RemoveCompositesRole<T>(IRoleType roleType, T value) where T : class, IObject;
-
-        void SetCompositesRole<T>(IRoleType roleType, in IEnumerable<T> role) where T : class, IObject;
-
-        T GetCompositeAssociation<T>(IAssociationType associationType) where T : class, IObject;
-
-        IEnumerable<T> GetCompositesAssociation<T>(IAssociationType associationType) where T : class, IObject;
+        IMethodSignal Method(IMethodType methodType);
     }
 }
