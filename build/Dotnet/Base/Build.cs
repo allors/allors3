@@ -21,7 +21,7 @@ partial class Build
     private Target DotnetBaseMerge => _ => _
         .Executes(() => DotNetRun(s => s
             .SetProjectFile(Paths.DotnetCoreDatabaseMerge)
-            .SetApplicationArguments(Paths.DotnetCoreDatabaseResourcesCore, Paths.DotnetBaseDatabaseResourcesBase, Paths.DotnetBaseDatabaseResources)));
+            .SetApplicationArguments(Paths.DotnetCoreDatabaseResourcesCore, Paths.DotnetIdentityDatabaseResourcesIdentity, Paths.DotnetBaseDatabaseResourcesBase, Paths.DotnetBaseDatabaseResources)));
 
     private Target DotnetBaseDatabaseTestDomain => _ => _
         .DependsOn(DotnetBaseGenerate)

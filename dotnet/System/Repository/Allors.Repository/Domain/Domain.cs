@@ -21,6 +21,7 @@ namespace Allors.Repository.Domain
             this.PartialInterfaceByName = new Dictionary<string, PartialInterface>();
             this.PartialClassBySingularName = new Dictionary<string, PartialClass>();
             this.PartialTypeBySingularName = new Dictionary<string, PartialType>();
+            this.Bases = new List<Domain>();
         }
 
         public Guid Id { get; }
@@ -29,7 +30,7 @@ namespace Allors.Repository.Domain
 
         public string Name { get; }
 
-        public Domain Base { get; set; }
+        public IList<Domain> Bases { get; }
 
         public Dictionary<string, PartialInterface> PartialInterfaceByName { get; }
 

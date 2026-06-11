@@ -16,7 +16,7 @@ partial class Build
     private Target DotnetCoreMerge => _ => _
         .Executes(() => DotNetRun(s => s
             .SetProjectFile(Paths.DotnetCoreDatabaseMerge)
-            .SetApplicationArguments(Paths.DotnetCoreDatabaseResourcesCore, Paths.DotnetCoreDatabaseResourcesCustom, Paths.DotnetCoreDatabaseResources)));
+            .SetApplicationArguments(Paths.DotnetCoreDatabaseResourcesCore, Paths.DotnetIdentityDatabaseResourcesIdentity, Paths.DotnetCoreDatabaseResourcesCustom, Paths.DotnetCoreDatabaseResources)));
 
     private Target DotnetCoreGenerate => _ => _
         .After(Clean)

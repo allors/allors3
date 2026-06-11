@@ -16,6 +16,20 @@
 - Follow existing naming and structure; avoid new conventions without reason.
 - Allors is in a refactoring/reeingineering cycle. Breaking changes are allowed but ask first.
 
+## Domain Architecture
+- `Core ← Base ← Apps` is the functional track. These are **abstract** domains: they must have no dependency on ASP.NET Identity (or any other security stack).
+- `Identity` (`dotnet/Identity`) is an **orthogonal track** that extends `Core` and encapsulates all Microsoft ASP.NET Identity integration. New identity-coupled code goes in the Identity track, never in Core/Base/Apps domain folders.
+- Each level's `Custom` domain is the **concrete composition point**: it extends both its functional domain and `Identity` (multiple `[Extends]`), and is where concrete test classes and level-specific glue live.
+- A future security stack should be another orthogonal domain (a sibling of Identity) that Custom domains compose instead.
+
+## Domain & Level Mechanics
+- Domain inheritance = `[Extends]` on the domain marker struct (multiple allowed) + `<Compile Include="..\..\..\<Track>\<Part>\<Domain>*\**\*.cs">` source globs in the consuming level's csprojs (Repository, Meta, Domain, Configuration, Server — and the Blazor site server).
+- Domain membership of repository types/properties = the directory containing the `[Domain]` struct. Partial interfaces/classes across domain folders merge; an inheriting domain may add members and supertypes to an inherited type.
+- Runtime behavior dispatch binds extension methods by name convention `{DomainName}{MethodType}` (e.g. `CoreOnPostBuild`, `IdentityDelete`) per interface per domain (`MethodCompiler`).
+- Setup/Security/ObjectsBase per-domain dispatch is **handwritten** per level in `Database/Domain/Virtual/{Setup,Security,ObjectsBase}.v.cs` — adding a domain means updating these at every composing level, plus providing the domain's hook partials.
+- The generated `MetaBuilder.Build()` calls `Build{DomainName}` for every domain in the repository — a handwritten partial `MetaBuilder` per domain folder is mandatory.
+- Level-local (never inherited via globs): `Custom/` folders, `Virtual/`, `Rules.cs`, server `Custom/`, Commands, and the Configuration `Custom/` services (`DatabaseServices`, `DefaultDatabaseServices`, `TransactionServices`, …). Each level provides its own copies.
+
 ## Git
 - No AI attribution in commits (no "Generated with", "Co-authored-by", or similar trailers)
 - Keep commits focused and well-described

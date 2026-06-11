@@ -10,6 +10,7 @@ namespace Allors.Database.Domain
         private void OnPreSetup()
         {
             this.CoreOnPreSetup();
+            this.IdentityOnPreSetup();
             this.BaseOnPreSetup();
             this.CustomOnPreSetup();
         }
@@ -17,6 +18,7 @@ namespace Allors.Database.Domain
         private void OnPostSetup()
         {
             this.CoreOnPostSetup();
+            this.IdentityOnPostSetup();
             this.BaseOnPostSetup();
             this.CustomOnPostSetup();
         }

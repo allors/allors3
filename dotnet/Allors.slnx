@@ -80,6 +80,28 @@
     <Project Path="Core/Workspace/Tests.Remote.Json.SystemText/Workspace.Tests.Remote.Json.SystemText.csproj" />
     <Project Path="Core/Workspace/Tests/Workspace.Tests.csproj" />
   </Folder>
+  <Folder Name="/Identity/" />
+  <Folder Name="/Identity/Database/">
+    <Project Path="Identity/Database/Commands/Commands.csproj" />
+    <Project Path="Identity/Database/Configuration.Tests/Configuration.Tests.csproj" />
+    <Project Path="Identity/Database/Configuration/Configuration.csproj" />
+    <Project Path="Identity/Database/Domain.Tests/Domain.Tests.csproj" />
+    <Project Path="Identity/Database/Domain/Domain.csproj" />
+    <Project Path="Identity/Database/Generate/Generate.csproj" />
+    <Project Path="Identity/Database/Meta/Meta.csproj" />
+    <Project Path="Identity/Database/Resources/Resources.csproj" />
+    <Project Path="Identity/Database/Server.Remote.Tests/Server.Remote.Tests.csproj" />
+    <Project Path="Identity/Database/Server/Server.csproj" />
+  </Folder>
+  <Folder Name="/Identity/Repository/">
+    <Project Path="Identity/Repository/Domain/Repository.csproj" />
+  </Folder>
+  <Folder Name="/Identity/Workspace/">
+    <Project Path="Identity/Workspace/Configuration/Workspace.Configuration.csproj" />
+    <Project Path="Identity/Workspace/Domain/Workspace.Domain.csproj" />
+    <Project Path="Identity/Workspace/Meta.Lazy/Workspace.Meta.Lazy.csproj" />
+    <Project Path="Identity/Workspace/Meta/Workspace.Meta.csproj" />
+  </Folder>
   <Folder Name="/System/">
     <Project Path="System/Shared.Tests/Allors.Shared.Tests.csproj" />
     <Project Path="System/Shared/Allors.Shared.csproj" />

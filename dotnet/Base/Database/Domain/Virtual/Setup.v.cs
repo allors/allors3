@@ -10,6 +10,7 @@ namespace Allors.Database.Domain
         private void OnPrePrepare()
         {
             this.CoreOnPrePrepare();
+            this.IdentityOnPrePrepare();
             this.BaseOnPrePrepare();
             this.CustomOnPrePrepare();
         }
@@ -17,6 +18,7 @@ namespace Allors.Database.Domain
         private void OnPostPrepare()
         {
             this.CoreOnPostPrepare();
+            this.IdentityOnPostPrepare();
             this.BaseOnPostPrepare();
             this.CustomOnPostPrepare();
         }
@@ -24,6 +26,7 @@ namespace Allors.Database.Domain
         private void OnPreSetup()
         {
             this.CoreOnPreSetup();
+            this.IdentityOnPreSetup();
             this.BaseOnPreSetup();
             this.CustomOnPreSetup();
         }
@@ -31,6 +34,7 @@ namespace Allors.Database.Domain
         private void OnPostSetup(Config config)
         {
             this.CoreOnPostSetup(config);
+            this.IdentityOnPostSetup(config);
             this.BaseOnPostSetup(config);
             this.CustomOnPostSetup(config);
         }

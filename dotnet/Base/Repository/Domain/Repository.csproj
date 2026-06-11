@@ -6,6 +6,7 @@
   <ItemGroup>
     <Compile Include="..\..\..\System\Repository\Attributes\Attributes*\**\*.cs" />
     <Compile Include="..\..\..\Core\Repository\Domain\Core*\**\*.cs" />
+    <Compile Include="..\..\..\Identity\Repository\Domain\Identity*\**\*.cs" />
   </ItemGroup>
 
   <ItemGroup>

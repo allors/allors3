@@ -1,4 +1,4 @@
-// <copyright file="Domain.cs" company="Allors bv">
+// <copyright file="UserNormalizedUserNameRule.cs" company="Allors bv">
 // Copyright (c) Allors bv. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -12,19 +12,19 @@ namespace Allors.Database.Domain
     using Derivations.Rules;
     using Meta;
 
-    public class UserNormalizedUserEmailRule : Rule
+    public class UserNormalizedUserNameRule : Rule
     {
-        public UserNormalizedUserEmailRule(MetaPopulation m) : base(m, new Guid("904187C3-773E-47BC-A2EA-EF45ECA78FD2")) =>
+        public UserNormalizedUserNameRule(MetaPopulation m) : base(m, new Guid("FD6F30D8-FF50-44FA-8863-343D2B08783B")) =>
             this.Patterns = new Pattern[]
             {
-                m.User.RolePattern(v=>v.UserEmail),
+                m.User.RolePattern(v=>v.UserName),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var @this in matches.Cast<User>())
             {
-                @this.NormalizedUserEmail = Users.Normalize(@this.UserEmail);
+                @this.NormalizedUserName = Users.Normalize(@this.UserName);
             }
         }
     }

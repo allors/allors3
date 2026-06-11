@@ -34,6 +34,10 @@ partial class Build
         .DependsOn(Reset)
         .DependsOn(DotnetCoreWorkspaceRemoteJsonNewtonsoftTest);
 
+    private Target CiDotnetIdentityDatabaseTest => _ => _
+        .DependsOn(Reset)
+        .DependsOn(DotnetIdentityDatabaseTest);
+
     private Target CiDotnetBaseDatabaseTest => _ => _
         .DependsOn(Reset)
         .DependsOn(DotnetBaseDatabaseTest);
