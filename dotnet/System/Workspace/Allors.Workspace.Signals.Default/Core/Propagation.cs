@@ -5,16 +5,33 @@
 
 namespace Allors.Workspace.Signals.Default.Core
 {
+    using System;
     using System.Collections.Generic;
 
     internal static class Propagation
     {
+        // Reused across calls to avoid allocating one frame per subscriber per change.
+        // Safe to cache per thread: the marking walk runs no user code (flushing is
+        // deferred until after the walk), so no nested Propagate can run while the
+        // buffer is in use.
+        [ThreadStatic]
+        private static PropagationEntry[] stackBuffer;
+
         internal static void Propagate(ReactiveNode source)
         {
-            PropagationFrame stack = null;
+            var stack = stackBuffer ??= new PropagationEntry[64];
+            var count = 0;
+
             for (var subscriber = source.SubscribersHead; subscriber != null; subscriber = subscriber.NextSubscriber)
             {
-                stack = new PropagationFrame(subscriber.Subscriber, true, stack);
+                if (count == stack.Length)
+                {
+                    stack = Grow(stack);
+                }
+
+                stack[count].Node = subscriber.Subscriber;
+                stack[count].IsDirect = true;
+                count++;
             }
 
             // Schedulers are held for the duration of the walk so that effects flush
@@ -25,12 +42,13 @@ namespace Allors.Workspace.Signals.Default.Core
 
             try
             {
-                while (stack != null)
+                while (count > 0)
                 {
-                    var frame = stack;
-                    stack = frame.Previous;
+                    count--;
+                    var node = stack[count].Node;
+                    var isDirect = stack[count].IsDirect;
+                    stack[count].Node = null;
 
-                    var node = frame.Node;
                     if (node == null || node.IsDisposed)
                     {
                         continue;
@@ -38,7 +56,7 @@ namespace Allors.Workspace.Signals.Default.Core
 
                     if (node is EffectNode effectNode)
                     {
-                        if (frame.IsDirect)
+                        if (isDirect)
                         {
                             effectNode.Flags |= ReactiveFlags.Dirty;
                         }
@@ -66,7 +84,7 @@ namespace Allors.Workspace.Signals.Default.Core
                     }
 
                     var previous = node.Flags & (ReactiveFlags.Dirty | ReactiveFlags.Pending);
-                    if (frame.IsDirect)
+                    if (isDirect)
                     {
                         node.Flags |= ReactiveFlags.Dirty;
                     }
@@ -82,12 +100,27 @@ namespace Allors.Workspace.Signals.Default.Core
 
                     for (var subscriber = node.SubscribersHead; subscriber != null; subscriber = subscriber.NextSubscriber)
                     {
-                        stack = new PropagationFrame(subscriber.Subscriber, false, stack);
+                        if (count == stack.Length)
+                        {
+                            stack = Grow(stack);
+                        }
+
+                        stack[count].Node = subscriber.Subscriber;
+                        stack[count].IsDirect = false;
+                        count++;
                     }
                 }
             }
             finally
             {
+                // On an exception mid-walk, clear remaining entries so the cached
+                // buffer does not root nodes.
+                while (count > 0)
+                {
+                    count--;
+                    stack[count].Node = null;
+                }
+
                 heldScheduler?.Release();
                 if (heldSchedulers != null)
                 {
@@ -97,6 +130,20 @@ namespace Allors.Workspace.Signals.Default.Core
                     }
                 }
             }
+        }
+
+        private static PropagationEntry[] Grow(PropagationEntry[] stack)
+        {
+            var grown = new PropagationEntry[stack.Length * 2];
+            Array.Copy(stack, grown, stack.Length);
+            stackBuffer = grown;
+            return grown;
+        }
+
+        private struct PropagationEntry
+        {
+            internal ReactiveNode Node;
+            internal bool IsDirect;
         }
 
         internal static bool CheckDirty(ComputationNode node)
@@ -192,22 +239,6 @@ namespace Allors.Workspace.Signals.Default.Core
             }
 
             return false;
-        }
-
-        private sealed class PropagationFrame
-        {
-            internal PropagationFrame(ReactiveNode node, bool isDirect, PropagationFrame previous)
-            {
-                this.Node = node;
-                this.IsDirect = isDirect;
-                this.Previous = previous;
-            }
-
-            internal ReactiveNode Node { get; }
-
-            internal bool IsDirect { get; }
-
-            internal PropagationFrame Previous { get; }
         }
 
         private sealed class EvaluationFrame
