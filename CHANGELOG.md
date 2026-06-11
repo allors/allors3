@@ -102,6 +102,12 @@ under a dated version heading.
 
 ### Fixed
 
+- Effects no longer observe torn state or run twice per change. The effect scheduler flushed as soon as
+  the first effect was enqueued, while the propagation walk was still marking the remaining subscribers —
+  an effect reading two computeds derived from the same signal ran once with one fresh and one stale value,
+  then again after the walk finished. `Propagation.Propagate` now holds every touched scheduler for the
+  duration of the walk and releases (flushes) them only after all reachable nodes are marked, so each
+  change produces exactly one consistent effect run.
 - A role write performed inside an effect no longer re-runs that effect forever. `Session.TouchGraph`
   bumped the graph revision by reading the revision signal through its tracked getter, so the writing
   effect subscribed itself to the session-wide revision — always recorded one version behind the bump —

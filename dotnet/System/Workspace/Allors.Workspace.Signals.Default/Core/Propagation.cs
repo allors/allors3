@@ -5,6 +5,8 @@
 
 namespace Allors.Workspace.Signals.Default.Core
 {
+    using System.Collections.Generic;
+
     internal static class Propagation
     {
         internal static void Propagate(ReactiveNode source)
@@ -15,50 +17,84 @@ namespace Allors.Workspace.Signals.Default.Core
                 stack = new PropagationFrame(subscriber.Subscriber, true, stack);
             }
 
-            while (stack != null)
+            // Schedulers are held for the duration of the walk so that effects flush
+            // only after every reachable node is marked; flushing mid-walk would let
+            // an effect observe dependencies the walk has not yet marked as stale.
+            EffectScheduler heldScheduler = null;
+            List<EffectScheduler> heldSchedulers = null;
+
+            try
             {
-                var frame = stack;
-                stack = frame.Previous;
-
-                var node = frame.Node;
-                if (node == null || node.IsDisposed)
+                while (stack != null)
                 {
-                    continue;
-                }
+                    var frame = stack;
+                    stack = frame.Previous;
 
-                if (node is EffectNode effectNode)
-                {
+                    var node = frame.Node;
+                    if (node == null || node.IsDisposed)
+                    {
+                        continue;
+                    }
+
+                    if (node is EffectNode effectNode)
+                    {
+                        if (frame.IsDirect)
+                        {
+                            effectNode.Flags |= ReactiveFlags.Dirty;
+                        }
+                        else if ((effectNode.Flags & ReactiveFlags.Dirty) == 0)
+                        {
+                            effectNode.Flags |= ReactiveFlags.Pending;
+                        }
+
+                        var scheduler = effectNode.Scheduler;
+                        if (heldScheduler == null)
+                        {
+                            heldScheduler = scheduler;
+                            scheduler.Hold();
+                        }
+                        else if (!ReferenceEquals(heldScheduler, scheduler) &&
+                                 (heldSchedulers == null || !heldSchedulers.Contains(scheduler)))
+                        {
+                            heldSchedulers ??= new List<EffectScheduler>();
+                            heldSchedulers.Add(scheduler);
+                            scheduler.Hold();
+                        }
+
+                        scheduler.Enqueue(effectNode);
+                        continue;
+                    }
+
+                    var previous = node.Flags & (ReactiveFlags.Dirty | ReactiveFlags.Pending);
                     if (frame.IsDirect)
                     {
-                        effectNode.Flags |= ReactiveFlags.Dirty;
+                        node.Flags |= ReactiveFlags.Dirty;
                     }
-                    else if ((effectNode.Flags & ReactiveFlags.Dirty) == 0)
+                    else if ((node.Flags & ReactiveFlags.Dirty) == 0)
                     {
-                        effectNode.Flags |= ReactiveFlags.Pending;
+                        node.Flags |= ReactiveFlags.Pending;
                     }
 
-                    effectNode.Scheduler.Enqueue(effectNode);
-                    continue;
-                }
+                    if (previous != ReactiveFlags.None)
+                    {
+                        continue;
+                    }
 
-                var previous = node.Flags & (ReactiveFlags.Dirty | ReactiveFlags.Pending);
-                if (frame.IsDirect)
-                {
-                    node.Flags |= ReactiveFlags.Dirty;
+                    for (var subscriber = node.SubscribersHead; subscriber != null; subscriber = subscriber.NextSubscriber)
+                    {
+                        stack = new PropagationFrame(subscriber.Subscriber, false, stack);
+                    }
                 }
-                else if ((node.Flags & ReactiveFlags.Dirty) == 0)
+            }
+            finally
+            {
+                heldScheduler?.Release();
+                if (heldSchedulers != null)
                 {
-                    node.Flags |= ReactiveFlags.Pending;
-                }
-
-                if (previous != ReactiveFlags.None)
-                {
-                    continue;
-                }
-
-                for (var subscriber = node.SubscribersHead; subscriber != null; subscriber = subscriber.NextSubscriber)
-                {
-                    stack = new PropagationFrame(subscriber.Subscriber, false, stack);
+                    foreach (var scheduler in heldSchedulers)
+                    {
+                        scheduler.Release();
+                    }
                 }
             }
         }

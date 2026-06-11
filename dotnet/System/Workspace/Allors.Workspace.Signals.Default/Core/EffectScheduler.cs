@@ -44,6 +44,21 @@ namespace Allors.Workspace.Signals.Default.Core
             }
         }
 
+        // Hold/Release bracket a propagation walk: effects enqueued while held are
+        // only flushed on the final Release. Flushing mid-walk would run an effect
+        // before all of its dependencies are marked, letting it observe a torn
+        // (partly stale) state and run a second, redundant time.
+        internal void Hold() => this.depth++;
+
+        internal void Release()
+        {
+            this.depth--;
+            if (this.depth == 0)
+            {
+                this.Flush();
+            }
+        }
+
         private void Flush()
         {
             this.depth++;
