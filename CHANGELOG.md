@@ -106,6 +106,12 @@ under a dated version heading.
 
 ### Fixed
 
+- The NonUnifiedPart edit form no longer drops part categories on save — the same alias + splice-during-
+  iteration defect as the NonUnifiedGood edit form. `onPostPull` set `selectedCategories` to the *same array
+  reference* as `originalCategories`; `onSave()` then iterated `selectedCategories` while `splice`-ing the
+  aliased `originalCategories` inside the loop, skipping every other `PartCategory`, which the second loop
+  then `removePart`-ed. `selectedCategories` is now an independent copy (`[...originalCategories]`), so all
+  part categories are preserved.
 - The NonUnifiedGood edit form no longer drops product categories on save. `onPostPull` assigned the same
   array reference to both `selectedCategories` and `originalCategories`, so `save()` iterated
   `selectedCategories` while `splice`-ing the aliased `originalCategories` inside that loop — a

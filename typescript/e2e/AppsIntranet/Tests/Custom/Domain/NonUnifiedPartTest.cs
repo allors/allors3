@@ -114,5 +114,41 @@ namespace Tests.E2E.Objects
             ClassicAssert.AreEqual("4202 21", nonUnifiedPart.HsCode);
         }
 
+        [Test]
+        public async Task EditNonUnifiedPartPreservesCategories()
+        {
+            var part = new NonUnifiedParts(this.Transaction).Extent()
+                .First(v => v.PartCategoriesWherePart.Count() >= 2);
+            var originalCategories = part.PartCategoriesWherePart.ToArray();
+
+            var @class = this.M.NonUnifiedPart;
+
+            var url = this.Application.GetOverview(@class).RouteInfo.FullPath.Replace(":id", $"{part.Strategy.ObjectId}");
+            await this.Page.GotoAsync(url);
+            await this.Page.WaitForAngular();
+
+            var overview = new NonunifiedpartOverviewPageComponent(this.AppRoot);
+            await overview.AllorsMaterialDynamicViewDetailPanelComponent.ClickAsync();
+            await this.Page.WaitForAngular();
+
+            var editForm = new NonunifiedpartEditFormComponent(this.AppRoot);
+            await editForm.NameInput.SetValueAsync("Edited NonUnifiedPart");
+            await this.Page.WaitForAngular();
+
+            var saveComponent = new SaveComponent(this.AppRoot);
+            await saveComponent.SaveAsync();
+            await this.Page.WaitForAngular();
+
+            this.Transaction.Rollback();
+
+            var after = part.PartCategoriesWherePart.ToArray();
+            foreach (var category in originalCategories)
+            {
+                ClassicAssert.Contains(category, after, $"part category '{category.Name}' was dropped on save");
+            }
+
+            ClassicAssert.AreEqual(originalCategories.Length, after.Length);
+        }
+
     }
 }
