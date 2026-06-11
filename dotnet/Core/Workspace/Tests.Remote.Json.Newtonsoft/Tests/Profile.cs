@@ -42,7 +42,7 @@ namespace Tests.Workspace.Remote
 
             var metaPopulation = new MetaBuilder().Build();
             var objectFactory = new ReflectionObjectFactory(metaPopulation, typeof(Allors.Workspace.Domain.Person));
-            this.configuration = new Configuration("Default", metaPopulation, objectFactory, new DefaultSignalFactory());
+            this.configuration = new Configuration("Default", metaPopulation, objectFactory, () => new DefaultSignalFactory());
         }
 
         IWorkspace IProfile.Workspace => this.Workspace;

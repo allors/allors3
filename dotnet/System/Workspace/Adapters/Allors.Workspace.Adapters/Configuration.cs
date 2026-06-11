@@ -11,12 +11,12 @@ namespace Allors.Workspace.Adapters
 
     public abstract class Configuration : IConfiguration
     {
-        protected Configuration(string name, IMetaPopulation metaPopulation, IObjectFactory objectFactory, ISignalFactory signalFactory)
+        protected Configuration(string name, IMetaPopulation metaPopulation, IObjectFactory objectFactory, Func<ISignalFactory> signalFactoryBuilder)
         {
             this.Name = name;
             this.MetaPopulation = metaPopulation;
             this.ObjectFactory = objectFactory;
-            this.SignalFactory = signalFactory ?? throw new ArgumentNullException(nameof(signalFactory));
+            this.SignalFactoryBuilder = signalFactoryBuilder ?? throw new ArgumentNullException(nameof(signalFactoryBuilder));
         }
 
         public string Name { get; }
@@ -25,6 +25,6 @@ namespace Allors.Workspace.Adapters
 
         public IObjectFactory ObjectFactory { get; }
 
-        public ISignalFactory SignalFactory { get; }
+        public Func<ISignalFactory> SignalFactoryBuilder { get; }
     }
 }

@@ -14,13 +14,27 @@ namespace Tests.Workspace
         protected SignalTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
+        public async Task SessionsHaveIsolatedSignalFactories()
+        {
+            await this.Login("administrator");
+
+            var session1 = this.Workspace.CreateSession();
+            var session2 = this.Workspace.CreateSession();
+
+            // Each session owns its reactive graph and effect scheduler; sharing one
+            // factory across sessions would share the (single-threaded) scheduler.
+            Assert.NotNull(session1.SignalFactory);
+            Assert.NotSame(session1.SignalFactory, session2.SignalFactory);
+        }
+
+        [Fact]
         public async Task EffectRerunsWhenObservedRoleChanges()
         {
             await this.Login("administrator");
 
             var session = this.Workspace.CreateSession();
             var c1 = session.Create<C1>();
-            var signals = this.Workspace.Configuration.SignalFactory;
+            var signals = session.SignalFactory;
 
             var runs = 0;
             using var effect = signals.Effect(() =>
@@ -43,7 +57,7 @@ namespace Tests.Workspace
 
             var session = this.Workspace.CreateSession();
             var c1 = session.Create<C1>();
-            var signals = this.Workspace.Configuration.SignalFactory;
+            var signals = session.SignalFactory;
 
             // The guard turns a non-settling effect into a test failure instead of a hang:
             // a write inside an effect must not subscribe the effect to session-wide state.

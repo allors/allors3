@@ -5,11 +5,12 @@
 
 namespace Allors.Workspace.Adapters.Remote
 {
+    using System;
     using Meta;
     using Signals;
 
     public class Configuration : Adapters.Configuration
     {
-        public Configuration(string name, IMetaPopulation metaPopulation, ReflectionObjectFactory objectFactory, ISignalFactory signalFactory) : base(name, metaPopulation, objectFactory, signalFactory) { }
+        public Configuration(string name, IMetaPopulation metaPopulation, ReflectionObjectFactory objectFactory, Func<ISignalFactory> signalFactoryBuilder) : base(name, metaPopulation, objectFactory, signalFactoryBuilder) { }
     }
 }

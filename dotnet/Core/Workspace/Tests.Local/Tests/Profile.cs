@@ -51,7 +51,7 @@ namespace Tests.Workspace.Local
 
             var metaPopulation = new MetaBuilder().Build();
             var objectFactory = new ReflectionObjectFactory(metaPopulation, typeof(Person));
-            this.configuration = new Configuration("Default", metaPopulation, objectFactory, new DefaultSignalFactory());
+            this.configuration = new Configuration("Default", metaPopulation, objectFactory, () => new DefaultSignalFactory());
 
             this.Database = new Database(
                 new DefaultDatabaseServices(fixture.Engine),

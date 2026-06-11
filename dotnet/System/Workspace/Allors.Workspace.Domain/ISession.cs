@@ -20,6 +20,13 @@ namespace Allors.Workspace
 
         ISignal<bool> HasChanges { get; }
 
+        /// <summary>
+        /// The session's own signal factory. Effects and signals created here share the
+        /// session's single-threaded reactive graph and effect scheduler, so they must be
+        /// used on the same thread/context as the session itself.
+        /// </summary>
+        ISignalFactory SignalFactory { get; }
+
         ISessionServices Services { get; }
 
         void Reset();

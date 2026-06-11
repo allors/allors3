@@ -34,6 +34,11 @@ namespace Allors.Workspace.Adapters
             this.ChangeSetTracker = new ChangeSetTracker(this);
             this.PushToDatabaseTracker = new PushToDatabaseTracker();
 
+            // Each session gets its own factory: the default engine's reactive graph and
+            // effect scheduler are single-threaded, and sessions may live on different
+            // threads (e.g. one per Blazor Server circuit).
+            this.SignalFactory = workspace.Configuration.SignalFactoryBuilder();
+
             this.graphRevision = this.SignalFactory.State(0L);
             this.hasChangesSignal = this.SignalFactory.Computed(() =>
             {
@@ -73,7 +78,7 @@ namespace Allors.Workspace.Adapters
 
         public SessionOriginState SessionOriginState { get; }
 
-        internal ISignalFactory SignalFactory => this.Workspace.Configuration.SignalFactory;
+        public ISignalFactory SignalFactory { get; }
 
         internal IStateSignal<long> GraphRevision => this.graphRevision;
 

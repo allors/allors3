@@ -24,7 +24,7 @@ namespace Allors.Workspace.Configuration
 
             var metaPopulation = new MetaBuilder().Build();
             var objectFactory = new ReflectionObjectFactory(metaPopulation, typeof(Person));
-            var configuration = new Adapters.Local.Configuration("Default", metaPopulation, objectFactory, new DefaultSignalFactory());
+            var configuration = new Adapters.Local.Configuration("Default", metaPopulation, objectFactory, () => new DefaultSignalFactory());
 
             services.AddScoped<DatabaseConnection>(serviceProvider =>
             {

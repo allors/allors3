@@ -28,7 +28,7 @@ var idGenerator = new IdGenerator();
 DefaultRanges<long> defaultRanges = new DefaultStructRanges<long>();
 var metaPopulation = new MetaBuilder().Build();
 var objectFactory = new ReflectionObjectFactory(metaPopulation, typeof(Allors.Workspace.Domain.Person));
-var configuration = new Configuration("Default", metaPopulation, objectFactory, new DefaultSignalFactory());
+var configuration = new Configuration("Default", metaPopulation, objectFactory, () => new DefaultSignalFactory());
 
 var databaseConnection = new DatabaseConnection(configuration, servicesBuilder, httpClient, idGenerator, defaultRanges);
 builder.Services.AddSingleton(databaseConnection);
