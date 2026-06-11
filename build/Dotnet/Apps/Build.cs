@@ -22,7 +22,7 @@ partial class Build
         .Executes(() => DotNetRun(s => s
             .SetProjectFile(Paths.DotnetCoreDatabaseMerge)
             .SetApplicationArguments(
-                $"{Paths.DotnetCoreDatabaseResourcesCore} {Paths.DotnetAppsDatabaseResourcesApps} {Paths.DotnetAppsDatabaseResources}")));
+                $"{Paths.DotnetCoreDatabaseResourcesCore} {Paths.DotnetIdentityDatabaseResourcesIdentity} {Paths.DotnetAppsDatabaseResourcesApps} {Paths.DotnetAppsDatabaseResources}")));
 
     private Target DotnetAppsDatabaseTestDomain => _ => _
         .DependsOn(DotnetAppsGenerate)
