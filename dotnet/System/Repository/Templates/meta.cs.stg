@@ -374,9 +374,7 @@ build_domain(assembly) ::= <<
 >>
 
 build_domain_inheritance(domain) ::= <<
-$if(domain.Base)$
-			domains.$domain.Name$.AddDirectSuperdomain(domains.$domain.base.Name$);
-$endif$
+$domain.Bases:{b|			domains.$domain.Name$.AddDirectSuperdomain(domains.$b.Name$);}; separator="\n"$
 >>
 
 build_unit(unit) ::= <<

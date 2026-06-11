@@ -107,7 +107,7 @@ namespace Allors.Repository.Domain
             get
             {
                 var assemblies = this.Domains.ToList();
-                assemblies.Sort((x, y) => x.Base == y ? 1 : -1);
+                assemblies.Sort((x, y) => x.Bases.Contains(y) ? 1 : -1);
                 return assemblies.ToArray();
             }
         }
@@ -153,7 +153,7 @@ namespace Allors.Repository.Domain
         {
             try
             {
-                var parentByChild = new Dictionary<string, string>();
+                var parentsByChild = new Dictionary<string, string[]>();
 
                 foreach (var syntaxTree in repositoryProject.DocumentBySyntaxTree.Keys)
                 {
@@ -176,22 +176,26 @@ namespace Allors.Repository.Domain
                             var domain = new Domain(id, structureModel.Name, directoryInfo);
                             this.DomainByName.Add(domain.Name, domain);
 
-                            var extendsAttribute = structureModel.GetAttributes()
-                                .FirstOrDefault(v => v.AttributeClass.Name.Equals("ExtendsAttribute"));
-                            var parent = (string)extendsAttribute?.ConstructorArguments.First().Value;
+                            var parents = structureModel.GetAttributes()
+                                .Where(v => v.AttributeClass.Name.Equals("ExtendsAttribute"))
+                                .Select(v => (string)v.ConstructorArguments.First().Value)
+                                .Where(v => !string.IsNullOrEmpty(v))
+                                .ToArray();
 
-                            if (!string.IsNullOrEmpty(parent))
+                            if (parents.Length > 0)
                             {
-                                parentByChild.Add(domain.Name, parent);
+                                parentsByChild.Add(domain.Name, parents);
                             }
                         }
                     }
                 }
 
-                foreach (var child in parentByChild.Keys)
+                foreach (var child in parentsByChild.Keys)
                 {
-                    var parent = parentByChild[child];
-                    this.DomainByName[child].Base = this.DomainByName[parent];
+                    foreach (var parent in parentsByChild[child])
+                    {
+                        this.DomainByName[child].Bases.Add(this.DomainByName[parent]);
+                    }
                 }
             }
             catch (Exception e)
