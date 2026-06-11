@@ -134,6 +134,38 @@ under a dated version heading.
   registered under that disposed scope, where no outer scope could ever dispose them. `Dispose` now restores
   the active scope whenever it lies anywhere in the disposed subtree, so it lands on the disposed scope's
   outer scope.
+- The apps-intranet application's **production** bootstrap no longer crashes — the same `environment.prod.ts`
+  `APP_INITIALIZER` defect as the base app. The four-parameter `appInitFactory` had only
+  `deps: [WorkspaceService, HttpClient]`, so `createService`/`editService` were injected as `undefined` and
+  the initializer threw a `TypeError` at bootstrap. `deps` now also lists `AllorsMaterialCreateService` and
+  `AllorsMaterialEditDialogService`. Production-only: the dev `environment.ts` was already correct.
+- The base application's **production** bootstrap no longer crashes. The `environment.prod.ts`
+  `APP_INITIALIZER` factory (`appInitFactory`) takes four parameters and assigns
+  `createService.createControlByObjectTypeTag` / `editService.editControlByObjectTypeTag`, but its `deps`
+  listed only `[WorkspaceService, HttpClient]` — so Angular injected `undefined` for the third and fourth
+  arguments and the initializer threw a `TypeError` during bootstrap. This is production-only: the dev
+  `environment.ts` already lists all four deps (and the e2e harness serves the dev configuration, so it
+  never exercised the prod file). `deps` now also lists `AllorsMaterialCreateService` and
+  `AllorsMaterialEditDialogService`, matching the factory's parameters.
+- The apps-extranet application's **production** bootstrap no longer crashes — the same `environment.prod.ts`
+  `APP_INITIALIZER` defect as the base and intranet apps. The four-parameter `appInitFactory` had only
+  `deps: [WorkspaceService, HttpClient]`, so `createService`/`editService` were injected as `undefined` and
+  the initializer threw a `TypeError` at bootstrap. `deps` now also lists `AllorsMaterialCreateService` and
+  `AllorsMaterialEditDialogService`. Production-only: the dev `environment.ts` was already correct.
+- The `SalesInvoiceStateRuleTests.ChangedSalesInvoiceItemAmountPaidDeriveSalesInvoiceItemStatePartiallyPaid`
+  domain test no longer flakes (~1% of CI runs). `SalesInvoiceItemBuilder.WithDefaults()` drew a random unit
+  price in `[1, 100]`; when it rolled `1` the test's `TotalIncVat - 1` partial payment was `0`, so
+  `SalesInvoiceStateRule` correctly derived `NotPaid` instead of the asserted `PartiallyPaid`. The test-data
+  builders now floor the random unit price at `2`, and a deterministic regression test pins the minimal price
+  so the "one unit short of full payment" boundary is always covered.
+- Test-population organisation builders now generate unique `Organisation.Name` values by construction.
+  `OrganisationBuilderExtensions.WithDefaults`, `WithManufacturerDefaults` and `WithInternalOrganisationDefaults`
+  used Bogus `Company.CompanyName()`, which is not unique, so a population occasionally produced two organisations
+  with the same name — invisible in allors3 core (no name-uniqueness rule) but an intermittent `DerivationException`
+  ("Company with this name already exists") in downstream apps that enforce it. Each generated name now carries a
+  monotonic `Interlocked.Increment` suffix, removing the collisions at the source. (Bogus' `faker.UniqueIndex`
+  only advances inside the `Faker<T>.Generate()` pipeline, which these builders do not use, so a dedicated counter
+  is required.)
 - Reassigning a session-origin one-to-many role to a new association now detaches it from the old one.
   `SessionOriginState.addCompositesRoleOne2Many` set the role's association back-pointer to the role itself
   instead of the association, so the "remove from previous association" step targeted the wrong object and the

@@ -6,12 +6,18 @@
 namespace Allors.Database.Domain.TestPopulation
 {
     using System.Linq;
+    using System.Threading;
     using Bogus;
     using Meta;
     using LegalForm = LegalForm;
 
     public static partial class OrganisationBuilderExtensions
     {
+        // Monotonic suffix that makes generated organisation names unique by construction.
+        // Bogus' faker.UniqueIndex/IndexGlobal only advance inside the Faker<T>.Generate() pipeline,
+        // which these builders do not use, so a dedicated counter is required.
+        private static int uniqueNameIndex;
+
         public static OrganisationBuilder WithDefaults(this OrganisationBuilder @this)
         {
             var m = @this.Transaction.Database.Services.Get<MetaPopulation>();
@@ -19,7 +25,7 @@ namespace Allors.Database.Domain.TestPopulation
 
             var euCountry = new Countries(@this.Transaction).FindBy(m.Country.IsoCode, faker.PickRandom(Countries.EuMemberStates));
 
-            @this.WithName(faker.Company.CompanyName())
+            @this.WithName($"{faker.Company.CompanyName()} {Interlocked.Increment(ref uniqueNameIndex)}")
                 .WithEuListingState(euCountry)
                 .WithLegalForm(faker.Random.ListItem(@this.Transaction.Extent<LegalForm>()))
                 .WithLocale(faker.Random.ListItem(@this.Transaction.GetSingleton().Locales.ToArray()))
@@ -33,7 +39,7 @@ namespace Allors.Database.Domain.TestPopulation
         {
             var company = faker.Company;
 
-            @this.WithName(company.CompanyName())
+            @this.WithName($"{company.CompanyName()} {Interlocked.Increment(ref uniqueNameIndex)}")
                 .WithIsManufacturer(true);
 
             return @this;
@@ -47,7 +53,7 @@ namespace Allors.Database.Domain.TestPopulation
             var company = faker.Company;
             var euCountry = new Countries(@this.Transaction).FindBy(m.Country.IsoCode, faker.PickRandom(Countries.EuMemberStates));
 
-            @this.WithName(company.CompanyName())
+            @this.WithName($"{company.CompanyName()} {Interlocked.Increment(ref uniqueNameIndex)}")
                 .WithEuListingState(euCountry)
                 .WithLegalForm(faker.Random.ListItem(@this.Transaction.Extent<LegalForm>()))
                 .WithLocale(faker.Random.ListItem(@this.Transaction.GetSingleton().Locales.ToArray()))
