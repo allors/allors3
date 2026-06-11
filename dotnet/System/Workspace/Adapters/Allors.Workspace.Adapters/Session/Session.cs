@@ -21,6 +21,8 @@ namespace Allors.Workspace.Adapters
         private readonly IStateSignal<long> graphRevision;
         private readonly ISignal<bool> hasChangesSignal;
         private long revision;
+        private int graphHolds;
+        private bool graphTouchPending;
 
         protected Session(Workspace workspace, ISessionServices sessionServices)
         {
@@ -93,7 +95,32 @@ namespace Allors.Workspace.Adapters
         // backing counter: reading graphRevision.Value here would register the revision
         // as a dependency of whichever effect or computed is performing the write,
         // re-running it on every subsequent change, forever.
-        internal void TouchGraph() => this.graphRevision.Value = ++this.revision;
+        internal void TouchGraph()
+        {
+            if (this.graphHolds > 0)
+            {
+                this.graphTouchPending = true;
+                return;
+            }
+
+            this.graphRevision.Value = ++this.revision;
+        }
+
+        // Hold/Release bracket a multi-record operation (pull, push response, reset):
+        // TouchGraph calls in between coalesce into a single bump on the final Release,
+        // so effects observe only the fully merged state instead of every intermediate
+        // record merge.
+        protected internal void HoldGraph() => this.graphHolds++;
+
+        protected internal void ReleaseGraph()
+        {
+            this.graphHolds--;
+            if (this.graphHolds == 0 && this.graphTouchPending)
+            {
+                this.graphTouchPending = false;
+                this.graphRevision.Value = ++this.revision;
+            }
+        }
 
         public void Reset()
         {
@@ -112,9 +139,17 @@ namespace Allors.Workspace.Adapters
             }
 
             //TODO: Koen, fix strategy = null
-            foreach (var strategy in strategies.Where(v => v != null))
+            this.HoldGraph();
+            try
             {
-                strategy.Reset();
+                foreach (var strategy in strategies.Where(v => v != null))
+                {
+                    strategy.Reset();
+                }
+            }
+            finally
+            {
+                this.ReleaseGraph();
             }
         }
 

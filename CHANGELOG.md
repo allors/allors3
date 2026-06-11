@@ -106,6 +106,11 @@ under a dated version heading.
 
 ### Fixed
 
+- Effects no longer run between the record merges of a single pull, push response or reset. Every merged
+  record bumped the session graph revision — and flushed effects — individually, so an effect reading roles
+  of two pulled objects observed the first object updated while the second still held its stale values
+  (and large pulls paid one full propagation per record). Multi-record operations now hold the revision and
+  bump once at the end (`Session.HoldGraph`/`ReleaseGraph`), so effects observe only the fully merged state.
 - Effects no longer observe torn state or run twice per change. The effect scheduler flushed as soon as
   the first effect was enqueued, while the propagation walk was still marking the remaining subscribers —
   an effect reading two computeds derived from the same signal ran once with one fresh and one stale value,

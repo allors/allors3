@@ -5,7 +5,10 @@
 
 namespace Tests.Workspace
 {
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
+    using Allors.Workspace.Data;
     using Allors.Workspace.Domain;
     using Xunit;
 
@@ -73,6 +76,39 @@ namespace Tests.Workspace
             });
 
             Assert.Equal(1, runs);
+        }
+
+        [Fact]
+        public async Task PullFlushesEffectsOncePerPull()
+        {
+            await this.Login("administrator");
+
+            var session1 = this.Workspace.CreateSession();
+            var session2 = this.Workspace.CreateSession();
+
+            var pull = new Pull { Extent = new Filter(this.M.C1) };
+
+            var result1 = await session1.PullAsync(pull);
+            var c1s1 = result1.GetCollection<C1>();
+            var c1a = c1s1.First(v => "c1A".Equals(v.Name.Value));
+            var c1b = c1s1.First(v => "c1B".Equals(v.Name.Value));
+
+            var result2 = await session2.PullAsync(pull);
+            var c1s2 = result2.GetCollection<C1>();
+            c1s2.First(v => "c1A".Equals(v.Name.Value)).C1AllorsString.Set("batchedA");
+            c1s2.First(v => "c1B".Equals(v.Name.Value)).C1AllorsString.Set("batchedB");
+            await session2.PushAsync();
+
+            var observations = new List<(string A, string B)>();
+            using var effect = session1.SignalFactory.Effect(() =>
+                observations.Add((c1a.C1AllorsString.Value, c1b.C1AllorsString.Value)));
+
+            await session1.PullAsync(pull);
+
+            // A pull merges records one by one; effects must observe only the fully
+            // merged state — one consistent run per pull, never a torn pair.
+            Assert.Equal(2, observations.Count);
+            Assert.Equal(("batchedA", "batchedB"), observations[1]);
         }
     }
 }
