@@ -27,5 +27,51 @@ namespace Allors.Workspace.Signals.Default.Tests
             // never a redundant second run for the same change.
             Assert.Equal(new[] { (2, 2), (4, 3) }, observations);
         }
+
+        [Fact]
+        public void DisposedEffectStopsRerunning()
+        {
+            var factory = new DefaultSignalFactory();
+            var state = factory.State(0);
+            var runs = 0;
+            var effect = factory.Effect(() =>
+            {
+                _ = state.Value;
+                runs++;
+            });
+
+            Assert.Equal(1, runs);
+
+            state.Value = 1;
+
+            Assert.Equal(2, runs);
+
+            effect.Dispose();
+            state.Value = 2;
+
+            Assert.Equal(2, runs);
+        }
+
+        [Fact]
+        public void EffectWritingAnUnobservedStateSettles()
+        {
+            var factory = new DefaultSignalFactory();
+            var observed = factory.State(0);
+            var target = factory.State(0);
+
+            var runs = 0;
+            factory.Effect(() =>
+            {
+                _ = observed.Value;
+                runs++;
+                if (runs <= 5)
+                {
+                    target.Value = runs;
+                }
+            });
+
+            Assert.Equal(1, runs);
+            Assert.Equal(1, target.Value);
+        }
     }
 }
