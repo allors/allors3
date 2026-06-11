@@ -78,6 +78,14 @@ under a dated version heading.
 
 ### Fixed
 
+- The base application's **production** bootstrap no longer crashes. The `environment.prod.ts`
+  `APP_INITIALIZER` factory (`appInitFactory`) takes four parameters and assigns
+  `createService.createControlByObjectTypeTag` / `editService.editControlByObjectTypeTag`, but its `deps`
+  listed only `[WorkspaceService, HttpClient]` — so Angular injected `undefined` for the third and fourth
+  arguments and the initializer threw a `TypeError` during bootstrap. This is production-only: the dev
+  `environment.ts` already lists all four deps (and the e2e harness serves the dev configuration, so it
+  never exercised the prod file). `deps` now also lists `AllorsMaterialCreateService` and
+  `AllorsMaterialEditDialogService`, matching the factory's parameters.
 - The `SalesInvoiceStateRuleTests.ChangedSalesInvoiceItemAmountPaidDeriveSalesInvoiceItemStatePartiallyPaid`
   domain test no longer flakes (~1% of CI runs). `SalesInvoiceItemBuilder.WithDefaults()` drew a random unit
   price in `[1, 100]`; when it rolled `1` the test's `TotalIncVat - 1` partial payment was `0`, so
