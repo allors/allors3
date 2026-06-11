@@ -102,6 +102,11 @@ under a dated version heading.
 
 ### Fixed
 
+- A role write performed inside an effect no longer re-runs that effect forever. `Session.TouchGraph`
+  bumped the graph revision by reading the revision signal through its tracked getter, so the writing
+  effect subscribed itself to the session-wide revision — always recorded one version behind the bump —
+  and was re-scheduled after every flush. The bump now comes from an untracked backing counter, so
+  writers never become subscribers of the revision they bump.
 - Disposing a parent effect scope while a nested child scope was the active scope no longer leaves the
   signals engine's active scope pointing at the disposed parent. `EffectScopeNode.Dispose` only restored the
   active scope when it was exactly the disposed node, but disposal recurses into child scopes, so the child's

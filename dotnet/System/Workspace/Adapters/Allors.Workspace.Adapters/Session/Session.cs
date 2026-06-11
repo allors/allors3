@@ -20,6 +20,7 @@ namespace Allors.Workspace.Adapters
 
         private readonly IStateSignal<long> graphRevision;
         private readonly ISignal<bool> hasChangesSignal;
+        private long revision;
 
         protected Session(Workspace workspace, ISessionServices sessionServices)
         {
@@ -83,8 +84,11 @@ namespace Allors.Workspace.Adapters
         internal static bool IsNewId(long id) => id < 0;
 
         // Bumps the session-wide graph revision; every reactive signal depends on it
-        // and therefore recomputes on next read.
-        internal void TouchGraph() => this.graphRevision.Value = this.graphRevision.Value + 1;
+        // and therefore recomputes on next read. The new value comes from an untracked
+        // backing counter: reading graphRevision.Value here would register the revision
+        // as a dependency of whichever effect or computed is performing the write,
+        // re-running it on every subsequent change, forever.
+        internal void TouchGraph() => this.graphRevision.Value = ++this.revision;
 
         public void Reset()
         {
