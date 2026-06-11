@@ -27,6 +27,7 @@
 
   <ItemGroup>
     <Compile Include="..\..\..\Core\Database\Server\Core*\**\*.cs" />
+    <Compile Include="..\..\..\Identity\Database\Server\Identity*\**\*.cs" />
   </ItemGroup>
 
   <ItemGroup>

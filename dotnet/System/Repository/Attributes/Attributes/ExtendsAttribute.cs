@@ -8,7 +8,7 @@ namespace Allors.Repository.Attributes
 {
     using System;
 
-    [AttributeUsage(AttributeTargets.Struct)]
+    [AttributeUsage(AttributeTargets.Struct, AllowMultiple = true)]
     public class ExtendsAttribute : RepositoryAttribute
     {
         public ExtendsAttribute(string value) => this.Value = value;

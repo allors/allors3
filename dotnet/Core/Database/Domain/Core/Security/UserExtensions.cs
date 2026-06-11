@@ -5,7 +5,6 @@
 
 namespace Allors.Database.Domain
 {
-    using System;
     using System.Linq;
 
     public static partial class UserExtensions
@@ -14,25 +13,6 @@ namespace Allors.Database.Domain
         {
             var administrators = new UserGroups(@this.Transaction()).Administrators;
             return administrators.Members.Contains(@this);
-        }
-
-        public static T SetPassword<T>(this T @this, string clearTextPassword)
-            where T : User
-        {
-            var passwordService = @this.Transaction().Database.Services.Get<IPasswordHasher>();
-            @this.UserPasswordHash = passwordService.HashPassword(@this.UserName, clearTextPassword);
-            return @this;
-        }
-
-        public static bool VerifyPassword(this User @this, string clearTextPassword)
-        {
-            if (string.IsNullOrWhiteSpace(clearTextPassword))
-            {
-                return false;
-            }
-
-            var passwordService = @this.Transaction().Database.Services.Get<IPasswordHasher>();
-            return passwordService.VerifyHashedPassword(@this.UserName, @this.UserPasswordHash, clearTextPassword);
         }
 
         public static void CoreOnPostBuild(this User @this, ObjectOnPostBuild method)
@@ -52,22 +32,12 @@ namespace Allors.Database.Domain
                     .WithGrant(@this.OwnerGrant)
                     .Build();
             }
-
-            if (!@this.ExistUserSecurityStamp)
-            {
-                @this.UserSecurityStamp = Guid.NewGuid().ToString();
-            }
         }
 
         public static void CoreDelete(this User @this, DeletableDelete method)
         {
             @this.OwnerGrant?.CascadingDelete();
             @this.OwnerSecurityToken?.CascadingDelete();
-
-            foreach (var login in @this.Logins)
-            {
-                login.CascadingDelete();
-            }
         }
     }
 }

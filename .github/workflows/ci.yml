@@ -186,6 +186,7 @@ jobs:
           - CiDotnetCoreWorkspaceLocalTest
           - CiDotnetCoreWorkspaceRemoteJsonSystemTextTest
           - CiDotnetCoreWorkspaceRemoteJsonNewtonsoftTest
+          - CiDotnetIdentityDatabaseTest
           - CiDotnetBaseDatabaseTest
           - CiDotnetAppsDatabaseTest
           - CiTypescriptWorkspaceTest

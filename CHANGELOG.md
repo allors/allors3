@@ -14,6 +14,14 @@ under a dated version heading.
 
 ### Added
 
+- New **Identity** domain track at `dotnet/Identity`: an orthogonal domain that extends `Core` and
+  encapsulates all Microsoft ASP.NET Identity integration (identity properties on `User`, `Login`,
+  `UserPasswordReset`, normalization/password rules, `PasswordHasher`, `AllorsUserStore`/`AllorsRoleStore`,
+  `AuthenticationController`). It is a full level with its own Custom domain, Server, Commands, database
+  (`config/<provider>/identity`), Domain/Server.Remote tests, dotnet Workspace projects and TypeScript libs
+  (`@allors/identity/workspace/*`).
+- The repository `[Extends]` attribute now supports multiple domain inheritance; each level's `Custom`
+  domain extends both its functional domain and `Identity`.
 - **Workspace signals** — reactive `state`/`computed`/`effect` primitives backported from allors4 core, as the
   standard reactive mechanism of the C# workspace. New netstandard2.0 projects `Allors.Workspace.Signals`
   (the `ISignal`/`IStateSignal`/`IComputedSignal`/`IEffect`/`IEffectScope`/`ISignalFactory` contract),
@@ -55,6 +63,11 @@ under a dated version heading.
 
 ### Changed
 
+- `Core`, `Base` and `Apps` are pure functional domains without a dependency on ASP.NET Identity:
+  Core's `User` keeps only `UserName`; the ASP.NET-shaped members moved to the Identity domain
+  (relation ids unchanged, so database schemas are unaffected). The identity sources are composed back
+  into each level via `Identity*` source globs because every `Custom` domain extends `Identity`.
+- `SignInTests`, `LockoutTests` and `LoginTests` moved from the Core level to the Identity level.
 - The Blazor workspace UI is migrated to the signal-based workspace surface. `RoleField`, `CustomValidator`
   and the Bootstrap role controls use the signal accessors (`CanRead`/`CanWrite(…).Value`; `ScalarRole`/
   `CompositeRole`/`CompositesRole` dispatched on the role's kind, mirroring the removed `GetRole`/`SetRole`;
@@ -112,6 +125,10 @@ under a dated version heading.
   aliased `originalCategories` inside the loop, skipping every other `PartCategory`, which the second loop
   then `removePart`-ed. `selectedCategories` is now an independent copy (`[...originalCategories]`), so all
   part categories are preserved.
+- Apps `Setup.v.cs` dispatched `BaseOnPreSetup` from `OnPrePrepare` instead of `BaseOnPrePrepare`
+  (latent; both hooks are empty today).
+- SQL Server `AllowSnapshotIsolation` now brackets the database name in its `ALTER DATABASE`
+  statement, so databases named after reserved T-SQL keywords (e.g. `Identity`) provision correctly.
 - The NonUnifiedGood edit form no longer drops product categories on save. `onPostPull` assigned the same
   array reference to both `selectedCategories` and `originalCategories`, so `save()` iterated
   `selectedCategories` while `splice`-ing the aliased `originalCategories` inside that loop — a
