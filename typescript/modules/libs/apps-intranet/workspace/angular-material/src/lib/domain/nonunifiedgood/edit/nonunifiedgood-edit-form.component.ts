@@ -124,8 +124,8 @@ export class NonUnifiedGoodEditFormComponent extends AllorsFormComponent<NonUnif
     this.onPostPullInitialize(pullResult);
 
     this.originalCategories =
-      pullResult.collection<ProductCategory>('OriginalCategories');
-    this.selectedCategories = this.originalCategories;
+      pullResult.collection<ProductCategory>('OriginalCategories') ?? [];
+    this.selectedCategories = [...this.originalCategories];
 
     this.categories = pullResult.collection<ProductCategory>(
       this.m.ProductCategory
