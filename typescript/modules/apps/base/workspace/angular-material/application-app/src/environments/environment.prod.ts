@@ -46,7 +46,12 @@ export const environment = {
     {
       provide: APP_INITIALIZER,
       useFactory: appInitFactory,
-      deps: [WorkspaceService, HttpClient],
+      deps: [
+        WorkspaceService,
+        HttpClient,
+        AllorsMaterialCreateService,
+        AllorsMaterialEditDialogService,
+      ],
       multi: true,
     },
   ],

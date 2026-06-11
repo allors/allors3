@@ -98,6 +98,28 @@ under a dated version heading.
   corrupted the file, failing a random matrix job. A new `dotnet/Directory.Build.targets` clears the
   `CloudBuildVersionVars` item before the target runs, skipping the emission. Assembly version stamping
   is unaffected, and `cloudBuild.setVersionVariables: false` does **not** gate this MSBuild-side write.
+- The base application's **production** bootstrap no longer crashes. The `environment.prod.ts`
+  `APP_INITIALIZER` factory (`appInitFactory`) takes four parameters and assigns
+  `createService.createControlByObjectTypeTag` / `editService.editControlByObjectTypeTag`, but its `deps`
+  listed only `[WorkspaceService, HttpClient]` — so Angular injected `undefined` for the third and fourth
+  arguments and the initializer threw a `TypeError` during bootstrap. This is production-only: the dev
+  `environment.ts` already lists all four deps (and the e2e harness serves the dev configuration, so it
+  never exercised the prod file). `deps` now also lists `AllorsMaterialCreateService` and
+  `AllorsMaterialEditDialogService`, matching the factory's parameters.
+- The `SalesInvoiceStateRuleTests.ChangedSalesInvoiceItemAmountPaidDeriveSalesInvoiceItemStatePartiallyPaid`
+  domain test no longer flakes (~1% of CI runs). `SalesInvoiceItemBuilder.WithDefaults()` drew a random unit
+  price in `[1, 100]`; when it rolled `1` the test's `TotalIncVat - 1` partial payment was `0`, so
+  `SalesInvoiceStateRule` correctly derived `NotPaid` instead of the asserted `PartiallyPaid`. The test-data
+  builders now floor the random unit price at `2`, and a deterministic regression test pins the minimal price
+  so the "one unit short of full payment" boundary is always covered.
+- Test-population organisation builders now generate unique `Organisation.Name` values by construction.
+  `OrganisationBuilderExtensions.WithDefaults`, `WithManufacturerDefaults` and `WithInternalOrganisationDefaults`
+  used Bogus `Company.CompanyName()`, which is not unique, so a population occasionally produced two organisations
+  with the same name — invisible in allors3 core (no name-uniqueness rule) but an intermittent `DerivationException`
+  ("Company with this name already exists") in downstream apps that enforce it. Each generated name now carries a
+  monotonic `Interlocked.Increment` suffix, removing the collisions at the source. (Bogus' `faker.UniqueIndex`
+  only advances inside the `Faker<T>.Generate()` pipeline, which these builders do not use, so a dedicated counter
+  is required.)
 - Reassigning a session-origin one-to-many role to a new association now detaches it from the old one.
   `SessionOriginState.addCompositesRoleOne2Many` set the role's association back-pointer to the role itself
   instead of the association, so the "remove from previous association" step targeted the wrong object and the
