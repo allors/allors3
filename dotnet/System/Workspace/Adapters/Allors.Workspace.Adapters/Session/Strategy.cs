@@ -18,14 +18,14 @@ namespace Allors.Workspace.Adapters
 
         private IObject @object;
 
-        // Reactive state. Every signal recomputes when the session-wide
-        // GraphRevision changes; that revision is bumped on any role write,
-        // pull, push or newly added strategy (see Session.TouchGraph). This
-        // is coarse but always correct, mirroring the workspace's existing
+        // Reactive state, created lazily on first access. Every signal recomputes
+        // when the session-wide GraphRevision changes; that revision is bumped on
+        // any role write, pull, push or newly added strategy (see Session.TouchGraph).
+        // This is coarse but always correct, mirroring the workspace's existing
         // "refresh everything on change" model.
-        private readonly ISignal<long> versionSignal;
-        private readonly ISignal<bool> isNewSignal;
-        private readonly ISignal<bool> hasChangesSignal;
+        private ISignal<long> versionSignal;
+        private ISignal<bool> isNewSignal;
+        private ISignal<bool> hasChangesSignal;
 
         // Lazy signal caches keyed by the meta operand (meta types are singletons,
         // so reference identity is a valid dictionary key — the same approach the
@@ -51,7 +51,6 @@ namespace Allors.Workspace.Adapters
             this.rangeId = this.Id;
             this.Class = @class;
             this.Ranges = this.Session.Workspace.StrategyRanges;
-            this.InitSignals(out this.versionSignal, out this.isNewSignal, out this.hasChangesSignal);
         }
 
         protected Strategy(Session session, DatabaseRecord databaseRecord)
@@ -61,7 +60,6 @@ namespace Allors.Workspace.Adapters
             this.rangeId = this.Id;
             this.Class = databaseRecord.Class;
             this.Ranges = this.Session.Workspace.StrategyRanges;
-            this.InitSignals(out this.versionSignal, out this.isNewSignal, out this.hasChangesSignal);
         }
 
         public long Version => this.DatabaseOriginState.Version;
@@ -82,11 +80,23 @@ namespace Allors.Workspace.Adapters
 
         public IObject Object => this.@object ??= this.Session.Workspace.DatabaseConnection.Configuration.ObjectFactory.Create(this);
 
-        ISignal<long> IStrategy.Version => this.versionSignal;
+        ISignal<long> IStrategy.Version => this.versionSignal ??= this.Session.SignalFactory.Computed(() =>
+        {
+            _ = this.Session.GraphRevision.Value;
+            return this.Version;
+        });
 
-        ISignal<bool> IStrategy.IsNew => this.isNewSignal;
+        ISignal<bool> IStrategy.IsNew => this.isNewSignal ??= this.Session.SignalFactory.Computed(() =>
+        {
+            _ = this.Session.GraphRevision.Value;
+            return this.IsNew;
+        });
 
-        ISignal<bool> IStrategy.HasChanges => this.hasChangesSignal;
+        ISignal<bool> IStrategy.HasChanges => this.hasChangesSignal ??= this.Session.SignalFactory.Computed(() =>
+        {
+            _ = this.Session.GraphRevision.Value;
+            return this.HasChanges;
+        });
 
         public IReadOnlyList<IDiff> Diff()
         {
@@ -599,26 +609,6 @@ namespace Allors.Workspace.Adapters
             }
 
             return signal;
-        }
-
-        private void InitSignals(out ISignal<long> version, out ISignal<bool> isNew, out ISignal<bool> hasChanges)
-        {
-            var factory = this.Session.SignalFactory;
-            version = factory.Computed(() =>
-            {
-                _ = this.Session.GraphRevision.Value;
-                return this.Version;
-            });
-            isNew = factory.Computed(() =>
-            {
-                _ = this.Session.GraphRevision.Value;
-                return this.IsNew;
-            });
-            hasChanges = factory.Computed(() =>
-            {
-                _ = this.Session.GraphRevision.Value;
-                return this.HasChanges;
-            });
         }
 
         private void AssertSameType<T>(IRoleType roleType, T value) where T : class, IObject
