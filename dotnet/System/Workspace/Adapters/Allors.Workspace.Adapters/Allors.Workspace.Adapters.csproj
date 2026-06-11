@@ -5,6 +5,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Allors.Workspace.Domain\Allors.Workspace.Domain.csproj" />
+    <ProjectReference Include="..\..\Allors.Workspace.Signals\Allors.Workspace.Signals.csproj" />
   </ItemGroup>
 
 </Project>

@@ -107,6 +107,10 @@ namespace Allors.Workspace.Adapters
             }
 
             this.DatabaseRecord = newRecord;
+
+            // A pull replaced the record with fresh server values; bump the graph so every
+            // reactive signal recomputes on next read.
+            this.Session.TouchGraph();
         }
 
         protected override void OnChange()

@@ -13,8 +13,8 @@ namespace Allors.Workspace.Domain
         {
             get
             {
-                var fileNamePart = !string.IsNullOrWhiteSpace(this.FileName) ? $"/{HttpUtility.UrlEncode(this.FileName)}" : null;
-                return $"/media/{this.UniqueId}{fileNamePart}";
+                var fileNamePart = !string.IsNullOrWhiteSpace(this.FileName.Value) ? $"/{HttpUtility.UrlEncode(this.FileName.Value)}" : null;
+                return $"/media/{this.UniqueId.Value}{fileNamePart}";
             }
         }
     }

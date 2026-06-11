@@ -62,10 +62,10 @@ namespace Tests.Workspace.DatabaseAssociation.SessionRole
 
                         c1y_1.ShouldNotBeNull(ctx, mode1, mode2);
 
-                        c1x_1.SessionC1Many2One = c1y_1;
+                        c1x_1.SessionC1Many2One.Set(c1y_1);
 
-                        c1x_1.SessionC1Many2One.ShouldEqual(c1y_1, ctx, mode1, mode2);
-                        c1y_1.C1sWhereSessionC1Many2One.ShouldContain(c1x_1, ctx, mode1, mode2);
+                        c1x_1.SessionC1Many2One.Value.ShouldEqual(c1y_1, ctx, mode1, mode2);
+                        c1y_1.C1sWhereSessionC1Many2One.Value.ShouldContain(c1x_1, ctx, mode1, mode2);
 
                         await session1.PushAsync();
                         await session2.PushAsync();
@@ -99,13 +99,13 @@ namespace Tests.Workspace.DatabaseAssociation.SessionRole
 
                         c1y_1.ShouldNotBeNull(ctx, mode1, mode2);
 
-                        c1x_1.SessionC1Many2One = c1y_1;
-                        c1x_1.SessionC1Many2One.ShouldEqual(c1y_1, ctx, mode1, mode2);
-                        c1y_1.C1sWhereSessionC1Many2One.ShouldContain(c1x_1, ctx, mode1, mode2);
+                        c1x_1.SessionC1Many2One.Set(c1y_1);
+                        c1x_1.SessionC1Many2One.Value.ShouldEqual(c1y_1, ctx, mode1, mode2);
+                        c1y_1.C1sWhereSessionC1Many2One.Value.ShouldContain(c1x_1, ctx, mode1, mode2);
 
                         c1x_1.RemoveSessionC1Many2One();
-                        c1x_1.SessionC1Many2One.ShouldNotEqual(c1y_1, ctx, mode1, mode2);
-                        c1y_1.C1sWhereSessionC1Many2One.ShouldNotContain(c1x_1, ctx, mode1, mode2);
+                        c1x_1.SessionC1Many2One.Value.ShouldNotEqual(c1y_1, ctx, mode1, mode2);
+                        c1y_1.C1sWhereSessionC1Many2One.Value.ShouldNotContain(c1x_1, ctx, mode1, mode2);
                     }
                 }
             }
@@ -141,15 +141,15 @@ namespace Tests.Workspace.DatabaseAssociation.SessionRole
                         c1b_1.ShouldNotBeNull(ctx, mode1, mode2);
 
                         // initial role
-                        c1x_1.SessionC1Many2One = c1a_1;
-                        c1x_1.SessionC1Many2One.ShouldEqual(c1a_1, ctx, mode1, mode2);
-                        c1a_1.C1sWhereSessionC1Many2One.ShouldContain(c1x_1, ctx, mode1, mode2);
+                        c1x_1.SessionC1Many2One.Set(c1a_1);
+                        c1x_1.SessionC1Many2One.Value.ShouldEqual(c1a_1, ctx, mode1, mode2);
+                        c1a_1.C1sWhereSessionC1Many2One.Value.ShouldContain(c1x_1, ctx, mode1, mode2);
 
                         // reassign to another role: the previous role's inverse association must be cleared
-                        c1x_1.SessionC1Many2One = c1b_1;
-                        c1x_1.SessionC1Many2One.ShouldEqual(c1b_1, ctx, mode1, mode2);
-                        c1b_1.C1sWhereSessionC1Many2One.ShouldContain(c1x_1, ctx, mode1, mode2);
-                        c1a_1.C1sWhereSessionC1Many2One.ShouldNotContain(c1x_1, ctx, mode1, mode2);
+                        c1x_1.SessionC1Many2One.Set(c1b_1);
+                        c1x_1.SessionC1Many2One.Value.ShouldEqual(c1b_1, ctx, mode1, mode2);
+                        c1b_1.C1sWhereSessionC1Many2One.Value.ShouldContain(c1x_1, ctx, mode1, mode2);
+                        c1a_1.C1sWhereSessionC1Many2One.Value.ShouldNotContain(c1x_1, ctx, mode1, mode2);
                     }
                 }
             }

@@ -33,8 +33,8 @@ namespace Tests.Workspace
             result = await session2.PullAsync(pull);
             var c1a_2 = result.GetCollection<C1>()[0];
 
-            c1a_1.C1AllorsString = "X";
-            c1a_2.C1AllorsString = "Y";
+            c1a_1.C1AllorsString.Set("X");
+            c1a_2.C1AllorsString.Set("Y");
 
             await session2.PushAsync();
 

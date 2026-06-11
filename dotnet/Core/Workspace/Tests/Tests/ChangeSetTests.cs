@@ -60,7 +60,7 @@ namespace Tests.Workspace
             var result = await session.PullAsync(pull);
             var c1a = result.GetCollection<C1>()[0];
 
-            c1a.C1AllorsString = "X";
+            c1a.C1AllorsString.Set("X");
 
             await session.PushAsync();
 
@@ -80,7 +80,7 @@ namespace Tests.Workspace
             var result = await session.PullAsync(pull);
             var c1a_1 = result.GetCollection<C1>()[0];
 
-            c1a_1.C1AllorsString = "X";
+            c1a_1.C1AllorsString.Set("X");
 
             await session.PushAsync();
 
@@ -90,7 +90,7 @@ namespace Tests.Workspace
             result = await session.PullAsync(pull);
             var c1a_2 = result.GetCollection<C1>()[0];
 
-            c1a_2.C1AllorsString = "Y";
+            c1a_2.C1AllorsString.Set("Y");
 
             changeSet = session.Checkpoint();
 
@@ -108,7 +108,7 @@ namespace Tests.Workspace
             var result = await session.PullAsync(pull);
             var c1a_1 = result.GetCollection<C1>()[0];
 
-            c1a_1.C1AllorsString = "X";
+            c1a_1.C1AllorsString.Set("X");
 
             await session.PushAsync();
 
@@ -118,7 +118,7 @@ namespace Tests.Workspace
             result = await session.PullAsync(pull);
             var c1a_2 = result.GetCollection<C1>()[0];
 
-            c1a_2.C1AllorsString = "Y";
+            c1a_2.C1AllorsString.Set("Y");
 
             await session.PushAsync();
 
@@ -157,7 +157,7 @@ namespace Tests.Workspace
             var result = await session.PullAsync(pull);
             var c1a = result.GetCollection<C1>()[0];
 
-            c1a.C1AllorsString = "X";
+            c1a.C1AllorsString.Set("X");
 
             await session.PushAsync();
 
@@ -209,7 +209,7 @@ namespace Tests.Workspace
 
             session.Checkpoint();
 
-            c1a.C1C1One2One = c1b;
+            c1a.C1C1One2One.Set(c1b);
 
             var changeSet = session.Checkpoint();
 
@@ -217,7 +217,7 @@ namespace Tests.Workspace
             Assert.Single(changeSet.AssociationsByRoleType);
             Assert.Single(changeSet.RolesByAssociationType);
 
-            c1a.C1C1One2One = c1c;
+            c1a.C1C1One2One.Set(c1c);
 
             changeSet = session.Checkpoint();
 
@@ -238,7 +238,7 @@ namespace Tests.Workspace
             var c1a = result.GetCollection<C1>()[0];
             var c1b = session.Create<C1>();
 
-            c1a.C1C1One2One = c1b;
+            c1a.C1C1One2One.Set(c1b);
 
             await session.PushAsync();
 
@@ -268,7 +268,7 @@ namespace Tests.Workspace
             var c1a = result.GetCollection<C1>().First();
             var c1b = session.Create<C1>();
 
-            c1a.C1C1One2One = c1b;
+            c1a.C1C1One2One.Set(c1b);
 
             await session.PushAsync();
             await session.PullAsync(pull);
@@ -296,7 +296,7 @@ namespace Tests.Workspace
             var c1a = result.GetCollection<C1>()[0];
             var c1b = session.Create<C1>();
 
-            c1a.C1C1Many2One = c1b;
+            c1a.C1C1Many2One.Set(c1b);
 
             await session.PushAsync();
 
@@ -331,7 +331,7 @@ namespace Tests.Workspace
 
             c1b = result.GetObject<C1>();
 
-            c1a.C1C1Many2One = c1b;
+            c1a.C1C1Many2One.Set(c1b);
 
             await session.PushAsync();
 
@@ -549,7 +549,7 @@ namespace Tests.Workspace
 
             session.Checkpoint();
 
-            c1a_1.C1AllorsString = "X";
+            c1a_1.C1AllorsString.Set("X");
 
             await session.PushAsync();
 
@@ -558,7 +558,7 @@ namespace Tests.Workspace
 
             var c1a_2 = result.GetCollection<C1>()[0];
 
-            c1a_2.C1AllorsString = "Y";
+            c1a_2.C1AllorsString.Set("Y");
 
             await session.PushAsync();
 
@@ -586,7 +586,7 @@ namespace Tests.Workspace
 
             session.Checkpoint();
 
-            c1a_1.C1AllorsString = "X";
+            c1a_1.C1AllorsString.Set("X");
 
             await session.PushAsync();
 
@@ -595,7 +595,7 @@ namespace Tests.Workspace
 
             var c1a_2 = result.GetCollection<C1>()[0];
 
-            c1a_2.C1AllorsString = "Y";
+            c1a_2.C1AllorsString.Set("Y");
 
             await session.PushAsync();
 

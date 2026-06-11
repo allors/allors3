@@ -7,27 +7,47 @@ namespace Tests.Workspace
 
     public static class AssertExtensions
     {
+        // Test assertions compare role/association VALUES. Since the workspace API now exposes
+        // signals, unwrap an ISignal<T> to its Value before comparing.
+        private static object Unwrap(object value)
+        {
+            if (value == null)
+            {
+                return null;
+            }
+
+            foreach (var @interface in value.GetType().GetInterfaces())
+            {
+                if (@interface.IsGenericType && @interface.GetGenericTypeDefinition() == typeof(Allors.Workspace.Signals.ISignal<>))
+                {
+                    return @interface.GetProperty("Value").GetValue(value);
+                }
+            }
+
+            return value;
+        }
+
         #region ShouldEqual
         public static void ShouldEqual(this object actual, object expected, Context context, DatabaseMode mode1, DatabaseMode mode2)
-            => Assert.True(Equals(actual, expected), $"{actual} should equal {expected} on context {context} with mode1 {mode1} and mode2 {mode2}");
+            => Assert.True(Equals(Unwrap(actual), Unwrap(expected)), $"{actual} should equal {expected} on context {context} with mode1 {mode1} and mode2 {mode2}");
 
         public static void ShouldEqual(this object actual, object expected, Context context, DatabaseMode mode)
-            => Assert.True(Equals(actual, expected), $"{actual} should equal {expected} on context {context} with mode1 {mode}");
+            => Assert.True(Equals(Unwrap(actual), Unwrap(expected)), $"{actual} should equal {expected} on context {context} with mode1 {mode}");
 
         public static void ShouldEqual(this object actual, object expected, Context context)
-          => Assert.True(Equals(actual, expected), $"{actual} should equal {expected} on context {context}");
+          => Assert.True(Equals(Unwrap(actual), Unwrap(expected)), $"{actual} should equal {expected} on context {context}");
 
         #endregion
 
         #region ShouldNotEqual
         public static void ShouldNotEqual(this object actual, object expected, Context context, DatabaseMode mode1, DatabaseMode mode2)
-            => Assert.True(!Equals(actual, expected), $"{actual} should not equal: {expected} on context {context} with mode1 {mode1} and mode2 {mode2}");
+            => Assert.True(!Equals(Unwrap(actual), Unwrap(expected)), $"{actual} should not equal: {expected} on context {context} with mode1 {mode1} and mode2 {mode2}");
 
         public static void ShouldNotEqual(this object actual, object expected, Context context, DatabaseMode mode)
-            => Assert.True(!Equals(actual, expected), $"{actual} should not equal: {expected} on context {context} with mode1 {mode}");
+            => Assert.True(!Equals(Unwrap(actual), Unwrap(expected)), $"{actual} should not equal: {expected} on context {context} with mode1 {mode}");
 
         public static void ShouldNotEqual(this object actual, object expected, Context context)
-          => Assert.True(!Equals(actual, expected), $"{actual} should not equal: {expected} on context {context}");
+          => Assert.True(!Equals(Unwrap(actual), Unwrap(expected)), $"{actual} should not equal: {expected} on context {context}");
 
         #endregion
 

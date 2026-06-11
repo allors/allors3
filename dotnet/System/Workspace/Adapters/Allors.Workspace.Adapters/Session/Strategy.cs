@@ -10,12 +10,39 @@ namespace Allors.Workspace.Adapters
     using System.Linq;
     using Meta;
     using Ranges;
+    using Signals;
 
     public abstract class Strategy : IStrategy, IComparable<Strategy>
     {
         private readonly long rangeId;
 
         private IObject @object;
+
+        // Reactive state, created lazily on first access. Every signal recomputes
+        // when the session-wide GraphRevision changes; that revision is bumped on
+        // any role write, pull, push or newly added strategy (see Session.TouchGraph).
+        // This is coarse but always correct, mirroring the workspace's existing
+        // "refresh everything on change" model.
+        private ISignal<long> versionSignal;
+        private ISignal<bool> isNewSignal;
+        private ISignal<bool> hasChangesSignal;
+
+        // Lazy signal caches keyed by the meta operand (meta types are singletons,
+        // so reference identity is a valid dictionary key — the same approach the
+        // change set already uses).
+        private Dictionary<IRoleType, ISignal<bool>> canReadSignals;
+        private Dictionary<IRoleType, ISignal<bool>> canWriteSignals;
+        private Dictionary<IRoleType, ISignal<bool>> existSignals;
+        private Dictionary<IRoleType, ISignal<bool>> hasChangedSignals;
+        private Dictionary<IRoleType, IRoleSignal<object>> scalarRoleObjectSignals;
+        private Dictionary<(IRoleType, Type), object> scalarRoleSignals;
+        private Dictionary<(IRoleType, Type), object> compositeRoleSignals;
+        private Dictionary<(IRoleType, Type), object> compositesRoleSignals;
+        private Dictionary<(IRoleType, Type), object> derivedRoleSignals;
+        private Dictionary<(IAssociationType, Type), object> compositeAssociationSignals;
+        private Dictionary<(IAssociationType, Type), object> compositesAssociationSignals;
+        private Dictionary<IMethodType, ISignal<bool>> canExecuteSignals;
+        private Dictionary<IMethodType, IMethodSignal> methodSignals;
 
         protected Strategy(Session session, IClass @class, long id)
         {
@@ -52,6 +79,25 @@ namespace Allors.Workspace.Adapters
         public bool IsNew => Session.IsNewId(this.Id);
 
         public IObject Object => this.@object ??= this.Session.Workspace.DatabaseConnection.Configuration.ObjectFactory.Create(this);
+
+        ISignal<long> IStrategy.Version => this.versionSignal ??= this.Session.SignalFactory.Computed(() =>
+        {
+            _ = this.Session.GraphRevision.Value;
+            return this.Version;
+        });
+
+        ISignal<bool> IStrategy.IsNew => this.isNewSignal ??= this.Session.SignalFactory.Computed(() =>
+        {
+            _ = this.Session.GraphRevision.Value;
+            return this.IsNew;
+        });
+
+        ISignal<bool> IStrategy.HasChanges => this.hasChangesSignal ??= this.Session.SignalFactory.Computed(() =>
+        {
+            _ = this.Session.GraphRevision.Value;
+            return this.HasChanges;
+        });
+
         public IReadOnlyList<IDiff> Diff()
         {
             var diffs = new List<IDiff>();
@@ -61,7 +107,11 @@ namespace Allors.Workspace.Adapters
 
         public bool HasChanges => this.DatabaseOriginState.HashChanges();
 
-        public void Reset() => this.DatabaseOriginState.Reset();
+        public void Reset()
+        {
+            this.DatabaseOriginState.Reset();
+            this.InvalidateSignals();
+        }
 
         public bool ExistRole(IRoleType roleType)
         {
@@ -96,6 +146,7 @@ namespace Allors.Workspace.Adapters
                     if (this.CanRead(roleType))
                     {
                         this.DatabaseOriginState.RestoreRole(roleType);
+                        this.InvalidateSignals();
                     }
 
                     return;
@@ -124,37 +175,16 @@ namespace Allors.Workspace.Adapters
             return this.GetCompositesRole<IObject>(roleType);
         }
 
-        public object GetUnitRole(IRoleType roleType)
-        {
-            if (roleType.RelationType.IsDerived)
-            {
-                var rule = this.Session.Resolve(this, roleType);
-                if (rule != null)
-                {
-                    return rule.Derive(this.Object);
-                }
-            }
-
-            return roleType.Origin switch
+        public object GetUnitRole(IRoleType roleType) =>
+            roleType.Origin switch
             {
                 Origin.Session => this.Session.SessionOriginState.GetUnitRole(this, roleType),
                 Origin.Database => this.CanRead(roleType) ? this.DatabaseOriginState.GetUnitRole(roleType) : null,
                 _ => throw new ArgumentException("Unsupported Origin")
             };
-        }
 
-        public T GetCompositeRole<T>(IRoleType roleType) where T : class, IObject
-        {
-            if (roleType.RelationType.IsDerived)
-            {
-                var rule = this.Session.Resolve(this, roleType);
-                if (rule != null)
-                {
-                    return (T)rule.Derive(this.Object);
-                }
-            }
-
-            return roleType.Origin switch
+        public T GetCompositeRole<T>(IRoleType roleType) where T : class, IObject =>
+            roleType.Origin switch
             {
                 Origin.Session => (T)this.Session.SessionOriginState.GetCompositeRole(this, roleType)?.Object,
                 Origin.Database => this.CanRead(roleType)
@@ -162,20 +192,9 @@ namespace Allors.Workspace.Adapters
                     : null,
                 _ => throw new ArgumentException("Unsupported Origin")
             };
-        }
 
-        public IEnumerable<T> GetCompositesRole<T>(IRoleType roleType) where T : class, IObject
-        {
-            if (roleType.RelationType.IsDerived)
-            {
-                var rule = this.Session.Resolve(this, roleType);
-                if (rule != null)
-                {
-                    return (IEnumerable<T>)rule.Derive(this.Object);
-                }
-            }
-
-            return roleType.Origin switch
+        public IEnumerable<T> GetCompositesRole<T>(IRoleType roleType) where T : class, IObject =>
+            roleType.Origin switch
             {
                 Origin.Session => this.Session.SessionOriginState.GetCompositesRole(this, roleType)
                     .Select(v => (T)v.Object),
@@ -184,7 +203,6 @@ namespace Allors.Workspace.Adapters
                     : Array.Empty<T>(),
                 _ => throw new ArgumentException("Unsupported Origin")
             };
-        }
 
         public void SetRole(IRoleType roleType, object value)
         {
@@ -222,6 +240,8 @@ namespace Allors.Workspace.Adapters
                 default:
                     throw new ArgumentException("Unsupported Origin");
             }
+
+            this.InvalidateSignals();
         }
 
         public void SetCompositeRole<T>(IRoleType roleType, T value) where T : class, IObject
@@ -255,6 +275,8 @@ namespace Allors.Workspace.Adapters
                 default:
                     throw new ArgumentException("Unsupported Origin");
             }
+
+            this.InvalidateSignals();
         }
 
         public void SetCompositesRole<T>(IRoleType roleType, in IEnumerable<T> role) where T : class, IObject
@@ -279,6 +301,8 @@ namespace Allors.Workspace.Adapters
                 default:
                     throw new ArgumentException("Unsupported Origin");
             }
+
+            this.InvalidateSignals();
         }
 
         public void AddCompositesRole<T>(IRoleType roleType, T value) where T : class, IObject
@@ -313,6 +337,8 @@ namespace Allors.Workspace.Adapters
                 default:
                     throw new ArgumentException("Unsupported Origin");
             }
+
+            this.InvalidateSignals();
         }
 
         public void RemoveCompositesRole<T>(IRoleType roleType, T value) where T : class, IObject
@@ -340,6 +366,8 @@ namespace Allors.Workspace.Adapters
                 default:
                     throw new ArgumentException("Unsupported Origin");
             }
+
+            this.InvalidateSignals();
         }
 
         public void RemoveRole(IRoleType roleType)
@@ -402,9 +430,186 @@ namespace Allors.Workspace.Adapters
                 _ => throw new ArgumentException("Unsupported Origin")
             };
 
-        public void OnDatabasePushNewId(long newId) => this.Id = newId;
+        public void OnDatabasePushNewId(long newId)
+        {
+            this.Id = newId;
+            this.InvalidateSignals();
+        }
 
-        public void OnDatabasePushed() => this.DatabaseOriginState.OnPushed();
+        public void OnDatabasePushed()
+        {
+            this.DatabaseOriginState.OnPushed();
+            this.InvalidateSignals();
+        }
+
+        ISignal<bool> IStrategy.CanRead(IRoleType roleType) => this.GetCanReadSignal(roleType);
+
+        ISignal<bool> IStrategy.CanWrite(IRoleType roleType) => this.GetCanWriteSignal(roleType);
+
+        ISignal<bool> IStrategy.CanExecute(IMethodType methodType) => this.GetCanExecuteSignal(methodType);
+
+        ISignal<bool> IStrategy.ExistRole(IRoleType roleType) => this.GetExistRoleSignal(roleType);
+
+        ISignal<bool> IStrategy.HasChanged(IRoleType roleType) => this.GetHasChangedSignal(roleType);
+
+        IRoleSignal<object> IStrategy.ScalarRole(IRoleType roleType) => this.GetUntypedScalarRoleSignal(roleType);
+
+        IRoleSignal<T> IStrategy.ScalarRole<T>(IRoleType roleType) => this.GetScalarRoleSignal<T>(roleType);
+
+        IRoleSignal<T> IStrategy.CompositeRole<T>(IRoleType roleType) => this.GetCompositeRoleSignal<T>(roleType);
+
+        ICompositesRoleSignal<T> IStrategy.CompositesRole<T>(IRoleType roleType) => this.GetCompositesRoleSignal<T>(roleType);
+
+        IDerivedRoleSignal<T> IStrategy.DerivedRole<T>(IRoleType roleType) => this.GetDerivedRoleSignal<T>(roleType);
+
+        IAssociationSignal<T> IStrategy.CompositeAssociation<T>(IAssociationType associationType) => this.GetCompositeAssociationSignal<T>(associationType);
+
+        ICompositesAssociationSignal<T> IStrategy.CompositesAssociation<T>(IAssociationType associationType) => this.GetCompositesAssociationSignal<T>(associationType);
+
+        IMethodSignal IStrategy.Method(IMethodType methodType) => this.GetMethodSignal(methodType);
+
+        // Bumps the session graph revision so every signal recomputes on next read.
+        internal void InvalidateSignals() => this.Session.TouchGraph();
+
+        internal ISignal<bool> GetCanReadSignal(IRoleType roleType)
+        {
+            this.canReadSignals ??= new Dictionary<IRoleType, ISignal<bool>>();
+            if (!this.canReadSignals.TryGetValue(roleType, out var signal))
+            {
+                signal = this.Session.SignalFactory.Computed(() =>
+                {
+                    _ = this.Session.GraphRevision.Value;
+                    return this.CanRead(roleType);
+                });
+                this.canReadSignals.Add(roleType, signal);
+            }
+
+            return signal;
+        }
+
+        internal ISignal<bool> GetCanWriteSignal(IRoleType roleType)
+        {
+            this.canWriteSignals ??= new Dictionary<IRoleType, ISignal<bool>>();
+            if (!this.canWriteSignals.TryGetValue(roleType, out var signal))
+            {
+                signal = this.Session.SignalFactory.Computed(() =>
+                {
+                    _ = this.Session.GraphRevision.Value;
+                    return this.CanWrite(roleType);
+                });
+                this.canWriteSignals.Add(roleType, signal);
+            }
+
+            return signal;
+        }
+
+        internal ISignal<bool> GetExistRoleSignal(IRoleType roleType)
+        {
+            this.existSignals ??= new Dictionary<IRoleType, ISignal<bool>>();
+            if (!this.existSignals.TryGetValue(roleType, out var signal))
+            {
+                signal = this.Session.SignalFactory.Computed(() =>
+                {
+                    _ = this.Session.GraphRevision.Value;
+                    return this.ExistRole(roleType);
+                });
+                this.existSignals.Add(roleType, signal);
+            }
+
+            return signal;
+        }
+
+        internal ISignal<bool> GetHasChangedSignal(IRoleType roleType)
+        {
+            this.hasChangedSignals ??= new Dictionary<IRoleType, ISignal<bool>>();
+            if (!this.hasChangedSignals.TryGetValue(roleType, out var signal))
+            {
+                signal = this.Session.SignalFactory.Computed(() =>
+                {
+                    _ = this.Session.GraphRevision.Value;
+                    return this.HasChanged(roleType);
+                });
+                this.hasChangedSignals.Add(roleType, signal);
+            }
+
+            return signal;
+        }
+
+        internal ISignal<bool> GetCanExecuteSignal(IMethodType methodType)
+        {
+            this.canExecuteSignals ??= new Dictionary<IMethodType, ISignal<bool>>();
+            if (!this.canExecuteSignals.TryGetValue(methodType, out var signal))
+            {
+                signal = this.Session.SignalFactory.Computed(() =>
+                {
+                    _ = this.Session.GraphRevision.Value;
+                    return this.CanExecute(methodType);
+                });
+                this.canExecuteSignals.Add(methodType, signal);
+            }
+
+            return signal;
+        }
+
+        private IRoleSignal<object> GetUntypedScalarRoleSignal(IRoleType roleType)
+        {
+            this.scalarRoleObjectSignals ??= new Dictionary<IRoleType, IRoleSignal<object>>();
+            if (!this.scalarRoleObjectSignals.TryGetValue(roleType, out var signal))
+            {
+                signal = new RoleSignal<object>(this, roleType, () => this.GetUnitRole(roleType), value => this.SetUnitRole(roleType, value));
+                this.scalarRoleObjectSignals.Add(roleType, signal);
+            }
+
+            return signal;
+        }
+
+        private IRoleSignal<T> GetScalarRoleSignal<T>(IRoleType roleType) =>
+            (IRoleSignal<T>)GetOrAddTyped(ref this.scalarRoleSignals, (roleType, typeof(T)),
+                () => new RoleSignal<T>(this, roleType, () => (T)this.GetUnitRole(roleType), value => this.SetUnitRole(roleType, value)));
+
+        private IRoleSignal<T> GetCompositeRoleSignal<T>(IRoleType roleType) where T : class, IObject =>
+            (IRoleSignal<T>)GetOrAddTyped(ref this.compositeRoleSignals, (roleType, typeof(T)),
+                () => new RoleSignal<T>(this, roleType, () => this.GetCompositeRole<T>(roleType), value => this.SetCompositeRole(roleType, value)));
+
+        private ICompositesRoleSignal<T> GetCompositesRoleSignal<T>(IRoleType roleType) where T : class, IObject =>
+            (ICompositesRoleSignal<T>)GetOrAddTyped(ref this.compositesRoleSignals, (roleType, typeof(T)),
+                () => new CompositesRoleSignal<T>(this, roleType));
+
+        private IDerivedRoleSignal<T> GetDerivedRoleSignal<T>(IRoleType roleType) =>
+            (IDerivedRoleSignal<T>)GetOrAddTyped(ref this.derivedRoleSignals, (roleType, typeof(T)),
+                () => new DerivedRoleSignal<T>(this, roleType));
+
+        private IAssociationSignal<T> GetCompositeAssociationSignal<T>(IAssociationType associationType) where T : class, IObject =>
+            (IAssociationSignal<T>)GetOrAddTyped(ref this.compositeAssociationSignals, (associationType, typeof(T)),
+                () => new AssociationSignal<T>(this, associationType));
+
+        private ICompositesAssociationSignal<T> GetCompositesAssociationSignal<T>(IAssociationType associationType) where T : class, IObject =>
+            (ICompositesAssociationSignal<T>)GetOrAddTyped(ref this.compositesAssociationSignals, (associationType, typeof(T)),
+                () => new CompositesAssociationSignal<T>(this, associationType));
+
+        private IMethodSignal GetMethodSignal(IMethodType methodType)
+        {
+            this.methodSignals ??= new Dictionary<IMethodType, IMethodSignal>();
+            if (!this.methodSignals.TryGetValue(methodType, out var signal))
+            {
+                signal = new MethodSignal(this, methodType);
+                this.methodSignals.Add(methodType, signal);
+            }
+
+            return signal;
+        }
+
+        private static object GetOrAddTyped<TKey>(ref Dictionary<TKey, object> cache, TKey key, Func<object> factory)
+        {
+            cache ??= new Dictionary<TKey, object>();
+            if (!cache.TryGetValue(key, out var signal))
+            {
+                signal = factory();
+                cache.Add(key, signal);
+            }
+
+            return signal;
+        }
 
         private void AssertSameType<T>(IRoleType roleType, T value) where T : class, IObject
         {

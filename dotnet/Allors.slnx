@@ -146,6 +146,10 @@
     <Project Path="System/Workspace/Allors.Workspace.Meta/Allors.Workspace.Meta.csproj" />
     <Project Path="System/Workspace/Allors.Workspace.Protocol.Direct/Allors.Workspace.Protocol.Direct.csproj" />
     <Project Path="System/Workspace/Allors.Workspace.Protocol.Json/Allors.Workspace.Protocol.Json.csproj" />
+    <Project Path="System/Workspace/Allors.Workspace.Signals/Allors.Workspace.Signals.csproj" />
+    <Project Path="System/Workspace/Allors.Workspace.Signals.Default/Allors.Workspace.Signals.Default.csproj" />
+    <Project Path="System/Workspace/Allors.Workspace.Signals.Plain/Allors.Workspace.Signals.Plain.csproj" />
+    <Project Path="System/Workspace/Allors.Workspace.Signals.Default.Tests/Allors.Workspace.Signals.Default.Tests.csproj" />
   </Folder>
   <Folder Name="/System/Workspace/Adapters/">
     <Project Path="System/Workspace/Adapters/Allors.Workspace.Adapters.Local/Allors.Workspace.Adapters.Local.csproj" />

@@ -57,7 +57,7 @@
     {
         get
         {
-            return (DateTime?)this.DerivedObject.Strategy.GetRole(this.RoleType);
+            return this.DerivedObject.Strategy.ScalarRole<DateTime?>(this.RoleType).Value;
         }
 
         set
@@ -74,7 +74,7 @@
                     DateTimeKind.Utc);
             }
 
-            this.DerivedObject.Strategy.SetRole(this.RoleType, value);
+            this.DerivedObject.Strategy.ScalarRole<DateTime?>(this.RoleType).Set(value);
         }
     }
 

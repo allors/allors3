@@ -18,7 +18,7 @@ namespace Tests.Workspace
         protected DerivationTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
-        public async void SessionFullName()
+        public async void DomainFullName()
         {
             await this.Login("administrator");
 
@@ -31,14 +31,15 @@ namespace Tests.Workspace
             };
 
             var session = this.Workspace.CreateSession();
-            session.Activate(this.Workspace.Configuration.Rules);
             var result = await session.PullAsync(pull);
 
             var people = result.GetCollection<Person>();
 
-            var person = people.First(v => "Jane".Equals(v.FirstName));
+            var person = people.First(v => "Jane".Equals(v.FirstName.Value));
 
-            Assert.Equal($"Jane Doe", person.SessionFullName);
+            // DomainFullName is derived server-side ($"{FirstName} {LastName}") and pulled into the
+            // workspace; the derived-role signal exposes that value reactively.
+            Assert.Equal($"Jane Doe", person.DomainFullName.Value);
         }
     }
 }

@@ -28,12 +28,12 @@ namespace Allors.Services
                 parameters.Add($"t={type}");
             }
 
-            if (!"png".Equals(type) && "image/png".Equals(media.Type))
+            if (!"png".Equals(type) && "image/png".Equals(media.Type.Value))
             {
                 parameters.Add($"b={background}");
             }
 
-            return $"{this.config?.Url}/allors/image/{media.UniqueId}/{media.Revision}{(parameters.Count > 0 ? "?" : string.Empty)}{string.Join("&", parameters)}";
+            return $"{this.config?.Url}/allors/image/{media.UniqueId.Value}/{media.Revision.Value}{(parameters.Count > 0 ? "?" : string.Empty)}{string.Join("&", parameters)}";
         }
     }
 }

@@ -2,6 +2,7 @@ namespace Allors.Workspace.Blazor
 {
     using System;
     using System.Collections;
+    using System.Collections.Generic;
     using System.Linq;
     using Meta;
     using Microsoft.AspNetCore.Components;
@@ -27,13 +28,29 @@ namespace Allors.Workspace.Blazor
         [Parameter]
         public IRoleType RoleType { get; set; }
 
-        public bool CanRead => this.ExistObject && this.Object.Strategy.CanRead(this.RoleType);
+        public bool CanRead => this.ExistObject && this.Object.Strategy.CanRead(this.RoleType).Value;
 
-        public bool CanWrite => this.ExistObject && this.Object.Strategy.CanWrite(this.RoleType);
+        public bool CanWrite => this.ExistObject && this.Object.Strategy.CanWrite(this.RoleType).Value;
 
         public virtual object Model
         {
-            get => this.ExistObject ? this.Object.Strategy.GetRole(this.RoleType) : null;
+            get
+            {
+                if (!this.ExistObject)
+                {
+                    return null;
+                }
+
+                var strategy = this.Object.Strategy;
+                if (this.RoleType.ObjectType.IsUnit)
+                {
+                    return strategy.ScalarRole(this.RoleType).Value;
+                }
+
+                return this.RoleType.IsOne
+                    ? strategy.CompositeRole<IObject>(this.RoleType).Value
+                    : (object)strategy.CompositesRole<IObject>(this.RoleType).Value;
+            }
 
             set
             {
@@ -45,7 +62,19 @@ namespace Allors.Workspace.Blazor
                         value = null;
                     }
 
-                    this.Object.Strategy.SetRole(this.RoleType, value);
+                    var strategy = this.Object.Strategy;
+                    if (this.RoleType.ObjectType.IsUnit)
+                    {
+                        strategy.ScalarRole(this.RoleType).Set(value);
+                    }
+                    else if (this.RoleType.IsOne)
+                    {
+                        strategy.CompositeRole<IObject>(this.RoleType).Set((IObject)value);
+                    }
+                    else
+                    {
+                        strategy.CompositesRole<IObject>(this.RoleType).Set((IEnumerable<IObject>)value);
+                    }
                 }
             }
         }
@@ -123,7 +152,7 @@ namespace Allors.Workspace.Blazor
         {
             if (this.ExistObject)
             {
-                this.Object.Strategy.AddCompositesRole(this.RoleType, value);
+                this.Object.Strategy.CompositesRole<IObject>(this.RoleType).Add(value);
             }
         }
 
@@ -131,7 +160,7 @@ namespace Allors.Workspace.Blazor
         {
             if (this.ExistObject)
             {
-                this.Object.Strategy.RemoveCompositesRole(this.RoleType, value);
+                this.Object.Strategy.CompositesRole<IObject>(this.RoleType).Remove(value);
             }
         }
 

@@ -32,20 +32,20 @@ namespace Tests.Workspace
 
             foreach (var roleType in this.M.C1.RoleTypes)
             {
-                Assert.True(newObject.Strategy.CanRead(roleType));
-                Assert.False(newObject.Strategy.ExistRole(roleType));
+                Assert.True(newObject.Strategy.CanRead(roleType).Value);
+                Assert.False(newObject.Strategy.ExistRole(roleType).Value);
             }
 
             foreach (var associationType in this.M.C1.AssociationTypes)
             {
                 if (associationType.IsOne)
                 {
-                    var association = newObject.Strategy.GetCompositeAssociation<IObject>(associationType);
+                    var association = newObject.Strategy.CompositeAssociation<IObject>(associationType).Value;
                     Assert.Null(association);
                 }
                 else
                 {
-                    var association = newObject.Strategy.GetCompositesAssociation<IObject>(associationType);
+                    var association = newObject.Strategy.CompositesAssociation<IObject>(associationType).Value;
                     Assert.Empty(association);
                 }
             }
@@ -67,20 +67,20 @@ namespace Tests.Workspace
 
             foreach (var roleType in this.M.C1.RoleTypes)
             {
-                Assert.True(newObject.Strategy.CanRead(roleType));
-                Assert.False(newObject.Strategy.ExistRole(roleType));
+                Assert.True(newObject.Strategy.CanRead(roleType).Value);
+                Assert.False(newObject.Strategy.ExistRole(roleType).Value);
             }
 
             foreach (var associationType in this.M.C1.AssociationTypes)
             {
                 if (associationType.IsOne)
                 {
-                    var association = newObject.Strategy.GetCompositeAssociation<IObject>(associationType);
+                    var association = newObject.Strategy.CompositeAssociation<IObject>(associationType).Value;
                     Assert.Null(association);
                 }
                 else
                 {
-                    var association = newObject.Strategy.GetCompositesAssociation<IObject>(associationType);
+                    var association = newObject.Strategy.CompositesAssociation<IObject>(associationType).Value;
                     Assert.Empty(association);
                 }
             }
@@ -94,14 +94,14 @@ namespace Tests.Workspace
             var session = this.Workspace.CreateSession();
 
             var newObject = session.Create<C1>();
-            newObject.C1AllorsString = "A new object";
+            newObject.C1AllorsString.Set("A new object");
 
             var result = await session.PushAsync();
             Assert.False(result.HasErrors);
 
             await session.PullAsync(new Pull { Object = newObject });
 
-            Assert.Equal("A new object", newObject.C1AllorsString);
+            Assert.Equal("A new object", newObject.C1AllorsString.Value);
         }
 
         [Fact]
@@ -122,14 +122,14 @@ namespace Tests.Workspace
             var result = await session.PullAsync(pull);
             var c1a = result.GetCollection<C1>()[0];
 
-            c1a.C1AllorsString = "X";
+            c1a.C1AllorsString.Set("X");
 
-            Assert.Equal("X", c1a.C1AllorsString);
+            Assert.Equal("X", c1a.C1AllorsString.Value);
 
             await session.PushAsync();
             await session.PullAsync(pull);
 
-            Assert.Equal("X", c1a.C1AllorsString);
+            Assert.Equal("X", c1a.C1AllorsString.Value);
         }
 
         [Fact]
@@ -146,9 +146,9 @@ namespace Tests.Workspace
 
             var result = await session.PullAsync(pull);
 
-            var c1a = result.GetCollection<C1>().First(v => v.Name.Equals("c1A"));
+            var c1a = result.GetCollection<C1>().First(v => v.Name.Value.Equals("c1A"));
 
-            c1a.C1AllorsString = "X";
+            c1a.C1AllorsString.Set("X");
 
             var changeSet = session.Checkpoint();
 
@@ -162,13 +162,13 @@ namespace Tests.Workspace
 
             var c1aSession2 = result.GetObject<C1>();
 
-            Assert.Equal("X", c1aSession2.C1AllorsString);
+            Assert.Equal("X", c1aSession2.C1AllorsString.Value);
 
             result = await session.PullAsync(new Pull { Object = c1a });
 
             var c1aSession1 = result.GetObject<C1>();
 
-            Assert.Equal("X", c1aSession1.C1AllorsString);
+            Assert.Equal("X", c1aSession1.C1AllorsString.Value);
         }
 
         [Fact]
@@ -179,8 +179,8 @@ namespace Tests.Workspace
             var session = this.Workspace.CreateSession();
 
             var person = session.Create<Person>();
-            person.FirstName = "Johny";
-            person.LastName = "Doey";
+            person.FirstName.Set("Johny");
+            person.LastName.Set("Doey");
 
             Assert.True(person.Id < 0);
 
@@ -197,14 +197,14 @@ namespace Tests.Workspace
             var session = this.Workspace.CreateSession();
 
             var person = session.Create<Person>();
-            person.FirstName = "Johny";
-            person.LastName = "Doey";
+            person.FirstName.Set("Johny");
+            person.LastName.Set("Doey");
 
-            Assert.Equal(Version.WorkspaceInitial.Value, person.Strategy.Version);
+            Assert.Equal(Version.WorkspaceInitial.Value, person.Strategy.Version.Value);
 
             Assert.False((await session.PushAsync()).HasErrors);
 
-            Assert.Equal(Version.WorkspaceInitial.Value, person.Strategy.Version);
+            Assert.Equal(Version.WorkspaceInitial.Value, person.Strategy.Version.Value);
         }
 
         [Fact]
@@ -215,8 +215,8 @@ namespace Tests.Workspace
             var session = this.Workspace.CreateSession();
 
             var person = session.Create<Person>();
-            person.FirstName = "Johny";
-            person.LastName = "Doey";
+            person.FirstName.Set("Johny");
+            person.LastName.Set("Doey");
 
             Assert.False((await session.PushAsync()).HasErrors);
 
@@ -227,7 +227,7 @@ namespace Tests.Workspace
 
             Assert.False((await session.PullAsync(pull)).HasErrors);
 
-            Assert.Equal("Johny Doey", person.DomainFullName);
+            Assert.Equal("Johny Doey", person.DomainFullName.Value);
         }
 
         [Fact]
@@ -239,7 +239,7 @@ namespace Tests.Workspace
 
             var c1x = session.Create<C1>();
             var c1y = session.Create<C1>();
-            c1x.C1C1Many2One = c1y;
+            c1x.C1C1Many2One.Set(c1y);
 
             var pushResult = await session.PushAsync();
             Assert.False(pushResult.HasErrors);

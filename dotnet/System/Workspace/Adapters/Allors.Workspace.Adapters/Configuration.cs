@@ -5,17 +5,18 @@
 
 namespace Allors.Workspace.Adapters
 {
-    using Derivations;
+    using System;
     using Meta;
+    using Signals;
 
     public abstract class Configuration : IConfiguration
     {
-        protected Configuration(string name, IMetaPopulation metaPopulation, IObjectFactory objectFactory, IRule[] rules)
+        protected Configuration(string name, IMetaPopulation metaPopulation, IObjectFactory objectFactory, Func<ISignalFactory> signalFactoryBuilder)
         {
             this.Name = name;
             this.MetaPopulation = metaPopulation;
             this.ObjectFactory = objectFactory;
-            this.Rules = rules;
+            this.SignalFactoryBuilder = signalFactoryBuilder ?? throw new ArgumentNullException(nameof(signalFactoryBuilder));
         }
 
         public string Name { get; }
@@ -24,6 +25,6 @@ namespace Allors.Workspace.Adapters
 
         public IObjectFactory ObjectFactory { get; }
 
-        public IRule[] Rules { get; }
+        public Func<ISignalFactory> SignalFactoryBuilder { get; }
     }
 }

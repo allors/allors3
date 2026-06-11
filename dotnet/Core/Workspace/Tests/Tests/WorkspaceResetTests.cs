@@ -28,17 +28,17 @@ namespace Tests.Workspace
             var result = await session.PullAsync(pull);
             var c1a = result.GetCollection<C1>()[0];
 
-            c1a.C1AllorsString = "X";
+            c1a.C1AllorsString.Set("X");
 
             await session.PushAsync();
             result = await session.PullAsync(pull);
             var c2a = result.GetCollection<C1>()[0];
 
-            var c2aString = c2a.C1AllorsString;
+            var c2aString = c2a.C1AllorsString.Value;
 
             c1a.Strategy.Reset();
 
-            Assert.Equal(c2aString, c1a.C1AllorsString);
+            Assert.Equal(c2aString, c1a.C1AllorsString.Value);
 
         }
 
@@ -53,15 +53,15 @@ namespace Tests.Workspace
             var result = await session.PullAsync(pull);
             var c1a = result.GetCollection<C1>()[0];
 
-            c1a.C1AllorsString = "X";
+            c1a.C1AllorsString.Set("X");
 
             await session.PushAsync();
 
-            Assert.Equal("X", c1a.C1AllorsString);
+            Assert.Equal("X", c1a.C1AllorsString.Value);
 
             c1a.Strategy.Reset();
 
-            Assert.Null(c1a.C1AllorsString);
+            Assert.Null(c1a.C1AllorsString.Value);
         }
 
         [Fact]
@@ -75,19 +75,19 @@ namespace Tests.Workspace
             var result = await session.PullAsync(pull);
             var c1a = result.GetCollection<C1>()[0];
 
-            c1a.C1AllorsString = "X";
+            c1a.C1AllorsString.Set("X");
 
             await session.PushAsync();
             result = await session.PullAsync(pull);
             var c2a = result.GetCollection<C1>()[0];
 
-            c2a.C1AllorsString = "Y";
+            c2a.C1AllorsString.Set("Y");
 
             await session.PushAsync();
 
             c1a.Strategy.Reset();
 
-            Assert.Equal("X", c2a.C1AllorsString);
+            Assert.Equal("X", c2a.C1AllorsString.Value);
         }
 
         [Fact]
@@ -109,16 +109,16 @@ namespace Tests.Workspace
             var c1a = result.GetCollection<C1>()[0];
             var c1x = session.Create<C1>();
 
-            c1a.C1C1One2One = c1x;
+            c1a.C1C1One2One.Set(c1x);
 
             c1a.Strategy.Reset();
 
             Assert.NotNull(Record.Exception(() =>
             {
-                var x = c1a.C1C1One2One;
+                var x = c1a.C1C1One2One.Value;
             }));
 
-            Assert.Null(c1x.C1WhereC1C1One2One);
+            Assert.Null(c1x.C1WhereC1C1One2One.Value);
         }
 
         [Fact]
@@ -145,15 +145,15 @@ namespace Tests.Workspace
 
             var result = await session.PullAsync(pull);
             var c1a = result.GetCollection<C1>()[0];
-            var c1b = c1a.C1C1One2One;
+            var c1b = c1a.C1C1One2One.Value;
             var c1x = session.Create<C1>();
 
-            c1a.C1C1One2One = c1x;
+            c1a.C1C1One2One.Set(c1x);
 
             c1a.Strategy.Reset();
 
-            Assert.Equal(c1b, c1a.C1C1One2One);
-            Assert.Null(c1x.C1WhereC1C1One2One);
+            Assert.Equal(c1b, c1a.C1C1One2One.Value);
+            Assert.Null(c1x.C1WhereC1C1One2One.Value);
         }
 
         [Fact]
@@ -168,7 +168,7 @@ namespace Tests.Workspace
             var c1a = result.GetCollection<C1>()[0];
             var c1b = session.Create<C1>();
 
-            c1a.C1C1One2One = c1b;
+            c1a.C1C1One2One.Set(c1b);
 
             await session.PushAsync();
 
@@ -176,10 +176,10 @@ namespace Tests.Workspace
 
             Assert.NotNull(Record.Exception(() =>
             {
-                var x = c1a.C1C1One2One;
+                var x = c1a.C1C1One2One.Value;
             }));
 
-            Assert.Null(c1b.C1WhereC1C1One2One);
+            Assert.Null(c1b.C1WhereC1C1One2One.Value);
         }
 
         [Fact]
@@ -206,17 +206,17 @@ namespace Tests.Workspace
 
             var result = await session.PullAsync(pull);
             var c1a = result.GetCollection<C1>()[0];
-            var c1b = c1a.C1C1One2One;
+            var c1b = c1a.C1C1One2One.Value;
             var c1x = session.Create<C1>();
 
-            c1a.C1C1One2One = c1x;
+            c1a.C1C1One2One.Set(c1x);
 
             await session.PushAsync();
 
             c1a.Strategy.Reset();
 
-            Assert.Equal(c1b, c1a.C1C1One2One);
-            Assert.Null(c1x.C1WhereC1C1One2One);
+            Assert.Equal(c1b, c1a.C1C1One2One.Value);
+            Assert.Null(c1x.C1WhereC1C1One2One.Value);
         }
 
         [Fact]
@@ -231,23 +231,23 @@ namespace Tests.Workspace
             var c1a = result.GetCollection<C1>()[0];
             var c1b = session.Create<C1>();
 
-            c1a.C1C1One2One = c1b;
+            c1a.C1C1One2One.Set(c1b);
 
-            Assert.Equal(c1b, c1a.C1C1One2One);
-            Assert.Equal(c1a, c1b.C1WhereC1C1One2One);
+            Assert.Equal(c1b, c1a.C1C1One2One.Value);
+            Assert.Equal(c1a, c1b.C1WhereC1C1One2One.Value);
 
             await session.PushAsync();
             result = await session.PullAsync(pull);
 
             c1a.RemoveC1C1One2One();
 
-            Assert.Null(c1a.C1C1One2One);
-            Assert.Null(c1b.C1WhereC1C1One2One);
+            Assert.Null(c1a.C1C1One2One.Value);
+            Assert.Null(c1b.C1WhereC1C1One2One.Value);
 
             c1a.Strategy.Reset();
 
-            Assert.Equal(c1b, c1a.C1C1One2One);
-            Assert.Equal(c1a, c1b.C1WhereC1C1One2One);
+            Assert.Equal(c1b, c1a.C1C1One2One.Value);
+            Assert.Equal(c1a, c1b.C1WhereC1C1One2One.Value);
         }
 
         [Fact]
@@ -262,12 +262,12 @@ namespace Tests.Workspace
             var c1a = result.GetCollection<C1>()[0];
             var c1b = session.Create<C1>();
 
-            c1a.C1C1Many2One = c1b;
+            c1a.C1C1Many2One.Set(c1b);
 
             c1a.Strategy.Reset();
 
-            Assert.Null(c1a.C1C1Many2One);
-            Assert.Empty(c1b.C1sWhereC1C1Many2One);
+            Assert.Null(c1a.C1C1Many2One.Value);
+            Assert.Empty(c1b.C1sWhereC1C1Many2One.Value);
         }
 
         [Fact]
@@ -282,14 +282,14 @@ namespace Tests.Workspace
             var c1a = result.GetCollection<C1>()[0];
             var c1b = session.Create<C1>();
 
-            c1a.C1C1Many2One = c1b;
+            c1a.C1C1Many2One.Set(c1b);
 
             await session.PushAsync();
 
             c1a.Strategy.Reset();
 
-            Assert.Null(c1a.C1C1Many2One);
-            Assert.Empty(c1b.C1sWhereC1C1Many2One);
+            Assert.Null(c1a.C1C1Many2One.Value);
+            Assert.Empty(c1b.C1sWhereC1C1Many2One.Value);
         }
 
         [Fact]
@@ -304,23 +304,23 @@ namespace Tests.Workspace
             var c1a = result.GetCollection<C1>()[0];
             var c1b = session.Create<C1>();
 
-            c1a.C1C1Many2One = c1b;
+            c1a.C1C1Many2One.Set(c1b);
 
-            Assert.Equal(c1b, c1a.C1C1Many2One);
-            Assert.Contains(c1a, c1b.C1sWhereC1C1Many2One);
+            Assert.Equal(c1b, c1a.C1C1Many2One.Value);
+            Assert.Contains(c1a, c1b.C1sWhereC1C1Many2One.Value);
 
             await session.PushAsync();
             result = await session.PullAsync(pull);
 
             c1a.RemoveC1C1Many2One();
 
-            Assert.Null(c1a.C1C1Many2One);
-            Assert.Empty(c1b.C1sWhereC1C1Many2One);
+            Assert.Null(c1a.C1C1Many2One.Value);
+            Assert.Empty(c1b.C1sWhereC1C1Many2One.Value);
 
             c1a.Strategy.Reset();
 
-            Assert.Equal(c1b, c1a.C1C1Many2One);
-            Assert.Contains(c1a, c1b.C1sWhereC1C1Many2One);
+            Assert.Equal(c1b, c1a.C1C1Many2One.Value);
+            Assert.Contains(c1a, c1b.C1sWhereC1C1Many2One.Value);
         }
 
         [Fact]
@@ -339,8 +339,8 @@ namespace Tests.Workspace
 
             c1a.Strategy.Reset();
 
-            Assert.Empty(c1a.C1C1One2Manies);
-            Assert.Null(c1b.C1WhereC1C1One2Many);
+            Assert.Empty(c1a.C1C1One2Manies.Value);
+            Assert.Null(c1b.C1WhereC1C1One2Many.Value);
         }
 
         [Fact]
@@ -361,8 +361,8 @@ namespace Tests.Workspace
 
             c1a.Strategy.Reset();
 
-            Assert.Empty(c1a.C1C1One2Manies);
-            Assert.Null(c1b.C1WhereC1C1One2Many);
+            Assert.Empty(c1a.C1C1One2Manies.Value);
+            Assert.Null(c1b.C1WhereC1C1One2Many.Value);
         }
 
         [Fact]
@@ -389,8 +389,8 @@ namespace Tests.Workspace
 
             c1a.Strategy.Reset();
 
-            Assert.Contains(c1b, c1a.C1C1One2Manies);
-            Assert.Equal(c1a, c1b.C1WhereC1C1One2Many);
+            Assert.Contains(c1b, c1a.C1C1One2Manies.Value);
+            Assert.Equal(c1a, c1b.C1WhereC1C1One2Many.Value);
         }
 
         [Fact]
@@ -409,8 +409,8 @@ namespace Tests.Workspace
 
             c1a.Strategy.Reset();
 
-            Assert.Empty(c1a.C1C1Many2Manies);
-            Assert.Empty(c1b.C1sWhereC1C1Many2Many);
+            Assert.Empty(c1a.C1C1Many2Manies.Value);
+            Assert.Empty(c1b.C1sWhereC1C1Many2Many.Value);
         }
 
         [Fact]
@@ -431,8 +431,8 @@ namespace Tests.Workspace
 
             c1a.Strategy.Reset();
 
-            Assert.Empty(c1a.C1C1Many2Manies);
-            Assert.Empty(c1b.C1sWhereC1C1Many2Many);
+            Assert.Empty(c1a.C1C1Many2Manies.Value);
+            Assert.Empty(c1b.C1sWhereC1C1Many2Many.Value);
         }
 
         [Fact]
@@ -453,8 +453,8 @@ namespace Tests.Workspace
 
             c1a.AddC1C1Many2Many(c1b_2);
 
-            Assert.Contains(c1b_2, c1a.C1C1Many2Manies);
-            Assert.Contains(c1a, c1b_2.C1sWhereC1C1Many2Many);
+            Assert.Contains(c1b_2, c1a.C1C1Many2Manies.Value);
+            Assert.Contains(c1a, c1b_2.C1sWhereC1C1Many2Many.Value);
 
             await session.PushAsync();
             result = await session.PullAsync(pull);
@@ -462,13 +462,13 @@ namespace Tests.Workspace
 
             c1a.RemoveC1C1Many2Many(c1b_2);
 
-            Assert.Empty(c1a.C1C1Many2Manies);
-            Assert.Empty(c1b_2.C1sWhereC1C1Many2Many);
+            Assert.Empty(c1a.C1C1Many2Manies.Value);
+            Assert.Empty(c1b_2.C1sWhereC1C1Many2Many.Value);
 
             c1a.Strategy.Reset();
 
-            Assert.Contains(c1b, c1a.C1C1Many2Manies);
-            Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many);
+            Assert.Contains(c1b, c1a.C1C1Many2Manies.Value);
+            Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many.Value);
         }
     }
 }

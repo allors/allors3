@@ -9,6 +9,6 @@ namespace Allors.Workspace.Domain
 
     public partial class Locale
     {
-        public bool MatchCurrentLanguage => this.Name.StartsWith(CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
+        public bool MatchCurrentLanguage => this.Name.Value.StartsWith(CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
     }
 }

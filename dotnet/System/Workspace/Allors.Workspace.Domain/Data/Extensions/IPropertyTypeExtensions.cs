@@ -7,6 +7,7 @@
 namespace Allors.Workspace.Data
 {
     using Allors.Workspace.Meta;
+    using Allors.Workspace.Signals;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -27,7 +28,7 @@ namespace Allors.Workspace.Data
             {
                 if (roleType.IsOne)
                 {
-                    var association = strategy.GetCompositeRole<IObject>(roleType);
+                    var association = strategy.CompositeRole<IObject>(roleType).Value;
 
                     if (ofType == null || association == null)
                     {
@@ -38,7 +39,7 @@ namespace Allors.Workspace.Data
                 }
                 else
                 {
-                    var association = strategy.GetCompositesRole<IObject>(roleType);
+                    var association = strategy.CompositesRole<IObject>(roleType).Value;
 
                     if (ofType == null || association == null)
                     {
@@ -53,7 +54,7 @@ namespace Allors.Workspace.Data
             {
                 if (associationType.IsOne)
                 {
-                    var association = strategy.GetCompositeAssociation<IObject>(associationType);
+                    var association = strategy.CompositeAssociation<IObject>(associationType).Value;
 
                     if (ofType == null || association == null)
                     {
@@ -64,7 +65,7 @@ namespace Allors.Workspace.Data
                 }
                 else
                 {
-                    var association = strategy.GetCompositesAssociation<IObject>(associationType);
+                    var association = strategy.CompositesAssociation<IObject>(associationType).Value;
 
                     if (ofType == null || association == null)
                     {

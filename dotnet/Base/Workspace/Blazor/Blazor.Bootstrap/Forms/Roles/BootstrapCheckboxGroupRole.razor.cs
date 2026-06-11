@@ -25,11 +25,11 @@ namespace Allors.Workspace.Blazor.Bootstrap.Forms.Roles
         {
             if ((bool)checkedValue)
             {
-                this.Object.Strategy.AddCompositesRole(this.RoleType, option);
+                this.Add(option);
             }
             else
             {
-                this.Object.Strategy.RemoveCompositesRole(this.RoleType, option);
+                this.Remove(option);
             }
         }
     }

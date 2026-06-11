@@ -42,8 +42,8 @@ namespace Tests.Workspace
             {
                 foreach (var roleType in this.M.C1.DatabaseOriginRoleTypes)
                 {
-                    Assert.True(c1.Strategy.CanRead(roleType));
-                    Assert.True(c1.Strategy.CanWrite(roleType));
+                    Assert.True(c1.Strategy.CanRead(roleType).Value);
+                    Assert.True(c1.Strategy.CanWrite(roleType).Value);
                 }
             }
         }
@@ -68,13 +68,13 @@ namespace Tests.Workspace
                 {
                     if (roleType.Origin == Origin.Database)
                     {
-                        Assert.False(c1.Strategy.CanRead(roleType));
-                        Assert.False(c1.Strategy.CanWrite(roleType));
+                        Assert.False(c1.Strategy.CanRead(roleType).Value);
+                        Assert.False(c1.Strategy.CanWrite(roleType).Value);
                     }
                     else
                     {
-                        Assert.True(c1.Strategy.CanRead(roleType));
-                        Assert.True(c1.Strategy.CanWrite(roleType));
+                        Assert.True(c1.Strategy.CanRead(roleType).Value);
+                        Assert.True(c1.Strategy.CanWrite(roleType).Value);
                     }
                 }
             }
@@ -100,13 +100,13 @@ namespace Tests.Workspace
                 {
                     if (roleType.Origin == Origin.Database)
                     {
-                        Assert.False(c1.Strategy.CanRead(roleType));
-                        Assert.False(c1.Strategy.CanWrite(roleType));
+                        Assert.False(c1.Strategy.CanRead(roleType).Value);
+                        Assert.False(c1.Strategy.CanWrite(roleType).Value);
                     }
                     else
                     {
-                        Assert.True(c1.Strategy.CanRead(roleType));
-                        Assert.True(c1.Strategy.CanWrite(roleType));
+                        Assert.True(c1.Strategy.CanRead(roleType).Value);
+                        Assert.True(c1.Strategy.CanWrite(roleType).Value);
                     }
                 }
             }
@@ -125,13 +125,13 @@ namespace Tests.Workspace
                 {
                     if (roleType.Origin == Origin.Database)
                     {
-                        Assert.False(denied.Strategy.CanRead(roleType));
-                        Assert.False(denied.Strategy.CanWrite(roleType));
+                        Assert.False(denied.Strategy.CanRead(roleType).Value);
+                        Assert.False(denied.Strategy.CanWrite(roleType).Value);
                     }
                     else
                     {
-                        Assert.True(denied.Strategy.CanRead(roleType));
-                        Assert.True(denied.Strategy.CanWrite(roleType));
+                        Assert.True(denied.Strategy.CanRead(roleType).Value);
+                        Assert.True(denied.Strategy.CanWrite(roleType).Value);
                     }
                 }
             }

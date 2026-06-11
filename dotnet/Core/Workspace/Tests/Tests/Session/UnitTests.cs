@@ -56,37 +56,37 @@ namespace Tests.Workspace.DatabaseAssociation.SessionRelation
                         await session1.PullAsync(new Pull { Object = c1 });
                     }
 
-                    c1.SessionAllorsBinary = new byte[] { 1, 2 };
-                    c1.SessionAllorsBoolean = true;
-                    c1.SessionAllorsDateTime = new DateTime(1973, 3, 27, 12, 1, 2, 3, DateTimeKind.Utc);
-                    c1.SessionAllorsDecimal = 10.10m;
-                    c1.SessionAllorsDouble = 11.11d;
-                    c1.SessionAllorsInteger = 12;
-                    c1.SessionAllorsString = "a string";
-                    c1.SessionAllorsUnique = new Guid("0208BB9B-E87B-4CED-8DEC-516E6778CD66");
+                    c1.SessionAllorsBinary.Set(new byte[] { 1, 2 });
+                    c1.SessionAllorsBoolean.Set(true);
+                    c1.SessionAllorsDateTime.Set(new DateTime(1973, 3, 27, 12, 1, 2, 3, DateTimeKind.Utc));
+                    c1.SessionAllorsDecimal.Set(10.10m);
+                    c1.SessionAllorsDouble.Set(11.11d);
+                    c1.SessionAllorsInteger.Set(12);
+                    c1.SessionAllorsString.Set("a string");
+                    c1.SessionAllorsUnique.Set(new Guid("0208BB9B-E87B-4CED-8DEC-516E6778CD66"));
 
-                    Assert.Equal(new byte[] { 1, 2 }, c1.SessionAllorsBinary);
-                    Assert.True(c1.SessionAllorsBoolean);
-                    Assert.Equal(new DateTime(1973, 3, 27, 12, 1, 2, 3, DateTimeKind.Utc), c1.SessionAllorsDateTime);
-                    Assert.Equal(10.10m, c1.SessionAllorsDecimal);
-                    Assert.Equal(11.11d, c1.SessionAllorsDouble);
-                    Assert.Equal(12, c1.SessionAllorsInteger);
-                    Assert.Equal("a string", c1.SessionAllorsString);
-                    Assert.Equal(new Guid("0208BB9B-E87B-4CED-8DEC-516E6778CD66"), c1.SessionAllorsUnique);
+                    Assert.Equal(new byte[] { 1, 2 }, c1.SessionAllorsBinary.Value);
+                    Assert.True(c1.SessionAllorsBoolean.Value);
+                    Assert.Equal(new DateTime(1973, 3, 27, 12, 1, 2, 3, DateTimeKind.Utc), c1.SessionAllorsDateTime.Value);
+                    Assert.Equal(10.10m, c1.SessionAllorsDecimal.Value);
+                    Assert.Equal(11.11d, c1.SessionAllorsDouble.Value);
+                    Assert.Equal(12, c1.SessionAllorsInteger.Value);
+                    Assert.Equal("a string", c1.SessionAllorsString.Value);
+                    Assert.Equal(new Guid("0208BB9B-E87B-4CED-8DEC-516E6778CD66"), c1.SessionAllorsUnique.Value);
 
                     if (c1.Strategy.Id > 0)
                     {
                         await session1.PullAsync(new Pull { Object = c1 });
                     }
 
-                    Assert.Equal(new byte[] { 1, 2 }, c1.SessionAllorsBinary);
-                    Assert.True(c1.SessionAllorsBoolean);
-                    Assert.Equal(new DateTime(1973, 3, 27, 12, 1, 2, 3, DateTimeKind.Utc), c1.SessionAllorsDateTime);
-                    Assert.Equal(10.10m, c1.SessionAllorsDecimal);
-                    Assert.Equal(11.11d, c1.SessionAllorsDouble);
-                    Assert.Equal(12, c1.SessionAllorsInteger);
-                    Assert.Equal("a string", c1.SessionAllorsString);
-                    Assert.Equal(new Guid("0208BB9B-E87B-4CED-8DEC-516E6778CD66"), c1.SessionAllorsUnique);
+                    Assert.Equal(new byte[] { 1, 2 }, c1.SessionAllorsBinary.Value);
+                    Assert.True(c1.SessionAllorsBoolean.Value);
+                    Assert.Equal(new DateTime(1973, 3, 27, 12, 1, 2, 3, DateTimeKind.Utc), c1.SessionAllorsDateTime.Value);
+                    Assert.Equal(10.10m, c1.SessionAllorsDecimal.Value);
+                    Assert.Equal(11.11d, c1.SessionAllorsDouble.Value);
+                    Assert.Equal(12, c1.SessionAllorsInteger.Value);
+                    Assert.Equal("a string", c1.SessionAllorsString.Value);
+                    Assert.Equal(new Guid("0208BB9B-E87B-4CED-8DEC-516E6778CD66"), c1.SessionAllorsUnique.Value);
                 }
             }
         }
@@ -110,14 +110,14 @@ namespace Tests.Workspace.DatabaseAssociation.SessionRelation
                         await session1.PullAsync(new Pull { Object = c1 });
                     }
 
-                    c1.SessionAllorsBinary = null;
-                    c1.SessionAllorsBoolean = null;
-                    c1.SessionAllorsDateTime = null;
-                    c1.SessionAllorsDecimal = null;
-                    c1.SessionAllorsDouble = null;
-                    c1.SessionAllorsInteger = null;
-                    c1.SessionAllorsString = null;
-                    c1.SessionAllorsUnique = null;
+                    c1.SessionAllorsBinary.Set(null);
+                    c1.SessionAllorsBoolean.Set(null);
+                    c1.SessionAllorsDateTime.Set(null);
+                    c1.SessionAllorsDecimal.Set(null);
+                    c1.SessionAllorsDouble.Set(null);
+                    c1.SessionAllorsInteger.Set(null);
+                    c1.SessionAllorsString.Set(null);
+                    c1.SessionAllorsUnique.Set(null);
 
                     Assert.False(c1.ExistSessionAllorsBinary);
                     Assert.False(c1.ExistSessionAllorsBoolean);
@@ -128,14 +128,14 @@ namespace Tests.Workspace.DatabaseAssociation.SessionRelation
                     Assert.False(c1.ExistSessionAllorsString);
                     Assert.False(c1.ExistSessionAllorsUnique);
 
-                    Assert.Null(c1.SessionAllorsBinary);
-                    Assert.Null(c1.SessionAllorsBoolean);
-                    Assert.Null(c1.SessionAllorsDateTime);
-                    Assert.Null(c1.SessionAllorsDecimal);
-                    Assert.Null(c1.SessionAllorsDouble);
-                    Assert.Null(c1.SessionAllorsInteger);
-                    Assert.Null(c1.SessionAllorsString);
-                    Assert.Null(c1.SessionAllorsUnique);
+                    Assert.Null(c1.SessionAllorsBinary.Value);
+                    Assert.Null(c1.SessionAllorsBoolean.Value);
+                    Assert.Null(c1.SessionAllorsDateTime.Value);
+                    Assert.Null(c1.SessionAllorsDecimal.Value);
+                    Assert.Null(c1.SessionAllorsDouble.Value);
+                    Assert.Null(c1.SessionAllorsInteger.Value);
+                    Assert.Null(c1.SessionAllorsString.Value);
+                    Assert.Null(c1.SessionAllorsUnique.Value);
 
                     if (c1.Strategy.Id > 0)
                     {
@@ -151,42 +151,42 @@ namespace Tests.Workspace.DatabaseAssociation.SessionRelation
                     Assert.False(c1.ExistSessionAllorsString);
                     Assert.False(c1.ExistSessionAllorsUnique);
 
-                    Assert.Null(c1.SessionAllorsBinary);
-                    Assert.Null(c1.SessionAllorsBoolean);
-                    Assert.Null(c1.SessionAllorsDateTime);
-                    Assert.Null(c1.SessionAllorsDecimal);
-                    Assert.Null(c1.SessionAllorsDouble);
-                    Assert.Null(c1.SessionAllorsInteger);
-                    Assert.Null(c1.SessionAllorsString);
-                    Assert.Null(c1.SessionAllorsUnique);
+                    Assert.Null(c1.SessionAllorsBinary.Value);
+                    Assert.Null(c1.SessionAllorsBoolean.Value);
+                    Assert.Null(c1.SessionAllorsDateTime.Value);
+                    Assert.Null(c1.SessionAllorsDecimal.Value);
+                    Assert.Null(c1.SessionAllorsDouble.Value);
+                    Assert.Null(c1.SessionAllorsInteger.Value);
+                    Assert.Null(c1.SessionAllorsString.Value);
+                    Assert.Null(c1.SessionAllorsUnique.Value);
 
                     if (!c1.CanWriteC1C1One2One)
                     {
                         await session1.PullAsync(new Pull { Object = c1 });
                     }
 
-                    c1.SessionAllorsBinary = new byte[] { 1, 2 };
-                    c1.SessionAllorsBoolean = true;
-                    c1.SessionAllorsDateTime = new DateTime(1973, 3, 27, 12, 1, 2, 3, DateTimeKind.Utc);
-                    c1.SessionAllorsDecimal = 10.10m;
-                    c1.SessionAllorsDouble = 11.11d;
-                    c1.SessionAllorsInteger = 12;
-                    c1.SessionAllorsString = "a string";
-                    c1.SessionAllorsUnique = new Guid("0208BB9B-E87B-4CED-8DEC-516E6778CD66");
+                    c1.SessionAllorsBinary.Set(new byte[] { 1, 2 });
+                    c1.SessionAllorsBoolean.Set(true);
+                    c1.SessionAllorsDateTime.Set(new DateTime(1973, 3, 27, 12, 1, 2, 3, DateTimeKind.Utc));
+                    c1.SessionAllorsDecimal.Set(10.10m);
+                    c1.SessionAllorsDouble.Set(11.11d);
+                    c1.SessionAllorsInteger.Set(12);
+                    c1.SessionAllorsString.Set("a string");
+                    c1.SessionAllorsUnique.Set(new Guid("0208BB9B-E87B-4CED-8DEC-516E6778CD66"));
 
                     if (!c1.CanWriteC1C1One2One)
                     {
                         await session1.PullAsync(new Pull { Object = c1 });
                     }
 
-                    c1.SessionAllorsBinary = null;
-                    c1.SessionAllorsBoolean = null;
-                    c1.SessionAllorsDateTime = null;
-                    c1.SessionAllorsDecimal = null;
-                    c1.SessionAllorsDouble = null;
-                    c1.SessionAllorsInteger = null;
-                    c1.SessionAllorsString = null;
-                    c1.SessionAllorsUnique = null;
+                    c1.SessionAllorsBinary.Set(null);
+                    c1.SessionAllorsBoolean.Set(null);
+                    c1.SessionAllorsDateTime.Set(null);
+                    c1.SessionAllorsDecimal.Set(null);
+                    c1.SessionAllorsDouble.Set(null);
+                    c1.SessionAllorsInteger.Set(null);
+                    c1.SessionAllorsString.Set(null);
+                    c1.SessionAllorsUnique.Set(null);
 
                     Assert.False(c1.ExistSessionAllorsBinary);
                     Assert.False(c1.ExistSessionAllorsBoolean);
@@ -197,14 +197,14 @@ namespace Tests.Workspace.DatabaseAssociation.SessionRelation
                     Assert.False(c1.ExistSessionAllorsString);
                     Assert.False(c1.ExistSessionAllorsUnique);
 
-                    Assert.Null(c1.SessionAllorsBinary);
-                    Assert.Null(c1.SessionAllorsBoolean);
-                    Assert.Null(c1.SessionAllorsDateTime);
-                    Assert.Null(c1.SessionAllorsDecimal);
-                    Assert.Null(c1.SessionAllorsDouble);
-                    Assert.Null(c1.SessionAllorsInteger);
-                    Assert.Null(c1.SessionAllorsString);
-                    Assert.Null(c1.SessionAllorsUnique);
+                    Assert.Null(c1.SessionAllorsBinary.Value);
+                    Assert.Null(c1.SessionAllorsBoolean.Value);
+                    Assert.Null(c1.SessionAllorsDateTime.Value);
+                    Assert.Null(c1.SessionAllorsDecimal.Value);
+                    Assert.Null(c1.SessionAllorsDouble.Value);
+                    Assert.Null(c1.SessionAllorsInteger.Value);
+                    Assert.Null(c1.SessionAllorsString.Value);
+                    Assert.Null(c1.SessionAllorsUnique.Value);
 
                     if (c1.Strategy.Id > 0)
                     {
@@ -220,14 +220,14 @@ namespace Tests.Workspace.DatabaseAssociation.SessionRelation
                     Assert.False(c1.ExistSessionAllorsString);
                     Assert.False(c1.ExistSessionAllorsUnique);
 
-                    Assert.Null(c1.SessionAllorsBinary);
-                    Assert.Null(c1.SessionAllorsBoolean);
-                    Assert.Null(c1.SessionAllorsDateTime);
-                    Assert.Null(c1.SessionAllorsDecimal);
-                    Assert.Null(c1.SessionAllorsDouble);
-                    Assert.Null(c1.SessionAllorsInteger);
-                    Assert.Null(c1.SessionAllorsString);
-                    Assert.Null(c1.SessionAllorsUnique);
+                    Assert.Null(c1.SessionAllorsBinary.Value);
+                    Assert.Null(c1.SessionAllorsBoolean.Value);
+                    Assert.Null(c1.SessionAllorsDateTime.Value);
+                    Assert.Null(c1.SessionAllorsDecimal.Value);
+                    Assert.Null(c1.SessionAllorsDouble.Value);
+                    Assert.Null(c1.SessionAllorsInteger.Value);
+                    Assert.Null(c1.SessionAllorsString.Value);
+                    Assert.Null(c1.SessionAllorsUnique.Value);
                 }
             }
         }
@@ -269,14 +269,14 @@ namespace Tests.Workspace.DatabaseAssociation.SessionRelation
                     Assert.False(c1.ExistSessionAllorsString);
                     Assert.False(c1.ExistSessionAllorsUnique);
 
-                    Assert.Null(c1.SessionAllorsBinary);
-                    Assert.Null(c1.SessionAllorsBoolean);
-                    Assert.Null(c1.SessionAllorsDateTime);
-                    Assert.Null(c1.SessionAllorsDecimal);
-                    Assert.Null(c1.SessionAllorsDouble);
-                    Assert.Null(c1.SessionAllorsInteger);
-                    Assert.Null(c1.SessionAllorsString);
-                    Assert.Null(c1.SessionAllorsUnique);
+                    Assert.Null(c1.SessionAllorsBinary.Value);
+                    Assert.Null(c1.SessionAllorsBoolean.Value);
+                    Assert.Null(c1.SessionAllorsDateTime.Value);
+                    Assert.Null(c1.SessionAllorsDecimal.Value);
+                    Assert.Null(c1.SessionAllorsDouble.Value);
+                    Assert.Null(c1.SessionAllorsInteger.Value);
+                    Assert.Null(c1.SessionAllorsString.Value);
+                    Assert.Null(c1.SessionAllorsUnique.Value);
 
                     if (c1.Strategy.Id > 0)
                     {
@@ -292,28 +292,28 @@ namespace Tests.Workspace.DatabaseAssociation.SessionRelation
                     Assert.False(c1.ExistSessionAllorsString);
                     Assert.False(c1.ExistSessionAllorsUnique);
 
-                    Assert.Null(c1.SessionAllorsBinary);
-                    Assert.Null(c1.SessionAllorsBoolean);
-                    Assert.Null(c1.SessionAllorsDateTime);
-                    Assert.Null(c1.SessionAllorsDecimal);
-                    Assert.Null(c1.SessionAllorsDouble);
-                    Assert.Null(c1.SessionAllorsInteger);
-                    Assert.Null(c1.SessionAllorsString);
-                    Assert.Null(c1.SessionAllorsUnique);
+                    Assert.Null(c1.SessionAllorsBinary.Value);
+                    Assert.Null(c1.SessionAllorsBoolean.Value);
+                    Assert.Null(c1.SessionAllorsDateTime.Value);
+                    Assert.Null(c1.SessionAllorsDecimal.Value);
+                    Assert.Null(c1.SessionAllorsDouble.Value);
+                    Assert.Null(c1.SessionAllorsInteger.Value);
+                    Assert.Null(c1.SessionAllorsString.Value);
+                    Assert.Null(c1.SessionAllorsUnique.Value);
 
                     if (!c1.CanWriteC1C1One2One)
                     {
                         await session1.PullAsync(new Pull { Object = c1 });
                     }
 
-                    c1.SessionAllorsBinary = new byte[] { 1, 2 };
-                    c1.SessionAllorsBoolean = true;
-                    c1.SessionAllorsDateTime = new DateTime(1973, 3, 27, 12, 1, 2, 3, DateTimeKind.Utc);
-                    c1.SessionAllorsDecimal = 10.10m;
-                    c1.SessionAllorsDouble = 11.11d;
-                    c1.SessionAllorsInteger = 12;
-                    c1.SessionAllorsString = "a string";
-                    c1.SessionAllorsUnique = new Guid("0208BB9B-E87B-4CED-8DEC-516E6778CD66");
+                    c1.SessionAllorsBinary.Set(new byte[] { 1, 2 });
+                    c1.SessionAllorsBoolean.Set(true);
+                    c1.SessionAllorsDateTime.Set(new DateTime(1973, 3, 27, 12, 1, 2, 3, DateTimeKind.Utc));
+                    c1.SessionAllorsDecimal.Set(10.10m);
+                    c1.SessionAllorsDouble.Set(11.11d);
+                    c1.SessionAllorsInteger.Set(12);
+                    c1.SessionAllorsString.Set("a string");
+                    c1.SessionAllorsUnique.Set(new Guid("0208BB9B-E87B-4CED-8DEC-516E6778CD66"));
 
                     if (!c1.CanWriteC1C1One2One)
                     {
@@ -338,14 +338,14 @@ namespace Tests.Workspace.DatabaseAssociation.SessionRelation
                     Assert.False(c1.ExistSessionAllorsString);
                     Assert.False(c1.ExistSessionAllorsUnique);
 
-                    Assert.Null(c1.SessionAllorsBinary);
-                    Assert.Null(c1.SessionAllorsBoolean);
-                    Assert.Null(c1.SessionAllorsDateTime);
-                    Assert.Null(c1.SessionAllorsDecimal);
-                    Assert.Null(c1.SessionAllorsDouble);
-                    Assert.Null(c1.SessionAllorsInteger);
-                    Assert.Null(c1.SessionAllorsString);
-                    Assert.Null(c1.SessionAllorsUnique);
+                    Assert.Null(c1.SessionAllorsBinary.Value);
+                    Assert.Null(c1.SessionAllorsBoolean.Value);
+                    Assert.Null(c1.SessionAllorsDateTime.Value);
+                    Assert.Null(c1.SessionAllorsDecimal.Value);
+                    Assert.Null(c1.SessionAllorsDouble.Value);
+                    Assert.Null(c1.SessionAllorsInteger.Value);
+                    Assert.Null(c1.SessionAllorsString.Value);
+                    Assert.Null(c1.SessionAllorsUnique.Value);
 
                     if (c1.Strategy.Id > 0)
                     {
@@ -361,14 +361,14 @@ namespace Tests.Workspace.DatabaseAssociation.SessionRelation
                     Assert.False(c1.ExistSessionAllorsString);
                     Assert.False(c1.ExistSessionAllorsUnique);
 
-                    Assert.Null(c1.SessionAllorsBinary);
-                    Assert.Null(c1.SessionAllorsBoolean);
-                    Assert.Null(c1.SessionAllorsDateTime);
-                    Assert.Null(c1.SessionAllorsDecimal);
-                    Assert.Null(c1.SessionAllorsDouble);
-                    Assert.Null(c1.SessionAllorsInteger);
-                    Assert.Null(c1.SessionAllorsString);
-                    Assert.Null(c1.SessionAllorsUnique);
+                    Assert.Null(c1.SessionAllorsBinary.Value);
+                    Assert.Null(c1.SessionAllorsBoolean.Value);
+                    Assert.Null(c1.SessionAllorsDateTime.Value);
+                    Assert.Null(c1.SessionAllorsDecimal.Value);
+                    Assert.Null(c1.SessionAllorsDouble.Value);
+                    Assert.Null(c1.SessionAllorsInteger.Value);
+                    Assert.Null(c1.SessionAllorsString.Value);
+                    Assert.Null(c1.SessionAllorsUnique.Value);
                 }
             }
         }

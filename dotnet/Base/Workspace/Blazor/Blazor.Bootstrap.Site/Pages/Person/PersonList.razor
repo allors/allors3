@@ -20,10 +20,10 @@
             @foreach (var person in people)
             {
                 <tr>
-                    <td>@person.FirstName</td>
-                    <td>@person.MiddleName</td>
-                    <td>@person.LastName</td>
-                    <td>@person.UserName</td>
+                    <td>@person.FirstName.Value</td>
+                    <td>@person.MiddleName.Value</td>
+                    <td>@person.LastName.Value</td>
+                    <td>@person.UserName.Value</td>
                     <td><a href="/person/edit/@person.Id">Edit</a></td>
                 </tr>
             }
