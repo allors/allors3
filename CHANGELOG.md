@@ -86,6 +86,11 @@ under a dated version heading.
   `environment.ts` already lists all four deps (and the e2e harness serves the dev configuration, so it
   never exercised the prod file). `deps` now also lists `AllorsMaterialCreateService` and
   `AllorsMaterialEditDialogService`, matching the factory's parameters.
+- The apps-extranet application's **production** bootstrap no longer crashes — the same `environment.prod.ts`
+  `APP_INITIALIZER` defect as the base and intranet apps. The four-parameter `appInitFactory` had only
+  `deps: [WorkspaceService, HttpClient]`, so `createService`/`editService` were injected as `undefined` and
+  the initializer threw a `TypeError` at bootstrap. `deps` now also lists `AllorsMaterialCreateService` and
+  `AllorsMaterialEditDialogService`. Production-only: the dev `environment.ts` was already correct.
 - The `SalesInvoiceStateRuleTests.ChangedSalesInvoiceItemAmountPaidDeriveSalesInvoiceItemStatePartiallyPaid`
   domain test no longer flakes (~1% of CI runs). `SalesInvoiceItemBuilder.WithDefaults()` drew a random unit
   price in `[1, 100]`; when it rolled `1` the test's `TotalIncVat - 1` partial payment was `0`, so
