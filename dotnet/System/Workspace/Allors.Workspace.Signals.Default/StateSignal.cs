@@ -23,8 +23,9 @@ namespace Allors.Workspace.Signals.Default
             this.value = value;
             this.comparer = comparer;
 
-            // Initial version is 1 (not 0) so newly created links with Version = 0
-            // are always considered stale on first access.
+            // Staleness checks compare a link's Version (recorded when the subscriber
+            // last read this signal) against the signal's current Version; the initial
+            // value itself carries no meaning.
             this.Version = 1;
         }
 

@@ -66,6 +66,13 @@ namespace Allors.Workspace.Signals
         /// </summary>
         IComputedSignal<T> Computed<T>(Func<T> computation, IEqualityComparer<T> comparer = null);
 
+        /// <summary>
+        /// Creates an effect: <paramref name="callback"/> runs immediately and re-runs
+        /// whenever a signal it read during its previous run changes. An exception from
+        /// the callback propagates to the code that triggered the run (the state write,
+        /// or this call for the initial run); effects queued behind the failing one are
+        /// not lost — they run on the next flush.
+        /// </summary>
         IEffect Effect(Action callback);
 
         IEffectScope EffectScope();

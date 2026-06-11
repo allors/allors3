@@ -11,6 +11,9 @@ namespace Allors.Workspace.Signals.Default.Core
     /// All signal reads/writes and effect execution must occur on the same
     /// synchronization context.
     /// Instance-based to isolate effect queues per factory/session.
+    /// An exception thrown by an effect propagates out of the flush to the
+    /// triggering writer; the effects still queued behind it are kept and run
+    /// on the next flush.
     /// </summary>
     internal sealed class EffectScheduler
     {
