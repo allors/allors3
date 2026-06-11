@@ -35,6 +35,8 @@ under a dated version heading.
 
 - Apps `Setup.v.cs` dispatched `BaseOnPreSetup` from `OnPrePrepare` instead of `BaseOnPrePrepare`
   (latent; both hooks are empty today).
+- SQL Server `AllowSnapshotIsolation` now brackets the database name in its `ALTER DATABASE`
+  statement, so databases named after reserved T-SQL keywords (e.g. `Identity`) provision correctly.
 
 - Configuration is now delivered from outside the source tree via the **required** `ALLORS_CONFIG_ROOT`
   environment variable. Each server, command-line tool and integration test loads
