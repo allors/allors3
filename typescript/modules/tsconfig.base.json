@@ -10,7 +10,10 @@
     "importHelpers": true,
     "target": "es2015",
     "module": "esnext",
-    "lib": ["es2017", "dom"],
+    "lib": [
+      "es2017",
+      "dom"
+    ],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
@@ -66,7 +69,9 @@
       "@allors/base/workspace/domain": [
         "libs/base/workspace/domain/src/index.ts"
       ],
-      "@allors/base/workspace/meta": ["libs/base/workspace/meta/src/index.ts"],
+      "@allors/base/workspace/meta": [
+        "libs/base/workspace/meta/src/index.ts"
+      ],
       "@allors/base/workspace/meta-json": [
         "libs/base/workspace/meta-json/src/index.ts"
       ],
@@ -79,9 +84,20 @@
       "@allors/core/workspace/domain": [
         "libs/core/workspace/domain/src/index.ts"
       ],
-      "@allors/core/workspace/meta": ["libs/core/workspace/meta/src/index.ts"],
+      "@allors/core/workspace/meta": [
+        "libs/core/workspace/meta/src/index.ts"
+      ],
       "@allors/core/workspace/meta-json": [
         "libs/core/workspace/meta-json/src/index.ts"
+      ],
+      "@allors/identity/workspace/domain": [
+        "libs/identity/workspace/domain/src/index.ts"
+      ],
+      "@allors/identity/workspace/meta": [
+        "libs/identity/workspace/meta/src/index.ts"
+      ],
+      "@allors/identity/workspace/meta-json": [
+        "libs/identity/workspace/meta-json/src/index.ts"
       ],
       "@allors/system/common/protocol-json": [
         "libs/system/common/protocol-json/src/index.ts"
@@ -115,5 +131,8 @@
       ]
     }
   },
-  "exclude": ["node_modules", "tmp"]
+  "exclude": [
+    "node_modules",
+    "tmp"
+  ]
 }

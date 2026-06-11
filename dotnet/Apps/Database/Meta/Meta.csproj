@@ -12,6 +12,7 @@
   <ItemGroup>
     <Compile Include="..\..\..\System\Database\Allors.Database.Meta.Props\Props*\**\*.cs" />
     <Compile Include="..\..\..\Core\Database\Meta\Core*\**\*.cs" />
+    <Compile Include="..\..\..\Identity\Database\Meta\Identity*\**\*.cs" />
     <Compile Include="..\..\..\Base\Database\Meta\Base*\**\*.cs" />
   </ItemGroup>
 

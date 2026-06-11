@@ -14,6 +14,28 @@ under a dated version heading.
 
 ### Added
 
+- New **Identity** domain track at `dotnet/Identity`: an orthogonal domain that extends `Core` and
+  encapsulates all Microsoft ASP.NET Identity integration (identity properties on `User`, `Login`,
+  `UserPasswordReset`, normalization/password rules, `PasswordHasher`, `AllorsUserStore`/`AllorsRoleStore`,
+  `AuthenticationController`). It is a full level with its own Custom domain, Server, Commands, database
+  (`config/<provider>/identity`), Domain/Server.Remote tests, dotnet Workspace projects and TypeScript libs
+  (`@allors/identity/workspace/*`).
+- The repository `[Extends]` attribute now supports multiple domain inheritance; each level's `Custom`
+  domain extends both its functional domain and `Identity`.
+
+### Changed
+
+- `Core`, `Base` and `Apps` are pure functional domains without a dependency on ASP.NET Identity:
+  Core's `User` keeps only `UserName`; the ASP.NET-shaped members moved to the Identity domain
+  (relation ids unchanged, so database schemas are unaffected). The identity sources are composed back
+  into each level via `Identity*` source globs because every `Custom` domain extends `Identity`.
+- `SignInTests`, `LockoutTests` and `LoginTests` moved from the Core level to the Identity level.
+
+### Fixed
+
+- Apps `Setup.v.cs` dispatched `BaseOnPreSetup` from `OnPrePrepare` instead of `BaseOnPrePrepare`
+  (latent; both hooks are empty today).
+
 - Configuration is now delivered from outside the source tree via the **required** `ALLORS_CONFIG_ROOT`
   environment variable. Each server, command-line tool and integration test loads
   `$ALLORS_CONFIG_ROOT/<domain>/appsettings.json` (domain = `core`/`base`/`apps`) through the new

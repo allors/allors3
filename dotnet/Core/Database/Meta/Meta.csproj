@@ -4,6 +4,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\..\..\System\Database\Allors.Database.Meta.Props\Props*\**\*.cs" />
+    <Compile Include="..\..\..\Identity\Database\Meta\Identity*\**\*.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\System\Database\Allors.Database.Workspace\Allors.Database.Workspace.csproj" />
