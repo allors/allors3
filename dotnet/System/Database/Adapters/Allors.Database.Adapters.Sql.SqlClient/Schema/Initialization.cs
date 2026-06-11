@@ -71,7 +71,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             {
                 var cmdText = $@"
 IF ((SELECT SNAPSHOT_ISOLATION_STATE FROM SYS.DATABASES WHERE NAME = '{connection.Database}') = 0)
-alter Database {connection.Database}
+alter Database [{connection.Database}]
 set allow_snapshot_isolation on";
                 using var command = new SqlCommand(cmdText, connection);
                 command.ExecuteNonQuery();

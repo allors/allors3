@@ -23,6 +23,12 @@ under a dated version heading.
   re-triggers downstream cost derivations.
 
 ### Added
+### Fixed
+
+- Apps `Setup.v.cs` dispatched `BaseOnPreSetup` from `OnPrePrepare` instead of `BaseOnPrePrepare`
+  (latent; both hooks are empty today).
+- SQL Server `AllowSnapshotIsolation` now brackets the database name in its `ALTER DATABASE`
+  statement, so databases named after reserved T-SQL keywords (e.g. `Identity`) provision correctly.
 
 - `WorkRequirement.WorkEffortPurpose` (enumeration Refurbishment / Maintenance / Repair): defaults to
   **Repair** on init, is copied onto the `WorkTask` created by `CreateWorkTask`, and is mirrored into
