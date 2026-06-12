@@ -119,6 +119,12 @@ under a dated version heading.
 
 ### Fixed
 
+- The NonUnifiedPart edit form no longer drops part categories on save — the same alias + splice-during-
+  iteration defect as the NonUnifiedGood edit form. `onPostPull` set `selectedCategories` to the *same array
+  reference* as `originalCategories`; `onSave()` then iterated `selectedCategories` while `splice`-ing the
+  aliased `originalCategories` inside the loop, skipping every other `PartCategory`, which the second loop
+  then `removePart`-ed. `selectedCategories` is now an independent copy (`[...originalCategories]`), so all
+  part categories are preserved.
 - Apps `Setup.v.cs` dispatched `BaseOnPreSetup` from `OnPrePrepare` instead of `BaseOnPrePrepare`
   (latent; both hooks are empty today).
 - SQL Server `AllowSnapshotIsolation` now brackets the database name in its `ALTER DATABASE`
