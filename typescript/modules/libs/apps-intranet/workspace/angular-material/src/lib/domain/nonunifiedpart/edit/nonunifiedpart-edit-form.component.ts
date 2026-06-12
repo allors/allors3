@@ -148,7 +148,7 @@ export class NonUnifiedPartEditFormComponent extends AllorsFormComponent<NonUnif
 
     this.originalCategories =
       pullResult.collection<PartCategory>('OriginalCategories') ?? [];
-    this.selectedCategories = this.originalCategories;
+    this.selectedCategories = [...this.originalCategories];
 
     this.inventoryItemKinds = pullResult.collection<InventoryItemKind>(
       this.m.InventoryItemKind

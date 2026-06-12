@@ -422,6 +422,11 @@ namespace Tests
 
             new PartCategoryBuilder(this.Transaction).WithDefaults().Build();
 
+            var e2ePartCategoryA = new PartCategoryBuilder(this.Transaction).WithName("E2E Part Category A").Build();
+            var e2ePartCategoryB = new PartCategoryBuilder(this.Transaction).WithName("E2E Part Category B").Build();
+            e2ePartCategoryA.AddPart(good_2.Part);
+            e2ePartCategoryB.AddPart(good_2.Part);
+
             this.Transaction.Derive();
 
             new IndustryClassificationBuilder(this.Transaction).WithDefaults().Build();
