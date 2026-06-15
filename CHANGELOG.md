@@ -166,6 +166,11 @@ under a dated version heading.
   `AssignedShipToCustomerAddress`, matching the adjacent `ShipToCustomerContactPerson` clear.
 - Apps `Setup.v.cs` dispatched `BaseOnPreSetup` from `OnPrePrepare` instead of `BaseOnPrePrepare`
   (latent; both hooks are empty today).
+- The UnifiedGood create form showed its manual ProductNumber input based on `settings.UseGlobalProductNumber`,
+  but the bound `ProductNumber` is created (and added to the good) based on `settings.UseProductNumberCounter`.
+  With the settings disagreeing, the field could be hidden while an empty product-number identification was
+  attached, or shown bound to `undefined`. The input is now gated on `!settings.UseProductNumberCounter`,
+  matching its creation.
 - SQL Server `AllowSnapshotIsolation` now brackets the database name in its `ALTER DATABASE`
   statement, so databases named after reserved T-SQL keywords (e.g. `Identity`) provision correctly.
 - The NonUnifiedGood edit form no longer drops product categories on save. `onPostPull` assigned the same
