@@ -119,6 +119,15 @@ under a dated version heading.
 
 ### Fixed
 
+- The purchase-invoice create and edit forms had several mis-wired "add new …" inline cards and
+  contact-added handlers, now corrected: the ShipToCustomer add-person card ran
+  `billedFromContactPersonAdded` (now `shipToCustomerContactPersonAdded`); the ShipToEndCustomer
+  add-customer card ran `billToEndCustomerAdded` (now `shipToEndCustomerAdded`); the BillToEndCustomer
+  add-customer card was shown by `*ngIf="addShipToCustomer"` instead of `addBillToEndCustomer`; and two
+  contact-added handlers linked the new `OrganisationContactRelationship` to the wrong organisation —
+  `billToEndCustomerContactPersonAdded` used `ShipToEndCustomer` (now `BillToEndCustomer`) and
+  `shipToCustomerContactPersonAdded` used `BilledFrom` (now `ShipToCustomer`). Each defect was present on
+  both the create and edit forms.
 - Editing a CustomerShipment or PurchaseReturn no longer silently clears its `ShipToAddress` and
   `ShipToContactPerson` on load. `onPostPull` called `updateShipToParty` without first setting
   `previousShipToparty`, so the `ShipToParty !== previousShipToparty` guard inside it was true on the initial
