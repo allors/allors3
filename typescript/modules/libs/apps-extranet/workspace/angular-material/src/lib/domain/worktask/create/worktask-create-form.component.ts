@@ -3,6 +3,7 @@ import { Component, Self } from '@angular/core';
 import {
   Person,
   ContactMechanism,
+  PartyContactMechanism,
   WorkTask,
 } from '@allors/default/workspace/domain';
 import {
@@ -89,8 +90,9 @@ export class WorkTaskCreateFormComponent extends AllorsFormComponent<WorkTask> {
 
     this.onPostPullInitialize(pullResult);
 
-    this.contactMechanisms =
-      pullResult.collection<ContactMechanism>('contactmechanisms');
+    this.contactMechanisms = pullResult
+      .collection<PartyContactMechanism>('contactmechanisms')
+      ?.map((v) => v.ContactMechanism);
     this.contacts = pullResult.collection<Person>('contacts');
   }
 }
