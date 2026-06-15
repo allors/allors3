@@ -7,6 +7,7 @@ namespace Tests.E2E.Objects
 {
     using System.Linq;
     using Allors.Database.Domain;
+    using Allors.Database.Domain.TestPopulation;
     using Allors.E2E.Angular;
     using Allors.E2E.Angular.Html;
     using Allors.E2E.Angular.Material.Factory;
@@ -22,8 +23,21 @@ namespace Tests.E2E.Objects
         [Test]
         public async Task EditCustomerShipmentPreservesShipToContactPerson()
         {
-            var shipment = new CustomerShipments(this.Transaction).Extent()
-                .First(v => v.ExistShipToContactPerson);
+            // Build a dedicated shipment with a guaranteed ShipToContactPerson, independent of the shared
+            // population (whose single WithDefaults shipment takes its contact from a random customer that
+            // may be a B2C person with no CurrentContacts). Repoint ShipTo to a B2B customer that has a
+            // contact — done post-build via direct role assignment, not on the builder.
+            var internalOrganisation = new Organisations(this.Transaction).FindBy(this.M.Organisation.Name, "Allors BV");
+            var customer = internalOrganisation.ActiveCustomers.OfType<Organisation>().First(v => v.CurrentContacts.Any());
+
+            var shipment = new CustomerShipmentBuilder(this.Transaction).WithDefaults(internalOrganisation).Build();
+            this.Transaction.Derive();
+
+            shipment.ShipToParty = customer;
+            shipment.ShipToContactPerson = customer.CurrentContacts.First();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
+
             var shipToContactPerson = shipment.ShipToContactPerson;
 
             var @class = this.M.CustomerShipment;
