@@ -158,6 +158,12 @@ under a dated version heading.
   PositionType, which the second loop then set to `PositionTypeRate = null`. Editing a rate with two or more
   assigned position types and saving unassigned roughly half of them. `originalPositionTypes` is now an
   independent copy (`[...(selectedPositionTypes ?? [])]`), so all assignments are preserved.
+- The purchase-invoice create + edit forms no longer clear the wrong assigned ship-to address when the
+  ShipToCustomer changes. `updateShipToCustomer`'s change-guard nulled `AssignedShipToEndCustomerAddress`
+  (the *end*-customer's field, correctly owned by `updateShipToEndCustomer`) instead of the ship-to-customer's
+  own `AssignedShipToCustomerAddress` — so changing the ShipToCustomer left its stale address in place (saved
+  against the new customer) while wiping the end-customer's chosen address. It now nulls
+  `AssignedShipToCustomerAddress`, matching the adjacent `ShipToCustomerContactPerson` clear.
 - Apps `Setup.v.cs` dispatched `BaseOnPreSetup` from `OnPrePrepare` instead of `BaseOnPrePrepare`
   (latent; both hooks are empty today).
 - SQL Server `AllowSnapshotIsolation` now brackets the database name in its `ALTER DATABASE`
