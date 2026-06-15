@@ -218,7 +218,9 @@ export class PurchaseReturnCreateFormComponent extends AllorsFormComponent<Purch
         ?.map(
           (v: PartyContactMechanism) => v.ContactMechanism
         ) as PostalAddress[];
-      this.shipToContacts = loaded.collection<Person>(m.Party.CurrentContacts);
+      this.shipFromContacts = loaded.collection<Person>(
+        m.Party.CurrentContacts
+      );
     });
   }
 }
