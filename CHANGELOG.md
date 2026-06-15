@@ -119,6 +119,11 @@ under a dated version heading.
 
 ### Fixed
 
+- The extranet work-task create + edit forms bound the FullfillContactMechanism select's options to
+  PartyContactMechanisms instead of ContactMechanisms. `onPostPull` assigned the pulled
+  `CurrentPartyContactMechanisms` (a PartyContactMechanism collection) straight to
+  `contactMechanisms: ContactMechanism[]`; it now maps each to its `.ContactMechanism`, so the picker offers
+  the contact mechanisms the `FullfillContactMechanism` role expects.
 - The employment form no longer overwrites an existing employment's FromDate on edit. `onPostPull` set
   `this.object.FromDate = new Date()` unconditionally, so opening an employment to edit it reset its start
   date to today (persisted on save). The default is now guarded by `this.createRequest`, so only a new
