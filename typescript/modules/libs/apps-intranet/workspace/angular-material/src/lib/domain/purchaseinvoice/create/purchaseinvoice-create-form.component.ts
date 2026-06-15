@@ -458,7 +458,7 @@ export class PurchaseInvoiceCreateFormComponent extends AllorsFormComponent<Purc
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
       if (this.object.ShipToCustomer !== this.previousShipToCustomer) {
-        this.object.AssignedShipToEndCustomerAddress = null;
+        this.object.AssignedShipToCustomerAddress = null;
         this.object.ShipToCustomerContactPerson = null;
         this.previousShipToCustomer = this.object.ShipToCustomer;
       }
