@@ -314,6 +314,7 @@ namespace Tests
                 .WithName("Best selling gizmo's")
                 .WithLocalisedName(new LocalisedTextBuilder(this.Transaction).WithText("Meest verkochte gizmo's").WithLocale(dutchLocale).Build())
                 .WithProduct(good_3)
+                .WithProduct(good_4)
                 .Build();
 
             var productCategory_2 = new ProductCategoryBuilder(this.Transaction)
@@ -321,6 +322,7 @@ namespace Tests
                 .WithName("Big Gizmo's")
                 .WithLocalisedName(new LocalisedTextBuilder(this.Transaction).WithText("Grote Gizmo's").WithLocale(dutchLocale).Build())
                 .WithProduct(good_3)
+                .WithProduct(good_4)
                 .Build();
 
             var productCategory_3 = new ProductCategoryBuilder(this.Transaction)
