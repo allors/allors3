@@ -68,6 +68,8 @@ export class EmploymentFormComponent extends AllorsFormComponent<Employment> {
 
     this.onPostPullInitialize(pullResult);
 
-    this.object.FromDate = new Date();
+    if (this.createRequest) {
+      this.object.FromDate = new Date();
+    }
   }
 }
