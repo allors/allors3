@@ -86,6 +86,16 @@ export class WorkEffortPurchaseOrderItemAssignmentFormComponent extends AllorsFo
       ? pullResult.object('_object')
       : this.context.create(this.createRequest.objectType);
 
+    if (this.createRequest) {
+      this.workEffort = pullResult.object<WorkEffort>(this.m.WorkEffort);
+
+      this.object.Assignment = this.workEffort;
+      this.object.Quantity = 1;
+    } else {
+      this.selectedPurchaseOrder = this.object.PurchaseOrder;
+      this.workEffort = this.object.Assignment;
+    }
+
     const purchaseOrders = pullResult.collection<PurchaseOrder>(
       this.m.PurchaseOrder
     );
@@ -100,15 +110,7 @@ export class WorkEffortPurchaseOrderItemAssignmentFormComponent extends AllorsFo
       )
     );
 
-    if (this.createRequest) {
-      this.workEffort = pullResult.object<WorkEffort>(this.m.WorkEffort);
-
-      this.object.Assignment = this.workEffort;
-      this.object.Quantity = 1;
-    } else {
-      this.selectedPurchaseOrder = this.object.PurchaseOrder;
-      this.workEffort = this.object.Assignment;
-
+    if (this.editRequest) {
       this.purchaseOrders.push(this.selectedPurchaseOrder);
       this.purchaseOrderSelected(this.selectedPurchaseOrder);
     }
