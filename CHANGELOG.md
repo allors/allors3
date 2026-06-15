@@ -135,6 +135,10 @@ under a dated version heading.
   ship-from party's `CurrentContacts` to `shipToContacts` (leaving the declared `shipFromContacts` unused),
   so on load — where `updateShipToParty` runs first and `updateShipFromParty` overwrites — the ship-to
   contact dropdown was clobbered with the ship-from party's contacts. It now assigns `shipFromContacts`.
+- The purchase-return create + edit forms had the identical `updateShipFromParty` defect: the ship-from
+  party's `CurrentContacts` were assigned to `shipToContacts` (leaving the declared `shipFromContacts`
+  unused), so the ship-from contact picker stayed empty and the ship-to contact options were overwritten
+  with the ship-from party's contacts. Both forms now assign `shipFromContacts`.
 - The NonUnifiedPart edit form no longer drops part categories on save — the same alias + splice-during-
   iteration defect as the NonUnifiedGood edit form. `onPostPull` set `selectedCategories` to the *same array
   reference* as `originalCategories`; `onSave()` then iterated `selectedCategories` while `splice`-ing the
