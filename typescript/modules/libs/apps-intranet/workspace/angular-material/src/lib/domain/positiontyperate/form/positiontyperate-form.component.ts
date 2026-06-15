@@ -92,7 +92,7 @@ export class PositionTypeRateFormComponent extends AllorsFormComponent<PositionT
     this.selectedPositionTypes = this.positionTypes?.filter(
       (v) => v.PositionTypeRate === this.object
     );
-    this.originalPositionTypes = this.selectedPositionTypes;
+    this.originalPositionTypes = [...(this.selectedPositionTypes ?? [])];
 
     if (this.createRequest) {
       this.object.Frequency = hour;
