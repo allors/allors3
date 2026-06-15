@@ -130,6 +130,7 @@ export class CustomerShipmentEditFormComponent extends AllorsFormComponent<Custo
     );
 
     if (this.object.ShipToParty) {
+      this.previousShipToparty = this.object.ShipToParty;
       this.updateShipToParty(this.object.ShipToParty);
     }
 
