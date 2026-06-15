@@ -140,6 +140,10 @@ under a dated version heading.
   `splice`-ing the aliased `originalCategories`, skipping every other `ProductCategory`, which the second
   loop then `removeProduct`-ed. `selectedCategories` is now an independent copy (`[...originalCategories]`),
   so all categories are preserved.
+- The work-effort / purchase-order-item assignment form no longer crashes on open. `onPostPull` filtered the
+  available purchase orders using `this.workEffort.TakenBy` before `workEffort` was assigned (it was set only
+  afterwards), throwing a `TypeError` whenever a candidate order existed. `workEffort` is now established
+  before the filter runs.
 - The customer-shipment create + edit forms now populate the ship-from contact dropdown with the ship-from
   party's contacts instead of overwriting the ship-to contact options. `updateShipFromParty` assigned the
   ship-from party's `CurrentContacts` to `shipToContacts` (leaving the declared `shipFromContacts` unused),
