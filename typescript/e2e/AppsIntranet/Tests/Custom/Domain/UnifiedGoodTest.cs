@@ -98,5 +98,41 @@ namespace Tests.E2E.Objects
             ClassicAssert.AreEqual(productType, unifiedGood.ProductType);
         }
 
+        [Test]
+        public async Task EditUnifiedGoodPreservesCategories()
+        {
+            var good = new UnifiedGoods(this.Transaction).Extent()
+                .First(v => v.ProductCategoriesWhereProduct.Count() >= 2);
+            var originalCategories = good.ProductCategoriesWhereProduct.ToArray();
+
+            var @class = this.M.UnifiedGood;
+
+            var url = this.Application.GetOverview(@class).RouteInfo.FullPath.Replace(":id", $"{good.Strategy.ObjectId}");
+            await this.Page.GotoAsync(url);
+            await this.Page.WaitForAngular();
+
+            var overview = new UnifiedgoodOverviewPageComponent(this.AppRoot);
+            await overview.AllorsMaterialDynamicViewDetailPanelComponent.ClickAsync();
+            await this.Page.WaitForAngular();
+
+            var editForm = new UnifiedgoodEditFormComponent(this.AppRoot);
+            await editForm.NameInput.SetValueAsync("Edited UnifiedGood");
+            await this.Page.WaitForAngular();
+
+            var saveComponent = new SaveComponent(this.AppRoot);
+            await saveComponent.SaveAsync();
+            await this.Page.WaitForAngular();
+
+            this.Transaction.Rollback();
+
+            var after = good.ProductCategoriesWhereProduct.ToArray();
+            foreach (var category in originalCategories)
+            {
+                ClassicAssert.Contains(category, after, $"category '{category.Name}' was dropped on save");
+            }
+
+            ClassicAssert.AreEqual(originalCategories.Length, after.Length);
+        }
+
     }
 }
