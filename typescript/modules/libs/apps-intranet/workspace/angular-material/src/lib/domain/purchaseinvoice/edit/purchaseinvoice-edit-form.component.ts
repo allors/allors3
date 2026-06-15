@@ -287,7 +287,7 @@ export class PurchaseInvoiceEditFormComponent extends AllorsFormComponent<Purcha
         this.m.OrganisationContactRelationship
       );
     organisationContactRelationship.Organisation = this.object
-      .BilledFrom as Organisation;
+      .ShipToCustomer as Organisation;
     organisationContactRelationship.Contact = person;
 
     this.shipToCustomerContacts.push(person);
@@ -300,7 +300,7 @@ export class PurchaseInvoiceEditFormComponent extends AllorsFormComponent<Purcha
         this.m.OrganisationContactRelationship
       );
     organisationContactRelationship.Organisation = this.object
-      .ShipToEndCustomer as Organisation;
+      .BillToEndCustomer as Organisation;
     organisationContactRelationship.Contact = person;
 
     this.billToEndCustomerContacts.push(person);
