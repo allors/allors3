@@ -119,6 +119,13 @@ under a dated version heading.
 
 ### Fixed
 
+- Editing a CustomerShipment or PurchaseReturn no longer silently clears its `ShipToAddress` and
+  `ShipToContactPerson` on load. `onPostPull` called `updateShipToParty` without first setting
+  `previousShipToparty`, so the `ShipToParty !== previousShipToparty` guard inside it was true on the initial
+  load and nulled `ShipToAddress` + `ShipToContactPerson` — which then persisted on save (silent data loss on
+  every edit). `onPostPull` now initializes `previousShipToparty` to the loaded `ShipToParty`, so a load is no
+  longer treated as a party change. (The customershipment instance was an unflagged sibling of the reported
+  purchasereturn defect.)
 - The bill-to-end-customer autocomplete on the sales-invoice (create + edit) and sales-order (edit) forms now
   fires `billToEndCustomerSelected` instead of `billToCustomerSelected`. The autocomplete binds the
   `BillToEndCustomer` role correctly, but its `(changed)` handler ran the bill-to-*customer* side-effect
