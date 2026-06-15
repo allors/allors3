@@ -125,6 +125,11 @@ under a dated version heading.
   `splice`-ing the aliased `originalCategories`, skipping every other `ProductCategory`, which the second
   loop then `removeProduct`-ed. `selectedCategories` is now an independent copy (`[...originalCategories]`),
   so all categories are preserved.
+- The customer-shipment create + edit forms now populate the ship-from contact dropdown with the ship-from
+  party's contacts instead of overwriting the ship-to contact options. `updateShipFromParty` assigned the
+  ship-from party's `CurrentContacts` to `shipToContacts` (leaving the declared `shipFromContacts` unused),
+  so on load — where `updateShipToParty` runs first and `updateShipFromParty` overwrites — the ship-to
+  contact dropdown was clobbered with the ship-from party's contacts. It now assigns `shipFromContacts`.
 - The NonUnifiedPart edit form no longer drops part categories on save — the same alias + splice-during-
   iteration defect as the NonUnifiedGood edit form. `onPostPull` set `selectedCategories` to the *same array
   reference* as `originalCategories`; `onSave()` then iterated `selectedCategories` while `splice`-ing the
