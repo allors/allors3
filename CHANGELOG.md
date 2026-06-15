@@ -126,6 +126,9 @@ under a dated version heading.
   every edit). `onPostPull` now initializes `previousShipToparty` to the loaded `ShipToParty`, so a load is no
   longer treated as a party change. (The customershipment instance was an unflagged sibling of the reported
   purchasereturn defect.)
+- The email-communication form's "add a To email" inline card saved the new address to `FromEmail` instead
+  of `ToEmail` (`toEmailAdded`), overwriting the From address and never setting the recipient. It now assigns
+  `ToEmail`. (The sibling `fromEmailAdded` was already correct.)
 - The bill-to-end-customer autocomplete on the sales-invoice (create + edit) and sales-order (edit) forms now
   fires `billToEndCustomerSelected` instead of `billToCustomerSelected`. The autocomplete binds the
   `BillToEndCustomer` role correctly, but its `(changed)` handler ran the bill-to-*customer* side-effect
