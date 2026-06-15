@@ -10,6 +10,7 @@ import { IPullResult, Pull } from '@allors/system/workspace/domain';
 import { NgForm } from '@angular/forms';
 import {
   ContactMechanism,
+  PartyContactMechanism,
   Person,
   WorkTask,
 } from '@allors/default/workspace/domain';
@@ -97,8 +98,9 @@ export class WorkTaskEditFormComponent extends AllorsFormComponent<WorkTask> {
 
     this.onPostPullInitialize(pullResult);
 
-    this.contactMechanisms =
-      pullResult.collection<ContactMechanism>('contactmechanisms');
+    this.contactMechanisms = pullResult
+      .collection<PartyContactMechanism>('contactmechanisms')
+      ?.map((v) => v.ContactMechanism);
     this.contacts = pullResult.collection<Person>('contacts');
   }
 }
