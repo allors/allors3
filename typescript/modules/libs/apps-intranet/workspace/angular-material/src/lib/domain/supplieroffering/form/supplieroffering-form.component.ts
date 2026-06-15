@@ -145,7 +145,10 @@ export class SupplierOfferingFormComponent extends AllorsFormComponent<SupplierO
   }
 
   public currencySelected(currency: IObject) {
-    if (this.supplierIsNew || this.object.Supplier?.PreferredCurrency == null) {
+    if (
+      this.object.Supplier &&
+      (this.supplierIsNew || this.object.Supplier.PreferredCurrency == null)
+    ) {
       this.object.Supplier.PreferredCurrency = currency as Currency;
     }
   }

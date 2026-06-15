@@ -180,6 +180,10 @@ under a dated version heading.
   own `AssignedShipToCustomerAddress` — so changing the ShipToCustomer left its stale address in place (saved
   against the new customer) while wiping the end-customer's chosen address. It now nulls
   `AssignedShipToCustomerAddress`, matching the adjacent `ShipToCustomerContactPerson` clear.
+- The supplier-offering form's `currencySelected` no longer throws when a currency is picked before a
+  supplier. Its condition optional-chained `this.object.Supplier?.PreferredCurrency`, but the body assigned
+  `this.object.Supplier.PreferredCurrency` unguarded, so with no supplier selected (the `== null` branch
+  true) it raised a `TypeError`. The assignment is now guarded by `this.object.Supplier`.
 - Apps `Setup.v.cs` dispatched `BaseOnPreSetup` from `OnPrePrepare` instead of `BaseOnPrePrepare`
   (latent; both hooks are empty today).
 - SQL Server `AllowSnapshotIsolation` now brackets the database name in its `ALTER DATABASE`
