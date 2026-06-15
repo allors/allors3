@@ -123,6 +123,7 @@ export class PurchaseReturnEditFormComponent extends AllorsFormComponent<Purchas
     );
 
     if (this.object.ShipToParty) {
+      this.previousShipToparty = this.object.ShipToParty;
       this.updateShipToParty(this.object.ShipToParty);
     }
 
