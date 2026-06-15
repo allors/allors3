@@ -131,6 +131,12 @@ under a dated version heading.
   aliased `originalCategories` inside the loop, skipping every other `PartCategory`, which the second loop
   then `removePart`-ed. `selectedCategories` is now an independent copy (`[...originalCategories]`), so all
   part categories are preserved.
+- The PositionTypeRate form no longer nulls kept PositionType assignments on save. `onPostPull` set
+  `originalPositionTypes` to the *same array reference* as `selectedPositionTypes`; `save()` then iterated
+  `selectedPositionTypes` while `splice`-ing the aliased `originalPositionTypes`, skipping every other
+  PositionType, which the second loop then set to `PositionTypeRate = null`. Editing a rate with two or more
+  assigned position types and saving unassigned roughly half of them. `originalPositionTypes` is now an
+  independent copy (`[...(selectedPositionTypes ?? [])]`), so all assignments are preserved.
 - Apps `Setup.v.cs` dispatched `BaseOnPreSetup` from `OnPrePrepare` instead of `BaseOnPrePrepare`
   (latent; both hooks are empty today).
 - SQL Server `AllowSnapshotIsolation` now brackets the database name in its `ALTER DATABASE`
