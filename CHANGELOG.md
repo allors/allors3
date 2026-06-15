@@ -98,6 +98,119 @@ under a dated version heading.
   corrupted the file, failing a random matrix job. A new `dotnet/Directory.Build.targets` clears the
   `CloudBuildVersionVars` item before the target runs, skipping the emission. Assembly version stamping
   is unaffected, and `cloudBuild.setVersionVariables: false` does **not** gate this MSBuild-side write.
+- The employment form no longer overwrites an existing employment's FromDate on edit. `onPostPull` set
+  `this.object.FromDate = new Date()` unconditionally, so opening an employment to edit it reset its start
+  date to today (persisted on save). The default is now guarded by `this.createRequest`, so only a new
+  employment gets today's date; a loaded one keeps its own.
+- The purchase-invoice create and edit forms had several mis-wired "add new …" inline cards and
+  contact-added handlers, now corrected: the ShipToCustomer add-person card ran
+  `billedFromContactPersonAdded` (now `shipToCustomerContactPersonAdded`); the ShipToEndCustomer
+  add-customer card ran `billToEndCustomerAdded` (now `shipToEndCustomerAdded`); the BillToEndCustomer
+  add-customer card was shown by `*ngIf="addShipToCustomer"` instead of `addBillToEndCustomer`; and two
+  contact-added handlers linked the new `OrganisationContactRelationship` to the wrong organisation —
+  `billToEndCustomerContactPersonAdded` used `ShipToEndCustomer` (now `BillToEndCustomer`) and
+  `shipToCustomerContactPersonAdded` used `BilledFrom` (now `ShipToCustomer`). Each defect was present on
+  both the create and edit forms.
+- Editing a CustomerShipment or PurchaseReturn no longer silently clears its `ShipToAddress` and
+  `ShipToContactPerson` on load. `onPostPull` called `updateShipToParty` without first setting
+  `previousShipToparty`, so the `ShipToParty !== previousShipToparty` guard inside it was true on the initial
+  load and nulled `ShipToAddress` + `ShipToContactPerson` — which then persisted on save (silent data loss on
+  every edit). `onPostPull` now initializes `previousShipToparty` to the loaded `ShipToParty`, so a load is no
+  longer treated as a party change. (The customershipment instance was an unflagged sibling of the reported
+  purchasereturn defect.)
+- The email-communication form's "add a To email" inline card saved the new address to `FromEmail` instead
+  of `ToEmail` (`toEmailAdded`), overwriting the From address and never setting the recipient. It now assigns
+  `ToEmail`. (The sibling `fromEmailAdded` was already correct.)
+- The bill-to-end-customer autocomplete on the sales-invoice (create + edit) and sales-order (edit) forms now
+  fires `billToEndCustomerSelected` instead of `billToCustomerSelected`. The autocomplete binds the
+  `BillToEndCustomer` role correctly, but its `(changed)` handler ran the bill-to-*customer* side-effect
+  (`updateBillToCustomer`), so selecting a bill-to-end-customer loaded the wrong party's contacts and
+  contact-mechanisms into the dependent dropdowns. It now runs `updateBillToEndCustomer`.
+- The UnifiedGood edit form no longer drops product categories on save — the same alias + splice-during-
+  iteration defect as the NonUnifiedGood/NonUnifiedPart edit forms. `onPostPull` set `selectedCategories` to
+  the *same array reference* as `originalCategories`; `onSave()` then iterated `selectedCategories` while
+  `splice`-ing the aliased `originalCategories`, skipping every other `ProductCategory`, which the second
+  loop then `removeProduct`-ed. `selectedCategories` is now an independent copy (`[...originalCategories]`),
+  so all categories are preserved.
+- The work-effort / purchase-order-item assignment form no longer crashes on open. `onPostPull` filtered the
+  available purchase orders using `this.workEffort.TakenBy` before `workEffort` was assigned (it was set only
+  afterwards), throwing a `TypeError` whenever a candidate order existed. `workEffort` is now established
+  before the filter runs.
+- The customer-shipment create + edit forms now populate the ship-from contact dropdown with the ship-from
+  party's contacts instead of overwriting the ship-to contact options. `updateShipFromParty` assigned the
+  ship-from party's `CurrentContacts` to `shipToContacts` (leaving the declared `shipFromContacts` unused),
+  so on load — where `updateShipToParty` runs first and `updateShipFromParty` overwrites — the ship-to
+  contact dropdown was clobbered with the ship-from party's contacts. It now assigns `shipFromContacts`.
+- The purchase-return create + edit forms had the identical `updateShipFromParty` defect: the ship-from
+  party's `CurrentContacts` were assigned to `shipToContacts` (leaving the declared `shipFromContacts`
+  unused), so the ship-from contact picker stayed empty and the ship-to contact options were overwritten
+  with the ship-from party's contacts. Both forms now assign `shipFromContacts`.
+- The NonUnifiedPart edit form no longer drops part categories on save — the same alias + splice-during-
+  iteration defect as the NonUnifiedGood edit form. `onPostPull` set `selectedCategories` to the *same array
+  reference* as `originalCategories`; `onSave()` then iterated `selectedCategories` while `splice`-ing the
+  aliased `originalCategories` inside the loop, skipping every other `PartCategory`, which the second loop
+  then `removePart`-ed. `selectedCategories` is now an independent copy (`[...originalCategories]`), so all
+  part categories are preserved.
+- The PositionTypeRate form no longer nulls kept PositionType assignments on save. `onPostPull` set
+  `originalPositionTypes` to the *same array reference* as `selectedPositionTypes`; `save()` then iterated
+  `selectedPositionTypes` while `splice`-ing the aliased `originalPositionTypes`, skipping every other
+  PositionType, which the second loop then set to `PositionTypeRate = null`. Editing a rate with two or more
+  assigned position types and saving unassigned roughly half of them. `originalPositionTypes` is now an
+  independent copy (`[...(selectedPositionTypes ?? [])]`), so all assignments are preserved.
+- The purchase-invoice create + edit forms no longer clear the wrong assigned ship-to address when the
+  ShipToCustomer changes. `updateShipToCustomer`'s change-guard nulled `AssignedShipToEndCustomerAddress`
+  (the *end*-customer's field, correctly owned by `updateShipToEndCustomer`) instead of the ship-to-customer's
+  own `AssignedShipToCustomerAddress` — so changing the ShipToCustomer left its stale address in place (saved
+  against the new customer) while wiping the end-customer's chosen address. It now nulls
+  `AssignedShipToCustomerAddress`, matching the adjacent `ShipToCustomerContactPerson` clear.
+- The supplier-offering form's `currencySelected` no longer throws when a currency is picked before a
+  supplier. Its condition optional-chained `this.object.Supplier?.PreferredCurrency`, but the body assigned
+  `this.object.Supplier.PreferredCurrency` unguarded, so with no supplier selected (the `== null` branch
+  true) it raised a `TypeError`. The assignment is now guarded by `this.object.Supplier`.
+- Apps `Setup.v.cs` dispatched `BaseOnPreSetup` from `OnPrePrepare` instead of `BaseOnPrePrepare`
+  (latent; both hooks are empty today).
+- SQL Server `AllowSnapshotIsolation` now brackets the database name in its `ALTER DATABASE`
+  statement, so databases named after reserved T-SQL keywords (e.g. `Identity`) provision correctly.
+- The NonUnifiedGood edit form no longer drops product categories on save. `onPostPull` assigned the same
+  array reference to both `selectedCategories` and `originalCategories`, so `save()` iterated
+  `selectedCategories` while `splice`-ing the aliased `originalCategories` inside that loop — a
+  splice-during-iteration that skipped every other category, which the second loop then `removeProduct`-ed
+  from the good. Editing a good with two or more categories and saving dropped roughly half of them.
+  `selectedCategories` is now an independent copy (`[...originalCategories]`, with the source `?? []`-guarded
+  for the spread), so all categories are preserved.
+- Effects watching composites roles (or derived list roles) no longer rerun on every unrelated session
+  write. Those signals rebuild their list on every recompute, and the default reference-equality comparer
+  counted each fresh array as a change. `ISignalFactory.Computed` now accepts an optional
+  `IEqualityComparer<T>` (mirroring `State`), and the adapter passes element-wise comparers for composites
+  and derived role signals, restoring the value cutoff.
+- Effects no longer run between the record merges of a single pull, push response or reset. Every merged
+  record bumped the session graph revision — and flushed effects — individually, so an effect reading roles
+  of two pulled objects observed the first object updated while the second still held its stale values
+  (and large pulls paid one full propagation per record). Multi-record operations now hold the revision and
+  bump once at the end (`Session.HoldGraph`/`ReleaseGraph`), so effects observe only the fully merged state.
+- Effects no longer observe torn state or run twice per change. The effect scheduler flushed as soon as
+  the first effect was enqueued, while the propagation walk was still marking the remaining subscribers —
+  an effect reading two computeds derived from the same signal ran once with one fresh and one stale value,
+  then again after the walk finished. `Propagation.Propagate` now holds every touched scheduler for the
+  duration of the walk and releases (flushes) them only after all reachable nodes are marked, so each
+  change produces exactly one consistent effect run.
+- A role write performed inside an effect no longer re-runs that effect forever. `Session.TouchGraph`
+  bumped the graph revision by reading the revision signal through its tracked getter, so the writing
+  effect subscribed itself to the session-wide revision — always recorded one version behind the bump —
+  and was re-scheduled after every flush. The bump now comes from an untracked backing counter, so
+  writers never become subscribers of the revision they bump.
+- Disposing a parent effect scope while a nested child scope was the active scope no longer leaves the
+  signals engine's active scope pointing at the disposed parent. `EffectScopeNode.Dispose` only restored the
+  active scope when it was exactly the disposed node, but disposal recurses into child scopes, so the child's
+  restore re-targeted its already-disposed (and already unlinked) parent — and effects created afterwards
+  registered under that disposed scope, where no outer scope could ever dispose them. `Dispose` now restores
+  the active scope whenever it lies anywhere in the disposed subtree, so it lands on the disposed scope's
+  outer scope.
+- The apps-intranet application's **production** bootstrap no longer crashes — the same `environment.prod.ts`
+  `APP_INITIALIZER` defect as the base app. The four-parameter `appInitFactory` had only
+  `deps: [WorkspaceService, HttpClient]`, so `createService`/`editService` were injected as `undefined` and
+  the initializer threw a `TypeError` at bootstrap. `deps` now also lists `AllorsMaterialCreateService` and
+  `AllorsMaterialEditDialogService`. Production-only: the dev `environment.ts` was already correct.
 - The base application's **production** bootstrap no longer crashes. The `environment.prod.ts`
   `APP_INITIALIZER` factory (`appInitFactory`) takes four parameters and assigns
   `createService.createControlByObjectTypeTag` / `editService.editControlByObjectTypeTag`, but its `deps`

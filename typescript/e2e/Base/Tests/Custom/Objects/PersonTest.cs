@@ -228,5 +228,55 @@ namespace Tests.E2E.Objects
             // throws); without the fix the table is empty and the console-error TearDown trips.
             ClassicAssert.Contains(employment.Strategy.ObjectId.ToString(), objectIds);
         }
+
+        [Test]
+        public async Task EditEmploymentPreservesFromDate()
+        {
+            // Build a dedicated employment with a known FromDate (well in the past, not today), so editing
+            // it must not silently reset FromDate. Self-contained: independent of population/order.
+            var person = new People(this.Transaction).FindBy(this.M.Person.FirstName, "John");
+            var employer = new OrganisationBuilder(this.Transaction).WithName("Employer For FromDate E2E").Build();
+            var fromDate = this.Transaction.Now().AddDays(-30);
+
+            var employment = new EmploymentBuilder(this.Transaction)
+                .WithEmployee(person)
+                .WithEmployer(employer)
+                .WithFromDate(fromDate)
+                .Build();
+
+            this.Transaction.Derive();
+            this.Transaction.Commit();
+
+            var @class = this.M.Person;
+
+            var overview = this.Application.GetOverview(@class);
+            var url = overview.RouteInfo.FullPath.Replace(":id", $"{person.Strategy.ObjectId}");
+            await this.Page.GotoAsync(url);
+            await this.Page.WaitForAngular();
+
+            var personOverview = new PersonOverviewPageComponent(this.AppRoot);
+
+            await personOverview.ViewEmployment.Locator.ClickAsync();
+            await this.Page.WaitForAngular();
+
+            var edit = personOverview.EditEmployment;
+            await edit.Table.DefaultAction(employment);
+            await this.Page.WaitForAngular();
+
+            var form = new EmploymentFormComponent(this.OverlayContainer);
+
+            // The form's onPostPull is the suspect; dirty an unrelated field (ThroughDate) so SAVE enables
+            // even after the fix (which no longer touches FromDate on load).
+            await form.ThroughDateDatepicker.SetAsync(this.Transaction.Now());
+            await this.Page.WaitForAngular();
+
+            var saveComponent = new SaveComponent(this.OverlayContainer);
+            await saveComponent.SaveAsync();
+            await this.Page.WaitForAngular();
+
+            this.Transaction.Rollback();
+
+            ClassicAssert.AreEqual(fromDate.Date, employment.FromDate.Date, "FromDate was overwritten on edit");
+        }
     }
 }
