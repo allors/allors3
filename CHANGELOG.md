@@ -119,6 +119,10 @@ under a dated version heading.
 
 ### Fixed
 
+- The employment form no longer overwrites an existing employment's FromDate on edit. `onPostPull` set
+  `this.object.FromDate = new Date()` unconditionally, so opening an employment to edit it reset its start
+  date to today (persisted on save). The default is now guarded by `this.createRequest`, so only a new
+  employment gets today's date; a loaded one keeps its own.
 - The purchase-invoice create and edit forms had several mis-wired "add new …" inline cards and
   contact-added handlers, now corrected: the ShipToCustomer add-person card ran
   `billedFromContactPersonAdded` (now `shipToCustomerContactPersonAdded`); the ShipToEndCustomer
