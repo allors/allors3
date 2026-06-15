@@ -67,7 +67,9 @@ export class BasepriceFormComponent extends AllorsFormComponent<BasePrice> {
     this.internalOrganisation =
       this.fetcher.getInternalOrganisation(pullResult);
 
-    this.object.FromDate = new Date();
-    this.object.PricedBy = this.internalOrganisation;
+    if (this.createRequest) {
+      this.object.FromDate = new Date();
+      this.object.PricedBy = this.internalOrganisation;
+    }
   }
 }

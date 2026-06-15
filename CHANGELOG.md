@@ -214,6 +214,10 @@ under a dated version heading.
   party's `CurrentContacts` were assigned to `shipToContacts` (leaving the declared `shipFromContacts`
   unused), so the ship-from contact picker stayed empty and the ship-to contact options were overwritten
   with the ship-from party's contacts. Both forms now assign `shipFromContacts`.
+- The base-price form's create-time defaults are no longer applied on edit. `onPostPull` unconditionally set
+  `FromDate = new Date()` and `PricedBy = internalOrganisation`, so editing an existing BasePrice reset its
+  effective-from date to today and its priced-by (persisted on save). Both are now guarded by
+  `this.createRequest`, so a loaded BasePrice keeps its own values.
 - The NonUnifiedPart edit form no longer drops part categories on save — the same alias + splice-during-
   iteration defect as the NonUnifiedGood edit form. `onPostPull` set `selectedCategories` to the *same array
   reference* as `originalCategories`; `onSave()` then iterated `selectedCategories` while `splice`-ing the
