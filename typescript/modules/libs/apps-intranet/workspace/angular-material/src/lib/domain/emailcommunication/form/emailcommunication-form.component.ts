@@ -254,7 +254,7 @@ export class EmailCommunicationFormComponent extends AllorsFormComponent<EmailCo
     const emailAddress = partyContactMechanism.ContactMechanism as EmailAddress;
 
     this.toEmails.push(emailAddress);
-    this.object.FromEmail = emailAddress;
+    this.object.ToEmail = emailAddress;
   }
 
   public fromPartyAdded(fromParty: Person): void {
