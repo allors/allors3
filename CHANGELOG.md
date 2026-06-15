@@ -119,6 +119,11 @@ under a dated version heading.
 
 ### Fixed
 
+- The bill-to-end-customer autocomplete on the sales-invoice (create + edit) and sales-order (edit) forms now
+  fires `billToEndCustomerSelected` instead of `billToCustomerSelected`. The autocomplete binds the
+  `BillToEndCustomer` role correctly, but its `(changed)` handler ran the bill-to-*customer* side-effect
+  (`updateBillToCustomer`), so selecting a bill-to-end-customer loaded the wrong party's contacts and
+  contact-mechanisms into the dependent dropdowns. It now runs `updateBillToEndCustomer`.
 - The UnifiedGood edit form no longer drops product categories on save — the same alias + splice-during-
   iteration defect as the NonUnifiedGood/NonUnifiedPart edit forms. `onPostPull` set `selectedCategories` to
   the *same array reference* as `originalCategories`; `onSave()` then iterated `selectedCategories` while
