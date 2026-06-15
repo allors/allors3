@@ -119,6 +119,15 @@ under a dated version heading.
 
 ### Fixed
 
+- The purchase-invoice create and edit forms had several mis-wired "add new …" inline cards and
+  contact-added handlers, now corrected: the ShipToCustomer add-person card ran
+  `billedFromContactPersonAdded` (now `shipToCustomerContactPersonAdded`); the ShipToEndCustomer
+  add-customer card ran `billToEndCustomerAdded` (now `shipToEndCustomerAdded`); the BillToEndCustomer
+  add-customer card was shown by `*ngIf="addShipToCustomer"` instead of `addBillToEndCustomer`; and two
+  contact-added handlers linked the new `OrganisationContactRelationship` to the wrong organisation —
+  `billToEndCustomerContactPersonAdded` used `ShipToEndCustomer` (now `BillToEndCustomer`) and
+  `shipToCustomerContactPersonAdded` used `BilledFrom` (now `ShipToCustomer`). Each defect was present on
+  both the create and edit forms.
 - Editing a CustomerShipment or PurchaseReturn no longer silently clears its `ShipToAddress` and
   `ShipToContactPerson` on load. `onPostPull` called `updateShipToParty` without first setting
   `previousShipToparty`, so the `ShipToParty !== previousShipToparty` guard inside it was true on the initial
@@ -126,6 +135,9 @@ under a dated version heading.
   every edit). `onPostPull` now initializes `previousShipToparty` to the loaded `ShipToParty`, so a load is no
   longer treated as a party change. (The customershipment instance was an unflagged sibling of the reported
   purchasereturn defect.)
+- The email-communication form's "add a To email" inline card saved the new address to `FromEmail` instead
+  of `ToEmail` (`toEmailAdded`), overwriting the From address and never setting the recipient. It now assigns
+  `ToEmail`. (The sibling `fromEmailAdded` was already correct.)
 - The bill-to-end-customer autocomplete on the sales-invoice (create + edit) and sales-order (edit) forms now
   fires `billToEndCustomerSelected` instead of `billToCustomerSelected`. The autocomplete binds the
   `BillToEndCustomer` role correctly, but its `(changed)` handler ran the bill-to-*customer* side-effect
@@ -137,6 +149,10 @@ under a dated version heading.
   `splice`-ing the aliased `originalCategories`, skipping every other `ProductCategory`, which the second
   loop then `removeProduct`-ed. `selectedCategories` is now an independent copy (`[...originalCategories]`),
   so all categories are preserved.
+- The work-effort / purchase-order-item assignment form no longer crashes on open. `onPostPull` filtered the
+  available purchase orders using `this.workEffort.TakenBy` before `workEffort` was assigned (it was set only
+  afterwards), throwing a `TypeError` whenever a candidate order existed. `workEffort` is now established
+  before the filter runs.
 - The customer-shipment create + edit forms now populate the ship-from contact dropdown with the ship-from
   party's contacts instead of overwriting the ship-to contact options. `updateShipFromParty` assigned the
   ship-from party's `CurrentContacts` to `shipToContacts` (leaving the declared `shipFromContacts` unused),
@@ -164,6 +180,10 @@ under a dated version heading.
   own `AssignedShipToCustomerAddress` — so changing the ShipToCustomer left its stale address in place (saved
   against the new customer) while wiping the end-customer's chosen address. It now nulls
   `AssignedShipToCustomerAddress`, matching the adjacent `ShipToCustomerContactPerson` clear.
+- The supplier-offering form's `currencySelected` no longer throws when a currency is picked before a
+  supplier. Its condition optional-chained `this.object.Supplier?.PreferredCurrency`, but the body assigned
+  `this.object.Supplier.PreferredCurrency` unguarded, so with no supplier selected (the `== null` branch
+  true) it raised a `TypeError`. The assignment is now guarded by `this.object.Supplier`.
 - Apps `Setup.v.cs` dispatched `BaseOnPreSetup` from `OnPrePrepare` instead of `BaseOnPrePrepare`
   (latent; both hooks are empty today).
 - The UnifiedGood create form showed its manual ProductNumber input based on `settings.UseGlobalProductNumber`,
