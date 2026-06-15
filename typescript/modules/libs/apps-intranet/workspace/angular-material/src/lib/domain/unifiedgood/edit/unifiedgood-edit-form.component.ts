@@ -161,7 +161,7 @@ export class UnifiedGoodEditFormComponent extends AllorsFormComponent<UnifiedGoo
 
     this.originalCategories =
       pullResult.collection<ProductCategory>('OriginalCategories') ?? [];
-    this.selectedCategories = this.originalCategories;
+    this.selectedCategories = [...this.originalCategories];
 
     this.inventoryItemKinds = pullResult.collection<InventoryItemKind>(
       this.m.InventoryItemKind
