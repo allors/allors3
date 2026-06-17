@@ -122,6 +122,9 @@ under a dated version heading.
 
 ### Fixed
 
+- The purchase-invoice summary panel's "ship to" and "Bill to End Customer" cards both navigated to the
+  `BilledFrom` party on click (copied from the "Billed from" card) instead of the party each card shows. They
+  now navigate to `ShipToCustomer` and `BillToEndCustomer` respectively.
 - The extranet work-task create + edit forms bound the FullfillContactMechanism select's options to
   PartyContactMechanisms instead of ContactMechanisms. `onPostPull` assigned the pulled
   `CurrentPartyContactMechanisms` (a PartyContactMechanism collection) straight to
