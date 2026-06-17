@@ -29,6 +29,11 @@ namespace Allors.Database.Domain
             {
                 this.ServicedBy = internalOrganisations[0];
             }
+
+            if (!this.ExistWorkEffortPurpose)
+            {
+                this.WorkEffortPurpose = new WorkEffortPurposes(this.Strategy.Transaction).Repair;
+            }
         }
 
         public void AppsDelete(DeletableDelete method)
@@ -73,6 +78,7 @@ namespace Allors.Database.Domain
                 .WithDescription(this.Reason)
                 .WithTakenBy(this.ServicedBy)
                 .WithCustomer(this.Originator)
+                .WithWorkEffortPurpose(this.WorkEffortPurpose)
                 .Build();
 
             new WorkEffortFixedAssetAssignmentBuilder(transaction).WithAssignment(workTask).WithFixedAsset(this.FixedAsset).Build();

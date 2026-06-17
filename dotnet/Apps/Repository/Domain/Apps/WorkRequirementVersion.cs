@@ -63,6 +63,13 @@ namespace Allors.Repository
         [Workspace(Default)]
         public bool UnServiceable { get; set; }
 
+        #region Allors
+        [Id("c7f2a934-8b15-4d62-a0e7-3f9b6d1c8e54")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Workspace(Default)]
+        public WorkEffortPurpose WorkEffortPurpose { get; set; }
+
         #region inherited methods
 
         public void OnBuild() { }
