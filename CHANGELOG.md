@@ -122,6 +122,10 @@ under a dated version heading.
 
 ### Fixed
 
+- The intranet `DisplayService.description()` read the `nameByObjectType` map instead of
+  `descriptionByObjectType`, so the dynamic summary panel showed an object's name as both its name and its
+  description. It now reads `descriptionByObjectType`, falling back to `nameByObjectType` when no description
+  role is configured for a type (the map is not yet populated, so behaviour is unchanged until it is).
 - The extranet work-task create + edit forms bound the FullfillContactMechanism select's options to
   PartyContactMechanisms instead of ContactMechanisms. `onPostPull` assigned the pulled
   `CurrentPartyContactMechanisms` (a PartyContactMechanism collection) straight to
