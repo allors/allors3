@@ -14,6 +14,9 @@ under a dated version heading.
 
 ### Added
 
+- `WorkRequirement.WorkEffortPurpose` (enumeration Refurbishment / Maintenance / Repair): defaults to
+  **Repair** on init, is copied onto the `WorkTask` created by `CreateWorkTask`, and is mirrored into
+  `WorkRequirementVersion` for version history.
 - New **Identity** domain track at `dotnet/Identity`: an orthogonal domain that extends `Core` and
   encapsulates all Microsoft ASP.NET Identity integration (identity properties on `User`, `Login`,
   `UserPasswordReset`, normalization/password rules, `PasswordHasher`, `AllorsUserStore`/`AllorsRoleStore`,

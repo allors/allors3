@@ -6,7 +6,9 @@
 
 namespace Allors.Database.Domain.Tests
 {
+    using System.Linq;
     using Xunit;
+    using TestPopulation;
 
     public class WorkRequirementTests : DomainTest, IClassFixture<Fixture>
     {
@@ -47,6 +49,40 @@ namespace Allors.Database.Domain.Tests
             builder.Build();
 
             Assert.False(this.Derive().HasErrors);
+        }
+
+        [Fact]
+        public void GivenWorkRequirement_WhenBuild_ThenWorkEffortPurposeDefaultsToRepair()
+        {
+            var requirement = new WorkRequirementBuilder(this.Transaction).WithDescription("WorkRequirement").Build();
+
+            this.Transaction.Derive();
+
+            Assert.Equal(new WorkEffortPurposes(this.Transaction).Repair, requirement.WorkEffortPurpose);
+        }
+
+        [Fact]
+        public void GivenWorkRequirementWithPurpose_WhenCreateWorkTask_ThenWorkEffortPurposeIsCopied()
+        {
+            var internalOrganisation = new Organisations(this.Transaction).Extent().First(o => o.IsInternalOrganisation);
+            var serialisedItem = new SerialisedItemBuilder(this.Transaction).WithDefaults(internalOrganisation).Build();
+            var maintenance = new WorkEffortPurposes(this.Transaction).Maintenance; // non-default, proves copy
+
+            var requirement = new WorkRequirementBuilder(this.Transaction)
+                .WithDescription("desc")
+                .WithFixedAsset(serialisedItem)
+                .WithWorkEffortPurpose(maintenance)
+                .Build();
+
+            this.Transaction.Derive();
+
+            requirement.CreateWorkTask();
+
+            this.Transaction.Derive(false);
+
+            var workTask = (WorkTask)requirement.WorkRequirementFulfillmentWhereFullfilledBy.FullfillmentOf;
+
+            Assert.Equal(maintenance, workTask.WorkEffortPurpose);
         }
     }
 }
