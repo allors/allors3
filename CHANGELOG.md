@@ -122,6 +122,9 @@ under a dated version heading.
 
 ### Fixed
 
+- The intranet proposal (quote) list declared `origin` and `destination` columns that were never populated —
+  a Proposal has no such roles, and they were absent from the row interface, the row-builder, and the Proposal
+  sorter — so they rendered permanently blank (and their `sort: true` was dead). Both columns are removed.
 - The extranet work-task create + edit forms bound the FullfillContactMechanism select's options to
   PartyContactMechanisms instead of ContactMechanisms. `onPostPull` assigned the pulled
   `CurrentPartyContactMechanisms` (a PartyContactMechanism collection) straight to
