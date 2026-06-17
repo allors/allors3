@@ -122,6 +122,9 @@ under a dated version heading.
 
 ### Fixed
 
+- The intranet purchase-order list's `customerReference` column showed the order's `Description` instead of
+  its `CustomerReference`. The row-builder read `v.Description`; it now reads `v.CustomerReference` (the role
+  the column is named for and the list already sorts by).
 - The extranet work-task create + edit forms bound the FullfillContactMechanism select's options to
   PartyContactMechanisms instead of ContactMechanisms. `onPostPull` assigned the pulled
   `CurrentPartyContactMechanisms` (a PartyContactMechanism collection) straight to
