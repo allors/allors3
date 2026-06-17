@@ -119,6 +119,10 @@ under a dated version heading.
 
 ### Fixed
 
+- The party `DisplayPhone` workspace derivation prefixed its output with a spurious `", "`. It joined the
+  telecommunications-number display names with `.reduce((acc, cur) => acc + ', ' + cur, '')` seeded with an
+  empty string, so the seed contributed a leading separator (e.g. `", Office, Mobile"`). It now uses
+  `.join(', ')`.
 - The extranet work-task create + edit forms bound the FullfillContactMechanism select's options to
   PartyContactMechanisms instead of ContactMechanisms. `onPostPull` assigned the pulled
   `CurrentPartyContactMechanisms` (a PartyContactMechanism collection) straight to
