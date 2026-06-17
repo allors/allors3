@@ -278,7 +278,7 @@ export class AppSorterService implements SorterService {
     );
 
     define(
-      m.SerialisedItemCharacteristic,
+      m.SerialisedItemCharacteristicType,
       new Sorter({
         name: m.SerialisedItemCharacteristicType.Name,
         uom: m.UnitOfMeasure.Name,
