@@ -122,6 +122,9 @@ under a dated version heading.
 
 ### Fixed
 
+- The extranet app's `MainComponent` leaked its `router.events` subscription: unlike the sibling
+  toggle/open/close side-nav subscriptions it was neither stored nor unsubscribed, so it survived component
+  teardown. It is now kept in a `routerSubscription` field and unsubscribed in `ngOnDestroy`.
 - The extranet work-task create + edit forms bound the FullfillContactMechanism select's options to
   PartyContactMechanisms instead of ContactMechanisms. `onPostPull` assigned the pulled
   `CurrentPartyContactMechanisms` (a PartyContactMechanism collection) straight to
