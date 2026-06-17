@@ -122,6 +122,9 @@ under a dated version heading.
 
 ### Fixed
 
+- The intranet non-unified-part list's `type` column was always blank: the column is defined (and sortable),
+  but the row-builder never set a `type` key. It now populates `type` from `v.ProductTypeName` (the role the
+  column already sorts by, alongside the sibling `brand`/`model`/`kind` derived-name columns).
 - The extranet work-task create + edit forms bound the FullfillContactMechanism select's options to
   PartyContactMechanisms instead of ContactMechanisms. `onPostPull` assigned the pulled
   `CurrentPartyContactMechanisms` (a PartyContactMechanism collection) straight to
