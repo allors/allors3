@@ -63,6 +63,10 @@ under a dated version heading.
 
 ### Changed
 
+- CI now triggers on pushes to `main`/`v*` and on all pull requests (any head branch),
+  instead of pushes to `feature/**`/`issue/**`. Branch names no longer gate CI, and the
+  duplicate push+PR run for feature branches is eliminated. Use a draft PR or
+  `workflow_dispatch` for pre-PR CI.
 - `Core`, `Base` and `Apps` are pure functional domains without a dependency on ASP.NET Identity:
   Core's `User` keeps only `UserName`; the ASP.NET-shaped members moved to the Identity domain
   (relation ids unchanged, so database schemas are unaffected). The identity sources are composed back

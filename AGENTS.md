@@ -35,6 +35,16 @@
 - Keep commits focused and well-described
 - Use conventional commit format: type(scope): description
 
+## Branching
+- Branch names do **not** affect CI. CI runs on every pull request (including drafts)
+  targeting `main`/`v*`, and on pushes to `main`/`v*` themselves.
+- Use conventional-commit-style prefixes for readability (`feat/`, `fix/`, `chore/`,
+  `test/`, `refactor/`, `docs/`…), matching the commit type. `feat/` vs `feature/` — both fine.
+- Pre-PR CI (no PR needed): push the branch, then dispatch manually — Actions → CI → **Run
+  workflow** → pick the branch, or `gh workflow run ci.yml --ref <branch>`. Tests the branch tip.
+- A **draft PR** also runs the full suite (and tests the merge-with-`main` result); it just
+  can't be merged and doesn't request review until you mark it ready.
+
 ## Code Style
 - Error messages should be actionable
 
