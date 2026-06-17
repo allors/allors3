@@ -122,6 +122,10 @@ under a dated version heading.
 
 ### Fixed
 
+- The intranet serialised-item list never sorted: its pull fetched `sorterService.sorter(m.Brand)` — a
+  composite with no entry in the sorter service, so `sorter(...)` returned undefined and no sorting was
+  applied — even though the pull and result are `SerialisedItem`. It now fetches `sorter(m.SerialisedItem)`,
+  so the id / name / categories / availability columns sort.
 - The extranet work-task create + edit forms bound the FullfillContactMechanism select's options to
   PartyContactMechanisms instead of ContactMechanisms. `onPostPull` assigned the pulled
   `CurrentPartyContactMechanisms` (a PartyContactMechanism collection) straight to
