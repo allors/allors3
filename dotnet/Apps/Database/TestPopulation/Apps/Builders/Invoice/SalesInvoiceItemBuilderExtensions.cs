@@ -97,8 +97,6 @@ namespace Allors.Database.Domain.TestPopulation
                 .WithInternalComment(faker.Lorem.Sentence())
                 .WithInvoiceItemType(invoiceItemType)
                 .WithPart(serializedPart)
-                .WithSerialisedItem(serializedPart.SerialisedItems.FirstOrDefault())
-                .WithNextSerialisedItemAvailability(faker.Random.ListItem(@this.Transaction.Extent<SerialisedItemAvailability>()))
                 .WithMessage(faker.Lorem.Sentence())
                 .WithQuantity(1)
                 .WithAssignedUnitPrice(faker.Random.UInt(2, 100));
