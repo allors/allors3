@@ -122,6 +122,11 @@ under a dated version heading.
 
 ### Fixed
 
+- The intranet product-characteristic list never sorted: it fetched `sorterService.sorter(m.Brand)`, and the
+  matching sorter — whose values are `SerialisedItemCharacteristicType` roles — was registered under the wrong
+  composite key `m.SerialisedItemCharacteristic` while the list pulls `SerialisedItemCharacteristicType`. The
+  sorter is now registered under `m.SerialisedItemCharacteristicType` and the list fetches it, so the name /
+  active columns sort. (No other component fetched the old key.)
 - The intranet serialised-item list never sorted: its pull fetched `sorterService.sorter(m.Brand)` — a
   composite with no entry in the sorter service, so `sorter(...)` returned undefined and no sorting was
   applied — even though the pull and result are `SerialisedItem`. It now fetches `sorter(m.SerialisedItem)`,
