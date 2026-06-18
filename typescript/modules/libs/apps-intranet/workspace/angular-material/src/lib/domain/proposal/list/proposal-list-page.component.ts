@@ -101,8 +101,6 @@ export class ProposalListPageComponent
         { name: 'number', sort: true },
         { name: 'to' },
         { name: 'state' },
-        { name: 'origin', sort: true },
-        { name: 'destination', sort: true },
         { name: 'description', sort: true },
         { name: 'validThroughDate', sort: true },
         { name: 'lastModifiedDate', sort: true },
