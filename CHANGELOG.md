@@ -131,6 +131,13 @@ under a dated version heading.
 
 ### Fixed
 
+- Removed a misplaced, vacuous duplicate test from the NonUnifiedPart suite. `NonUnifiedPartTests` contained a
+  single `OnPostDeriveAssertExistPart` that was a byte-identical copy of the test in `NonUnifiedGoodTests`: it
+  built a `NonUnifiedGood` and asserted `"NonUnifiedGood.Part is required"`, so it exercised `NonUnifiedGood`,
+  not `NonUnifiedPart` (which has no required-part rule — an empty `NonUnifiedPart` derives clean), and merely
+  duplicated coverage already in `NonUnifiedGoodTests`. The now-empty `NonUnifiedPartTests` class was removed;
+  the genuine `NonUnifiedPartRuleTests` / `NonUnifiedPartDeniedPermissionRuleTests` in the same file are
+  unchanged.
 - `CustomerShipmentTests.GivenCustomerShipmentBuilder_WhenBuild_ThenPostBuildRelationsMustExist` now asserts the
   derived `ShipFromParty` against the expected internal organisation instead of comparing the value to itself.
   The assertion read `Assert.Equal(shipment.ShipFromParty, shipment.ShipFromParty)` — a tautology that passed
