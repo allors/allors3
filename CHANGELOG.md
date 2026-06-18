@@ -131,6 +131,13 @@ under a dated version heading.
 
 ### Fixed
 
+- The `ProductFeatureTests` "required relations" tests now build the named object before asserting it derives
+  without errors. `GivenModel`, `GivenServiceFeature`, `GivenSizeConstant`, `GivenSoftwareFeature` and
+  `GivenProductQualityConstant` set `builder.WithName("Mt")` but never called `builder.Build()` afterwards
+  (unlike the correct `GivenDimension`), so after the `Rollback()` there was no object to derive and the
+  positive assertion `Assert.False(this.Derive().HasErrors)` passed vacuously. Each now calls `builder.Build()`
+  after `WithName`, so the assertion actually exercises a named object's derivation. (The review flagged
+  `GivenModel` and `GivenServiceFeature`; the identical omission was present in three sibling tests.)
 - The Apps meta/workspace generator built the **apps-extranet** TypeScript workspace libraries against the
   **Default** workspace instead of **Extranet**. `Generate/Program.cs` applied a single `workspaceName = "Default"`
   to every workspace output, including the three `libs/apps-extranet/workspace/**` outputs, so the extranet
