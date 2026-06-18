@@ -122,6 +122,10 @@ under a dated version heading.
 
 ### Fixed
 
+- The party `DisplayPhone` workspace derivation prefixed its output with a spurious `", "`. It joined the
+  telecommunications-number display names with `.reduce((acc, cur) => acc + ', ' + cur, '')` seeded with an
+  empty string, so the seed contributed a leading separator (e.g. `", Office, Mobile"`). It now uses
+  `.join(', ')`.
 - The purchase-order-item `TotalIncVat` workspace derivation computed unit VAT on the gross base price
   instead of the net unit price — the order-side sibling of the purchase-invoice-item fix. `unitVat` was
   `unitBasePrice * vatRate`, so the line's discounts and surcharges (accumulated into
