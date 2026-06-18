@@ -122,6 +122,9 @@ under a dated version heading.
 
 ### Fixed
 
+- The intranet proposal (quote) list declared `origin` and `destination` columns that were never populated —
+  a Proposal has no such roles, and they were absent from the row interface, the row-builder, and the Proposal
+  sorter — so they rendered permanently blank (and their `sort: true` was dead). Both columns are removed.
 - The intranet non-unified-part list's `type` column was always blank: the column is defined (and sortable),
   but the row-builder never set a `type` key. It now populates `type` from `v.ProductTypeName` (the role the
   column already sorts by, alongside the sibling `brand`/`model`/`kind` derived-name columns).
