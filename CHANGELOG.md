@@ -111,6 +111,11 @@ under a dated version heading.
 
 ### Removed
 
+- The non-functional extranet e2e build harness: `build/Typescript/E2E/AppsExtranet/{Build.cs,Paths.cs}` and
+  the `CiTypescriptWorkspacesE2EAngularAppsExtranetTest` Nuke target. It pointed at a
+  `typescript/e2e/AppsExtranet/Angular.Tests` project that does not exist, served the *intranet* app, and was
+  never wired into `ci.yml`, so it could not run. There are no extranet e2e tests; standing up a real extranet
+  e2e suite + gate is tracked as a follow-up.
 - The workspace client-side `IRule` derivation engine (`ISession.Activate`, `IConfiguration.Rules`, the
   `Allors.Workspace.Derivations` namespace and the workspace `Rule` base class). Derived workspace roles are
   now exposed as `IDerivedRoleSignal<T>`; their values are computed server-side and arrive via pull (matching
