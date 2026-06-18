@@ -14,6 +14,9 @@ under a dated version heading.
 
 ### Added
 
+- `WorkRequirement.WorkEffortPurpose` (enumeration Refurbishment / Maintenance / Repair): defaults to
+  **Repair** on init, is copied onto the `WorkTask` created by `CreateWorkTask`, and is mirrored into
+  `WorkRequirementVersion` for version history.
 - Configuration is now delivered from outside the source tree via the **required** `ALLORS_CONFIG_ROOT`
   environment variable. Each server, command-line tool and integration test loads
   `$ALLORS_CONFIG_ROOT/<domain>/appsettings.json` (domain = `core`/`base`/`apps`) through the new
