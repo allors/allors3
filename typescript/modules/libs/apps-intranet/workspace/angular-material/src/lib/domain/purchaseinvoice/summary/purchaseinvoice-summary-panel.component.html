@@ -30,7 +30,7 @@
       *ngIf="
         invoice.ShipToCustomer && invoice.ShipToCustomer !== invoice.BilledTo
       "
-      (click)="navigation.overview(invoice.BilledFrom)"
+      (click)="navigation.overview(invoice.ShipToCustomer)"
       style="cursor: pointer"
     >
       <div style="color: grey">ship to</div>
@@ -41,7 +41,7 @@
 
     <div
       *ngIf="invoice.BillToEndCustomer"
-      (click)="navigation.overview(invoice.BilledFrom)"
+      (click)="navigation.overview(invoice.BillToEndCustomer)"
       style="cursor: pointer"
     >
       <div style="color: grey">Bill to End Customer</div>

@@ -122,6 +122,9 @@ under a dated version heading.
 
 ### Fixed
 
+- The purchase-invoice summary panel's "ship to" and "Bill to End Customer" cards both navigated to the
+  `BilledFrom` party on click (copied from the "Billed from" card) instead of the party each card shows. They
+  now navigate to `ShipToCustomer` and `BillToEndCustomer` respectively.
 - The intranet proposal (quote) list declared `origin` and `destination` columns that were never populated —
   a Proposal has no such roles, and they were absent from the row interface, the row-builder, and the Proposal
   sorter — so they rendered permanently blank (and their `sort: true` was dead). Both columns are removed.
