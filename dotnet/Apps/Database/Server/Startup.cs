@@ -95,7 +95,7 @@ namespace Allors.Database.Server.Controllers
 
                     var problemDetails = new ValidationProblemDetails(context.ModelState);
                     var message = string.Join("; ", problemDetails.Errors.Select(v => $"{string.Join(",", v.Value)}"));
-                    logger.LogError(problemDetails.Title, message);
+                    logger.LogError("{Title}: {Errors}", problemDetails.Title, message);
 
                     return builtInFactory(context);
                 };

@@ -131,6 +131,13 @@ under a dated version heading.
 
 ### Fixed
 
+- The Apps test server's invalid-model-state logger silently dropped the validation detail. `Startup`'s
+  `InvalidModelStateResponseFactory` called `logger.LogError(problemDetails.Title, message)`, but `LogError`'s
+  first argument is the message *template* and `ValidationProblemDetails.Title` is the constant
+  `"One or more validation errors occurred."` with no `{}` placeholders — so `message` (the joined field
+  errors) had nowhere to bind and was discarded, logging only the generic title. It now calls
+  `LogError("{Title}: {Errors}", problemDetails.Title, message)`, so the actual validation errors are logged
+  and both values become structured properties.
 - The base app's Person overview pulled the wrong object: `onPreSharedPull` fetched `p.Organisation` by the
   Person's `scoped.id`, so no object came back and the overview's `object` (the Person) was null — e.g. the
   breadcrumb `{{ object?.FirstName }}` rendered blank. It now pulls `p.Person`. (The dynamic panels were
