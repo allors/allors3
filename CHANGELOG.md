@@ -131,6 +131,13 @@ under a dated version heading.
 
 ### Fixed
 
+- Removed a misplaced, vacuous duplicate test from the NonUnifiedPart suite. `NonUnifiedPartTests` contained a
+  single `OnPostDeriveAssertExistPart` that was a byte-identical copy of the test in `NonUnifiedGoodTests`: it
+  built a `NonUnifiedGood` and asserted `"NonUnifiedGood.Part is required"`, so it exercised `NonUnifiedGood`,
+  not `NonUnifiedPart` (which has no required-part rule — an empty `NonUnifiedPart` derives clean), and merely
+  duplicated coverage already in `NonUnifiedGoodTests`. The now-empty `NonUnifiedPartTests` class was removed;
+  the genuine `NonUnifiedPartRuleTests` / `NonUnifiedPartDeniedPermissionRuleTests` in the same file are
+  unchanged.
 - The base app's Person overview pulled the wrong object: `onPreSharedPull` fetched `p.Organisation` by the
   Person's `scoped.id`, so no object came back and the overview's `object` (the Person) was null — e.g. the
   breadcrumb `{{ object?.FirstName }}` rendered blank. It now pulls `p.Person`. (The dynamic panels were
