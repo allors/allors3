@@ -5,8 +5,6 @@ on:
     branches:
       - main
       - 'v[0-9]*'
-      - 'feature/**'
-      - 'issue/**'
   pull_request:
     branches:
       - main
