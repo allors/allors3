@@ -131,6 +131,14 @@ under a dated version heading.
 
 ### Fixed
 
+- The test-population `SalesInvoiceItemBuilder.WithPartItemDefaults` built a **product** item, not a part item.
+  It was a copy of `WithProductItemDefaults` — using the `ProductItem` invoice-item-type and `.WithProduct(...)`
+  — despite its name and the `salesInvoiceItem_Part` it populates on the sample sales invoices. It now uses the
+  `PartItem` invoice-item-type (`InvoiceItemTypes.PartItemId`) and `.WithPart(...)`, matching the correct
+  `PurchaseInvoiceItemBuilder.WithPartItemDefaults`. (`UnifiedGood` is both a `Good` and a `Part`, so the
+  existing serialised-good source remains valid for the part role.) The part item sets only `Part` — not
+  `SerialisedItem`/availability — because a `SalesInvoiceItem` permits at most one of
+  `SerialisedItem` / `ProductFeatures` / `Part`.
 - The `ProductFeatureTests` "required relations" tests now build the named object before asserting it derives
   without errors. `GivenModel`, `GivenServiceFeature`, `GivenSizeConstant`, `GivenSoftwareFeature` and
   `GivenProductQualityConstant` set `builder.WithName("Mt")` but never called `builder.Build()` afterwards

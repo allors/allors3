@@ -86,7 +86,7 @@ namespace Allors.Database.Domain.TestPopulation
         {
             var m = @this.Transaction.Database.Services.Get<MetaPopulation>();
             var faker = @this.Transaction.Faker();
-            var invoiceItemType = @this.Transaction.Extent<InvoiceItemType>().FirstOrDefault(v => v.UniqueId.Equals(InvoiceItemTypes.ProductItemId));
+            var invoiceItemType = @this.Transaction.Extent<InvoiceItemType>().FirstOrDefault(v => v.UniqueId.Equals(InvoiceItemTypes.PartItemId));
 
             var unifiedGoodExtent = @this.Transaction.Extent<UnifiedGood>();
             unifiedGoodExtent.Filter.AddEquals(m.UnifiedGood.InventoryItemKind, new InventoryItemKinds(@this.Transaction).Serialised);
@@ -96,9 +96,7 @@ namespace Allors.Database.Domain.TestPopulation
                 .WithComment(faker.Lorem.Sentence())
                 .WithInternalComment(faker.Lorem.Sentence())
                 .WithInvoiceItemType(invoiceItemType)
-                .WithProduct(serializedPart)
-                .WithSerialisedItem(serializedPart.SerialisedItems.FirstOrDefault())
-                .WithNextSerialisedItemAvailability(faker.Random.ListItem(@this.Transaction.Extent<SerialisedItemAvailability>()))
+                .WithPart(serializedPart)
                 .WithMessage(faker.Lorem.Sentence())
                 .WithQuantity(1)
                 .WithAssignedUnitPrice(faker.Random.UInt(2, 100));
