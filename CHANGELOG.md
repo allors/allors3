@@ -131,6 +131,13 @@ under a dated version heading.
 
 ### Fixed
 
+- The Apps meta/workspace generator built the **apps-extranet** TypeScript workspace libraries against the
+  **Default** workspace instead of **Extranet**. `Generate/Program.cs` applied a single `workspaceName = "Default"`
+  to every workspace output, including the three `libs/apps-extranet/workspace/**` outputs, so the extranet
+  meta / meta-json / domain were generated with the full Default workspace rather than the restricted Extranet
+  one. Each output now carries its own workspace name and the apps-extranet outputs use `"Extranet"`. (The
+  generated files are gitignored, so only the generator changes; regenerating drops the extranet domain from
+  ~580 to ~18 classes, matching the Extranet workspace.)
 - `CustomerShipmentTests.GivenCustomerShipmentBuilder_WhenBuild_ThenPostBuildRelationsMustExist` now asserts the
   derived `ShipFromParty` against the expected internal organisation instead of comparing the value to itself.
   The assertion read `Assert.Equal(shipment.ShipFromParty, shipment.ShipFromParty)` — a tautology that passed
