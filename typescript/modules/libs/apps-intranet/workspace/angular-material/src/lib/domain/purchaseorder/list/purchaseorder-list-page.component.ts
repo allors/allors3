@@ -244,7 +244,7 @@ export class PurchaseOrderListPageComponent implements OnInit, OnDestroy {
                 v.PurchaseOrderShipmentState &&
                 v.PurchaseOrderShipmentState.Name
               }`,
-              customerReference: `${v.Description || ''}`,
+              customerReference: `${v.CustomerReference || ''}`,
               invoice: v.PurchaseInvoicesWherePurchaseOrder?.map(
                 (w) => w.InvoiceNumber
               ).join(', '),
