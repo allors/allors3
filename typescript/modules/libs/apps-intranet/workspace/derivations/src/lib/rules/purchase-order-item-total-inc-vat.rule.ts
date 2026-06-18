@@ -65,7 +65,10 @@ export class PurchaseOrderItemTotalIncVatRule
             : parseFloat(v.Amount ?? '0');
       });
 
-      unitVat = (unitBasePrice * parseFloat(vatRate?.Rate ?? '0')) / 100;
+      unitVat =
+        ((unitBasePrice - unitDiscount + unitSurcharge) *
+          parseFloat(vatRate?.Rate ?? '0')) /
+        100;
     }
 
     const unitPrice = unitBasePrice - unitDiscount + unitSurcharge;
