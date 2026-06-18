@@ -122,6 +122,10 @@ under a dated version heading.
 
 ### Fixed
 
+- The base app's Person overview pulled the wrong object: `onPreSharedPull` fetched `p.Organisation` by the
+  Person's `scoped.id`, so no object came back and the overview's `object` (the Person) was null — e.g. the
+  breadcrumb `{{ object?.FirstName }}` rendered blank. It now pulls `p.Person`. (The dynamic panels were
+  unaffected because they drive off `scoped.id` directly.)
 - The extranet app's `MainComponent` leaked its `router.events` subscription: unlike the sibling
   toggle/open/close side-nav subscriptions it was neither stored nor unsubscribed, so it survived component
   teardown. It is now kept in a `routerSubscription` field and unsubscribed in `ngOnDestroy`.
