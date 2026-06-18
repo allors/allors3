@@ -131,6 +131,13 @@ under a dated version heading.
 
 ### Fixed
 
+- The `ProductFeatureTests` "required relations" tests now build the named object before asserting it derives
+  without errors. `GivenModel`, `GivenServiceFeature`, `GivenSizeConstant`, `GivenSoftwareFeature` and
+  `GivenProductQualityConstant` set `builder.WithName("Mt")` but never called `builder.Build()` afterwards
+  (unlike the correct `GivenDimension`), so after the `Rollback()` there was no object to derive and the
+  positive assertion `Assert.False(this.Derive().HasErrors)` passed vacuously. Each now calls `builder.Build()`
+  after `WithName`, so the assertion actually exercises a named object's derivation. (The review flagged
+  `GivenModel` and `GivenServiceFeature`; the identical omission was present in three sibling tests.)
 - The base app's Person overview pulled the wrong object: `onPreSharedPull` fetched `p.Organisation` by the
   Person's `scoped.id`, so no object came back and the overview's `object` (the Person) was null — e.g. the
   breadcrumb `{{ object?.FirstName }}` rendered blank. It now pulls `p.Person`. (The dynamic panels were
