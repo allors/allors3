@@ -86,10 +86,15 @@ namespace Scaffold
             {
             }
 
-            public override ComponentModel? Build(IElement element) =>
-                TypeByTag.ContainsKey(element.TagName.ToLowerInvariant())
+            public override ComponentModel? Build(IElement element)
+            {
+                var tag = element.TagName.ToLowerInvariant();
+                return TypeByTag.ContainsKey(tag) &&
+                       (tag != "a-mat-autocomplete" ||
+                        element.GetAttribute("[roleType]") != null)
                     ? new RoleComponentModel(element)
                     : base.Build(element);
+            }
         }
 
         public override bool Equals(object? obj)

@@ -40,7 +40,7 @@ export class PartyDisplayPhoneRule implements IRule<Party> {
             v.ContactMechanism as TelecommunicationsNumber;
           return telecommunicationsNumber.DisplayName;
         })
-        .reduce((acc: string, cur: string) => acc + ', ' + cur, '');
+        .join(', ');
     }
 
     return '';
