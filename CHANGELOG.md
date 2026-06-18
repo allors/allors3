@@ -122,6 +122,12 @@ under a dated version heading.
 
 ### Fixed
 
+- The purchase-invoice-item `TotalIncVat` workspace derivation computed unit VAT on the gross base price
+  instead of the net unit price. `unitVat` was `unitBasePrice * vatRate`, so the line's discounts and
+  surcharges — already accumulated into `unitDiscount`/`unitSurcharge` just above — were excluded from the VAT
+  base, overstating VAT on discounted lines and understating it on surcharged ones (and leaving `TotalIncVat`
+  inconsistent with the sibling `UnitVat` rule, which already applied the rate to the net price). It now
+  applies the rate to `unitBasePrice - unitDiscount + unitSurcharge`.
 - The extranet work-task create + edit forms bound the FullfillContactMechanism select's options to
   PartyContactMechanisms instead of ContactMechanisms. `onPostPull` assigned the pulled
   `CurrentPartyContactMechanisms` (a PartyContactMechanism collection) straight to
