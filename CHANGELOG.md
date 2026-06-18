@@ -122,6 +122,15 @@ under a dated version heading.
 
 ### Fixed
 
+- The intranet ProductCategory list could not be sorted: its sorter was a copy of the Catalogue sorter, so
+  its keys pointed at the foreign `m.Catalogue.*` / `m.Scope.*` roleTypes (which a `ProductCategory` pull has
+  no business sorting by) rather than ProductCategory's own roles. It now sorts by `m.ProductCategory.Name`.
+  (Sorting the `scope` / parent columns would need derived `<Composite>Name` roles on ProductCategory — a
+  dotnet-domain change tracked separately.)
+- The intranet WorkRequirement list's `priority` column sorted by the requirement number, not the priority.
+  Its sort key was `m.WorkRequirement.SortableRequirementNumber` — the same roleType the `number` column uses
+  — so sorting by priority reproduced the number order. It now sorts by `m.WorkRequirement.PriorityName`
+  (mirroring how the `state` column uses `RequirementStateName`).
 - The party `DisplayPhone` workspace derivation prefixed its output with a spurious `", "`. It joined the
   telecommunications-number display names with `.reduce((acc, cur) => acc + ', ' + cur, '')` seeded with an
   empty string, so the seed contributed a leading separator (e.g. `", Office, Mobile"`). It now uses
