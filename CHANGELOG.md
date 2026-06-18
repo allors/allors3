@@ -131,6 +131,13 @@ under a dated version heading.
 
 ### Fixed
 
+- The Apps test server's invalid-model-state logger silently dropped the validation detail. `Startup`'s
+  `InvalidModelStateResponseFactory` called `logger.LogError(problemDetails.Title, message)`, but `LogError`'s
+  first argument is the message *template* and `ValidationProblemDetails.Title` is the constant
+  `"One or more validation errors occurred."` with no `{}` placeholders — so `message` (the joined field
+  errors) had nowhere to bind and was discarded, logging only the generic title. It now calls
+  `LogError("{Title}: {Errors}", problemDetails.Title, message)`, so the actual validation errors are logged
+  and both values become structured properties.
 - The Apps test `TestController` (`Database/Server`) no longer throws a `NullReferenceException` inside its own
   error handler. Its `ILogger<TestController>` property was declared but never injected — the constructor took
   only `IDatabaseService`, so the property stayed `null` — yet the `catch` blocks of `Init`, `Restart` and
