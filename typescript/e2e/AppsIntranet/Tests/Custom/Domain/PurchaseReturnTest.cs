@@ -55,6 +55,11 @@ namespace Tests.E2E.Objects
         {
             var before = new PurchaseReturns(this.Transaction).Extent().ToArray();
 
+            var shipToParty = new Organisations(this.Transaction)
+                .Extent()
+                .First(v => v.Name == "Allors BV")
+                .ActiveSuppliers.First();
+
             var @class = this.M.Shipment;
 
             var list = this.Application.GetList(@class);
@@ -67,6 +72,9 @@ namespace Tests.E2E.Objects
 
             var form = new PurchasereturnCreateFormComponent(this.OverlayContainer);
 
+            await form.ShipToPartyAutocomplete.SelectAsync(shipToParty.DisplayName);
+            await this.Page.WaitForAngular();
+
             var saveComponent = new Button(form, "text=SAVE");
             await saveComponent.ClickAsync();
 
@@ -78,7 +86,9 @@ namespace Tests.E2E.Objects
 
             ClassicAssert.AreEqual(before.Length + 1, after.Length);
 
-            //var productType = after.Except(before).First();
+            var purchaseReturn = after.Except(before).First();
+
+            ClassicAssert.AreEqual(shipToParty, purchaseReturn.ShipToParty);
         }
     }
 }
