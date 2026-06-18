@@ -13,14 +13,15 @@ namespace Allors.Database.Domain.Tests
         public AutomatedAgentTest(Fixture fixture) : base(fixture) { }
 
         [Fact]
-        public void ChangedNameDerivePartyName()
+        public void ChangedNameDeriveDisplayName()
         {
             var automatedAgent = new AutomatedAgentBuilder(this.Transaction).Build();
             this.Transaction.Derive();
 
             automatedAgent.Name = "name";
+            this.Transaction.Derive();
 
-            Assert.Equal("name", automatedAgent.Name);
+            Assert.Equal("name", automatedAgent.DisplayName);
         }
     }
 }

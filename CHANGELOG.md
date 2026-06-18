@@ -131,6 +131,11 @@ under a dated version heading.
 
 ### Fixed
 
+- `AutomatedAgentTest.ChangedNameDerivePartyName` was vacuous: it set `automatedAgent.Name = "name"`, never
+  re-derived, and asserted the raw `Name` it had just set — and the `PartyName` role it was named for does not
+  exist (the role derived from `Name` is `DisplayName`, via `AutomatedAgentRule`). It now re-derives after the
+  change and asserts the derived `DisplayName`, and is renamed `ChangedNameDeriveDisplayName` to match what it
+  verifies.
 - The base app's Person overview pulled the wrong object: `onPreSharedPull` fetched `p.Organisation` by the
   Person's `scoped.id`, so no object came back and the overview's `object` (the Person) was null — e.g. the
   breadcrumb `{{ object?.FirstName }}` rendered blank. It now pulls `p.Person`. (The dynamic panels were
