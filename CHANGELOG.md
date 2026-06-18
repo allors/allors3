@@ -122,6 +122,9 @@ under a dated version heading.
 
 ### Fixed
 
+- The intranet non-unified-part list's `type` column was always blank: the column is defined (and sortable),
+  but the row-builder never set a `type` key. It now populates `type` from `v.ProductTypeName` (the role the
+  column already sorts by, alongside the sibling `brand`/`model`/`kind` derived-name columns).
 - The intranet purchase-order list's `customerReference` column showed the order's `Description` instead of
   its `CustomerReference`. The row-builder read `v.Description`; it now reads `v.CustomerReference` (the role
   the column is named for and the list already sorts by).
