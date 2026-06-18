@@ -131,6 +131,11 @@ under a dated version heading.
 
 ### Fixed
 
+- `AutomatedAgentTest.ChangedNameDerivePartyName` was vacuous: it set `automatedAgent.Name = "name"`, never
+  re-derived, and asserted the raw `Name` it had just set — and the `PartyName` role it was named for does not
+  exist (the role derived from `Name` is `DisplayName`, via `AutomatedAgentRule`). It now re-derives after the
+  change and asserts the derived `DisplayName`, and is renamed `ChangedNameDeriveDisplayName` to match what it
+  verifies.
 - `RgsFilterRuleTests.RgsFilterUseWoCoTrueAndUseExcludeWoCoFalseShouldNotGiveError` now exercises the scenario in
   its name. Its body set `UseWoCo = false; ExcludeWoCo = true` — the opposite of the name, and byte-identical to
   the preceding `…UseWoCoFalseAndUseExcludeWoCoTrue…` test — so the "UseWoCo true / ExcludeWoCo false"
