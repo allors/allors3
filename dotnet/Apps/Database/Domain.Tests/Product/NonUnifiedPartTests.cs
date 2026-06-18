@@ -10,22 +10,6 @@ namespace Allors.Database.Domain.Tests
     using System.Linq;
     using Xunit;
 
-    public class NonUnifiedPartTests : DomainTest, IClassFixture<Fixture>
-    {
-        public NonUnifiedPartTests(Fixture fixture) : base(fixture) { }
-
-        [Fact]
-        public void OnPostDeriveAssertExistPart()
-        {
-            this.Transaction.GetSingleton().Settings.UseProductNumberCounter = true;
-
-            var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Transaction).Build();
-
-            var errors = this.Derive().Errors.ToList();
-            Assert.Contains(errors, e => e.Message.Equals("NonUnifiedGood.Part is required"));
-        }
-    }
-
     public class NonUnifiedPartRuleTests : DomainTest, IClassFixture<Fixture>
     {
         public NonUnifiedPartRuleTests(Fixture fixture) : base(fixture) { }

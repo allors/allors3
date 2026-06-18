@@ -225,8 +225,8 @@ namespace Allors.Database.Domain.Tests
             var errors = this.Derive().Errors.ToList();
             Assert.Empty(errors);
 
-            rgsFilter.UseWoCo = false;
-            rgsFilter.ExcludeWoCo = true;
+            rgsFilter.UseWoCo = true;
+            rgsFilter.ExcludeWoCo = false;
 
             errors = this.Derive().Errors.ToList();
             Assert.Empty(errors);

@@ -138,6 +138,50 @@ under a dated version heading.
   positive assertion `Assert.False(this.Derive().HasErrors)` passed vacuously. Each now calls `builder.Build()`
   after `WithName`, so the assertion actually exercises a named object's derivation. (The review flagged
   `GivenModel` and `GivenServiceFeature`; the identical omission was present in three sibling tests.)
+- The Apps meta/workspace generator built the **apps-extranet** TypeScript workspace libraries against the
+  **Default** workspace instead of **Extranet**. `Generate/Program.cs` applied a single `workspaceName = "Default"`
+  to every workspace output, including the three `libs/apps-extranet/workspace/**` outputs, so the extranet
+  meta / meta-json / domain were generated with the full Default workspace rather than the restricted Extranet
+  one. Each output now carries its own workspace name and the apps-extranet outputs use `"Extranet"`. (The
+  generated files are gitignored, so only the generator changes; regenerating drops the extranet domain from
+  ~580 to ~18 classes, matching the Extranet workspace.)
+- `AutomatedAgentTest.ChangedNameDerivePartyName` was vacuous: it set `automatedAgent.Name = "name"`, never
+  re-derived, and asserted the raw `Name` it had just set — and the `PartyName` role it was named for does not
+  exist (the role derived from `Name` is `DisplayName`, via `AutomatedAgentRule`). It now re-derives after the
+  change and asserts the derived `DisplayName`, and is renamed `ChangedNameDeriveDisplayName` to match what it
+  verifies.
+- `RgsFilterRuleTests.RgsFilterUseWoCoTrueAndUseExcludeWoCoFalseShouldNotGiveError` now exercises the scenario in
+  its name. Its body set `UseWoCo = false; ExcludeWoCo = true` — the opposite of the name, and byte-identical to
+  the preceding `…UseWoCoFalseAndUseExcludeWoCoTrue…` test — so the "UseWoCo true / ExcludeWoCo false"
+  combination was never actually tested and the case merely duplicated its sibling. It now sets
+  `UseWoCo = true; ExcludeWoCo = false`, asserting that the single-flag combination derives without the
+  "cannot both be true" error.
+- Removed a misplaced, vacuous duplicate test from the NonUnifiedPart suite. `NonUnifiedPartTests` contained a
+  single `OnPostDeriveAssertExistPart` that was a byte-identical copy of the test in `NonUnifiedGoodTests`: it
+  built a `NonUnifiedGood` and asserted `"NonUnifiedGood.Part is required"`, so it exercised `NonUnifiedGood`,
+  not `NonUnifiedPart` (which has no required-part rule — an empty `NonUnifiedPart` derives clean), and merely
+  duplicated coverage already in `NonUnifiedGoodTests`. The now-empty `NonUnifiedPartTests` class was removed;
+  the genuine `NonUnifiedPartRuleTests` / `NonUnifiedPartDeniedPermissionRuleTests` in the same file are
+  unchanged.
+- `CustomerShipmentTests.GivenCustomerShipmentBuilder_WhenBuild_ThenPostBuildRelationsMustExist` now asserts the
+  derived `ShipFromParty` against the expected internal organisation instead of comparing the value to itself.
+  The assertion read `Assert.Equal(shipment.ShipFromParty, shipment.ShipFromParty)` — a tautology that passed
+  even if the `ShipFromParty` derivation were wrong (or null). It now asserts
+  `Assert.Equal(this.InternalOrganisation, shipment.ShipFromParty)`, matching the sibling `ShipFromAddress`
+  assertion and the derivation (the single internal organisation becomes the ship-from party).
+- The Apps test server's invalid-model-state logger silently dropped the validation detail. `Startup`'s
+  `InvalidModelStateResponseFactory` called `logger.LogError(problemDetails.Title, message)`, but `LogError`'s
+  first argument is the message *template* and `ValidationProblemDetails.Title` is the constant
+  `"One or more validation errors occurred."` with no `{}` placeholders — so `message` (the joined field
+  errors) had nowhere to bind and was discarded, logging only the generic title. It now calls
+  `LogError("{Title}: {Errors}", problemDetails.Title, message)`, so the actual validation errors are logged
+  and both values become structured properties.
+- The Apps test `TestController` (`Database/Server`) no longer throws a `NullReferenceException` inside its own
+  error handler. Its `ILogger<TestController>` property was declared but never injected — the constructor took
+  only `IDatabaseService`, so the property stayed `null` — yet the `catch` blocks of `Init`, `Restart` and
+  `TimeShift` call `this.Logger.LogError(...)`. Any failure therefore NRE'd inside the handler, masking the
+  original exception and turning the intended `400 + message` into a `500`. The logger is now injected through
+  the constructor, mirroring the sibling `TestAuthenticationController`.
 - The base app's Person overview pulled the wrong object: `onPreSharedPull` fetched `p.Organisation` by the
   Person's `scoped.id`, so no object came back and the overview's `object` (the Person) was null — e.g. the
   breadcrumb `{{ object?.FirstName }}` rendered blank. It now pulls `p.Person`. (The dynamic panels were
