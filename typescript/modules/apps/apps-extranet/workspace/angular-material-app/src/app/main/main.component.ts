@@ -29,6 +29,7 @@ export class MainComponent implements OnInit, OnDestroy {
 
   sideMenuItems: SideMenuItem[] = [];
 
+  private routerSubscription: Subscription;
   private toggleSubscription: Subscription;
   private openSubscription: Subscription;
   private closeSubscription: Subscription;
@@ -75,7 +76,7 @@ export class MainComponent implements OnInit, OnDestroy {
     });
 
     this.router.onSameUrlNavigation = 'reload';
-    this.router.events
+    this.routerSubscription = this.router.events
       .pipe(filter((v) => v instanceof NavigationEnd))
       .subscribe(() => {
         if (this.sidenav) {
@@ -97,6 +98,7 @@ export class MainComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.routerSubscription.unsubscribe();
     this.toggleSubscription.unsubscribe();
     this.openSubscription.unsubscribe();
     this.closeSubscription.unsubscribe();
