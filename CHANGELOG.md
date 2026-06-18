@@ -138,6 +138,24 @@ under a dated version heading.
   one. Each output now carries its own workspace name and the apps-extranet outputs use `"Extranet"`. (The
   generated files are gitignored, so only the generator changes; regenerating drops the extranet domain from
   ~580 to ~18 classes, matching the Extranet workspace.)
+- `AutomatedAgentTest.ChangedNameDerivePartyName` was vacuous: it set `automatedAgent.Name = "name"`, never
+  re-derived, and asserted the raw `Name` it had just set — and the `PartyName` role it was named for does not
+  exist (the role derived from `Name` is `DisplayName`, via `AutomatedAgentRule`). It now re-derives after the
+  change and asserts the derived `DisplayName`, and is renamed `ChangedNameDeriveDisplayName` to match what it
+  verifies.
+- `RgsFilterRuleTests.RgsFilterUseWoCoTrueAndUseExcludeWoCoFalseShouldNotGiveError` now exercises the scenario in
+  its name. Its body set `UseWoCo = false; ExcludeWoCo = true` — the opposite of the name, and byte-identical to
+  the preceding `…UseWoCoFalseAndUseExcludeWoCoTrue…` test — so the "UseWoCo true / ExcludeWoCo false"
+  combination was never actually tested and the case merely duplicated its sibling. It now sets
+  `UseWoCo = true; ExcludeWoCo = false`, asserting that the single-flag combination derives without the
+  "cannot both be true" error.
+- Removed a misplaced, vacuous duplicate test from the NonUnifiedPart suite. `NonUnifiedPartTests` contained a
+  single `OnPostDeriveAssertExistPart` that was a byte-identical copy of the test in `NonUnifiedGoodTests`: it
+  built a `NonUnifiedGood` and asserted `"NonUnifiedGood.Part is required"`, so it exercised `NonUnifiedGood`,
+  not `NonUnifiedPart` (which has no required-part rule — an empty `NonUnifiedPart` derives clean), and merely
+  duplicated coverage already in `NonUnifiedGoodTests`. The now-empty `NonUnifiedPartTests` class was removed;
+  the genuine `NonUnifiedPartRuleTests` / `NonUnifiedPartDeniedPermissionRuleTests` in the same file are
+  unchanged.
 - `CustomerShipmentTests.GivenCustomerShipmentBuilder_WhenBuild_ThenPostBuildRelationsMustExist` now asserts the
   derived `ShipFromParty` against the expected internal organisation instead of comparing the value to itself.
   The assertion read `Assert.Equal(shipment.ShipFromParty, shipment.ShipFromParty)` — a tautology that passed
