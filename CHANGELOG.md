@@ -131,6 +131,22 @@ under a dated version heading.
   Its sort key was `m.WorkRequirement.SortableRequirementNumber` — the same roleType the `number` column uses
   — so sorting by priority reproduced the number order. It now sorts by `m.WorkRequirement.PriorityName`
   (mirroring how the `state` column uses `RequirementStateName`).
+- The party `DisplayPhone` workspace derivation prefixed its output with a spurious `", "`. It joined the
+  telecommunications-number display names with `.reduce((acc, cur) => acc + ', ' + cur, '')` seeded with an
+  empty string, so the seed contributed a leading separator (e.g. `", Office, Mobile"`). It now uses
+  `.join(', ')`.
+- The purchase-order-item `TotalIncVat` workspace derivation computed unit VAT on the gross base price
+  instead of the net unit price — the order-side sibling of the purchase-invoice-item fix. `unitVat` was
+  `unitBasePrice * vatRate`, so the line's discounts and surcharges (accumulated into
+  `unitDiscount`/`unitSurcharge` just above) were excluded from the VAT base, and `TotalIncVat` was left
+  inconsistent with the sibling `UnitVat` rule. It now applies the rate to
+  `unitBasePrice - unitDiscount + unitSurcharge`.
+- The purchase-invoice-item `TotalIncVat` workspace derivation computed unit VAT on the gross base price
+  instead of the net unit price. `unitVat` was `unitBasePrice * vatRate`, so the line's discounts and
+  surcharges — already accumulated into `unitDiscount`/`unitSurcharge` just above — were excluded from the VAT
+  base, overstating VAT on discounted lines and understating it on surcharged ones (and leaving `TotalIncVat`
+  inconsistent with the sibling `UnitVat` rule, which already applied the rate to the net price). It now
+  applies the rate to `unitBasePrice - unitDiscount + unitSurcharge`.
 - The extranet work-task create + edit forms bound the FullfillContactMechanism select's options to
   PartyContactMechanisms instead of ContactMechanisms. `onPostPull` assigned the pulled
   `CurrentPartyContactMechanisms` (a PartyContactMechanism collection) straight to
