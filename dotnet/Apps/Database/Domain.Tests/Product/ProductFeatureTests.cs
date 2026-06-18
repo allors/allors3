@@ -39,6 +39,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Rollback();
 
             builder.WithName("Mt");
+            builder.Build();
 
             Assert.False(this.Derive().HasErrors);
         }
@@ -54,6 +55,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Rollback();
 
             builder.WithName("Mt");
+            builder.Build();
 
             Assert.False(this.Derive().HasErrors);
         }
@@ -69,6 +71,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Rollback();
 
             builder.WithName("Mt");
+            builder.Build();
 
             Assert.False(this.Derive().HasErrors);
         }
@@ -84,6 +87,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Rollback();
 
             builder.WithName("Mt");
+            builder.Build();
 
             Assert.False(this.Derive().HasErrors);
         }
@@ -99,6 +103,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Rollback();
 
             builder.WithName("Mt");
+            builder.Build();
 
             Assert.False(this.Derive().HasErrors);
         }
