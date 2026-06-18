@@ -14,6 +14,9 @@ under a dated version heading.
 
 ### Added
 
+- `WorkRequirement.WorkEffortPurpose` (enumeration Refurbishment / Maintenance / Repair): defaults to
+  **Repair** on init, is copied onto the `WorkTask` created by `CreateWorkTask`, and is mirrored into
+  `WorkRequirementVersion` for version history.
 - New **Identity** domain track at `dotnet/Identity`: an orthogonal domain that extends `Core` and
   encapsulates all Microsoft ASP.NET Identity integration (identity properties on `User`, `Login`,
   `UserPasswordReset`, normalization/password rules, `PasswordHasher`, `AllorsUserStore`/`AllorsRoleStore`,
@@ -125,6 +128,12 @@ under a dated version heading.
   `unitDiscount`/`unitSurcharge` just above) were excluded from the VAT base, and `TotalIncVat` was left
   inconsistent with the sibling `UnitVat` rule. It now applies the rate to
   `unitBasePrice - unitDiscount + unitSurcharge`.
+- The purchase-invoice-item `TotalIncVat` workspace derivation computed unit VAT on the gross base price
+  instead of the net unit price. `unitVat` was `unitBasePrice * vatRate`, so the line's discounts and
+  surcharges — already accumulated into `unitDiscount`/`unitSurcharge` just above — were excluded from the VAT
+  base, overstating VAT on discounted lines and understating it on surcharged ones (and leaving `TotalIncVat`
+  inconsistent with the sibling `UnitVat` rule, which already applied the rate to the net price). It now
+  applies the rate to `unitBasePrice - unitDiscount + unitSurcharge`.
 - The extranet work-task create + edit forms bound the FullfillContactMechanism select's options to
   PartyContactMechanisms instead of ContactMechanisms. `onPostPull` assigned the pulled
   `CurrentPartyContactMechanisms` (a PartyContactMechanism collection) straight to
