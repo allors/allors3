@@ -120,7 +120,7 @@ namespace Tests.E2E.Generic
                                 var rows = objectRelation.Locator("tr[data-allors-id]");
                                 for (var j = 0; j < await rows.CountAsync(); j++)
                                 {
-                                    var row = rows.Nth(i);
+                                    var row = rows.Nth(j);
 
                                     await row.ClickAsync();
 
