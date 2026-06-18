@@ -122,6 +122,10 @@ under a dated version heading.
 
 ### Fixed
 
+- The intranet `DisplayService.description()` read the `nameByObjectType` map instead of
+  `descriptionByObjectType`, so the dynamic summary panel showed an object's name as both its name and its
+  description. It now reads `descriptionByObjectType`, falling back to `nameByObjectType` when no description
+  role is configured for a type (the map is not yet populated, so behaviour is unchanged until it is).
 - The purchase-invoice summary panel's "ship to" and "Bill to End Customer" cards both navigated to the
   `BilledFrom` party on click (copied from the "Billed from" card) instead of the party each card shows. They
   now navigate to `ShipToCustomer` and `BillToEndCustomer` respectively.
