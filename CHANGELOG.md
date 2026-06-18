@@ -122,6 +122,9 @@ under a dated version heading.
 
 ### Fixed
 
+- The extranet app's `MainComponent` leaked its `router.events` subscription: unlike the sibling
+  toggle/open/close side-nav subscriptions it was neither stored nor unsubscribed, so it survived component
+  teardown. It is now kept in a `routerSubscription` field and unsubscribed in `ngOnDestroy`.
 - The intranet `DisplayService.description()` read the `nameByObjectType` map instead of
   `descriptionByObjectType`, so the dynamic summary panel showed an object's name as both its name and its
   description. It now reads `descriptionByObjectType`, falling back to `nameByObjectType` when no description
