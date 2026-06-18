@@ -131,6 +131,12 @@ under a dated version heading.
 
 ### Fixed
 
+- The test-population `SalesInvoiceItemBuilder.WithPartItemDefaults` built a **product** item, not a part item.
+  It was a copy of `WithProductItemDefaults` — using the `ProductItem` invoice-item-type and `.WithProduct(...)`
+  — despite its name and the `salesInvoiceItem_Part` it populates on the sample sales invoices. It now uses the
+  `PartItem` invoice-item-type (`InvoiceItemTypes.PartItemId`) and `.WithPart(...)`, matching the correct
+  `PurchaseInvoiceItemBuilder.WithPartItemDefaults`. (`UnifiedGood` is both a `Good` and a `Part`, so the
+  existing serialised-good source remains valid for the part role.)
 - `CustomerShipmentTests.GivenCustomerShipmentBuilder_WhenBuild_ThenPostBuildRelationsMustExist` now asserts the
   derived `ShipFromParty` against the expected internal organisation instead of comparing the value to itself.
   The assertion read `Assert.Equal(shipment.ShipFromParty, shipment.ShipFromParty)` — a tautology that passed
