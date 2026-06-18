@@ -122,6 +122,12 @@ under a dated version heading.
 
 ### Fixed
 
+- The purchase-order-item `TotalIncVat` workspace derivation computed unit VAT on the gross base price
+  instead of the net unit price — the order-side sibling of the purchase-invoice-item fix. `unitVat` was
+  `unitBasePrice * vatRate`, so the line's discounts and surcharges (accumulated into
+  `unitDiscount`/`unitSurcharge` just above) were excluded from the VAT base, and `TotalIncVat` was left
+  inconsistent with the sibling `UnitVat` rule. It now applies the rate to
+  `unitBasePrice - unitDiscount + unitSurcharge`.
 - The purchase-invoice-item `TotalIncVat` workspace derivation computed unit VAT on the gross base price
   instead of the net unit price. `unitVat` was `unitBasePrice * vatRate`, so the line's discounts and
   surcharges — already accumulated into `unitDiscount`/`unitSurcharge` just above — were excluded from the VAT
