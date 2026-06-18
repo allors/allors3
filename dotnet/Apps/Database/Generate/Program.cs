@@ -24,18 +24,18 @@ namespace Allors.Meta.Generation.Storage
 
             string[,] workspace =
             {
-                { "../Core/Workspace/Templates/meta.cs.stg", "Workspace/Meta/Generated" },
-                { "../Core/Workspace/Templates/meta.lazy.cs.stg", "Workspace/Meta.Lazy/Generated" },
-                { "../Core/Workspace/Templates/domain.cs.stg", "Workspace/Domain/Generated" },
-                { "../Core/Workspace/Templates/uml.cs.stg", "Workspace/Diagrams/Generated" },
+                { "../Core/Workspace/Templates/meta.cs.stg", "Workspace/Meta/Generated", "Default" },
+                { "../Core/Workspace/Templates/meta.lazy.cs.stg", "Workspace/Meta.Lazy/Generated", "Default" },
+                { "../Core/Workspace/Templates/domain.cs.stg", "Workspace/Domain/Generated", "Default" },
+                { "../Core/Workspace/Templates/uml.cs.stg", "Workspace/Diagrams/Generated", "Default" },
 
-                { "../../typescript/modules/templates/workspace.meta.ts.stg", "../../typescript/modules/libs/apps-intranet/workspace/meta/src/lib/generated" },
-                { "../../typescript/modules/templates/workspace.meta.json.ts.stg", "../../typescript/modules/libs/apps-intranet/workspace/meta-json/src/lib/generated" },
-                { "../../typescript/modules/templates/workspace.domain.ts.stg", "../../typescript/modules/libs/apps-intranet/workspace/domain/src/lib/generated" },
+                { "../../typescript/modules/templates/workspace.meta.ts.stg", "../../typescript/modules/libs/apps-intranet/workspace/meta/src/lib/generated", "Default" },
+                { "../../typescript/modules/templates/workspace.meta.json.ts.stg", "../../typescript/modules/libs/apps-intranet/workspace/meta-json/src/lib/generated", "Default" },
+                { "../../typescript/modules/templates/workspace.domain.ts.stg", "../../typescript/modules/libs/apps-intranet/workspace/domain/src/lib/generated", "Default" },
 
-                { "../../typescript/modules/templates/workspace.meta.ts.stg", "../../typescript/modules/libs/apps-extranet/workspace/meta/src/lib/generated" },
-                { "../../typescript/modules/templates/workspace.meta.json.ts.stg", "../../typescript/modules/libs/apps-extranet/workspace/meta-json/src/lib/generated" },
-                { "../../typescript/modules/templates/workspace.domain.ts.stg", "../../typescript/modules/libs/apps-extranet/workspace/domain/src/lib/generated" },
+                { "../../typescript/modules/templates/workspace.meta.ts.stg", "../../typescript/modules/libs/apps-extranet/workspace/meta/src/lib/generated", "Extranet" },
+                { "../../typescript/modules/templates/workspace.meta.json.ts.stg", "../../typescript/modules/libs/apps-extranet/workspace/meta-json/src/lib/generated", "Extranet" },
+                { "../../typescript/modules/templates/workspace.domain.ts.stg", "../../typescript/modules/libs/apps-extranet/workspace/domain/src/lib/generated", "Extranet" },
             };
 
             var metaPopulation = MetaBuilder.Build();
@@ -57,12 +57,11 @@ namespace Allors.Meta.Generation.Storage
                 }
             }
 
-            var workspaceName = "Default";
-
             for (var i = 0; i < workspace.GetLength(0); i++)
             {
                 var template = workspace[i, 0];
                 var output = workspace[i, 1];
+                var workspaceName = workspace[i, 2];
 
                 Console.WriteLine("-> " + output);
 
