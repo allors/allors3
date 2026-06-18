@@ -138,6 +138,12 @@ under a dated version heading.
   errors) had nowhere to bind and was discarded, logging only the generic title. It now calls
   `LogError("{Title}: {Errors}", problemDetails.Title, message)`, so the actual validation errors are logged
   and both values become structured properties.
+- The Apps test `TestController` (`Database/Server`) no longer throws a `NullReferenceException` inside its own
+  error handler. Its `ILogger<TestController>` property was declared but never injected — the constructor took
+  only `IDatabaseService`, so the property stayed `null` — yet the `catch` blocks of `Init`, `Restart` and
+  `TimeShift` call `this.Logger.LogError(...)`. Any failure therefore NRE'd inside the handler, masking the
+  original exception and turning the intended `400 + message` into a `500`. The logger is now injected through
+  the constructor, mirroring the sibling `TestAuthenticationController`.
 - The base app's Person overview pulled the wrong object: `onPreSharedPull` fetched `p.Organisation` by the
   Person's `scoped.id`, so no object came back and the overview's `object` (the Person) was null — e.g. the
   breadcrumb `{{ object?.FirstName }}` rendered blank. It now pulls `p.Person`. (The dynamic panels were

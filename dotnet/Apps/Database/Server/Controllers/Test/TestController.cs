@@ -13,11 +13,15 @@ namespace Allors.Database.Server.Controllers
 
     public class TestController : Controller
     {
-        public TestController(IDatabaseService databaseService) => this.DatabaseService = databaseService;
+        public TestController(IDatabaseService databaseService, ILogger<TestController> logger)
+        {
+            this.DatabaseService = databaseService;
+            this.Logger = logger;
+        }
 
         public IDatabaseService DatabaseService { get; set; }
 
-        private ILogger<TestController> Logger { get; set; }
+        private ILogger<TestController> Logger { get; }
 
         [HttpGet]
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
