@@ -122,6 +122,9 @@ under a dated version heading.
 
 ### Fixed
 
+- The intranet purchase-order list's `customerReference` column showed the order's `Description` instead of
+  its `CustomerReference`. The row-builder read `v.Description`; it now reads `v.CustomerReference` (the role
+  the column is named for and the list already sorts by).
 - The intranet product-characteristic list never sorted: it fetched `sorterService.sorter(m.Brand)`, and the
   matching sorter — whose values are `SerialisedItemCharacteristicType` roles — was registered under the wrong
   composite key `m.SerialisedItemCharacteristic` while the list pulls `SerialisedItemCharacteristicType`. The
