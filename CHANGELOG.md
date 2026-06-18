@@ -131,6 +131,12 @@ under a dated version heading.
 
 ### Fixed
 
+- `CustomerShipmentTests.GivenCustomerShipmentBuilder_WhenBuild_ThenPostBuildRelationsMustExist` now asserts the
+  derived `ShipFromParty` against the expected internal organisation instead of comparing the value to itself.
+  The assertion read `Assert.Equal(shipment.ShipFromParty, shipment.ShipFromParty)` — a tautology that passed
+  even if the `ShipFromParty` derivation were wrong (or null). It now asserts
+  `Assert.Equal(this.InternalOrganisation, shipment.ShipFromParty)`, matching the sibling `ShipFromAddress`
+  assertion and the derivation (the single internal organisation becomes the ship-from party).
 - The Apps test server's invalid-model-state logger silently dropped the validation detail. `Startup`'s
   `InvalidModelStateResponseFactory` called `logger.LogError(problemDetails.Title, message)`, but `LogError`'s
   first argument is the message *template* and `ValidationProblemDetails.Title` is the constant
