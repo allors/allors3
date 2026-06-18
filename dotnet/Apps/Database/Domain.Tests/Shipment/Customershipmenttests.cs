@@ -69,7 +69,7 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Equal(new ShipmentStates(this.Transaction).Created, shipment.ShipmentState);
             Assert.Equal(this.InternalOrganisation.ShippingAddress, shipment.ShipFromAddress);
-            Assert.Equal(shipment.ShipFromParty, shipment.ShipFromParty);
+            Assert.Equal(this.InternalOrganisation, shipment.ShipFromParty);
             Assert.Equal(new Stores(this.Transaction).FindBy(this.M.Store.Name, "store"), shipment.Store);
         }
 
