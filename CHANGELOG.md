@@ -122,6 +122,10 @@ under a dated version heading.
 
 ### Fixed
 
+- The intranet serialised-item list never sorted: its pull fetched `sorterService.sorter(m.Brand)` — a
+  composite with no entry in the sorter service, so `sorter(...)` returned undefined and no sorting was
+  applied — even though the pull and result are `SerialisedItem`. It now fetches `sorter(m.SerialisedItem)`,
+  so the id / name / categories / availability columns sort.
 - The intranet ProductCategory list could not be sorted: its sorter was a copy of the Catalogue sorter, so
   its keys pointed at the foreign `m.Catalogue.*` / `m.Scope.*` roleTypes (which a `ProductCategory` pull has
   no business sorting by) rather than ProductCategory's own roles. It now sorts by `m.ProductCategory.Name`.
