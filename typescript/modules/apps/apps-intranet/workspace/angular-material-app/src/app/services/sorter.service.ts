@@ -180,9 +180,7 @@ export class AppSorterService implements SorterService {
     define(
       m.ProductCategory,
       new Sorter({
-        name: m.Catalogue.Name,
-        description: m.Catalogue.Description,
-        scope: m.Scope.Name,
+        name: m.ProductCategory.Name,
       })
     );
 
@@ -278,7 +276,7 @@ export class AppSorterService implements SorterService {
     );
 
     define(
-      m.SerialisedItemCharacteristic,
+      m.SerialisedItemCharacteristicType,
       new Sorter({
         name: m.SerialisedItemCharacteristicType.Name,
         uom: m.UnitOfMeasure.Name,
@@ -334,7 +332,7 @@ export class AppSorterService implements SorterService {
       new Sorter({
         number: [m.WorkRequirement.SortableRequirementNumber],
         state: [m.WorkRequirement.RequirementStateName],
-        priority: [m.WorkRequirement.SortableRequirementNumber],
+        priority: [m.WorkRequirement.PriorityName],
         equipment: [m.WorkRequirement.FixedAssetName],
         location: [m.WorkRequirement.Location],
         lastModifiedDate: m.WorkRequirement.LastModifiedDate,

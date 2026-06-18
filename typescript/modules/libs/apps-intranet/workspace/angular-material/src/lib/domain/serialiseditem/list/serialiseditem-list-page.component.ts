@@ -138,7 +138,7 @@ export class SerialisedItemListPageComponent implements OnInit, OnDestroy {
               pull.SerialisedItem({
                 predicate: this.filter.definition.predicate,
                 sorting: sort
-                  ? this.sorterService.sorter(m.Brand)?.create(sort)
+                  ? this.sorterService.sorter(m.SerialisedItem)?.create(sort)
                   : null,
                 arguments: this.filter.parameters(filterFields),
                 skip: pageEvent.pageIndex * pageEvent.pageSize,

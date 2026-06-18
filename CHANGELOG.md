@@ -125,6 +125,46 @@ under a dated version heading.
 - The intranet proposal (quote) list declared `origin` and `destination` columns that were never populated —
   a Proposal has no such roles, and they were absent from the row interface, the row-builder, and the Proposal
   sorter — so they rendered permanently blank (and their `sort: true` was dead). Both columns are removed.
+- The intranet non-unified-part list's `type` column was always blank: the column is defined (and sortable),
+  but the row-builder never set a `type` key. It now populates `type` from `v.ProductTypeName` (the role the
+  column already sorts by, alongside the sibling `brand`/`model`/`kind` derived-name columns).
+- The intranet purchase-order list's `customerReference` column showed the order's `Description` instead of
+  its `CustomerReference`. The row-builder read `v.Description`; it now reads `v.CustomerReference` (the role
+  the column is named for and the list already sorts by).
+- The intranet product-characteristic list never sorted: it fetched `sorterService.sorter(m.Brand)`, and the
+  matching sorter — whose values are `SerialisedItemCharacteristicType` roles — was registered under the wrong
+  composite key `m.SerialisedItemCharacteristic` while the list pulls `SerialisedItemCharacteristicType`. The
+  sorter is now registered under `m.SerialisedItemCharacteristicType` and the list fetches it, so the name /
+  active columns sort. (No other component fetched the old key.)
+- The intranet serialised-item list never sorted: its pull fetched `sorterService.sorter(m.Brand)` — a
+  composite with no entry in the sorter service, so `sorter(...)` returned undefined and no sorting was
+  applied — even though the pull and result are `SerialisedItem`. It now fetches `sorter(m.SerialisedItem)`,
+  so the id / name / categories / availability columns sort.
+- The intranet ProductCategory list could not be sorted: its sorter was a copy of the Catalogue sorter, so
+  its keys pointed at the foreign `m.Catalogue.*` / `m.Scope.*` roleTypes (which a `ProductCategory` pull has
+  no business sorting by) rather than ProductCategory's own roles. It now sorts by `m.ProductCategory.Name`.
+  (Sorting the `scope` / parent columns would need derived `<Composite>Name` roles on ProductCategory — a
+  dotnet-domain change tracked separately.)
+- The intranet WorkRequirement list's `priority` column sorted by the requirement number, not the priority.
+  Its sort key was `m.WorkRequirement.SortableRequirementNumber` — the same roleType the `number` column uses
+  — so sorting by priority reproduced the number order. It now sorts by `m.WorkRequirement.PriorityName`
+  (mirroring how the `state` column uses `RequirementStateName`).
+- The party `DisplayPhone` workspace derivation prefixed its output with a spurious `", "`. It joined the
+  telecommunications-number display names with `.reduce((acc, cur) => acc + ', ' + cur, '')` seeded with an
+  empty string, so the seed contributed a leading separator (e.g. `", Office, Mobile"`). It now uses
+  `.join(', ')`.
+- The purchase-order-item `TotalIncVat` workspace derivation computed unit VAT on the gross base price
+  instead of the net unit price — the order-side sibling of the purchase-invoice-item fix. `unitVat` was
+  `unitBasePrice * vatRate`, so the line's discounts and surcharges (accumulated into
+  `unitDiscount`/`unitSurcharge` just above) were excluded from the VAT base, and `TotalIncVat` was left
+  inconsistent with the sibling `UnitVat` rule. It now applies the rate to
+  `unitBasePrice - unitDiscount + unitSurcharge`.
+- The purchase-invoice-item `TotalIncVat` workspace derivation computed unit VAT on the gross base price
+  instead of the net unit price. `unitVat` was `unitBasePrice * vatRate`, so the line's discounts and
+  surcharges — already accumulated into `unitDiscount`/`unitSurcharge` just above — were excluded from the VAT
+  base, overstating VAT on discounted lines and understating it on surcharged ones (and leaving `TotalIncVat`
+  inconsistent with the sibling `UnitVat` rule, which already applied the rate to the net price). It now
+  applies the rate to `unitBasePrice - unitDiscount + unitSurcharge`.
 - The extranet work-task create + edit forms bound the FullfillContactMechanism select's options to
   PartyContactMechanisms instead of ContactMechanisms. `onPostPull` assigned the pulled
   `CurrentPartyContactMechanisms` (a PartyContactMechanism collection) straight to
