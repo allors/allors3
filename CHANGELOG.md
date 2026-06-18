@@ -131,6 +131,12 @@ under a dated version heading.
 
 ### Fixed
 
+- `RgsFilterRuleTests.RgsFilterUseWoCoTrueAndUseExcludeWoCoFalseShouldNotGiveError` now exercises the scenario in
+  its name. Its body set `UseWoCo = false; ExcludeWoCo = true` — the opposite of the name, and byte-identical to
+  the preceding `…UseWoCoFalseAndUseExcludeWoCoTrue…` test — so the "UseWoCo true / ExcludeWoCo false"
+  combination was never actually tested and the case merely duplicated its sibling. It now sets
+  `UseWoCo = true; ExcludeWoCo = false`, asserting that the single-flag combination derives without the
+  "cannot both be true" error.
 - The base app's Person overview pulled the wrong object: `onPreSharedPull` fetched `p.Organisation` by the
   Person's `scoped.id`, so no object came back and the overview's `object` (the Person) was null — e.g. the
   breadcrumb `{{ object?.FirstName }}` rendered blank. It now pulls `p.Person`. (The dynamic panels were
