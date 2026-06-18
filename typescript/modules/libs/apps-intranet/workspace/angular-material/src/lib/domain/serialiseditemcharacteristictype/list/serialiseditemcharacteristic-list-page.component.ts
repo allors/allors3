@@ -136,7 +136,9 @@ export class SerialisedItemCharacteristicListPageComponent
               pull.SerialisedItemCharacteristicType({
                 predicate: this.filter.definition.predicate,
                 sorting: sort
-                  ? this.sorterService.sorter(m.Brand)?.create(sort)
+                  ? this.sorterService
+                      .sorter(m.SerialisedItemCharacteristicType)
+                      ?.create(sort)
                   : null,
                 include: {
                   UnitOfMeasure: x,
