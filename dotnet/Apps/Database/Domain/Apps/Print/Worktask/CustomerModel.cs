@@ -19,12 +19,12 @@ namespace Allors.Database.Domain.Print.WorkTaskModel
                     this.BillingAddress = postalBillingAddress.Address1;
                     if (!string.IsNullOrWhiteSpace(postalBillingAddress.Address2))
                     {
-                        this.BillingAddress = $"\n{postalBillingAddress.Address2}";
+                        this.BillingAddress += $"\n{postalBillingAddress.Address2}";
                     }
 
                     if (!string.IsNullOrWhiteSpace(postalBillingAddress.Address3))
                     {
-                        this.BillingAddress = $"\n{postalBillingAddress.Address3}";
+                        this.BillingAddress += $"\n{postalBillingAddress.Address3}";
                     }
 
                     this.BillingCity = postalBillingAddress.Locality;

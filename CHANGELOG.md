@@ -131,6 +131,11 @@ under a dated version heading.
 
 ### Fixed
 
+- The Work Task print `CustomerModel` overwrote the billing address instead of appending it. Each
+  `if (Address2/Address3 present)` block **assigned** `this.BillingAddress = $"\n{AddressN}"` rather than
+  appending, so `Address1` (and `Address2`) were discarded and a leading newline remained — the printed
+  billing address showed only the last present line. The two assignments are now `+=`, so the billing address
+  joins the present lines as `Address1\nAddress2\nAddress3`.
 - The `LegalForms` setup seeded the **FR - SASU** legal form under the `FrSas` id. Because a later
   `merge(...)` for the same id wins, `FrSas` was overwritten (its `Description` became "FR - SASU") and
   `LegalForms.FrSasu` was never created (resolved to `null`). The second `merge(...)` now uses `FrSasuId`,
