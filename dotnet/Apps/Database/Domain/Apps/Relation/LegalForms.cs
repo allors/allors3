@@ -112,7 +112,7 @@ namespace Allors.Database.Domain
 
             merge(FrSaId, v => v.Description = "FR - SA");
             merge(FrSasId, v => v.Description = "FR - SAS");
-            merge(FrSasId, v => v.Description = "FR - SASU");
+            merge(FrSasuId, v => v.Description = "FR - SASU");
             merge(FrSarlId, v => v.Description = "FR - SARL");
             merge(FrSncId, v => v.Description = "FR - SNC");
             merge(FrScsId, v => v.Description = "FR - SCS");
