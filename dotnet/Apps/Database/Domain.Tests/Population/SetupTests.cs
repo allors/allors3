@@ -52,5 +52,20 @@ namespace Allors.Database.Domain.Tests
             Assert.NotNull(genderTypes.PreferNotToSay);
             Assert.Equal("Prefer not to say", genderTypes.PreferNotToSay.Name);
         }
+
+        [Fact]
+        public void EmploymentApplicationStatusesAreSeeded()
+        {
+            var transaction = this.Transaction;
+            var database = transaction.Database;
+
+            new Setup(database, new Config()).Apply();
+
+            var statuses = new EmploymentApplicationStatuses(transaction);
+
+            Assert.Equal("Received", statuses.Received.Name);
+            Assert.NotNull(statuses.Reviewed);
+            Assert.Equal("Reviewed", statuses.Reviewed.Name);
+        }
     }
 }

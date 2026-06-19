@@ -131,6 +131,10 @@ under a dated version heading.
 
 ### Fixed
 
+- The `EmploymentApplicationStatuses` setup seeded the **Reviewed** status under the `Received` id. Because a
+  later `merge(...)` for the same id wins, `Received` was overwritten (its `Name` became "Reviewed") and
+  `EmploymentApplicationStatuses.Reviewed` was never created (resolved to `null`). The second `merge(...)` now
+  uses `ReviewedId`, so both `Received` and `Reviewed` are seeded correctly.
 - The `GenderTypes` setup seeded the **Prefer not to say** gender type under the `Other` id. Because a later
   `merge(...)` for the same id wins, `Other` was overwritten (its `Name` became "Prefer not to say") and
   `GenderTypes.PreferNotToSay` was never created (resolved to `null`). The second `merge(...)` now uses
