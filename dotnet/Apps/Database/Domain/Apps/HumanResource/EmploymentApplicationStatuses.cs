@@ -46,7 +46,7 @@ namespace Allors.Database.Domain
                 v.IsActive = true;
             });
 
-            merge(ReceivedId, v =>
+            merge(ReviewedId, v =>
             {
                 v.Name = "Reviewed";
                 localisedName.Set(v, dutchLocale, "Gereviewed");
