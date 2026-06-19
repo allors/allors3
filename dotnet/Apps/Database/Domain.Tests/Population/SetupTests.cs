@@ -37,5 +37,20 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Empty(diff);
         }
+
+        [Fact]
+        public void GenderTypesAreSeeded()
+        {
+            var transaction = this.Transaction;
+            var database = transaction.Database;
+
+            new Setup(database, new Config()).Apply();
+
+            var genderTypes = new GenderTypes(transaction);
+
+            Assert.Equal("Other", genderTypes.Other.Name);
+            Assert.NotNull(genderTypes.PreferNotToSay);
+            Assert.Equal("Prefer not to say", genderTypes.PreferNotToSay.Name);
+        }
     }
 }
