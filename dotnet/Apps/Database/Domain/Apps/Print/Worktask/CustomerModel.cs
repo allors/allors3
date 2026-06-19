@@ -42,12 +42,12 @@ namespace Allors.Database.Domain.Print.WorkTaskModel
                     this.ShippingAddress = shippingAddress.Address1;
                     if (!string.IsNullOrWhiteSpace(shippingAddress.Address2))
                     {
-                        this.ShippingAddress = $"\n{shippingAddress.Address2}";
+                        this.ShippingAddress += $"\n{shippingAddress.Address2}";
                     }
 
                     if (!string.IsNullOrWhiteSpace(shippingAddress.Address3))
                     {
-                        this.ShippingAddress = $"\n{shippingAddress.Address3}";
+                        this.ShippingAddress += $"\n{shippingAddress.Address3}";
                     }
 
                     this.ShippingCity = shippingAddress.Locality;
