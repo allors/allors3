@@ -54,7 +54,7 @@ namespace Allors.Database.Domain
                 v.IsActive = true;
             });
 
-            merge(OtherId, v =>
+            merge(PreferNotToSayId, v =>
             {
                 v.Name = "Prefer not to say";
                 localisedName.Set(v, dutchLocale, "Zeg liever niet");

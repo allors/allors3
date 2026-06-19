@@ -131,6 +131,10 @@ under a dated version heading.
 
 ### Fixed
 
+- The `GenderTypes` setup seeded the **Prefer not to say** gender type under the `Other` id. Because a later
+  `merge(...)` for the same id wins, `Other` was overwritten (its `Name` became "Prefer not to say") and
+  `GenderTypes.PreferNotToSay` was never created (resolved to `null`). The second `merge(...)` now uses
+  `PreferNotToSayId`, so both `Other` and `PreferNotToSay` are seeded correctly.
 - The test-population `SalesInvoiceItemBuilder.WithPartItemDefaults` built a **product** item, not a part item.
   It was a copy of `WithProductItemDefaults` — using the `ProductItem` invoice-item-type and `.WithProduct(...)`
   — despite its name and the `salesInvoiceItem_Part` it populates on the sample sales invoices. It now uses the
