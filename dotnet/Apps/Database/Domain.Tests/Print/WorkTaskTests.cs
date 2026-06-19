@@ -96,6 +96,28 @@ namespace Allors.Database.Domain.Tests.Print
             Assert.Single(model.TimeEntriesByBillingRate);
         }
 
+        [Fact]
+        public void GivenCustomerWithMultiLineBillingAddress_WhenCreatingModel_ThenAllAddressLinesAreJoined()
+        {
+            var purposes = new ContactMechanismPurposes(this.Transaction);
+
+            var customer = new OrganisationBuilder(this.Transaction).WithName("Customer").Build();
+
+            var usa = new Countries(this.Transaction).Extent().First(c => c.IsoCode.Equals("US"));
+            var michigan = new StateBuilder(this.Transaction).WithName("Michigan").WithCountry(usa).Build();
+            var northville = new CityBuilder(this.Transaction).WithName("Northville").WithState(michigan).Build();
+            var postalCode = new PostalCodeBuilder(this.Transaction).WithCode("48167").Build();
+            var billingAddress = this.CreatePostalAddress("123 Street", "Suite S1", "Floor 3", northville, postalCode);
+
+            this.CreatePartyContactMechanism(customer, purposes.BillingAddress, billingAddress);
+
+            this.Transaction.Derive();
+
+            var model = new CustomerModel(customer);
+
+            Assert.Equal("123 Street\nSuite S1\nFloor 3", model.BillingAddress);
+        }
+
         private Part CreatePart(string id) =>
             new NonUnifiedPartBuilder(this.Transaction)
             .WithProductIdentification(new PartNumberBuilder(this.Transaction)
