@@ -131,6 +131,10 @@ under a dated version heading.
 
 ### Fixed
 
+- The `LegalForms` setup seeded the **FR - SASU** legal form under the `FrSas` id. Because a later
+  `merge(...)` for the same id wins, `FrSas` was overwritten (its `Description` became "FR - SASU") and
+  `LegalForms.FrSasu` was never created (resolved to `null`). The second `merge(...)` now uses `FrSasuId`,
+  so both `FrSas` and `FrSasu` are seeded correctly.
 - The `EmploymentApplicationStatuses` setup seeded the **Reviewed** status under the `Received` id. Because a
   later `merge(...)` for the same id wins, `Received` was overwritten (its `Name` became "Reviewed") and
   `EmploymentApplicationStatuses.Reviewed` was never created (resolved to `null`). The second `merge(...)` now

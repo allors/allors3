@@ -67,5 +67,20 @@ namespace Allors.Database.Domain.Tests
             Assert.NotNull(statuses.Reviewed);
             Assert.Equal("Reviewed", statuses.Reviewed.Name);
         }
+
+        [Fact]
+        public void LegalFormsAreSeeded()
+        {
+            var transaction = this.Transaction;
+            var database = transaction.Database;
+
+            new Setup(database, new Config()).Apply();
+
+            var legalForms = new LegalForms(transaction);
+
+            Assert.Equal("FR - SAS", legalForms.FrSas.Description);
+            Assert.NotNull(legalForms.FrSasu);
+            Assert.Equal("FR - SASU", legalForms.FrSasu.Description);
+        }
     }
 }
