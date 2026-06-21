@@ -131,6 +131,11 @@ under a dated version heading.
 
 ### Fixed
 
+- `RepeatingPurchaseInvoice.Repeat` re-billed already-billed, **partially-received** purchase-order items. The
+  "to bill" guard `!ExistOrderItemBillings && IsReceived || IsPartiallyReceived || (!ExistPart && QuantityReceived == 1)`
+  was mis-parenthesised: since `&&` binds tighter than `||`, the already-billed check only gated the `IsReceived`
+  term, so a partially-received item that was already billed got billed again. The three received-conditions are
+  now wrapped in parentheses so the already-billed guard applies to all of them.
 - `PurchaseOrder.AppsCopy` copied each item's sales terms onto the **source** item instead of the new (copied)
   item: the per-item loop called `purchaseOrderItem.AddSalesTerm(...)` rather than `item.AddSalesTerm(...)`. As a
   result copied purchase orders had no item sales terms and the source items' terms were duplicated. The four
