@@ -23,9 +23,9 @@ namespace Allors.Database.Domain.Print.WorkTaskModel
             this.Description = timeEntry.Description;
             this.IsBillable = timeEntry.IsBillable == true;
             this.FromDate = timeEntry.FromDate.ToString("yyyy-MM-dd");
-            this.FromTime = timeEntry.FromDate.ToString("hh:mm:ss");
+            this.FromTime = timeEntry.FromDate.ToString("HH:mm:ss");
             this.ThroughDate = timeEntry.ThroughDate?.ToString("yyyy-MM-dd");
-            this.ThroughTime = timeEntry.ThroughDate?.ToString("hh:mm:ss");
+            this.ThroughTime = timeEntry.ThroughDate?.ToString("HH:mm:ss");
         }
 
         public decimal AmountOfTime { get; }

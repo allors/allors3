@@ -131,6 +131,9 @@ under a dated version heading.
 
 ### Fixed
 
+- The Work Task print `TimeEntryModel` formatted `FromTime`/`ThroughTime` with the 12-hour clock pattern
+  `"hh:mm:ss"` and no AM/PM designator, so afternoon times collapsed onto the morning (e.g. 13:30 printed as
+  "01:30:00"). Both now use the 24-hour pattern `"HH:mm:ss"`.
 - The Product Quote print `IssuerModel` overwrote the issuer's address instead of appending it. Each
   `if (Address2/Address3 present)` block **assigned** `this.Address = $"\n{AddressN}"` rather than appending,
   so the issuer's `GeneralCorrespondence` `Address1` (and `Address2`) were discarded and a leading newline
