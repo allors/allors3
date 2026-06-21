@@ -140,6 +140,20 @@ namespace Allors.Database.Domain.Tests.Print
             Assert.Equal("123 Street\nSuite S1\nDock D1", model.ShippingAddress);
         }
 
+        [Fact]
+        public void GivenAfternoonTimeEntry_WhenCreatingModel_ThenTimesUse24HourClock()
+        {
+            var timeEntry = new TimeEntryBuilder(this.Transaction)
+                .WithFromDate(new DateTime(2024, 1, 2, 13, 30, 0, DateTimeKind.Utc))
+                .WithThroughDate(new DateTime(2024, 1, 2, 14, 45, 0, DateTimeKind.Utc))
+                .Build();
+
+            var model = new TimeEntryModel(timeEntry);
+
+            Assert.Equal("13:30:00", model.FromTime);
+            Assert.Equal("14:45:00", model.ThroughTime);
+        }
+
         private Part CreatePart(string id) =>
             new NonUnifiedPartBuilder(this.Transaction)
             .WithProductIdentification(new PartNumberBuilder(this.Transaction)
