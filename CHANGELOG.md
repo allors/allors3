@@ -131,6 +131,11 @@ under a dated version heading.
 
 ### Fixed
 
+- `SalesInvoice.AppsCopy` copied each item's sales terms onto the **source** item instead of the new (copied)
+  item: the per-item loop called `salesInvoiceItem.AddSalesTerm(...)` (the item being iterated) rather than
+  `invoiceItem.AddSalesTerm(...)` (the copy). As a result the copied invoice's items had no sales terms and the
+  source items' terms were duplicated. The four `Inco`/`Invoice`/`Order`/`QuoteTerm` branches now add to
+  `invoiceItem`. (The order-level sales-term loop already correctly targeted the copy.)
 - The repository meta declared `RequestVersion.RequestState` as `[Multiplicity(OneToOne)]`, unlike every other
   version-state relation (e.g. `CustomerShipmentVersion.ShipmentState` is `ManyToOne`). A `OneToOne` state would
   break once a second `RequestVersion` referenced the same `RequestState` singleton; it is now `ManyToOne`. The

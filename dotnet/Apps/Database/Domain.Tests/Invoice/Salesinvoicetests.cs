@@ -587,6 +587,51 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void GivenSalesInvoiceItemWithSalesTerm_WhenCopying_ThenSalesTermIsCopiedToNewItemNotSource()
+        {
+            var good = new NonUnifiedGoods(this.Transaction).FindBy(this.M.Good.Name, "good1");
+            var productItem = new InvoiceItemTypes(this.Transaction).ProductItem;
+
+            var customer = new OrganisationBuilder(this.Transaction).WithName("customer").Build();
+            var contactMechanism = new PostalAddressBuilder(this.Transaction)
+                .WithAddress1("Haverwerf 15")
+                .WithLocality("Mechelen")
+                .WithCountry(new Countries(this.Transaction).FindBy(this.M.Country.IsoCode, "BE"))
+                .Build();
+
+            new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(customer).Build();
+
+            this.Transaction.Derive();
+
+            var invoice = new SalesInvoiceBuilder(this.Transaction)
+                .WithBillToCustomer(customer)
+                .WithAssignedBillToContactMechanism(contactMechanism)
+                .Build();
+
+            var item = new SalesInvoiceItemBuilder(this.Transaction)
+                .WithInvoiceItemType(productItem)
+                .WithProduct(good)
+                .WithQuantity(1)
+                .WithAssignedUnitPrice(8)
+                .Build();
+
+            item.AddSalesTerm(new InvoiceTermBuilder(this.Transaction)
+                .WithTermType(new InvoiceTermTypes(this.Transaction).PaymentNetDays)
+                .WithTermValue("30")
+                .Build());
+
+            invoice.AddSalesInvoiceItem(item);
+
+            this.Transaction.Derive();
+
+            var copy = invoice.AppsCopy(new SalesInvoiceCopy(invoice));
+
+            // The item-level sales term must be copied onto the new item, not added to the source item.
+            Assert.Single(copy.SalesInvoiceItems.First().SalesTerms);
+            Assert.Single(item.SalesTerms);
+        }
+
+        [Fact]
         public void GivenSalesInvoice_WhenDeriving_ThenTotalAmountMustBeDerived()
         {
             var euro = new Currencies(this.Transaction).FindBy(this.M.Currency.IsoCode, "EUR");
