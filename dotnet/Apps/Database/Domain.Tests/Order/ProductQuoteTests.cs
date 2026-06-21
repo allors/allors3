@@ -6,7 +6,9 @@
 
 namespace Allors.Database.Domain.Tests
 {
+    using System.Collections.Generic;
     using System.Linq;
+    using Domain.Print.ProductQuoteModel;
     using Resources;
     using TestPopulation;
     using Xunit;
@@ -40,6 +42,27 @@ namespace Allors.Database.Domain.Tests
             builder.Build();
 
             Assert.False(this.Derive().HasErrors);
+        }
+
+        [Fact]
+        public void GivenIssuerWithMultiLineGeneralCorrespondence_WhenCreatingModel_ThenAllAddressLinesAreJoined()
+        {
+            var generalAddress = (PostalAddress)this.InternalOrganisation.GeneralCorrespondence;
+            generalAddress.Address1 = "123 Street";
+            generalAddress.Address2 = "Suite S1";
+            generalAddress.Address3 = "Floor 3";
+
+            var party = new PersonBuilder(this.Transaction).WithLastName("party").Build();
+            var quote = new ProductQuoteBuilder(this.Transaction)
+                .WithReceiver(party)
+                .WithFullfillContactMechanism(new WebAddressBuilder(this.Transaction).WithElectronicAddressString("test").Build())
+                .Build();
+
+            this.Transaction.Derive();
+
+            var model = new IssuerModel(quote, new Dictionary<string, byte[]>());
+
+            Assert.Equal("123 Street\nSuite S1\nFloor 3", model.Address);
         }
 
         [Fact]

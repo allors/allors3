@@ -131,6 +131,11 @@ under a dated version heading.
 
 ### Fixed
 
+- The Product Quote print `IssuerModel` overwrote the issuer's address instead of appending it. Each
+  `if (Address2/Address3 present)` block **assigned** `this.Address = $"\n{AddressN}"` rather than appending,
+  so the issuer's `GeneralCorrespondence` `Address1` (and `Address2`) were discarded and a leading newline
+  remained. The two assignments are now `+=`, so the address joins the present lines as
+  `Address1\nAddress2\nAddress3`.
 - The Work Task print `CustomerModel` overwrote the **shipping** address the same way as the billing address:
   each `if (Address2/Address3 present)` block **assigned** `this.ShippingAddress = $"\n{AddressN}"` rather than
   appending, so `Address1` (and `Address2`) were discarded and a leading newline remained. The two assignments
