@@ -131,6 +131,10 @@ under a dated version heading.
 
 ### Fixed
 
+- The repository meta typed `CapitalBudget.CurrentVersion`/`AllVersions` as `SalesOrderVersion` /
+  `SalesOrderVersion[]` (a copy-paste error), even though `CapitalBudget : Budget, Versioned` versions into
+  `CapitalBudgetVersion`. Both relations are now typed `CapitalBudgetVersion`, so CapitalBudget version history
+  is correctly typed. The relation ids are unchanged.
 - The Product Quote print `BillToModel` overwrote the bill-to address instead of appending it. Each
   `if (Address2/Address3 present)` block **assigned** `this.Address = $"\n{AddressN}"` rather than appending,
   so the `FullfillContactMechanism` postal address `Address1` (and `Address2`) were discarded and a leading
