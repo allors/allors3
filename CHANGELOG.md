@@ -131,6 +131,10 @@ under a dated version heading.
 
 ### Fixed
 
+- The repository meta declared `RequestVersion.RequestState` as `[Multiplicity(OneToOne)]`, unlike every other
+  version-state relation (e.g. `CustomerShipmentVersion.ShipmentState` is `ManyToOne`). A `OneToOne` state would
+  break once a second `RequestVersion` referenced the same `RequestState` singleton; it is now `ManyToOne`. The
+  relation id is unchanged.
 - The repository meta typed `CapitalBudget.CurrentVersion`/`AllVersions` as `SalesOrderVersion` /
   `SalesOrderVersion[]` (a copy-paste error), even though `CapitalBudget : Budget, Versioned` versions into
   `CapitalBudgetVersion`. Both relations are now typed `CapitalBudgetVersion`, so CapitalBudget version history
