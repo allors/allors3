@@ -259,7 +259,7 @@ namespace Allors.Database.Domain
             {
                 if (salesTerm.GetType().Name == nameof(IncoTerm))
                 {
-                    @this.AddSalesTerm(new IncoTermBuilder(@this.Transaction())
+                    copy.AddSalesTerm(new IncoTermBuilder(@this.Transaction())
                         .WithTermType(salesTerm.TermType)
                         .WithTermValue(salesTerm.TermValue)
                         .WithDescription(salesTerm.Description)
@@ -268,7 +268,7 @@ namespace Allors.Database.Domain
 
                 if (salesTerm.GetType().Name == nameof(InvoiceTerm))
                 {
-                    @this.AddSalesTerm(new InvoiceTermBuilder(@this.Transaction())
+                    copy.AddSalesTerm(new InvoiceTermBuilder(@this.Transaction())
                         .WithTermType(salesTerm.TermType)
                         .WithTermValue(salesTerm.TermValue)
                         .WithDescription(salesTerm.Description)
@@ -277,7 +277,7 @@ namespace Allors.Database.Domain
 
                 if (salesTerm.GetType().Name == nameof(OrderTerm))
                 {
-                    @this.AddSalesTerm(new OrderTermBuilder(@this.Transaction())
+                    copy.AddSalesTerm(new OrderTermBuilder(@this.Transaction())
                         .WithTermType(salesTerm.TermType)
                         .WithTermValue(salesTerm.TermValue)
                         .WithDescription(salesTerm.Description)
@@ -286,7 +286,7 @@ namespace Allors.Database.Domain
 
                 if (salesTerm.GetType().Name == nameof(QuoteTerm))
                 {
-                    @this.AddSalesTerm(new QuoteTermBuilder(@this.Transaction())
+                    copy.AddSalesTerm(new QuoteTermBuilder(@this.Transaction())
                         .WithTermType(salesTerm.TermType)
                         .WithTermValue(salesTerm.TermValue)
                         .WithDescription(salesTerm.Description)
