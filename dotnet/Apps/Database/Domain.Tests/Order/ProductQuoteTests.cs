@@ -66,6 +66,29 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void GivenQuoteWithSalesTerm_WhenCopying_ThenSalesTermIsCopiedToNewQuoteNotSource()
+        {
+            var party = new PersonBuilder(this.Transaction).WithLastName("party").Build();
+            var quote = new ProductQuoteBuilder(this.Transaction)
+                .WithReceiver(party)
+                .WithFullfillContactMechanism(new WebAddressBuilder(this.Transaction).WithElectronicAddressString("test").Build())
+                .Build();
+
+            quote.AddSalesTerm(new OrderTermBuilder(this.Transaction)
+                .WithTermType(new InvoiceTermTypes(this.Transaction).PaymentNetDays)
+                .WithTermValue("30")
+                .Build());
+
+            this.Transaction.Derive();
+
+            var copy = quote.AppsCopy(new ProductQuoteCopy(quote));
+
+            // Order-level sales terms must be copied onto the new quote, not added to the source.
+            Assert.Single(copy.SalesTerms);
+            Assert.Single(quote.SalesTerms);
+        }
+
+        [Fact]
         public void GivenBillToWithMultiLinePostalAddress_WhenCreatingModel_ThenAllAddressLinesAreJoined()
         {
             var usa = new Countries(this.Transaction).Extent().First(c => c.IsoCode.Equals("US"));

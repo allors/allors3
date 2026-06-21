@@ -131,6 +131,11 @@ under a dated version heading.
 
 ### Fixed
 
+- `QuoteExtensions.AppsCopy` (ProductQuote / Proposal / StatementOfWork) copied the quote's order-level sales
+  terms onto the **source** quote instead of the new `copy`: the loop called `@this.AddSalesTerm(...)` rather
+  than `copy.AddSalesTerm(...)`. As a result copied quotes had no order-level sales terms and the source quote's
+  terms were duplicated. The four `Inco`/`Invoice`/`Order`/`QuoteTerm` branches now add to `copy`. (The
+  item-level loop already correctly targeted the item copy.)
 - `SalesInvoice.AppsCopy` copied each item's sales terms onto the **source** item instead of the new (copied)
   item: the per-item loop called `salesInvoiceItem.AddSalesTerm(...)` (the item being iterated) rather than
   `invoiceItem.AddSalesTerm(...)` (the copy). As a result the copied invoice's items had no sales terms and the
