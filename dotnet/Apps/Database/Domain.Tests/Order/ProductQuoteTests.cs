@@ -66,6 +66,35 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void GivenBillToWithMultiLinePostalAddress_WhenCreatingModel_ThenAllAddressLinesAreJoined()
+        {
+            var usa = new Countries(this.Transaction).Extent().First(c => c.IsoCode.Equals("US"));
+            var michigan = new StateBuilder(this.Transaction).WithName("Michigan").WithCountry(usa).Build();
+            var northville = new CityBuilder(this.Transaction).WithName("Northville").WithState(michigan).Build();
+            var postalCode = new PostalCodeBuilder(this.Transaction).WithCode("48167").Build();
+            var postalAddress = new PostalAddressBuilder(this.Transaction)
+                .WithAddress1("123 Street")
+                .WithAddress2("Suite S1")
+                .WithAddress3("Floor 3")
+                .WithPostalAddressBoundary(postalCode)
+                .WithPostalAddressBoundary(northville)
+                .WithPostalAddressBoundary(usa)
+                .Build();
+
+            var party = new PersonBuilder(this.Transaction).WithLastName("party").Build();
+            var quote = new ProductQuoteBuilder(this.Transaction)
+                .WithReceiver(party)
+                .WithFullfillContactMechanism(postalAddress)
+                .Build();
+
+            this.Transaction.Derive();
+
+            var model = new BillToModel(quote, new Dictionary<string, byte[]>());
+
+            Assert.Equal("123 Street\nSuite S1\nFloor 3", model.Address);
+        }
+
+        [Fact]
         public void GivenProposal_WhenDeriving_ThenRequiredRelationsMustExist()
         {
             var party = new PersonBuilder(this.Transaction).WithLastName("party").Build();
