@@ -76,5 +76,68 @@ namespace Allors.Database.Domain.Tests
             var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.DateDayOfWeek));
         }
+
+        [Fact]
+        public void GivenAlreadyBilledPartiallyReceivedOrderItem_WhenRepeating_ThenItemIsNotRebilled()
+        {
+            var supplier = new OrganisationBuilder(this.Transaction).WithName("supplier").Build();
+            new SupplierRelationshipBuilder(this.Transaction).WithSupplier(supplier).WithInternalOrganisation(this.InternalOrganisation).Build();
+
+            var part = new NonUnifiedGoods(this.Transaction).FindBy(this.M.Good.Name, "good1").Part;
+
+            new SupplierOfferingBuilder(this.Transaction)
+                .WithPart(part)
+                .WithSupplier(supplier)
+                .WithFromDate(this.Transaction.Now().AddDays(-1))
+                .WithUnitOfMeasure(new UnitsOfMeasure(this.Transaction).Piece)
+                .WithPrice(5)
+                .WithCurrency(new Currencies(this.Transaction).FindBy(this.M.Currency.IsoCode, "EUR"))
+                .Build();
+
+            var order = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSupplier(supplier).Build();
+
+            var item = new PurchaseOrderItemBuilder(this.Transaction)
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).PartItem)
+                .WithPart(part)
+                .WithQuantityOrdered(2)
+                .WithAssignedUnitPrice(5)
+                .Build();
+            order.AddPurchaseOrderItem(item);
+            this.Derive();
+
+            order.SetReadyForProcessing();
+            this.Derive();
+
+            order.Send();
+            this.Derive();
+
+            // Partially receive the item (1 of 2 ordered).
+            new ShipmentReceiptBuilder(this.Transaction).WithOrderItem(item).WithQuantityAccepted(1).Build();
+            this.Derive();
+
+            // The item is already billed.
+            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Transaction).Build();
+            var invoiceItem = new PurchaseInvoiceItemBuilder(this.Transaction).Build();
+            purchaseInvoice.AddPurchaseInvoiceItem(invoiceItem);
+            new OrderItemBillingBuilder(this.Transaction).WithOrderItem(item).WithInvoiceItem(invoiceItem).WithQuantity(1).WithAmount(5).Build();
+            this.Derive();
+
+            // Scenario preconditions for RepeatingPurchaseInvoice.Repeat to consider this order/item.
+            Assert.True(order.PurchaseOrderState.IsSent || order.PurchaseOrderState.IsCompleted, $"orderState={order.PurchaseOrderState?.Name}");
+            Assert.True(item.PurchaseOrderItemShipmentState.IsPartiallyReceived, $"itemShipmentState={item.PurchaseOrderItemShipmentState?.Name}");
+
+            var repeatingInvoice = new RepeatingPurchaseInvoiceBuilder(this.Transaction)
+                .WithSupplier(supplier)
+                .WithInternalOrganisation(this.InternalOrganisation)
+                .WithFrequency(new TimeFrequencies(this.Transaction).Month)
+                .Build();
+            this.Derive();
+
+            repeatingInvoice.Repeat();
+            this.Derive();
+
+            // The already-billed item must not be billed a second time.
+            Assert.Single(item.OrderItemBillingsWhereOrderItem);
+        }
     }
 }
