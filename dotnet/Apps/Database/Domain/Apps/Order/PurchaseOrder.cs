@@ -581,7 +581,7 @@ namespace Allors.Database.Domain
                 {
                     if (salesTerm.GetType().Name == nameof(IncoTerm))
                     {
-                        purchaseOrderItem.AddSalesTerm(new IncoTermBuilder(this.Strategy.Transaction)
+                        item.AddSalesTerm(new IncoTermBuilder(this.Strategy.Transaction)
                             .WithTermType(salesTerm.TermType)
                             .WithTermValue(salesTerm.TermValue)
                             .WithDescription(salesTerm.Description)
@@ -590,7 +590,7 @@ namespace Allors.Database.Domain
 
                     if (salesTerm.GetType().Name == nameof(InvoiceTerm))
                     {
-                        purchaseOrderItem.AddSalesTerm(new InvoiceTermBuilder(this.Strategy.Transaction)
+                        item.AddSalesTerm(new InvoiceTermBuilder(this.Strategy.Transaction)
                             .WithTermType(salesTerm.TermType)
                             .WithTermValue(salesTerm.TermValue)
                             .WithDescription(salesTerm.Description)
@@ -599,7 +599,7 @@ namespace Allors.Database.Domain
 
                     if (salesTerm.GetType().Name == nameof(OrderTerm))
                     {
-                        purchaseOrderItem.AddSalesTerm(new OrderTermBuilder(this.Strategy.Transaction)
+                        item.AddSalesTerm(new OrderTermBuilder(this.Strategy.Transaction)
                             .WithTermType(salesTerm.TermType)
                             .WithTermValue(salesTerm.TermValue)
                             .WithDescription(salesTerm.Description)
@@ -608,7 +608,7 @@ namespace Allors.Database.Domain
 
                     if (salesTerm.GetType().Name == nameof(QuoteTerm))
                     {
-                        purchaseOrderItem.AddSalesTerm(new QuoteTermBuilder(this.Strategy.Transaction)
+                        item.AddSalesTerm(new QuoteTermBuilder(this.Strategy.Transaction)
                             .WithTermType(salesTerm.TermType)
                             .WithTermValue(salesTerm.TermValue)
                             .WithDescription(salesTerm.Description)

@@ -131,6 +131,11 @@ under a dated version heading.
 
 ### Fixed
 
+- `PurchaseOrder.AppsCopy` copied each item's sales terms onto the **source** item instead of the new (copied)
+  item: the per-item loop called `purchaseOrderItem.AddSalesTerm(...)` rather than `item.AddSalesTerm(...)`. As a
+  result copied purchase orders had no item sales terms and the source items' terms were duplicated. The four
+  `Inco`/`Invoice`/`Order`/`QuoteTerm` branches now add to `item`. (The discount- and surcharge-adjustment loops
+  already correctly targeted the copy.)
 - `QuoteExtensions.AppsCopy` (ProductQuote / Proposal / StatementOfWork) copied the quote's order-level sales
   terms onto the **source** quote instead of the new `copy`: the loop called `@this.AddSalesTerm(...)` rather
   than `copy.AddSalesTerm(...)`. As a result copied quotes had no order-level sales terms and the source quote's
