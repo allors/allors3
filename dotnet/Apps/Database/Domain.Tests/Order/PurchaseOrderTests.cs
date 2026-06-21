@@ -37,6 +37,39 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void GivenPurchaseOrderItemWithSalesTerm_WhenCopying_ThenSalesTermIsCopiedToNewItemNotSource()
+        {
+            var supplier = new OrganisationBuilder(this.Transaction).WithName("supplier").Build();
+            new SupplierRelationshipBuilder(this.Transaction).WithSupplier(supplier).Build();
+
+            var order = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSupplier(supplier).Build();
+
+            var part = new NonUnifiedGoods(this.Transaction).FindBy(this.M.Good.Name, "good1").Part;
+
+            var item = new PurchaseOrderItemBuilder(this.Transaction)
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).PartItem)
+                .WithPart(part)
+                .WithQuantityOrdered(1)
+                .WithAssignedUnitPrice(1)
+                .Build();
+
+            order.AddPurchaseOrderItem(item);
+
+            item.AddSalesTerm(new InvoiceTermBuilder(this.Transaction)
+                .WithTermType(new InvoiceTermTypes(this.Transaction).PaymentNetDays)
+                .WithTermValue("30")
+                .Build());
+
+            this.Transaction.Derive();
+
+            var copy = order.AppsCopy(new PurchaseOrderCopy(order));
+
+            // The item-level sales term must be copied onto the new item, not added to the source item.
+            Assert.Single(copy.PurchaseOrderItems.First().SalesTerms);
+            Assert.Single(item.SalesTerms);
+        }
+
+        [Fact]
         public void GivenOrder_WhenDeriving_ThenRequiredRelationsMustExist()
         {
             var supplier = new OrganisationBuilder(this.Transaction).WithName("supplier2").Build();
