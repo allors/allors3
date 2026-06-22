@@ -432,7 +432,10 @@ namespace Allors.Database.Domain
             {
                 if (@this.QuoteState.IsCreated)
                 {
-                    quoteItem.QuoteItemState = new QuoteItemStates(@this.Strategy.Transaction).Draft;
+                    if (!Equals(quoteItem.QuoteItemState, quoteItemStates.Cancelled) && !Equals(quoteItem.QuoteItemState, quoteItemStates.Rejected))
+                    {
+                        quoteItem.QuoteItemState = new QuoteItemStates(@this.Strategy.Transaction).Draft;
+                    }
                 }
 
                 if (@this.QuoteState.IsCancelled)
