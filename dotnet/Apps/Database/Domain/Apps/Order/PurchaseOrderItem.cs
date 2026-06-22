@@ -198,6 +198,7 @@ namespace Allors.Database.Domain
                 var shipmentItem = new ShipmentItemBuilder(this.Strategy.Transaction)
                     .WithPart(this.Part)
                     .WithSerialisedItem(this.SerialisedItem)
+                    .WithNextSerialisedItemAvailability(new SerialisedItemAvailabilities(this.Strategy.Transaction).NotAvailable)
                     .WithQuantity(this.QuantityReceived)
                     .WithContentsDescription($"{this.QuantityReceived} * {this.Part.Name}")
                     .WithReservedFromInventoryItem(inventoryItem)

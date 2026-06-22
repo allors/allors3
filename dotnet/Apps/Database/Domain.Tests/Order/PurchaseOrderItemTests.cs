@@ -1733,6 +1733,35 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void GivenReceivedSerialisedOrderItem_WhenReturning_ThenNoMissingSerialisedItemAvailabilityError()
+        {
+            this.InternalOrganisation.IsAutomaticallyReceived = true;
+            this.Derive();
+
+            var order = this.InternalOrganisation.CreatePurchaseOrderWithBothItems(this.Transaction.Faker());
+            this.Derive();
+
+            order.SetReadyForProcessing();
+            this.Derive();
+
+            order.Send();
+            this.Derive();
+
+            order.QuickReceive();
+            this.Derive();
+
+            var serialisedOrderItem = order.PurchaseOrderItems.First(v => v.ExistSerialisedItem);
+            Assert.True(serialisedOrderItem.PurchaseOrderItemShipmentState.IsReceived, $"shipState={serialisedOrderItem.PurchaseOrderItemShipmentState?.Name}");
+
+            serialisedOrderItem.Return();
+            var errors = this.Derive().Errors.ToList();
+
+            // Returning a serialised item builds a PurchaseReturn ShipmentItem; ShipmentItemRule requires
+            // NextSerialisedItemAvailability on it, so the Return must set it.
+            Assert.DoesNotContain(errors, e => e.Message.Contains("NextSerialisedItemAvailability"));
+        }
+
+        [Fact]
         public void OnChangedOrderShipmentOrderItemDeriveReturnPermission()
         {
             this.InternalOrganisation.IsAutomaticallyReceived = true;
