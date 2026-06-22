@@ -12,6 +12,16 @@ under a dated version heading.
 
 <!-- Add entries under one of: Added, Changed, Deprecated, Removed, Fixed, Security -->
 
+### Changed
+
+- The part weighted-average cost is now maintained by a dedicated `PartWeightedAverageRule` that only
+  recomputes when stock is received, instead of `PartQuantitiesRule` re-reading a part's entire
+  inventory-transaction history on every inventory transaction. Consumption transactions (e.g. parts
+  scanned on the shopfloor) no longer trigger the full-history recompute, which dramatically speeds up
+  scanning of parts with long transaction histories. Behaviour is unchanged — the weighted average
+  still updates identically on receipts — and the write is now guarded so an unchanged value no longer
+  re-triggers downstream cost derivations.
+
 ### Added
 
 - `WorkRequirement.WorkEffortPurpose` (enumeration Refurbishment / Maintenance / Repair): defaults to

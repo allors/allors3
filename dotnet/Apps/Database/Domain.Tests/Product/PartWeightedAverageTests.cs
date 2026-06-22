@@ -975,5 +975,69 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(300, part.QuantityOnHand);
             Assert.Equal(6, part.PartWeightedAverage.AverageCostInApplicationCurrency);
         }
+
+        [Fact]
+        public void GivenPartWithReceivedStock_WhenConsumedByWorkEffort_ThenWeightedAverageCostUnchanged()
+        {
+            this.InternalOrganisation.IsAutomaticallyReceived = true;
+            var defaultFacility = this.InternalOrganisation.StoresWhereInternalOrganisation.Single().DefaultFacility;
+            var supplier = this.InternalOrganisation.ActiveSuppliers.FirstOrDefault();
+            var customer = this.InternalOrganisation.ActiveCustomers.FirstOrDefault();
+
+            var part = new NonUnifiedPartBuilder(this.Transaction).WithNonSerialisedDefaults(this.InternalOrganisation).Build();
+            this.Transaction.Derive();
+
+            // Receive 100 @ 8 and 100 @ 8.2 => weighted average 8.1
+            var purchaseOrder1 = new PurchaseOrderBuilder(this.Transaction)
+                .WithTakenViaSupplier(supplier)
+                .WithStoredInFacility(defaultFacility)
+                .WithDeliveryDate(this.Transaction.Now())
+                .Build();
+            this.Transaction.Derive();
+
+            var purchaseItem1 = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).WithQuantityOrdered(100).WithAssignedUnitPrice(8M).Build();
+            purchaseOrder1.AddPurchaseOrderItem(purchaseItem1);
+            this.Transaction.Derive();
+            purchaseOrder1.SetReadyForProcessing();
+            this.Transaction.Derive();
+            purchaseOrder1.Send();
+            this.Transaction.Derive();
+            purchaseItem1.QuickReceive();
+            this.Transaction.Derive();
+
+            var purchaseOrder2 = new PurchaseOrderBuilder(this.Transaction)
+                .WithTakenViaSupplier(supplier)
+                .WithStoredInFacility(defaultFacility)
+                .WithDeliveryDate(this.Transaction.Now())
+                .Build();
+            this.Transaction.Derive();
+
+            var purchaseItem2 = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).WithQuantityOrdered(100).WithAssignedUnitPrice(8.2M).Build();
+            purchaseOrder2.AddPurchaseOrderItem(purchaseItem2);
+            this.Transaction.Derive();
+            purchaseOrder2.SetReadyForProcessing();
+            this.Transaction.Derive();
+            purchaseOrder2.Send();
+            this.Transaction.Derive();
+            purchaseItem2.QuickReceive();
+            this.Transaction.Derive();
+
+            Assert.Equal(200, part.QuantityOnHand);
+            Assert.Equal(8.1M, part.PartWeightedAverage.AverageCostInApplicationCurrency);
+
+            // Consume 50 on a work effort (the shopfloor scan path). Consumption must NOT move the average.
+            var workEffort = new WorkTaskBuilder(this.Transaction).WithName("Activity").WithCustomer(customer).WithTakenBy(this.InternalOrganisation).Build();
+            this.Transaction.Derive();
+
+            new WorkEffortInventoryAssignmentBuilder(this.Transaction)
+                .WithAssignment(workEffort)
+                .WithInventoryItem(part.InventoryItemsWherePart.FirstOrDefault())
+                .WithQuantity(50)
+                .Build();
+            this.Transaction.Derive();
+
+            Assert.Equal(150, part.QuantityOnHand);
+            Assert.Equal(8.1M, part.PartWeightedAverage.AverageCostInApplicationCurrency);
+        }
     }
 }
