@@ -419,6 +419,45 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void GivenQuoteItemWithFeature_WhenCopying_ThenFeatureLinkIsPreserved()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Transaction).WithNonSerialisedDefaults(this.InternalOrganisation).Build();
+
+            new BasePriceBuilder(this.Transaction)
+                .WithPricedBy(this.InternalOrganisation)
+                .WithProduct(product)
+                .WithPrice(1)
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
+                .Build();
+
+            var quote = new ProductQuoteBuilder(this.Transaction).WithIssueDate(this.Transaction.Now()).Build();
+            this.Derive();
+
+            var quoteItem = new QuoteItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            quote.AddQuoteItem(quoteItem);
+            this.Derive();
+
+            var productFeature = new ColourBuilder(this.Transaction).WithName("a colour").Build();
+            new BasePriceBuilder(this.Transaction)
+                .WithPricedBy(this.InternalOrganisation)
+                .WithProductFeature(productFeature)
+                .WithPrice(0.2M)
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
+                .Build();
+            this.Derive();
+
+            var featureItem = new QuoteItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductFeatureItem).WithProductFeature(productFeature).WithQuantity(1).Build();
+            quoteItem.AddQuotedWithFeature(featureItem);
+            this.Derive();
+
+            var copy = quote.AppsCopy(new ProductQuoteCopy(quote));
+            this.Derive();
+
+            // The copied quote must preserve the parent-item -> feature (QuotedWithFeature) link.
+            Assert.Contains(copy.QuoteItems, v => v.ExistQuotedWithFeatures);
+        }
+
+        [Fact]
         public void OnChangedDerivationTriggerTriggeredByPriceComponentFromDateCalculatePrice()
         {
             var product = new NonUnifiedGoodBuilder(this.Transaction).Build();

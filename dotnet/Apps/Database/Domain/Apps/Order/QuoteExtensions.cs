@@ -358,7 +358,8 @@ namespace Allors.Database.Domain
 
             foreach (var featureItem in quoteItem.QuotedWithFeatures)
             {
-                CopyQuoteItem(@this, copy, featureItem);
+                var featureItemCopy = CopyQuoteItem(@this, copy, featureItem);
+                itemCopy.AddQuotedWithFeature(featureItemCopy);
             }
 
             foreach (var orderAdjustment in quoteItem.DiscountAdjustments)
