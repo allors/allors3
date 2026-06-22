@@ -8,6 +8,7 @@ namespace Allors.Database.Domain.Tests
 {
     using System.Linq;
     using Resources;
+    using TestPopulation;
     using Xunit;
 
     public class BasePriceTests : DomainTest, IClassFixture<Fixture>
@@ -83,6 +84,23 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             Assert.Contains(basePrice, productFeature.BasePrices);
+        }
+
+        [Fact]
+        public void GivenProductBasePriceWithoutProductFeature_WhenDeleting_ThenNoNullReference()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Transaction).WithNonSerialisedDefaults(this.InternalOrganisation).Build();
+            var basePrice = new BasePriceBuilder(this.Transaction)
+                .WithPricedBy(this.InternalOrganisation)
+                .WithProduct(product)
+                .WithPrice(1)
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
+                .Build();
+            this.Derive();
+
+            basePrice.Delete();
+
+            Assert.False(this.Derive().HasErrors);
         }
     }
 }
