@@ -131,6 +131,10 @@ under a dated version heading.
 
 ### Fixed
 
+- `BasePrice.AppsDelete` called `this.Product.RemoveBasePrice(this)` and `this.ProductFeature.RemoveFromBasePrices(this)`
+  without guards, but a base price requires only **one** of `Product`/`ProductFeature` — so deleting a product-only
+  (or feature-only) base price threw a `NullReferenceException`. Each removal is now guarded by
+  `ExistProduct`/`ExistProductFeature`.
 - `PriceComponents` threw a `NullReferenceException` when evaluating a price component that has a `SalesChannel`
   against an order/invoice with **no** `SalesChannel`: `channel.Equals(priceComponent.SalesChannel)` dereferenced
   a null `channel`. It now uses the null-safe `Equals(channel, priceComponent.SalesChannel)`, so a channel-specific

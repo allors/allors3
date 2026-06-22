@@ -11,9 +11,15 @@ namespace Allors.Database.Domain
 
         public void AppsDelete(DeletableDelete method)
         {
-            this.Product.RemoveBasePrice(this);
+            if (this.ExistProduct)
+            {
+                this.Product.RemoveBasePrice(this);
+            }
 
-            this.ProductFeature.RemoveFromBasePrices(this);
+            if (this.ExistProductFeature)
+            {
+                this.ProductFeature.RemoveFromBasePrices(this);
+            }
         }
     }
 }
