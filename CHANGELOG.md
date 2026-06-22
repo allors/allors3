@@ -131,6 +131,11 @@ under a dated version heading.
 
 ### Fixed
 
+- `CustomerShipment` billing computed how much was left to invoice from the **optional** `AssignedUnitPrice`
+  (`QuantityOrdered * AssignedUnitPrice - amountAlreadyInvoiced`). For a catalog-priced order line (no assigned
+  price), `AssignedUnitPrice` is null, so the result was null, `leftToInvoice > 0` was false, and the line was
+  never invoiced on shipment. It now uses the derived `UnitPrice` (which the created invoice item already uses),
+  so catalog-priced lines are billed.
 - `BasePrice.AppsDelete` called `this.Product.RemoveBasePrice(this)` and `this.ProductFeature.RemoveFromBasePrices(this)`
   without guards, but a base price requires only **one** of `Product`/`ProductFeature` — so deleting a product-only
   (or feature-only) base price threw a `NullReferenceException`. Each removal is now guarded by

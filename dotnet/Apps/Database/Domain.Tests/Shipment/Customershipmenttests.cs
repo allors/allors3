@@ -1035,6 +1035,91 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void GivenCatalogPricedOrderItem_WhenCustomerShipmentShipped_ThenItemIsInvoiced()
+        {
+            var assessable = new VatRegimes(this.Transaction).ZeroRated;
+
+            var good1 = new NonUnifiedGoods(this.Transaction).FindBy(this.M.Good.Name, "good1");
+
+            // Catalog price for good1; the order item below has no AssignedUnitPrice, so UnitPrice derives from this.
+            new BasePriceBuilder(this.Transaction)
+                .WithPricedBy(this.InternalOrganisation)
+                .WithProduct(good1)
+                .WithPrice(15)
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
+                .Build();
+
+            new InventoryItemTransactionBuilder(this.Transaction).WithQuantity(100).WithReason(new InventoryTransactionReasons(this.Transaction).PhysicalCount).WithPart(good1.Part).Build();
+
+            var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
+            var mechelenAddress = new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build();
+
+            var customer = new PersonBuilder(this.Transaction).WithLastName("customer").Build();
+            new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(customer)
+                .WithContactMechanism(mechelenAddress)
+                .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).ShippingAddress)
+                .WithUseAsDefault(true)
+                .Build();
+
+            new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(customer)
+                .WithContactMechanism(mechelenAddress)
+                .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).BillingAddress)
+                .WithUseAsDefault(true)
+                .Build();
+
+            new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(customer).Build();
+
+            this.Transaction.Derive();
+
+            var order = new SalesOrderBuilder(this.Transaction)
+                .WithBillToCustomer(customer)
+                .WithShipToCustomer(customer)
+                .WithAssignedVatRegime(assessable)
+                .Build();
+
+            var item1 = new SalesOrderItemBuilder(this.Transaction).WithProduct(good1).WithQuantityOrdered(1).Build();
+            order.AddSalesOrderItem(item1);
+
+            this.Transaction.Derive();
+
+            order.SetReadyForPosting();
+            this.Transaction.Derive();
+
+            order.Post();
+            this.Transaction.Derive();
+
+            order.Accept();
+            this.Transaction.Derive();
+
+            var shipment = (CustomerShipment)item1.OrderShipmentsWhereOrderItem.ElementAt(0).ShipmentItem.ShipmentWhereShipmentItem;
+
+            shipment.Pick();
+            this.Transaction.Derive();
+
+            var pickList = shipment.ShipmentItems.ElementAt(0).ItemIssuancesWhereShipmentItem.ElementAt(0).PickListItem.PickListWherePickListItem;
+            pickList.Picker = this.OrderProcessor;
+            pickList.SetPicked();
+
+            var package = new ShipmentPackageBuilder(this.Transaction).Build();
+            shipment.AddShipmentPackage(package);
+
+            foreach (ShipmentItem shipmentItem in shipment.ShipmentItems)
+            {
+                package.AddPackagingContent(new PackagingContentBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithQuantity(shipmentItem.Quantity).Build());
+            }
+
+            this.Transaction.Derive();
+
+            shipment.Ship();
+            this.Transaction.Derive();
+
+            // The catalog-priced shipment item must be billed/invoiced, not dropped.
+            Assert.NotEmpty(shipment.ShipmentItems.ElementAt(0).ShipmentItemBillingsWhereShipmentItem);
+        }
+
+        [Fact]
         public void GivenCustomerShipmentWithoutOrder_WhenStateIsSetToShipped_ThenInventoryIsUpdated()
         {
             var good = new UnifiedGoodBuilder(this.Transaction).WithNonSerialisedDefaults(this.InternalOrganisation).Build();
