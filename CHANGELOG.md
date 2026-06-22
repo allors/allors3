@@ -131,6 +131,10 @@ under a dated version heading.
 
 ### Fixed
 
+- `PriceComponents` threw a `NullReferenceException` when evaluating a price component that has a `SalesChannel`
+  against an order/invoice with **no** `SalesChannel`: `channel.Equals(priceComponent.SalesChannel)` dereferenced
+  a null `channel`. It now uses the null-safe `Equals(channel, priceComponent.SalesChannel)`, so a channel-specific
+  price component simply does not apply to a channel-less order.
 - `QuoteExtensions.AppsCopy` dropped the `QuotedWithFeature` parent link when copying a quote. `CopyQuoteItem`
   recursively copied each item's feature sub-items (`QuotedWithFeatures`) and added them to the copied quote, but
   never re-linked them to the copied parent item — so a copied feature item became an orphaned standalone quote

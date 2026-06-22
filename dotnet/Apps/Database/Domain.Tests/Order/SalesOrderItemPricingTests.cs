@@ -1795,6 +1795,33 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void GivenSalesChannelDiscountComponent_WhenOrderHasNoSalesChannel_ThenDerivesWithoutNullReference()
+        {
+            const decimal quantityOrdered = 3;
+
+            var email = new SalesChannels(this.Transaction).EmailChannel;
+            new DiscountComponentBuilder(this.Transaction)
+                .WithDescription("discount with sales channel")
+                .WithSalesChannel(email)
+                .WithProduct(this.good)
+                .WithPrice(1)
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
+                .WithThroughDate(this.Transaction.Now().AddYears(1).AddDays(-1))
+                .Build();
+
+            this.Transaction.Derive();
+            this.Transaction.Commit();
+
+            this.InstantiateObjects(this.Transaction);
+
+            // The order has no SalesChannel, while the discount component is channel-specific.
+            var item1 = new SalesOrderItemBuilder(this.Transaction).WithProduct(this.good).WithQuantityOrdered(quantityOrdered).Build();
+            this.order.AddSalesOrderItem(item1);
+
+            Assert.False(this.Derive().HasErrors);
+        }
+
+        [Fact]
         public void GivenOrderItemWithDiscountPercentageAndItemDiscountPercentage_WhenDeriving_ThenExtraDiscountIsCalculated()
         {
             const decimal quantityOrdered = 3;
