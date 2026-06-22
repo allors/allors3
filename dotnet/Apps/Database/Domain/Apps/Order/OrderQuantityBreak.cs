@@ -7,6 +7,6 @@ namespace Allors.Database.Domain
 {
     public partial class OrderQuantityBreak
     {
-        public void AppsOnPostDerive(ObjectOnPostDerive method) => method.Derivation.Validation.AssertAtLeastOne(this, this.M.OrderQuantityBreak.FromAmount, this.M.OrderValue.ThroughAmount);
+        public void AppsOnPostDerive(ObjectOnPostDerive method) => method.Derivation.Validation.AssertAtLeastOne(this, this.M.OrderQuantityBreak.FromAmount, this.M.OrderQuantityBreak.ThroughAmount);
     }
 }

@@ -131,6 +131,10 @@ under a dated version heading.
 
 ### Fixed
 
+- `OrderQuantityBreak` validation required at least one of `FromAmount`/`ThroughAmount`, but checked
+  `OrderValue.ThroughAmount` — a different type's roletype — instead of the break's own
+  `OrderQuantityBreak.ThroughAmount`. A break with only its own `ThroughAmount` set was therefore wrongly
+  rejected with the "at least one" error. `AppsOnPostDerive` now asserts on `OrderQuantityBreak.ThroughAmount`.
 - `RepeatingPurchaseInvoice.Repeat` re-billed already-billed, **partially-received** purchase-order items. The
   "to bill" guard `!ExistOrderItemBillings && IsReceived || IsPartiallyReceived || (!ExistPart && QuantityReceived == 1)`
   was mis-parenthesised: since `&&` binds tighter than `||`, the already-billed check only gated the `IsReceived`

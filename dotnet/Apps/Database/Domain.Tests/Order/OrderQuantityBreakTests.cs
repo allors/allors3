@@ -23,5 +23,14 @@ namespace Allors.Database.Domain.Tests
             var errors = this.Derive().Errors.ToList();
             Assert.Single(errors, e => e.Message == "OrderQuantityBreak.FromAmount, OrderQuantityBreak.ThroughAmount at least one");
         }
+
+        [Fact]
+        public void GivenOrderQuantityBreakWithOnlyThroughAmount_WhenDeriving_ThenNoAtLeastOneError()
+        {
+            new OrderQuantityBreakBuilder(this.Transaction).WithThroughAmount(100M).Build();
+
+            var errors = this.Derive().Errors.ToList();
+            Assert.DoesNotContain(errors, e => e.Message == "OrderQuantityBreak.FromAmount, OrderQuantityBreak.ThroughAmount at least one");
+        }
     }
 }
