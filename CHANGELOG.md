@@ -131,6 +131,10 @@ under a dated version heading.
 
 ### Fixed
 
+- `QuoteExtensions.AppsCopy` dropped the `QuotedWithFeature` parent link when copying a quote. `CopyQuoteItem`
+  recursively copied each item's feature sub-items (`QuotedWithFeatures`) and added them to the copied quote, but
+  never re-linked them to the copied parent item — so a copied feature item became an orphaned standalone quote
+  item. The recursive copy now captures the new feature item and re-links it via `itemCopy.AddQuotedWithFeature(...)`.
 - `QuoteExtensions.SetItemState` reset **every** quote item to `Draft` when the quote was `Created`, with no
   guard — so `Revise()`/`Reopen()` (which return the quote to `Created` and call `SetItemState`) clobbered items
   that were already `Cancelled` or `Rejected`. The `IsCreated` branch now skips items in those terminal states,
