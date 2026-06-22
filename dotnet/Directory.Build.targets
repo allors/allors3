@@ -1,0 +1,26 @@
+<Project>
+  <!--
+    Neutralize Nerdbank.GitVersioning's GitHub Actions $GITHUB_ENV writes.
+
+    On every project build under GitHub Actions, NB.GV's `SetCloudBuildVersionVars` target appends
+    its Git* version variables (GitBuildVersion, GitBuildVersionSimple, GitAssemblyInformationalVersion)
+    to the shared $GITHUB_ENV file. Nothing in this repo consumes those variables, and when the Nuke
+    build compiles many projects in parallel their appends interleave and corrupt the file, so a
+    random matrix job intermittently fails with:
+
+        ##[error]Unable to process file command 'env' successfully.
+        ##[error]Invalid format '<version fragment>'
+
+    (`version.json` `cloudBuild.setVersionVariables: false` does NOT gate this MSBuild-side write.)
+
+    Clearing the item before the target runs makes its `@(CloudBuildVersionVars) != ''` condition
+    false, so the target is skipped. Assembly version stamping is unaffected — it does not depend on
+    these cloud variables. The dedicated `dotnet nbgv cloud` workflow step remains the single, correct
+    place those variables are set if ever needed.
+  -->
+  <Target Name="_DisableNbgvCloudBuildVersionVars" BeforeTargets="SetCloudBuildVersionVars">
+    <ItemGroup>
+      <CloudBuildVersionVars Remove="@(CloudBuildVersionVars)" />
+    </ItemGroup>
+  </Target>
+</Project>
