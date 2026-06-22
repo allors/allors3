@@ -131,6 +131,10 @@ under a dated version heading.
 
 ### Fixed
 
+- `QuoteExtensions.SetItemState` reset **every** quote item to `Draft` when the quote was `Created`, with no
+  guard — so `Revise()`/`Reopen()` (which return the quote to `Created` and call `SetItemState`) clobbered items
+  that were already `Cancelled` or `Rejected`. The `IsCreated` branch now skips items in those terminal states,
+  matching the `Cancelled`/`Rejected`/`AwaitingApproval` branches.
 - `PurchaseOrderItem.Return` (item-level return) built a `PurchaseReturn` `ShipmentItem` for a serialised part
   without setting `NextSerialisedItemAvailability`, which `ShipmentItemRule` requires for serialised items on a
   `CustomerShipment`/`PurchaseReturn`. Returning a received serialised order item therefore failed validation

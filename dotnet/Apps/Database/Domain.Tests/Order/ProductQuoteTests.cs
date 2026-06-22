@@ -347,6 +347,31 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void GivenCreatedQuoteWithCancelledItem_WhenSettingItemState_ThenCancelledItemIsNotResetToDraft()
+        {
+            var productQuote = new ProductQuoteBuilder(this.Transaction).Build();
+            this.Derive();
+
+            var quoteItem = new QuoteItemBuilder(this.Transaction)
+                .WithInvoiceItemType(new InvoiceItemTypeBuilder(this.Transaction).Build())
+                .WithAssignedUnitPrice(1)
+                .Build();
+            productQuote.AddQuoteItem(quoteItem);
+            this.Derive();
+
+            quoteItem.Cancel();
+            this.Derive();
+
+            Assert.True(quoteItem.QuoteItemState.IsCancelled);
+            Assert.True(productQuote.QuoteState.IsCreated, $"quoteState={productQuote.QuoteState?.Name}");
+
+            // SetItemState is what Revise()/Reopen() invoke after returning the quote to Created.
+            productQuote.SetItemState();
+
+            Assert.True(quoteItem.QuoteItemState.IsCancelled, $"itemState={quoteItem.QuoteItemState?.Name}");
+        }
+
+        [Fact]
         public void OnChangedProductQuoteStateNotCreatedDeriveSetReadyPermission()
         {
             var productQuote = this.InternalOrganisation.CreateB2BProductQuoteWithSerialisedItem(this.Transaction.Faker());
