@@ -131,6 +131,13 @@ under a dated version heading.
 
 ### Fixed
 
+- CI no longer fails intermittently with `Unable to process file command 'env' successfully. Invalid
+  format '<version>'`. Under GitHub Actions, Nerdbank.GitVersioning's `SetCloudBuildVersionVars` MSBuild
+  target appended its (unused) `Git*` version variables to the shared `$GITHUB_ENV` on every project
+  build; because the Nuke build compiles projects in parallel, the concurrent appends interleaved and
+  corrupted the file, failing a random matrix job. A new `dotnet/Directory.Build.targets` clears the
+  `CloudBuildVersionVars` item before the target runs, skipping the emission. Assembly version stamping
+  is unaffected, and `cloudBuild.setVersionVariables: false` does **not** gate this MSBuild-side write.
 - `CustomerShipment` billing computed how much was left to invoice from the **optional** `AssignedUnitPrice`
   (`QuantityOrdered * AssignedUnitPrice - amountAlreadyInvoiced`). For a catalog-priced order line (no assigned
   price), `AssignedUnitPrice` is null, so the result was null, `leftToInvoice > 0` was false, and the line was
