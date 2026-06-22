@@ -131,6 +131,11 @@ under a dated version heading.
 
 ### Fixed
 
+- `PurchaseOrderItem.Return` (item-level return) built a `PurchaseReturn` `ShipmentItem` for a serialised part
+  without setting `NextSerialisedItemAvailability`, which `ShipmentItemRule` requires for serialised items on a
+  `CustomerShipment`/`PurchaseReturn`. Returning a received serialised order item therefore failed validation
+  (`ShipmentItem.NextSerialisedItemAvailability is required`). The shipment item now sets it to `NotAvailable`,
+  matching the order-level `PurchaseOrder.AppsReturn`.
 - `OrderQuantityBreak` validation required at least one of `FromAmount`/`ThroughAmount`, but checked
   `OrderValue.ThroughAmount` — a different type's roletype — instead of the break's own
   `OrderQuantityBreak.ThroughAmount`. A break with only its own `ThroughAmount` set was therefore wrongly
