@@ -138,7 +138,7 @@ namespace Allors.Database.Domain
                     channel = salesInvoice.SalesChannel;
                 }
 
-                if (channel.Equals(priceComponent.SalesChannel))
+                if (Equals(channel, priceComponent.SalesChannel))
                 {
                     salesChannelValid = true;
                 }
