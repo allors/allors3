@@ -131,6 +131,11 @@ under a dated version heading.
 
 ### Fixed
 
+- `CustomerShipment.CreatePickList` decided whether a shipment item was serialised from `unifiedGood` only
+  (`unifiedGood?.InventoryItemKind`). For a serialised `NonUnifiedGood`/`NonUnifiedPart`, `unifiedGood` is null,
+  so `serialized` was false and the non-serialised branch cast the part's `SerialisedInventoryItem` to
+  `NonSerialisedInventoryItem`, throwing an `InvalidCastException` when picking. It now derives `serialized` from
+  the resolved `part` (which covers all three good types), so picking a serialised non-unified good works.
 - CI no longer fails intermittently with `Unable to process file command 'env' successfully. Invalid
   format '<version>'`. Under GitHub Actions, Nerdbank.GitVersioning's `SetCloudBuildVersionVars` MSBuild
   target appended its (unused) `Git*` version variables to the shared `$GITHUB_ENV` on every project

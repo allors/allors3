@@ -1205,6 +1205,62 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void GivenCustomerShipmentForSerialisedNonUnifiedGood_WhenPicked_ThenSerialisedInventoryIsHandled()
+        {
+            var good = new NonUnifiedGoodBuilder(this.Transaction).WithSerialisedDefaults(this.InternalOrganisation).Build();
+            this.Transaction.Derive();
+
+            var serialisedItem = new SerialisedItemBuilder(this.Transaction).WithSerialNumber("sn-bug23").Build();
+            good.Part.AddSerialisedItem(serialisedItem);
+            this.Transaction.Derive();
+
+            new InventoryItemTransactionBuilder(this.Transaction)
+                .WithQuantity(1)
+                .WithReason(new InventoryTransactionReasons(this.Transaction).PhysicalCount)
+                .WithPart(good.Part)
+                .WithSerialisedItem(serialisedItem)
+                .Build();
+            this.Transaction.Derive();
+
+            var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
+            var mechelenAddress = new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build();
+
+            var customer = new PersonBuilder(this.Transaction).WithLastName("customer").Build();
+            new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(customer)
+                .WithContactMechanism(mechelenAddress)
+                .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).ShippingAddress)
+                .WithUseAsDefault(true)
+                .Build();
+
+            new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(customer).Build();
+
+            this.Transaction.Derive();
+
+            var shipment = new CustomerShipmentBuilder(this.Transaction)
+                .WithShipToParty(customer)
+                .WithShipToAddress(mechelenAddress)
+                .WithShipmentMethod(new ShipmentMethods(this.Transaction).Ground)
+                .Build();
+
+            var shipmentItem = new ShipmentItemBuilder(this.Transaction)
+                .WithGood(good)
+                .WithSerialisedItem(serialisedItem)
+                .WithNextSerialisedItemAvailability(new SerialisedItemAvailabilities(this.Transaction).Sold)
+                .WithQuantity(1)
+                .Build();
+            shipment.AddShipmentItem(shipmentItem);
+
+            this.Transaction.Derive();
+
+            // Picking creates the pick list; a serialised NonUnifiedGood must be detected as serialised
+            // (otherwise the SerialisedInventoryItem is cast to NonSerialisedInventoryItem -> InvalidCastException).
+            shipment.Pick();
+
+            Assert.False(this.Derive().HasErrors);
+        }
+
+        [Fact]
         public void GivenCustomerShipmentContainingOrderOnHold_WhenTrySetStateToShipped_ThenActionIsNotAllowed()
         {
             var assessable = new VatRegimes(this.Transaction).ZeroRated;
