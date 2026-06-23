@@ -312,6 +312,21 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void GivenInternalOrganisationWithFiscalYearCustomerReturns_WhenNextCustomerReturnNumber_ThenCustomerReturnSequenceGovernsNumbering()
+        {
+            // CustomerReturn numbering must follow CustomerReturnSequence, independently of PurchaseShipmentSequence.
+            this.InternalOrganisation.PurchaseShipmentSequence = new PurchaseShipmentSequences(this.Transaction).EnforcedSequence;
+            this.InternalOrganisation.CustomerReturnSequence = new CustomerReturnSequences(this.Transaction).RestartOnFiscalYear;
+            this.Derive();
+
+            this.InternalOrganisation.NextCustomerReturnNumber(2099);
+
+            // RestartOnFiscalYear must create a per-fiscal-year sequence for the year. The bug branched on
+            // PurchaseShipmentSequence (Enforced), took the global-counter path, and created no fiscal-year sequence.
+            Assert.Contains(this.InternalOrganisation.FiscalYearsInternalOrganisationSequenceNumbers, v => v.FiscalYear == 2099);
+        }
+
+        [Fact]
         public void ChangedInvoiceSequenceDerivePurchaseOrderNumberCounter()
         {
             var internalOrganisation = new OrganisationBuilder(this.Transaction)

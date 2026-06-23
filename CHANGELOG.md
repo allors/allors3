@@ -131,6 +131,10 @@ under a dated version heading.
 
 ### Fixed
 
+- `InternalOrganisation.NextCustomerReturnNumber` decided enforced-vs-fiscal-year numbering from
+  `PurchaseShipmentSequence` instead of `CustomerReturnSequence`, so customer-return numbers followed the
+  purchase-shipment sequence setting rather than their own (e.g. a fiscal-year customer-return sequence used the
+  global enforced counter when purchase shipments were enforced). It now branches on `CustomerReturnSequence`.
 - `PurchaseShipment.AppsReceive` dereferenced `shipmentItem.Part.InventoryItemKind` for every shipment item with
   no `ExistPart` guard, so receiving a shipment that contained a part-less item (e.g. a manually added
   non-inventory line) threw a `NullReferenceException`. A part-less item has no inventory to receive, so it is now
