@@ -152,29 +152,42 @@ namespace Allors.Database.Domain
                 .WithLocale(@this.DerivedLocale)
                 .Build();
 
+            var orderedState = new QuoteItemStates(@this.Strategy.Transaction).Ordered;
+
             var quoteItems = @this.ValidQuoteItems
-                .Where(i => i.QuoteItemState.Equals(new QuoteItemStates(@this.Strategy.Transaction).Ordered))
+                .Where(i => i.QuoteItemState.Equals(orderedState))
                 .ToArray();
 
-            foreach (var quoteItem in quoteItems)
-            {
-                quoteItem.QuoteItemState = new QuoteItemStates(@this.Strategy.Transaction).Ordered;
+            SalesOrderItem CreateSalesOrderItem(QuoteItem quoteItem) =>
+                new SalesOrderItemBuilder(@this.Strategy.Transaction)
+                    .WithInvoiceItemType(quoteItem.InvoiceItemType)
+                    .WithAssignedDeliveryDate(quoteItem.EstimatedDeliveryDate)
+                    .WithAssignedUnitPrice(quoteItem.UnitPrice)
+                    .WithAssignedVatRegime(quoteItem.AssignedVatRegime)
+                    .WithAssignedIrpfRegime(quoteItem.AssignedIrpfRegime)
+                    .WithProduct(quoteItem.Product)
+                    .WithSerialisedItem(quoteItem.SerialisedItem)
+                    .WithNextSerialisedItemAvailability(new SerialisedItemAvailabilities(@this.Transaction()).Sold)
+                    .WithProductFeature(quoteItem.ProductFeature)
+                    .WithQuantityOrdered(quoteItem.Quantity)
+                    .WithDescription(quoteItem.Details)
+                    .WithInternalComment(quoteItem.InternalComment)
+                    .Build();
 
-                salesOrder.AddSalesOrderItem(
-                    new SalesOrderItemBuilder(@this.Strategy.Transaction)
-                        .WithInvoiceItemType(quoteItem.InvoiceItemType)
-                        .WithAssignedDeliveryDate(quoteItem.EstimatedDeliveryDate)
-                        .WithAssignedUnitPrice(quoteItem.UnitPrice)
-                        .WithAssignedVatRegime(quoteItem.AssignedVatRegime)
-                        .WithAssignedIrpfRegime(quoteItem.AssignedIrpfRegime)
-                        .WithProduct(quoteItem.Product)
-                        .WithSerialisedItem(quoteItem.SerialisedItem)
-                        .WithNextSerialisedItemAvailability(new SerialisedItemAvailabilities(@this.Transaction()).Sold)
-                        .WithProductFeature(quoteItem.ProductFeature)
-                        .WithQuantityOrdered(quoteItem.Quantity)
-                        .WithDescription(quoteItem.Details)
-                        .WithInternalComment(quoteItem.InternalComment)
-                        .Build());
+            // Top-level quote items become order lines; their ordered feature sub-items are nested under the
+            // created order item via OrderedWithFeature (mirroring the quote's QuotedWithFeature), not materialised
+            // as separate flat order lines (which double-counts and, with no parent, cannot be priced).
+            foreach (var quoteItem in quoteItems.Where(i => !i.ExistQuoteItemWhereQuotedWithFeature))
+            {
+                var orderItem = CreateSalesOrderItem(quoteItem);
+                salesOrder.AddSalesOrderItem(orderItem);
+
+                foreach (var featureItem in quoteItem.QuotedWithFeatures.Where(f => f.QuoteItemState.Equals(orderedState)))
+                {
+                    var featureOrderItem = CreateSalesOrderItem(featureItem);
+                    salesOrder.AddSalesOrderItem(featureOrderItem);
+                    orderItem.AddOrderedWithFeature(featureOrderItem);
+                }
             }
 
             foreach (var salesTerm in @this.SalesTerms)

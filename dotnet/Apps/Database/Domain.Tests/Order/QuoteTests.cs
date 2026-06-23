@@ -661,6 +661,59 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void GivenQuoteWithProductFeature_WhenOrdered_ThenFeatureIsNestedUnderItsOrderItem()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
+
+            new BasePriceBuilder(this.Transaction)
+                .WithPricedBy(this.InternalOrganisation)
+                .WithProduct(product)
+                .WithPrice(1)
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
+                .Build();
+
+            var customer = this.InternalOrganisation.ActiveCustomers.FirstOrDefault();
+            var quote = new ProductQuoteBuilder(this.Transaction).WithReceiver(customer).WithIssueDate(this.Transaction.Now()).Build();
+            this.Derive();
+
+            var quoteItem = new QuoteItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(product).WithQuantity(1).Build();
+            quote.AddQuoteItem(quoteItem);
+            this.Derive();
+
+            var productFeature = new ColourBuilder(this.Transaction).WithName("a colour").Build();
+            new BasePriceBuilder(this.Transaction)
+                .WithPricedBy(this.InternalOrganisation)
+                .WithProduct(product)
+                .WithProductFeature(productFeature)
+                .WithPrice(0.1M)
+                .WithFromDate(this.Transaction.Now().AddMinutes(-1))
+                .Build();
+            this.Derive();
+
+            var featureItem = new QuoteItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductFeatureItem).WithProductFeature(productFeature).WithQuantity(1).Build();
+            quoteItem.AddQuotedWithFeature(featureItem);
+            quote.AddQuoteItem(featureItem);
+            this.Derive();
+
+            // Accept both items (the state quote items are in when an accepted quote is ordered), then order.
+            var accepted = new QuoteItemStates(this.Transaction).Accepted;
+            quoteItem.QuoteItemState = accepted;
+            featureItem.QuoteItemState = accepted;
+            this.Derive();
+
+            quote.Order();
+            this.Derive();
+
+            var salesOrder = quote.SalesOrderWhereQuote;
+            Assert.NotNull(salesOrder);
+
+            // The feature must be nested under its product order item (OrderedWithFeature), mirroring the quote's
+            // QuotedWithFeature, not materialised as a separate flat order line.
+            var productOrderItem = salesOrder.SalesOrderItems.First(v => v.ExistProduct);
+            Assert.Contains(productOrderItem.OrderedWithFeatures, v => v is SalesOrderItem soi && Equals(soi.ProductFeature, productFeature));
+        }
+
+        [Fact]
         public void OnChangedReceiverCalculatePrice()
         {
             var theGood = new CustomOrganisationClassificationBuilder(this.Transaction).WithName("good customer").Build();

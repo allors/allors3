@@ -131,6 +131,12 @@ under a dated version heading.
 
 ### Fixed
 
+- `Quote.Order` (`QuoteExtensions.AppsOrder`) materialised a flat `SalesOrderItem` for **every** quote item,
+  including feature sub-items (`QuotedWithFeatures`), instead of nesting them. A feature became a separate priced
+  order line (double-counting), and — having no parent `OrderedWithFeature` link — threw a `NullReferenceException`
+  during order-item pricing (`SalesOrderItemPriceRule`). Ordering a quote now creates order items only for
+  top-level quote items and nests their ordered feature sub-items under the parent via `OrderedWithFeature`,
+  mirroring the quote's `QuotedWithFeature` structure and the quote-copy logic.
 - `Proposal` quotes could be set ready for processing even with no valid quote items. The `Proposals` security
   config set `DeniedPermissions` on the **`ProductQuote`** `SetReadyForProcessing` revocation (a copy-paste from
   `ProductQuotes`) instead of the `Proposal` one, so the `ProposalSetReadyForProcessingRevocation` that
