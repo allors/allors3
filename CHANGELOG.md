@@ -131,6 +131,11 @@ under a dated version heading.
 
 ### Fixed
 
+- `PurchaseShipment.AppsReceive` dereferenced `shipmentItem.Part.InventoryItemKind` for every shipment item with
+  no `ExistPart` guard, so receiving a shipment that contained a part-less item (e.g. a manually added
+  non-inventory line) threw a `NullReferenceException`. A part-less item has no inventory to receive, so it is now
+  marked received but skips the inventory receipt and inventory transaction (purchase order items without a part
+  are non-receivable, so order-linked receipts are unaffected).
 - `CustomerShipment` shipping over-deducted inventory when a shipment item was issued from more than one
   inventory item. `AppsShip` iterates the item's `ReservedFromInventoryItems` and, for non-serialised parts,
   created an `OutgoingShipment` transaction of the **whole** `shipmentItem.Quantity` for *each* reserved item —

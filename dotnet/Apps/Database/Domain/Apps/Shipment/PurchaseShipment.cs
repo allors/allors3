@@ -62,6 +62,13 @@ namespace Allors.Database.Domain
             {
                 shipmentItem.ShipmentItemState = new ShipmentItemStates(this.Transaction()).Received;
 
+                if (!shipmentItem.ExistPart)
+                {
+                    // A part-less shipment item (e.g. a non-inventory line) has no inventory to receive, so there
+                    // is no inventory receipt or inventory transaction to record for it.
+                    continue;
+                }
+
                 if (!shipmentItem.ExistShipmentReceiptWhereShipmentItem)
                 {
                     if (!shipmentItem.ExistOrderShipmentsWhereShipmentItem)
