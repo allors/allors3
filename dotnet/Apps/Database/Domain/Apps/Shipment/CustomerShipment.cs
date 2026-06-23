@@ -238,12 +238,16 @@ namespace Allors.Database.Domain
                         }
                         else
                         {
+                            var issuedQuantity = shipmentItem.ItemIssuancesWhereShipmentItem
+                                .Where(v => Equals(v.InventoryItem, inventoryItem))
+                                .Sum(v => v.Quantity);
+
                             new InventoryItemTransactionBuilder(this.Transaction())
                                 .WithPart(inventoryItem.Part)
                                 .WithUnitOfMeasure(inventoryItem.Part.UnitOfMeasure)
                                 .WithFacility(inventoryItem.Facility)
                                 .WithReason(new InventoryTransactionReasons(this.Strategy.Transaction).OutgoingShipment)
-                                .WithQuantity(shipmentItem.Quantity)
+                                .WithQuantity(issuedQuantity)
                                 .WithCostInApplicationCurrency(inventoryItem.Part.PartWeightedAverage.AverageCostInApplicationCurrency)
                                 .Build();
                         }
