@@ -131,6 +131,10 @@ under a dated version heading.
 
 ### Fixed
 
+- `TimeFrequency.GetConvertToFactor` dereferenced `FirstOrDefault(...).ConversionFactor`: when the frequency had
+  no conversion to the requested target, `FirstOrDefault` returned null and the `.ConversionFactor` access threw a
+  `NullReferenceException` instead of returning null. It now uses `?.ConversionFactor`, honouring the method's
+  `decimal?` contract (and `ConvertToFrequency`, which already null-checks the result).
 - `WorkTasks.AppsMonthly` (collective/monthly work-effort invoicing) built a `SalesInvoiceItem` for every
   inventory assignment from `DerivedBillableQuantity` with no guard, so an assignment with a **zero** billable
   quantity produced an invalid 0-quantity invoice line. It now skips assignments with `DerivedBillableQuantity <= 0`,

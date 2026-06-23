@@ -10,7 +10,7 @@ namespace Allors.Database.Domain
     public partial class TimeFrequency
     {
         public decimal? GetConvertToFactor(TimeFrequency timeFrquency)
-            => this.UnitOfMeasureConversions?.FirstOrDefault(c => c.ToUnitOfMeasure.Equals(timeFrquency)).ConversionFactor;
+            => this.UnitOfMeasureConversions?.FirstOrDefault(c => c.ToUnitOfMeasure.Equals(timeFrquency))?.ConversionFactor;
 
         public decimal? ConvertToFrequency(decimal value, TimeFrequency timeFrequency)
         {
