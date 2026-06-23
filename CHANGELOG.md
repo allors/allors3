@@ -131,6 +131,11 @@ under a dated version heading.
 
 ### Fixed
 
+- `WorkEffort` invoicing billed a part that had a **zero** billable quantity. `CreateInvoiceItems` computed the
+  invoice quantity as `DerivedBillableQuantity != 0 ? DerivedBillableQuantity : Quantity`, so an inventory
+  assignment with `AssignedBillableQuantity = 0` (hence `DerivedBillableQuantity = 0`) fell back to the full
+  assignment `Quantity` and was invoiced anyway. It now skips assignments with `DerivedBillableQuantity <= 0`
+  and bills `DerivedBillableQuantity` directly, matching `WorkEffortTotalMaterialRevenueRule`.
 - `InternalOrganisation.NextCustomerReturnNumber` decided enforced-vs-fiscal-year numbering from
   `PurchaseShipmentSequence` instead of `CustomerReturnSequence`, so customer-return numbers followed the
   purchase-shipment sequence setting rather than their own (e.g. a fiscal-year customer-return sequence used the
