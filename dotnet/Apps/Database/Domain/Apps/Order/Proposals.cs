@@ -65,7 +65,7 @@ namespace Allors.Database.Domain
                 permissions.Get(this.Meta, this.Meta.Delete),
             };
 
-            revocations.ProductQuoteSetReadyForProcessingRevocation.DeniedPermissions = new[]
+            revocations.ProposalSetReadyForProcessingRevocation.DeniedPermissions = new[]
             {
                 permissions.Get(this.Meta, this.Meta.SetReadyForProcessing),
             };

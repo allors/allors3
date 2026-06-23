@@ -131,6 +131,12 @@ under a dated version heading.
 
 ### Fixed
 
+- `Proposal` quotes could be set ready for processing even with no valid quote items. The `Proposals` security
+  config set `DeniedPermissions` on the **`ProductQuote`** `SetReadyForProcessing` revocation (a copy-paste from
+  `ProductQuotes`) instead of the `Proposal` one, so the `ProposalSetReadyForProcessingRevocation` that
+  `ProposalDeniedPermissionRule` attaches to a created, item-less proposal denied nothing — a no-op gate. It now
+  populates `ProposalSetReadyForProcessingRevocation.DeniedPermissions`, making the gate effective (and no longer
+  clobbering the ProductQuote revocation's permissions).
 - `TimeFrequency.GetConvertToFactor` dereferenced `FirstOrDefault(...).ConversionFactor`: when the frequency had
   no conversion to the requested target, `FirstOrDefault` returned null and the `.ConversionFactor` access threw a
   `NullReferenceException` instead of returning null. It now uses `?.ConversionFactor`, honouring the method's
