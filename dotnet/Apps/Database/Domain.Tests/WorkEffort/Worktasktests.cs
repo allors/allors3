@@ -768,6 +768,82 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void GivenCollectiveWorkEffortWithZeroBillablePart_WhenMonthlyInvoiced_ThenPartIsNotInvoiced()
+        {
+            var organisation = new Organisations(this.Transaction).Extent().First(o => o.IsInternalOrganisation);
+
+            var customer = new PersonBuilder(this.Transaction).WithLastName("Customer").Build();
+            new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(customer)
+                .WithContactMechanism(new EmailAddressBuilder(this.Transaction).WithElectronicAddressString("customer@acme.com").Build())
+                .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).BillingAddress)
+                .WithUseAsDefault(true)
+                .Build();
+
+            new CustomerRelationshipBuilder(this.Transaction).WithCustomer(customer).WithInternalOrganisation(organisation).Build();
+
+            // Collective (monthly) invoicing for this customer.
+            customer.CollectiveWorkEffortInvoice = true;
+
+            var employee = new PersonBuilder(this.Transaction).WithFirstName("Good").WithLastName("Worker").Build();
+            new EmploymentBuilder(this.Transaction).WithEmployee(employee).WithEmployer(organisation).Build();
+
+            var today = DateTimeFactory.CreateDateTime(this.Transaction.Now());
+            var laterToday = DateTimeFactory.CreateDateTime(today.AddHours(4));
+
+            var part1 = this.CreatePart("P1");
+
+            this.Transaction.Derive();
+
+            new InventoryItemTransactionBuilder(this.Transaction)
+                .WithPart(part1)
+                .WithReason(new InventoryTransactionReasons(this.Transaction).IncomingShipment)
+                .WithQuantity(11)
+                .Build();
+
+            new BasePriceBuilder(this.Transaction)
+                .WithDescription("baseprice part1")
+                .WithPrice(10)
+                .WithProduct(part1)
+                .WithFromDate(today.AddDays(-1))
+                .Build();
+
+            var workOrder = new WorkTaskBuilder(this.Transaction).WithName("Task").WithCustomer(customer).WithTakenBy(organisation).Build();
+
+            this.Transaction.Derive();
+
+            var timeEntryToday = new TimeEntryBuilder(this.Transaction)
+                .WithRateType(new RateTypes(this.Transaction).StandardRate)
+                .WithFromDate(today)
+                .WithThroughDate(laterToday)
+                .WithWorkEffort(workOrder)
+                .WithAssignedBillingRate(12)
+                .Build();
+
+            employee.TimeSheetWhereWorker.AddTimeEntry(timeEntryToday);
+
+            // Part assigned with an explicit 0 billable quantity. It must not be invoiced in the monthly run.
+            new WorkEffortInventoryAssignmentBuilder(this.Transaction)
+                .WithAssignment(workOrder)
+                .WithInventoryItem(part1.InventoryItemsWherePart.FirstOrDefault())
+                .WithQuantity(3)
+                .WithAssignedBillableQuantity(0)
+                .Build();
+
+            this.Transaction.Derive();
+
+            workOrder.Complete();
+            this.Transaction.Derive();
+
+            WorkTasks.AppsMonthly(this.Transaction);
+            this.Derive();
+
+            // The bug built a 0-quantity SalesInvoiceItem for the part (DerivedBillableQuantity == 0) with no skip.
+            // The 0-billable part must not produce a billing; only the time entry is invoiced.
+            Assert.Empty(workOrder.WorkEffortBillingsWhereWorkEffort);
+        }
+
+        [Fact]
         public void GivenWorkEffortWithInvoiceItems_WhenInvoiced_ThenInvoiceItemsAreInvoiced()
         {
             var organisation = new Organisations(this.Transaction).Extent().First(o => o.IsInternalOrganisation);

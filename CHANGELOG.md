@@ -131,6 +131,10 @@ under a dated version heading.
 
 ### Fixed
 
+- `WorkTasks.AppsMonthly` (collective/monthly work-effort invoicing) built a `SalesInvoiceItem` for every
+  inventory assignment from `DerivedBillableQuantity` with no guard, so an assignment with a **zero** billable
+  quantity produced an invalid 0-quantity invoice line. It now skips assignments with `DerivedBillableQuantity <= 0`,
+  matching the per-effort `WorkEffort` invoicing and `WorkEffortTotalMaterialRevenueRule`.
 - `WorkEffort` invoicing billed a part that had a **zero** billable quantity. `CreateInvoiceItems` computed the
   invoice quantity as `DerivedBillableQuantity != 0 ? DerivedBillableQuantity : Quantity`, so an inventory
   assignment with `AssignedBillableQuantity = 0` (hence `DerivedBillableQuantity = 0`) fell back to the full

@@ -93,6 +93,11 @@ namespace Allors.Database.Domain
 
                                 foreach (var inventoryAssignment in workEffort.WorkEffortInventoryAssignmentsWhereAssignment)
                                 {
+                                    if (inventoryAssignment.DerivedBillableQuantity <= 0)
+                                    {
+                                        continue;
+                                    }
+
                                     var part = inventoryAssignment.InventoryItem.Part;
 
                                     var invoiceItem = new SalesInvoiceItemBuilder(transaction)
