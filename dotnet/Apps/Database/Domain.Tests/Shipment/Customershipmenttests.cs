@@ -1352,6 +1352,31 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void GivenShipmentItemWithMultipleIssuances_WhenQuantityDecreased_ThenCorrectionIsSpreadAcrossAllIssuances()
+        {
+            var customerShipment = new CustomerShipmentBuilder(this.Transaction).Build();
+            var shipmentItem = new ShipmentItemBuilder(this.Transaction).WithQuantity(10).Build();
+            customerShipment.AddShipmentItem(shipmentItem);
+
+            // The shipment item's quantity of 10 is issued from two inventory items (6 + 4).
+            new ItemIssuanceBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithQuantity(6).Build();
+            new ItemIssuanceBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithQuantity(4).Build();
+
+            var order = new SalesOrderBuilder(this.Transaction).Build();
+            var orderItem = new SalesOrderItemBuilder(this.Transaction).Build();
+            order.AddSalesOrderItem(orderItem);
+
+            new OrderShipmentBuilder(this.Transaction).WithOrderItem(orderItem).WithShipmentItem(shipmentItem).WithQuantity(10).Build();
+
+            // Decrease the shipped quantity by 7: the correction must be spread across BOTH issuances (6 fully +
+            // 1 from the next), leaving 3 issued. The bug subtracted the whole correction from the running
+            // remainder after the first issuance, stopping early and only applying 6 (leaving 4).
+            customerShipment.AppsOnDeriveQuantityDecreased(shipmentItem, orderItem, 7);
+
+            Assert.Equal(3, shipmentItem.ItemIssuancesWhereShipmentItem.Sum(v => v.Quantity));
+        }
+
+        [Fact]
         public void GivenCustomerShipmentContainingOrderOnHold_WhenTrySetStateToShipped_ThenActionIsNotAllowed()
         {
             var assessable = new VatRegimes(this.Transaction).ZeroRated;

@@ -131,6 +131,11 @@ under a dated version heading.
 
 ### Fixed
 
+- `CustomerShipment.AppsOnDeriveQuantityDecreased` mis-applied a quantity-decrease correction when a shipment
+  item was issued from more than one `ItemIssuance`. While spreading the correction it subtracted the **whole**
+  correction from the running remainder after the first issuance (`itemIssuanceCorrection -= quantity`) rather
+  than the amount just applied (`-= subQuantity`), so the remainder zeroed out, the loop stopped early, and later
+  issuances were left uncorrected (the decrease was under-applied). It now subtracts `subQuantity`.
 - `Quote.Order` (`QuoteExtensions.AppsOrder`) materialised a flat `SalesOrderItem` for **every** quote item,
   including feature sub-items (`QuotedWithFeatures`), instead of nesting them. A feature became a separate priced
   order line (double-counting), and — having no parent `OrderedWithFeature` link — threw a `NullReferenceException`
