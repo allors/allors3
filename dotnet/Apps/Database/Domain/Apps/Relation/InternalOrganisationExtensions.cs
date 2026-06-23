@@ -269,7 +269,7 @@ namespace Allors.Database.Domain
 
         public static string NextCustomerReturnNumber(this InternalOrganisation @this, int year)
         {
-            if (@this.PurchaseShipmentSequence.Equals(new PurchaseShipmentSequences(@this.Transaction()).EnforcedSequence))
+            if (@this.CustomerReturnSequence.Equals(new CustomerReturnSequences(@this.Transaction()).EnforcedSequence))
             {
                 return string.Concat(@this.CustomerReturnNumberPrefix, @this.CustomerReturnNumberCounter?.NextValue()).Replace("{year}", year.ToString());
             }
