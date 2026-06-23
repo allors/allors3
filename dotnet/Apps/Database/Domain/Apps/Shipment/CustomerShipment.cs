@@ -523,8 +523,8 @@ namespace Allors.Database.Domain
                     var unifiedGood = shipmentItem.Good as UnifiedGood;
                     var nonUnifiedGood = shipmentItem.Good as NonUnifiedGood;
                     var nonUnifiedPart = shipmentItem.Good as NonUnifiedPart;
-                    var serialized = unifiedGood?.InventoryItemKind.Equals(new InventoryItemKinds(this.Transaction()).Serialised);
                     var part = unifiedGood ?? nonUnifiedGood?.Part ?? nonUnifiedPart;
+                    var serialized = part?.InventoryItemKind.Equals(new InventoryItemKinds(this.Transaction()).Serialised);
 
                     var facilities = ((InternalOrganisation)this.ShipFromParty).FacilitiesWhereOwner;
                     var inventoryItems = part.InventoryItemsWherePart.Where(v => facilities.Contains(v.Facility));
