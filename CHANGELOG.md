@@ -131,6 +131,12 @@ under a dated version heading.
 
 ### Fixed
 
+- `CustomerShipment` shipping over-deducted inventory when a shipment item was issued from more than one
+  inventory item. `AppsShip` iterates the item's `ReservedFromInventoryItems` and, for non-serialised parts,
+  created an `OutgoingShipment` transaction of the **whole** `shipmentItem.Quantity` for *each* reserved item —
+  so a quantity issued as a split (e.g. 6 + 4 across two facilities) deducted the full quantity twice. It now
+  deducts each reserved item's actually-issued quantity (summed from `ItemIssuancesWhereShipmentItem`), matching
+  the per-item granularity of the serialised branch.
 - `CustomerShipment.CreatePickList` decided whether a shipment item was serialised from `unifiedGood` only
   (`unifiedGood?.InventoryItemKind`). For a serialised `NonUnifiedGood`/`NonUnifiedPart`, `unifiedGood` is null,
   so `serialized` was false and the non-serialised branch cast the part's `SerialisedInventoryItem` to

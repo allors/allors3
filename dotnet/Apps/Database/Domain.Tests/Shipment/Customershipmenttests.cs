@@ -1261,6 +1261,97 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void GivenCustomerShipmentSplitAcrossTwoInventoryItems_WhenShipped_ThenInventoryIsDeductedOncePerIssuedQuantity()
+        {
+            var good = new UnifiedGoodBuilder(this.Transaction).WithNonSerialisedDefaults(this.InternalOrganisation).Build();
+            this.Transaction.Derive();
+
+            var facility1 = good.DefaultFacility;
+            var facility2 = new FacilityBuilder(this.Transaction)
+                .WithFacilityType(new FacilityTypes(this.Transaction).Warehouse)
+                .WithName("facility2")
+                .WithOwner(this.InternalOrganisation)
+                .Build();
+            this.Transaction.Derive();
+
+            // Stock the part across two owned facilities (6 + 5). Neither alone covers a shipment of 10, so the
+            // orderless pick must split the issuance across both inventory items (two ReservedFromInventoryItems).
+            new InventoryItemTransactionBuilder(this.Transaction)
+                .WithQuantity(6)
+                .WithReason(new InventoryTransactionReasons(this.Transaction).PhysicalCount)
+                .WithPart(good)
+                .WithFacility(facility1)
+                .Build();
+
+            new InventoryItemTransactionBuilder(this.Transaction)
+                .WithQuantity(5)
+                .WithReason(new InventoryTransactionReasons(this.Transaction).PhysicalCount)
+                .WithPart(good)
+                .WithFacility(facility2)
+                .Build();
+
+            var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
+            var mechelenAddress = new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build();
+
+            var customer = new PersonBuilder(this.Transaction).WithLastName("customer").Build();
+            new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(customer)
+                .WithContactMechanism(mechelenAddress)
+                .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).ShippingAddress)
+                .WithUseAsDefault(true)
+                .Build();
+
+            new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(customer).Build();
+
+            this.Transaction.Derive();
+
+            var shipment = new CustomerShipmentBuilder(this.Transaction)
+                .WithShipToParty(customer)
+                .WithShipToAddress(mechelenAddress)
+                .WithShipmentMethod(new ShipmentMethods(this.Transaction).Ground)
+                .Build();
+
+            var shipmentItem = new ShipmentItemBuilder(this.Transaction).WithGood(good).WithQuantity(10).Build();
+            shipment.AddShipmentItem(shipmentItem);
+
+            this.Transaction.Derive();
+
+            shipment.Pick();
+            this.Transaction.Derive();
+
+            // Precondition: the pick really did split across both inventory items.
+            Assert.Equal(2, shipmentItem.ReservedFromInventoryItems.Count());
+
+            var pickList = shipmentItem.ItemIssuancesWhereShipmentItem.ElementAt(0).PickListItem.PickListWherePickListItem;
+            pickList.Picker = this.OrderProcessor;
+            pickList.SetPicked();
+            this.Transaction.Derive();
+
+            var package = new ShipmentPackageBuilder(this.Transaction).Build();
+            package.AddPackagingContent(new PackagingContentBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithQuantity(shipmentItem.Quantity).Build());
+            shipment.AddShipmentPackage(package);
+
+            this.Transaction.Derive();
+
+            shipment.Ship();
+
+            // The bug over-deducts and drives the split inventory items negative, so derive non-throwing here
+            // and assert no errors below (rather than letting the throwing derive mask the quantity assertion).
+            var derivation = this.Derive();
+
+            // Shipping must deduct exactly the shipped quantity (10), spread over the reserved items as actually
+            // issued. The bug deducted the full shipment quantity (10) once per reserved item => 20.
+            var outgoing = new InventoryTransactionReasons(this.Transaction).OutgoingShipment;
+            var totalDeducted = good.InventoryItemsWherePart
+                .SelectMany(v => v.InventoryItemTransactionsWhereInventoryItem)
+                .Where(v => Equals(v.Reason, outgoing))
+                .Sum(v => v.Quantity);
+
+            Assert.Equal(10, totalDeducted);
+            Assert.False(derivation.HasErrors);
+        }
+
+        [Fact]
         public void GivenCustomerShipmentContainingOrderOnHold_WhenTrySetStateToShipped_ThenActionIsNotAllowed()
         {
             var assessable = new VatRegimes(this.Transaction).ZeroRated;
