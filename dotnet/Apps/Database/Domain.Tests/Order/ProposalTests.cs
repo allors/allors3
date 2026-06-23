@@ -78,6 +78,31 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void OnChangedProposalValidQuoteItemsDeriveSetReadyForProcessingDeniedPermission()
+        {
+            var quote = new ProposalBuilder(this.Transaction).Build();
+            this.Derive();
+
+            var quoteItem = new QuoteItemBuilder(this.Transaction)
+                    .WithInvoiceItemType(new InvoiceItemTypeBuilder(this.Transaction).Build())
+                    .WithAssignedUnitPrice(1)
+                    .Build();
+            quote.AddQuoteItem(quoteItem);
+            this.Derive();
+
+            quoteItem.Cancel();
+            this.Derive();
+
+            // The revocation is attached (Created, no valid items), but the gate is only effective if the
+            // revocation actually denies the SetReadyForProcessing permission. The bug populated the ProductQuote
+            // revocation instead, leaving the Proposal revocation's DeniedPermissions empty (a no-op gate).
+            Assert.Contains(this.setReadyForProcessingRevocation, quote.Revocations);
+
+            var setReadyForProcessingPermission = new Permissions(this.Transaction).Get(this.M.Proposal, this.M.Proposal.SetReadyForProcessing);
+            Assert.Contains(setReadyForProcessingPermission, quote.Revocations.SelectMany(v => v.DeniedPermissions));
+        }
+
+        [Fact]
         public void OnChangedProductQuoteStateNotCreatedDeriveSetReadyPermission()
         {
             var quote = this.InternalOrganisation.CreateB2BProductQuoteWithSerialisedItem(this.Transaction.Faker());
