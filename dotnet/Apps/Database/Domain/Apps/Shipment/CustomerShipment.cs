@@ -455,7 +455,7 @@ namespace Allors.Database.Domain
                         if (itemIssuance.Quantity < itemIssuanceCorrection)
                         {
                             subQuantity = itemIssuance.Quantity;
-                            itemIssuanceCorrection -= quantity;
+                            itemIssuanceCorrection -= subQuantity;
                         }
                         else
                         {
