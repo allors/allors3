@@ -312,5 +312,29 @@ namespace Allors.Database.Domain.Tests
 
             Assert.True(shipment.ShipmentState.IsReceived);
         }
+
+        [Fact]
+        public void GivenPurchaseShipmentWithPartlessItem_WhenReceived_ThenReceiveDoesNotThrow()
+        {
+            var supplier = new OrganisationBuilder(this.Transaction).WithName("supplier").Build();
+            new SupplierRelationshipBuilder(this.Transaction).WithSupplier(supplier).Build();
+            this.Transaction.Derive();
+
+            var shipment = new PurchaseShipmentBuilder(this.Transaction)
+                .WithShipmentMethod(new ShipmentMethods(this.Transaction).Ground)
+                .WithShipFromParty(supplier)
+                .Build();
+
+            // A shipment item without a Part (e.g. a non-inventory line). Receive must not dereference Part.
+            var shipmentItem = new ShipmentItemBuilder(this.Transaction).WithQuantity(1).Build();
+            shipment.AddShipmentItem(shipmentItem);
+            this.Transaction.Derive();
+
+            // Without the ExistPart guard, AppsReceive dereferences shipmentItem.Part.InventoryItemKind => NRE.
+            shipment.Receive();
+
+            Assert.False(this.Derive().HasErrors);
+            Assert.True(shipment.ShipmentState.IsReceived);
+        }
     }
 }
