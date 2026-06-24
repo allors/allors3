@@ -131,6 +131,10 @@ under a dated version heading.
 
 ### Fixed
 
+- `SerialisedItemSearchStringRule` folds the owning sales-invoice number into the serialised item's `SearchString`
+  but, alone among the seven invoice/order/quote/request/shipment collections it reads, had no association pattern for
+  `SalesInvoiceItemsWhereSerialisedItem` — so putting a serialised item on a sales-invoice line left its `SearchString`
+  stale. It now watches `SalesInvoiceItemsWhereSerialisedItem`, consistent with the other collections.
 - `SerialisedItemProductCategoriesDisplayNameRule` builds a serialised item's `ProductCategoriesDisplayName` from each
   owning category's `DisplayName` but watched only category *membership*, so renaming a product category left the
   serialised item's `ProductCategoriesDisplayName` stale. It now also watches `ProductCategory.DisplayName` (rerouted
