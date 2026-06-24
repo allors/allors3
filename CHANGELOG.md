@@ -131,6 +131,9 @@ under a dated version heading.
 
 ### Fixed
 
+- `RequirementServicedByNameRule` copied the serviced organisation's `DisplayName` into `ServicedByName` but
+  watched only the `ServicedBy` link, so renaming the organisation left `ServicedByName` stale. It now also watches
+  `Organisation.DisplayName` (rerouted to `RequirementsWhereServicedBy`).
 - `WorkEffortTotalOtherRevenueRule` summed non-discount work-effort invoice items' amounts into `TotalOtherRevenue`
   (partitioning on `InvoiceItemType.IsDiscount`) but didn't watch `WorkEffortInvoiceItem.InvoiceItemType`, so
   changing an item's invoice-item type left `TotalOtherRevenue` stale. It now also watches `InvoiceItemType`.
