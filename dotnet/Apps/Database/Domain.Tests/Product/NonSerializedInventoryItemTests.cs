@@ -96,6 +96,37 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void ChangedPartNameAndFacilityNameDeriveDisplayName()
+        {
+            var part = new NonUnifiedPartBuilder(this.Transaction)
+                .WithName("partone")
+                .WithProductIdentification(new PartNumberBuilder(this.Transaction)
+                    .WithIdentification("1")
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
+                .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised)
+                .Build();
+            this.Transaction.Derive();
+
+            var facility = new FacilityBuilder(this.Transaction)
+                .WithName("facone")
+                .WithFacilityType(new FacilityTypes(this.Transaction).Warehouse)
+                .WithOwner(this.InternalOrganisation)
+                .Build();
+            this.Transaction.Derive();
+
+            var item = new NonSerialisedInventoryItemBuilder(this.Transaction).WithPart(part).WithFacility(facility).Build();
+            this.Transaction.Derive();
+
+            Assert.Equal($"{part.Name} at {facility.Name} with state {item.NonSerialisedInventoryItemState?.Name}", item.DisplayName);
+
+            part.Name = "parttwo";
+            facility.Name = "factwo";
+            this.Transaction.Derive();
+
+            Assert.Equal($"{part.Name} at {facility.Name} with state {item.NonSerialisedInventoryItemState?.Name}", item.DisplayName);
+        }
+
+        [Fact]
         public void GivenInventoryItemForPart_WhenDerived_ThenUnitOfMeasureIsPartUnitOfMeasure()
         {
             var uom = new UnitsOfMeasure(this.Transaction).Centimeter;
