@@ -131,6 +131,10 @@ under a dated version heading.
 
 ### Fixed
 
+- `SerialisedItemProductCategoriesDisplayNameRule` builds a serialised item's `ProductCategoriesDisplayName` from each
+  owning category's `DisplayName` but watched only category *membership*, so renaming a product category left the
+  serialised item's `ProductCategoriesDisplayName` stale. It now also watches `ProductCategory.DisplayName` (rerouted
+  via `Products` → `UnifiedGood` → `SerialisedItems`).
 - `NonUnifiedPartSearchStringRule` folds `Brand.Name`, `Model.Name` and `ProductType.Name` into the part's
   `SearchString` but watched only the `Brand`/`Model`/`ProductType` *link* roles, so renaming a brand, model or product
   type in place left the parts' `SearchString` stale. It now also watches `Brand.Name`, `Model.Name` and

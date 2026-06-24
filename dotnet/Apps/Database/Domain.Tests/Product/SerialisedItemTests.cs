@@ -584,6 +584,25 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Contains("catname", serialisedItem.ProductCategoriesDisplayName);
         }
+
+        [Fact]
+        public void ChangedProductCategoryNameDeriveDisplayProductCategories()
+        {
+            var part = new UnifiedGoodBuilder(this.Transaction).Build();
+            var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
+            part.AddSerialisedItem(serialisedItem);
+            this.Derive();
+
+            var category = new ProductCategoryBuilder(this.Transaction).WithName("catone").WithProduct(part).Build();
+            this.Derive();
+
+            Assert.Contains("catone", serialisedItem.ProductCategoriesDisplayName);
+
+            category.Name = "renamedcat";
+            this.Derive();
+
+            Assert.Contains("renamedcat", serialisedItem.ProductCategoriesDisplayName);
+        }
     }
 
     public class SerialisedItemOwnerDervivationTests : DomainTest, IClassFixture<Fixture>

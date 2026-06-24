@@ -19,6 +19,7 @@ namespace Allors.Database.Domain
             {
                 m.SerialisedItem.AssociationPattern(v=>v.AccountingTransactionsWhereFixedAsset),
                 m.Part.AssociationPattern(v=>v.ProductCategoriesWhereProduct, v=>v.SerialisedItems),
+                m.ProductCategory.RolePattern(v => v.DisplayName, v => v.Products.ObjectType.AsUnifiedGood.SerialisedItems),
                 m.SerialisedItem.RolePattern(v => v.DerivationTrigger),
             };
 
