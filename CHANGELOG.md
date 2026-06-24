@@ -131,6 +131,13 @@ under a dated version heading.
 
 ### Fixed
 
+- `PurchaseShipmentShipToPartyRule` selected the shipment-number **prefix** used for `SortableShipmentNumber`
+  from `CustomerShipmentSequence.IsEnforcedSequence` instead of the purchase shipment's own
+  `PurchaseShipmentSequence`. The number itself comes from `NextPurchaseShipmentNumber` (which branches on
+  `PurchaseShipmentSequence`), so when the two sequences disagreed the prefix branch diverged from the number
+  branch — picking the wrong prefix, or (when the purchase-shipment sequence was enforced while the
+  customer-shipment sequence restarted on fiscal year) dereferencing the absent fiscal-year sequence record and
+  throwing a `NullReferenceException`. It now branches on `PurchaseShipmentSequence`.
 - `CustomerReturnExistShipmentNumberRule` selected the shipment-number **prefix** used for
   `SortableShipmentNumber` from `CustomerShipmentSequence.IsEnforcedSequence` instead of the customer return's
   own `CustomerReturnSequence`. After the number itself was fixed to follow `CustomerReturnSequence`

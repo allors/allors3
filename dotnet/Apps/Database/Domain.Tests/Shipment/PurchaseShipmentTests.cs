@@ -155,6 +155,28 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void GivenShipToWithShipmentNumberPrefix_WhenDeriving_ThenSortableShipmentNumberFollowsPurchaseShipmentSequence()
+        {
+            // The SortableShipmentNumber prefix must be selected by the PurchaseShipmentSequence, not the CustomerShipmentSequence.
+            this.InternalOrganisation.PurchaseShipmentSequence = new PurchaseShipmentSequences(this.Transaction).EnforcedSequence;
+            this.InternalOrganisation.PurchaseShipmentNumberPrefix = "prefix-";
+            this.InternalOrganisation.CustomerShipmentSequence = new CustomerShipmentSequences(this.Transaction).RestartOnFiscalYear;
+            var supplier = new OrganisationBuilder(this.Transaction).WithName("supplier").Build();
+            new SupplierRelationshipBuilder(this.Transaction).WithSupplier(supplier).Build();
+
+            this.Transaction.Derive();
+
+            var shipment = new PurchaseShipmentBuilder(this.Transaction)
+                .WithShipmentMethod(new ShipmentMethods(this.Transaction).Ground)
+                .WithShipFromParty(supplier)
+                .Build();
+
+            this.Transaction.Derive();
+
+            Assert.Equal(int.Parse(shipment.ShipmentNumber.Split('-')[1]), shipment.SortableShipmentNumber);
+        }
+
+        [Fact]
         public void GivenPurchaseShipmentWithShipToCustomerWithshippingAddress_WhenDeriving_ThenDerivedShipToCustomerAndDerivedShipToAddressMustExist()
         {
             var supplier = new OrganisationBuilder(this.Transaction).WithName("supplier").Build();
