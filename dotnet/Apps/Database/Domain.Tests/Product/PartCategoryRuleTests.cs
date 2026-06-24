@@ -124,5 +124,22 @@ namespace Allors.Database.Domain.Tests
             Assert.Contains(partCategory11, partCategory1.Descendants);
             Assert.Contains(partCategory111, partCategory1.Descendants);
         }
+
+        [Fact]
+        public void ChangedAncestorNameDeriveDisplayName()
+        {
+            var root = new PartCategoryBuilder(this.Transaction).WithName("alpha").Build();
+            var mid = new PartCategoryBuilder(this.Transaction).WithName("beta").WithPrimaryParent(root).Build();
+            var leaf = new PartCategoryBuilder(this.Transaction).WithName("gamma").WithPrimaryParent(mid).Build();
+            this.Derive();
+
+            Assert.Contains("alpha", leaf.DisplayName);
+
+            root.Name = "delta";
+            this.Derive();
+
+            Assert.Contains("delta", leaf.DisplayName);
+            Assert.DoesNotContain("alpha", leaf.DisplayName);
+        }
     }
 }
