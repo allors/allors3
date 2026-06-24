@@ -131,6 +131,9 @@ under a dated version heading.
 
 ### Fixed
 
+- `CustomerRelationshipFromDateRule` validated overlapping customer-relationship periods using `ThroughDate` but
+  watched only `FromDate`, so extending a relationship's `ThroughDate` into a later relationship's period never
+  re-ran the overlap check and the conflicting periods silently passed validation. It now also watches `ThroughDate`.
 - `PurchaseOrderItemStateRule` decided `PurchaseOrderItemShipmentState` (PartiallyReceived vs Received) from
   `QuantityReceived < QuantityOrdered` but its patterns never watched `QuantityOrdered`, so raising the ordered
   quantity on a revision left the shipment state stale (e.g. a fully-received item stayed `Received` instead of

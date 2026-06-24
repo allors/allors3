@@ -19,6 +19,7 @@ namespace Allors.Database.Domain
         this.Patterns = new Pattern[]
         {
             m.CustomerRelationship.RolePattern(v => v.FromDate),
+            m.CustomerRelationship.RolePattern(v => v.ThroughDate),
         };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
