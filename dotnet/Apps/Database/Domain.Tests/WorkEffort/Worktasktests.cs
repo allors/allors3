@@ -1701,6 +1701,32 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Equal(3, workEffort.TotalOtherRevenue);
         }
+
+        [Fact]
+        public void ChangedWorkEffortInvoiceItemInvoiceItemTypeDeriveTotalOtherRevenue()
+        {
+            var workEffort = new WorkTaskBuilder(this.Transaction).Build();
+            this.Derive();
+
+            var workEffortInvoiceItem = new WorkEffortInvoiceItemBuilder(this.Transaction)
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).Time)
+                .WithDescription("desc")
+                .WithAmount(1)
+                .Build();
+
+            new WorkEffortInvoiceItemAssignmentBuilder(this.Transaction)
+                .WithWorkEffortInvoiceItem(workEffortInvoiceItem)
+                .WithAssignment(workEffort)
+                .Build();
+            this.Derive();
+
+            Assert.Equal(1, workEffort.TotalOtherRevenue);
+
+            workEffortInvoiceItem.InvoiceItemType = new InvoiceItemTypes(this.Transaction).Discount;
+            this.Derive();
+
+            Assert.Equal(0, workEffort.TotalOtherRevenue);
+        }
     }
 
     public class WorkEffortTotalSubContractedRevenueRuleTests : DomainTest, IClassFixture<Fixture>

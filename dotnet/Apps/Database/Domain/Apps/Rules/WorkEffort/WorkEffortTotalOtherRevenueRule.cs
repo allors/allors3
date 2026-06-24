@@ -18,6 +18,7 @@ namespace Allors.Database.Domain
             {
                 m.WorkEffortInvoiceItemAssignment.RolePattern(v => v.Assignment, v => v.Assignment),
                 m.WorkEffortInvoiceItem.RolePattern(v => v.Amount, v => v.WorkEffortInvoiceItemAssignmentWhereWorkEffortInvoiceItem.ObjectType.Assignment),
+                m.WorkEffortInvoiceItem.RolePattern(v => v.InvoiceItemType, v => v.WorkEffortInvoiceItemAssignmentWhereWorkEffortInvoiceItem.ObjectType.Assignment),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
