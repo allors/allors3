@@ -218,6 +218,29 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Equal("parent/child", nonUnifiedGood.ProductCategoriesDisplayName);
         }
+
+        [Fact]
+        public void ChangedProductCategoryAncestorNameDeriveProductCategoriesDisplayName()
+        {
+            var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Transaction).Build();
+            this.Derive();
+
+            var partCategory1 = new ProductCategoryBuilder(this.Transaction).WithName("parent").Build();
+            this.Derive();
+
+            var partCategory2 = new ProductCategoryBuilder(this.Transaction).WithName("child").WithPrimaryParent(partCategory1).Build();
+            this.Derive();
+
+            partCategory2.AddProduct(nonUnifiedGood);
+            this.Derive();
+
+            Assert.Equal("parent/child", nonUnifiedGood.ProductCategoriesDisplayName);
+
+            partCategory1.Name = "renamedparent";
+            this.Derive();
+
+            Assert.Equal("renamedparent/child", nonUnifiedGood.ProductCategoriesDisplayName);
+        }
     }
 
     [Trait("Category", "Security")]

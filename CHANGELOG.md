@@ -131,6 +131,11 @@ under a dated version heading.
 
 ### Fixed
 
+- `ProductProductCategoriesDisplayNameRule` renders a product's `ProductCategoriesDisplayName` as the full
+  primary-ancestor path (`grandparent/parent/child`) but watched only `ProductCategory.Name` rerouted to that
+  category's *own* products, so renaming a non-direct ancestor category left descendant categories' products'
+  `ProductCategoriesDisplayName` stale. It now also watches `ProductCategory.Name` rerouted via
+  `ProductCategoriesWherePrimaryAncestor` to the descendant categories' products.
 - `PartPartCategoriesDisplayNameRule` renders a part's `PartCategoriesDisplayName` as the full primary-ancestor path
   (`grandparent/parent/child`) but watched only `PartCategory.Name` rerouted to that category's *own* parts, so
   renaming a non-direct ancestor category left descendant categories' parts' `PartCategoriesDisplayName` stale. It now
