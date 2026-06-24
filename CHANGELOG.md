@@ -131,6 +131,10 @@ under a dated version heading.
 
 ### Fixed
 
+- `SalesInvoiceReadyForPostingDerivedCurrencyRule` derives `DerivedCurrency` from `BillToCustomer`'s preferred
+  currency/locale but watched only the customer party's leaf roles (via the reverse path) and the invoice's
+  `BilledFrom`/`AssignedCurrency` — not the invoice→`BillToCustomer` link. Reassigning an invoice's `BillToCustomer`
+  therefore left `DerivedCurrency` based on the previous customer. It now also watches `SalesInvoice.BillToCustomer`.
 - `ProductProductCategoriesDisplayNameRule` renders a product's `ProductCategoriesDisplayName` as the full
   primary-ancestor path (`grandparent/parent/child`) but watched only `ProductCategory.Name` rerouted to that
   category's *own* products, so renaming a non-direct ancestor category left descendant categories' products'
