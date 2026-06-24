@@ -131,6 +131,9 @@ under a dated version heading.
 
 ### Fixed
 
+- `ProductCategoryDisplayNameRule` had the same descendant-stale-on-ancestor-rename gap as
+  `PartCategoryDisplayNameRule`: its roleless `Name` pattern re-derived only the renamed category itself. It now
+  also watches `Name` rerouted to `ProductCategoriesWherePrimaryAncestor` (the descendants).
 - `PartCategoryDisplayNameRule` builds a category's `DisplayName` from its ancestor chain's names but its roleless
   `Name` pattern re-derived only the renamed category itself, so renaming an ancestor left descendants' display
   names stale. It now also watches `Name` rerouted to `PartCategoriesWherePrimaryAncestor` (the descendants).

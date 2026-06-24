@@ -129,6 +129,23 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void ChangedAncestorNameDeriveDisplayName()
+        {
+            var root = new ProductCategoryBuilder(this.Transaction).WithName("alpha").Build();
+            var mid = new ProductCategoryBuilder(this.Transaction).WithName("beta").WithPrimaryParent(root).Build();
+            var leaf = new ProductCategoryBuilder(this.Transaction).WithName("gamma").WithPrimaryParent(mid).Build();
+            this.Transaction.Derive();
+
+            Assert.Contains("alpha", leaf.DisplayName);
+
+            root.Name = "delta";
+            this.Transaction.Derive();
+
+            Assert.Contains("delta", leaf.DisplayName);
+            Assert.DoesNotContain("alpha", leaf.DisplayName);
+        }
+
+        [Fact]
         public void GivenProductCategory_WhenNewParentsAreInserted_ThenProductCategoriesWhereDescendantAreRecalculated()
         {
             var productCategory1 = new ProductCategoryBuilder(this.Transaction)
