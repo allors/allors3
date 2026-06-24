@@ -72,6 +72,23 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void ChangedFullfillContactMechanismDisplayNameDeriveSearchString()
+        {
+            var webAddress = new WebAddressBuilder(this.Transaction).WithElectronicAddressString("originaladdress").Build();
+            var request = new RequestForInformationBuilder(this.Transaction)
+                .WithFullfillContactMechanism(webAddress)
+                .Build();
+            this.Transaction.Derive();
+
+            Assert.Contains("originaladdress", request.SearchString);
+
+            webAddress.ElectronicAddressString = "changedaddress";
+            this.Transaction.Derive();
+
+            Assert.Contains("changedaddress", request.SearchString);
+        }
+
+        [Fact]
         public void ChangedFullfillContactMechanismDisplayNameDeriveRequestForProposalSearchString()
         {
             var webAddress = new WebAddressBuilder(this.Transaction).WithElectronicAddressString("originaladdress").Build();
