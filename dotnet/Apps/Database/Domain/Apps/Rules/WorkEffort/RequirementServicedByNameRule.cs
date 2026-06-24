@@ -18,6 +18,7 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
         {
             m.Requirement.RolePattern(v => v.ServicedBy),
+            m.Organisation.RolePattern(v => v.DisplayName, v => v.RequirementsWhereServicedBy),
         };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)

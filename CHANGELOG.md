@@ -135,6 +135,12 @@ under a dated version heading.
   the fulfillment but watched only the `FullfilledBy` link, so editing the requirement left
   `WorkRequirementNumber`/`WorkRequirementDescription` stale. It now also watches the work requirement's
   `RequirementNumber` and `Description` (rerouted to `WorkRequirementFulfillmentWhereFullfilledBy`).
+- `RequirementServicedByNameRule` copied the serviced organisation's `DisplayName` into `ServicedByName` but
+  watched only the `ServicedBy` link, so renaming the organisation left `ServicedByName` stale. It now also watches
+  `Organisation.DisplayName` (rerouted to `RequirementsWhereServicedBy`).
+- `ProductCategoryDisplayNameRule` had the same descendant-stale-on-ancestor-rename gap as
+  `PartCategoryDisplayNameRule`: its roleless `Name` pattern re-derived only the renamed category itself. It now
+  also watches `Name` rerouted to `ProductCategoriesWherePrimaryAncestor` (the descendants).
 - `PartCategoryDisplayNameRule` builds a category's `DisplayName` from its ancestor chain's names but its roleless
   `Name` pattern re-derived only the renamed category itself, so renaming an ancestor left descendants' display
   names stale. It now also watches `Name` rerouted to `PartCategoriesWherePrimaryAncestor` (the descendants).
