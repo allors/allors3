@@ -985,6 +985,39 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void ChangedDerivationTotalFeeAndTotalShippingAndHandlingDoNotAccumulate()
+        {
+            var supplier = this.InternalOrganisation.ActiveSuppliers.ElementAt(0);
+            var part = new UnifiedGoodBuilder(this.Transaction).Build();
+
+            new SupplierOfferingBuilder(this.Transaction)
+                .WithPart(part)
+                .WithSupplier(supplier)
+                .WithPrice(1)
+                .WithFromDate(this.Transaction.Now().AddDays(-1))
+                .Build();
+
+            var invoice = new PurchaseInvoiceBuilder(this.Transaction).WithBilledFrom(supplier).WithInvoiceDate(this.Transaction.Now()).Build();
+            this.Derive();
+
+            var invoiceItem = new PurchaseInvoiceItemBuilder(this.Transaction).WithPart(part).WithQuantity(1).Build();
+            invoice.AddPurchaseInvoiceItem(invoiceItem);
+            invoice.AddOrderAdjustment(new FeeBuilder(this.Transaction).WithAmount(10).Build());
+            invoice.AddOrderAdjustment(new ShippingAndHandlingChargeBuilder(this.Transaction).WithAmount(5).Build());
+            this.Derive();
+
+            Assert.Equal(10M, invoice.TotalFee);
+            Assert.Equal(5M, invoice.TotalShippingAndHandling);
+
+            // Force the price rule to re-derive; the fixed charges must not accumulate.
+            invoiceItem.Quantity = 2;
+            this.Derive();
+
+            Assert.Equal(10M, invoice.TotalFee);
+            Assert.Equal(5M, invoice.TotalShippingAndHandling);
+        }
+
+        [Fact]
         public void ChangedDiscountAdjustmentPercentageCalculatePrice()
         {
             var supplier = this.InternalOrganisation.ActiveSuppliers.ElementAt(0);
