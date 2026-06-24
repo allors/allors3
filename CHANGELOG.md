@@ -131,6 +131,10 @@ under a dated version heading.
 
 ### Fixed
 
+- `PartPartCategoriesDisplayNameRule` renders a part's `PartCategoriesDisplayName` as the full primary-ancestor path
+  (`grandparent/parent/child`) but watched only `PartCategory.Name` rerouted to that category's *own* parts, so
+  renaming a non-direct ancestor category left descendant categories' parts' `PartCategoriesDisplayName` stale. It now
+  also watches `PartCategory.Name` rerouted via `PartCategoriesWherePrimaryAncestor` to the descendant categories' parts.
 - `SerialisedItemSearchStringRule` folds the owning sales-invoice number into the serialised item's `SearchString`
   but, alone among the seven invoice/order/quote/request/shipment collections it reads, had no association pattern for
   `SalesInvoiceItemsWhereSerialisedItem` — so putting a serialised item on a sales-invoice line left its `SearchString`
