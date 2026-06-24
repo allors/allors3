@@ -84,5 +84,26 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Equal(maintenance, workTask.WorkEffortPurpose);
         }
+
+        [Fact]
+        public void ChangedServicedByDisplayNameDeriveServicedByName()
+        {
+            var organisation = this.InternalOrganisation;
+
+            var requirement = new WorkRequirementBuilder(this.Transaction)
+                .WithDescription("req")
+                .WithServicedBy(organisation)
+                .Build();
+            this.Transaction.Derive();
+
+            Assert.Equal(organisation.DisplayName, requirement.ServicedByName);
+
+            var before = organisation.DisplayName;
+            organisation.Name = "renamedservicedby";
+            this.Transaction.Derive();
+
+            Assert.NotEqual(before, organisation.DisplayName);
+            Assert.Equal(organisation.DisplayName, requirement.ServicedByName);
+        }
     }
 }

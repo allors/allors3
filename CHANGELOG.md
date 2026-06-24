@@ -131,6 +131,9 @@ under a dated version heading.
 
 ### Fixed
 
+- `RequirementServicedByNameRule` copied the serviced organisation's `DisplayName` into `ServicedByName` but
+  watched only the `ServicedBy` link, so renaming the organisation left `ServicedByName` stale. It now also watches
+  `Organisation.DisplayName` (rerouted to `RequirementsWhereServicedBy`).
 - `ProductCategoryDisplayNameRule` had the same descendant-stale-on-ancestor-rename gap as
   `PartCategoryDisplayNameRule`: its roleless `Name` pattern re-derived only the renamed category itself. It now
   also watches `Name` rerouted to `ProductCategoriesWherePrimaryAncestor` (the descendants).
