@@ -6,6 +6,8 @@
 
 namespace Allors.Database.Domain.Tests
 {
+    using System;
+    using System.Linq;
     using Xunit;
 
     [Trait("Category", "Security")]
@@ -73,6 +75,51 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             Assert.Contains(this.deleteRevocation, transaction.Revocations);
+        }
+    }
+
+    public class AccountingTransactionDerivedTotalAmountRuleTests : DomainTest, IClassFixture<Fixture>
+    {
+        public AccountingTransactionDerivedTotalAmountRuleTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedAccountingTransactionDetailAmountAndBalanceSideDeriveDerivedTotalAmount()
+        {
+            var organisationGlAccount = new OrganisationGlAccounts(this.Transaction).Extent().ToArray().First();
+
+            var accountingPeriod = new AccountingPeriodBuilder(this.Transaction)
+                .WithInternalOrganisation(organisationGlAccount.InternalOrganisation)
+                .WithFrequency(new TimeFrequencies(this.Transaction).Day)
+                .Build();
+
+            var detail = new AccountingTransactionDetailBuilder(this.Transaction)
+                .WithAmount(100)
+                .WithBalanceSide(new BalanceSides(this.Transaction).Debit)
+                .WithGeneralLedgerAccount(organisationGlAccount.GeneralLedgerAccount)
+                .Build();
+
+            var accountingTransaction = new AccountingTransactionBuilder(this.Transaction)
+                .WithAccountingTransactionType(new AccountingTransactionTypes(this.Transaction).Internal)
+                .WithInternalOrganisation(organisationGlAccount.InternalOrganisation)
+                .WithAccountingPeriod(accountingPeriod)
+                .WithDescription("Test")
+                .WithTransactionDate(DateTime.Now)
+                .WithEntryDate(DateTime.Now.AddHours(1))
+                .WithAccountingTransactionDetail(detail)
+                .Build();
+            this.Derive();
+
+            Assert.Equal(100, accountingTransaction.DerivedTotalAmount);
+
+            detail.Amount = 150;
+            this.Derive();
+
+            Assert.Equal(150, accountingTransaction.DerivedTotalAmount);
+
+            detail.BalanceSide = new BalanceSides(this.Transaction).Credit;
+            this.Derive();
+
+            Assert.Equal(0, accountingTransaction.DerivedTotalAmount);
         }
     }
 }

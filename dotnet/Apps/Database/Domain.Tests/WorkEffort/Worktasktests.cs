@@ -2103,4 +2103,35 @@ namespace Allors.Database.Domain.Tests
             Assert.DoesNotContain(revisePermission, workTask.Revocations.SelectMany(v => v.DeniedPermissions));
         }
     }
+
+    public class WorkEffortTotalDiscountRuleTests : DomainTest, IClassFixture<Fixture>
+    {
+        public WorkEffortTotalDiscountRuleTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedWorkEffortInvoiceItemInvoiceItemTypeDeriveTotalDiscount()
+        {
+            var workEffort = new WorkTaskBuilder(this.Transaction).Build();
+            this.Derive();
+
+            var workEffortInvoiceItem = new WorkEffortInvoiceItemBuilder(this.Transaction)
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).Discount)
+                .WithDescription("desc")
+                .WithAmount(1)
+                .Build();
+
+            new WorkEffortInvoiceItemAssignmentBuilder(this.Transaction)
+                .WithWorkEffortInvoiceItem(workEffortInvoiceItem)
+                .WithAssignment(workEffort)
+                .Build();
+            this.Derive();
+
+            Assert.Equal(1, workEffort.TotalDiscount);
+
+            workEffortInvoiceItem.InvoiceItemType = new InvoiceItemTypes(this.Transaction).Time;
+            this.Derive();
+
+            Assert.Equal(0, workEffort.TotalDiscount);
+        }
+    }
 }

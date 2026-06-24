@@ -134,6 +134,12 @@ under a dated version heading.
 - `WorkEffortTotalOtherRevenueRule` summed non-discount work-effort invoice items' amounts into `TotalOtherRevenue`
   (partitioning on `InvoiceItemType.IsDiscount`) but didn't watch `WorkEffortInvoiceItem.InvoiceItemType`, so
   changing an item's invoice-item type left `TotalOtherRevenue` stale. It now also watches `InvoiceItemType`.
+- `WorkEffortTotalDiscountRule` summed discount work-effort invoice items' amounts into `TotalDiscount`
+  (partitioning on `InvoiceItemType.IsDiscount`) but didn't watch `WorkEffortInvoiceItem.InvoiceItemType`, so
+  changing an item's invoice-item type left `TotalDiscount` stale. It now also watches `InvoiceItemType`.
+- `AccountingTransactionDerivedTotalAmountRule` summed the debit-side details' amounts into `DerivedTotalAmount`
+  but watched only the detail *set*, so editing a detail's `Amount` or `BalanceSide` in place left
+  `DerivedTotalAmount` stale. It now also watches `AccountingTransactionDetail.Amount` and `.BalanceSide`.
 - `PurchaseInvoiceAmountPaidRule` summed each payment application's `AmountApplied` into `AmountPaid` but watched
   only the application *set* (an association pattern), so editing an existing application's `AmountApplied` left
   `AmountPaid` stale. It now also watches `PaymentApplication.AmountApplied` (mirroring `SalesInvoiceStateRule`).
