@@ -136,6 +136,20 @@ under a dated version heading.
   instead of `RequestsWhereFullfillContactMechanism`. Filtering Quote objects to `RequestForInformation` is always
   empty, so renaming a request's `FullfillContactMechanism` left its `SearchString` stale. It now reroutes through
   `RequestsWhereFullfillContactMechanism`.
+- `PurchaseShipmentShipToPartyRule` selected the shipment-number **prefix** used for `SortableShipmentNumber`
+  from `CustomerShipmentSequence.IsEnforcedSequence` instead of the purchase shipment's own
+  `PurchaseShipmentSequence`. The number itself comes from `NextPurchaseShipmentNumber` (which branches on
+  `PurchaseShipmentSequence`), so when the two sequences disagreed the prefix branch diverged from the number
+  branch — picking the wrong prefix, or (when the purchase-shipment sequence was enforced while the
+  customer-shipment sequence restarted on fiscal year) dereferencing the absent fiscal-year sequence record and
+  throwing a `NullReferenceException`. It now branches on `PurchaseShipmentSequence`.
+- `CustomerReturnExistShipmentNumberRule` selected the shipment-number **prefix** used for
+  `SortableShipmentNumber` from `CustomerShipmentSequence.IsEnforcedSequence` instead of the customer return's
+  own `CustomerReturnSequence`. After the number itself was fixed to follow `CustomerReturnSequence`
+  (`NextCustomerReturnNumber`), the prefix branch could diverge from the number branch: when the two sequences
+  disagreed it picked the wrong prefix, and when the customer-return sequence was enforced while the
+  customer-shipment sequence restarted on fiscal year it dereferenced the (absent) fiscal-year sequence record
+  and threw a `NullReferenceException`. It now branches on `CustomerReturnSequence`.
 - `CustomerShipment.AppsOnDeriveQuantityDecreased` mis-applied a quantity-decrease correction when a shipment
   item was issued from more than one `ItemIssuance`. While spreading the correction it subtracted the **whole**
   correction from the running remainder after the first issuance (`itemIssuanceCorrection -= quantity`) rather

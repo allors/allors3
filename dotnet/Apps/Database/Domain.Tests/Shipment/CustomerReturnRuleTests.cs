@@ -36,6 +36,21 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void ChangedShipToPartyDeriveSortableShipmentNumberFollowsCustomerReturnSequence()
+        {
+            // The SortableShipmentNumber prefix must be selected by the CustomerReturnSequence, not the CustomerShipmentSequence.
+            this.InternalOrganisation.CustomerReturnSequence = new CustomerReturnSequences(this.Transaction).EnforcedSequence;
+            this.InternalOrganisation.CustomerReturnNumberPrefix = "prefix-";
+            this.InternalOrganisation.CustomerShipmentSequence = new CustomerShipmentSequences(this.Transaction).RestartOnFiscalYear;
+            this.Derive();
+
+            var shipment = new CustomerReturnBuilder(this.Transaction).WithShipToParty(this.InternalOrganisation).Build();
+            this.Derive();
+
+            Assert.Equal(int.Parse(shipment.ShipmentNumber.Split('-')[1]), shipment.SortableShipmentNumber.Value);
+        }
+
+        [Fact]
         public void ChangedShipToPartyDeriveShipToAddress()
         {
             var shipment = new CustomerReturnBuilder(this.Transaction)
