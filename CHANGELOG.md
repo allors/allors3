@@ -131,6 +131,10 @@ under a dated version heading.
 
 ### Fixed
 
+- `PurchaseOrderItemStateRule` decided `PurchaseOrderItemShipmentState` (PartiallyReceived vs Received) from
+  `QuantityReceived < QuantityOrdered` but its patterns never watched `QuantityOrdered`, so raising the ordered
+  quantity on a revision left the shipment state stale (e.g. a fully-received item stayed `Received` instead of
+  dropping back to `PartiallyReceived`). It now watches `PurchaseOrderItem.QuantityOrdered`.
 - `WorkEffortTotalCostRule` computed `TotalLabourCost` by hard-casting **every** `ServiceEntriesWhereWorkEffort`
   entry to `TimeEntry` (`((TimeEntry)v).Cost`). As soon as a non-`TimeEntry` service entry (e.g. a `MaterialsUsage`
   or `ExpenseEntry`) was attached to the work effort, the cast threw an `InvalidCastException` and the entire cost
