@@ -131,6 +131,11 @@ under a dated version heading.
 
 ### Fixed
 
+- `ProductProductCategoriesDisplayNameRule` renders a product's `ProductCategoriesDisplayName` as the full
+  primary-ancestor path (`grandparent/parent/child`) but watched only `ProductCategory.Name` rerouted to that
+  category's *own* products, so renaming a non-direct ancestor category left descendant categories' products'
+  `ProductCategoriesDisplayName` stale. It now also watches `ProductCategory.Name` rerouted via
+  `ProductCategoriesWherePrimaryAncestor` to the descendant categories' products.
 - `SerialisedItemSearchStringRule` folds the owning sales-invoice number into the serialised item's `SearchString`
   but, alone among the seven invoice/order/quote/request/shipment collections it reads, had no association pattern for
   `SalesInvoiceItemsWhereSerialisedItem` — so putting a serialised item on a sales-invoice line left its `SearchString`
