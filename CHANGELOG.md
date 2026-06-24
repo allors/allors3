@@ -131,6 +131,10 @@ under a dated version heading.
 
 ### Fixed
 
+- `ProductCategorySearchStringRule` folds the owning catalogue's `Name`/`Description` into the category's
+  `SearchString` but watched only catalogue *membership* (the `CatalogueWhereProductCategory` association), so editing
+  `Catalogue.Name`/`Description` left the categories' `SearchString` stale. It now also watches `Catalogue.Name` and
+  `Catalogue.Description` (rerouted to `ProductCategories`).
 - `SerialisedInventoryItemDisplayNameRule` had the same gap as `NonSerialisedInventoryItemDisplayNameRule`: its
   `DisplayName` interpolates `Part.Name`/`Facility.Name` but watched only the `Part`/`Facility` links, so renaming the
   part or facility left the display name stale. It now also watches `Part.Name` and `Facility.Name` (rerouted via

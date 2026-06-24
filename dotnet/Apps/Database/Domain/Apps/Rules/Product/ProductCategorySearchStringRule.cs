@@ -28,6 +28,8 @@ namespace Allors.Database.Domain
                 m.LocalisedText.RolePattern(v => v.Text, v => v.ProductCategoryWhereLocalisedDescription.ObjectType),
 
                 m.ProductCategory.AssociationPattern(v => v.CatalogueWhereProductCategory),
+                m.Catalogue.RolePattern(v => v.Name, v => v.ProductCategories),
+                m.Catalogue.RolePattern(v => v.Description, v => v.ProductCategories),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
