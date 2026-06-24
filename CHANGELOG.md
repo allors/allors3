@@ -131,6 +131,10 @@ under a dated version heading.
 
 ### Fixed
 
+- `WorkEffortTotalCostRule` rounded its four cost totals with `Math.Round` (banker's / to-even) instead of
+  `Rounder.RoundDecimal` (away-from-zero), the money-rounding convention used elsewhere. For `TotalMaterialCost`,
+  whose input (`Quantity × weighted-average cost`) can land on a half-cent, this under-rounded by a cent
+  (e.g. `0.125` → `0.12` instead of `0.13`). All four totals now use `Rounder.RoundDecimal`.
 - `PurchaseOrderItemStateRule` decided `PurchaseOrderItemShipmentState` (PartiallyReceived vs Received) from
   `QuantityReceived < QuantityOrdered` but its patterns never watched `QuantityOrdered`, so raising the ordered
   quantity on a revision left the shipment state stale (e.g. a fully-received item stayed `Received` instead of
