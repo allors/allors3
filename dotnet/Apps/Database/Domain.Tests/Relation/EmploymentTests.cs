@@ -188,5 +188,28 @@ namespace Allors.Database.Domain.Tests
 
             Assert.False(this.Derive().HasErrors);
         }
+
+        [Fact]
+        public void ChangedThroughDatePeriodActiveThrowValidationError()
+        {
+            var employee = new PersonBuilder(this.Transaction).WithLastName("employee").Build();
+            var employment = new EmploymentBuilder(this.Transaction)
+                .WithFromDate(this.Transaction.Now())
+                .WithThroughDate(this.Transaction.Now().AddDays(1))
+                .WithEmployee(employee)
+                .Build();
+
+            new EmploymentBuilder(this.Transaction)
+                .WithFromDate(this.Transaction.Now().AddDays(2))
+                .WithEmployee(employee)
+                .Build();
+
+            Assert.False(this.Derive().HasErrors);
+
+            employment.ThroughDate = this.Transaction.Now().AddDays(3);
+
+            var errors = this.Derive().Errors.ToList();
+            Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.PeriodActive)));
+        }
     }
 }

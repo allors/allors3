@@ -131,6 +131,9 @@ under a dated version heading.
 
 ### Fixed
 
+- `EmploymentFromDateRule` validated overlapping employment periods using `ThroughDate` but watched only
+  `FromDate`, so extending an employment's `ThroughDate` into a later employment's period never re-ran the overlap
+  check and the conflict silently passed validation. It now also watches `ThroughDate`.
 - `CustomerRelationshipFromDateRule` validated overlapping customer-relationship periods using `ThroughDate` but
   watched only `FromDate`, so extending a relationship's `ThroughDate` into a later relationship's period never
   re-ran the overlap check and the conflicting periods silently passed validation. It now also watches `ThroughDate`.
