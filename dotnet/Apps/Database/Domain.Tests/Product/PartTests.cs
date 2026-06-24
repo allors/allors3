@@ -373,6 +373,29 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Equal("parent/child", nonUnifiedPart.PartCategoriesDisplayName);
         }
+
+        [Fact]
+        public void ChangedPartCategoryAncestorNameDerivePartCategoriesDisplayName()
+        {
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
+            this.Derive();
+
+            var partCategory1 = new PartCategoryBuilder(this.Transaction).WithName("parent").Build();
+            this.Derive();
+
+            var partCategory2 = new PartCategoryBuilder(this.Transaction).WithName("child").WithPrimaryParent(partCategory1).Build();
+            this.Derive();
+
+            partCategory2.AddPart(nonUnifiedPart);
+            this.Derive();
+
+            Assert.Equal("parent/child", nonUnifiedPart.PartCategoriesDisplayName);
+
+            partCategory1.Name = "renamedparent";
+            this.Derive();
+
+            Assert.Equal("renamedparent/child", nonUnifiedPart.PartCategoriesDisplayName);
+        }
     }
 
     public class PartDefaultFacilityNameRuleTests : DomainTest, IClassFixture<Fixture>
