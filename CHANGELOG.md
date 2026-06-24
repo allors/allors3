@@ -134,6 +134,13 @@ under a dated version heading.
 - `EmploymentFromDateRule` validated overlapping employment periods using `ThroughDate` but watched only
   `FromDate`, so extending an employment's `ThroughDate` into a later employment's period never re-ran the overlap
   check and the conflict silently passed validation. It now also watches `ThroughDate`.
+- `CustomerRelationshipFromDateRule` validated overlapping customer-relationship periods using `ThroughDate` but
+  watched only `FromDate`, so extending a relationship's `ThroughDate` into a later relationship's period never
+  re-ran the overlap check and the conflicting periods silently passed validation. It now also watches `ThroughDate`.
+- `WorkEffortTotalCostRule` rounded its four cost totals with `Math.Round` (banker's / to-even) instead of
+  `Rounder.RoundDecimal` (away-from-zero), the money-rounding convention used elsewhere. For `TotalMaterialCost`,
+  whose input (`Quantity × weighted-average cost`) can land on a half-cent, this under-rounded by a cent
+  (e.g. `0.125` → `0.12` instead of `0.13`). All four totals now use `Rounder.RoundDecimal`.
 - `PurchaseOrderItemStateRule` decided `PurchaseOrderItemShipmentState` (PartiallyReceived vs Received) from
   `QuantityReceived < QuantityOrdered` but its patterns never watched `QuantityOrdered`, so raising the ordered
   quantity on a revision left the shipment state stale (e.g. a fully-received item stayed `Received` instead of

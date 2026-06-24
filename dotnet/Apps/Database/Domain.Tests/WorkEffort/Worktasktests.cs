@@ -10,6 +10,7 @@ namespace Allors.Database.Domain.Tests
     using System.IO;
     using System.Linq;
     using Resources;
+    using TestPopulation;
     using Xunit;
 
     public class WorkTaskTests : DomainTest, IClassFixture<Fixture>
@@ -173,6 +174,57 @@ namespace Allors.Database.Domain.Tests
 
             // Assert
             Assert.Equal(Math.Round(timeEntry.Cost, 2), workOrder.TotalLabourCost);
+        }
+
+        [Fact]
+        public void ChangedWorkEffortInventoryAssignmentDeriveTotalMaterialCostRoundedAwayFromZero()
+        {
+            this.InternalOrganisation.IsAutomaticallyReceived = true;
+            var defaultFacility = this.InternalOrganisation.StoresWhereInternalOrganisation.Single().DefaultFacility;
+
+            var supplier = new OrganisationBuilder(this.Transaction).WithName("supplier").Build();
+            new SupplierRelationshipBuilder(this.Transaction).WithSupplier(supplier).WithInternalOrganisation(this.InternalOrganisation).Build();
+
+            var customer = new OrganisationBuilder(this.Transaction).WithName("Org1").Build();
+            new CustomerRelationshipBuilder(this.Transaction).WithCustomer(customer).WithInternalOrganisation(this.InternalOrganisation).Build();
+
+            var part = new UnifiedGoodBuilder(this.Transaction).WithNonSerialisedDefaults(this.InternalOrganisation).Build();
+            this.Transaction.Derive();
+
+            // Establish a weighted-average cost of 0.25 by receiving one unit at 0.25.
+            var purchaseOrder = new PurchaseOrderBuilder(this.Transaction)
+                .WithTakenViaSupplier(supplier)
+                .WithStoredInFacility(defaultFacility)
+                .Build();
+            this.Transaction.Derive();
+
+            var purchaseItem = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).WithQuantityOrdered(1).WithAssignedUnitPrice(0.25M).Build();
+            purchaseOrder.AddPurchaseOrderItem(purchaseItem);
+            this.Transaction.Derive();
+
+            purchaseOrder.SetReadyForProcessing();
+            this.Transaction.Derive();
+
+            purchaseOrder.Send();
+            this.Transaction.Derive();
+
+            purchaseItem.QuickReceive();
+            this.Transaction.Derive();
+
+            Assert.Equal(0.25M, part.PartWeightedAverage.AverageCostInApplicationCurrency);
+
+            var workTask = new WorkTaskBuilder(this.Transaction).WithName("Task").WithCustomer(customer).WithTakenBy(this.InternalOrganisation).Build();
+            this.Transaction.Derive();
+
+            // 0.5 * 0.25 = 0.125 - a half-cent that exposes banker's (Math.Round) vs away-from-zero (Rounder) rounding.
+            new WorkEffortInventoryAssignmentBuilder(this.Transaction)
+                .WithAssignment(workTask)
+                .WithInventoryItem(part.InventoryItemsWherePart.First())
+                .WithQuantity(0.5M)
+                .Build();
+            this.Transaction.Derive();
+
+            Assert.Equal(0.13M, workTask.TotalMaterialCost);
         }
 
         [Fact]

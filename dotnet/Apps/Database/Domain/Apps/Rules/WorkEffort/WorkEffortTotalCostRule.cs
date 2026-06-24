@@ -42,10 +42,10 @@ namespace Allors.Database.Domain
     {
         public static void DeriveWorkEffortTotalCost(this WorkEffort @this, IValidation validation)
         {
-            @this.TotalLabourCost = Math.Round(@this.ServiceEntriesWhereWorkEffort.OfType<TimeEntry>().Sum(v => v.Cost), 2);
-            @this.TotalMaterialCost = Math.Round(@this.WorkEffortInventoryAssignmentsWhereAssignment.Sum(v => v.CostOfGoodsSoldInApplicationCurrency), 2);
-            @this.TotalSubContractedCost = Math.Round(@this.WorkEffortPurchaseOrderItemAssignmentsWhereAssignment.Sum(v => v.Quantity * v.UnitPurchasePrice), 2);
-            @this.TotalCost = Math.Round(@this.TotalLabourCost + @this.TotalMaterialCost + @this.TotalSubContractedCost, 2);
+            @this.TotalLabourCost = Rounder.RoundDecimal(@this.ServiceEntriesWhereWorkEffort.OfType<TimeEntry>().Sum(v => v.Cost), 2);
+            @this.TotalMaterialCost = Rounder.RoundDecimal(@this.WorkEffortInventoryAssignmentsWhereAssignment.Sum(v => v.CostOfGoodsSoldInApplicationCurrency), 2);
+            @this.TotalSubContractedCost = Rounder.RoundDecimal(@this.WorkEffortPurchaseOrderItemAssignmentsWhereAssignment.Sum(v => v.Quantity * v.UnitPurchasePrice), 2);
+            @this.TotalCost = Rounder.RoundDecimal(@this.TotalLabourCost + @this.TotalMaterialCost + @this.TotalSubContractedCost, 2);
         }
     }
 }
