@@ -18,6 +18,8 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
         {
             m.WorkRequirementFulfillment.RolePattern(v => v.FullfilledBy),
+            m.WorkRequirement.RolePattern(v => v.RequirementNumber, v => v.WorkRequirementFulfillmentWhereFullfilledBy),
+            m.WorkRequirement.RolePattern(v => v.Description, v => v.WorkRequirementFulfillmentWhereFullfilledBy),
         };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)

@@ -131,6 +131,10 @@ under a dated version heading.
 
 ### Fixed
 
+- `WorkRequirementFulfillmentRule` copied the fulfilled work requirement's `RequirementNumber`/`Description` into
+  the fulfillment but watched only the `FullfilledBy` link, so editing the requirement left
+  `WorkRequirementNumber`/`WorkRequirementDescription` stale. It now also watches the work requirement's
+  `RequirementNumber` and `Description` (rerouted to `WorkRequirementFulfillmentWhereFullfilledBy`).
 - `RequirementServicedByNameRule` copied the serviced organisation's `DisplayName` into `ServicedByName` but
   watched only the `ServicedBy` link, so renaming the organisation left `ServicedByName` stale. It now also watches
   `Organisation.DisplayName` (rerouted to `RequirementsWhereServicedBy`).

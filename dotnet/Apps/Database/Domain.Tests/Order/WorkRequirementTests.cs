@@ -86,6 +86,30 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void ChangedFullfilledByDescriptionDeriveWorkRequirementDescription()
+        {
+            var internalOrganisation = new Organisations(this.Transaction).Extent().First(o => o.IsInternalOrganisation);
+            var serialisedItem = new SerialisedItemBuilder(this.Transaction).WithDefaults(internalOrganisation).Build();
+
+            var requirement = new WorkRequirementBuilder(this.Transaction)
+                .WithDescription("origdesc")
+                .WithFixedAsset(serialisedItem)
+                .Build();
+            this.Transaction.Derive();
+
+            requirement.CreateWorkTask();
+            this.Transaction.Derive(false);
+
+            var fulfillment = requirement.WorkRequirementFulfillmentWhereFullfilledBy;
+            Assert.Equal("origdesc", fulfillment.WorkRequirementDescription);
+
+            requirement.Description = "newdesc";
+            this.Transaction.Derive();
+
+            Assert.Equal("newdesc", fulfillment.WorkRequirementDescription);
+        }
+
+        [Fact]
         public void ChangedServicedByDisplayNameDeriveServicedByName()
         {
             var organisation = this.InternalOrganisation;
