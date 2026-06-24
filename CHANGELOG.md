@@ -131,6 +131,9 @@ under a dated version heading.
 
 ### Fixed
 
+- `EmploymentFromDateRule` validated overlapping employment periods using `ThroughDate` but watched only
+  `FromDate`, so extending an employment's `ThroughDate` into a later employment's period never re-ran the overlap
+  check and the conflict silently passed validation. It now also watches `ThroughDate`.
 - `PurchaseOrderItemStateRule` decided `PurchaseOrderItemShipmentState` (PartiallyReceived vs Received) from
   `QuantityReceived < QuantityOrdered` but its patterns never watched `QuantityOrdered`, so raising the ordered
   quantity on a revision left the shipment state stale (e.g. a fully-received item stayed `Received` instead of
