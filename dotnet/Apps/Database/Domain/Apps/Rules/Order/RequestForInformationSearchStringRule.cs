@@ -30,7 +30,7 @@ namespace Allors.Database.Domain
                 m.Request.RolePattern(v => v.Originator, m.RequestForInformation),
                 m.Party.RolePattern(v => v.DisplayName, v => v.RequestsWhereOriginator, m.RequestForInformation),
                 m.Request.RolePattern(v => v.FullfillContactMechanism, m.RequestForInformation),
-                m.ContactMechanism.RolePattern(v => v.DisplayName, v => v.QuotesWhereFullfillContactMechanism, m.RequestForInformation),
+                m.ContactMechanism.RolePattern(v => v.DisplayName, v => v.RequestsWhereFullfillContactMechanism, m.RequestForInformation),
 
                 m.RequestItem.RolePattern(v => v.RequestItemState, v => v.RequestWhereRequestItem.ObjectType, m.RequestForInformation),
                 m.RequestItem.RolePattern(v => v.Description, v => v.RequestWhereRequestItem.ObjectType, m.RequestForInformation),
