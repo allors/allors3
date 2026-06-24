@@ -45,6 +45,7 @@ namespace Allors.Database.Domain
                 m.SerialisedItem.AssociationPattern(v => v.PurchaseOrderItemsWhereSerialisedItem),
                 m.SerialisedItem.AssociationPattern(v => v.QuoteItemsWhereSerialisedItem),
                 m.SerialisedItem.AssociationPattern(v => v.RequestItemsWhereSerialisedItem),
+                m.SerialisedItem.AssociationPattern(v => v.SalesInvoiceItemsWhereSerialisedItem),
                 m.SerialisedItem.AssociationPattern(v => v.SerialisedInventoryItemsWhereSerialisedItem),
                 m.SerialisedItem.AssociationPattern(v => v.ShipmentItemsWhereSerialisedItem),
             };

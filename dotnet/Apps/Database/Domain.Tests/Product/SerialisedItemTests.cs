@@ -565,6 +565,31 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Contains("changedModelName", serialisedItem.SearchString);
         }
+
+        [Fact]
+        public void ChangedSalesInvoiceItemSerialisedItemDeriveSearchString()
+        {
+            var serialisedItem = new SerialisedItemBuilder(this.Transaction).WithSerialNumber("serialno").Build();
+            this.Derive();
+
+            Assert.DoesNotContain("searchinvno", serialisedItem.SearchString);
+
+            var customer = new OrganisationBuilder(this.Transaction).WithName("customer").Build();
+            var invoice = new SalesInvoiceBuilder(this.Transaction)
+                .WithInvoiceNumber("searchinvno")
+                .WithBillToCustomer(customer)
+                .WithSalesInvoiceType(new SalesInvoiceTypes(this.Transaction).SalesInvoice)
+                .Build();
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction)
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem)
+                .WithSerialisedItem(serialisedItem)
+                .WithQuantity(1)
+                .Build();
+            invoice.AddSalesInvoiceItem(invoiceItem);
+            this.Derive();
+
+            Assert.Contains("searchinvno", serialisedItem.SearchString);
+        }
     }
 
     public class SerialisedItemDisplayProductCategoriesRuleTests : DomainTest, IClassFixture<Fixture>
