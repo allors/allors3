@@ -131,6 +131,11 @@ under a dated version heading.
 
 ### Fixed
 
+- `RequestForInformationSearchStringRule` rerouted its "re-derive when the contact mechanism is renamed" pattern
+  through `QuotesWhereFullfillContactMechanism` (the Quote inverse, copy-pasted from the quote search rules)
+  instead of `RequestsWhereFullfillContactMechanism`. Filtering Quote objects to `RequestForInformation` is always
+  empty, so renaming a request's `FullfillContactMechanism` left its `SearchString` stale. It now reroutes through
+  `RequestsWhereFullfillContactMechanism`.
 - `CustomerShipment.AppsOnDeriveQuantityDecreased` mis-applied a quantity-decrease correction when a shipment
   item was issued from more than one `ItemIssuance`. While spreading the correction it subtracted the **whole**
   correction from the running remainder after the first issuance (`itemIssuanceCorrection -= quantity`) rather
