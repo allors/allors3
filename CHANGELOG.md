@@ -134,6 +134,10 @@ under a dated version heading.
 - `PurchaseInvoiceAmountPaidRule` summed each payment application's `AmountApplied` into `AmountPaid` but watched
   only the application *set* (an association pattern), so editing an existing application's `AmountApplied` left
   `AmountPaid` stale. It now also watches `PaymentApplication.AmountApplied` (mirroring `SalesInvoiceStateRule`).
+- `AccountingTransactionDeniedPermissionRule` toggles the delete revocation from `IsDeletable`
+  (`InternalOrganisation.ExportAccounting && !Exported`) but watched only `Exported`, so toggling the internal
+  organisation's `ExportAccounting` left the delete permission stale. It now also watches
+  `InternalOrganisation.ExportAccounting`.
 - `PurchaseInvoicePriceRule` accumulated `TotalFee` and `TotalShippingAndHandling` with `+=` but omitted both from
   the reset block, so every re-derive added the fee/shipping charges again and the two totals (and their derived
   `*InPreferredCurrency` counterparts) grew without bound. Both are now reset to `0` before accumulation.
