@@ -131,6 +131,9 @@ under a dated version heading.
 
 ### Fixed
 
+- `CustomerRelationshipFromDateRule` validated overlapping customer-relationship periods using `ThroughDate` but
+  watched only `FromDate`, so extending a relationship's `ThroughDate` into a later relationship's period never
+  re-ran the overlap check and the conflicting periods silently passed validation. It now also watches `ThroughDate`.
 - `WorkEffortTotalCostRule` rounded its four cost totals with `Math.Round` (banker's / to-even) instead of
   `Rounder.RoundDecimal` (away-from-zero), the money-rounding convention used elsewhere. For `TotalMaterialCost`,
   whose input (`Quantity × weighted-average cost`) can land on a half-cent, this under-rounded by a cent
