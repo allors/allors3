@@ -1030,6 +1030,28 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void ChangedCatalogueNameAndDescriptionDeriveSearchString()
+        {
+            var productCategory = new ProductCategoryBuilder(this.Transaction).WithName("cat").Build();
+            var catalogue = new CatalogueBuilder(this.Transaction)
+                .WithName("alpha")
+                .WithDescription("charlie")
+                .WithProductCategory(productCategory)
+                .Build();
+            this.Derive();
+
+            Assert.Contains("alpha", productCategory.SearchString);
+            Assert.Contains("charlie", productCategory.SearchString);
+
+            catalogue.Name = "bravo";
+            catalogue.Description = "delta";
+            this.Derive();
+
+            Assert.Contains("bravo", productCategory.SearchString);
+            Assert.Contains("delta", productCategory.SearchString);
+        }
+
+        [Fact]
         public void ChangedCategoryImageDeriveCategoryImage()
         {
             var noImageAvailableImage = this.Transaction.GetSingleton().Settings.NoImageAvailableImage;
