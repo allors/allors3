@@ -105,6 +105,8 @@ namespace Allors.Database.Domain
             @this.TotalIrpf = 0;
             @this.TotalExVat = 0;
             @this.TotalExtraCharge = 0;
+            @this.TotalFee = 0;
+            @this.TotalShippingAndHandling = 0;
             @this.TotalIncVat = 0;
             @this.GrandTotal = 0;
             @this.TotalShippingAndHandlingInPreferredCurrency = 0;

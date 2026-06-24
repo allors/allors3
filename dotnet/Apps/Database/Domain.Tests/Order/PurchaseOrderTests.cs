@@ -1120,6 +1120,31 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void ChangedDerivationTotalFeeAndTotalShippingAndHandlingDoNotAccumulate()
+        {
+            var part = new UnifiedGoodBuilder(this.Transaction).Build();
+
+            var order = new PurchaseOrderBuilder(this.Transaction).WithOrderDate(this.Transaction.Now()).Build();
+            this.Derive();
+
+            var orderItem = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).WithQuantityOrdered(1).WithAssignedUnitPrice(1).Build();
+            order.AddPurchaseOrderItem(orderItem);
+            order.AddOrderAdjustment(new FeeBuilder(this.Transaction).WithAmount(10).Build());
+            order.AddOrderAdjustment(new ShippingAndHandlingChargeBuilder(this.Transaction).WithAmount(5).Build());
+            this.Derive();
+
+            Assert.Equal(10M, order.TotalFee);
+            Assert.Equal(5M, order.TotalShippingAndHandling);
+
+            // Force the price rule to re-derive; the fixed charges must not accumulate.
+            orderItem.QuantityOrdered = 2;
+            this.Derive();
+
+            Assert.Equal(10M, order.TotalFee);
+            Assert.Equal(5M, order.TotalShippingAndHandling);
+        }
+
+        [Fact]
         public void ChangedSalesOrderItemAssignedUnitPriceCalculatePrice()
         {
             var part = new UnifiedGoodBuilder(this.Transaction).Build();
