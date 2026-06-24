@@ -135,6 +135,10 @@ under a dated version heading.
   `Rounder.RoundDecimal` (away-from-zero), the money-rounding convention used elsewhere. For `TotalMaterialCost`,
   whose input (`Quantity × weighted-average cost`) can land on a half-cent, this under-rounded by a cent
   (e.g. `0.125` → `0.12` instead of `0.13`). All four totals now use `Rounder.RoundDecimal`.
+- `PurchaseOrderItemStateRule` decided `PurchaseOrderItemShipmentState` (PartiallyReceived vs Received) from
+  `QuantityReceived < QuantityOrdered` but its patterns never watched `QuantityOrdered`, so raising the ordered
+  quantity on a revision left the shipment state stale (e.g. a fully-received item stayed `Received` instead of
+  dropping back to `PartiallyReceived`). It now watches `PurchaseOrderItem.QuantityOrdered`.
 - `WorkEffortTotalCostRule` computed `TotalLabourCost` by hard-casting **every** `ServiceEntriesWhereWorkEffort`
   entry to `TimeEntry` (`((TimeEntry)v).Cost`). As soon as a non-`TimeEntry` service entry (e.g. a `MaterialsUsage`
   or `ExpenseEntry`) was attached to the work effort, the cast threw an `InvalidCastException` and the entire cost
