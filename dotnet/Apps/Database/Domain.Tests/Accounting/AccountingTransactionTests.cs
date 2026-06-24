@@ -60,5 +60,19 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Contains(this.deleteRevocation, transaction.Revocations);
         }
+
+        [Fact]
+        public void OnChangedInternalOrganisationExportAccountingDeriveDeletePermission()
+        {
+            var transaction = new AccountingTransactionBuilder(this.Transaction).Build();
+            this.Derive();
+
+            Assert.DoesNotContain(this.deleteRevocation, transaction.Revocations);
+
+            this.InternalOrganisation.ExportAccounting = false;
+            this.Derive();
+
+            Assert.Contains(this.deleteRevocation, transaction.Revocations);
+        }
     }
 }
