@@ -136,6 +136,46 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void GivenWorkEffortWithNonTimeEntryServiceEntry_WhenDeriving_ThenTotalLabourCostExcludesIt()
+        {
+            // Arrange
+            var customer = new OrganisationBuilder(this.Transaction).WithName("Org1").Build();
+            var internalOrganisation = new Organisations(this.Transaction).Extent().First(o => o.IsInternalOrganisation);
+            new CustomerRelationshipBuilder(this.Transaction).WithCustomer(customer).WithInternalOrganisation(internalOrganisation).Build();
+
+            var workOrder = new WorkTaskBuilder(this.Transaction).WithName("Task").WithCustomer(customer).WithTakenBy(internalOrganisation).Build();
+
+            var employee = new PersonBuilder(this.Transaction).WithFirstName("Good").WithLastName("Worker").Build();
+            new EmploymentBuilder(this.Transaction).WithEmployee(employee).WithEmployer(internalOrganisation).Build();
+
+            this.Transaction.Derive();
+
+            var today = DateTimeFactory.CreateDateTime(this.Transaction.Now());
+            var laterToday = DateTimeFactory.CreateDateTime(today.AddHours(4));
+
+            var timeEntry = new TimeEntryBuilder(this.Transaction)
+                .WithRateType(new RateTypes(this.Transaction).StandardRate)
+                .WithFromDate(today)
+                .WithThroughDate(laterToday)
+                .WithWorkEffort(workOrder)
+                .Build();
+            employee.TimeSheetWhereWorker.AddTimeEntry(timeEntry);
+
+            // A non-TimeEntry ServiceEntry on the same WorkEffort must not break the labour-cost derivation.
+            new MaterialsUsageBuilder(this.Transaction)
+                .WithWorkEffort(workOrder)
+                .WithIsBillable(false)
+                .WithAmount(50M)
+                .Build();
+
+            // Act
+            this.Transaction.Derive();
+
+            // Assert
+            Assert.Equal(Math.Round(timeEntry.Cost, 2), workOrder.TotalLabourCost);
+        }
+
+        [Fact]
         public void GivenWorkEffortAndTimeEntries_WhenDeriving_ThenActualStartAndCompletionDerived()
         {
             // Arrange

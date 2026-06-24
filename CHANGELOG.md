@@ -131,6 +131,10 @@ under a dated version heading.
 
 ### Fixed
 
+- `WorkEffortTotalCostRule` computed `TotalLabourCost` by hard-casting **every** `ServiceEntriesWhereWorkEffort`
+  entry to `TimeEntry` (`((TimeEntry)v).Cost`). As soon as a non-`TimeEntry` service entry (e.g. a `MaterialsUsage`
+  or `ExpenseEntry`) was attached to the work effort, the cast threw an `InvalidCastException` and the entire cost
+  derivation failed. It now filters with `OfType<TimeEntry>()` before summing `Cost`.
 - `RequestForQuoteSearchStringRule` had the same wrong reroute as the other request search rules: it watched
   `ContactMechanism.DisplayName` via `QuotesWhereFullfillContactMechanism` (the Quote inverse) instead of
   `RequestsWhereFullfillContactMechanism`, so renaming a request's `FullfillContactMechanism` left its
