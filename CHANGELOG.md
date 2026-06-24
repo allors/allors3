@@ -131,6 +131,10 @@ under a dated version heading.
 
 ### Fixed
 
+- `WorkRequirementFulfillmentRule` copied the fulfilled work requirement's `RequirementNumber`/`Description` into
+  the fulfillment but watched only the `FullfilledBy` link, so editing the requirement left
+  `WorkRequirementNumber`/`WorkRequirementDescription` stale. It now also watches the work requirement's
+  `RequirementNumber` and `Description` (rerouted to `WorkRequirementFulfillmentWhereFullfilledBy`).
 - `PartCategoryDisplayNameRule` builds a category's `DisplayName` from its ancestor chain's names but its roleless
   `Name` pattern re-derived only the renamed category itself, so renaming an ancestor left descendants' display
   names stale. It now also watches `Name` rerouted to `PartCategoriesWherePrimaryAncestor` (the descendants).
