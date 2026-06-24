@@ -19,6 +19,7 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
         {
             m.SalesInvoice.RolePattern(v => v.BilledFrom),
+            m.SalesInvoice.RolePattern(v => v.BillToCustomer),
             m.SalesInvoice.RolePattern(v => v.AssignedCurrency),
             m.SalesInvoice.RolePattern(v => v.InvoiceDate),
             m.Party.RolePattern(v => v.Locale, v => v.SalesInvoicesWhereBillToCustomer),

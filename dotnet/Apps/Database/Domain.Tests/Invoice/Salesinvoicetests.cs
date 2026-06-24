@@ -1304,6 +1304,28 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void ChangedBillToCustomerDeriveDerivedCurrency()
+        {
+            var euro = new Currencies(this.Transaction).FindBy(this.M.Currency.IsoCode, "EUR");
+            var swedishKrona = new Currencies(this.Transaction).FindBy(this.M.Currency.IsoCode, "SEK");
+
+            var customer1 = new OrganisationBuilder(this.Transaction).WithName("customer1").WithPreferredCurrency(euro).Build();
+            var customer2 = new OrganisationBuilder(this.Transaction).WithName("customer2").WithPreferredCurrency(swedishKrona).Build();
+            new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(customer1).Build();
+            new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(customer2).Build();
+
+            var invoice = new SalesInvoiceBuilder(this.Transaction).WithBillToCustomer(customer1).Build();
+            this.Derive();
+
+            Assert.Equal(euro, invoice.DerivedCurrency);
+
+            invoice.BillToCustomer = customer2;
+            this.Derive();
+
+            Assert.Equal(swedishKrona, invoice.DerivedCurrency);
+        }
+
+        [Fact]
         public void ChangedAssignedVatRegimeDeriveDerivedVatRegime()
         {
             var invoice = new SalesInvoiceBuilder(this.Transaction).Build();
