@@ -18,6 +18,7 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 m.PurchaseOrderItem.RolePattern(v => v.IsReceivable),
+                m.PurchaseOrderItem.RolePattern(v => v.QuantityOrdered),
                 m.PurchaseOrderItem.RolePattern(v => v.QuantityReturned),
                 m.PurchaseOrder.RolePattern(v => v.PurchaseOrderState, v => v.PurchaseOrderItems),
                 m.ShipmentReceipt.RolePattern(v => v.QuantityAccepted, v => v.OrderItem, m.PurchaseOrderItem),

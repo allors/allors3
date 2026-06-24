@@ -1008,6 +1008,32 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void ChangedQuantityOrderedDerivePurchaseOrderItemShipmentState()
+        {
+            var order = new PurchaseOrderBuilder(this.Transaction)
+                .WithPurchaseOrderState(new PurchaseOrderStates(this.Transaction).Sent)
+                .Build();
+            this.Derive();
+
+            var orderItem = new PurchaseOrderItemBuilder(this.Transaction)
+                .WithIsReceivable(true)
+                .WithQuantityOrdered(1)
+                .Build();
+            order.AddPurchaseOrderItem(orderItem);
+            this.Derive();
+
+            new ShipmentReceiptBuilder(this.Transaction).WithOrderItem(orderItem).WithQuantityAccepted(1).Build();
+            this.Derive();
+
+            Assert.Equal(new PurchaseOrderItemShipmentStates(this.Transaction).Received, orderItem.PurchaseOrderItemShipmentState);
+
+            orderItem.QuantityOrdered = 2;
+            this.Derive();
+
+            Assert.Equal(new PurchaseOrderItemShipmentStates(this.Transaction).PartiallyReceived, orderItem.PurchaseOrderItemShipmentState);
+        }
+
+        [Fact]
         public void ChangedPurchaseOrderPaymentStateDerivePurchaseOrderState()
         {
             var order = new PurchaseOrderBuilder(this.Transaction)
