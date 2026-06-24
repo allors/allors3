@@ -18,6 +18,7 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 m.ProductCategory.RolePattern(v => v.Name),
+                m.ProductCategory.RolePattern(v => v.Name, v => v.ProductCategoriesWherePrimaryAncestor),
                 m.ProductCategory.RolePattern(v => v.PrimaryAncestors),
             };
 
