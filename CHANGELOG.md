@@ -131,6 +131,9 @@ under a dated version heading.
 
 ### Fixed
 
+- `PurchaseInvoiceAmountPaidRule` summed each payment application's `AmountApplied` into `AmountPaid` but watched
+  only the application *set* (an association pattern), so editing an existing application's `AmountApplied` left
+  `AmountPaid` stale. It now also watches `PaymentApplication.AmountApplied` (mirroring `SalesInvoiceStateRule`).
 - `AccountingTransactionDeniedPermissionRule` toggles the delete revocation from `IsDeletable`
   (`InternalOrganisation.ExportAccounting && !Exported`) but watched only `Exported`, so toggling the internal
   organisation's `ExportAccounting` left the delete permission stale. It now also watches

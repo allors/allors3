@@ -416,6 +416,23 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void ChangedPaymentApplicationAmountAppliedDeriveAmountPaid()
+        {
+            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Transaction).Build();
+            this.Derive();
+
+            var paymentApplication = new PaymentApplicationBuilder(this.Transaction).WithInvoice(purchaseInvoice).WithAmountApplied(10).Build();
+            this.Derive();
+
+            Assert.Equal(10, purchaseInvoice.AmountPaid);
+
+            paymentApplication.AmountApplied = 7;
+            this.Derive();
+
+            Assert.Equal(7, purchaseInvoice.AmountPaid);
+        }
+
+        [Fact]
         public void ChangedPaymentApplicationInvoiceItemDeriveAmountPaid()
         {
             var purchaseInvoice = new PurchaseInvoiceBuilder(this.Transaction).Build();
