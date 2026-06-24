@@ -108,6 +108,8 @@ namespace Allors.Database.Domain
                 @this.TotalIncVat = 0;
                 @this.TotalIrpf = 0;
                 @this.TotalExtraCharge = 0;
+                @this.TotalFee = 0;
+                @this.TotalShippingAndHandling = 0;
                 @this.GrandTotal = 0;
 
                 foreach (PurchaseInvoiceItem item in @this.ValidInvoiceItems)

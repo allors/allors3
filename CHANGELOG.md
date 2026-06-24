@@ -131,6 +131,9 @@ under a dated version heading.
 
 ### Fixed
 
+- `PurchaseInvoicePriceRule` accumulated `TotalFee` and `TotalShippingAndHandling` with `+=` but omitted both from
+  the reset block, so every re-derive added the fee/shipping charges again and the two totals (and their derived
+  `*InPreferredCurrency` counterparts) grew without bound. Both are now reset to `0` before accumulation.
 - `EmploymentFromDateRule` validated overlapping employment periods using `ThroughDate` but watched only
   `FromDate`, so extending an employment's `ThroughDate` into a later employment's period never re-ran the overlap
   check and the conflict silently passed validation. It now also watches `ThroughDate`.
