@@ -131,6 +131,10 @@ under a dated version heading.
 
 ### Fixed
 
+- `NonUnifiedPartSearchStringRule` folds `Brand.Name`, `Model.Name` and `ProductType.Name` into the part's
+  `SearchString` but watched only the `Brand`/`Model`/`ProductType` *link* roles, so renaming a brand, model or product
+  type in place left the parts' `SearchString` stale. It now also watches `Brand.Name`, `Model.Name` and
+  `ProductType.Name` (rerouted via `PartsWhereBrand`/`PartsWhereModel`/`PartsWhereProductType`).
 - `ProductCategorySearchStringRule` folds the owning catalogue's `Name`/`Description` into the category's
   `SearchString` but watched only catalogue *membership* (the `CatalogueWhereProductCategory` association), so editing
   `Catalogue.Name`/`Description` left the categories' `SearchString` stale. It now also watches `Catalogue.Name` and

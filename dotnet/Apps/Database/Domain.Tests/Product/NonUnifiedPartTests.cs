@@ -169,6 +169,33 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Contains("keywords", nonUnifiedPart.SearchString);
         }
+
+        [Fact]
+        public void ChangedBrandNameModelNameProductTypeNameDeriveSearchString()
+        {
+            var brand = new BrandBuilder(this.Transaction).WithName("brandone").Build();
+            var model = new ModelBuilder(this.Transaction).WithName("modelone").Build();
+            var productType = new ProductTypeBuilder(this.Transaction).WithName("typeone").Build();
+
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
+            nonUnifiedPart.Brand = brand;
+            nonUnifiedPart.Model = model;
+            nonUnifiedPart.ProductType = productType;
+            this.Derive();
+
+            Assert.Contains("brandone", nonUnifiedPart.SearchString);
+            Assert.Contains("modelone", nonUnifiedPart.SearchString);
+            Assert.Contains("typeone", nonUnifiedPart.SearchString);
+
+            brand.Name = "brandtwo";
+            model.Name = "modeltwo";
+            productType.Name = "typetwo";
+            this.Derive();
+
+            Assert.Contains("brandtwo", nonUnifiedPart.SearchString);
+            Assert.Contains("modeltwo", nonUnifiedPart.SearchString);
+            Assert.Contains("typetwo", nonUnifiedPart.SearchString);
+        }
     }
 
     [Trait("Category", "Security")]
