@@ -131,6 +131,10 @@ under a dated version heading.
 
 ### Fixed
 
+- `RequestForProposalSearchStringRule` had the same wrong reroute as `RequestForInformationSearchStringRule`: it
+  watched `ContactMechanism.DisplayName` via `QuotesWhereFullfillContactMechanism` (the Quote inverse) instead of
+  `RequestsWhereFullfillContactMechanism`, so renaming a request's `FullfillContactMechanism` left its
+  `SearchString` stale. It now reroutes through `RequestsWhereFullfillContactMechanism`.
 - `RequestForInformationSearchStringRule` rerouted its "re-derive when the contact mechanism is renamed" pattern
   through `QuotesWhereFullfillContactMechanism` (the Quote inverse, copy-pasted from the quote search rules)
   instead of `RequestsWhereFullfillContactMechanism`. Filtering Quote objects to `RequestForInformation` is always
