@@ -19,6 +19,8 @@ namespace Allors.Database.Domain
             {
                 m.SerialisedInventoryItem.RolePattern(v => v.Part),
                 m.SerialisedInventoryItem.RolePattern(v => v.Facility),
+                m.Part.RolePattern(v => v.Name, v => v.InventoryItemsWherePart, m.SerialisedInventoryItem),
+                m.Facility.RolePattern(v => v.Name, v => v.InventoryItemsWhereFacility, m.SerialisedInventoryItem),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)

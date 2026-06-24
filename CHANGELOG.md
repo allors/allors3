@@ -131,6 +131,10 @@ under a dated version heading.
 
 ### Fixed
 
+- `SerialisedInventoryItemDisplayNameRule` had the same gap as `NonSerialisedInventoryItemDisplayNameRule`: its
+  `DisplayName` interpolates `Part.Name`/`Facility.Name` but watched only the `Part`/`Facility` links, so renaming the
+  part or facility left the display name stale. It now also watches `Part.Name` and `Facility.Name` (rerouted via
+  `InventoryItemsWherePart`/`InventoryItemsWhereFacility`).
 - `NonSerialisedInventoryItemDisplayNameRule` builds `DisplayName` from the item's `Part.Name` and `Facility.Name`
   but watched only the `Part`/`Facility` links, so renaming the part or facility left `DisplayName` stale. It now
   also watches `Part.Name` and `Facility.Name` (rerouted to `InventoryItemsWherePart`/`InventoryItemsWhereFacility`).
