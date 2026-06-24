@@ -70,6 +70,23 @@ namespace Allors.Database.Domain.Tests
             var number = int.Parse(request.RequestNumber.Split('-').Last()).ToString("000000");
             Assert.Equal(int.Parse(string.Concat(this.Transaction.Now().Date.Year.ToString(), number)), request.SortableRequestNumber);
         }
+
+        [Fact]
+        public void ChangedFullfillContactMechanismDisplayNameDeriveRequestForProposalSearchString()
+        {
+            var webAddress = new WebAddressBuilder(this.Transaction).WithElectronicAddressString("originaladdress").Build();
+            var request = new RequestForProposalBuilder(this.Transaction)
+                .WithFullfillContactMechanism(webAddress)
+                .Build();
+            this.Transaction.Derive();
+
+            Assert.Contains("originaladdress", request.SearchString);
+
+            webAddress.ElectronicAddressString = "changedaddress";
+            this.Transaction.Derive();
+
+            Assert.Contains("changedaddress", request.SearchString);
+        }
     }
 
     public class RequestAnonymousRuleTests : DomainTest, IClassFixture<Fixture>

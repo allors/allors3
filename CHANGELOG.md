@@ -131,6 +131,10 @@ under a dated version heading.
 
 ### Fixed
 
+- `RequestForProposalSearchStringRule` had the same wrong reroute as `RequestForInformationSearchStringRule`: it
+  watched `ContactMechanism.DisplayName` via `QuotesWhereFullfillContactMechanism` (the Quote inverse) instead of
+  `RequestsWhereFullfillContactMechanism`, so renaming a request's `FullfillContactMechanism` left its
+  `SearchString` stale. It now reroutes through `RequestsWhereFullfillContactMechanism`.
 - `PurchaseShipmentShipToPartyRule` selected the shipment-number **prefix** used for `SortableShipmentNumber`
   from `CustomerShipmentSequence.IsEnforcedSequence` instead of the purchase shipment's own
   `PurchaseShipmentSequence`. The number itself comes from `NextPurchaseShipmentNumber` (which branches on
