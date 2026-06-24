@@ -52,6 +52,43 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void ChangedPartNameAndFacilityNameDeriveDisplayName()
+        {
+            var serialItem = new SerialisedItemBuilder(this.Transaction).WithSerialNumber("1").Build();
+            var part = new NonUnifiedPartBuilder(this.Transaction)
+                .WithName("partone")
+                .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).Serialised)
+                .WithProductIdentification(new PartNumberBuilder(this.Transaction)
+                    .WithIdentification("P1")
+                    .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
+                .WithSerialisedItem(serialItem)
+                .Build();
+            this.Transaction.Derive();
+
+            var facility = new FacilityBuilder(this.Transaction)
+                .WithName("facone")
+                .WithFacilityType(new FacilityTypes(this.Transaction).Warehouse)
+                .WithOwner(this.InternalOrganisation)
+                .Build();
+            this.Transaction.Derive();
+
+            var item = new SerialisedInventoryItemBuilder(this.Transaction)
+                .WithPart(part)
+                .WithFacility(facility)
+                .WithSerialisedItem(serialItem)
+                .Build();
+            this.Transaction.Derive();
+
+            Assert.Equal($"{part.Name} at {facility.Name} with state {item.SerialisedInventoryItemState?.Name}", item.DisplayName);
+
+            part.Name = "parttwo";
+            facility.Name = "factwo";
+            this.Transaction.Derive();
+
+            Assert.Equal($"{part.Name} at {facility.Name} with state {item.SerialisedInventoryItemState?.Name}", item.DisplayName);
+        }
+
+        [Fact]
         public void GivenInventoryItem_WhenBuild_ThenPostBuildRelationsMustExist()
         {
             // Arrange
