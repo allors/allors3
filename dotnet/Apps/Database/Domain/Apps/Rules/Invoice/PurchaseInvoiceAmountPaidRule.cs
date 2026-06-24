@@ -18,6 +18,7 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 m.Invoice.AssociationPattern(v => v.PaymentApplicationsWhereInvoice, m.PurchaseInvoice),
+                m.PaymentApplication.RolePattern(v => v.AmountApplied, v => v.Invoice, m.PurchaseInvoice),
                 m.PurchaseInvoiceItem.RolePattern(v => v.AmountPaid, v => v.PurchaseInvoiceWherePurchaseInvoiceItem),
             };
 
