@@ -2619,6 +2619,32 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void ChangedInvoiceDateDerivePrice()
+        {
+            var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
+
+            new BasePriceBuilder(this.Transaction)
+                .WithProduct(product)
+                .WithPrice(1)
+                .WithFromDate(this.Transaction.Now().AddDays(2))
+                .Build();
+
+            var invoice = new SalesInvoiceBuilder(this.Transaction).WithInvoiceDate(this.Transaction.Now()).Build();
+            this.Derive();
+
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(product).WithQuantity(1).Build();
+            invoice.AddSalesInvoiceItem(invoiceItem);
+            this.Derive();
+
+            Assert.Equal(0, invoice.TotalIncVat);
+
+            invoice.InvoiceDate = this.Transaction.Now().AddDays(3);
+            this.Derive();
+
+            Assert.Equal(1, invoice.TotalIncVat);
+        }
+
+        [Fact]
         public void OnChangedDerivationTriggerTriggeredByDiscountComponentPercentageCalculatePrice()
         {
             var product = new NonUnifiedGoodBuilder(this.Transaction).Build();

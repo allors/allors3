@@ -131,6 +131,10 @@ under a dated version heading.
 
 ### Fixed
 
+- `SalesInvoicePriceRule` reads `InvoiceDate` (to select date-effective price components and as the currency-conversion
+  date) and `DerivedCurrency` (the conversion source) but watched neither, so editing the invoice date — or a change to
+  the derived currency — left item prices and the `*InPreferredCurrency` totals stale. It now also watches
+  `SalesInvoice.InvoiceDate` and `SalesInvoice.DerivedCurrency` (the latter complements the `DerivedCurrency` re-derivation fix).
 - `SalesInvoiceDueDateRule` computes `PaymentDays`/`DueDate` from `PaymentNetDays` — a getter that reads the
   customer relationship and the store — but watched only `InvoiceDate`/`SalesTerms`. Reassigning `BillToCustomer`,
   `BilledFrom` or `Store`, or editing `Store.PaymentNetDays`, left `PaymentDays`/`DueDate` stale. It now also watches
