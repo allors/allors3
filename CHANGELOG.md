@@ -131,6 +131,10 @@ under a dated version heading.
 
 ### Fixed
 
+- `SalesInvoicePriceRule` had the same adjustment-rollup bug as `PurchaseInvoicePriceRule`: each order-adjustment
+  type's amount fed the `TotalExVat`/`TotalVat`/`TotalIncVat`/`TotalIrpf`/`GrandTotal` rollup via a per-type local
+  assigned with `=` (last-wins), so with two or more same-type adjustments only the last was counted. The per-type
+  locals now accumulate.
 - `PurchaseInvoicePriceRule` rolled each order-adjustment type's amount into the `TotalExVat`/`TotalVat`/`TotalIncVat`/
   `TotalIrpf`/`GrandTotal` rollup via a per-type local assigned with `=` (last-wins), so with two or more same-type
   adjustments (e.g. two surcharges) only the last flowed into those totals. The per-type locals now accumulate, so all
