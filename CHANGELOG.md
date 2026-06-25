@@ -131,6 +131,11 @@ under a dated version heading.
 
 ### Fixed
 
+- `WorkTaskCanInvoiceRule` blocks `CanInvoice` while any service entry lacks a `ThroughDate` but watched only service-
+  entry add/remove (via the time-sheet association), so filling in a `ThroughDate` left `CanInvoice` stale; it now also
+  watches `ServiceEntry.ThroughDate`. The same loop also hard-cast every `ServiceEntry` to `TimeEntry`, throwing
+  `InvalidCastException` once a non-time entry (e.g. a materials usage) was attached to a completed work task — it now
+  iterates `.OfType<TimeEntry>()`.
 - `WorkTaskCanInvoiceRule` also denies `CanInvoice` when the work task's `ExecutedBy` equals its `Customer`, but
   watched neither role, so reassigning either left `CanInvoice` stale. It now also watches `WorkTask.Customer` and
   `WorkTask.ExecutedBy`.
