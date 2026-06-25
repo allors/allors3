@@ -131,6 +131,10 @@ under a dated version heading.
 
 ### Fixed
 
+- `SalesInvoiceDueDateRule` computes `PaymentDays`/`DueDate` from `PaymentNetDays` — a getter that reads the
+  customer relationship and the store — but watched only `InvoiceDate`/`SalesTerms`. Reassigning `BillToCustomer`,
+  `BilledFrom` or `Store`, or editing `Store.PaymentNetDays`, left `PaymentDays`/`DueDate` stale. It now also watches
+  `SalesInvoice.BillToCustomer`/`BilledFrom`/`Store` and `Store.PaymentNetDays` (rerouted via `SalesInvoicesWhereStore`).
 - `SalesInvoiceReadyForPostingDerivedLocaleRule` derives `DerivedLocale` from `BillToCustomer`'s/`BilledFrom`'s locale
   but watched only those parties' `Locale` leaf role (via the reverse path) and the invoice's own `Locale` — not the
   invoice→`BillToCustomer`/`BilledFrom` links. Reassigning an invoice's `BillToCustomer` (or `BilledFrom`) therefore
