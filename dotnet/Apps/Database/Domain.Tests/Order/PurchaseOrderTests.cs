@@ -569,6 +569,34 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Equal(newVatRate, order.DerivedVatRate);
         }
+
+        [Fact]
+        public void ChangedDerivedVatRateDeriveTotalVat()
+        {
+            var vatRegime = new VatRegimes(this.Transaction).SpainReduced;
+            vatRegime.VatRates.ElementAt(0).ThroughDate = this.Transaction.Now().AddDays(-1).Date;
+            this.Derive();
+
+            var newVatRate = new VatRateBuilder(this.Transaction).WithFromDate(this.Transaction.Now().Date).WithRate(11).Build();
+            vatRegime.AddVatRate(newVatRate);
+            this.Derive();
+
+            var order = new PurchaseOrderBuilder(this.Transaction)
+                .WithTakenViaSupplier(this.InternalOrganisation.ActiveSuppliers.First())
+                .WithOrderDate(this.Transaction.Now().AddDays(-1).Date)
+                .WithAssignedVatRegime(vatRegime)
+                .Build();
+            var surcharge = new SurchargeAdjustmentBuilder(this.Transaction).WithAmount(100).Build();
+            order.AddOrderAdjustment(surcharge);
+            this.Derive();
+
+            Assert.NotEqual(11M, order.TotalVat);
+
+            order.OrderDate = this.Transaction.Now().AddDays(1).Date;
+            this.Derive();
+
+            Assert.Equal(11M, order.TotalVat);
+        }
     }
 
     public class PurchaseOrderAwaitingApprovalLevel1RuleTests : DomainTest, IClassFixture<Fixture>
