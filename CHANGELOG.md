@@ -131,6 +131,10 @@ under a dated version heading.
 
 ### Fixed
 
+- `PurchaseInvoicePriceRule`'s item-rollup loop summed every item total into the invoice except `item.TotalDiscount`,
+  so the invoice `TotalDiscount` omitted per-line item discounts (it reflected only order-level discounts). It now adds
+  `item.TotalDiscount`, matching `SalesInvoicePriceRule`. (Item discounts were already reflected in `TotalExVat`/
+  `GrandTotal` via `item.TotalExVat`; only the `TotalDiscount` summary was under-reported.)
 - `SalesInvoicePriceRule` had the same adjustment-rollup bug as `PurchaseInvoicePriceRule`: each order-adjustment
   type's amount fed the `TotalExVat`/`TotalVat`/`TotalIncVat`/`TotalIrpf`/`GrandTotal` rollup via a per-type local
   assigned with `=` (last-wins), so with two or more same-type adjustments only the last was counted. The per-type

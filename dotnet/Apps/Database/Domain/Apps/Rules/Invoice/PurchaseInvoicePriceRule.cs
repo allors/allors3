@@ -117,6 +117,7 @@ namespace Allors.Database.Domain
                 foreach (PurchaseInvoiceItem item in @this.ValidInvoiceItems)
                 {
                     @this.TotalBasePrice += item.TotalBasePrice;
+                    @this.TotalDiscount += item.TotalDiscount;
                     @this.TotalSurcharge += item.TotalSurcharge;
                     @this.TotalIrpf += item.TotalIrpf;
                     @this.TotalVat += item.TotalVat;
