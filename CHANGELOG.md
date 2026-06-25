@@ -131,6 +131,10 @@ under a dated version heading.
 
 ### Fixed
 
+- `SalesInvoicePriceRule` reads `InvoiceDate` (to select date-effective price components and as the currency-conversion
+  date) and `DerivedCurrency` (the conversion source) but watched neither, so editing the invoice date — or a change to
+  the derived currency — left item prices and the `*InPreferredCurrency` totals stale. It now also watches
+  `SalesInvoice.InvoiceDate` and `SalesInvoice.DerivedCurrency` (the latter complements the `DerivedCurrency` re-derivation fix).
 - `SalesInvoiceReadyForPostingDerivedCurrencyRule` derives `DerivedCurrency` from `BillToCustomer`'s preferred
   currency/locale but watched only the customer party's leaf roles (via the reverse path) and the invoice's
   `BilledFrom`/`AssignedCurrency` — not the invoice→`BillToCustomer` link. Reassigning an invoice's `BillToCustomer`
