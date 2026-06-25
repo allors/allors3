@@ -131,6 +131,10 @@ under a dated version heading.
 
 ### Fixed
 
+- `PurchaseOrderPriceRule` watched only `DiscountAdjustment`/`SurchargeAdjustment` for order-level adjustment
+  `Amount`/`Percentage` edits, so editing an existing Fee/Shipping/Misc charge's amount left the order totals stale. It
+  now also watches `OrderAdjustment.Amount`/`Percentage` (the base type, rerouted via `OrderWhereOrderAdjustment`),
+  covering all adjustment subtypes.
 - `PurchaseInvoicePriceRule` watched only `DiscountAdjustment`/`SurchargeAdjustment` for invoice-level adjustment
   `Amount`/`Percentage` edits, so editing an existing Fee/Shipping/Misc charge's amount left the invoice totals stale.
   It now also watches `OrderAdjustment.Amount`/`Percentage` (the base type, rerouted via `InvoiceWhereOrderAdjustment`),
