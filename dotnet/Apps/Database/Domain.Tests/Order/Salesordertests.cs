@@ -2531,6 +2531,56 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void ChangedShipToCustomerShippingAddressDeriveDerivedShipToAddressWhenShipToDiffersFromBillTo()
+        {
+            var billToCustomer = this.InternalOrganisation.ActiveCustomers.FirstOrDefault();
+
+            var shipToCustomer = new PersonBuilder(this.Transaction).WithLastName("shipto").Build();
+            new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(shipToCustomer).WithInternalOrganisation(this.InternalOrganisation).Build();
+            shipToCustomer.RemoveShippingAddress();
+            shipToCustomer.RemoveGeneralCorrespondence();
+
+            var order = new SalesOrderBuilder(this.Transaction)
+                .WithTakenBy(this.InternalOrganisation)
+                .WithBillToCustomer(billToCustomer)
+                .WithShipToCustomer(shipToCustomer)
+                .Build();
+            this.Derive();
+
+            Assert.False(order.ExistDerivedShipToAddress);
+
+            shipToCustomer.ShippingAddress = new PostalAddressBuilder(this.Transaction).WithAddress1("Haverwerf 15").Build();
+            this.Derive();
+
+            Assert.Equal(shipToCustomer.ShippingAddress, order.DerivedShipToAddress);
+        }
+
+        [Fact]
+        public void ChangedShipToCustomerGeneralCorrespondenceDeriveDerivedShipToAddress()
+        {
+            var shipToCustomer = new PersonBuilder(this.Transaction).WithLastName("shipto").Build();
+            new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(shipToCustomer).WithInternalOrganisation(this.InternalOrganisation).Build();
+
+            var order = new SalesOrderBuilder(this.Transaction)
+                .WithTakenBy(this.InternalOrganisation)
+                .WithShipToCustomer(shipToCustomer)
+                .Build();
+            this.Derive();
+
+            var addr1 = new PostalAddressBuilder(this.Transaction).WithAddress1("addr1").Build();
+            shipToCustomer.GeneralCorrespondence = addr1;
+            this.Derive();
+
+            Assert.Equal(addr1, order.DerivedShipToAddress);
+
+            var addr2 = new PostalAddressBuilder(this.Transaction).WithAddress1("addr2").Build();
+            shipToCustomer.GeneralCorrespondence = addr2;
+            this.Derive();
+
+            Assert.Equal(addr2, order.DerivedShipToAddress);
+        }
+
+        [Fact]
         public void ChangedBillToCustomerDeriveDerivedLocaleFromBillToCustomerLocale()
         {
             var swedishLocale = new LocaleBuilder(this.Transaction)

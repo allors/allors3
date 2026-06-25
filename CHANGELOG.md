@@ -131,6 +131,11 @@ under a dated version heading.
 
 ### Fixed
 
+- `SalesOrderProvisionalShipToAddressRule` derives a provisional order's `DerivedShipToAddress` from the **ship-to**
+  customer's `ShippingAddress`/`GeneralCorrespondence`, but watched `ShippingAddress` via the wrong reverse path
+  (`SalesOrdersWhereBillToCustomer`, a copy-paste) and didn't watch `GeneralCorrespondence` at all. When the ship-to
+  customer differed from the bill-to customer, changing its shipping address (or general correspondence) left
+  `DerivedShipToAddress` stale. It now watches both via `SalesOrdersWhereShipToCustomer`.
 - `QuotePriceRule` watched only `DiscountAdjustment`/`SurchargeAdjustment` for quote-level adjustment `Amount`/
   `Percentage` edits, so editing an existing Fee/Shipping/Misc charge's amount left the quote totals stale. It now also
   watches `OrderAdjustment.Amount`/`Percentage` (the base type, rerouted via `QuoteWhereOrderAdjustment`), covering all
