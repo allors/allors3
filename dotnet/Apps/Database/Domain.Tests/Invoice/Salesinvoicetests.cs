@@ -1673,6 +1673,25 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void ChangedStorePaymentNetDaysDerivePaymentDays()
+        {
+            var store = new Stores(this.Transaction).Extent().First(v => Equals(v.InternalOrganisation, this.InternalOrganisation));
+            store.PaymentNetDays = 7;
+
+            var invoice = new SalesInvoiceBuilder(this.Transaction).WithStore(store).WithInvoiceDate(this.Transaction.Now()).Build();
+            this.Derive();
+
+            Assert.Equal(7, invoice.PaymentDays);
+            Assert.Equal(invoice.InvoiceDate.AddDays(7), invoice.DueDate);
+
+            store.PaymentNetDays = 14;
+            this.Derive();
+
+            Assert.Equal(14, invoice.PaymentDays);
+            Assert.Equal(invoice.InvoiceDate.AddDays(14), invoice.DueDate);
+        }
+
+        [Fact]
         public void DeriveCustomers()
         {
             var customer1 = this.InternalOrganisation.ActiveCustomers.FirstOrDefault();
