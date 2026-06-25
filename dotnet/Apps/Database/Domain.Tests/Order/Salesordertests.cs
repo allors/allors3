@@ -2710,6 +2710,32 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void ChangedBillToCustomerLocaleOnlyDeriveDerivedCurrency()
+        {
+            var se = new Countries(this.Transaction).FindBy(this.M.Country.IsoCode, "SE");
+            var newLocale = new LocaleBuilder(this.Transaction)
+                .WithCountry(se)
+                .WithLanguage(new Languages(this.Transaction).FindBy(this.M.Language.IsoCode, "sv"))
+                .Build();
+
+            var customer = this.InternalOrganisation.ActiveCustomers.FirstOrDefault();
+            customer.RemoveLocale();
+            customer.RemovePreferredCurrency();
+
+            var order = new SalesOrderBuilder(this.Transaction).WithBillToCustomer(customer).Build();
+            this.Derive();
+
+            // no assigned/preferred currency, no locale -> falls back to TakenBy's currency.
+            Assert.NotEqual(se.Currency, order.DerivedCurrency);
+
+            // only the bill-to customer's Locale changes.
+            customer.Locale = newLocale;
+            this.Derive();
+
+            Assert.Equal(se.Currency, order.DerivedCurrency);
+        }
+
+        [Fact]
         public void ChangedBillToCustomerPreferredCurrencyDeriveDerivedCurrency()
         {
             var customer = this.InternalOrganisation.ActiveCustomers.FirstOrDefault();

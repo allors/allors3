@@ -131,6 +131,10 @@ under a dated version heading.
 
 ### Fixed
 
+- `SalesOrderProvisionalCurrencyRule` falls back to the bill-to customer's `Locale.Country.Currency` when no assigned
+  or preferred currency exists, but watched only the customer's `PreferredCurrency` — so changing the customer's
+  `Locale` alone left `DerivedCurrency` stale. It now also watches `Party.Locale` (rerouted via
+  `SalesOrdersWhereBillToCustomer`), matching the sales-invoice currency rule.
 - `SalesOrderProvisionalShipToAddressRule` derives a provisional order's `DerivedShipToAddress` from the **ship-to**
   customer's `ShippingAddress`/`GeneralCorrespondence`, but watched `ShippingAddress` via the wrong reverse path
   (`SalesOrdersWhereBillToCustomer`, a copy-paste) and didn't watch `GeneralCorrespondence` at all. When the ship-to
