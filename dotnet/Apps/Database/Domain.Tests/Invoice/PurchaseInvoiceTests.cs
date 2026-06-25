@@ -1284,6 +1284,25 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(10, invoiceItem.TotalDiscount);
             Assert.Equal(10, invoice.TotalDiscount);
         }
+
+        [Fact]
+        public void ChangedFeeAmountDeriveTotalFee()
+        {
+            var invoice = new PurchaseInvoiceBuilder(this.Transaction)
+                .WithBilledFrom(this.InternalOrganisation.ActiveSuppliers.First())
+                .WithInvoiceDate(this.Transaction.Now())
+                .Build();
+            var fee = new FeeBuilder(this.Transaction).WithAmount(10).Build();
+            invoice.AddOrderAdjustment(fee);
+            this.Derive();
+
+            Assert.Equal(10, invoice.TotalFee);
+
+            fee.Amount = 20;
+            this.Derive();
+
+            Assert.Equal(20, invoice.TotalFee);
+        }
     }
 
     [Trait("Category", "Security")]
