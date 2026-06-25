@@ -1463,6 +1463,37 @@ namespace Allors.Database.Domain.Tests
 
             Assert.False(workTask.CanInvoice);
         }
+
+        [Fact]
+        public void ChangedServiceEntryThroughDateDeriveCanInvoice()
+        {
+            var workTask = new WorkTaskBuilder(this.Transaction).Build();
+            var timeEntry = new TimeEntryBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithWorkEffort(workTask).Build();
+            this.Derive();
+
+            workTask.WorkEffortState = new WorkEffortStates(this.Transaction).Completed;
+            this.Derive();
+
+            Assert.False(workTask.CanInvoice);
+
+            timeEntry.ThroughDate = timeEntry.FromDate;
+            this.Derive();
+
+            Assert.True(workTask.CanInvoice);
+        }
+
+        [Fact]
+        public void NonTimeEntryServiceEntryDoesNotBreakCanInvoice()
+        {
+            var workTask = new WorkTaskBuilder(this.Transaction).Build();
+            new MaterialsUsageBuilder(this.Transaction).WithWorkEffort(workTask).WithIsBillable(false).Build();
+            this.Derive();
+
+            workTask.WorkEffortState = new WorkEffortStates(this.Transaction).Completed;
+            this.Derive();
+
+            Assert.True(workTask.CanInvoice);
+        }
     }
 
     public class WorkEffortTotalLabourRevenueRuleTests : DomainTest, IClassFixture<Fixture>

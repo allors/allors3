@@ -24,6 +24,7 @@ namespace Allors.Database.Domain
             m.WorkTask.RolePattern(v => v.ExecutedBy),
             m.WorkEffort.RolePattern(v => v.WorkEffortState, v => v.WorkEffortWhereChild, m.WorkTask),
             m.TimeEntry.AssociationPattern(v => v.TimeSheetWhereTimeEntry, v => v.WorkEffort),
+            m.ServiceEntry.RolePattern(v => v.ThroughDate, v => v.WorkEffort.ObjectType.ServiceEntriesWhereWorkEffort.ObjectType.WorkEffort),
         };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
@@ -56,7 +57,7 @@ namespace Allors.Database.Domain
 
                 if (@this.CanInvoice)
                 {
-                    foreach (TimeEntry timeEntry in @this.ServiceEntriesWhereWorkEffort)
+                    foreach (var timeEntry in @this.ServiceEntriesWhereWorkEffort.OfType<TimeEntry>())
                     {
                         if (!timeEntry.ExistThroughDate)
                         {
