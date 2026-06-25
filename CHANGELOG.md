@@ -131,6 +131,10 @@ under a dated version heading.
 
 ### Fixed
 
+- `PurchaseInvoicePriceRule` derives each item's VAT/IRPF from its `AssignedVatRegime`/`AssignedIrpfRegime` (falling
+  back to the invoice regime) but watched neither item role — and, unlike the sales side, there is no separate
+  item-regime rule — so overriding an item's VAT or IRPF regime left the item's tax and the invoice totals stale. It
+  now watches `PurchaseInvoiceItem.AssignedVatRegime` and `AssignedIrpfRegime`.
 - `WorkTaskCanInvoiceRule` blocks `CanInvoice` while any service entry lacks a `ThroughDate` but watched only service-
   entry add/remove (via the time-sheet association), so filling in a `ThroughDate` left `CanInvoice` stale; it now also
   watches `ServiceEntry.ThroughDate`. The same loop also hard-cast every `ServiceEntry` to `TimeEntry`, throwing

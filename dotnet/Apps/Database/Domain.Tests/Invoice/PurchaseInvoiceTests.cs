@@ -1226,6 +1226,33 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Equal(newVatRate, invoiceItem.VatRate);
         }
+
+        [Fact]
+        public void ChangedPurchaseInvoiceItemAssignedVatRegimeAndIrpfRegimeDeriveDerivedRegimes()
+        {
+            var vatRegime = new VatRegimes(this.Transaction).BelgiumStandard;
+            var irpfRegime = new IrpfRegimes(this.Transaction).Assessable19;
+
+            var invoice = new PurchaseInvoiceBuilder(this.Transaction)
+                .WithBilledFrom(this.InternalOrganisation.ActiveSuppliers.First())
+                .WithInvoiceDate(this.Transaction.Now())
+                .Build();
+            this.Derive();
+
+            var invoiceItem = new PurchaseInvoiceItemBuilder(this.Transaction).WithAssignedUnitPrice(100).WithQuantity(1).Build();
+            invoice.AddPurchaseInvoiceItem(invoiceItem);
+            this.Derive();
+
+            Assert.NotEqual(vatRegime, invoiceItem.DerivedVatRegime);
+            Assert.NotEqual(irpfRegime, invoiceItem.DerivedIrpfRegime);
+
+            invoiceItem.AssignedVatRegime = vatRegime;
+            invoiceItem.AssignedIrpfRegime = irpfRegime;
+            this.Derive();
+
+            Assert.Equal(vatRegime, invoiceItem.DerivedVatRegime);
+            Assert.Equal(irpfRegime, invoiceItem.DerivedIrpfRegime);
+        }
     }
 
     [Trait("Category", "Security")]
