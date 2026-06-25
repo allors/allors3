@@ -304,6 +304,22 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Equal(11M, quote.TotalVat);
         }
+
+        [Fact]
+        public void ChangedFeeAmountDeriveTotalFee()
+        {
+            var quote = new ProductQuoteBuilder(this.Transaction).WithIssueDate(this.Transaction.Now()).Build();
+            var fee = new FeeBuilder(this.Transaction).WithAmount(10).Build();
+            quote.AddOrderAdjustment(fee);
+            this.Derive();
+
+            Assert.Equal(10, quote.TotalFee);
+
+            fee.Amount = 20;
+            this.Derive();
+
+            Assert.Equal(20, quote.TotalFee);
+        }
     }
 
     public class ProductQuoteAwaitingApprovalRuleTests : DomainTest, IClassFixture<Fixture>
