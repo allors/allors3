@@ -1438,6 +1438,31 @@ namespace Allors.Database.Domain.Tests
 
             Assert.True(parent.CanInvoice);
         }
+
+        [Fact]
+        public void ChangedExecutedByAndCustomerDeriveCanInvoice()
+        {
+            var customer = new OrganisationBuilder(this.Transaction).WithName("customer").Build();
+            var other = new OrganisationBuilder(this.Transaction).WithName("other").Build();
+
+            var workTask = new WorkTaskBuilder(this.Transaction).WithCustomer(customer).WithExecutedBy(customer).Build();
+            this.Derive();
+
+            workTask.WorkEffortState = new WorkEffortStates(this.Transaction).Completed;
+            this.Derive();
+
+            Assert.False(workTask.CanInvoice);
+
+            workTask.ExecutedBy = other;
+            this.Derive();
+
+            Assert.True(workTask.CanInvoice);
+
+            workTask.Customer = other;
+            this.Derive();
+
+            Assert.False(workTask.CanInvoice);
+        }
     }
 
     public class WorkEffortTotalLabourRevenueRuleTests : DomainTest, IClassFixture<Fixture>

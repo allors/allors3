@@ -131,6 +131,9 @@ under a dated version heading.
 
 ### Fixed
 
+- `WorkTaskCanInvoiceRule` also denies `CanInvoice` when the work task's `ExecutedBy` equals its `Customer`, but
+  watched neither role, so reassigning either left `CanInvoice` stale. It now also watches `WorkTask.Customer` and
+  `WorkTask.ExecutedBy`.
 - `WorkTaskCanInvoiceRule` blocks a parent work task's `CanInvoice` until every child is Completed/Finished but watched
   only the task's own `WorkEffortState`, so completing the last child did not flip the parent's `CanInvoice`. It now
   also watches each child's `WorkEffortState` (rerouted via `WorkEffortWhereChild` to the parent `WorkTask`).
