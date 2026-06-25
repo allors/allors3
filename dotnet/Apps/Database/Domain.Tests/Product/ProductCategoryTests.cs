@@ -1304,5 +1304,49 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(4, productCategory1.AllNonSerialisedInventoryItemsForSale.Count());
             Assert.Contains(good.Part.InventoryItemsWherePart.ElementAt(0), productCategory1.AllNonSerialisedInventoryItemsForSale);
         }
+
+        [Fact]
+        public void ChangedSerialisedItemAvailableForSaleDeriveAllSerialisedItemsForSale()
+        {
+            var serialisedItem = new SerialisedItemBuilder(this.Transaction).WithSerialNumber("1").WithAvailableForSale(true).Build();
+            var good = new UnifiedGoodBuilder(this.Transaction)
+                .WithName("good")
+                .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).Serialised)
+                .Build();
+            good.AddSerialisedItem(serialisedItem);
+
+            var productCategory = new ProductCategoryBuilder(this.Transaction).WithName("category").WithProduct(good).Build();
+            this.Derive();
+
+            Assert.Contains(serialisedItem, productCategory.AllSerialisedItemsForSale);
+
+            serialisedItem.AvailableForSale = false;
+            this.Derive();
+
+            Assert.DoesNotContain(serialisedItem, productCategory.AllSerialisedItemsForSale);
+        }
+
+        [Fact]
+        public void ChangedNonSerialisedInventoryItemStateDeriveAllNonSerialisedInventoryItemsForSale()
+        {
+            var good = new NonUnifiedGoodBuilder(this.Transaction)
+                .WithPart(new NonUnifiedPartBuilder(this.Transaction)
+                            .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised)
+                            .Build())
+                .Build();
+            var productCategory = new ProductCategoryBuilder(this.Transaction).WithName("category").WithProduct(good).Build();
+            this.Derive();
+
+            Assert.NotEmpty(productCategory.AllNonSerialisedInventoryItemsForSale);
+
+            foreach (NonSerialisedInventoryItem inventoryItem in good.Part.InventoryItemsWherePart)
+            {
+                inventoryItem.NonSerialisedInventoryItemState = new NonSerialisedInventoryItemStates(this.Transaction).Scrap;
+            }
+
+            this.Derive();
+
+            Assert.Empty(productCategory.AllNonSerialisedInventoryItemsForSale);
+        }
     }
 }

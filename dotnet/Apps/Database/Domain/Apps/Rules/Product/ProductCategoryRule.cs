@@ -27,6 +27,16 @@ namespace Allors.Database.Domain
                 m.ProductCategory.RolePattern(v => v.AllProducts, v => v.ProductCategoriesWhereDescendant),
                 m.ProductCategory.AssociationPattern(v => v.ProductCategoriesWherePrimaryParent),
                 m.ProductCategory.AssociationPattern(v => v.ProductCategoriesWhereSecondaryParent),
+                // AllSerialisedItemsForSale reads Part.SerialisedItems and SerialisedItem.AvailableForSale
+                m.SerialisedItem.RolePattern(v => v.AvailableForSale, v => v.PartWhereSerialisedItem.ObjectType.AsUnifiedGood.ProductCategoriesWhereAllProduct),
+                m.SerialisedItem.RolePattern(v => v.AvailableForSale, v => v.PartWhereSerialisedItem.ObjectType.AsNonUnifiedPart.NonUnifiedGoodsWherePart.ObjectType.ProductCategoriesWhereAllProduct),
+                m.Part.RolePattern(v => v.SerialisedItems, v => v.AsUnifiedGood.ProductCategoriesWhereAllProduct),
+                m.Part.RolePattern(v => v.SerialisedItems, v => v.AsNonUnifiedPart.NonUnifiedGoodsWherePart.ObjectType.ProductCategoriesWhereAllProduct),
+                // AllNonSerialisedInventoryItemsForSale reads Part.InventoryItemsWherePart and NonSerialisedInventoryItem.NonSerialisedInventoryItemState
+                m.NonSerialisedInventoryItem.RolePattern(v => v.NonSerialisedInventoryItemState, v => v.Part.ObjectType.AsUnifiedGood.ProductCategoriesWhereAllProduct),
+                m.NonSerialisedInventoryItem.RolePattern(v => v.NonSerialisedInventoryItemState, v => v.Part.ObjectType.AsNonUnifiedPart.NonUnifiedGoodsWherePart.ObjectType.ProductCategoriesWhereAllProduct),
+                m.Part.AssociationPattern(v => v.InventoryItemsWherePart, v => v.AsUnifiedGood.ProductCategoriesWhereAllProduct),
+                m.Part.AssociationPattern(v => v.InventoryItemsWherePart, v => v.AsNonUnifiedPart.NonUnifiedGoodsWherePart.ObjectType.ProductCategoriesWhereAllProduct),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
