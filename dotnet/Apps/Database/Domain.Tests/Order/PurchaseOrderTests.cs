@@ -1194,6 +1194,25 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void ChangedFeeAmountDeriveTotalFee()
+        {
+            var order = new PurchaseOrderBuilder(this.Transaction)
+                .WithOrderedBy(this.InternalOrganisation)
+                .WithOrderDate(this.Transaction.Now())
+                .Build();
+            var fee = new FeeBuilder(this.Transaction).WithAmount(10).Build();
+            order.AddOrderAdjustment(fee);
+            this.Derive();
+
+            Assert.Equal(10, order.TotalFee);
+
+            fee.Amount = 20;
+            this.Derive();
+
+            Assert.Equal(20, order.TotalFee);
+        }
+
+        [Fact]
         public void ChangedSalesOrderItemAssignedUnitPriceCalculatePrice()
         {
             var part = new UnifiedGoodBuilder(this.Transaction).Build();

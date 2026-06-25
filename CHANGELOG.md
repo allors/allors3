@@ -131,6 +131,10 @@ under a dated version heading.
 
 ### Fixed
 
+- `PurchaseOrderPriceRule` watched only `DiscountAdjustment`/`SurchargeAdjustment` for order-level adjustment
+  `Amount`/`Percentage` edits, so editing an existing Fee/Shipping/Misc charge's amount left the order totals stale. It
+  now also watches `OrderAdjustment.Amount`/`Percentage` (the base type, rerouted via `OrderWhereOrderAdjustment`),
+  covering all adjustment subtypes.
 - `PurchaseInvoicePriceRule`'s item-rollup loop summed every item total into the invoice except `item.TotalDiscount`,
   so the invoice `TotalDiscount` omitted per-line item discounts (it reflected only order-level discounts). It now adds
   `item.TotalDiscount`, matching `SalesInvoicePriceRule`. (Item discounts were already reflected in `TotalExVat`/
