@@ -131,6 +131,10 @@ under a dated version heading.
 
 ### Fixed
 
+- `PaymentRule` rejects a payment whose applications sum to more than its `Amount`, but watched only the
+  `PaymentApplications` set and `Amount` — so editing an existing application's `AmountApplied` to push the aggregate
+  over the payment amount was not re-validated. It now also watches `PaymentApplication.AmountApplied` (rerouted via
+  `PaymentWherePaymentApplication`).
 - `SalesOrderProvisionalCurrencyRule` falls back to the bill-to customer's `Locale.Country.Currency` when no assigned
   or preferred currency exists, but watched only the customer's `PreferredCurrency` — so changing the customer's
   `Locale` alone left `DerivedCurrency` stale. It now also watches `Party.Locale` (rerouted via
