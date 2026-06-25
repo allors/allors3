@@ -131,6 +131,10 @@ under a dated version heading.
 
 ### Fixed
 
+- `SalesInvoicePriceRule` sums each item's VAT/IRPF (computed from the item's own `VatRate`/`IrpfRate`, set by the
+  item-regime rules) into the invoice totals, but watched only the invoice-level `DerivedVatRate` — so a change to an
+  item's `VatRate`/`IrpfRate` (e.g. overriding the item's VAT regime) left the invoice `TotalVat`/`TotalIrpf` stale. It
+  now also watches `SalesInvoiceItem.VatRate` and `IrpfRate` (rerouted to the invoice).
 - `PurchaseInvoicePriceRule` derives each item's VAT/IRPF from its `AssignedVatRegime`/`AssignedIrpfRegime` (falling
   back to the invoice regime) but watched neither item role — and, unlike the sales side, there is no separate
   item-regime rule — so overriding an item's VAT or IRPF regime left the item's tax and the invoice totals stale. It

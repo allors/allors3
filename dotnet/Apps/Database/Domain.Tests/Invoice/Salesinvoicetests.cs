@@ -2645,6 +2645,30 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void ChangedSalesInvoiceItemVatRateAndIrpfRateDeriveTotals()
+        {
+            var vatRegime = new VatRegimes(this.Transaction).BelgiumStandard;
+            var irpfRegime = new IrpfRegimes(this.Transaction).Assessable19;
+
+            var invoice = new SalesInvoiceBuilder(this.Transaction).WithInvoiceDate(this.Transaction.Now()).Build();
+            this.Derive();
+
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithAssignedUnitPrice(100).WithQuantity(1).Build();
+            invoice.AddSalesInvoiceItem(invoiceItem);
+            this.Derive();
+
+            Assert.Equal(0, invoice.TotalVat);
+            Assert.Equal(0, invoice.TotalIrpf);
+
+            invoiceItem.AssignedVatRegime = vatRegime;
+            invoiceItem.AssignedIrpfRegime = irpfRegime;
+            this.Derive();
+
+            Assert.Equal(invoiceItem.UnitPrice * invoiceItem.VatRate.Rate / 100, invoice.TotalVat);
+            Assert.Equal(invoiceItem.UnitPrice * invoiceItem.IrpfRate.Rate / 100, invoice.TotalIrpf);
+        }
+
+        [Fact]
         public void OnChangedDerivationTriggerTriggeredByDiscountComponentPercentageCalculatePrice()
         {
             var product = new NonUnifiedGoodBuilder(this.Transaction).Build();

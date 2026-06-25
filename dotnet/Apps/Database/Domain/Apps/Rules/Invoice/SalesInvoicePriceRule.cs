@@ -30,6 +30,8 @@ namespace Allors.Database.Domain
             m.SalesInvoiceItem.RolePattern(v => v.ProductFeatures, v => v.SalesInvoiceWhereSalesInvoiceItem),
             m.SalesInvoiceItem.RolePattern(v => v.Quantity, v => v .SalesInvoiceWhereSalesInvoiceItem),
             m.SalesInvoiceItem.RolePattern(v => v.AssignedUnitPrice, v => v.SalesInvoiceWhereSalesInvoiceItem),
+            m.SalesInvoiceItem.RolePattern(v => v.VatRate, v => v.SalesInvoiceWhereSalesInvoiceItem),
+            m.SalesInvoiceItem.RolePattern(v => v.IrpfRate, v => v.SalesInvoiceWhereSalesInvoiceItem),
             m.SalesInvoiceItem.RolePattern(v => v.DiscountAdjustments, v => v.SalesInvoiceWhereSalesInvoiceItem),
             m.DiscountAdjustment.RolePattern(v => v.Percentage, v => v.PriceableWhereDiscountAdjustment.ObjectType.AsSalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem, m.SalesInvoice),
             m.DiscountAdjustment.RolePattern(v => v.Percentage, v => v.InvoiceWhereOrderAdjustment, m.SalesInvoice),
