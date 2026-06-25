@@ -148,5 +148,67 @@ namespace Allors.Database.Domain.Tests
 
             Assert.DoesNotContain(partyContactMechanism, party.CurrentPartyContactMechanisms);
         }
+
+        [Fact]
+        public void ChangedPartyContactMechanismUseAsDefaultDeriveGeneralEmail()
+        {
+            var party = new PersonBuilder(this.Transaction).Build();
+            var partyContactMechanism = new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(party)
+                .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).GeneralEmail)
+                .WithContactMechanism(new EmailAddressBuilder(this.Transaction).Build())
+                .WithUseAsDefault(true)
+                .Build();
+            this.Derive();
+
+            Assert.Equal(partyContactMechanism.ContactMechanism, party.GeneralEmail);
+
+            partyContactMechanism.UseAsDefault = false;
+            this.Derive();
+
+            Assert.False(party.ExistGeneralEmail);
+        }
+
+        [Fact]
+        public void ChangedPartyContactMechanismUseAsDefaultDeriveShippingInquiriesPhone()
+        {
+            var party = new PersonBuilder(this.Transaction).Build();
+            var partyContactMechanism = new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(party)
+                .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).ShippingInquiriesPhone)
+                .WithContactMechanism(new TelecommunicationsNumberBuilder(this.Transaction).WithContactNumber("1").Build())
+                .WithUseAsDefault(true)
+                .Build();
+            this.Derive();
+
+            Assert.Equal(partyContactMechanism.ContactMechanism, party.ShippingInquiriesPhone);
+
+            partyContactMechanism.UseAsDefault = false;
+            this.Derive();
+
+            Assert.False(party.ExistShippingInquiriesPhone);
+        }
+
+        [Fact]
+        public void ChangedPartyContactMechanismContactMechanismDeriveGeneralCorrespondence()
+        {
+            var party = new PersonBuilder(this.Transaction).Build();
+            var address1 = new EmailAddressBuilder(this.Transaction).Build();
+            var partyContactMechanism = new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(party)
+                .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).GeneralCorrespondence)
+                .WithContactMechanism(address1)
+                .WithUseAsDefault(true)
+                .Build();
+            this.Derive();
+
+            Assert.Equal(address1, party.GeneralCorrespondence);
+
+            var address2 = new EmailAddressBuilder(this.Transaction).Build();
+            partyContactMechanism.ContactMechanism = address2;
+            this.Derive();
+
+            Assert.Equal(address2, party.GeneralCorrespondence);
+        }
     }
 }

@@ -22,6 +22,8 @@ namespace Allors.Database.Domain
                 m.PartyContactMechanism.RolePattern(v => v.ContactPurposes, v => v.Party.ObjectType),
                 m.PartyContactMechanism.RolePattern(v => v.FromDate, v => v.Party.ObjectType),
                 m.PartyContactMechanism.RolePattern(v => v.ThroughDate, v => v.Party.ObjectType),
+                m.PartyContactMechanism.RolePattern(v => v.UseAsDefault, v => v.Party.ObjectType),
+                m.PartyContactMechanism.RolePattern(v => v.ContactMechanism, v => v.Party.ObjectType),
                 m.Party.AssociationPattern(v => v.PartyRelationshipsWhereParty),
                 m.PartyRelationship.RolePattern(v => v.FromDate, v => v.Parties),
                 m.PartyRelationship.RolePattern(v => v.ThroughDate, v => v.Parties),
@@ -37,6 +39,7 @@ namespace Allors.Database.Domain
                 @this.BillingInquiriesPhone = null;
                 @this.CellPhoneNumber = null;
                 @this.GeneralCorrespondence = null;
+                @this.GeneralEmail = null;
                 @this.GeneralFaxNumber = null;
                 @this.GeneralPhoneNumber = null;
                 @this.HeadQuarter = null;
@@ -49,7 +52,7 @@ namespace Allors.Database.Domain
                 @this.SalesOffice = null;
                 @this.ShippingAddress = null;
                 @this.ShippingInquiriesFax = null;
-                @this.ShippingAddress = null;
+                @this.ShippingInquiriesPhone = null;
 
                 foreach (var partyContactMechanism in @this.PartyContactMechanismsWhereParty)
                 {
