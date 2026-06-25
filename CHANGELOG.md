@@ -131,6 +131,11 @@ under a dated version heading.
 
 ### Fixed
 
+- `SalesInvoiceReadyForPostingDerivedLocaleRule` derives `DerivedLocale` from `BillToCustomer`'s/`BilledFrom`'s locale
+  but watched only those parties' `Locale` leaf role (via the reverse path) and the invoice's own `Locale` — not the
+  invoice→`BillToCustomer`/`BilledFrom` links. Reassigning an invoice's `BillToCustomer` (or `BilledFrom`) therefore
+  left `DerivedLocale` based on the previous party. It now also watches `SalesInvoice.BillToCustomer` and
+  `SalesInvoice.BilledFrom` (same shape as the `DerivedCurrency` fix).
 - `SalesInvoiceReadyForPostingDerivedCurrencyRule` derives `DerivedCurrency` from `BillToCustomer`'s preferred
   currency/locale but watched only the customer party's leaf roles (via the reverse path) and the invoice's
   `BilledFrom`/`AssignedCurrency` — not the invoice→`BillToCustomer` link. Reassigning an invoice's `BillToCustomer`

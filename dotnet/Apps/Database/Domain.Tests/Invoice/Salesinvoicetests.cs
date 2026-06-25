@@ -1241,6 +1241,34 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void ChangedBillToCustomerDeriveDerivedLocale()
+        {
+            var localeGb = new LocaleBuilder(this.Transaction)
+                .WithCountry(new Countries(this.Transaction).FindBy(this.M.Country.IsoCode, "GB"))
+                .WithLanguage(new Languages(this.Transaction).FindBy(this.M.Language.IsoCode, "en"))
+                .Build();
+            var localeSe = new LocaleBuilder(this.Transaction)
+                .WithCountry(new Countries(this.Transaction).FindBy(this.M.Country.IsoCode, "SE"))
+                .WithLanguage(new Languages(this.Transaction).FindBy(this.M.Language.IsoCode, "sv"))
+                .Build();
+
+            var customer1 = new OrganisationBuilder(this.Transaction).WithName("customer1").WithLocale(localeGb).Build();
+            var customer2 = new OrganisationBuilder(this.Transaction).WithName("customer2").WithLocale(localeSe).Build();
+            new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(customer1).Build();
+            new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(customer2).Build();
+
+            var invoice = new SalesInvoiceBuilder(this.Transaction).WithBillToCustomer(customer1).Build();
+            this.Derive();
+
+            Assert.Equal(localeGb, invoice.DerivedLocale);
+
+            invoice.BillToCustomer = customer2;
+            this.Derive();
+
+            Assert.Equal(localeSe, invoice.DerivedLocale);
+        }
+
+        [Fact]
         public void ChangedAssignedCurrencyDeriveDerivedCurrency()
         {
             var invoice = new SalesInvoiceBuilder(this.Transaction).Build();
