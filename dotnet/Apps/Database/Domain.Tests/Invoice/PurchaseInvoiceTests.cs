@@ -1253,6 +1253,21 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(vatRegime, invoiceItem.DerivedVatRegime);
             Assert.Equal(irpfRegime, invoiceItem.DerivedIrpfRegime);
         }
+
+        [Fact]
+        public void ChangedOrderAdjustmentMultipleSameTypeDeriveGrandTotal()
+        {
+            var invoice = new PurchaseInvoiceBuilder(this.Transaction)
+                .WithBilledFrom(this.InternalOrganisation.ActiveSuppliers.First())
+                .WithInvoiceDate(this.Transaction.Now())
+                .Build();
+            invoice.AddOrderAdjustment(new SurchargeAdjustmentBuilder(this.Transaction).WithAmount(100).Build());
+            invoice.AddOrderAdjustment(new SurchargeAdjustmentBuilder(this.Transaction).WithAmount(100).Build());
+            this.Derive();
+
+            Assert.Equal(200, invoice.TotalSurcharge);
+            Assert.Equal(200, invoice.GrandTotal);
+        }
     }
 
     [Trait("Category", "Security")]

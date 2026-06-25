@@ -131,6 +131,10 @@ under a dated version heading.
 
 ### Fixed
 
+- `PurchaseInvoicePriceRule` rolled each order-adjustment type's amount into the `TotalExVat`/`TotalVat`/`TotalIncVat`/
+  `TotalIrpf`/`GrandTotal` rollup via a per-type local assigned with `=` (last-wins), so with two or more same-type
+  adjustments (e.g. two surcharges) only the last flowed into those totals. The per-type locals now accumulate, so all
+  same-type adjustments are included. (The persistent `Total*` fields were already correct.)
 - `PurchaseOrderPriceRule` reset `TotalFeeInPreferredCurrency`, `TotalShippingAndHandlingInPreferredCurrency` and
   `TotalExtraChargeInPreferredCurrency` to 0 but never re-assigned them in the preferred-currency block, so they stayed
   permanently 0 even when the order carried fees/shipping/misc charges. They are now converted from the corresponding
