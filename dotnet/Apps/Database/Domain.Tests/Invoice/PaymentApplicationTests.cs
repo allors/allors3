@@ -55,6 +55,44 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void ChangedPaymentApplicationAmountAppliedDerivePaymentAmountIsToSmall()
+        {
+            var contactMechanism = new ContactMechanisms(this.Transaction).Extent().FirstOrDefault();
+            var good = new Goods(this.Transaction).FindBy(this.M.Good.Name, "good1");
+
+            var customer = new PersonBuilder(this.Transaction).WithLastName("customer").Build();
+            new CustomerRelationshipBuilder(this.Transaction).WithCustomer(customer).Build();
+
+            var invoice = new SalesInvoiceBuilder(this.Transaction)
+                .WithBillToCustomer(customer)
+                .WithAssignedBillToContactMechanism(contactMechanism)
+                .WithSalesInvoiceItem(new SalesInvoiceItemBuilder(this.Transaction).WithProduct(good).WithQuantity(1).WithAssignedUnitPrice(1000M).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).Build())
+                .Build();
+
+            this.Transaction.Derive();
+
+            var receipt = new ReceiptBuilder(this.Transaction)
+                .WithAmount(100)
+                .WithEffectiveDate(this.Transaction.Now())
+                .Build();
+
+            var paymentApplication = new PaymentApplicationBuilder(this.Transaction)
+                .WithAmountApplied(50)
+                .WithInvoiceItem(invoice.InvoiceItems.ElementAt(0))
+                .Build();
+
+            receipt.AddPaymentApplication(paymentApplication);
+
+            var initialErrors = this.Derive().Errors.ToList();
+            Assert.Empty(initialErrors.FindAll(e => e.Message.Contains(ErrorMessages.PaymentAmountIsToSmall)));
+
+            paymentApplication.AmountApplied = 150;
+
+            var errors = this.Derive().Errors.ToList();
+            Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.PaymentAmountIsToSmall)));
+        }
+
+        [Fact]
         public void DeriveOnCreateAtMostOneInvalidPaymentApplication()
         {
             var salesInvoice = new SalesInvoiceBuilder(this.Transaction).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
