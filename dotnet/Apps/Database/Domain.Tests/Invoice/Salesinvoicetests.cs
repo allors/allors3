@@ -2669,6 +2669,18 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void ChangedOrderAdjustmentMultipleSameTypeDeriveGrandTotal()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Transaction).WithInvoiceDate(this.Transaction.Now()).Build();
+            invoice.AddOrderAdjustment(new SurchargeAdjustmentBuilder(this.Transaction).WithAmount(100).Build());
+            invoice.AddOrderAdjustment(new SurchargeAdjustmentBuilder(this.Transaction).WithAmount(100).Build());
+            this.Derive();
+
+            Assert.Equal(200, invoice.TotalSurcharge);
+            Assert.Equal(200, invoice.GrandTotal);
+        }
+
+        [Fact]
         public void OnChangedDerivationTriggerTriggeredByDiscountComponentPercentageCalculatePrice()
         {
             var product = new NonUnifiedGoodBuilder(this.Transaction).Build();

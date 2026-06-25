@@ -131,6 +131,10 @@ under a dated version heading.
 
 ### Fixed
 
+- `SalesInvoicePriceRule` had the same adjustment-rollup bug as `PurchaseInvoicePriceRule`: each order-adjustment
+  type's amount fed the `TotalExVat`/`TotalVat`/`TotalIncVat`/`TotalIrpf`/`GrandTotal` rollup via a per-type local
+  assigned with `=` (last-wins), so with two or more same-type adjustments only the last was counted. The per-type
+  locals now accumulate.
 - `PurchaseOrderPriceRule` reset `TotalFeeInPreferredCurrency`, `TotalShippingAndHandlingInPreferredCurrency` and
   `TotalExtraChargeInPreferredCurrency` to 0 but never re-assigned them in the preferred-currency block, so they stayed
   permanently 0 even when the order carried fees/shipping/misc charges. They are now converted from the corresponding

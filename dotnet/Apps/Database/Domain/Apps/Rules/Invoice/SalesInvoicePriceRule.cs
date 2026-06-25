@@ -144,96 +144,101 @@ namespace Allors.Database.Domain
                 {
                     if (orderAdjustment.GetType().Name.Equals(typeof(DiscountAdjustment).Name))
                     {
-                        discount = orderAdjustment.Percentage.HasValue ?
+                        var thisDiscount = orderAdjustment.Percentage.HasValue ?
                                         @this.TotalExVat * orderAdjustment.Percentage.Value / 100 :
                                         orderAdjustment.Amount ?? 0;
 
-                        @this.TotalDiscount += discount;
+                        discount += thisDiscount;
+                        @this.TotalDiscount += thisDiscount;
 
                         if (@this.ExistDerivedVatRegime)
                         {
-                            discountVat = discount * @this.DerivedVatRate.Rate / 100;
+                            discountVat += thisDiscount * @this.DerivedVatRate.Rate / 100;
                         }
 
                         if (@this.ExistDerivedIrpfRegime)
                         {
-                            discountIrpf = discount * @this.DerivedIrpfRate.Rate / 100;
+                            discountIrpf += thisDiscount * @this.DerivedIrpfRate.Rate / 100;
                         }
                     }
 
                     if (orderAdjustment.GetType().Name.Equals(typeof(SurchargeAdjustment).Name))
                     {
-                        surcharge = orderAdjustment.Percentage.HasValue ?
+                        var thisSurcharge = orderAdjustment.Percentage.HasValue ?
                                             @this.TotalExVat * orderAdjustment.Percentage.Value / 100 :
                                             orderAdjustment.Amount ?? 0;
 
-                        @this.TotalSurcharge += surcharge;
+                        surcharge += thisSurcharge;
+                        @this.TotalSurcharge += thisSurcharge;
 
                         if (@this.ExistDerivedVatRegime)
                         {
-                            surchargeVat = surcharge * @this.DerivedVatRate.Rate / 100;
+                            surchargeVat += thisSurcharge * @this.DerivedVatRate.Rate / 100;
                         }
 
                         if (@this.ExistDerivedIrpfRegime)
                         {
-                            surchargeIrpf = surcharge * @this.DerivedIrpfRate.Rate / 100;
+                            surchargeIrpf += thisSurcharge * @this.DerivedIrpfRate.Rate / 100;
                         }
                     }
 
                     if (orderAdjustment.GetType().Name.Equals(typeof(Fee).Name))
                     {
-                        fee = orderAdjustment.Percentage.HasValue ?
+                        var thisFee = orderAdjustment.Percentage.HasValue ?
                                     @this.TotalExVat * orderAdjustment.Percentage.Value / 100 :
                                     orderAdjustment.Amount ?? 0;
 
-                        @this.TotalFee += fee;
+                        fee += thisFee;
+                        @this.TotalFee += thisFee;
 
                         if (@this.ExistDerivedVatRegime)
                         {
-                            feeVat = fee * @this.DerivedVatRate.Rate / 100;
+                            feeVat += thisFee * @this.DerivedVatRate.Rate / 100;
                         }
 
                         if (@this.ExistDerivedIrpfRegime)
                         {
-                            feeIrpf = fee * @this.DerivedIrpfRate.Rate / 100;
+                            feeIrpf += thisFee * @this.DerivedIrpfRate.Rate / 100;
                         }
                     }
 
                     if (orderAdjustment.GetType().Name.Equals(typeof(ShippingAndHandlingCharge).Name))
                     {
-                        shipping = orderAdjustment.Percentage.HasValue ?
+                        var thisShipping = orderAdjustment.Percentage.HasValue ?
                                         @this.TotalExVat * orderAdjustment.Percentage.Value / 100 :
                                         orderAdjustment.Amount ?? 0;
 
-                        @this.TotalShippingAndHandling += shipping;
+                        shipping += thisShipping;
+                        @this.TotalShippingAndHandling += thisShipping;
 
                         if (@this.ExistDerivedVatRegime)
                         {
-                            shippingVat = shipping * @this.DerivedVatRate.Rate / 100;
+                            shippingVat += thisShipping * @this.DerivedVatRate.Rate / 100;
                         }
 
                         if (@this.ExistDerivedIrpfRegime)
                         {
-                            shippingIrpf = shipping * @this.DerivedIrpfRate.Rate / 100;
+                            shippingIrpf += thisShipping * @this.DerivedIrpfRate.Rate / 100;
                         }
                     }
 
                     if (orderAdjustment.GetType().Name.Equals(typeof(MiscellaneousCharge).Name))
                     {
-                        miscellaneous = orderAdjustment.Percentage.HasValue ?
+                        var thisMiscellaneous = orderAdjustment.Percentage.HasValue ?
                                         @this.TotalExVat * orderAdjustment.Percentage.Value / 100 :
                                         orderAdjustment.Amount ?? 0;
 
-                        @this.TotalExtraCharge += miscellaneous;
+                        miscellaneous += thisMiscellaneous;
+                        @this.TotalExtraCharge += thisMiscellaneous;
 
                         if (@this.ExistDerivedVatRegime)
                         {
-                            miscellaneousVat = miscellaneous * @this.DerivedVatRate.Rate / 100;
+                            miscellaneousVat += thisMiscellaneous * @this.DerivedVatRate.Rate / 100;
                         }
 
                         if (@this.ExistDerivedIrpfRegime)
                         {
-                            miscellaneousIrpf = miscellaneous * @this.DerivedIrpfRate.Rate / 100;
+                            miscellaneousIrpf += thisMiscellaneous * @this.DerivedIrpfRate.Rate / 100;
                         }
                     }
                 }
