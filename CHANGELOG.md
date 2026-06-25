@@ -131,6 +131,10 @@ under a dated version heading.
 
 ### Fixed
 
+- `QuotePriceRule` watched only `DiscountAdjustment`/`SurchargeAdjustment` for quote-level adjustment `Amount`/
+  `Percentage` edits, so editing an existing Fee/Shipping/Misc charge's amount left the quote totals stale. It now also
+  watches `OrderAdjustment.Amount`/`Percentage` (the base type, rerouted via `QuoteWhereOrderAdjustment`), covering all
+  adjustment subtypes.
 - `PurchaseOrderPriceRule` watched only `DiscountAdjustment`/`SurchargeAdjustment` for order-level adjustment
   `Amount`/`Percentage` edits, so editing an existing Fee/Shipping/Misc charge's amount left the order totals stale. It
   now also watches `OrderAdjustment.Amount`/`Percentage` (the base type, rerouted via `OrderWhereOrderAdjustment`),

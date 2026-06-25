@@ -29,6 +29,8 @@ namespace Allors.Database.Domain
                 m.DiscountAdjustment.RolePattern(v => v.Amount, v => v.QuoteWhereOrderAdjustment),
                 m.SurchargeAdjustment.RolePattern(v => v.Percentage, v => v.QuoteWhereOrderAdjustment),
                 m.SurchargeAdjustment.RolePattern(v => v.Amount, v => v.QuoteWhereOrderAdjustment),
+                m.OrderAdjustment.RolePattern(v => v.Amount, v => v.QuoteWhereOrderAdjustment),
+                m.OrderAdjustment.RolePattern(v => v.Percentage, v => v.QuoteWhereOrderAdjustment),
                 m.QuoteItem.RolePattern(v => v.TotalBasePrice, v => v.QuoteWhereQuoteItem),
                 m.QuoteItem.RolePattern(v => v.TotalDiscount, v => v.QuoteWhereQuoteItem),
                 m.QuoteItem.RolePattern(v => v.TotalSurcharge, v => v.QuoteWhereQuoteItem),
