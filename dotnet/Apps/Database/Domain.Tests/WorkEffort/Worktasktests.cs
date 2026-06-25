@@ -1419,6 +1419,25 @@ namespace Allors.Database.Domain.Tests
 
             Assert.True(workTask.CanInvoice);
         }
+
+        [Fact]
+        public void ChangedChildWorkEffortStateDeriveCanInvoice()
+        {
+            var parent = new WorkTaskBuilder(this.Transaction).Build();
+            var child = new WorkTaskBuilder(this.Transaction).Build();
+            parent.AddChild(child);
+            this.Derive();
+
+            parent.WorkEffortState = new WorkEffortStates(this.Transaction).Completed;
+            this.Derive();
+
+            Assert.False(parent.CanInvoice);
+
+            child.WorkEffortState = new WorkEffortStates(this.Transaction).Completed;
+            this.Derive();
+
+            Assert.True(parent.CanInvoice);
+        }
     }
 
     public class WorkEffortTotalLabourRevenueRuleTests : DomainTest, IClassFixture<Fixture>

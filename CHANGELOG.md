@@ -131,6 +131,9 @@ under a dated version heading.
 
 ### Fixed
 
+- `WorkTaskCanInvoiceRule` blocks a parent work task's `CanInvoice` until every child is Completed/Finished but watched
+  only the task's own `WorkEffortState`, so completing the last child did not flip the parent's `CanInvoice`. It now
+  also watches each child's `WorkEffortState` (rerouted via `WorkEffortWhereChild` to the parent `WorkTask`).
 - `SalesInvoicePriceRule` reads `InvoiceDate` (to select date-effective price components and as the currency-conversion
   date) and `DerivedCurrency` (the conversion source) but watched neither, so editing the invoice date — or a change to
   the derived currency — left item prices and the `*InPreferredCurrency` totals stale. It now also watches
