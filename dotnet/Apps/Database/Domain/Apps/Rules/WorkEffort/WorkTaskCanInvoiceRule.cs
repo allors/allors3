@@ -20,6 +20,7 @@ namespace Allors.Database.Domain
         {
             m.WorkTask.RolePattern(v => v.DerivationTrigger),
             m.WorkTask.RolePattern(v => v.WorkEffortState),
+            m.WorkEffort.RolePattern(v => v.WorkEffortState, v => v.WorkEffortWhereChild, m.WorkTask),
             m.TimeEntry.AssociationPattern(v => v.TimeSheetWhereTimeEntry, v => v.WorkEffort),
         };
 
