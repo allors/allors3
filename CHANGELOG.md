@@ -131,6 +131,13 @@ under a dated version heading.
 
 ### Fixed
 
+- `PartyRule` derives a party's default contact mechanisms (billing/shipping/general addresses, phones, emails) from
+  its `PartyContactMechanism`s, but watched only their membership/`ContactPurposes`/`FromDate`/`ThroughDate` — not
+  `UseAsDefault` or `ContactMechanism`. So toggling a contact mechanism's default flag, or swapping its actual
+  address/number, left every derived contact role stale. It now also watches `PartyContactMechanism.UseAsDefault` and
+  `ContactMechanism`. The same rule's reset block also omitted `GeneralEmail` and `ShippingInquiriesPhone` (the latter a
+  duplicated `ShippingAddress` reset), so those two retained stale values when the default mechanism changed; both are
+  now reset.
 - `PaymentRule` rejects a payment whose applications sum to more than its `Amount`, but watched only the
   `PaymentApplications` set and `Amount` — so editing an existing application's `AmountApplied` to push the aggregate
   over the payment amount was not re-validated. It now also watches `PaymentApplication.AmountApplied` (rerouted via
