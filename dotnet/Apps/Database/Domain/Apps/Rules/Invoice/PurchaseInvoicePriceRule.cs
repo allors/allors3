@@ -41,6 +41,8 @@ namespace Allors.Database.Domain
                 m.SurchargeAdjustment.RolePattern(v => v.Percentage, v => v.InvoiceWhereOrderAdjustment, m.PurchaseInvoice),
                 m.SurchargeAdjustment.RolePattern(v => v.Amount, v => v.PriceableWhereSurchargeAdjustment.ObjectType.AsPurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem, m.PurchaseInvoice),
                 m.SurchargeAdjustment.RolePattern(v => v.Amount, v => v.InvoiceWhereOrderAdjustment, m.PurchaseInvoice),
+                m.OrderAdjustment.RolePattern(v => v.Amount, v => v.InvoiceWhereOrderAdjustment, m.PurchaseInvoice),
+                m.OrderAdjustment.RolePattern(v => v.Percentage, v => v.InvoiceWhereOrderAdjustment, m.PurchaseInvoice),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
