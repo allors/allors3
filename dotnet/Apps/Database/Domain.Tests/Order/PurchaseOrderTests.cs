@@ -1173,6 +1173,27 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void ChangedOrderAdjustmentDeriveTotalFeeInPreferredCurrency()
+        {
+            var order = new PurchaseOrderBuilder(this.Transaction)
+                .WithOrderedBy(this.InternalOrganisation)
+                .WithOrderDate(this.Transaction.Now())
+                .Build();
+            order.AddOrderAdjustment(new FeeBuilder(this.Transaction).WithAmount(10).Build());
+            order.AddOrderAdjustment(new ShippingAndHandlingChargeBuilder(this.Transaction).WithAmount(5).Build());
+            this.Derive();
+
+            Assert.Equal(10M, order.TotalFee);
+            Assert.Equal(5M, order.TotalShippingAndHandling);
+            Assert.Equal(15M, order.TotalExtraCharge);
+
+            // DerivedCurrency == OrderedBy.PreferredCurrency, so conversion is identity.
+            Assert.Equal(order.TotalFee, order.TotalFeeInPreferredCurrency);
+            Assert.Equal(order.TotalShippingAndHandling, order.TotalShippingAndHandlingInPreferredCurrency);
+            Assert.Equal(order.TotalExtraCharge, order.TotalExtraChargeInPreferredCurrency);
+        }
+
+        [Fact]
         public void ChangedSalesOrderItemAssignedUnitPriceCalculatePrice()
         {
             var part = new UnifiedGoodBuilder(this.Transaction).Build();
