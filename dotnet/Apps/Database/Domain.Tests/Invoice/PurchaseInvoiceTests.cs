@@ -1268,6 +1268,22 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(200, invoice.TotalSurcharge);
             Assert.Equal(200, invoice.GrandTotal);
         }
+
+        [Fact]
+        public void ChangedInvoiceItemDiscountDeriveTotalDiscount()
+        {
+            var invoice = new PurchaseInvoiceBuilder(this.Transaction)
+                .WithBilledFrom(this.InternalOrganisation.ActiveSuppliers.First())
+                .WithInvoiceDate(this.Transaction.Now())
+                .Build();
+            var invoiceItem = new PurchaseInvoiceItemBuilder(this.Transaction).WithAssignedUnitPrice(100).WithQuantity(1).Build();
+            invoice.AddPurchaseInvoiceItem(invoiceItem);
+            invoiceItem.AddDiscountAdjustment(new DiscountAdjustmentBuilder(this.Transaction).WithAmount(10).Build());
+            this.Derive();
+
+            Assert.Equal(10, invoiceItem.TotalDiscount);
+            Assert.Equal(10, invoice.TotalDiscount);
+        }
     }
 
     [Trait("Category", "Security")]
