@@ -20,7 +20,8 @@ namespace Allors.Database.Domain
                 m.SalesOrder.RolePattern(v => v.SalesOrderState),
                 m.SalesOrder.RolePattern(v => v.AssignedShipToAddress),
                 m.SalesOrder.RolePattern(v => v.ShipToCustomer),
-                m.Party.RolePattern(v => v.ShippingAddress, v => v.SalesOrdersWhereBillToCustomer),
+                m.Party.RolePattern(v => v.ShippingAddress, v => v.SalesOrdersWhereShipToCustomer),
+                m.Party.RolePattern(v => v.GeneralCorrespondence, v => v.SalesOrdersWhereShipToCustomer),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
