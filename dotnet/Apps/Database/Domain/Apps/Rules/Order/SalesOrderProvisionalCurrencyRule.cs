@@ -24,6 +24,7 @@ namespace Allors.Database.Domain
                 m.SalesOrder.RolePattern(v => v.TakenBy),
                 m.SalesOrder.RolePattern(v => v.OrderDate),
                 m.Party.RolePattern(v => v.PreferredCurrency, v => v.SalesOrdersWhereBillToCustomer),
+                m.Party.RolePattern(v => v.Locale, v => v.SalesOrdersWhereBillToCustomer),
                 m.Organisation.RolePattern(v => v.PreferredCurrency, v => v.SalesOrdersWhereTakenBy),
             };
 
