@@ -131,6 +131,15 @@ under a dated version heading.
 
 ### Fixed
 
+- `ProductCategoryRule` derives `AllSerialisedItemsForSale` from its parts' `SerialisedItem`s (filtered by
+  `AvailableForSale`) and `AllNonSerialisedInventoryItemsForSale` from their `NonSerialisedInventoryItem`s (filtered by
+  `NonSerialisedInventoryItemState.AvailableForSale`), but watched neither those leaf flags/state nor part-level item
+  membership. So flipping a serialised item's `AvailableForSale`, changing a non-serialised inventory item's state, or
+  adding/removing inventory items on a part already in a category left both derived collections stale. It now also
+  watches `SerialisedItem.AvailableForSale`, `Part.SerialisedItems`,
+  `NonSerialisedInventoryItem.NonSerialisedInventoryItemState` and `Part.InventoryItemsWherePart`, each rerouted to the
+  owning product categories (including ancestors, via `ProductCategoriesWhereAllProduct`) along both the `UnifiedGood`
+  and `NonUnifiedPart` legs.
 - `PartyRule` derives a party's default contact mechanisms (billing/shipping/general addresses, phones, emails) from
   its `PartyContactMechanism`s, but watched only their membership/`ContactPurposes`/`FromDate`/`ThroughDate` — not
   `UseAsDefault` or `ContactMechanism`. So toggling a contact mechanism's default flag, or swapping its actual
