@@ -23,6 +23,8 @@ namespace Allors.Database.Domain
                 m.Quote.RolePattern(v => v.QuoteItems),
                 m.Quote.RolePattern(v => v.Receiver),
                 m.Quote.RolePattern(v => v.OrderAdjustments),
+                m.Quote.RolePattern(v => v.DerivedVatRate),
+                m.Quote.RolePattern(v => v.DerivedIrpfRate),
                 m.DiscountAdjustment.RolePattern(v => v.Percentage, v => v.QuoteWhereOrderAdjustment),
                 m.DiscountAdjustment.RolePattern(v => v.Amount, v => v.QuoteWhereOrderAdjustment),
                 m.SurchargeAdjustment.RolePattern(v => v.Percentage, v => v.QuoteWhereOrderAdjustment),

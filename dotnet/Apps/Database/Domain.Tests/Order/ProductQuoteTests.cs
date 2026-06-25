@@ -277,6 +277,33 @@ namespace Allors.Database.Domain.Tests
             var expected = $"ProductQuote: {quote.QuoteNumber} [{quote.Issuer?.DisplayName}]";
             Assert.Equal(expected, quote.WorkItemDescription);
         }
+
+        [Fact]
+        public void ChangedDerivedVatRateDeriveTotalVat()
+        {
+            var vatRegime = new VatRegimes(this.Transaction).SpainReduced;
+            vatRegime.VatRates.ElementAt(0).ThroughDate = this.Transaction.Now().AddDays(-1).Date;
+            this.Derive();
+
+            var newVatRate = new VatRateBuilder(this.Transaction).WithFromDate(this.Transaction.Now().Date).WithRate(11).Build();
+            vatRegime.AddVatRate(newVatRate);
+            this.Derive();
+
+            var quote = new ProductQuoteBuilder(this.Transaction)
+                .WithIssueDate(this.Transaction.Now().AddDays(-1).Date)
+                .WithAssignedVatRegime(vatRegime)
+                .Build();
+            var surcharge = new SurchargeAdjustmentBuilder(this.Transaction).WithAmount(100).Build();
+            quote.AddOrderAdjustment(surcharge);
+            this.Derive();
+
+            Assert.NotEqual(11M, quote.TotalVat);
+
+            quote.IssueDate = this.Transaction.Now().AddDays(1).Date;
+            this.Derive();
+
+            Assert.Equal(11M, quote.TotalVat);
+        }
     }
 
     public class ProductQuoteAwaitingApprovalRuleTests : DomainTest, IClassFixture<Fixture>

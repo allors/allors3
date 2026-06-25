@@ -131,6 +131,9 @@ under a dated version heading.
 
 ### Fixed
 
+- `QuotePriceRule` computes the VAT/IRPF on quote-level adjustments (discount/surcharge/fee/shipping/misc) from the
+  quote's `DerivedVatRate`/`DerivedIrpfRate` but watched neither, so a VAT/IRPF regime or rate change left the quote
+  `TotalVat`/`TotalIrpf` stale. It now also watches `Quote.DerivedVatRate` and `DerivedIrpfRate`.
 - `PurchaseOrderPriceRule` computes the VAT/IRPF on order-level adjustments (discount/surcharge/fee/shipping/misc) from
   the order's `DerivedVatRate`/`DerivedIrpfRate` but watched neither, so a VAT/IRPF regime or rate change left the
   order `TotalVat`/`TotalIrpf` stale. It now also watches `PurchaseOrder.DerivedVatRate` and `DerivedIrpfRate` (as the
