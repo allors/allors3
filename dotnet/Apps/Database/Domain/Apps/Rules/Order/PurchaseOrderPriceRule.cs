@@ -21,6 +21,8 @@ namespace Allors.Database.Domain
                 m.PurchaseOrder.RolePattern(v => v.ValidOrderItems),
                 m.PurchaseOrder.RolePattern(v => v.TakenViaSupplier),
                 m.PurchaseOrder.RolePattern(v => v.OrderAdjustments),
+                m.PurchaseOrder.RolePattern(v => v.DerivedVatRate),
+                m.PurchaseOrder.RolePattern(v => v.DerivedIrpfRate),
                 m.PurchaseOrderItem.RolePattern(v => v.Part, v => v.PurchaseOrderWherePurchaseOrderItem),
                 m.PurchaseOrderItem.RolePattern(v => v.QuantityOrdered, v => v.PurchaseOrderWherePurchaseOrderItem),
                 m.PurchaseOrderItem.RolePattern(v => v.AssignedUnitPrice, v => v.PurchaseOrderWherePurchaseOrderItem),

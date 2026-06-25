@@ -131,6 +131,10 @@ under a dated version heading.
 
 ### Fixed
 
+- `PurchaseOrderPriceRule` computes the VAT/IRPF on order-level adjustments (discount/surcharge/fee/shipping/misc) from
+  the order's `DerivedVatRate`/`DerivedIrpfRate` but watched neither, so a VAT/IRPF regime or rate change left the
+  order `TotalVat`/`TotalIrpf` stale. It now also watches `PurchaseOrder.DerivedVatRate` and `DerivedIrpfRate` (as the
+  sales invoice rule does).
 - `SalesInvoicePriceRule` sums each item's VAT/IRPF (computed from the item's own `VatRate`/`IrpfRate`, set by the
   item-regime rules) into the invoice totals, but watched only the invoice-level `DerivedVatRate` — so a change to an
   item's `VatRate`/`IrpfRate` (e.g. overriding the item's VAT regime) left the invoice `TotalVat`/`TotalIrpf` stale. It
