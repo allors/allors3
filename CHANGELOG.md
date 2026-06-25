@@ -131,6 +131,11 @@ under a dated version heading.
 
 ### Fixed
 
+- `PurchaseOrderPriceRule` reset `TotalFeeInPreferredCurrency`, `TotalShippingAndHandlingInPreferredCurrency` and
+  `TotalExtraChargeInPreferredCurrency` to 0 but never re-assigned them in the preferred-currency block, so they stayed
+  permanently 0 even when the order carried fees/shipping/misc charges. They are now converted from the corresponding
+  base-currency totals (mirroring `SalesOrderPriceRule`). (`TotalListPriceInPreferredCurrency` has no source on a
+  purchase order — there is no `TotalListPrice` role — so it correctly remains 0.)
 - `QuotePriceRule` computes the VAT/IRPF on quote-level adjustments (discount/surcharge/fee/shipping/misc) from the
   quote's `DerivedVatRate`/`DerivedIrpfRate` but watched neither, so a VAT/IRPF regime or rate change left the quote
   `TotalVat`/`TotalIrpf` stale. It now also watches `Quote.DerivedVatRate` and `DerivedIrpfRate`.

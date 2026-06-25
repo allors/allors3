@@ -253,6 +253,9 @@ namespace Allors.Database.Domain
                 @this.TotalIncVatInPreferredCurrency = Rounder.RoundDecimal(Currencies.ConvertCurrency(@this.TotalIncVat, @this.OrderDate, @this.DerivedCurrency, @this.OrderedBy.PreferredCurrency), 2);
                 @this.TotalIrpfInPreferredCurrency = Rounder.RoundDecimal(Currencies.ConvertCurrency(@this.TotalIrpf, @this.OrderDate, @this.DerivedCurrency, @this.OrderedBy.PreferredCurrency), 2);
                 @this.GrandTotalInPreferredCurrency = Rounder.RoundDecimal(Currencies.ConvertCurrency(@this.GrandTotal, @this.OrderDate, @this.DerivedCurrency, @this.OrderedBy.PreferredCurrency), 2);
+                @this.TotalFeeInPreferredCurrency = Rounder.RoundDecimal(Currencies.ConvertCurrency(@this.TotalFee, @this.OrderDate, @this.DerivedCurrency, @this.OrderedBy.PreferredCurrency), 2);
+                @this.TotalShippingAndHandlingInPreferredCurrency = Rounder.RoundDecimal(Currencies.ConvertCurrency(@this.TotalShippingAndHandling, @this.OrderDate, @this.DerivedCurrency, @this.OrderedBy.PreferredCurrency), 2);
+                @this.TotalExtraChargeInPreferredCurrency = Rounder.RoundDecimal(Currencies.ConvertCurrency(fee + shipping + miscellaneous, @this.OrderDate, @this.DerivedCurrency, @this.OrderedBy.PreferredCurrency), 2);
             }
 
             @this.TotalBasePrice = Rounder.RoundDecimal(@this.TotalBasePrice, 2);
