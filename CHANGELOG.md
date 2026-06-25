@@ -135,6 +135,16 @@ under a dated version heading.
   date) and `DerivedCurrency` (the conversion source) but watched neither, so editing the invoice date — or a change to
   the derived currency — left item prices and the `*InPreferredCurrency` totals stale. It now also watches
   `SalesInvoice.InvoiceDate` and `SalesInvoice.DerivedCurrency` (the latter complements the `DerivedCurrency` re-derivation fix).
+- `SalesInvoiceDueDateRule` computes `PaymentDays`/`DueDate` from `PaymentNetDays` — a getter that reads the
+  customer relationship and the store — but watched only `InvoiceDate`/`SalesTerms`. Reassigning `BillToCustomer`,
+  `BilledFrom` or `Store`, or editing `Store.PaymentNetDays`, left `PaymentDays`/`DueDate` stale. It now also watches
+  `SalesInvoice.BillToCustomer`/`BilledFrom`/`Store` and `Store.PaymentNetDays` (rerouted via `SalesInvoicesWhereStore`).
+- `SalesInvoiceReadyForPostingDerivedLocaleRule` derives `DerivedLocale` from `BillToCustomer`'s/`BilledFrom`'s locale
+  but watched only those parties' `Locale` leaf role (via the reverse path) and the invoice's own `Locale` — not the
+  invoice→`BillToCustomer`/`BilledFrom` links. Reassigning an invoice's `BillToCustomer` (or `BilledFrom`) therefore
+  left `DerivedLocale` based on the previous party. It now also watches `SalesInvoice.BillToCustomer` and
+  `SalesInvoice.BilledFrom` (same shape as the `DerivedCurrency` fix).
+>>>>>>> origin/main
 - `SalesInvoiceReadyForPostingDerivedCurrencyRule` derives `DerivedCurrency` from `BillToCustomer`'s preferred
   currency/locale but watched only the customer party's leaf roles (via the reverse path) and the invoice's
   `BilledFrom`/`AssignedCurrency` — not the invoice→`BillToCustomer` link. Reassigning an invoice's `BillToCustomer`

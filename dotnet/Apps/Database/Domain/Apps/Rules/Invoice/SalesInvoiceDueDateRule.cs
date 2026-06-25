@@ -20,6 +20,10 @@ namespace Allors.Database.Domain
             m.SalesInvoice.RolePattern(v => v.InvoiceDate),
             m.SalesInvoice.RolePattern(v => v.SalesTerms),
             m.SalesTerm.RolePattern(v => v.TermValue, v => v.InvoiceWhereSalesTerm, m.SalesInvoice),
+            m.SalesInvoice.RolePattern(v => v.BillToCustomer),
+            m.SalesInvoice.RolePattern(v => v.BilledFrom),
+            m.SalesInvoice.RolePattern(v => v.Store),
+            m.Store.RolePattern(v => v.PaymentNetDays, v => v.SalesInvoicesWhereStore),
         };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
