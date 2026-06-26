@@ -4588,6 +4588,22 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Equal(1.4M, order.TotalIncVat);
         }
+
+        [Fact]
+        public void OnChangedFeeAdjustmentAmountCalculatePrice()
+        {
+            var order = new SalesOrderBuilder(this.Transaction).WithOrderDate(this.Transaction.Now()).Build();
+            var fee = new FeeBuilder(this.Transaction).WithAmount(10).Build();
+            order.AddOrderAdjustment(fee);
+            this.Derive();
+
+            Assert.Equal(10, order.TotalFee);
+
+            fee.Amount = 20;
+            this.Derive();
+
+            Assert.Equal(20, order.TotalFee);
+        }
     }
 
     public class SalesOrderStateRuleTests : DomainTest, IClassFixture<Fixture>

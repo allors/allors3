@@ -131,6 +131,11 @@ under a dated version heading.
 
 ### Fixed
 
+- `SalesOrderPriceRule` watched order-level adjustment *edits* only for the `DiscountAdjustment` and
+  `SurchargeAdjustment` subtypes, so editing an existing `Fee` / `ShippingAndHandlingCharge` /
+  `MiscellaneousCharge`'s `Amount` or `Percentage` left `TotalFee` / `TotalShippingAndHandling` / `TotalExtraCharge`
+  (and the grand totals) stale. It now watches the base `OrderAdjustment.Amount` / `Percentage` rerouted to the order,
+  covering all adjustment subtypes (mirrors the `PurchaseOrderPriceRule` fix).
 - `SalesInvoicePriceRule` watched invoice-level adjustment *edits* only for the `DiscountAdjustment` and
   `SurchargeAdjustment` subtypes, so editing an existing `Fee` / `ShippingAndHandlingCharge` /
   `MiscellaneousCharge`'s `Amount` or `Percentage` left `TotalFee` / `TotalShippingAndHandling` / `TotalExtraCharge`
