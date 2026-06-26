@@ -131,6 +131,11 @@ under a dated version heading.
 
 ### Fixed
 
+- `SalesInvoicePriceRule` watched invoice-level adjustment *edits* only for the `DiscountAdjustment` and
+  `SurchargeAdjustment` subtypes, so editing an existing `Fee` / `ShippingAndHandlingCharge` /
+  `MiscellaneousCharge`'s `Amount` or `Percentage` left `TotalFee` / `TotalShippingAndHandling` / `TotalExtraCharge`
+  (and the grand totals) stale. It now watches the base `OrderAdjustment.Amount` / `Percentage` rerouted to the
+  invoice, covering all adjustment subtypes (mirrors the `PurchaseInvoicePriceRule` fix).
 - `AutomatedAgent.DisplayName` was written by two rules — `AutomatedAgentRule` (`= Name`, watching `Name`) and
   `AutomatedAgentDisplayNameRule` (`= UserName ?? "N/A"`, watching `UserName`) — so the displayed value was
   last-writer-wins (order-dependent), and clearing `UserName` could overwrite a valid `Name` with `"N/A"`.
