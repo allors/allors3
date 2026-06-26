@@ -135,7 +135,7 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(100, organisationGlAccountBalance.Amount);
         }
 
-        [Fact(Skip = "Investigate")]
+        [Fact]
         public void OrganisationGlAccountWhenLevel5AccountAmountChangesThenLevel4AmountShouldReflectThis()
         {
             var internalOrganisation = new OrganisationBuilder(this.Transaction).WithInternalOrganisationDefaults().Build();
