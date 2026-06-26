@@ -17,6 +17,7 @@ namespace Allors.Database.Domain
         public AutomatedAgentDisplayNameRule(MetaPopulation m) : base(m, new Guid("0735d5f4-62c4-489f-96f4-eadbb4237719")) =>
             this.Patterns = new Pattern[]
             {
+                m.AutomatedAgent.RolePattern(v => v.Name),
                 m.AutomatedAgent.RolePattern(v => v.UserName),
             };
 
@@ -24,7 +25,7 @@ namespace Allors.Database.Domain
         {
             foreach (var @this in matches.Cast<AutomatedAgent>())
             {
-                @this.DisplayName = @this.UserName ?? "N/A";
+                @this.DisplayName = @this.Name ?? @this.UserName ?? "N/A";
             }
         }
     }

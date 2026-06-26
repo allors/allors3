@@ -23,5 +23,22 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Equal("name", automatedAgent.DisplayName);
         }
+
+        [Fact]
+        public void ChangedUserNameDeriveDisplayName()
+        {
+            var automatedAgent = new AutomatedAgentBuilder(this.Transaction)
+                .WithName("name")
+                .WithUserName("username")
+                .Build();
+            this.Transaction.Derive();
+
+            Assert.Equal("name", automatedAgent.DisplayName);
+
+            automatedAgent.UserName = null;
+            this.Transaction.Derive();
+
+            Assert.Equal("name", automatedAgent.DisplayName);
+        }
     }
 }

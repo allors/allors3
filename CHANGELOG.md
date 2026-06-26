@@ -131,6 +131,12 @@ under a dated version heading.
 
 ### Fixed
 
+- `AutomatedAgent.DisplayName` was written by two rules — `AutomatedAgentRule` (`= Name`, watching `Name`) and
+  `AutomatedAgentDisplayNameRule` (`= UserName ?? "N/A"`, watching `UserName`) — so the displayed value was
+  last-writer-wins (order-dependent), and clearing `UserName` could overwrite a valid `Name` with `"N/A"`.
+  `AutomatedAgentDisplayNameRule` now deterministically derives `DisplayName = Name ?? UserName ?? "N/A"` while
+  watching both roles, and the redundant `AutomatedAgentRule` is removed (one `DisplayName` rule per type, matching the
+  codebase norm).
 - `OrganisationGlAccountBalanceAmountRule` rolled GL balances up incorrectly. A level-4 balance aggregated its
   level-3 **parent** instead of its level-5 **children** (`generalLedgerAccount.Parent` instead of
   `GeneralLedgerAccountsWhereParent`); when a level-5 child's detail changed, the rule only bumped a
