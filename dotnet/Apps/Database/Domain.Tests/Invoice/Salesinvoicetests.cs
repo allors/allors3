@@ -2681,6 +2681,22 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void ChangedFeeAmountDeriveTotalFee()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Transaction).WithInvoiceDate(this.Transaction.Now()).Build();
+            var fee = new FeeBuilder(this.Transaction).WithAmount(10).Build();
+            invoice.AddOrderAdjustment(fee);
+            this.Derive();
+
+            Assert.Equal(10, invoice.TotalFee);
+
+            fee.Amount = 20;
+            this.Derive();
+
+            Assert.Equal(20, invoice.TotalFee);
+        }
+
+        [Fact]
         public void OnChangedDerivationTriggerTriggeredByDiscountComponentPercentageCalculatePrice()
         {
             var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
