@@ -131,6 +131,15 @@ under a dated version heading.
 
 ### Fixed
 
+- `OrganisationGlAccountBalanceAmountRule` rolled GL balances up incorrectly. A level-4 balance aggregated its
+  level-3 **parent** instead of its level-5 **children** (`generalLedgerAccount.Parent` instead of
+  `GeneralLedgerAccountsWhereParent`); when a level-5 child's detail changed, the rule only bumped a
+  `DerivationTrigger` that **no rule watched** (a dead no-op), so the level-4 balance never reflected the change; and
+  the up-roll guard tested `generalLedgerAccount.ExistParent` while dereferencing the unrelated
+  `organisationGlAccount.SubsidiaryOf`, risking a null-reference. The rule now aggregates a level-4 balance from its
+  level-5 children, recomputes the parent (level-4) balance directly when a child detail changes, and guards
+  `ExistSubsidiaryOf`. The shipped acceptance test
+  `OrganisationGlAccountWhenLevel5AccountAmountChangesThenLevel4AmountShouldReflectThis` is un-skipped.
 - `ProductCategoryRule` derives `AllSerialisedItemsForSale` from its parts' `SerialisedItem`s (filtered by
   `AvailableForSale`) and `AllNonSerialisedInventoryItemsForSale` from their `NonSerialisedInventoryItem`s (filtered by
   `NonSerialisedInventoryItemState.AvailableForSale`), but watched neither those leaf flags/state nor part-level item

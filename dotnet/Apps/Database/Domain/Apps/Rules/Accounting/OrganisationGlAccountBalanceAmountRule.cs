@@ -40,7 +40,12 @@ namespace Allors.Database.Domain
                     {
                         if (generalLedgerAccount.RgsLevel == 4)
                         {
-                            var subDetails = internalOrganisation.AccountingTransactionsWhereInternalOrganisation.Where(v => v.AccountingPeriod == accountingPeriod).SelectMany(v => v.AccountingTransactionDetails.Where(v => v.GeneralLedgerAccount.Equals(generalLedgerAccount.Parent))).ToList();
+                            // A level-4 balance aggregates the details booked on its level-5 children
+                            // (GeneralLedgerAccountsWhereParent), together with any booked on the level-4 account itself.
+                            var subDetails = internalOrganisation.AccountingTransactionsWhereInternalOrganisation
+                                .Where(t => t.AccountingPeriod == accountingPeriod)
+                                .SelectMany(t => t.AccountingTransactionDetails.Where(d => generalLedgerAccount.GeneralLedgerAccountsWhereParent.Contains(d.GeneralLedgerAccount)))
+                                .ToList();
 
                             var allDetails = details.Concat(subDetails).ToList();
 
@@ -50,10 +55,28 @@ namespace Allors.Database.Domain
                         {
                             this.CalculateAmounts(organisationGlAccountBalance, details);
 
-                            if (generalLedgerAccount.ExistParent)
+                            // Roll the change up into the parent (level-4) balance, which aggregates this account's
+                            // siblings. The parent is reached through OrganisationGlAccount.SubsidiaryOf.
+                            if (organisationGlAccount.ExistSubsidiaryOf)
                             {
-                                organisationGlAccount.SubsidiaryOf.OrganisationGlAccountBalancesWhereOrganisationGlAccount.ToList()
-                                    .ForEach(v => v.DerivationTrigger = Guid.NewGuid());
+                                var parentOrganisationGlAccount = organisationGlAccount.SubsidiaryOf;
+                                var parentGeneralLedgerAccount = parentOrganisationGlAccount.GeneralLedgerAccount;
+
+                                var parentBalance = parentOrganisationGlAccount
+                                    .OrganisationGlAccountBalancesWhereOrganisationGlAccount
+                                    .FirstOrDefault(v => v.AccountingPeriod.Equals(accountingPeriod));
+
+                                if (parentBalance != null)
+                                {
+                                    var parentDetails = internalOrganisation.AccountingTransactionsWhereInternalOrganisation
+                                        .Where(t => t.AccountingPeriod == accountingPeriod)
+                                        .SelectMany(t => t.AccountingTransactionDetails.Where(d =>
+                                            d.GeneralLedgerAccount.Equals(parentGeneralLedgerAccount)
+                                            || parentGeneralLedgerAccount.GeneralLedgerAccountsWhereParent.Contains(d.GeneralLedgerAccount)))
+                                        .ToList();
+
+                                    this.CalculateAmounts(parentBalance, parentDetails);
+                                }
                             }
                         }
                     }
