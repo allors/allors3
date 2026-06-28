@@ -1,4 +1,5 @@
 import fetch from 'cross-fetch';
+import { Agent } from 'http';
 import {
   InvokeRequest,
   PullRequest,
@@ -34,6 +35,15 @@ interface AuthenticationTokenResponse {
   t: string;
 }
 
+// Node 19+ defaults http(s) keep-alive to ON. node-fetch v2 (what cross-fetch uses) then
+// reuses sockets that Kestrel closes between requests, which it surfaces as "Premature
+// close" (fails every adapters-json test on Node 24 CI). Force a fresh, non-keep-alive
+// connection per request. `agent` is a node-fetch option, not part of the standard fetch
+// RequestInit, so the augmented init is passed untyped.
+const keepAliveOffAgent = new Agent({ keepAlive: false });
+const withAgent = (init: RequestInit = {}): RequestInit =>
+  ({ ...init, agent: keepAliveOffAgent } as RequestInit);
+
 export class FetchClient implements IDatabaseJsonClient {
   userId: number;
   jwtToken: string;
@@ -42,7 +52,7 @@ export class FetchClient implements IDatabaseJsonClient {
 
   async setup(population = 'full') {
     const url = `${this.baseUrl}Test/Setup?population=${population}`;
-    await fetch(url);
+    await fetch(url, withAgent());
   }
 
   async login(login: string, password?: string): Promise<boolean> {
@@ -52,13 +62,16 @@ export class FetchClient implements IDatabaseJsonClient {
     };
 
     const url = `${this.baseUrl}${this.authUrl}`;
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(tokenRequest),
-    });
+    const response = await fetch(
+      url,
+      withAgent({
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(tokenRequest),
+      })
+    );
 
     if (response.ok) {
       const tokenResponse =
@@ -101,14 +114,17 @@ export class FetchClient implements IDatabaseJsonClient {
   }
 
   async post<T>(relativeUrl: string, data: any): Promise<T> {
-    const response = await fetch(`${this.baseUrl}${relativeUrl}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${this.jwtToken}`,
-      },
-      body: JSON.stringify(data),
-    });
+    const response = await fetch(
+      `${this.baseUrl}${relativeUrl}`,
+      withAgent({
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${this.jwtToken}`,
+        },
+        body: JSON.stringify(data),
+      })
+    );
 
     return await response.json();
   }
