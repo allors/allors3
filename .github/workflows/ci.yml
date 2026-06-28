@@ -47,7 +47,7 @@ jobs:
           - CiDotnetSystemWorkspaceSignalsTest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           submodules: false
           fetch-depth: 0      # nbgv needs full history for git-height versioning
@@ -113,7 +113,7 @@ jobs:
           - CiDotnetSystemAdaptersTestNpgsql
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           submodules: false
           fetch-depth: 0
@@ -193,7 +193,7 @@ jobs:
           - CiTypescriptWorkspacesE2EAngularAppsIntranetTest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           submodules: false
           fetch-depth: 0
