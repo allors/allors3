@@ -24,12 +24,13 @@ under a dated version heading.
 
 ### Added
 
-- Design docs under `docs/`: `power-bi-odata-integration.md` (Power BI integration via a
-  meta-model-generated OData v4 feed — EDM mapping, interface/spine handling, `$filter`/`$expand`
-  folding, workspace + ACL security) and `security-paging-rca.md` (root cause analysis of the
-  post-fetch access-control/paging limitation shared by the workspace Pull, with a
-  materialisation ladder and SQL-adapter pushdown recommendations). Documentation only — no
-  behavioural change.
+- Design doc `docs/data-access-integration.md`: external data access & reporting integration
+  architecture — the protocol-agnostic query core (`Allors.Database.Data` IR + execution), an
+  OData v4 projection for Power BI and other clients (meta-model→EDM mapping, interface/spine
+  handling, `$filter`/`$expand` folding, workspace + ACL security), a root cause analysis of the
+  post-fetch access-control/paging limitation shared by the workspace Pull (with a materialisation
+  ladder and SQL-adapter pushdown recommendations), the consumer/pipeline ecosystem, and
+  alternatives (GraphQL, SQL, REST). Documentation only — no behavioural change.
 - `WorkRequirement.WorkEffortPurpose` (enumeration Refurbishment / Maintenance / Repair): defaults to
   **Repair** on init, is copied onto the `WorkTask` created by `CreateWorkTask`, and is mirrored into
   `WorkRequirementVersion` for version history.
