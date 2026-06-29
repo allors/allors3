@@ -283,6 +283,7 @@ export class NonUnifiedPartListPageComponent implements OnInit, OnDestroy {
             object: v,
             name: v.Name,
             partNo: v.ProductNumber,
+            type: v.ProductTypeName,
             qoh: v.QuantityOnHand,
             localQoh:
               facilitySearchId &&
