@@ -4,6 +4,7 @@
 
 *.csproj text merge=union
 *.sln    text merge=union
+CHANGELOG.md merge=union
 
 yarn.lock merge=ours
 package-lock.json merge=ours
