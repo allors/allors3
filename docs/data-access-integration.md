@@ -3,8 +3,8 @@
 > Status: Draft / proposal. Branch: `claude/power-bi-integration-design-7uer34`.
 > Scope: how external clients (Power BI first, but not only) should read Allors data — the
 > protocol-agnostic core that makes this possible, an OData v4 projection over it, the
-> access-control/paging issue both must solve, the consumer/pipeline ecosystem, and the
-> alternatives (GraphQL, SQL, REST).
+> access-control/paging issue both must solve, the consumer/pipeline ecosystem, an MCP
+> projection for AI agents, and the alternatives (GraphQL, SQL, REST).
 
 ---
 
@@ -45,9 +45,9 @@ layers:
    `PrefetchPolicy`, enforces `IAccessControl`, shapes results.
 
 `Allors.Database.Workspace.Json` is **one projection** over this: it deserialises a wire format
-into `Data.Pull` (`pullRequest.l.FromJson(...)`) and serialises results back. OData and GraphQL
-should be **peer front-ends that compile their query into the same `Data.Pull`/`IExtent` IR** and
-reuse one execution path.
+into `Data.Pull` (`pullRequest.l.FromJson(...)`) and serialises results back. OData, GraphQL, and
+an **MCP server for AI agents** (§8) should all be **peer front-ends that compile their query into
+the same `Data.Pull`/`IExtent` IR** and reuse one execution path.
 
 ```
             ┌────────────────────────────────────────────────────────────┐
@@ -76,7 +76,9 @@ reuse one execution path.
 ```
 
 Each protocol does exactly three things: **render the schema** from meta, **compile its query
-into the IR**, and **serialise the neutral result**. Everything between is shared.
+into the IR**, and **serialise the neutral result**. Everything between is shared. (The diagram
+shows three front-ends; an **MCP server for agents** is a fourth column of the same shape —
+tool schemas from meta, tool-call args → IR, neutral result → MCP response. See §8.)
 
 ### 2.1 The seam to break
 
@@ -126,6 +128,8 @@ Two rows are the payoff:
 - `Allors.Database.Workspace.Json` — refactored to a thin front-end. *(exists, slimmed)*
 - `Allors.Database.Protocol.OData` (new) — EDM generator + OData-query→IR compiler + serialiser.
 - `Allors.Database.Protocol.GraphQL` (later) — SDL generator + selection→IR compiler + resolver.
+- `Allors.Database.Protocol.Mcp` (later) — MCP tool-schema generator + tool-call→IR compiler +
+  serialiser (§8).
 
 The discipline that makes this pay off: **nothing protocol-specific below the IR line; no
 re-implementation of query/security/paging above it.** Each time OData "needs" something, decide
@@ -517,8 +521,8 @@ But for BI it has a decisive weakness: **BI tools don't speak GraphQL** (you'd w
 non-folding connector — the bespoke-protocol problem we reject), and it **doesn't standardise
 filter/aggregate/paging** (every schema invents its own), so there is no universal fold.
 
-> **OData for analysts/BI/integration; GraphQL for application developers.** Not mutually
-> exclusive — both generated from the same meta model over the same core (§2).
+> **OData for analysts/BI/integration; GraphQL for application developers; MCP for AI agents
+> (§8).** Not mutually exclusive — all generated from the same meta model over the same core (§2).
 
 ### Others
 
@@ -538,7 +542,71 @@ filter/aggregate/paging** (every schema invents its own), so there is no univers
 
 ---
 
-## 8. Recommendation & roadmap
+## 8. Connecting AI agents (the MCP projection)
+
+An AI agent connecting to Allors is, architecturally, **another thin front-end over the core** —
+the same shape as OData/GraphQL: render a surface from the meta model, compile requests into the
+`Data.Pull` IR, run them through the one execution service (folding + prefetch + ACL + paging).
+The agent-specific work is the *shape* of the surface and the *security* around it, not a new
+data path. The natural front-end is an **MCP (Model Context Protocol) server**, mounted beside
+`allors/odata`.
+
+### 8.1 Options, by where the agent loop runs
+
+- **MCP server consumed by an API connector** — the host's request declares the Allors MCP server
+  and a matching toolset; the agent calls Allors tools as part of its loop. One server, every
+  agent host (embedded agents, IDEs, hosted agents).
+- **MCP server consumed by a managed/hosted agent** — the agent config declares the Allors MCP
+  server (no inline auth); credentials live in a **vault** attached per session. The host runs the
+  loop and sandbox.
+- **Bespoke tool-use loop** — if you host the loop, define a few semantic tools backed by the
+  execution service and drive them yourself (most control over what's exposed and how writes are
+  gated).
+- **Agent consumes OData/GraphQL directly** — workable, but raw `$filter` URLs read poorly to an
+  LLM; a few semantic MCP tools (`pull`/`get`/`invoke`) are a better surface. Prefer the dedicated
+  MCP projection.
+
+### 8.2 Tool shape — semantic tools + tool search, not entity-per-tool
+
+Don't emit one tool per composite (Allors has hundreds). Emit a few **meta-model-driven semantic
+tools** over the curated agent workspace — e.g. `pull(objectType, filter, select, expand)`,
+`get(id)`, `invoke(method, args)` — and lean on **tool search / deferred tool loading** for the
+long tail of types, so the agent discovers the relevant handful instead of loading every schema
+into context. This reuses the §3.1 surface generation and the §2 surface descriptor.
+
+### 8.3 Security — the confused-deputy problem (where §4 pays off again)
+
+An agent acting for a user is a **confused-deputy risk**: prompt injection in the data it reads
+could try to make it fetch or do more than the user may. The Allors ACL is the backstop **only if
+the agent runs under the right principal** — the same coarse-workspace + authoritative-ACL,
+defense-in-depth invariant from §3.3:
+
+- **Per-user pass-through** — the agent inherits the user's `IAccessControl`, so even a hijacked
+  agent reads only what that user can read. This is exactly the case that needs the §4 **foldable
+  visibility predicate** (Level 1).
+- **Scoped service principal *(recommended start)*** — a dedicated read-only agent user; simplest,
+  and (per §4.5) makes the paging fix a pure SQL-adapter change. Every invocation sees the same
+  slice regardless of who is asking.
+
+### 8.4 Writes need a gate
+
+Reads are comparatively safe; letting an agent **mutate** is not — Allors writes fire derivations
+and validation and are hard to reverse. So: default the agent surface **read-only** (mirroring
+the §3 OData decision); route any allowed writes through **domain methods (`invoke`)**, never raw
+`push`, so business rules apply; and put each write tool behind **confirmation** (a host
+permission policy that asks, or a human-in-the-loop step in a manual loop). Opt specific,
+gated mutations in rather than exposing write broadly.
+
+### 8.5 Summary
+
+**OData is for analysts and pipelines, GraphQL is for app developers, MCP is for agents — three
+projections, one core, one ACL.** The hard parts (meta→surface generation, query folding, the
+post-fetch ACL/paging fix) are shared; the agent projection is a thin tail plus a deliberate
+read-only-by-default, ACL-scoped security posture.
+
+---
+
+## 9. Recommendation & roadmap
 
 Ship an **OData feed** for self-service plus a **reporting star schema on a replica** for
 dashboards, secured by a **reporting service principal** to start (per-user pass-through later).
@@ -553,7 +621,9 @@ Incremental, low-risk path:
    for per-user, the Level-1 visibility predicate. Assert `folded-set ≡ evaluator-trimmed-set`.
 3. **Add the OData front-end** over the clean core (EDM generator + query compiler + serialiser)
    — the spike below.
-4. **Add GraphQL later** if app-developer demand appears — a new front-end, zero core changes.
+4. **Add the GraphQL and MCP front-ends later** as demand appears — GraphQL for app developers,
+   an MCP server for AI agents (§8, read-only + ACL-scoped to start). Each is a new front-end with
+   zero core changes.
 
 **Spike:** a handful of entity sets generated from the meta model, `$filter` folded to an
 `Extent`, behind the reporting principal — to validate folding + security end-to-end. Pair it
@@ -561,7 +631,7 @@ with the SQL-adapter paging pushdown.
 
 ---
 
-## 9. Open questions
+## 10. Open questions
 
 1. Which classes/roles form the reporting workspace(s) — and do any audiences need distinct model
    shapes (and thus distinct spines)?
@@ -573,10 +643,12 @@ with the SQL-adapter paging pushdown.
    come into scope?
 6. Is a GraphQL (app-developer) projection anticipated, i.e. how hard to insist on the
    protocol-agnostic core up front?
+7. Are AI agents (§8) in scope, and if so should they run under per-user pass-through or a scoped
+   service principal — and is any agent-driven write (gated `invoke`) wanted, or read-only only?
 
 ---
 
-## 10. Key files
+## 11. Key files
 
 - `dotnet/System/Database/Allors.Database/Data/` — the query IR (`Pull`, `IExtent`, predicate AST,
   `Result`, `Select`, `Node`, `Sort`, `IVisitor`).

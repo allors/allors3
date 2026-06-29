@@ -29,8 +29,9 @@ under a dated version heading.
   OData v4 projection for Power BI and other clients (meta-model→EDM mapping, interface/spine
   handling, `$filter`/`$expand` folding, workspace + ACL security), a root cause analysis of the
   post-fetch access-control/paging limitation shared by the workspace Pull (with a materialisation
-  ladder and SQL-adapter pushdown recommendations), the consumer/pipeline ecosystem, and
-  alternatives (GraphQL, SQL, REST). Documentation only — no behavioural change.
+  ladder and SQL-adapter pushdown recommendations), the consumer/pipeline ecosystem, an MCP
+  projection for connecting AI agents (semantic tools, confused-deputy security, read-only/gated
+  writes), and alternatives (GraphQL, SQL, REST). Documentation only — no behavioural change.
 - `WorkRequirement.WorkEffortPurpose` (enumeration Refurbishment / Maintenance / Repair): defaults to
   **Repair** on init, is copied onto the `WorkTask` created by `CreateWorkTask`, and is mirrored into
   `WorkRequirementVersion` for version history.
