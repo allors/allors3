@@ -31,7 +31,8 @@ under a dated version heading.
   post-fetch access-control/paging limitation shared by the workspace Pull (with a materialisation
   ladder and SQL-adapter pushdown recommendations), the consumer/pipeline ecosystem, an MCP
   projection for connecting AI agents (semantic tools, confused-deputy security, read-only/gated
-  writes), and alternatives (GraphQL, SQL, REST). Documentation only — no behavioural change.
+  writes, plus a retrieval/RAG/GraphRAG framework-support recommendation), and alternatives
+  (GraphQL, SQL, REST). Documentation only — no behavioural change.
 - `WorkRequirement.WorkEffortPurpose` (enumeration Refurbishment / Maintenance / Repair): defaults to
   **Repair** on init, is copied onto the `WorkTask` created by `CreateWorkTask`, and is mirrored into
   `WorkRequirementVersion` for version history.

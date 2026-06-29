@@ -597,12 +597,55 @@ the §3 OData decision); route any allowed writes through **domain methods (`inv
 permission policy that asks, or a human-in-the-loop step in a manual loop). Opt specific,
 gated mutations in rather than exposing write broadly.
 
-### 8.5 Summary
+### 8.5 Retrieval — RAG, GraphRAG & framework support
+
+Retrieval frameworks (vector RAG, GraphRAG, and orchestrators like LlamaIndex / LangChain /
+Semantic Kernel / Haystack) are the agent-knowledge layer. They fit Allors well **only if they
+respect the two invariants a copy tends to break** — the ACL boundary and freshness:
+
+- **A vector/graph index is a copy outside the ACL, frozen at index time.** Scope it to
+  **unstructured text** (`Media`/attachments, `Comment`, `Note`, long description roles), not the
+  structured domain — a structured `pull` is exact, current, and visibility-folded where a
+  similarity match is lossy, stale, and leaks the ACL.
+- **Retrieve to *locate*, `pull` to *read*.** Use similarity/graph search only to find candidate
+  object ids, then issue a live, ACL-folded `pull`/`get` for the answer. Content staleness
+  disappears and the index can over-surface without leaking, because the answer comes from the
+  authoritative read.
+- **Allors is already a typed, ACL-governed knowledge graph** (objects = nodes, bidirectional
+  relation types = labelled edges, meta = ontology). So GraphRAG here is **prefetch-based
+  neighbourhood/path traversal seeded by a hit** (the §3.2 `$expand`/`Node` machinery), run
+  **in-place** so the per-hop ACL trim (`PullResponseBuilder.AddDependencies` + `Include`) comes
+  for free. Don't run LLM graph *extraction* over Allors text — the edges already exist as ground
+  truth.
+
+**Recommendation — support a contract, not a framework:**
+
+1. **Expose retrieval as tools on the MCP projection (§8.1):** `search(text, objectType?, filter?)`,
+   `neighbourhood(id, hops, edgeTypes?)`, `path(fromId, toId)`, alongside `pull`/`get`. One
+   contract; every MCP-capable framework (LlamaIndex, LangChain, Semantic Kernel, Haystack)
+   consumes it with no per-framework code.
+2. **Make text-to-`Data.Pull`/OData a first-class tool.** For a structured, ACL-governed domain
+   this is the highest-leverage "GraphRAG-like" capability — the model emits a query against the
+   live surface, so there is no copy, no staleness, and it folds through the ACL.
+3. **Treat graph-store-native frameworks as optional** (Neo4j GraphRAG, LlamaIndex
+   `PropertyGraphIndex`). Prefer a **custom store adapter over the live execution service** (keeps
+   the ACL + freshness) to a raw **exported graph** (Layer-B copy — only for offline/global
+   analytics, and the ACL must be re-enforced on nodes *and* edges).
+4. **Don't adopt construction-heavy frameworks** (Microsoft GraphRAG / LightRAG / Cognee
+   extraction) for Allors data — reuse their *retrieval* patterns (local / path / community
+   search), not their graph-from-text construction.
+
+The constant across all of them: **the ACL stays the authoritative server-side boundary** — never
+duplicate the security decision into the framework, and scope any index/graph copy with security
+metadata (or re-check live) so retrieval cannot surface what a `pull` would deny.
+
+### 8.6 Summary
 
 **OData is for analysts and pipelines, GraphQL is for app developers, MCP is for agents — three
 projections, one core, one ACL.** The hard parts (meta→surface generation, query folding, the
 post-fetch ACL/paging fix) are shared; the agent projection is a thin tail plus a deliberate
-read-only-by-default, ACL-scoped security posture.
+read-only-by-default, ACL-scoped security posture. Retrieval frameworks (RAG/GraphRAG) ride on the
+same MCP tools and the same ACL boundary (§8.5).
 
 ---
 
