@@ -14,6 +14,7 @@ under a dated version heading.
 
 ### Changed
 
+- Updated the e2e test projects' `Microsoft.Playwright` dependency from 1.59.0 to 1.61.0.
 - The part weighted-average cost is now maintained by a dedicated `PartWeightedAverageRule` that only
   recomputes when stock is received, instead of `PartQuantitiesRule` re-reading a part's entire
   inventory-transaction history on every inventory transaction. Consumption transactions (e.g. parts
