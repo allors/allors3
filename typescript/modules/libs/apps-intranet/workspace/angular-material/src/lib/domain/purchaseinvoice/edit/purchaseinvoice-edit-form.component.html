@@ -294,7 +294,7 @@
               <person-inline
                 (cancelled)="addShipToCustomerContactPerson = false"
                 (saved)="
-                  billedFromContactPersonAdded($event);
+                  shipToCustomerContactPersonAdded($event);
                   addShipToCustomerContactPerson = false
                 "
               >
@@ -329,7 +329,7 @@
           </div>
         </div>
         <div class="col-md-12">
-          <mat-card *ngIf="addShipToCustomer">
+          <mat-card *ngIf="addBillToEndCustomer">
             <mat-card-header>Add a new customer</mat-card-header>
             <mat-card-content>
               <party-party
@@ -489,7 +489,7 @@
             <mat-card-content>
               <party-party
                 (saved)="
-                  billToEndCustomerAdded($event); addShipToEndCustomer = false
+                  shipToEndCustomerAdded($event); addShipToEndCustomer = false
                 "
                 (cancelled)="addShipToEndCustomer = false"
               >
