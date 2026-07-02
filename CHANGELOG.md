@@ -29,7 +29,8 @@ under a dated version heading.
   OData v4 projection for Power BI and other clients (meta-model→EDM mapping, interface/spine
   handling, `$filter`/`$expand` folding, workspace + ACL security), a root cause analysis of the
   post-fetch access-control/paging limitation shared by the workspace Pull (with a materialisation
-  ladder and SQL-adapter pushdown recommendations), the consumer/pipeline ecosystem, an MCP
+  ladder and SQL-adapter pushdown recommendations, including navigation-path sorts — ordering an
+  extent by a unit role of an adjacent composite role object), the consumer/pipeline ecosystem, an MCP
   projection for connecting AI agents (semantic tools, confused-deputy security, read-only/gated
   writes, plus a retrieval/RAG/GraphRAG framework-support recommendation), and alternatives
   (GraphQL, SQL, REST). Documentation only — no behavioural change.

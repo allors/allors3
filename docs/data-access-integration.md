@@ -103,7 +103,7 @@ result exposes secured data + paging; the Pull front-end appends that access-met
 |---|---|
 | Schema source | **Core** (meta + surface descriptor) |
 | Query → IR compilation | **Per protocol** (parsing differs) |
-| Predicate / paging / projection / prefetch semantics | **Core** (`Data` IR + execution) |
+| Predicate / sort (incl. path sorts, §3.2) / paging / projection / prefetch semantics | **Core** (`Data` IR + execution) |
 | Object **visibility predicate** (§4) | **Core** — an `IVisitor` pass over the IR before `Extent.Build` |
 | Cell masking, COUNT, OFFSET/FETCH pushdown | **Core** (execution + adapter) |
 | Guardrails (max page, max expand depth) | **Core** — declared in surface descriptor, advertised per protocol |
@@ -234,7 +234,8 @@ Spine-selection algorithm
 | `contains` / `startswith` / `endswith` | `AddLike(roleType, "%…%")` |
 | `and` / `or` / `not` | `AddAnd` / `AddOr` / `AddNot` (under the top-level AND `Extent.Filter`) |
 | `isof(type)` / type cast | `AddInstanceof(composite)` — the linchpin for interface-typed sets |
-| `$orderby` | `Extent.AddSort(roleType[, direction])` |
+| `$orderby` (own unit role) | `Extent.AddSort(roleType[, direction])` |
+| `$orderby` over a navigation path (`Customer/Name`) | **not supported today** — needs the path-sort extension below |
 | `$top` / `$skip` | paging — see §4 |
 
 **`$filter` over navigation paths** folds to **sub-extents fed into `AddContainedIn`**:
@@ -255,6 +256,36 @@ extent.Filter.AddContainedIn(ownerRoleType, owners);
 
 The SQL predicates `RoleContainedInExtent` / `AssociationContainedInExtent` already compile these
 to `EXISTS`/`IN` subqueries.
+
+**`$orderby` over navigation paths (path sorts).** Today sorting is limited to a unit role
+**directly on the extent's own type**: `Data.Sort` carries a single `IRoleType`, and the SQL
+adapter's `ExtentSort.BuildOrder` emits `ORDER BY` on a column of the object's own table
+(`Mapping.ColumnNameByRelationType`) — no joins. Sorting by a unit role of an **adjacent
+composite role object** (`$orderby=Customer/Name` — order sales orders by the customer's name)
+is therefore unsupported, while the *filter* equivalent already folds via sub-extents. Extend the
+core to accept a **sort path**: one or more composite segments ending in a unit role.
+
+- **IR change, not per-protocol:** extend `Data.Sort` (and the wire `Sort`) from a single
+  `RoleType` to a **path of `IPropertyType`s + terminal unit role**, and `Extent.AddSort` /
+  `ExtentSort` accordingly. OData `$orderby=Customer/Name`, GraphQL nested `orderBy`, MCP
+  `pull(..., orderBy)`, and the JSON Pull then all compile to the same node — the §2 discipline.
+- **Single-valued segments only:** each path segment must be an `IsOne` role (many-to-one /
+  one-to-one) or a single-valued association. Sorting *through a collection* is ill-defined
+  without an aggregate (min/max) — reject `IsMany` segments, the same rule OData applies to
+  `$orderby` paths. The terminal segment must be a **unit** role.
+- **Fold as `LEFT JOIN` + `ORDER BY`:** LEFT, not INNER — an absent role must not drop rows from
+  the extent (SQL null ordering applies; expose nulls-first/last if needed). The adapter already
+  knows both storage layouts (role as a column on the object table vs. a relation table) from the
+  predicate machinery; a relation-table-stored segment just adds the intermediate join.
+- **Interface-typed targets are the honest complication:** unit roles live on concrete class
+  tables (interfaces have no table), so `Owner/Name` with `Owner : Party` must join across the
+  target's concrete classes (per-class joins + `COALESCE`). Support targets with an
+  `ExclusiveDatabaseClass` first; treat multi-class targets as a follow-up.
+- **Keep the total order deterministic:** always append object `Id` as the final tiebreaker —
+  adjacent-object values duplicate and null freely, and §4's paging/count correctness (and any
+  keyset cursor) depends on a total order.
+- This is the same adapter workstream as the §4.6 `OFFSET/FETCH`/`COUNT` pushdown — the sort
+  columns/joins must land in the paged SQL statement, so build them together.
 
 **`$expand` → prefetch policies.** `$expand` is a tree; `PrefetchPolicy` is a tree:
 
@@ -421,7 +452,9 @@ defers the security-predicate work.
 
 1. **Add SQL-side paging/count pushdown to the extent** — `OFFSET/FETCH` + a real
    `SELECT COUNT(*)` path + `Skip`/`Take` on the `Extent` API. Necessary for everyone; sufficient
-   alone for the service-principal feed; a general scalability win for all of Pull.
+   alone for the service-principal feed; a general scalability win for all of Pull. The same
+   workstream should include **navigation-path sorts** (§3.2) — the sort joins must land in the
+   same paged statement.
 2. **For per-user pass-through, add the foldable visibility predicate (Level 1)** built on
    `Grant.EffectivePermissions`, folded via `AddContainedIn`, with the `AllowedClasses` trim moved
    into the extent as an `instanceof`. Keep cell masking in memory (paging-neutral). Property-test
