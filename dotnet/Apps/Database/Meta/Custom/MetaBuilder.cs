@@ -19,7 +19,6 @@ namespace Allors.Database.Meta
         private void BuildCustom(MetaPopulation meta, Domains domains, RelationTypes relationTypes, MethodTypes methodTypes)
         {
             this.DefaultWorkspace(meta, relationTypes, methodTypes);
-            this.ExtranetWorkspace(meta, relationTypes, methodTypes);
         }
 
         private void DefaultWorkspace(MetaPopulation meta, RelationTypes relationTypes, MethodTypes methodTypes)
@@ -61,38 +60,6 @@ namespace Allors.Database.Meta
             {
                 AddWorkspace(@class, workspaceName);
             }
-        }
-
-        private void ExtranetWorkspace(MetaPopulation meta, RelationTypes relationTypes, MethodTypes methodTypes)
-        {
-            const string workspaceName = "Extranet";
-
-            // Relations
-            AddWorkspace(relationTypes.CountryName, workspaceName);
-            AddWorkspace(relationTypes.CurrencyIsoCode, workspaceName);
-            AddWorkspace(relationTypes.EnumerationName, workspaceName);
-            AddWorkspace(relationTypes.EnumerationIsActive, workspaceName);
-            AddWorkspace(relationTypes.LanguageName, workspaceName);
-            AddWorkspace(relationTypes.LocaleName, workspaceName);
-            AddWorkspace(relationTypes.LocaleCountry, workspaceName);
-            AddWorkspace(relationTypes.LocaleLanguage, workspaceName);
-            AddWorkspace(relationTypes.LocalisedLocale, workspaceName);
-            AddWorkspace(relationTypes.ObjectStateName, workspaceName);
-            AddWorkspace(relationTypes.PersonFirstName, workspaceName);
-            AddWorkspace(relationTypes.PersonLastName, workspaceName);
-            AddWorkspace(relationTypes.PersonMiddleName, workspaceName);
-            AddWorkspace(relationTypes.UserUserEmail, workspaceName);
-            AddWorkspace(relationTypes.UserUserName, workspaceName);
-            AddWorkspace(relationTypes.RoleName, workspaceName);
-
-            // Classes
-            AddWorkspace(meta.Country, workspaceName);
-            AddWorkspace(meta.Currency, workspaceName);
-            AddWorkspace(meta.Language, workspaceName);
-            AddWorkspace(meta.Locale, workspaceName);
-            AddWorkspace(meta.Person, workspaceName);
-            AddWorkspace(meta.Role, workspaceName);
-            AddWorkspace(meta.WorkTask, workspaceName);
         }
     }
 }

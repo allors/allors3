@@ -45,10 +45,6 @@ namespace Allors.Server
 
                 var host = this.Request.Host;
 
-                if (host.Host.StartsWith("extranet"))
-                {
-                }
-
                 if (host.Host.StartsWith("intranet"))
                 {
                 }

@@ -19,14 +19,6 @@ npm install easymde
 npm install jsnlog
 npm install luxon@2.5.0
 
-// Apps Extranet
-npx nx g @nrwl/angular:application apps-extranet/workspace/angular-material-app --routing=true --style=scss --e2eTestRunner=none
-npx nx g @nrwl/angular:library apps-extranet/workspace/angular-material
-npx nx g @nrwl/workspace:library apps-extranet/workspace/derivations
-npx nx g @nrwl/workspace:library apps-extranet/workspace/domain
-npx nx g @nrwl/workspace:library apps-extranet/workspace/meta
-npx nx g @nrwl/workspace:library apps-extranet/workspace/meta-json
-
 // Apps Intranet
 npx nx g @nrwl/angular:application apps-intranet/workspace/angular-material-app --routing=true --style=scss --e2eTestRunner=none
 npx nx g @nrwl/angular:library apps-intranet/workspace/angular-material

@@ -32,10 +32,6 @@ namespace Allors.Meta.Generation.Storage
                 { "../../typescript/modules/templates/workspace.meta.ts.stg", "../../typescript/modules/libs/apps-intranet/workspace/meta/src/lib/generated" },
                 { "../../typescript/modules/templates/workspace.meta.json.ts.stg", "../../typescript/modules/libs/apps-intranet/workspace/meta-json/src/lib/generated" },
                 { "../../typescript/modules/templates/workspace.domain.ts.stg", "../../typescript/modules/libs/apps-intranet/workspace/domain/src/lib/generated" },
-
-                { "../../typescript/modules/templates/workspace.meta.ts.stg", "../../typescript/modules/libs/apps-extranet/workspace/meta/src/lib/generated" },
-                { "../../typescript/modules/templates/workspace.meta.json.ts.stg", "../../typescript/modules/libs/apps-extranet/workspace/meta-json/src/lib/generated" },
-                { "../../typescript/modules/templates/workspace.domain.ts.stg", "../../typescript/modules/libs/apps-extranet/workspace/domain/src/lib/generated" },
             };
 
             var metaPopulation = MetaBuilder.Build();
@@ -74,25 +70,6 @@ namespace Allors.Meta.Generation.Storage
                     return 1;
                 }
             }
-
-            //{
-            //    var template = "../Core/Workspace/Templates/meta.builder.cs.stg";
-            //    var output = "/temp/";
-
-            //    RemoveDirectory(output);
-
-            //    var log = Generate.Execute(model, template, output, "Default");
-            //    if (log.ErrorOccured)
-            //    {
-            //        return 1;
-            //    }
-
-            //    log = Generate.Execute(model, template, output, "Extranet");
-            //    if (log.ErrorOccured)
-            //    {
-            //        return 1;
-            //    }
-            //}
 
             return 0;
         }
