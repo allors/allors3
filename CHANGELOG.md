@@ -14,6 +14,15 @@ under a dated version heading.
 
 ### Changed
 
+- The three server `Startup` classes now delegate to a shared hosting seam
+  (`AddAllorsServer`/`UseAllorsServer` under `Core/Database/Server/Core/Hosting/`), so hosting changes
+  land once for Core, Base and Apps. Per-app deltas (CORS origins, controllers-with-views) moved into
+  `AllorsServerOptions`. Behavioural deltas: the Core server now also sets the `IDatabaseService.Build`
+  delegate (Base/Apps already did), and the invalid-model-state log category changed from
+  `Allors.Server.Startup` to `Allors.Server`. `ConfigureExceptionHandler` gained an
+  `IWebHostEnvironment` overload. The Blazor `Blazor.Bootstrap.Site.Server` project, which
+  compile-globs the shared server sources, gained the `JSNLog` and
+  `Microsoft.AspNetCore.Authentication.JwtBearer` package references the seam requires.
 - Updated the e2e test projects' `Microsoft.Playwright` dependency from 1.59.0 to 1.61.0.
 - The part weighted-average cost is now maintained by a dedicated `PartWeightedAverageRule` that only
   recomputes when stock is received, instead of `PartQuantitiesRule` re-reading a part's entire

@@ -13,12 +13,20 @@ namespace Allors.Server
     using Microsoft.AspNetCore.Diagnostics;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.Extensions.Hosting;
     using NLog;
     using Microsoft.IdentityModel.Tokens;
+    using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
     public static class ExceptionHandler
     {
-        public static IApplicationBuilder ConfigureExceptionHandler(this IApplicationBuilder appBuilder, IHostingEnvironment env)
+        public static IApplicationBuilder ConfigureExceptionHandler(this IApplicationBuilder appBuilder, IHostingEnvironment env) =>
+            appBuilder.ConfigureExceptionHandler(env.IsDevelopment());
+
+        public static IApplicationBuilder ConfigureExceptionHandler(this IApplicationBuilder appBuilder, IWebHostEnvironment env) =>
+            appBuilder.ConfigureExceptionHandler(env.IsDevelopment());
+
+        private static IApplicationBuilder ConfigureExceptionHandler(this IApplicationBuilder appBuilder, bool isDevelopment)
         {
             async Task Middleware(HttpContext context, Func<Task> next)
             {
@@ -35,7 +43,7 @@ namespace Allors.Server
                         ? (int)HttpStatusCode.Unauthorized
                         : (int)HttpStatusCode.InternalServerError;
 
-                    var message = ErrorMessage(error, env.IsDevelopment());
+                    var message = ErrorMessage(error, isDevelopment);
                     await context.Response.WriteAsync(JsonSerializer.Serialize(message));
                 }
                 else
