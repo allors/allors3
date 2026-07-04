@@ -20,7 +20,7 @@ Oldest-first. To bring one back: `git cherry-pick <hash>` (ideally on a short-li
 - [ ] e717857457 fix(base): add missing CreateService/EditDialogService to prod APP_INITIALIZER deps (#100)
 - [ ] 1295688693 fix(adapters): bracket database name when enabling snapshot isolation
 - [ ] 75a2b1e784 fix(apps-intranet): add missing CreateService/EditDialogService to prod APP_INITIALIZER deps (#101)
-- [ ] 174d7953bd fix(apps-extranet): add missing CreateService/EditDialogService to prod APP_INITIALIZER deps (#103)
+- [ ] 174d7953bd fix(apps-extranet): add missing CreateService/EditDialogService to prod APP_INITIALIZER deps (#103) — **superseded: extranet removed**
 - [ ] b87b8e17f1 feat(workspace): signals as the standard C# reactive mechanism (#98)
 - [ ] f8490dee3b fix(apps-intranet): keep product categories when editing a NonUnifiedGood (#104)
 - [ ] 05c52b6c13 Merge remote-tracking branch 'origin/main' into feature/identity-domain
@@ -41,7 +41,7 @@ Oldest-first. To bring one back: `git cherry-pick <hash>` (ideally on a short-li
 - [ ] 32a6a3cf65 fix(base): preserve an employment's FromDate on edit [BUG-01] (#120)
 - [ ] 5513e377a7 fix(apps-intranet): gate the UnifiedGood ProductNumber input on the setting that creates it [BUG-30] (#117)
 - [ ] 88b691a090 fix(apps-intranet): only set BasePrice FromDate/PricedBy defaults on create [BUG-D1] (#119)
-- [ ] a79ad4dd0c fix(apps-extranet): bind FullfillContactMechanism options to ContactMechanism in worktask forms [BUG-05/06] (#121)
+- [ ] a79ad4dd0c fix(apps-extranet): bind FullfillContactMechanism options to ContactMechanism in worktask forms [BUG-05/06] (#121) — **superseded: extranet removed**
 - [ ] c357edf1a4 feat(apps-worktask): add WorkEffortPurpose to WorkRequirement (default Repair, copy to WorkTask, versioned) (#122)
 - [ ] bee5b24f6e fix(apps-intranet): compute purchase-invoice-item VAT on the net unit price [BUG-04] (#123)
 - [ ] 061fd4f131 test(apps-intranet): exercise an optional field in CreatePurchaseReturnMaximal [BUG-19] (#137)
@@ -56,10 +56,10 @@ Oldest-first. To bring one back: `git cherry-pick <hash>` (ideally on a short-li
 - [ ] 86ba39cf68 fix(apps-intranet): drop the proposal list's unpopulated origin/destination columns [BUG-12] (#132)
 - [ ] 3a3c8e8cd0 fix(apps-intranet): navigate purchase-invoice summary cards to their own party [BUG-13] (#134)
 - [ ] 9cd7a1ae37 fix(apps-intranet): read descriptionByObjectType in DisplayService.description() [BUG-09] (#135)
-- [ ] 0d3d6a5245 fix(apps-extranet): unsubscribe the MainComponent router.events subscription [BUG-08] (#136)
+- [ ] 0d3d6a5245 fix(apps-extranet): unsubscribe the MainComponent router.events subscription [BUG-08] (#136) — **superseded: extranet removed**
 - [ ] b9652e2fe1 fix(base): pull the Person, not Organisation, in the person overview [BUG-01] (#133)
 - [ ] 97374f00a3 fix(e2e): distinguish role vs association autocompletes in the scaffold [BUG-18] (#139)
-- [ ] 5f0b8df547 chore(build): remove the non-functional extranet e2e build harness [BUG-17] (#140)
+- [ ] 5f0b8df547 chore(build): remove the non-functional extranet e2e build harness [BUG-17] (#140) — **superseded: extranet removed**
 - [ ] 29ca26ff13 ci: run on main/v* push + all PRs instead of feature/issue branches (#126)
 - [ ] e23f3594b1 fix(apps): inject ILogger into the test TestController [BUG-05] (#141)
 - [ ] 584813a255 fix(apps): log the validation detail in the test server's model-state handler [BUG-09] (#142)
@@ -67,7 +67,7 @@ Oldest-first. To bring one back: `git cherry-pick <hash>` (ideally on a short-li
 - [ ] e3d4bf8e42 test(apps): remove the misplaced duplicate NonUnifiedPart part-required test [BUG-08] (#144)
 - [ ] c382da1365 test(apps): exercise the named UseWoCo/ExcludeWoCo scenario in the RgsFilter test [BUG-07] (#145)
 - [ ] 2e2be4ae51 test(apps): re-derive and assert DisplayName in the AutomatedAgent name test [BUG-02] (#146)
-- [ ] 521b3cce89 fix(apps): generate the apps-extranet workspace libs against the Extranet workspace [BUG-04] (#149)
+- [ ] 521b3cce89 fix(apps): generate the apps-extranet workspace libs against the Extranet workspace [BUG-04] (#149) — **superseded: extranet removed**
 - [ ] 9405af3022 test(apps): build the named object in the ProductFeature required-relations tests [BUG-01] (#147)
 - [ ] 483e2f8327 fix(apps): build a part item in SalesInvoiceItem WithPartItemDefaults [BUG-06] (#148)
 - [ ] da091b7a3b build(versioning): bump main to 3.2.0-alpha after cutting v3.1 (#151)

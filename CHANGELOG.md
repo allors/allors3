@@ -24,6 +24,14 @@ under a dated version heading.
   re-triggers downstream cost derivations.
 
 ### Added
+
+### Removed
+
+- The **extranet** application has been removed: the Angular app (`apps/apps-extranet`), its five
+  workspace libraries (`libs/apps-extranet`), the dead legacy e2e project, and the non-functional
+  Nuke E2E build harness (and its CI target). The unused backend `Extranet` meta-workspace
+  registration was dropped as well. `apps-intranet` and `base` are unaffected.
+
 ### Fixed
 
 - Apps `Setup.v.cs` dispatched `BaseOnPreSetup` from `OnPrePrepare` instead of `BaseOnPrePrepare`

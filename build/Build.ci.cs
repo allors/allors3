@@ -65,9 +65,4 @@ partial class Build
         .DependsOn(Reset)
         .DependsOn(TypescriptInstall)
         .DependsOn(TypescriptE2EAngularAppsIntranetTest);
-
-    private Target CiTypescriptWorkspacesE2EAngularAppsExtranetTest => _ => _
-        .DependsOn(Reset)
-        .DependsOn(TypescriptInstall)
-        .DependsOn(TypescriptE2EAngularAppsExtranetTest);
 }
