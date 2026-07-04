@@ -16,13 +16,9 @@ namespace Allors.Server
     using Microsoft.Extensions.Hosting;
     using NLog;
     using Microsoft.IdentityModel.Tokens;
-    using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
     public static class ExceptionHandler
     {
-        public static IApplicationBuilder ConfigureExceptionHandler(this IApplicationBuilder appBuilder, IHostingEnvironment env) =>
-            appBuilder.ConfigureExceptionHandler(env.IsDevelopment());
-
         public static IApplicationBuilder ConfigureExceptionHandler(this IApplicationBuilder appBuilder, IWebHostEnvironment env) =>
             appBuilder.ConfigureExceptionHandler(env.IsDevelopment());
 
