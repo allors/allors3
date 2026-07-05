@@ -14,6 +14,9 @@ under a dated version heading.
 
 ### Security
 
+- `AllorsUserStore.HasPasswordAsync` returned the inverse of the truth (true when the user had *no*
+  password). It now reports whether a password hash is set, so Identity's account-management pages
+  route users to change-password rather than set-password.
 - Identity lockout and password policy are now configured explicitly, following NIST 800-63B /
   OWASP ASVS guidance: lockout after 10 failed attempts with a 15-minute auto-unlock (bounded
   lockout beats a hair-trigger hard lock, which is a denial-of-service lever), and passwords
