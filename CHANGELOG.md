@@ -29,6 +29,10 @@ under a dated version heading.
   person form and the user-profile form, and the user-profile menu gains an **Account settings** link
   to the shipped Identity `/Identity/Account/Manage` page. Password management is handled by ASP.NET
   Core Identity; the interactive domain password path is retired from the model in a later phase.
+- The **foundation-app** (the Core showcase demo) is cut over to the Identity cookie: relative base
+  URL, `/Identity` proxy entry, the 401 `UnauthorizedInterceptor`, and a `UserInfo` bootstrap gate,
+  with the dead `authUrl` plumbing removed. It previously reached the API anonymously; it now
+  requires an authenticated cookie like the material apps.
 - The e2e harness signs a default Identity cookie into the browser context before each test (through
   the dev proxy, same-origin), so once an app is on cookie auth the pre-test navigation loads
   authenticated. Invisible to the still-bearer apps. (Test infrastructure.)
