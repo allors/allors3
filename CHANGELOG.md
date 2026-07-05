@@ -14,6 +14,9 @@ under a dated version heading.
 
 ### Security
 
+- Added an anti-regression test asserting the inheritable server layer folders (`Core`/`Base`/`Apps`)
+  expose no test or bypass controllers — enforcing that destructive/test scaffolding stays in the
+  non-inherited `Custom/` folder and can never reach a downstream inheritor's production build (F2).
 - JWT lifetime is now 8 hours instead of 30 days. The previous `"30d"` value never parsed as a
   `TimeSpan` and silently fell back to a 30-day default; `"08:00:00"` parses correctly. Production
   Angular builds now point `authUrl` at the real password endpoint (`Authentication/Token`) instead
