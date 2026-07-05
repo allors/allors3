@@ -83,6 +83,11 @@ under a dated version heading.
 
 ### Added
 
+- `ARCHITECTURE.md` documenting the abstract-domain model (Core ← Base ← Apps), how inheritance
+  works by compile-globbing the layer folders, why `Custom/` scaffolding is never inherited, the
+  `Custom` naming overload (and the planned split into a `Test` domain plus a demo `Custom`), and
+  the hardening principle: secure defaults in the inherited layer folders, overridable by config.
+
 ### Removed
 
 - The **extranet** application has been removed: the Angular app (`apps/apps-extranet`), its five
