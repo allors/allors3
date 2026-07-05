@@ -5,6 +5,8 @@
 
 namespace Allors.Server
 {
+    using System;
+    using System.Net;
     using Allors.Services;
     using Database.Adapters;
     using Database.Configuration;
@@ -14,6 +16,7 @@ namespace Allors.Server
     using JSNLog;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.HttpOverrides;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
@@ -36,6 +39,9 @@ namespace Allors.Server
             databaseService.Build = () => databaseBuilder.Build();
             databaseService.Database = databaseService.Build();
 
+            app.UseForwardedHeaders(CreateForwardedHeadersOptions(configuration));
+            app.UseMiddleware<SecurityHeadersMiddleware>();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -43,13 +49,14 @@ namespace Allors.Server
             else
             {
                 app.UseHsts();
+                app.UseHttpsRedirection();
             }
 
             app.UseCors();
 
             var jsnlogConfiguration = new JsnlogConfiguration
             {
-                corsAllowedOriginsRegex = ".*",
+                corsAllowedOriginsRegex = configuration["Logging:JSNLog:CorsAllowedOriginsRegex"] ?? "^https?://localhost(:[0-9]+)?$",
                 serverSideMessageFormat = env.IsDevelopment() ?
                                             "%requestId | %url | %message" :
                                             "%requestId | %url | %userHostAddress | %userAgent | %message",
@@ -74,6 +81,39 @@ namespace Allors.Server
                     pattern: "allors/{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapControllers();
             });
+        }
+
+        private static ForwardedHeadersOptions CreateForwardedHeadersOptions(IConfiguration configuration)
+        {
+            // Trust defaults to loopback only (a same-host reverse proxy); extend via configuration.
+            var options = new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
+            };
+
+            foreach (var section in configuration.GetSection("ForwardedHeaders:KnownProxies").GetChildren())
+            {
+                if (!IPAddress.TryParse(section.Value, out var address))
+                {
+                    throw new InvalidOperationException(
+                        $"ForwardedHeaders:KnownProxies contains '{section.Value}', which is not a valid IP address. Use e.g. \"10.0.0.5\".");
+                }
+
+                options.KnownProxies.Add(address);
+            }
+
+            foreach (var section in configuration.GetSection("ForwardedHeaders:KnownNetworks").GetChildren())
+            {
+                if (!System.Net.IPNetwork.TryParse(section.Value, out var network))
+                {
+                    throw new InvalidOperationException(
+                        $"ForwardedHeaders:KnownNetworks contains '{section.Value}', which is not a valid CIDR network. Use e.g. \"10.0.0.0/8\".");
+                }
+
+                options.KnownIPNetworks.Add(network);
+            }
+
+            return options;
         }
     }
 }

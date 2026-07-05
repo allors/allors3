@@ -14,6 +14,13 @@ under a dated version heading.
 
 ### Security
 
+- The server pipeline now processes `X-Forwarded-For`/`X-Forwarded-Proto` first (trusting loopback
+  proxies by default; `ForwardedHeaders:KnownProxies`/`:KnownNetworks` configure others), redirects
+  http to https outside Development, and emits baseline security headers on every response
+  (`X-Content-Type-Options: nosniff`, `Referrer-Policy: no-referrer`, a restrictive
+  `Permissions-Policy`, and `Content-Security-Policy: frame-ancestors 'none'`, overridable via
+  `Security:ContentSecurityPolicy`). JSNLog's browser-log endpoint no longer allows any origin
+  (`.*`); it defaults to localhost and is configurable via `Logging:JSNLog:CorsAllowedOriginsRegex`.
 - Each server now persists its DataProtection key ring to disk (config `DataProtection:KeysDirectory`,
   default `<ContentRoot>/.allors/dataprotection-keys`) and sets a per-app application name
   (`Allors.Core`/`Allors.Base`/`Allors.Apps`). This keeps future auth cookies and antiforgery tokens
