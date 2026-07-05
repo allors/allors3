@@ -14,6 +14,10 @@ under a dated version heading.
 
 ### Changed
 
+- Nuke-booted servers (remote/workspace/jest/e2e test rigs) now run with
+  `ASPNETCORE_ENVIRONMENT=Development` instead of defaulting to Production. This aligns the test
+  rigs with upcoming production-only hardening (fail-fast secret checks, HTTPS redirect) that must
+  not apply to local test boots.
 - The three server `Startup` classes now delegate to a shared hosting seam
   (`AddAllorsServer`/`UseAllorsServer` under `Core/Database/Server/Core/Hosting/`), so hosting changes
   land once for Core, Base and Apps. Per-app deltas (CORS origins, controllers-with-views) moved into

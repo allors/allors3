@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -17,7 +18,12 @@ internal class Server : IDisposable
         var arguments = $@"{path}/Server.dll";
         var workingDirectory = path;
 
-        Process = StartProcess(DotNetTasks.DotNetPath, arguments, workingDirectory);
+        var environmentVariables = System.Environment.GetEnvironmentVariables()
+            .Cast<DictionaryEntry>()
+            .ToDictionary(e => (string)e.Key, e => (string)e.Value, StringComparer.OrdinalIgnoreCase);
+        environmentVariables["ASPNETCORE_ENVIRONMENT"] = "Development";
+
+        Process = StartProcess(DotNetTasks.DotNetPath, arguments, workingDirectory, environmentVariables);
     }
 
     private IProcess Process { get; set; }
