@@ -14,6 +14,9 @@ under a dated version heading.
 
 ### Security
 
+- The e2e harness signs a default Identity cookie into the browser context before each test (through
+  the dev proxy, same-origin), so once an app is on cookie auth the pre-test navigation loads
+  authenticated. Invisible to the still-bearer apps. (Test infrastructure.)
 - The test authentication controller gained a passwordless cookie `SignIn` action
   (`SignInManager.SignInAsync`) beside the JWT `Token` action, so browser-context tests can
   authenticate the way the real app will (Identity application cookie, no bearer token). Test-only.
