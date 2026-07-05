@@ -14,6 +14,12 @@ under a dated version heading.
 
 ### Security
 
+- Anonymous requests no longer fault in the object-level security check. Per-request user resolution
+  keys off `IsAuthenticated` (rather than a non-null principal), and the grant evaluation
+  (`Security.GetVersionedGrants`) null-guards the user before dereferencing its id — so an
+  unauthenticated request degrades safely instead of throwing `NullReferenceException`. Anonymous
+  access is opt-in via `Security:AnonymousUserName`, which resolves to a real (guest) user by name
+  rather than a null user; absent that setting, the request simply has no user, as before (F7).
 - The ASP.NET Core Identity UI is now served (`AddRazorPages` + `UseStaticFiles` + `MapRazorPages`),
   so `/Identity/Account/*` (login, manage, logout, …) is live.
 - The Identity login page is overridden to accept a **user name** (not an `[EmailAddress]`), since

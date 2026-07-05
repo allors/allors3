@@ -106,7 +106,7 @@ namespace Allors.Database.Configuration
 
                 if (this.databaseVersionedGrants.TryGetValue(grantId, out var versionedGrant) && versionedGrant.Version == grantVersion)
                 {
-                    if (versionedGrant.UserSet.Contains(user.Id))
+                    if (user != null && versionedGrant.UserSet.Contains(user.Id))
                     {
                         result.Add(versionedGrant.Id, versionedGrant);
                     }
@@ -127,7 +127,7 @@ namespace Allors.Database.Configuration
                 {
                     var versionedGrant = new VersionedGrant(this.Ranges, grant.Id, grant.Strategy.ObjectVersion, new HashSet<long>(grant.EffectiveUsers.Select(v => v.Id)), grant.EffectivePermissions.Select(v => v.Id));
                     this.databaseVersionedGrants[grant.Id] = versionedGrant;
-                    if (versionedGrant.UserSet.Contains(user.Id))
+                    if (user != null && versionedGrant.UserSet.Contains(user.Id))
                     {
                         result.Add(versionedGrant.Id, versionedGrant);
                     }
@@ -297,7 +297,7 @@ namespace Allors.Database.Configuration
 
                 if (versionedGrantById.TryGetValue(grantId, out var versionedGrant) && versionedGrant.Version == grantVersion)
                 {
-                    if (versionedGrant.UserSet.Contains(user.Id))
+                    if (user != null && versionedGrant.UserSet.Contains(user.Id))
                     {
                         result.Add(versionedGrant);
                     }
@@ -320,7 +320,7 @@ namespace Allors.Database.Configuration
                 {
                     var versionedGrant = new VersionedGrant(this.Ranges, grant.Id, grant.Strategy.ObjectVersion, new HashSet<long>(grant.EffectiveUsers.Select(v => v.Id)), grant.EffectivePermissions.Where(v => workspacePermissionIds.Contains(v.Id)).Select(v => v.Id));
                     versionedGrantById[grant.Id] = versionedGrant;
-                    if (versionedGrant.UserSet.Contains(user.Id))
+                    if (user != null && versionedGrant.UserSet.Contains(user.Id))
                     {
                         result.Add(versionedGrant);
                     }
