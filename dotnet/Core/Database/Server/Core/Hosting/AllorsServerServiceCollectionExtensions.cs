@@ -174,6 +174,12 @@ namespace Allors.Server
             services.Configure<SecurityStampValidatorOptions>(securityStampValidatorOptions =>
                 securityStampValidatorOptions.ValidationInterval = TimeSpan.FromMinutes(5));
 
+            services.AddAntiforgery(antiforgeryOptions =>
+            {
+                antiforgeryOptions.HeaderName = "X-XSRF-TOKEN";
+                antiforgeryOptions.Cookie.SecurePolicy = environment.IsDevelopment() ? CookieSecurePolicy.SameAsRequest : CookieSecurePolicy.Always;
+            });
+
             services.AddResponseCaching();
 
             var mvcBuilder = options.UseControllersWithViews ? services.AddControllersWithViews() : services.AddControllers();

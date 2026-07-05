@@ -70,6 +70,7 @@ namespace Allors.Server
             app.UseRouting();
             app.UseRateLimiter();
             app.UseAuthentication();
+            app.UseMiddleware<AllorsAntiforgeryMiddleware>(!env.IsDevelopment());
             app.UseAuthorization();
 
             app.ConfigureExceptionHandler(env);

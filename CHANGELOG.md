@@ -14,6 +14,11 @@ under a dated version heading.
 
 ### Security
 
+- The JSON API now has antiforgery protection scoped to browser (cookie) callers. Safe `/allors`
+  responses issue a readable `XSRF-TOKEN` cookie; unsafe `/allors` requests are validated (header
+  `X-XSRF-TOKEN` against the antiforgery cookie) **only when the caller authenticated via the Identity
+  application cookie**. Bearer, test-header and future API-key clients carry a different authentication
+  type and are exempt by construction, so the check applies to exactly the surface that needs it.
 - Anonymous requests no longer fault in the object-level security check. Per-request user resolution
   keys off `IsAuthenticated` (rather than a non-null principal), and the grant evaluation
   (`Security.GetVersionedGrants`) null-guards the user before dereferencing its id — so an
