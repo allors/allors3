@@ -21,6 +21,7 @@ namespace Allors.Server
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
     using Microsoft.IdentityModel.Tokens;
 
@@ -28,6 +29,8 @@ namespace Allors.Server
     {
         public static IMvcBuilder AddAllorsServer(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment environment, AllorsServerOptions options)
         {
+            ProductionSecretsGuard.Validate(configuration, environment.IsDevelopment());
+
             services.AddSingleton(configuration);
 
             // Allors

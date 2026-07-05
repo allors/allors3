@@ -14,6 +14,10 @@ under a dated version heading.
 
 ### Security
 
+- Servers now fail fast at startup outside Development when `JwtToken:Key` is missing, still the
+  checked-in template value, or shorter than 32 characters — turning a silently-weak signing key
+  into a loud, actionable configuration error. Development (and the test rigs) keep using the
+  template key.
 - The Apps `Person` and `OrganisationContactRelationship` pull controllers now require
   authentication (`[Authorize]`). They previously answered anonymous POSTs with object data;
   unauthenticated callers are now challenged (the authenticated intranet client is unaffected, as it
