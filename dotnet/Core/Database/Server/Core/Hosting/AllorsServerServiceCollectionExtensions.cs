@@ -10,6 +10,7 @@ namespace Allors.Server
     using System.Linq;
     using System.Text;
     using System.Threading.RateLimiting;
+    using System.Threading.Tasks;
     using Allors.Security;
     using Allors.Services;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -27,6 +28,10 @@ namespace Allors.Server
 
     public static class AllorsServerServiceCollectionExtensions
     {
+        // The default authentication scheme: a policy scheme that forwards Bearer-header requests to
+        // JWT and everything else to the Identity application cookie.
+        public const string AuthenticationScheme = "AllorsAuthentication";
+
         public static IMvcBuilder AddAllorsServer(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment environment, AllorsServerOptions options)
         {
             ProductionSecretsGuard.Validate(configuration, environment.IsDevelopment());
@@ -90,7 +95,20 @@ namespace Allors.Server
 
             services.Configure<IdentityOptions>(configuration.GetSection("Identity"));
 
-            services.AddAuthentication(authenticationOptions => authenticationOptions.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme)
+            // Dual-scheme window: a request carrying an "Authorization: Bearer" header authenticates
+            // via JWT (existing machine clients, bit-identical); everything else uses the revocable
+            // Identity application cookie. JWT is retired once every client is on the cookie.
+            services.AddAuthentication(authenticationOptions =>
+                {
+                    authenticationOptions.DefaultScheme = AuthenticationScheme;
+                    authenticationOptions.DefaultAuthenticateScheme = AuthenticationScheme;
+                    authenticationOptions.DefaultChallengeScheme = AuthenticationScheme;
+                })
+                .AddPolicyScheme(AuthenticationScheme, "Bearer header → JWT, else Identity cookie", policySchemeOptions =>
+                    policySchemeOptions.ForwardDefaultSelector = context =>
+                        context.Request.Headers.Authorization.Any(v => v != null && v.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+                            ? JwtBearerDefaults.AuthenticationScheme
+                            : IdentityConstants.ApplicationScheme)
                 .AddJwtBearer(jwtBearerOptions =>
                     jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters
                     {
@@ -99,6 +117,50 @@ namespace Allors.Server
                         ValidateIssuer = false,
                         ValidateAudience = false,
                     });
+
+            services.ConfigureApplicationCookie(cookieOptions =>
+            {
+                cookieOptions.Cookie.Name = environment.IsDevelopment() ? "Allors.Auth" : "__Host-Allors.Auth";
+                cookieOptions.Cookie.HttpOnly = true;
+                cookieOptions.Cookie.SameSite = SameSiteMode.Lax;
+                // Development runs over plain http (the C#/Playwright fixtures use CookieContainer,
+                // which refuses Secure cookies over http); production is https at the edge.
+                cookieOptions.Cookie.SecurePolicy = environment.IsDevelopment() ? CookieSecurePolicy.SameAsRequest : CookieSecurePolicy.Always;
+                cookieOptions.SlidingExpiration = true;
+                cookieOptions.ExpireTimeSpan = TimeSpan.TryParse(configuration["Identity:Cookie:ExpireTimeSpan"], out var expireTimeSpan)
+                    ? expireTimeSpan
+                    : TimeSpan.FromHours(8);
+
+                // JSON API callers get a raw status code, not a login-page redirect.
+                cookieOptions.Events.OnRedirectToLogin = context =>
+                {
+                    if (context.Request.Path.StartsWithSegments("/allors"))
+                    {
+                        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                        return Task.CompletedTask;
+                    }
+
+                    context.Response.Redirect(context.RedirectUri);
+                    return Task.CompletedTask;
+                };
+                cookieOptions.Events.OnRedirectToAccessDenied = context =>
+                {
+                    if (context.Request.Path.StartsWithSegments("/allors"))
+                    {
+                        context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                        return Task.CompletedTask;
+                    }
+
+                    context.Response.Redirect(context.RedirectUri);
+                    return Task.CompletedTask;
+                };
+            });
+
+            // Revocation lever: the built-in SecurityStampValidator re-checks the persisted security
+            // stamp on this interval, so a rotated stamp (disable / "log out everywhere") invalidates
+            // live cookies within ~5 minutes.
+            services.Configure<SecurityStampValidatorOptions>(securityStampValidatorOptions =>
+                securityStampValidatorOptions.ValidationInterval = TimeSpan.FromMinutes(5));
 
             services.AddResponseCaching();
 

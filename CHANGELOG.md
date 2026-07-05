@@ -14,6 +14,14 @@ under a dated version heading.
 
 ### Security
 
+- Authentication now runs through a policy scheme: requests with an `Authorization: Bearer` header
+  authenticate via JWT (unchanged), everything else via the ASP.NET Core Identity **application
+  cookie**. The cookie is hardened — `HttpOnly`, `SameSite=Lax`, sliding 8-hour expiry, and an
+  environment-switched name/secure policy (`__Host-Allors.Auth` + always-`Secure` in production, a
+  plain name + `SameAsRequest` in Development) — and `/allors` requests receive a raw 401/403 rather
+  than a login-page redirect. A 5-minute security-stamp revalidation interval is the revocation lever
+  (stamp rotation on password change / disable follows in a later phase). This opens the window in
+  which JWT and cookie auth coexist until every client is migrated off Bearer.
 - Added an anti-regression test asserting the inheritable server layer folders (`Core`/`Base`/`Apps`)
   expose no test or bypass controllers — enforcing that destructive/test scaffolding stays in the
   non-inherited `Custom/` folder and can never reach a downstream inheritor's production build (F2).
