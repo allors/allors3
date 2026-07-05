@@ -14,6 +14,11 @@ under a dated version heading.
 
 ### Security
 
+- JWT lifetime is now 8 hours instead of 30 days. The previous `"30d"` value never parsed as a
+  `TimeSpan` and silently fell back to a 30-day default; `"08:00:00"` parses correctly. Production
+  Angular builds now point `authUrl` at the real password endpoint (`Authentication/Token`) instead
+  of the passwordless test minter (`TestAuthentication/Token`), so a production build no longer ships
+  passwordless login.
 - Servers now fail fast at startup outside Development when `JwtToken:Key` is missing, still the
   checked-in template value, or shorter than 32 characters — turning a silently-weak signing key
   into a loud, actionable configuration error. Development (and the test rigs) keep using the
