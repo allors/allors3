@@ -16,14 +16,17 @@ namespace Allors.Database.Server.Controllers
 
     public class TestAuthenticationController : Controller
     {
-        public TestAuthenticationController(UserManager<IdentityUser> userManager, ILogger<AuthenticationController> logger, IConfiguration config)
+        public TestAuthenticationController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, ILogger<AuthenticationController> logger, IConfiguration config)
         {
             this.UserManager = userManager;
+            this.SignInManager = signInManager;
             this.Logger = logger;
             this.Configuration = config;
         }
 
         public UserManager<IdentityUser> UserManager { get; }
+
+        public SignInManager<IdentityUser> SignInManager { get; }
 
         public ILogger Logger { get; }
 
@@ -50,6 +53,24 @@ namespace Allors.Database.Server.Controllers
             }
 
             return this.Ok(new { Authenticated = false });
+        }
+
+        // Passwordless cookie sign-in for browser-context tests: issues the Identity application
+        // cookie (no bearer token), mirroring how the real app authenticates.
+        [HttpPost]
+        public async Task<IActionResult> SignIn([FromBody]AuthenticationTokenRequest request)
+        {
+            if (this.ModelState.IsValid && !string.IsNullOrWhiteSpace(request.l))
+            {
+                var user = await this.UserManager.FindByNameAsync(request.l);
+                if (user != null)
+                {
+                    await this.SignInManager.SignInAsync(user, isPersistent: false);
+                    return this.Ok(new AuthenticationTokenResponse { a = true, u = user.Id });
+                }
+            }
+
+            return this.Unauthorized();
         }
     }
 }

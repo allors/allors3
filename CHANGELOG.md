@@ -14,6 +14,9 @@ under a dated version heading.
 
 ### Security
 
+- The test authentication controller gained a passwordless cookie `SignIn` action
+  (`SignInManager.SignInAsync`) beside the JWT `Token` action, so browser-context tests can
+  authenticate the way the real app will (Identity application cookie, no bearer token). Test-only.
 - Added an authenticated `GET /allors/UserInfo` endpoint returning the current user's id and name.
   It is the SPA's user-id source once the browser no longer receives a JWT token response; an
   anonymous request is challenged (401 for `/allors`), which the SPA turns into a login redirect.
