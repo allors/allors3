@@ -12,6 +12,14 @@ under a dated version heading.
 
 <!-- Add entries under one of: Added, Changed, Deprecated, Removed, Fixed, Security -->
 
+### Security
+
+- Each server now persists its DataProtection key ring to disk (config `DataProtection:KeysDirectory`,
+  default `<ContentRoot>/.allors/dataprotection-keys`) and sets a per-app application name
+  (`Allors.Core`/`Allors.Base`/`Allors.Apps`). This keeps future auth cookies and antiforgery tokens
+  valid across restarts, and makes protected payloads deliberately non-interchangeable between apps
+  (no shared key ring).
+
 ### Changed
 
 - Nuke-booted servers (remote/workspace/jest/e2e test rigs) now run with

@@ -5,11 +5,13 @@
 
 namespace Allors.Server
 {
+    using System.IO;
     using System.Linq;
     using System.Text;
     using Allors.Security;
     using Allors.Services;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
+    using Microsoft.AspNetCore.DataProtection;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Identity;
@@ -42,6 +44,16 @@ namespace Allors.Server
                         .AllowAnyHeader()
                         .AllowAnyMethod()
                         .AllowCredentials()));
+
+            var dataProtectionKeysDirectory = configuration["DataProtection:KeysDirectory"];
+            if (string.IsNullOrWhiteSpace(dataProtectionKeysDirectory))
+            {
+                dataProtectionKeysDirectory = Path.Combine(environment.ContentRootPath, ".allors", "dataprotection-keys");
+            }
+
+            services.AddDataProtection()
+                .PersistKeysToFileSystem(new DirectoryInfo(dataProtectionKeysDirectory))
+                .SetApplicationName(options.ApplicationName);
 
             services.AddDefaultIdentity<IdentityUser>()
                 .AddAllorsStores();
