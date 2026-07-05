@@ -33,6 +33,13 @@ under a dated version heading.
   URL, `/Identity` proxy entry, the 401 `UnauthorizedInterceptor`, and a `UserInfo` bootstrap gate,
   with the dead `authUrl` plumbing removed. It previously reached the API anonymously; it now
   requires an authenticated cookie like the material apps.
+- **Breaking (Angular foundation lib):** the bearer/JWT client surface is removed from
+  `@allors/base/workspace/angular/foundation` — `AuthenticationService`,
+  `AuthenticationSessionStoreService`, `AuthenticationInterceptor`, `AuthenticationConfig`, and the
+  `AuthenticationTokenRequest`/`AuthenticationTokenResponse` DTOs. Cookie authentication replaces
+  them: register `UnauthorizedInterceptor` (401 → Identity login) instead of the bearer interceptor,
+  prime the user with `UserInfoService.init(baseUrl)` in an `APP_INITIALIZER`, and sign out with
+  `LogoutService`.
 - The e2e harness signs a default Identity cookie into the browser context before each test (through
   the dev proxy, same-origin), so once an app is on cookie auth the pre-test navigation loads
   authenticated. Invisible to the still-bearer apps. (Test infrastructure.)
