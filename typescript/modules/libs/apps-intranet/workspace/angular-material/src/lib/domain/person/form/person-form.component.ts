@@ -52,7 +52,6 @@ export class PersonFormComponent extends AllorsFormComponent<Person> {
   locales: Locale[];
   genders: Enumeration[];
   salutations: Enumeration[];
-  public confirmPassword: string;
 
   currencies: Currency[];
   emailFrequencies: EmailFrequency[];

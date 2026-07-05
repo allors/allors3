@@ -25,6 +25,10 @@ under a dated version heading.
   URL, `UserInfo` bootstrap, 401 redirect, logout, no in-app login screen or route guard). The
   login component's post-authentication bootstrap pull — default internal organisation and singleton
   — moves into the `APP_INITIALIZER` so those ids are primed before the app renders.
+- The intranet UI no longer offers domain password entry: the password fields are removed from the
+  person form and the user-profile form, and the user-profile menu gains an **Account settings** link
+  to the shipped Identity `/Identity/Account/Manage` page. Password management is handled by ASP.NET
+  Core Identity; the interactive domain password path is retired from the model in a later phase.
 - The e2e harness signs a default Identity cookie into the browser context before each test (through
   the dev proxy, same-origin), so once an app is on cookie auth the pre-test navigation loads
   authenticated. Invisible to the still-bearer apps. (Test infrastructure.)

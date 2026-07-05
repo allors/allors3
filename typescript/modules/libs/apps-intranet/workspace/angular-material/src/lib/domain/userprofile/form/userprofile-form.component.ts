@@ -26,7 +26,6 @@ export class UserProfileFormComponent extends AllorsFormComponent<UserProfile> {
   public m: M;
   internalOrganizations: Organisation[];
   supportedLocales: Locale[];
-  public confirmPassword: string;
 
   user: User;
   emailFrequencies: EmailFrequency[];
