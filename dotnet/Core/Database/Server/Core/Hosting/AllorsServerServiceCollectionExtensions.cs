@@ -8,12 +8,14 @@ namespace Allors.Server
     using System.IO;
     using System.Linq;
     using System.Text;
+    using System.Threading.RateLimiting;
     using Allors.Security;
     using Allors.Services;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.DataProtection;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
@@ -44,6 +46,14 @@ namespace Allors.Server
                         .AllowAnyHeader()
                         .AllowAnyMethod()
                         .AllowCredentials()));
+
+            var authenticationRateLimitSettings = AuthenticationRateLimitSettings.From(configuration);
+            services.AddRateLimiter(rateLimiterOptions =>
+            {
+                rateLimiterOptions.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+                rateLimiterOptions.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
+                    AuthenticationRateLimitPolicy.Partition(context, authenticationRateLimitSettings));
+            });
 
             var dataProtectionKeysDirectory = configuration["DataProtection:KeysDirectory"];
             if (string.IsNullOrWhiteSpace(dataProtectionKeysDirectory))

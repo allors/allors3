@@ -14,6 +14,12 @@ under a dated version heading.
 
 ### Security
 
+- Authentication endpoints are now rate limited per client IP (the forwarded IP behind a trusted
+  proxy): fixed window, HTTP 429 on rejection, defaults 10/minute per IP with generous loopback
+  headroom for local test rigs. Configure via `Security:AuthenticationRateLimit:{Paths, PermitLimit,
+  WindowSeconds, LoopbackPermitLimit}`; the default path list covers the token endpoints and the
+  upcoming `/Identity/Account/{Login,ForgotPassword,ResetPassword}` pages. Per-account protection
+  remains Identity lockout.
 - The server pipeline now processes `X-Forwarded-For`/`X-Forwarded-Proto` first (trusting loopback
   proxies by default; `ForwardedHeaders:KnownProxies`/`:KnownNetworks` configure others), redirects
   http to https outside Development, and emits baseline security headers on every response
