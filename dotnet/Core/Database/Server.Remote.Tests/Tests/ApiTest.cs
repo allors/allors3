@@ -101,6 +101,37 @@ namespace Allors.Server.Tests
 
         protected void SignOut() => this.HttpClient.DefaultRequestHeaders.Authorization = null;
 
+        // Logs in through the real Identity Razor login page (GET to obtain the antiforgery token,
+        // then POST the form) and returns a cookie-bearing client — no bearer token involved.
+        protected async Task<HttpClient> SignInWithCookieAsync(string userName, string password)
+        {
+            var handler = new HttpClientHandler
+            {
+                UseCookies = true,
+                CookieContainer = new System.Net.CookieContainer(),
+                AllowAutoRedirect = false,
+            };
+            var client = new HttpClient(handler) { BaseAddress = new Uri("http://localhost:5000/") };
+
+            var loginUri = new Uri("Identity/Account/Login", UriKind.Relative);
+            var getResponse = await client.GetAsync(loginUri);
+            var getBody = await getResponse.Content.ReadAsStringAsync();
+            var token = System.Text.RegularExpressions.Regex.Match(
+                getBody,
+                "name=\"__RequestVerificationToken\"[^>]*value=\"([^\"]+)\"").Groups[1].Value;
+
+            var form = new System.Collections.Generic.Dictionary<string, string>
+            {
+                ["Input.UserName"] = userName,
+                ["Input.Password"] = password,
+                ["Input.RememberMe"] = "false",
+                ["__RequestVerificationToken"] = token,
+            };
+
+            await client.PostAsync(loginUri, new FormUrlEncodedContent(form));
+            return client;
+        }
+
         protected Stream GetResource(string name)
         {
             var assembly = this.GetType().GetTypeInfo().Assembly;

@@ -1,0 +1,23 @@
+@page
+@model Allors.Server.IdentityUi.Account.LoginModel
+@{
+    ViewData["Title"] = "Log in";
+}
+
+<h1>Log in</h1>
+<form method="post">
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(false)
+    <div>
+        <label for="Input_UserName">User name</label>
+        <input id="Input_UserName" name="Input.UserName" value="@(Model.Input?.UserName)" autocomplete="username" />
+    </div>
+    <div>
+        <label for="Input_Password">Password</label>
+        <input id="Input_Password" name="Input.Password" type="password" autocomplete="current-password" />
+    </div>
+    <div>
+        <label><input name="Input.RememberMe" type="checkbox" value="true" /> Remember me?</label>
+    </div>
+    <button type="submit">Log in</button>
+</form>

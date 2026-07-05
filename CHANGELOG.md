@@ -15,7 +15,13 @@ under a dated version heading.
 ### Security
 
 - The ASP.NET Core Identity UI is now served (`AddRazorPages` + `UseStaticFiles` + `MapRazorPages`),
-  so `/Identity/Account/*` (login, manage, logout, …) is live. Account-page overrides follow.
+  so `/Identity/Account/*` (login, manage, logout, …) is live.
+- The Identity login page is overridden to accept a **user name** (not an `[EmailAddress]`), since
+  Allors user names are not necessarily e-mail addresses. Dangerous or unsupported account pages are
+  disabled (404) by a configurable convention (`Identity:DisabledPages`): open registration
+  (anonymous user creation), the personal-data pages (which cascade-delete the user), and two-factor
+  management (unsupported until a later phase). Override pages live in the inheritable `Core` layer
+  folder and are globbed into every server, so inheritors receive them and can further override.
 - Authentication now runs through a policy scheme: requests with an `Authorization: Bearer` header
   authenticate via JWT (unchanged), everything else via the ASP.NET Core Identity **application
   cookie**. The cookie is hardened — `HttpOnly`, `SameSite=Lax`, sliding 8-hour expiry, and an

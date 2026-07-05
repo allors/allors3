@@ -31,4 +31,13 @@
     </Content>
   </ItemGroup>
 
+  <!-- Identity UI override pages live in the inheritable Core layer folder; re-link them into the
+       Identity area (the SDK includes in-cone .cshtml by default, hence the Remove). -->
+  <ItemGroup>
+    <Content Remove="Core\IdentityUi\**\*.cshtml" />
+    <Content Include="Core\IdentityUi\**\*.cshtml">
+      <Link>Areas\Identity\Pages\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Content>
+  </ItemGroup>
+
 </Project>

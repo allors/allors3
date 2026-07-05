@@ -32,6 +32,18 @@ namespace Allors.Server
         // JWT and everything else to the Identity application cookie.
         public const string AuthenticationScheme = "AllorsAuthentication";
 
+        // Identity area pages disabled (404) by default — see DisableIdentityPagesConvention.
+        // Overridable via the "Identity:DisabledPages" configuration array.
+        private static readonly string[] DefaultDisabledIdentityPages =
+        {
+            "/Account/Register",
+            "/Account/RegisterConfirmation",
+            "/Account/Manage/PersonalData",
+            "/Account/Manage/DeletePersonalData",
+            "/Account/Manage/DownloadPersonalData",
+            "/Account/Manage/TwoFactorAuthentication",
+        };
+
         public static IMvcBuilder AddAllorsServer(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment environment, AllorsServerOptions options)
         {
             ProductionSecretsGuard.Validate(configuration, environment.IsDevelopment());
@@ -165,7 +177,10 @@ namespace Allors.Server
             services.AddResponseCaching();
 
             var mvcBuilder = options.UseControllersWithViews ? services.AddControllersWithViews() : services.AddControllers();
-            services.AddRazorPages();
+
+            var disabledIdentityPages = configuration.GetSection("Identity:DisabledPages").Get<string[]>() ?? DefaultDisabledIdentityPages;
+            services.AddRazorPages(razorPagesOptions =>
+                razorPagesOptions.Conventions.Add(new DisableIdentityPagesConvention(disabledIdentityPages)));
 
             services.PostConfigure<ApiBehaviorOptions>(apiBehaviorOptions =>
             {

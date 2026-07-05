@@ -28,6 +28,9 @@
   <ItemGroup>
     <Compile Include="..\..\..\..\Core\Database\Server\Core*\**\*.cs" />
     <Compile Include="..\..\..\..\Base\Database\Server\Base*\**\*.cs" />
+    <Content Include="..\..\..\..\Core\Database\Server\Core*\IdentityUi\**\*.cshtml">
+      <Link>Areas\Identity\Pages\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Content>
   </ItemGroup>
 
 </Project>
