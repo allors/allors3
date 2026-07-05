@@ -14,6 +14,9 @@ under a dated version heading.
 
 ### Security
 
+- Added an authenticated `GET /allors/UserInfo` endpoint returning the current user's id and name.
+  It is the SPA's user-id source once the browser no longer receives a JWT token response; an
+  anonymous request is challenged (401 for `/allors`), which the SPA turns into a login redirect.
 - The JSON API now has antiforgery protection scoped to browser (cookie) callers. Safe `/allors`
   responses issue a readable `XSRF-TOKEN` cookie; unsafe `/allors` requests are validated (header
   `X-XSRF-TOKEN` against the antiforgery cookie) **only when the caller authenticated via the Identity
