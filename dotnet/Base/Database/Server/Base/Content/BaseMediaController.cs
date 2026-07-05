@@ -26,7 +26,6 @@ namespace Allors.Database.Server.Controllers
         protected ITransaction Transaction { get; }
 
         [Authorize]
-        [AllowAnonymous]
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         [HttpGet("/allors/print/{idString}/{*name}")]
         public virtual ActionResult Print(string idString, string name)
@@ -55,7 +54,6 @@ namespace Allors.Database.Server.Controllers
         }
 
         [Authorize]
-        [AllowAnonymous]
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         [HttpGet("/allors/media/{idString}/{*name}")]
         public virtual IActionResult RedirectOrNotFound(string idString, string name)
@@ -75,8 +73,7 @@ namespace Allors.Database.Server.Controllers
         }
 
         [Authorize]
-        [AllowAnonymous]
-        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = OneYearInSeconds)]
+        [ResponseCache(Location = ResponseCacheLocation.Client, Duration = OneYearInSeconds)]
         [HttpGet("/allors/media/{idString}/{revisionString}/{*name}")]
         public virtual IActionResult Get(string idString, string revisionString, string name)
         {

@@ -40,6 +40,13 @@ under a dated version heading.
   them: register `UnauthorizedInterceptor` (401 → Identity login) instead of the bearer interceptor,
   prime the user with `UserInfoService.init(baseUrl)` in an `APP_INITIALIZER`, and sign out with
   `LogoutService`.
+- Media, image and print content is no longer anonymously accessible: `BaseMediaController`
+  (print + media) and `BaseImageController` now require authentication. The media actions already
+  carried `[Authorize]` behind an `[AllowAnonymous]` override, which is removed; the image action
+  gains `[Authorize]`. Cacheable responses switch from `ResponseCacheLocation.Any` (`Cache-Control:
+  public`) to `Client` (`private`), so authenticated content is cached only by the browser, never by
+  shared proxies/CDNs. Media URLs are relative and same-origin, so the `SameSite=Lax` cookie rides
+  `<img>` and print (`window.open`) requests (F1).
 - The e2e harness signs a default Identity cookie into the browser context before each test (through
   the dev proxy, same-origin), so once an app is on cookie auth the pre-test navigation loads
   authenticated. Invisible to the still-bearer apps. (Test infrastructure.)
