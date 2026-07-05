@@ -64,7 +64,9 @@ namespace Allors.Server
 
             app.UseJSNLog(new LoggingAdapter(loggerFactory), jsnlogConfiguration);
 
-            // app.UseHttpsRedirection();
+            // Serves the Identity UI's static web assets (/Identity/lib/*) and any app static files.
+            app.UseStaticFiles();
+
             app.UseRouting();
             app.UseRateLimiter();
             app.UseAuthentication();
@@ -77,6 +79,7 @@ namespace Allors.Server
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapRazorPages();
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "allors/{controller=Home}/{action=Index}/{id?}");

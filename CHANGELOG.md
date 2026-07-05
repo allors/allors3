@@ -14,6 +14,8 @@ under a dated version heading.
 
 ### Security
 
+- The ASP.NET Core Identity UI is now served (`AddRazorPages` + `UseStaticFiles` + `MapRazorPages`),
+  so `/Identity/Account/*` (login, manage, logout, …) is live. Account-page overrides follow.
 - Authentication now runs through a policy scheme: requests with an `Authorization: Bearer` header
   authenticate via JWT (unchanged), everything else via the ASP.NET Core Identity **application
   cookie**. The cookie is hardened — `HttpOnly`, `SameSite=Lax`, sliding 8-hour expiry, and an

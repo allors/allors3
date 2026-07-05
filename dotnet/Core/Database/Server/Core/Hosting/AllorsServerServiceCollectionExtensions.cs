@@ -165,6 +165,7 @@ namespace Allors.Server
             services.AddResponseCaching();
 
             var mvcBuilder = options.UseControllersWithViews ? services.AddControllersWithViews() : services.AddControllers();
+            services.AddRazorPages();
 
             services.PostConfigure<ApiBehaviorOptions>(apiBehaviorOptions =>
             {
