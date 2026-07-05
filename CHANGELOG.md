@@ -14,6 +14,10 @@ under a dated version heading.
 
 ### Security
 
+- The Apps `Person` and `OrganisationContactRelationship` pull controllers now require
+  authentication (`[Authorize]`). They previously answered anonymous POSTs with object data;
+  unauthenticated callers are now challenged (the authenticated intranet client is unaffected, as it
+  already sends its bearer token on every request).
 - `AllorsUserStore.HasPasswordAsync` returned the inverse of the truth (true when the user had *no*
   password). It now reports whether a password hash is set, so Identity's account-management pages
   route users to change-password rather than set-password.
