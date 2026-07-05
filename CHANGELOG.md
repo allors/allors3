@@ -21,6 +21,10 @@ under a dated version heading.
   and the in-app login screen + token guard are removed (auth is enforced by the server). The
   `WorkspaceConfig` host map now also covers the dev-server origin (`localhost:4200`) so same-origin
   proxied requests resolve their workspace.
+- The **apps-intranet** application-app is likewise cut over to the Identity cookie (relative base
+  URL, `UserInfo` bootstrap, 401 redirect, logout, no in-app login screen or route guard). The
+  login component's post-authentication bootstrap pull — default internal organisation and singleton
+  — moves into the `APP_INITIALIZER` so those ids are primed before the app renders.
 - The e2e harness signs a default Identity cookie into the browser context before each test (through
   the dev proxy, same-origin), so once an app is on cookie auth the pre-test navigation loads
   authenticated. Invisible to the still-bearer apps. (Test infrastructure.)

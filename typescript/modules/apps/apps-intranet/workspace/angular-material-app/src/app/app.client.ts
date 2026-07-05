@@ -16,11 +16,7 @@ import { IDatabaseJsonClient } from '@allors/system/workspace/adapters-json';
 import { HttpClient } from '@angular/common/http';
 
 export class AppClient implements IDatabaseJsonClient {
-  constructor(
-    public httpClient: HttpClient,
-    public baseUrl: string,
-    public authUrl: string
-  ) {}
+  constructor(public httpClient: HttpClient, public baseUrl: string) {}
 
   async pull(pullRequest: PullRequest): Promise<PullResponse> {
     return await this.post('pull', pullRequest);
