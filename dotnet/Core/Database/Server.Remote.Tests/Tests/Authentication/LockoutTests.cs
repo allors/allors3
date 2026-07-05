@@ -28,8 +28,8 @@ namespace Allors.Server.Tests
         {
             var tokenUri = new Uri("Authentication/Token", UriKind.Relative);
 
-            // Default Identity lockout is 5 failed attempts.
-            for (var i = 0; i < 5; i++)
+            // The configured lockout threshold (AllorsServerServiceCollectionExtensions) is 10 failed attempts.
+            for (var i = 0; i < 10; i++)
             {
                 await this.PostAsJsonAsync(tokenUri, new AuthenticationTokenRequest { l = "Jane", p = "wrong" });
             }

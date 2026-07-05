@@ -5,6 +5,7 @@
 
 namespace Allors.Server
 {
+    using System;
     using System.IO;
     using System.Linq;
     using System.Text;
@@ -65,8 +66,26 @@ namespace Allors.Server
                 .PersistKeysToFileSystem(new DirectoryInfo(dataProtectionKeysDirectory))
                 .SetApplicationName(options.ApplicationName);
 
-            services.AddDefaultIdentity<IdentityUser>()
+            services.AddDefaultIdentity<IdentityUser>(identityOptions =>
+                {
+                    // Bounded auto-unlock over hair-trigger hard locks: a permanent/low-threshold
+                    // lockout is a denial-of-service lever against known usernames.
+                    identityOptions.Lockout.AllowedForNewUsers = true;
+                    identityOptions.Lockout.MaxFailedAccessAttempts = 10;
+                    identityOptions.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
+
+                    // Length over composition (NIST 800-63B / OWASP ASVS): composition rules push
+                    // predictable substitutions without adding entropy.
+                    identityOptions.Password.RequiredLength = 12;
+                    identityOptions.Password.RequireDigit = false;
+                    identityOptions.Password.RequireUppercase = false;
+                    identityOptions.Password.RequireLowercase = false;
+                    identityOptions.Password.RequireNonAlphanumeric = false;
+                    identityOptions.Password.RequiredUniqueChars = 4;
+                })
                 .AddAllorsStores();
+
+            services.Configure<IdentityOptions>(configuration.GetSection("Identity"));
 
             services.AddAuthentication(authenticationOptions => authenticationOptions.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(jwtBearerOptions =>

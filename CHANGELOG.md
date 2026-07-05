@@ -14,6 +14,14 @@ under a dated version heading.
 
 ### Security
 
+- Identity lockout and password policy are now configured explicitly, following NIST 800-63B /
+  OWASP ASVS guidance: lockout after 10 failed attempts with a 15-minute auto-unlock (bounded
+  lockout beats a hair-trigger hard lock, which is a denial-of-service lever), and passwords
+  require length (12+, at least 4 unique characters) instead of composition rules (digit/upper/
+  special requirements are off — they push predictable substitutions without adding entropy).
+  Deployments can override any value via the `Identity` configuration section. Lockout remains
+  inert until `UserLockoutEnabled` is backfilled (upcoming domain phase); breached-password
+  checking is a known deferred gap.
 - Authentication endpoints are now rate limited per client IP (the forwarded IP behind a trusted
   proxy): fixed window, HTTP 429 on rejection, defaults 10/minute per IP with generous loopback
   headroom for local test rigs. Configure via `Security:AuthenticationRateLimit:{Paths, PermitLimit,
