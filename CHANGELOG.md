@@ -43,6 +43,10 @@ under a dated version heading.
 
 ### Fixed
 
+- The AppsIntranet e2e `RequestForQuoteTest.CreateRequestForQuoteMaximal` no longer fails between
+  local midnight and UTC midnight: its expected request date now derives from the UTC transaction
+  clock (`Transaction.Now().Date`) instead of the local `DateTime.Today`, matching the datepicker's
+  UTC-midnight storage convention (same pattern as the Base `DatepickerTest`).
 - Apps `Setup.v.cs` dispatched `BaseOnPreSetup` from `OnPrePrepare` instead of `BaseOnPrePrepare`
   (latent; both hooks are empty today).
 - SQL Server `AllowSnapshotIsolation` now brackets the database name in its `ALTER DATABASE`
