@@ -12,12 +12,13 @@ namespace Allors.E2E
 
         public async Task Login(string username, string password = null)
         {
+            // Cookie auth: sign in through the test endpoint (Identity application cookie, shared with
+            // the browser context via the dev proxy), then load the app authenticated.
+            await this.Page.Context.APIRequest.PostAsync(
+                "/allors/TestAuthentication/SignIn",
+                new APIRequestContextOptions { DataObject = new { l = username } });
+
             await this.Page.GotoAsync("/");
-
-            await this.Page.FillAsync("input[name=\"username\"]", username);
-            await this.Page.FillAsync("input[name=\"password\"]", password ?? string.Empty);
-            await this.Page.ClickAsync("button:has-text(\"Sign In\")");
-
             await this.Page.WaitForAngular();
         }
     }

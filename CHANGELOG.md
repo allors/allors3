@@ -14,6 +14,13 @@ under a dated version heading.
 
 ### Security
 
+- The base **application-app** now authenticates with the Identity cookie instead of a bearer token:
+  its API base URL is relative (`/allors/`, same-origin through the proxy, which engages Angular's
+  built-in `X-XSRF-TOKEN`), an `APP_INITIALIZER` reads `GET /allors/UserInfo` to learn the user, a
+  401 interceptor redirects to `/Identity/Account/Login`, logout posts to `/Identity/Account/Logout`,
+  and the in-app login screen + token guard are removed (auth is enforced by the server). The
+  `WorkspaceConfig` host map now also covers the dev-server origin (`localhost:4200`) so same-origin
+  proxied requests resolve their workspace.
 - The e2e harness signs a default Identity cookie into the browser context before each test (through
   the dev proxy, same-origin), so once an app is on cookie auth the pre-test navigation loads
   authenticated. Invisible to the still-bearer apps. (Test infrastructure.)

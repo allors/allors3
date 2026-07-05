@@ -17,6 +17,11 @@ namespace Allors.Server
         public IReadOnlyDictionary<HostString, string> WorkspaceNameByHost { get; set; } = new Dictionary<HostString, string>
         {
             { new HostString("localhost", 5000), "Default" },
+
+            // The dev-server/e2e origin: once the SPA is same-origin, requests arrive through the
+            // proxy with the browser's Host (localhost:4200) preserved. (Phase 7 makes this
+            // configuration-driven with an actionable error for unmapped hosts.)
+            { new HostString("localhost", 4200), "Default" },
         };
 
         public bool UseControllersWithViews { get; set; } = true;

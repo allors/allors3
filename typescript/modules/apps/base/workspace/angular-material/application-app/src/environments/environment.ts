@@ -7,6 +7,7 @@ import { HttpClient } from '@angular/common/http';
 import {
   CreateService,
   EditDialogService,
+  UserInfoService,
   WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
 import { RouteInfoService } from '@allors/base/workspace/angular/foundation';
@@ -25,15 +26,14 @@ export function appInitializerFactory(
   workspaceService: WorkspaceService,
   httpClient: HttpClient,
   createService: AllorsMaterialCreateService,
-  editService: AllorsMaterialEditDialogService
+  editService: AllorsMaterialEditDialogService,
+  userInfoService: UserInfoService
 ) {
   return async () => {
-    config(
-      workspaceService,
-      httpClient,
-      environment.baseUrl,
-      environment.authUrl
-    );
+    config(workspaceService, httpClient, environment.baseUrl);
+
+    // Cookie auth: learn the logged-in user before bootstrap; a 401 here redirects to login.
+    await userInfoService.init(environment.baseUrl);
 
     createService.createControlByObjectTypeTag = dialogs.create;
     editService.editControlByObjectTypeTag = dialogs.edit;
@@ -56,8 +56,7 @@ export function appBootstrapListenerFactory(
 
 export const environment = {
   production: false,
-  baseUrl: 'http://localhost:5000/allors/',
-  authUrl: 'TestAuthentication/Token',
+  baseUrl: '/allors/',
   providers: [
     MenuInfoService,
     NavigationInfoService,
@@ -65,7 +64,13 @@ export const environment = {
     {
       provide: APP_INITIALIZER,
       useFactory: appInitializerFactory,
-      deps: [WorkspaceService, HttpClient, CreateService, EditDialogService],
+      deps: [
+        WorkspaceService,
+        HttpClient,
+        CreateService,
+        EditDialogService,
+        UserInfoService,
+      ],
       multi: true,
     },
     {

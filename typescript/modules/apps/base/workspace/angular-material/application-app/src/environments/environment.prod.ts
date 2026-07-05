@@ -1,6 +1,9 @@
 import { APP_INITIALIZER, ErrorHandler } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
+import {
+  UserInfoService,
+  WorkspaceService,
+} from '@allors/base/workspace/angular/foundation';
 import { config } from '../app/app.config';
 import { ErrorHandlerService } from '../app/services/error-handler.service';
 import {
@@ -17,15 +20,14 @@ export function appInitFactory(
   workspaceService: WorkspaceService,
   httpClient: HttpClient,
   createService: AllorsMaterialCreateService,
-  editService: AllorsMaterialEditDialogService
+  editService: AllorsMaterialEditDialogService,
+  userInfoService: UserInfoService
 ) {
   return async () => {
-    config(
-      workspaceService,
-      httpClient,
-      environment.baseUrl,
-      environment.authUrl
-    );
+    config(workspaceService, httpClient, environment.baseUrl);
+
+    // Cookie auth: learn the logged-in user before bootstrap; a 401 here redirects to login.
+    await userInfoService.init(environment.baseUrl);
 
     createService.createControlByObjectTypeTag = dialogs.create;
     editService.editControlByObjectTypeTag = dialogs.edit;
@@ -34,8 +36,7 @@ export function appInitFactory(
 
 export const environment = {
   production: true,
-  baseUrl: 'http://localhost:5000/allors/',
-  authUrl: 'Authentication/Token',
+  baseUrl: '/allors/',
   providers: [
     {
       // processes all errors
@@ -50,6 +51,7 @@ export const environment = {
         HttpClient,
         AllorsMaterialCreateService,
         AllorsMaterialEditDialogService,
+        UserInfoService,
       ],
       multi: true,
     },
