@@ -135,7 +135,9 @@ namespace Allors.Server
             // stamp on this interval, so a rotated stamp (disable / "log out everywhere") invalidates
             // live cookies within ~5 minutes.
             services.Configure<SecurityStampValidatorOptions>(securityStampValidatorOptions =>
-                securityStampValidatorOptions.ValidationInterval = TimeSpan.FromMinutes(5));
+                // Development (and the test rigs) revalidate the stamp every request, so disabling a
+                // user or rotating the stamp takes effect immediately; production uses 5 minutes.
+                securityStampValidatorOptions.ValidationInterval = environment.IsDevelopment() ? TimeSpan.Zero : TimeSpan.FromMinutes(5));
 
             // Default-deny: every endpoint requires an authenticated user unless it opts out with
             // [AllowAnonymous] (the login page, the JWT token endpoint, the test-harness controllers).

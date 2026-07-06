@@ -24,5 +24,34 @@ namespace Allors.Database.Domain.Tests
             Assert.True(user.ExistIsDisabled);
             Assert.False(user.IsDisabled);
         }
+
+        [Fact]
+        public void DisablingAUserLocksItOutAndRotatesTheStamp()
+        {
+            var user = new PersonBuilder(this.Transaction).WithUserName("to-disable").Build();
+            this.Transaction.Derive();
+            var stampBefore = user.UserSecurityStamp;
+
+            user.IsDisabled = true;
+            this.Transaction.Derive();
+
+            Assert.True(user.UserLockoutEnabled);
+            Assert.Equal(System.DateTime.MaxValue, user.UserLockoutEnd);
+            Assert.NotEqual(stampBefore, user.UserSecurityStamp);
+        }
+
+        [Fact]
+        public void ReEnablingAUserClearsTheLockout()
+        {
+            var user = new PersonBuilder(this.Transaction).WithUserName("to-reenable").Build();
+            user.IsDisabled = true;
+            this.Transaction.Derive();
+
+            user.IsDisabled = false;
+            this.Transaction.Derive();
+
+            Assert.False(user.ExistUserLockoutEnd);
+            Assert.Equal(0, user.UserAccessFailedCount);
+        }
     }
 }

@@ -62,6 +62,12 @@ under a dated version heading.
 - Added a required `IsDisabled` role to `User`, defaulting to `false` for new users (seeded in the
   post-build), giving the model a first-class account-disabled flag (F10). The rule that acts on it —
   lockout + security-stamp rotation — follows in the next change.
+- Disabling a user now takes effect: a rule on `User.IsDisabled` locks the account
+  (`UserLockoutEnabled` + `UserLockoutEnd = MaxValue`) and rotates the security stamp, so the
+  framework's lockout gate rejects sign-in and the stamp validator invalidates any live cookie within
+  the revalidation interval. Re-enabling clears the lockout, resets the failure count, and rotates the
+  stamp again. The stamp revalidation interval is now immediate (0) in Development and 5 minutes in
+  production, so a disable is observed at once by the test rigs (F10).
 - The base **application-app** now authenticates with the Identity cookie instead of a bearer token:
   its API base URL is relative (`/allors/`, same-origin through the proxy, which engages Angular's
   built-in `X-XSRF-TOKEN`), an `APP_INITIALIZER` reads `GET /allors/UserInfo` to learn the user, a

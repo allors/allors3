@@ -17,6 +17,7 @@ namespace Allors.Database.Domain
                 new UserNormalizedUserNameRule(m),
                 new UserNormalizedUserEmailRule(m),
                 new UserInUserPasswordRule(m),
+                new UserIsDisabledRule(m),
                 new GrantEffectiveUsersRule(m),
                 new GrantEffectivePermissionsRule(m),
                 new SecurityTokenSecurityStampRule(m),
