@@ -68,6 +68,10 @@ under a dated version heading.
   the revalidation interval. Re-enabling clears the lockout, resets the failure count, and rotates the
   stamp again. The stamp revalidation interval is now immediate (0) in Development and 5 minutes in
   production, so a disable is observed at once by the test rigs (F10).
+- `UserExtensions.SetPassword` now rotates the security stamp, so a programmatic (domain-code)
+  password change invalidates any live session on the next revalidation. Identity's own
+  password-change path (`AllorsUserStore.UpdateAsync`) already rotates the stamp; this covers the
+  domain path without a derive rule that would clobber it (F3).
 - The base **application-app** now authenticates with the Identity cookie instead of a bearer token:
   its API base URL is relative (`/allors/`, same-origin through the proxy, which engages Angular's
   built-in `X-XSRF-TOKEN`), an `APP_INITIALIZER` reads `GET /allors/UserInfo` to learn the user, a

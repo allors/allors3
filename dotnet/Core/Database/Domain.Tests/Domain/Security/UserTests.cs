@@ -53,5 +53,17 @@ namespace Allors.Database.Domain.Tests
             Assert.False(user.ExistUserLockoutEnd);
             Assert.Equal(0, user.UserAccessFailedCount);
         }
+
+        [Fact]
+        public void SetPasswordRotatesTheStamp()
+        {
+            var user = new PersonBuilder(this.Transaction).WithUserName("password-rotate").Build();
+            this.Transaction.Derive();
+            var stampBefore = user.UserSecurityStamp;
+
+            user.SetPassword("p@ssw0rd");
+
+            Assert.NotEqual(stampBefore, user.UserSecurityStamp);
+        }
     }
 }
