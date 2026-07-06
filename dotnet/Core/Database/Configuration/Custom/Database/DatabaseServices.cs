@@ -7,6 +7,7 @@
 namespace Allors.Database.Configuration
 {
     using System;
+    using Microsoft.Extensions.Configuration;
     using Database;
     using Data;
     using Database.Derivations;
@@ -50,7 +51,13 @@ namespace Allors.Database.Configuration
 
         private IWorkspaceMask workspaceMask;
 
-        protected DatabaseServices(Engine engine) => this.Engine = engine;
+        protected DatabaseServices(Engine engine, IConfiguration configuration = null)
+        {
+            this.Engine = engine;
+            this.Configuration = configuration;
+        }
+
+        protected IConfiguration Configuration { get; }
 
         internal IDatabase Database { get; private set; }
 

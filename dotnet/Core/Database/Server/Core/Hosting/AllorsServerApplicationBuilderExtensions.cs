@@ -32,8 +32,8 @@ namespace Allors.Server
             var metaPopulation = new MetaBuilder().Build();
             var engine = new Engine(Rules.Create(metaPopulation));
             var objectFactory = new ObjectFactory(metaPopulation, typeof(User));
-            var databaseScope = new DefaultDatabaseServices(engine);
             var configuration = app.ApplicationServices.GetRequiredService<IConfiguration>();
+            var databaseScope = new DefaultDatabaseServices(engine, configuration);
             var databaseBuilder = new DatabaseBuilder(databaseScope, configuration, objectFactory, null, 60);
             var databaseService = app.ApplicationServices.GetRequiredService<IDatabaseService>();
             databaseService.Build = () => databaseBuilder.Build();

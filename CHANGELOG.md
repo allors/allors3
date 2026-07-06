@@ -14,6 +14,14 @@ under a dated version heading.
 
 ### Security
 
+- Mailer configuration plumbing for the account-recovery work (F15 groundwork): the Base and Apps
+  `DatabaseServices` now build their `IMailer` through a `virtual CreateMailer()` seam that reads
+  `Mail:Smtp`, `Mail:DefaultSender` (falling back to the legacy top-level `DefaultSender` key) and
+  `Mail:DefaultSenderName` from configuration. The hosting seam threads its `IConfiguration` into
+  `DefaultDatabaseServices` via an optional constructor argument, so existing call sites and the
+  test scopes are unaffected — with no configuration they get an unconfigured mailer, exactly as
+  before. No mail is sent yet; this is the prerequisite for the Identity e-mail sender and the
+  queue drainer that follow.
 - The JSON API is now **default-deny**: the server's authorization `FallbackPolicy` requires an
   authenticated user, so every endpoint is closed unless it explicitly opts out with
   `[AllowAnonymous]`. The six JSON API controllers (pull/push/sync/invoke/access/permission) drop
