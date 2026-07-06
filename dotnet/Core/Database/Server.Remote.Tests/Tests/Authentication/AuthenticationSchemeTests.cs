@@ -27,5 +27,18 @@ namespace Allors.Server.Tests
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.False(response.Headers.Contains("Location"), "An /allors request must get a raw 401, not a login-page redirect.");
         }
+
+        [Fact]
+        public async Task JwtTokenEndpointIsGone()
+        {
+            // Authenticate first, so the default-deny fallback is satisfied and the request reaches
+            // routing: the deleted route then 404s (an anonymous probe would be challenged with 401
+            // by the fallback before routing, which would not prove the endpoint is gone).
+            await this.SignIn(this.Administrator);
+
+            var response = await this.HttpClient.PostAsync(new Uri("Authentication/Token", UriKind.Relative), null);
+
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
     }
 }

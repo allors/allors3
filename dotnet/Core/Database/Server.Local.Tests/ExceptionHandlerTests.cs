@@ -7,7 +7,6 @@ namespace Tests
 {
     using System;
     using Allors.Server;
-    using Microsoft.IdentityModel.Tokens;
     using Xunit;
 
     public class ExceptionHandlerTests
@@ -20,16 +19,6 @@ namespace Tests
             var message = ExceptionHandler.ErrorMessage(error, isDevelopment: false);
 
             Assert.DoesNotContain("secret-internal-detail", message);
-        }
-
-        [Fact]
-        public void ProductionTokenExpiredMessageDoesNotLeakExceptionDetail()
-        {
-            var error = new SecurityTokenExpiredException("token-secret-detail");
-
-            var message = ExceptionHandler.ErrorMessage(error, isDevelopment: false);
-
-            Assert.DoesNotContain("token-secret-detail", message);
         }
 
         [Fact]

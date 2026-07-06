@@ -40,6 +40,15 @@ under a dated version heading.
   the bearer `TestAuthentication/Token` flow, was built by no CI target and referenced by nothing;
   it is removed ahead of the JWT retirement rather than migrated to cookie auth. The other Blazor
   sample projects are unaffected.
+- **Breaking: the JWT authentication stack is removed** — the dual-scheme window closes and the
+  ASP.NET Core Identity **cookie is now the only authentication scheme**. Deleted: the JWT bearer
+  handler + policy scheme from the hosting seam, `AuthenticationController` (the `Authentication/Token`
+  endpoint), `IdentityUserExtensions.CreateToken`, the `Token` action on the test authentication
+  controllers, `ProductionSecretsGuard` (it guarded the JWT signing key), the `JwtToken` config
+  sections, and the `Microsoft.AspNetCore.Authentication.JwtBearer` package. Closes F3 (no unrevocable
+  long-lived token remains — only the revocable cookie) and F6 (the weak JWT defaults are gone), and
+  removes the token endpoint's enumeration/timing surface (F13). The test harness now authenticates
+  via the cookie (browser) or the `X-Allors-TestUser` header (jest / remote suites).
 - The base **application-app** now authenticates with the Identity cookie instead of a bearer token:
   its API base URL is relative (`/allors/`, same-origin through the proxy, which engages Angular's
   built-in `X-XSRF-TOKEN`), an `APP_INITIALIZER` reads `GET /allors/UserInfo` to learn the user, a

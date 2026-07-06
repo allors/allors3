@@ -8,12 +8,10 @@ namespace Allors.Server
     using System;
     using System.IO;
     using System.Linq;
-    using System.Text;
     using System.Threading.RateLimiting;
     using System.Threading.Tasks;
     using Allors.Security;
     using Allors.Services;
-    using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.DataProtection;
     using Microsoft.AspNetCore.Hosting;
@@ -25,14 +23,9 @@ namespace Allors.Server
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
-    using Microsoft.IdentityModel.Tokens;
 
     public static class AllorsServerServiceCollectionExtensions
     {
-        // The default authentication scheme: a policy scheme that forwards Bearer-header requests to
-        // JWT and everything else to the Identity application cookie.
-        public const string AuthenticationScheme = "AllorsAuthentication";
-
         // Identity area pages disabled (404) by default — see DisableIdentityPagesConvention.
         // Overridable via the "Identity:DisabledPages" configuration array.
         private static readonly string[] DefaultDisabledIdentityPages =
@@ -47,8 +40,6 @@ namespace Allors.Server
 
         public static IMvcBuilder AddAllorsServer(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment environment, AllorsServerOptions options)
         {
-            ProductionSecretsGuard.Validate(configuration, environment.IsDevelopment());
-
             services.AddSingleton(configuration);
 
             // Allors
@@ -108,29 +99,8 @@ namespace Allors.Server
 
             services.Configure<IdentityOptions>(configuration.GetSection("Identity"));
 
-            // Dual-scheme window: a request carrying an "Authorization: Bearer" header authenticates
-            // via JWT (existing machine clients, bit-identical); everything else uses the revocable
-            // Identity application cookie. JWT is retired once every client is on the cookie.
-            services.AddAuthentication(authenticationOptions =>
-                {
-                    authenticationOptions.DefaultScheme = AuthenticationScheme;
-                    authenticationOptions.DefaultAuthenticateScheme = AuthenticationScheme;
-                    authenticationOptions.DefaultChallengeScheme = AuthenticationScheme;
-                })
-                .AddPolicyScheme(AuthenticationScheme, "Bearer header → JWT, else Identity cookie", policySchemeOptions =>
-                    policySchemeOptions.ForwardDefaultSelector = context =>
-                        context.Request.Headers.Authorization.Any(v => v != null && v.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
-                            ? JwtBearerDefaults.AuthenticationScheme
-                            : IdentityConstants.ApplicationScheme)
-                .AddJwtBearer(jwtBearerOptions =>
-                    jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(configuration.GetSection("JwtToken:Key").Value)),
-                        ValidateIssuer = false,
-                        ValidateAudience = false,
-                    });
-
+            // Authentication is the ASP.NET Core Identity application cookie, configured as the default
+            // scheme by AddDefaultIdentity above. Its hardening and revocation lever follow.
             services.ConfigureApplicationCookie(cookieOptions =>
             {
                 cookieOptions.Cookie.Name = environment.IsDevelopment() ? "Allors.Auth" : "__Host-Allors.Auth";

@@ -8,10 +8,7 @@ namespace Allors.Server.Tests
     using System;
     using System.Net;
     using System.Net.Http;
-    using System.Text;
-    using System.Text.Json;
     using System.Threading.Tasks;
-    using Allors.Protocol.Json.Auth;
     using Xunit;
 
     [Collection("Api")]
@@ -22,7 +19,7 @@ namespace Allors.Server.Tests
         {
             for (var i = 0; i < 15; i++)
             {
-                var response = await this.PostTokenRequestAsync();
+                var response = await this.RequestRateLimitedAuthPathAsync();
                 Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             }
         }
@@ -36,21 +33,19 @@ namespace Allors.Server.Tests
 
             for (var i = 0; i < 10; i++)
             {
-                var response = await this.PostTokenRequestAsync(forwardedIp);
+                var response = await this.RequestRateLimitedAuthPathAsync(forwardedIp);
                 Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             }
 
-            var limited = await this.PostTokenRequestAsync(forwardedIp);
+            var limited = await this.RequestRateLimitedAuthPathAsync(forwardedIp);
             Assert.Equal(HttpStatusCode.TooManyRequests, limited.StatusCode);
         }
 
-        private async Task<HttpResponseMessage> PostTokenRequestAsync(string forwardedIp = null)
+        private async Task<HttpResponseMessage> RequestRateLimitedAuthPathAsync(string forwardedIp = null)
         {
-            var args = new AuthenticationTokenRequest { l = "jane@example.com" };
-            using var request = new HttpRequestMessage(HttpMethod.Post, new Uri("TestAuthentication/Token", UriKind.Relative))
-            {
-                Content = new StringContent(JsonSerializer.Serialize(args), Encoding.UTF8, "application/json"),
-            };
+            // The Identity login page is on the rate-limiter's auth-path list; a GET returns 200 unless
+            // the partition is exhausted (429). It is site-root (not under /allors), hence the absolute URL.
+            using var request = new HttpRequestMessage(HttpMethod.Get, "http://localhost:5000/Identity/Account/Login");
 
             if (forwardedIp != null)
             {
