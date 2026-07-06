@@ -14,6 +14,13 @@ under a dated version heading.
 
 ### Security
 
+- Mailer configuration for account recovery is completed and CI-verified. `MailKitMailer` reads
+  `Mail:Smtp` as `host` or `host:port` (defaulting to port 25), so a dev SMTP sink on a
+  non-privileged port (e.g. 1025) works; an unset `Mail:Smtp` now fails with an actionable message
+  instead of a cryptic MailKit error. The dev appsettings (Base + Apps, both providers) gain a
+  `Mail` section (`DefaultSender`, `DefaultSenderName`; apps' legacy top-level `DefaultSender` moved
+  into it with the fallback kept); `Mail:Smtp` is left for the deployment to set. The send path is
+  covered by an in-process SMTP test, so recovery mail is verified without an external mail server.
 - **Breaking (Apps domain): the unused admin `ResetPassword` surface is removed.** With self-service
   recovery in place (Identity ForgotPassword → e-mailed reset link), the admin-triggered
   `Person.ResetPassword` — a server-side no-op wired to an orphaned intranet method with no button —
