@@ -35,14 +35,14 @@ npx nx g @nrwl/angular:library base/workspace/angular/application
 npx nx g @nrwl/angular:library base/workspace/angular-material/foundation
 npx nx g @nrwl/angular:library base/workspace/angular-material/application
 npx nx g @nrwl/workspace:library base/workspace/derivations
-npx nx g @nrwl/workspace:library base/workspace/derivations-custom
+npx nx g @nrwl/workspace:library base/workspace/derivations-test
 npx nx g @nrwl/workspace:library base/workspace/domain
 npx nx g @nrwl/workspace:library base/workspace/meta
 npx nx g @nrwl/workspace:library base/workspace/meta-json
 
 // Core
 npx nx g @nrwl/workspace:library core/workspace/derivations
-npx nx g @nrwl/workspace:library core/workspace/derivations-custom
+npx nx g @nrwl/workspace:library core/workspace/derivations-test
 npx nx g @nrwl/workspace:library core/workspace/domain
 npx nx g @nrwl/workspace:library core/workspace/meta
 npx nx g @nrwl/workspace:library core/workspace/meta-json

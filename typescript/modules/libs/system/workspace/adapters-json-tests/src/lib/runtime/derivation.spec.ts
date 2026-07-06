@@ -3,7 +3,7 @@ import { Pull } from '@allors/system/workspace/domain';
 import {
   OrganisationDisplayNameRule,
   PersonDisplayNameRule,
-} from '@allors/core/workspace/derivations-custom';
+} from '@allors/core/workspace/derivations-test';
 
 import { Fixture } from '../fixture';
 import '../matchers';

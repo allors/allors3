@@ -1,21 +1,21 @@
 {
-  "name": "core-workspace-derivations-custom",
+  "name": "core-workspace-derivations-test",
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/core/workspace/derivations-custom/src",
+  "sourceRoot": "libs/core/workspace/derivations-test/src",
   "projectType": "library",
   "targets": {
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/core/workspace/derivations-custom/**/*.ts"]
+        "lintFilePatterns": ["libs/core/workspace/derivations-test/**/*.ts"]
       }
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/core/workspace/derivations-custom"],
+      "outputs": ["coverage/libs/core/workspace/derivations-test"],
       "options": {
-        "jestConfig": "libs/core/workspace/derivations-custom/jest.config.ts",
+        "jestConfig": "libs/core/workspace/derivations-test/jest.config.ts",
         "passWithNoTests": true
       }
     }
