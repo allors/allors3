@@ -68,6 +68,10 @@ namespace Allors.Database.Domain
             {
                 @this.IsDisabled = false;
             }
+
+            // Lockout is enabled by default for new users so the configured failed-attempt threshold
+            // actually applies (a required bool otherwise defaults to false, leaving lockout inert).
+            @this.UserLockoutEnabled = true;
         }
 
         public static void CoreDelete(this User @this, DeletableDelete method)

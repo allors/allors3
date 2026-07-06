@@ -80,6 +80,12 @@ under a dated version heading.
   over the JSON API after the UI fields were removed (P5.7). Password management is now the Identity
   `/Identity/Account/Manage` flow; strength is enforced by the configured Identity policy; and
   programmatic `SetPassword` (which rotates the stamp) remains.
+- Account lockout is now real: new users default to `UserLockoutEnabled = true` in the post-build, so
+  the configured failed-attempt threshold actually locks the account (a required bool otherwise
+  defaults to false, leaving lockout inert) (F5). `Upgrade.Execute()` in all three layers backfills
+  existing populations via `Users.BackfillSecurityRoles()` — a security stamp for pre-stamp users
+  (required for cookie sign-in), the required `IsDisabled=false`, and lockout enabled. **Run
+  `Commands.dll Upgrade` against an existing population before serving it.**
 - The base **application-app** now authenticates with the Identity cookie instead of a bearer token:
   its API base URL is relative (`/allors/`, same-origin through the proxy, which engages Angular's
   built-in `X-XSRF-TOKEN`), an `APP_INITIALIZER` reads `GET /allors/UserInfo` to learn the user, a

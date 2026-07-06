@@ -13,6 +13,27 @@ namespace Allors.Database.Domain
     {
         internal static string Normalize(string value) => value?.Normalize().ToUpperInvariant();
 
+        // Migrates existing users to the current security model: gives pre-stamp users a security
+        // stamp (cookie sign-in requires one), backfills the required IsDisabled flag, and enables
+        // lockout so the configured failed-attempt threshold applies. Idempotent; run from Upgrade.
+        public void BackfillSecurityRoles()
+        {
+            foreach (User user in this.Extent())
+            {
+                if (!user.ExistUserSecurityStamp)
+                {
+                    user.UserSecurityStamp = System.Guid.NewGuid().ToString();
+                }
+
+                if (!user.ExistIsDisabled)
+                {
+                    user.IsDisabled = false;
+                }
+
+                user.UserLockoutEnabled = true;
+            }
+        }
+
         public void SavePasswords(XmlWriter writer)
         {
             var usersWithPassword = this.Extent();
