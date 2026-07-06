@@ -72,6 +72,14 @@ under a dated version heading.
   password change invalidates any live session on the next revalidation. Identity's own
   password-change path (`AllorsUserStore.UpdateAsync`) already rotates the stamp; this covers the
   domain path without a derive rule that would clobber it (F3).
+- **Breaking (domain): the interactive domain password path is retired (F12).** `User` no longer
+  inherits `UserPasswordReset`; the `InExistingUserPassword`/`InUserPassword` transient roles, the
+  `UserInUserPasswordRule` that consumed them (verify-old-password → strength-check → set hash), and
+  the `IPasswordHasher.CheckStrength` composition check are removed. That path skipped the old-password
+  proof when no existing password was supplied, never rotated the security stamp, and stayed reachable
+  over the JSON API after the UI fields were removed (P5.7). Password management is now the Identity
+  `/Identity/Account/Manage` flow; strength is enforced by the configured Identity policy; and
+  programmatic `SetPassword` (which rotates the stamp) remains.
 - The base **application-app** now authenticates with the Identity cookie instead of a bearer token:
   its API base URL is relative (`/allors/`, same-origin through the proxy, which engages Angular's
   built-in `X-XSRF-TOKEN`), an `APP_INITIALIZER` reads `GET /allors/UserInfo` to learn the user, a
