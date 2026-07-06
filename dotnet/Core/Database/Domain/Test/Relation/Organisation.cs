@@ -8,9 +8,9 @@ namespace Allors.Database.Domain
 {
     public partial class Organisation
     {
-        public void CustomOnPostDerive(ObjectOnPostDerive _) => this.PostDeriveTrigger = true;
+        public void TestOnPostDerive(ObjectOnPostDerive _) => this.PostDeriveTrigger = true;
 
-        public void CustomToggleCanWrite(OrganisationToggleCanWrite method)
+        public void TestToggleCanWrite(OrganisationToggleCanWrite method)
         {
             if (this.ExistRevocations)
             {
@@ -23,7 +23,7 @@ namespace Allors.Database.Domain
             }
         }
 
-        public void CustomJustDoIt(OrganisationJustDoIt _) => this.JustDidIt = true;
+        public void TestJustDoIt(OrganisationJustDoIt _) => this.JustDidIt = true;
 
         public override string ToString() => this.Name;
     }

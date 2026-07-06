@@ -18,9 +18,9 @@ namespace Allors.Database.Domain
 
         public Page Index => this.Cache[IndexId];
 
-        protected override void CustomPrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.Media);
+        protected override void TestPrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.Media);
 
-        protected override void CustomSetup(Setup setup)
+        protected override void TestSetup(Setup setup)
         {
             var medias = new Medias(this.Transaction);
 

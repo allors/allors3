@@ -7,7 +7,7 @@ namespace Allors.Database.Domain
 {
     public partial class Users
     {
-        protected override void CustomPrepare(Setup setup)
+        protected override void TestPrepare(Setup setup)
         {
             setup.AddDependency(this.ObjectType, this.M.Locale);
             setup.AddDependency(this.ObjectType, this.M.Singleton);

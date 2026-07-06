@@ -7,7 +7,7 @@ namespace Allors.Database.Domain
 {
     public partial class ValidationC2
     {
-        public void CustomOnPostDerive(ObjectOnPostDerive method)
+        public void TestOnPostDerive(ObjectOnPostDerive method)
         {
             var derivation = method.Derivation;
 

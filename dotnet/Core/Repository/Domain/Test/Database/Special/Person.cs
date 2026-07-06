@@ -136,7 +136,7 @@ namespace Allors.Repository
         #endregion
         [Workspace(Default)]
         [Derived]
-        public string CustomFullName { get; set; }
+        public string TestFullName { get; set; }
 
         #region Allors
         [Id("a8a3b4b8-c4f2-4054-ab2a-2eac6fd058e4")]

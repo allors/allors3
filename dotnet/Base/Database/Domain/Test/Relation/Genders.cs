@@ -26,9 +26,9 @@ namespace Allors.Database.Domain
 
         private UniquelyIdentifiableCache<Gender> Cache => this.cache ??= new UniquelyIdentifiableCache<Gender>(this.Transaction);
 
-        protected override void CustomSetup(Setup setup)
+        protected override void TestSetup(Setup setup)
         {
-            base.CustomSetup(setup);
+            base.TestSetup(setup);
 
             new GenderBuilder(this.Transaction)
                 .WithName("Male")

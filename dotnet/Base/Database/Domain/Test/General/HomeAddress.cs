@@ -11,7 +11,7 @@ namespace Allors.Database.Domain
     /// </summary>
     public partial class HomeAddress
     {
-        public void CustomOnPostDerive(ObjectOnPostDerive method)
+        public void TestOnPostDerive(ObjectOnPostDerive method)
         {
             var derivation = method.Derivation;
 

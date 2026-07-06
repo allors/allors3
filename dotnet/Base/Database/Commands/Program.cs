@@ -30,7 +30,7 @@ namespace Commands
         typeof(Print),
         typeof(Mailing),
         typeof(Init),
-        typeof(Custom))]
+        typeof(Test))]
     public class Program
     {
         private IConfigurationRoot configuration;

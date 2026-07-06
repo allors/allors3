@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
     {
         public static readonly Guid ByName = new Guid("2A2246FD-91F8-438F-B6DB-6BA9C3481778");
 
-        protected override void CustomSetup(Setup setup)
+        protected override void TestSetup(Setup setup)
         {
             var merge = this.Cache.Merger().Action();
 

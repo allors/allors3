@@ -26,7 +26,7 @@ namespace Allors.Database.Domain
             return this.UserName;
         }
 
-        public void CustomOnInit(ObjectOnInit method)
+        public void TestOnInit(ObjectOnInit method)
         {
             if (this.ExistOrganisationWhereManager)
             {

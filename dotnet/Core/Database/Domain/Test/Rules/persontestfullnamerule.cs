@@ -13,26 +13,26 @@ namespace Allors.Database.Domain
     using Derivations.Rules;
     using Meta;
 
-    public class PersonCustomFullNameRule : Rule
+    public class PersonTestFullNameRule : Rule
     {
-        public PersonCustomFullNameRule(MetaPopulation m) : base(m, new Guid("C9895CF4-98B2-4023-A3EA-582107C7D80D")) =>
+        public PersonTestFullNameRule(MetaPopulation m) : base(m, new Guid("C9895CF4-98B2-4023-A3EA-582107C7D80D")) =>
             this.Patterns = new IRolePattern[]
             {
-                new CustomRolePattern(m.Person.FirstName),
-                new CustomRolePattern(m.Person.LastName),
+                new TestRolePattern(m.Person.FirstName),
+                new TestRolePattern(m.Person.LastName),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var person in matches.Cast<Person>())
             {
-                person.CustomFullName = $"{person.FirstName} {person.LastName}";
+                person.TestFullName = $"{person.FirstName} {person.LastName}";
             }
         }
 
-        private class CustomRolePattern : IRolePattern
+        private class TestRolePattern : IRolePattern
         {
-            public CustomRolePattern(IRoleType roleType) => this.RoleType = roleType;
+            public TestRolePattern(IRoleType roleType) => this.RoleType = roleType;
 
             public IEnumerable<Node> Tree => null;
 

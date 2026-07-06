@@ -7,7 +7,7 @@ namespace Allors.Database.Domain
 {
     public partial class OrganisationContactRelationship
     {
-        public void CustomOnPostDerive(ObjectOnPostDerive method)
+        public void TestOnPostDerive(ObjectOnPostDerive method)
         {
             var transaction = this.Strategy.Transaction;
 

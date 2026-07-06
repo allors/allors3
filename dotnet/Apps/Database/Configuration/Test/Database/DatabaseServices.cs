@@ -109,7 +109,7 @@ namespace Allors.Database.Configuration
                 { } type when type == typeof(IMailer) => (T)(this.mailer ??= this.CreateMailer()),
                 { } type when type == typeof(IBarcodeGenerator) => (T)(this.barcodeGenerator ??= new ZXingBarcodeGenerator()),
                 { } type when type == typeof(ITemplateObjectCache) => (T)(this.templateObjectCache ??= new TemplateObjectCache()),
-                // Custom
+                // Test
                 { } type when type == typeof(Faker) => (T)(object)(this.faker ??= new Faker()),
                 _ => throw new NotSupportedException($"Service {typeof(T)} not supported")
             };

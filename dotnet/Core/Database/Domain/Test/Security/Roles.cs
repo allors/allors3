@@ -20,9 +20,9 @@ namespace Allors.Database.Domain
 
         public Role Sales => this.Cache[SalesId];
 
-        protected override void CustomSetup(Setup setup)
+        protected override void TestSetup(Setup setup)
         {
-            base.CustomSetup(setup);
+            base.TestSetup(setup);
 
             new RoleBuilder(this.Transaction).WithName("Operations").WithUniqueId(OperationsId).Build();
             new RoleBuilder(this.Transaction).WithName("Procurement").WithUniqueId(ProcurementId).Build();

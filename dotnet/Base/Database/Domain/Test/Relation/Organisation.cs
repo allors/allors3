@@ -8,7 +8,7 @@ namespace Allors.Database.Domain
 {
     public partial class Organisation
     {
-        public void CustomToggleCanWrite(OrganisationToggleCanWrite method)
+        public void TestToggleCanWrite(OrganisationToggleCanWrite method)
         {
             if (this.ExistRevocations)
             {
@@ -23,7 +23,7 @@ namespace Allors.Database.Domain
             this.Address = this.MainAddress;
         }
 
-        public void CustomJustDoIt(OrganisationJustDoIt method) => this.JustDidIt = true;
+        public void TestJustDoIt(OrganisationJustDoIt method) => this.JustDidIt = true;
 
         public override string ToString() => this.Name;
     }

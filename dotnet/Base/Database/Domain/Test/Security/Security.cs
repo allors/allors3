@@ -21,7 +21,7 @@ namespace Allors.Database.Domain
 
         public void GrantSales(ObjectType objectType, IOperandType operandType, params Operations[] operations) => this.Grant(Roles.SalesId, objectType, operandType, operations);
 
-        private void CustomOnPostSetup()
+        private void TestOnPostSetup()
         {
             // Default access policy
             var security = new Security(this.transaction);
@@ -36,7 +36,7 @@ namespace Allors.Database.Domain
             }
         }
 
-        private void CustomOnPreSetup()
+        private void TestOnPreSetup()
         {
         }
     }

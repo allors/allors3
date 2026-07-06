@@ -7,9 +7,9 @@ namespace Allors.Database.Domain
 {
     public partial class SecurityTokens
     {
-        protected override void CustomPrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.Grant);
+        protected override void TestPrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.Grant);
 
-        protected override void CustomSetup(Setup setup)
+        protected override void TestSetup(Setup setup)
         {
             var merge = this.Cache.Merger().Action();
 

@@ -9,19 +9,19 @@ namespace Allors.Database.Domain
 
     public partial class Setup
     {
-        private void CustomOnPrePrepare()
+        private void TestOnPrePrepare()
         {
         }
 
-        private void CustomOnPostPrepare()
+        private void TestOnPostPrepare()
         {
         }
 
-        private void CustomOnPreSetup()
+        private void TestOnPreSetup()
         {
         }
 
-        private void CustomOnPostSetup(Config config)
+        private void TestOnPostSetup(Config config)
         {
             if (this.Config.SetupSecurity)
             {

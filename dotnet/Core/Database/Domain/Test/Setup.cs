@@ -11,19 +11,19 @@ namespace Allors.Database.Domain
 
     public partial class Setup
     {
-        private void CustomOnPrePrepare()
+        private void TestOnPrePrepare()
         {
         }
 
-        private void CustomOnPostPrepare()
+        private void TestOnPostPrepare()
         {
         }
 
-        private void CustomOnPreSetup()
+        private void TestOnPreSetup()
         {
         }
 
-        private void CustomOnPostSetup(Config config)
+        private void TestOnPostSetup(Config config)
         {
 
             var jane = new PersonBuilder(this.transaction).WithFirstName("Jane").WithLastName("Doe").WithUserName("jane@example.com").WithUserEmail("jane@example.com").WithUserEmailConfirmed(true).Build();

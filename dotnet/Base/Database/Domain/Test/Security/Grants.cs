@@ -19,7 +19,7 @@ namespace Allors.Database.Domain
 
         public Grant Procurement => this.Cache[ProcurementId];
 
-        protected override void CustomSetup(Setup setup)
+        protected override void TestSetup(Setup setup)
         {
             if (setup.Config.SetupSecurity)
             {

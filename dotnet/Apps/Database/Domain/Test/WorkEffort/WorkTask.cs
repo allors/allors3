@@ -7,7 +7,7 @@ namespace Allors.Database.Domain
 {
     public partial class WorkTask
     {
-        public void CustomOnPostDerive(ObjectOnPostDerive method)
+        public void TestOnPostDerive(ObjectOnPostDerive method)
         {
             this.SecurityTokens = new[]
             {

@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
         public Grant CustomerContacts => this.Cache[CustomerContactsId];
 
-        protected override void CustomSetup(Setup setup)
+        protected override void TestSetup(Setup setup)
         {
             if (setup.Config.SetupSecurity)
             {

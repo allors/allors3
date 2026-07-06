@@ -7,7 +7,7 @@ namespace Allors.Database.Domain
 {
     public partial class Settingses
     {
-        protected override void CustomSetup(Setup setup)
+        protected override void TestSetup(Setup setup)
         {
             var singleton = this.Transaction.GetSingleton();
             singleton.Settings ??= new SettingsBuilder(this.Transaction)

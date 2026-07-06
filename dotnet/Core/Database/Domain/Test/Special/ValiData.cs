@@ -8,7 +8,7 @@ namespace Allors.Database.Domain
 {
     public partial class ValiData
     {
-        public void CustomOnPostDerive(ObjectOnPostDerive objectOnPostDerive)
+        public void TestOnPostDerive(ObjectOnPostDerive objectOnPostDerive)
         {
             var derivation = objectOnPostDerive.Derivation;
 

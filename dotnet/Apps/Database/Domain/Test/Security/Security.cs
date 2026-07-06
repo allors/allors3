@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
         public void GrantCustomerContact(ObjectType objectType, params Operations[] operations) => this.Grant(Roles.CustomerContactId, objectType, operations);
 
-        private void CustomOnPreSetup()
+        private void TestOnPreSetup()
         {
             var m = this.transaction.Database.Services.Get<MetaPopulation>();
 
@@ -126,7 +126,7 @@ namespace Allors.Database.Domain
             }
         }
 
-        private void CustomOnPostSetup()
+        private void TestOnPostSetup()
         {
         }
     }

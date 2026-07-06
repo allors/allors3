@@ -22,7 +22,7 @@ namespace Allors.Database.Domain
 
         public Media About => this.Cache[AboutId];
 
-        protected override void CustomSetup(Setup setup)
+        protected override void TestSetup(Setup setup)
         {
             var merge = this.Cache.Merger().Action();
 

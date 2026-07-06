@@ -28,7 +28,7 @@ namespace Allors.Database.Domain
 
         public OrderState Cancelled => this.Cache[CancelledId];
 
-        protected override void CustomSetup(Setup setup)
+        protected override void TestSetup(Setup setup)
         {
             var merge = this.Cache.Merger().Action();
 

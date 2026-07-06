@@ -10,6 +10,6 @@ namespace Allors.Database.Domain
     {
         public static void CoreSuperinterfaceMethod(this I1 @this, S1SuperinterfaceMethod method) => method.Value += "I1Core";
 
-        public static void CustomSuperinterfaceMethod(this I1 @this, S1SuperinterfaceMethod method) => method.Value += "I1Custom";
+        public static void TestSuperinterfaceMethod(this I1 @this, S1SuperinterfaceMethod method) => method.Value += "I1Test";
     }
 }

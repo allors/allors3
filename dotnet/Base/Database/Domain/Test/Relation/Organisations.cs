@@ -14,9 +14,9 @@ namespace Allors.Database.Domain
 
         public UniquelyIdentifiableCache<Organisation> Cache => this.cache ??= new UniquelyIdentifiableCache<Organisation>(this.Transaction);
 
-        protected override void CustomPrepare(Security security) => security.AddDependency(this.ObjectType, this.M.Revocation);
+        protected override void TestPrepare(Security security) => security.AddDependency(this.ObjectType, this.M.Revocation);
 
-        protected override void CustomSecure(Security security)
+        protected override void TestSecure(Security security)
         {
             var revocations = new Revocations(this.Transaction);
             var permissions = new Permissions(this.Transaction);

@@ -12,7 +12,7 @@ namespace Allors.Database.Domain
     /// </summary>
     public partial class Build
     {
-        public void CustomOnBuild(ObjectOnBuild method)
+        public void TestOnBuild(ObjectOnBuild method)
         {
             if (!this.ExistGuid)
             {
@@ -20,7 +20,7 @@ namespace Allors.Database.Domain
             }
         }
 
-        public void CustomOnPostBuild(ObjectOnPostBuild method)
+        public void TestOnPostBuild(ObjectOnPostBuild method)
         {
             if (!this.ExistString)
             {

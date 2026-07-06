@@ -10,14 +10,14 @@ namespace Allors.Database.Domain
     {
         public void CoreClassMethod(C1ClassMethod method) => method.Value += "C1Core";
 
-        public void CustomClassMethod(C1ClassMethod method) => method.Value += "C1Custom";
+        public void TestClassMethod(C1ClassMethod method) => method.Value += "C1Test";
 
         public void CoreInterfaceMethod(I1InterfaceMethod method) => method.Value += "C1Core";
 
-        public void CustomInterfaceMethod(I1InterfaceMethod method) => method.Value += "C1Custom";
+        public void TestInterfaceMethod(I1InterfaceMethod method) => method.Value += "C1Test";
 
         public void CoreSuperinterfaceMethod(S1SuperinterfaceMethod method) => method.Value += "C1Core";
 
-        public void CustomSuperinterfaceMethod(S1SuperinterfaceMethod method) => method.Value += "C1Custom";
+        public void TestSuperinterfaceMethod(S1SuperinterfaceMethod method) => method.Value += "C1Test";
     }
 }

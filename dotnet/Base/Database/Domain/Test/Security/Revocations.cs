@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
 
         public Revocation ToggleRevocation => this.Cache[ToggleRevocationId];
 
-        protected override void CustomSecure(Security security)
+        protected override void TestSecure(Security security)
         {
             var merge = this.Cache.Merger().Action();
 

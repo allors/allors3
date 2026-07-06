@@ -1,4 +1,4 @@
-// <copyright file="Custom.cs" company="Allors bv">
+// <copyright file="Test.cs" company="Allors bv">
 // Copyright (c) Allors bv. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -11,7 +11,7 @@ namespace Commands
     using NLog;
 
     [Command(Description = "Execute custom code")]
-    public class Custom
+    public class Test
     {
         public Program Parent { get; set; }
 

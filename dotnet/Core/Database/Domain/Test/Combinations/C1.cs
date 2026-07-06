@@ -7,7 +7,7 @@ namespace Allors.Database.Domain
 {
     public partial class C1
     {
-        public void CustomSum(C1Sum method) => method.Result = method.A + method.B;
+        public void TestSum(C1Sum method) => method.Result = method.A + method.B;
 
         public override string ToString() => this.Name;
     }

@@ -10,6 +10,6 @@ namespace Allors.Database.Domain
     {
         public static void CoreInterfaceMethod(this I1 @this, I1InterfaceMethod method) => method.Value += "I1Core";
 
-        public static void CustomInterfaceMethod(this I1 @this, I1InterfaceMethod method) => method.Value += "I1Custom";
+        public static void TestInterfaceMethod(this I1 @this, I1InterfaceMethod method) => method.Value += "I1Test";
     }
 }

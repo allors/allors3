@@ -10,9 +10,9 @@ namespace Allors.Database.Domain.Tests
 {
     using Xunit;
 
-    public class CustomPatternTest : DomainTest, IClassFixture<Fixture>
+    public class TestPatternTest : DomainTest, IClassFixture<Fixture>
     {
-        public CustomPatternTest(Fixture fixture) : base(fixture) { }
+        public TestPatternTest(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public void UnitRoles()
@@ -24,7 +24,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            Assert.Equal("Jane Doe", person.CustomFullName);
+            Assert.Equal("Jane Doe", person.TestFullName);
         }
     }
 }

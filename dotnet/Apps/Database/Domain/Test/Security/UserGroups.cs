@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
 
         public UserGroup CustomerContacts => this.Cache[CustomerContactsId];
 
-        protected override void CustomSetup(Setup setup)
+        protected override void TestSetup(Setup setup)
         {
             var merge = this.cache.Merger().Action();
 

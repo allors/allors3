@@ -12,7 +12,7 @@ namespace Allors.Database.Domain
     /// </summary>
     public partial class Cascaded
     {
-        public void CustomDelete(DeletableDelete method)
+        public void TestDelete(DeletableDelete method)
         {
             if (!this.IsDeleting())
             {

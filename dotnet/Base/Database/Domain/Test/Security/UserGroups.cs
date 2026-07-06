@@ -20,9 +20,9 @@ namespace Allors.Database.Domain
 
         public UserGroup Procurement => this.Cache[ProcurementId];
 
-        protected override void CustomSetup(Setup setup)
+        protected override void TestSetup(Setup setup)
         {
-            base.CustomSetup(setup);
+            base.TestSetup(setup);
 
             new UserGroupBuilder(this.Transaction).WithName("operations").WithUniqueId(OperationsId).Build();
             new UserGroupBuilder(this.Transaction).WithName("sales").WithUniqueId(SalesId).Build();

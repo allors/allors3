@@ -10,7 +10,7 @@ namespace Allors.Database.Domain
     /// </summary>
     public partial class Data
     {
-        public void CustomOnInit(ObjectOnInit method)
+        public void TestOnInit(ObjectOnInit method)
         {
             var singleton = this.strategy.Transaction.GetSingleton();
 
@@ -25,7 +25,7 @@ namespace Allors.Database.Domain
             }
         }
 
-        public void CustomOnPostDerive(ObjectOnPostDerive method)
+        public void TestOnPostDerive(ObjectOnPostDerive method)
         {
             var singleton = this.strategy.Transaction.GetSingleton();
 
