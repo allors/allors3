@@ -64,7 +64,7 @@ namespace Tests.E2E.Objects
             var contactMechanism = customer.CurrentPartyContactMechanisms.First().ContactMechanism;
             var contactPerson = customer.CurrentContacts.First();
 
-            var dateNow = System.DateTime.Today;
+            var dateNow = this.Transaction.Now().Date;
             var dateTommorow = dateNow.AddDays(1);
 
             var @class = this.M.RequestForQuote;

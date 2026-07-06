@@ -39,9 +39,9 @@ namespace Allors.Database.Domain
 
             var genders = new Genders(this.transaction);
 
-            var jane = new PersonBuilder(this.transaction).WithMainAddress(address).WithFirstName("Jane").WithLastName("Doe").WithUserName("jane@example.com").WithPhoto(avatar).WithGender(genders.Female).Build();
-            var john = new PersonBuilder(this.transaction).WithFirstName("John").WithLastName("Doe").WithUserName("john@example.com").WithPhoto(avatar).WithGender(genders.Male).Build();
-            var jenny = new PersonBuilder(this.transaction).WithFirstName("Jenny").WithLastName("Doe").WithUserName("jenny@example.com").WithPhoto(avatar).WithGender(genders.Other).Build();
+            var jane = new PersonBuilder(this.transaction).WithMainAddress(address).WithFirstName("Jane").WithLastName("Doe").WithUserName("jane@example.com").WithUserEmail("jane@example.com").WithUserEmailConfirmed(true).WithPhoto(avatar).WithGender(genders.Female).Build();
+            var john = new PersonBuilder(this.transaction).WithFirstName("John").WithLastName("Doe").WithUserName("john@example.com").WithUserEmail("john@example.com").WithUserEmailConfirmed(true).WithPhoto(avatar).WithGender(genders.Male).Build();
+            var jenny = new PersonBuilder(this.transaction).WithFirstName("Jenny").WithLastName("Doe").WithUserName("jenny@example.com").WithUserEmail("jenny@example.com").WithUserEmailConfirmed(true).WithPhoto(avatar).WithGender(genders.Other).Build();
 
             jane.SetPassword("jane");
             john.SetPassword("john");

@@ -32,10 +32,6 @@ namespace Allors.Repository
 
         public string NormalizedUserName { get; set; }
 
-        public string InExistingUserPassword { get; set; }
-
-        public string InUserPassword { get; set; }
-
         public string UserPasswordHash { get; set; }
 
         public string UserEmail { get; set; }
@@ -57,6 +53,8 @@ namespace Allors.Repository
         public bool UserLockoutEnabled { get; set; }
 
         public int UserAccessFailedCount { get; set; }
+
+        public bool IsDisabled { get; set; }
 
         public Login[] Logins { get; set; }
 

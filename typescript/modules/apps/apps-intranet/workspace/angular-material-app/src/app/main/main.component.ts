@@ -6,6 +6,7 @@ import { Router, NavigationEnd } from '@angular/router';
 import { Organisation } from '@allors/default/workspace/domain';
 import {
   ContextService,
+  LogoutService,
   MetaService,
 } from '@allors/base/workspace/angular/foundation';
 import {
@@ -42,9 +43,14 @@ export class MainComponent implements OnInit, OnDestroy {
     private menuService: MenuService,
     private navigation: NavigationService,
     private iconService: IconService,
-    private metaService: MetaService
+    private metaService: MetaService,
+    private logoutService: LogoutService
   ) {
     this.allors.context.name = this.constructor.name;
+  }
+
+  public logout(): void {
+    this.logoutService.logout();
   }
 
   public ngOnInit(): void {

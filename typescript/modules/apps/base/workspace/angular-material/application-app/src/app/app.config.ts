@@ -14,10 +14,9 @@ import { AppContext } from './app.context';
 export function config(
   workspaceService: WorkspaceService,
   httpClient: HttpClient,
-  baseUrl: string,
-  authUrl: string
+  baseUrl: string
 ) {
-  const angularClient = new AppClient(httpClient, baseUrl, authUrl);
+  const angularClient = new AppClient(httpClient, baseUrl);
 
   const metaPopulation = new LazyMetaPopulation(data);
   const m = metaPopulation as unknown as M;

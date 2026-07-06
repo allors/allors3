@@ -21,6 +21,12 @@ namespace Allors.Database.Domain
         {
             var passwordService = @this.Transaction().Database.Services.Get<IPasswordHasher>();
             @this.UserPasswordHash = passwordService.HashPassword(@this.UserName, clearTextPassword);
+
+            // Rotate the security stamp so any live session is invalidated on the next revalidation.
+            // (Done here rather than in a derive rule on UserPasswordHash: Identity's own UpdateAsync
+            // already rotates the stamp when it changes the hash, and a rule would clobber that.)
+            @this.UserSecurityStamp = Guid.NewGuid().ToString();
+
             return @this;
         }
 
@@ -57,6 +63,15 @@ namespace Allors.Database.Domain
             {
                 @this.UserSecurityStamp = Guid.NewGuid().ToString();
             }
+
+            if (!@this.ExistIsDisabled)
+            {
+                @this.IsDisabled = false;
+            }
+
+            // Lockout is enabled by default for new users so the configured failed-attempt threshold
+            // actually applies (a required bool otherwise defaults to false, leaving lockout inert).
+            @this.UserLockoutEnabled = true;
         }
 
         public static void CoreDelete(this User @this, DeletableDelete method)

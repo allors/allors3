@@ -112,7 +112,20 @@ namespace Tests.E2E
             this.M = Config.MetaPopulation;
             this.Database = this.Fixture.Init();
             this.Transaction = this.Database.CreateTransaction();
+
+            // Mint the Identity application cookie into the browser context (through the dev proxy, so
+            // it is same-origin) before any test navigates. Once an app has cut over to cookie auth,
+            // this lets the pre-test navigation to "/" load authenticated instead of bouncing to the
+            // Identity login. It is a no-op for still-bearer apps, which ignore the cookie.
+            await this.CookieSignInAsync(this.DefaultLogin);
         }
+
+        protected virtual string DefaultLogin => this.Fixture.Logins[0];
+
+        protected async Task CookieSignInAsync(string login) =>
+            await this.Context.APIRequest.PostAsync(
+                "/allors/TestAuthentication/SignIn",
+                new APIRequestContextOptions { DataObject = new { l = login } });
 
         [TearDown]
         public async Task E2ETestTearDown()

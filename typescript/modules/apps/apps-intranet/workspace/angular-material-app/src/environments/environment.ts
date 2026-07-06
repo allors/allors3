@@ -7,6 +7,9 @@ import { HttpClient } from '@angular/common/http';
 import {
   CreateService,
   EditDialogService,
+  SingletonId,
+  UserId,
+  UserInfoService,
   WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
 import { RouteInfoService } from '@allors/base/workspace/angular/foundation';
@@ -14,8 +17,9 @@ import {
   MenuInfoService,
   NavigationInfoService,
 } from '@allors/base/workspace/angular/application';
+import { InternalOrganisationId } from '@allors/apps-intranet/workspace/angular-material';
 import { dialogs } from '../app/app.dialog';
-import { config } from '../app/app.config';
+import { initialize } from '../app/app.config';
 
 // This file can be replaced during build by using the `fileReplacements` array.
 // `ng build` replaces `environment.ts` with `environment.prod.ts`.
@@ -25,14 +29,21 @@ export function appInitializerFactory(
   workspaceService: WorkspaceService,
   httpClient: HttpClient,
   createService: AllorsMaterialCreateService,
-  editService: AllorsMaterialEditDialogService
+  editService: AllorsMaterialEditDialogService,
+  userInfoService: UserInfoService,
+  userId: UserId,
+  internalOrganisationId: InternalOrganisationId,
+  singletonId: SingletonId
 ) {
   return async () => {
-    config(
+    await initialize(
       workspaceService,
       httpClient,
       environment.baseUrl,
-      environment.authUrl
+      userInfoService,
+      userId,
+      internalOrganisationId,
+      singletonId
     );
 
     createService.createControlByObjectTypeTag = dialogs.create;
@@ -56,8 +67,7 @@ export function appBootstrapListenerFactory(
 
 export const environment = {
   production: false,
-  baseUrl: 'http://localhost:5000/allors/',
-  authUrl: 'TestAuthentication/Token',
+  baseUrl: '/allors/',
   providers: [
     MenuInfoService,
     NavigationInfoService,
@@ -65,7 +75,16 @@ export const environment = {
     {
       provide: APP_INITIALIZER,
       useFactory: appInitializerFactory,
-      deps: [WorkspaceService, HttpClient, CreateService, EditDialogService],
+      deps: [
+        WorkspaceService,
+        HttpClient,
+        CreateService,
+        EditDialogService,
+        UserInfoService,
+        UserId,
+        InternalOrganisationId,
+        SingletonId,
+      ],
       multi: true,
     },
     {

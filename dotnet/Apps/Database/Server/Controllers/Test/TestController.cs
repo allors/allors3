@@ -8,9 +8,11 @@ namespace Allors.Database.Server.Controllers
     using System;
     using Allors.Services;
     using Domain;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
 
+    [AllowAnonymous]
     public class TestController : Controller
     {
         public TestController(IDatabaseService databaseService) => this.DatabaseService = databaseService;

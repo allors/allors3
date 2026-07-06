@@ -1,7 +1,5 @@
 import { Routes } from '@angular/router';
-import { AuthorizationService } from './auth/authorization.service';
 
-import { LoginComponent } from './auth/login.component';
 import { ErrorComponent } from './error/error.component';
 import { MainComponent } from './main/main.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
@@ -66,10 +64,8 @@ import {
 } from '@allors/apps-intranet/workspace/angular-material';
 
 export const routes: Routes = [
-  { path: 'login', component: LoginComponent },
   { path: 'error', component: ErrorComponent },
   {
-    canActivate: [AuthorizationService],
     path: '',
     component: MainComponent,
     children: [
@@ -292,7 +288,6 @@ export const routes: Routes = [
 ];
 
 export const components: any[] = [
-  LoginComponent,
   ErrorComponent,
   MainComponent,
   DashboardComponent,

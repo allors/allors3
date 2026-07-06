@@ -17,7 +17,6 @@ namespace Allors.Workspace.Adapters.Remote.SystemText
     using Allors.Protocol.Json.Api.Push;
     using Allors.Protocol.Json.Api.Security;
     using Allors.Protocol.Json.Api.Sync;
-    using Allors.Protocol.Json.Auth;
     using Allors.Protocol.Json.SystemTextJson;
     using Ranges;
     using Polly;
@@ -25,8 +24,6 @@ namespace Allors.Workspace.Adapters.Remote.SystemText
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "RCS1090:Add call to 'ConfigureAwait' (or vice versa).", Justification = "<Pending>")]
     public class DatabaseConnection : Remote.DatabaseConnection
     {
-        private string userId;
-
         public DatabaseConnection(Configuration configuration, Func<IWorkspaceServices> servicesBuilder, HttpClient httpClient, IdGenerator idGenerator, IRanges<long> ranges) : base(configuration, idGenerator, servicesBuilder, ranges)
         {
             this.HttpClient = httpClient;
@@ -38,37 +35,13 @@ namespace Allors.Workspace.Adapters.Remote.SystemText
 
         public override IUnitConvert UnitConvert { get; }
 
-        public override string UserId => this.userId;
+        public override string UserId => null;
 
         public IAsyncPolicy Policy { get; set; } = Polly.Policy
             .Handle<HttpRequestException>()
             .WaitAndRetryAsync(5, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
 
         public HttpClient HttpClient { get; }
-
-        public async Task<bool> Login(Uri url, string username, string password)
-        {
-            var request = new AuthenticationTokenRequest { l = username, p = password };
-            using var response = await this.PostAsJsonAsync(url, request);
-            response.EnsureSuccessStatusCode();
-            var authResult = await this.ReadAsAsync<AuthenticationTokenResponse>(response);
-            if (!authResult.a)
-            {
-                this.Logoff();
-                return false;
-            }
-
-            this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authResult.t);
-            this.userId = authResult.u;
-
-            return true;
-        }
-
-        public void Logoff()
-        {
-            this.HttpClient.DefaultRequestHeaders.Authorization = null;
-            this.userId = null;
-        }
 
         public override async Task<PullResponse> Pull(object args, string name)
         {

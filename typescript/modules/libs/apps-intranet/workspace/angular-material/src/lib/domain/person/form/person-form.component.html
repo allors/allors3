@@ -140,29 +140,6 @@
         >
         </a-mat-select>
       </div>
-
-      <div class="row">
-        <mat-form-field class="col-md">
-          <input
-            matInput
-            [(ngModel)]="object.InUserPassword"
-            placeholder="New password"
-            type="password"
-            name="newpassword"
-            [disabled]="!object.canWriteInUserPassword"
-          />
-        </mat-form-field>
-        <mat-form-field class="col-md">
-          <input
-            matInput
-            [(ngModel)]="confirmPassword"
-            placeholder="Confirm new password"
-            type="Password"
-            name="confirmPassword"
-            [disabled]="!object.canWriteInUserPassword"
-          />
-        </mat-form-field>
-      </div>
     </div>
   </mat-tab>
 </mat-tab-group>

@@ -1,8 +1,5 @@
 import { Routes } from '@angular/router';
 
-import { AuthorizationService } from './auth/authorization.service';
-
-import { LoginComponent } from './auth/login.component';
 import { MainComponent } from './main/main.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { FieldsComponent } from './fields/fields-form.component';
@@ -15,12 +12,10 @@ import { PersonListPageComponent } from './domain/person/list/person-list-page.c
 import { PersonOverviewPageComponent } from './domain/person/overview/person-overview-page.component';
 
 export const routes: Routes = [
-  { path: 'login', component: LoginComponent },
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
   {
     path: '',
     component: MainComponent,
-    canActivate: [AuthorizationService],
     children: [
       {
         path: 'dashboard',
@@ -55,7 +50,6 @@ export const routes: Routes = [
 ];
 
 export const components: any[] = [
-  LoginComponent,
   MainComponent,
   DashboardComponent,
   FieldsComponent,

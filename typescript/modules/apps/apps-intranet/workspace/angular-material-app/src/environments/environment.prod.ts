@@ -1,7 +1,13 @@
 import { APP_INITIALIZER, ErrorHandler } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
-import { config } from '../app/app.config';
+import {
+  SingletonId,
+  UserId,
+  UserInfoService,
+  WorkspaceService,
+} from '@allors/base/workspace/angular/foundation';
+import { InternalOrganisationId } from '@allors/apps-intranet/workspace/angular-material';
+import { initialize } from '../app/app.config';
 import { ErrorHandlerService } from '../app/services/error-handler.service';
 import {
   AllorsMaterialCreateService,
@@ -17,14 +23,21 @@ export function appInitFactory(
   workspaceService: WorkspaceService,
   httpClient: HttpClient,
   createService: AllorsMaterialCreateService,
-  editService: AllorsMaterialEditDialogService
+  editService: AllorsMaterialEditDialogService,
+  userInfoService: UserInfoService,
+  userId: UserId,
+  internalOrganisationId: InternalOrganisationId,
+  singletonId: SingletonId
 ) {
   return async () => {
-    config(
+    await initialize(
       workspaceService,
       httpClient,
       environment.baseUrl,
-      environment.authUrl
+      userInfoService,
+      userId,
+      internalOrganisationId,
+      singletonId
     );
 
     createService.createControlByObjectTypeTag = dialogs.create;
@@ -34,9 +47,7 @@ export function appInitFactory(
 
 export const environment = {
   production: true,
-  baseUrl: 'http://localhost:5000/allors/',
-  authUrl: 'TestAuthentication/Token',
-  // authUrl: 'Authentication/Token',
+  baseUrl: '/allors/',
   providers: [
     {
       // processes all errors
@@ -51,6 +62,10 @@ export const environment = {
         HttpClient,
         AllorsMaterialCreateService,
         AllorsMaterialEditDialogService,
+        UserInfoService,
+        UserId,
+        InternalOrganisationId,
+        SingletonId,
       ],
       multi: true,
     },

@@ -8,8 +8,10 @@ namespace Allors.Database.Server.Controllers
     using System.Threading;
     using Allors.Services;
     using Protocol.Json;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
+    [Authorize]
     public class PersonController : Controller
     {
         public PersonController(ITransactionService transactionService, IWorkspaceService workspaceService)

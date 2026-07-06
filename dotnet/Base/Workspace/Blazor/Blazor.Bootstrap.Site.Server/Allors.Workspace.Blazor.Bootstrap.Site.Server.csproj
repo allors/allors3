@@ -7,6 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="JSNLog" Version="3.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.7" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="10.0.7" />
     <PackageReference Include="NLog.Web.AspNetCore" Version="6.1.3" />
   </ItemGroup>
@@ -26,6 +28,9 @@
   <ItemGroup>
     <Compile Include="..\..\..\..\Core\Database\Server\Core*\**\*.cs" />
     <Compile Include="..\..\..\..\Base\Database\Server\Base*\**\*.cs" />
+    <Content Include="..\..\..\..\Core\Database\Server\Core*\IdentityUi\**\*.cshtml">
+      <Link>Areas\Identity\Pages\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Content>
   </ItemGroup>
 
 </Project>

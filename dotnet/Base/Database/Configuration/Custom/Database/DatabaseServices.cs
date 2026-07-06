@@ -7,6 +7,7 @@
 namespace Allors.Database.Configuration
 {
     using System;
+    using Microsoft.Extensions.Configuration;
     using Data;
     using Database.Derivations;
     using Derivations.Default;
@@ -57,10 +58,13 @@ namespace Allors.Database.Configuration
 
         private IWorkspaceMask workspaceMask;
 
-        protected DatabaseServices(Engine engine)
+        protected DatabaseServices(Engine engine, IConfiguration configuration = null)
         {
             this.Engine = engine;
+            this.Configuration = configuration;
         }
+
+        protected IConfiguration Configuration { get; }
 
         internal IDatabase Database { get; private set; }
 
@@ -99,11 +103,25 @@ namespace Allors.Database.Configuration
                 { } type when type == typeof(IWorkspaceMask) => (T)(this.workspaceMask ??= new WorkspaceMask(this.M)),
                 // Base
                 { } type when type == typeof(ISingletonId) => (T)(this.singletonId ??= new SingletonId()),
-                { } type when type == typeof(IMailer) => (T)(this.mailer ??= new MailKitMailer()),
+                { } type when type == typeof(IMailer) => (T)(this.mailer ??= this.CreateMailer()),
                 { } type when type == typeof(IBarcodeGenerator) => (T)(this.barcodeGenerator ??= new ZXingBarcodeGenerator()),
                 { } type when type == typeof(ITemplateObjectCache) => (T)(this.templateObjectCache ??= new TemplateObjectCache()),
                 _ => throw new NotSupportedException($"Service {typeof(T)} not supported")
             };
+
+        protected virtual IMailer CreateMailer()
+        {
+            var mailer = new MailKitMailer();
+
+            if (this.Configuration != null)
+            {
+                mailer.Smtp = this.Configuration["Mail:Smtp"];
+                mailer.DefaultSender = this.Configuration["Mail:DefaultSender"] ?? this.Configuration["DefaultSender"];
+                mailer.DefaultSenderName = this.Configuration["Mail:DefaultSenderName"];
+            }
+
+            return mailer;
+        }
 
         protected abstract IPasswordHasher CreatePasswordHasher();
 

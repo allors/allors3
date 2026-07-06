@@ -9,7 +9,6 @@ namespace Allors.Database.Protocol.Json
     using System.Threading;
     using Allors.Protocol.Json.Api.Sync;
     using Allors.Services;
-    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using NLog;
 
@@ -32,8 +31,6 @@ namespace Allors.Database.Protocol.Json
         public Logger Logger => LogManager.GetCurrentClassLogger();
 
         [HttpPost]
-        [Authorize]
-        [AllowAnonymous]
         public ActionResult<SyncResponse> Post([FromBody]SyncRequest syncRequest, CancellationToken cancellationToken) =>
             this.PolicyService.SyncPolicy.Execute(
                 () =>

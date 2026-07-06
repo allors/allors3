@@ -6,13 +6,19 @@ import { FormsModule } from '@angular/forms';
 import {
   ThrottledConfig,
   ThrottledDirective,
+  UnauthorizedInterceptor,
+  UserInfoService,
   WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
 import { PrototypeObjectFactory } from '@allors/system/workspace/adapters';
 import { DatabaseConnection } from '@allors/system/workspace/adapters-json';
 import { LazyMetaPopulation } from '@allors/system/workspace/meta-json';
 import { data } from '@allors/default/workspace/meta-json';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpClientModule,
+  HTTP_INTERCEPTORS,
+} from '@angular/common/http';
 import { M } from '@allors/default/workspace/meta';
 
 import { AngularClient } from '../allors/angular-client';
@@ -28,14 +34,11 @@ import { ruleBuilder } from '@allors/base/workspace/derivations-custom';
 
 export function appInitFactory(
   workspaceService: WorkspaceService,
-  httpClient: HttpClient
+  httpClient: HttpClient,
+  userInfoService: UserInfoService
 ) {
   return async () => {
-    const angularClient = new AngularClient(
-      httpClient,
-      environment.baseUrl,
-      environment.authUrl
-    );
+    const angularClient = new AngularClient(httpClient, environment.baseUrl);
 
     const metaPopulation = new LazyMetaPopulation(data);
     const m = metaPopulation as unknown as M;
@@ -55,6 +58,9 @@ export function appInitFactory(
     workspaceService.workspace = workspace;
 
     workspaceService.contextBuilder = () => new CoreContext(workspaceService);
+
+    // Cookie auth: learn the logged-in user before bootstrap; a 401 here redirects to login.
+    await userInfoService.init(environment.baseUrl);
   };
 }
 
@@ -96,7 +102,12 @@ const routes: Routes = [
     {
       provide: APP_INITIALIZER,
       useFactory: appInitFactory,
-      deps: [WorkspaceService, HttpClient],
+      deps: [WorkspaceService, HttpClient, UserInfoService],
+      multi: true,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: UnauthorizedInterceptor,
       multi: true,
     },
     {

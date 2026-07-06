@@ -45,7 +45,6 @@ import {
   // Config
   DateConfig,
   MediaConfig,
-  AuthenticationConfig,
   // Services
   CreateService,
   DisplayService,
@@ -55,12 +54,10 @@ import {
   MetaService,
   WorkspaceService,
   ErrorService,
-  AuthenticationSessionStoreService,
   DateStaticService,
   AllorsBarcodeKeypressService,
   AllorsFocusBehaviorSubjectService,
   RefreshBehaviorService,
-  AuthenticationService,
   DateService,
   AllorsFocusService,
   RefreshService,
@@ -69,7 +66,7 @@ import {
   MediaLocalService,
   AllorsDialogService,
   // Interceptors
-  AuthenticationInterceptor,
+  UnauthorizedInterceptor,
   // Directives
   AllorsFocusDirective,
   AllorsBarcodeDirective,
@@ -488,18 +485,8 @@ import { AppActionService } from './services/action.service';
   providers: [
     WorkspaceService,
     {
-      provide: AuthenticationService,
-      useClass: AuthenticationSessionStoreService,
-    },
-    {
-      provide: AuthenticationConfig,
-      useValue: {
-        url: environment.baseUrl + environment.authUrl,
-      },
-    },
-    {
       provide: HTTP_INTERCEPTORS,
-      useClass: AuthenticationInterceptor,
+      useClass: UnauthorizedInterceptor,
       multi: true,
     },
     { provide: AllorsBarcodeService, useClass: AllorsBarcodeKeypressService },

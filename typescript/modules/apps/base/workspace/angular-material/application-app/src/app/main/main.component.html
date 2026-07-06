@@ -28,6 +28,9 @@
           <span style="padding-left: 1rem">
             <a-mat-barcode-entry></a-mat-barcode-entry>
           </span>
+          <button mat-icon-button type="button" title="Sign out" (click)="logout()">
+            <mat-icon>logout</mat-icon>
+          </button>
         </span>
       </mat-toolbar>
       <router-outlet></router-outlet>

@@ -13,12 +13,15 @@ namespace Allors.Server
     using Microsoft.AspNetCore.Diagnostics;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.Extensions.Hosting;
     using NLog;
-    using Microsoft.IdentityModel.Tokens;
 
     public static class ExceptionHandler
     {
-        public static IApplicationBuilder ConfigureExceptionHandler(this IApplicationBuilder appBuilder, IHostingEnvironment env)
+        public static IApplicationBuilder ConfigureExceptionHandler(this IApplicationBuilder appBuilder, IWebHostEnvironment env) =>
+            appBuilder.ConfigureExceptionHandler(env.IsDevelopment());
+
+        private static IApplicationBuilder ConfigureExceptionHandler(this IApplicationBuilder appBuilder, bool isDevelopment)
         {
             async Task Middleware(HttpContext context, Func<Task> next)
             {
@@ -31,11 +34,9 @@ namespace Allors.Server
                     logger.Error(error, "Unhandled Exception");
 
                     context.Response.ContentType = "application/json";
-                    context.Response.StatusCode = error is SecurityTokenExpiredException
-                        ? (int)HttpStatusCode.Unauthorized
-                        : (int)HttpStatusCode.InternalServerError;
+                    context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
-                    var message = ErrorMessage(error, env.IsDevelopment());
+                    var message = ErrorMessage(error, isDevelopment);
                     await context.Response.WriteAsync(JsonSerializer.Serialize(message));
                 }
                 else
@@ -55,9 +56,7 @@ namespace Allors.Server
             }
 
             // Production: never expose the raw exception detail (it is logged server-side above).
-            return error is SecurityTokenExpiredException
-                ? "Authentication token expired."
-                : "An internal server error has occurred.";
+            return "An internal server error has occurred.";
         }
     }
 }

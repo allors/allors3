@@ -72,9 +72,6 @@ namespace Allors.Database.Domain
             m.Person.AssociationPattern(v => v.PickListsWherePicker, m.Person),
             m.Person.AssociationPattern(v => v.PositionFulfillmentsWherePerson, m.Person),
             m.Person.AssociationPattern(v => v.ProfessionalAssignmentsWhereProfessional, m.Person),
-
-            m.Person.RolePattern(v => v.IsUser),
-            m.Person.RolePattern(v => v.UserEmail),
         };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
@@ -93,7 +90,6 @@ namespace Allors.Database.Domain
         public static void DerivePersonDeniedPermission(this Person @this, IValidation validation)
         {
             var deleteRevocation = new Revocations(@this.Transaction()).PersonDeleteRevocation;
-            var resetPasswordRevocation = new Revocations(@this.Transaction()).PersonResetPasswordRevocation;
 
             if (@this.IsDeletable)
             {
@@ -102,15 +98,6 @@ namespace Allors.Database.Domain
             else
             {
                 @this.AddRevocation(deleteRevocation);
-            }
-
-            if (@this.IsUser && @this.ExistUserEmail)
-            {
-                @this.RemoveRevocation(resetPasswordRevocation);
-            }
-            else
-            {
-                @this.AddRevocation(resetPasswordRevocation);
             }
         }
     }

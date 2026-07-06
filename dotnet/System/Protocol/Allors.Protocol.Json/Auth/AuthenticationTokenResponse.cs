@@ -16,10 +16,5 @@ namespace Allors.Protocol.Json.Auth
         /// UserId
         /// </summary>
         public string u { get; set; }
-
-        /// <summary>
-        /// Token
-        /// </summary>
-        public string t { get; set; }
     }
 }

@@ -12,8 +12,276 @@ under a dated version heading.
 
 <!-- Add entries under one of: Added, Changed, Deprecated, Removed, Fixed, Security -->
 
+### Security
+
+- The Blazor Bootstrap demo site (`Blazor.Bootstrap.Site.Server`) now runs the authentication
+  middleware. Its pipeline had `UseAuthorization` without `UseAuthentication`, so
+  `HttpContext.User` was never populated from the Identity cookie and the `[Authorize]`
+  image/media endpoints (which its pages render via relative `/allors/image` URLs) denied even
+  signed-in users; the Blazor-side `AuthorizeRouteView` saw an anonymous user for the same reason.
+  Known pre-existing gaps of this local-only demo, left as future work: its plain `AddRazorPages()`
+  does not apply `DisableIdentityPagesConvention` (open `/Identity/Account/Register`), and it has
+  no authorization fallback policy or antiforgery middleware.
+- All 2FA pages of the Identity UI are disabled (404) by default, not just the
+  `TwoFactorAuthentication` menu page: `EnableAuthenticator`, `ResetAuthenticator`,
+  `GenerateRecoveryCodes`, `ShowRecoveryCodes`, `Disable2fa`, `LoginWith2fa` and
+  `LoginWithRecoveryCode` were still directly URL-addressable and threw 500s, because
+  `AllorsUserStore` implements neither `IUserAuthenticatorKeyStore` nor
+  `IUserTwoFactorRecoveryCodeStore` (2FA remains future work). Note for deployments that override
+  `Identity:DisabledPages` in configuration: the array replaces the defaults wholesale, so add the
+  new entries to your override.
+- The `XSRF-TOKEN` cookie's lifetime now tracks the authentication session. The token was minted
+  once — typically on the SPA's *anonymous* bootstrap GET — and antiforgery request tokens are
+  bound to the authenticated identity, so after the Identity login every cookie-authenticated POST
+  (JSON API and Identity logout) failed with 400 until the browser's cookies were cleared. Sign-in
+  and sign-out now delete the cookie (the next safe `/allors` GET re-issues one bound to the
+  current user), and an antiforgery validation failure deletes it too, so a stale or undecryptable
+  token (e.g. after data-protection key loss) heals on the next request instead of wedging the
+  session in a permanent 400 loop.
+- Mailer configuration for account recovery is completed and CI-verified. `MailKitMailer` reads
+  `Mail:Smtp` as `host` or `host:port` (defaulting to port 25), so a dev SMTP sink on a
+  non-privileged port (e.g. 1025) works; an unset `Mail:Smtp` now fails with an actionable message
+  instead of a cryptic MailKit error. The dev appsettings (Base + Apps, both providers) gain a
+  `Mail` section (`DefaultSender`, `DefaultSenderName`; apps' legacy top-level `DefaultSender` moved
+  into it with the fallback kept); `Mail:Smtp` is left for the deployment to set. The send path is
+  covered by an in-process SMTP test, so recovery mail is verified without an external mail server.
+- **Breaking (Apps domain): the unused admin `ResetPassword` surface is removed.** With self-service
+  recovery in place (Identity ForgotPassword → e-mailed reset link), the admin-triggered
+  `Person.ResetPassword` — a server-side no-op wired to an orphaned intranet method with no button —
+  added no value (it would have e-mailed the same reset link, not let an admin set a password).
+  Removed: the `User.ResetPassword` method and its `Person`/`AutomatedAgent` implementations, the
+  generated `ResetPassword` permission, the `PersonResetPasswordRevocation` (definition, seed, and its
+  branch in `PersonDeniedPermissionRule`), and the dead Angular method. Password recovery is now solely
+  the self-service ForgotPassword flow.
+- The demo/seed users (jane, john, jenny, and the Apps `administrator`) now have a confirmed
+  `UserEmail` equal to their username, so account recovery is reachable: Identity's ForgotPassword
+  no longer silently no-ops (it requires a confirmed e-mail). The normalized e-mail derives
+  automatically, so lookup by e-mail resolves them (F15 groundwork).
+- Queued e-mails are transmitted by a `Mailing` console command rather than an in-process background
+  service. `Commands.dll Mailing` opens a transaction as the System automated agent and drains the
+  send queue via `EmailMessages.Send`; the deployment's scheduler (the Immediate scheduler, run by
+  Windows Task Scheduler) invokes it. The Base and Apps `Commands` now build `DefaultDatabaseServices`
+  with configuration so the console mailer is configured (`Mail:Smtp`, `Mail:DefaultSender`). A failed
+  transport parks the message (its `DateSending` is set, so it is not retried on the next run) —
+  existing `EmailMessages.Send` behaviour, now covered by tests (F15 groundwork).
+- ASP.NET Core Identity account-recovery e-mails are now delivered through the Allors mail pipeline
+  instead of being discarded. A new `AllorsEmailSender` (`Microsoft.AspNetCore.Identity.UI.Services.IEmailSender`)
+  persists each Identity e-mail — the ForgotPassword reset link, e-mail confirmations, admin-triggered
+  resets — as an Allors `EmailMessage` in the send queue. Identity's `DefaultMessageEmailSender<TUser>`
+  composes the subject/body and delegates to it; registering `AllorsEmailSender` after `AddAllorsServer`
+  makes it win over the framework's `NoOpEmailSender`. The sender lives in the Base layer folder, so it
+  is compiled into the Base and Apps servers but never into Core (no `EmailMessage` model → keeps NoOp).
+  The queued messages are transmitted by the hosted drainer that follows (F15 groundwork).
+- Mailer configuration plumbing for the account-recovery work (F15 groundwork): the Base and Apps
+  `DatabaseServices` now build their `IMailer` through a `virtual CreateMailer()` seam that reads
+  `Mail:Smtp`, `Mail:DefaultSender` (falling back to the legacy top-level `DefaultSender` key) and
+  `Mail:DefaultSenderName` from configuration. The hosting seam threads its `IConfiguration` into
+  `DefaultDatabaseServices` via an optional constructor argument, so existing call sites and the
+  test scopes are unaffected — with no configuration they get an unconfigured mailer, exactly as
+  before. No mail is sent yet; this is the prerequisite for the Identity e-mail sender and the
+  queue drainer that follow.
+- The JSON API is now **default-deny**: the server's authorization `FallbackPolicy` requires an
+  authenticated user, so every endpoint is closed unless it explicitly opts out with
+  `[AllowAnonymous]`. The six JSON API controllers (pull/push/sync/invoke/access/permission) drop
+  their per-action `[Authorize]`/`[AllowAnonymous]` and rely on the fallback; the test-harness
+  controllers (`Test`/`TestAuthentication`) are marked `[AllowAnonymous]` so the test rigs can still
+  reset, populate and sign in. A controller added without an explicit policy is now denied by
+  default rather than silently exposed — the core of the F1 fix for downstream inheritors.
+- Added a test-only `X-Allors-TestUser` header credential (scheme `AllorsTestUser`): a request
+  carrying the header authenticates as that user without a password, resolving to the same Allors
+  user as the JWT/cookie (identical `NameIdentifier` claim). The handler is registered only in the
+  Core abstract test-harness server's `Startup` — never in the inherited hosting seam — so it can
+  never reach a downstream inheritor. It gives jest and the remote C# suites a password-free
+  credential ahead of the JWT retirement. Test infrastructure.
+- The jest adapters-json test client authenticates with the `X-Allors-TestUser` header instead of a
+  bearer token: it drops the JWT token POST (and the dead `authUrl`), resolves the user id from
+  `GET /allors/UserInfo`, and sends the header on every request. Spec behaviour is unchanged. Test
+  infrastructure.
+- The remaining C# bearer test clients move off JWT: the remote `ApiTest.SignIn` and the
+  workspace-remote `Profile.Login` authenticate with the `X-Allors-TestUser` header, and the
+  login-mechanism tests (`SignInTests`, `LockoutTests`) drive the Identity cookie form login (whose
+  endpoint is the one that remains). This clears the last non-deletion bearer consumers ahead of
+  removing the JWT stack. Test infrastructure.
+- Retired the `Blazor.Bootstrap.Site.Wasm` demo (removed from the solution). It authenticated with
+  the bearer `TestAuthentication/Token` flow, was built by no CI target and referenced by nothing;
+  it is removed ahead of the JWT retirement rather than migrated to cookie auth. The other Blazor
+  sample projects are unaffected.
+- **Breaking: the JWT authentication stack is removed** — the dual-scheme window closes and the
+  ASP.NET Core Identity **cookie is now the only authentication scheme**. Deleted: the JWT bearer
+  handler + policy scheme from the hosting seam, `AuthenticationController` (the `Authentication/Token`
+  endpoint), `IdentityUserExtensions.CreateToken`, the `Token` action on the test authentication
+  controllers, `ProductionSecretsGuard` (it guarded the JWT signing key), the `JwtToken` config
+  sections, and the `Microsoft.AspNetCore.Authentication.JwtBearer` package. Closes F3 (no unrevocable
+  long-lived token remains — only the revocable cookie) and F6 (the weak JWT defaults are gone), and
+  removes the token endpoint's enumeration/timing surface (F13). The test harness now authenticates
+  via the cookie (browser) or the `X-Allors-TestUser` header (jest / remote suites).
+- Removed the development CORS policy (`AddCors`/`UseCors` + the `CorsOrigins` origin lists). Every
+  client is now same-origin through the dev proxy (Phase 5), and the C# test clients call the server
+  directly (CORS is browser-enforced only), so the policy is dead. JSNLog keeps its own origin regex
+  (F14).
+- Retired the bearer login from the remote workspace adapters: `DatabaseConnection.Login`/`Logoff`
+  (which posted credentials and set the `Authorization: Bearer` header) are removed from both the
+  System.Text.Json and Newtonsoft adapters — the last bearer *behaviour* in the tree. Test clients
+  authenticate with the `X-Allors-TestUser` header instead. The `AuthenticationToken{Request,Response}`
+  DTOs are retained as the test sign-in shapes, with their JWT-era `p`/`t` (password/token) fields
+  dropped.
+- Added a required `IsDisabled` role to `User`, defaulting to `false` for new users (seeded in the
+  post-build), giving the model a first-class account-disabled flag (F10). The rule that acts on it —
+  lockout + security-stamp rotation — follows in the next change.
+- Disabling a user now takes effect: a rule on `User.IsDisabled` locks the account
+  (`UserLockoutEnabled` + `UserLockoutEnd = MaxValue`) and rotates the security stamp, so the
+  framework's lockout gate rejects sign-in and the stamp validator invalidates any live cookie within
+  the revalidation interval. Re-enabling clears the lockout, resets the failure count, and rotates the
+  stamp again. The stamp revalidation interval is now immediate (0) in Development and 5 minutes in
+  production, so a disable is observed at once by the test rigs (F10).
+- `UserExtensions.SetPassword` now rotates the security stamp, so a programmatic (domain-code)
+  password change invalidates any live session on the next revalidation. Identity's own
+  password-change path (`AllorsUserStore.UpdateAsync`) already rotates the stamp; this covers the
+  domain path without a derive rule that would clobber it (F3).
+- **Breaking (domain): the interactive domain password path is retired (F12).** `User` no longer
+  inherits `UserPasswordReset`; the `InExistingUserPassword`/`InUserPassword` transient roles, the
+  `UserInUserPasswordRule` that consumed them (verify-old-password → strength-check → set hash), and
+  the `IPasswordHasher.CheckStrength` composition check are removed. That path skipped the old-password
+  proof when no existing password was supplied, never rotated the security stamp, and stayed reachable
+  over the JSON API after the UI fields were removed (P5.7). Password management is now the Identity
+  `/Identity/Account/Manage` flow; strength is enforced by the configured Identity policy; and
+  programmatic `SetPassword` (which rotates the stamp) remains.
+- Account lockout is now real: new users default to `UserLockoutEnabled = true` in the post-build, so
+  the configured failed-attempt threshold actually locks the account (a required bool otherwise
+  defaults to false, leaving lockout inert) (F5). `Upgrade.Execute()` in all three layers backfills
+  existing populations via `Users.BackfillSecurityRoles()` — a security stamp for pre-stamp users
+  (required for cookie sign-in), the required `IsDisabled=false`, and lockout enabled. **Run
+  `Commands.dll Upgrade` against an existing population before serving it.**
+- The base **application-app** now authenticates with the Identity cookie instead of a bearer token:
+  its API base URL is relative (`/allors/`, same-origin through the proxy, which engages Angular's
+  built-in `X-XSRF-TOKEN`), an `APP_INITIALIZER` reads `GET /allors/UserInfo` to learn the user, a
+  401 interceptor redirects to `/Identity/Account/Login`, logout posts to `/Identity/Account/Logout`,
+  and the in-app login screen + token guard are removed (auth is enforced by the server). The
+  `WorkspaceConfig` host map now also covers the dev-server origin (`localhost:4200`) so same-origin
+  proxied requests resolve their workspace.
+- The **apps-intranet** application-app is likewise cut over to the Identity cookie (relative base
+  URL, `UserInfo` bootstrap, 401 redirect, logout, no in-app login screen or route guard). The
+  login component's post-authentication bootstrap pull — default internal organisation and singleton
+  — moves into the `APP_INITIALIZER` so those ids are primed before the app renders.
+- The intranet UI no longer offers domain password entry: the password fields are removed from the
+  person form and the user-profile form, and the user-profile menu gains an **Account settings** link
+  to the shipped Identity `/Identity/Account/Manage` page. Password management is handled by ASP.NET
+  Core Identity; the interactive domain password path is retired from the model in a later phase.
+- The **foundation-app** (the Core showcase demo) is cut over to the Identity cookie: relative base
+  URL, `/Identity` proxy entry, the 401 `UnauthorizedInterceptor`, and a `UserInfo` bootstrap gate,
+  with the dead `authUrl` plumbing removed. It previously reached the API anonymously; it now
+  requires an authenticated cookie like the material apps.
+- **Breaking (Angular foundation lib):** the bearer/JWT client surface is removed from
+  `@allors/base/workspace/angular/foundation` — `AuthenticationService`,
+  `AuthenticationSessionStoreService`, `AuthenticationInterceptor`, `AuthenticationConfig`, and the
+  `AuthenticationTokenRequest`/`AuthenticationTokenResponse` DTOs. Cookie authentication replaces
+  them: register `UnauthorizedInterceptor` (401 → Identity login) instead of the bearer interceptor,
+  prime the user with `UserInfoService.init(baseUrl)` in an `APP_INITIALIZER`, and sign out with
+  `LogoutService`.
+- Media, image and print content is no longer anonymously accessible: `BaseMediaController`
+  (print + media) and `BaseImageController` now require authentication. The media actions already
+  carried `[Authorize]` behind an `[AllowAnonymous]` override, which is removed; the image action
+  gains `[Authorize]`. Cacheable responses switch from `ResponseCacheLocation.Any` (`Cache-Control:
+  public`) to `Client` (`private`), so authenticated content is cached only by the browser, never by
+  shared proxies/CDNs. Media URLs are relative and same-origin, so the `SameSite=Lax` cookie rides
+  `<img>` and print (`window.open`) requests (F1).
+- The e2e harness signs a default Identity cookie into the browser context before each test (through
+  the dev proxy, same-origin), so once an app is on cookie auth the pre-test navigation loads
+  authenticated. Invisible to the still-bearer apps. (Test infrastructure.)
+- The test authentication controller gained a passwordless cookie `SignIn` action
+  (`SignInManager.SignInAsync`) beside the JWT `Token` action, so browser-context tests can
+  authenticate the way the real app will (Identity application cookie, no bearer token). Test-only.
+- Added an authenticated `GET /allors/UserInfo` endpoint returning the current user's id and name.
+  It is the SPA's user-id source once the browser no longer receives a JWT token response; an
+  anonymous request is challenged (401 for `/allors`), which the SPA turns into a login redirect.
+- The JSON API now has antiforgery protection scoped to browser (cookie) callers. Safe `/allors`
+  responses issue a readable `XSRF-TOKEN` cookie; unsafe `/allors` requests are validated (header
+  `X-XSRF-TOKEN` against the antiforgery cookie) **only when the caller authenticated via the Identity
+  application cookie**. Bearer, test-header and future API-key clients carry a different authentication
+  type and are exempt by construction, so the check applies to exactly the surface that needs it.
+- Anonymous requests no longer fault in the object-level security check. Per-request user resolution
+  keys off `IsAuthenticated` (rather than a non-null principal), and the grant evaluation
+  (`Security.GetVersionedGrants`) null-guards the user before dereferencing its id — so an
+  unauthenticated request degrades safely instead of throwing `NullReferenceException`. Anonymous
+  access is opt-in via `Security:AnonymousUserName`, which resolves to a real (guest) user by name
+  rather than a null user; absent that setting, the request simply has no user, as before (F7).
+- The ASP.NET Core Identity UI is now served (`AddRazorPages` + `UseStaticFiles` + `MapRazorPages`),
+  so `/Identity/Account/*` (login, manage, logout, …) is live.
+- The Identity login page is overridden to accept a **user name** (not an `[EmailAddress]`), since
+  Allors user names are not necessarily e-mail addresses. Dangerous or unsupported account pages are
+  disabled (404) by a configurable convention (`Identity:DisabledPages`): open registration
+  (anonymous user creation), the personal-data pages (which cascade-delete the user), and two-factor
+  management (unsupported until a later phase). Override pages live in the inheritable `Core` layer
+  folder and are globbed into every server, so inheritors receive them and can further override.
+- Authentication now runs through a policy scheme: requests with an `Authorization: Bearer` header
+  authenticate via JWT (unchanged), everything else via the ASP.NET Core Identity **application
+  cookie**. The cookie is hardened — `HttpOnly`, `SameSite=Lax`, sliding 8-hour expiry, and an
+  environment-switched name/secure policy (`__Host-Allors.Auth` + always-`Secure` in production, a
+  plain name + `SameAsRequest` in Development) — and `/allors` requests receive a raw 401/403 rather
+  than a login-page redirect. A 5-minute security-stamp revalidation interval is the revocation lever
+  (stamp rotation on password change / disable follows in a later phase). This opens the window in
+  which JWT and cookie auth coexist until every client is migrated off Bearer.
+- Added an anti-regression test asserting the inheritable server layer folders (`Core`/`Base`/`Apps`)
+  expose no test or bypass controllers — enforcing that destructive/test scaffolding stays in the
+  non-inherited `Custom/` folder and can never reach a downstream inheritor's production build (F2).
+- JWT lifetime is now 8 hours instead of 30 days. The previous `"30d"` value never parsed as a
+  `TimeSpan` and silently fell back to a 30-day default; `"08:00:00"` parses correctly. Production
+  Angular builds now point `authUrl` at the real password endpoint (`Authentication/Token`) instead
+  of the passwordless test minter (`TestAuthentication/Token`), so a production build no longer ships
+  passwordless login.
+- Servers now fail fast at startup outside Development when `JwtToken:Key` is missing, still the
+  checked-in template value, or shorter than 32 characters — turning a silently-weak signing key
+  into a loud, actionable configuration error. Development (and the test rigs) keep using the
+  template key.
+- The Apps `Person` and `OrganisationContactRelationship` pull controllers now require
+  authentication (`[Authorize]`). They previously answered anonymous POSTs with object data;
+  unauthenticated callers are now challenged (the authenticated intranet client is unaffected, as it
+  already sends its bearer token on every request).
+- `AllorsUserStore.HasPasswordAsync` returned the inverse of the truth (true when the user had *no*
+  password). It now reports whether a password hash is set, so Identity's account-management pages
+  route users to change-password rather than set-password.
+- Identity lockout and password policy are now configured explicitly, following NIST 800-63B /
+  OWASP ASVS guidance: lockout after 10 failed attempts with a 15-minute auto-unlock (bounded
+  lockout beats a hair-trigger hard lock, which is a denial-of-service lever), and passwords
+  require length (12+, at least 4 unique characters) instead of composition rules (digit/upper/
+  special requirements are off — they push predictable substitutions without adding entropy).
+  Deployments can override any value via the `Identity` configuration section. Lockout remains
+  inert until `UserLockoutEnabled` is backfilled (upcoming domain phase); breached-password
+  checking is a known deferred gap.
+- Authentication endpoints are now rate limited per client IP (the forwarded IP behind a trusted
+  proxy): fixed window, HTTP 429 on rejection, defaults 10/minute per IP with generous loopback
+  headroom for local test rigs. Configure via `Security:AuthenticationRateLimit:{Paths, PermitLimit,
+  WindowSeconds, LoopbackPermitLimit}`; the default path list covers the token endpoints and the
+  upcoming `/Identity/Account/{Login,ForgotPassword,ResetPassword}` pages. Per-account protection
+  remains Identity lockout.
+- The server pipeline now processes `X-Forwarded-For`/`X-Forwarded-Proto` first (trusting loopback
+  proxies by default; `ForwardedHeaders:KnownProxies`/`:KnownNetworks` configure others), redirects
+  http to https outside Development, and emits baseline security headers on every response
+  (`X-Content-Type-Options: nosniff`, `Referrer-Policy: no-referrer`, a restrictive
+  `Permissions-Policy`, and `Content-Security-Policy: frame-ancestors 'none'`, overridable via
+  `Security:ContentSecurityPolicy`). JSNLog's browser-log endpoint no longer allows any origin
+  (`.*`); it defaults to localhost and is configurable via `Logging:JSNLog:CorsAllowedOriginsRegex`.
+- Each server now persists its DataProtection key ring to disk (config `DataProtection:KeysDirectory`,
+  default `<ContentRoot>/.allors/dataprotection-keys`) and sets a per-app application name
+  (`Allors.Core`/`Allors.Base`/`Allors.Apps`). This keeps future auth cookies and antiforgery tokens
+  valid across restarts, and makes protected payloads deliberately non-interchangeable between apps
+  (no shared key ring).
+
 ### Changed
 
+- Nuke-booted servers (remote/workspace/jest/e2e test rigs) now run with
+  `ASPNETCORE_ENVIRONMENT=Development` instead of defaulting to Production. This aligns the test
+  rigs with upcoming production-only hardening (fail-fast secret checks, HTTPS redirect) that must
+  not apply to local test boots.
+- The three server `Startup` classes now delegate to a shared hosting seam
+  (`AddAllorsServer`/`UseAllorsServer` under `Core/Database/Server/Core/Hosting/`), so hosting changes
+  land once for Core, Base and Apps. Per-app deltas (CORS origins, controllers-with-views) moved into
+  `AllorsServerOptions`. Behavioural deltas: the Core server now also sets the `IDatabaseService.Build`
+  delegate (Base/Apps already did), and the invalid-model-state log category changed from
+  `Allors.Server.Startup` to `Allors.Server`. `ConfigureExceptionHandler` gained an
+  `IWebHostEnvironment` overload. The Blazor `Blazor.Bootstrap.Site.Server` project, which
+  compile-globs the shared server sources, gained the `JSNLog` and
+  `Microsoft.AspNetCore.Authentication.JwtBearer` package references the seam requires.
 - Updated the e2e test projects' `Microsoft.Playwright` dependency from 1.59.0 to 1.61.0.
 - The part weighted-average cost is now maintained by a dedicated `PartWeightedAverageRule` that only
   recomputes when stock is received, instead of `PartQuantitiesRule` re-reading a part's entire
@@ -25,6 +293,11 @@ under a dated version heading.
 
 ### Added
 
+- `ARCHITECTURE.md` documenting the abstract-domain model (Core ← Base ← Apps), how inheritance
+  works by compile-globbing the layer folders, why `Custom/` scaffolding is never inherited, the
+  `Custom` naming overload (and the planned split into a `Test` domain plus a demo `Custom`), and
+  the hardening principle: secure defaults in the inherited layer folders, overridable by config.
+
 ### Removed
 
 - The **extranet** application has been removed: the Angular app (`apps/apps-extranet`), its five
@@ -34,6 +307,10 @@ under a dated version heading.
 
 ### Fixed
 
+- The AppsIntranet e2e `RequestForQuoteTest.CreateRequestForQuoteMaximal` no longer fails between
+  local midnight and UTC midnight: its expected request date now derives from the UTC transaction
+  clock (`Transaction.Now().Date`) instead of the local `DateTime.Today`, matching the datepicker's
+  UTC-midnight storage convention (same pattern as the Base `DatepickerTest`).
 - Apps `Setup.v.cs` dispatched `BaseOnPreSetup` from `OnPrePrepare` instead of `BaseOnPrePrepare`
   (latent; both hooks are empty today).
 - SQL Server `AllowSnapshotIsolation` now brackets the database name in its `ALTER DATABASE`

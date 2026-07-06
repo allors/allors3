@@ -9,8 +9,10 @@ namespace Allors.Database.Server.Controllers
     using Allors.Services;
     using Domain;
     using Protocol.Json;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
+    [Authorize]
     public class OrganisationContactRelationshipController : Controller
     {
 

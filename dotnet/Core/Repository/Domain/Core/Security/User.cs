@@ -14,7 +14,7 @@ namespace Allors.Repository
     #region Allors
     [Id("a0309c3b-6f80-4777-983e-6e69800df5be")]
     #endregion
-    public partial interface User : UniquelyIdentifiable, SecurityTokenOwner, UserPasswordReset, Deletable
+    public partial interface User : UniquelyIdentifiable, SecurityTokenOwner, Deletable
     {
         #region Allors
         [Id("5e8ab257-1a1c-4448-aacc-71dbaaba525b")]
@@ -96,6 +96,13 @@ namespace Allors.Repository
         #endregion
         [Required]
         int UserAccessFailedCount { get; set; }
+
+        #region Allors
+        [Id("38af8c1b-94cb-4a35-a095-3824051fbcb7")]
+        #endregion
+        [Required]
+        [Workspace(Default)]
+        bool IsDisabled { get; set; }
 
         #region Allors
         [Id("4C9FDD8A-D7D4-4F6C-9584-77C6E1FC90FD")]

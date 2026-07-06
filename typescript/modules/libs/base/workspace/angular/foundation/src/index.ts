@@ -3,12 +3,9 @@ export * from './lib/action/action';
 
 export * from './lib/component';
 
-export * from './lib/authentication/authentication-token-request';
-export * from './lib/authentication/authentication-token-response';
-export * from './lib/authentication/authentication.service';
-export * from './lib/authentication/authentication-config';
-export * from './lib/authentication/authentication-interceptor';
-export * from './lib/authentication/authentication-session-store.service';
+export * from './lib/authentication/unauthorized.interceptor';
+export * from './lib/authentication/user-info.service';
+export * from './lib/authentication/logout.service';
 
 export * from './lib/barcode/barcode.service';
 export * from './lib/barcode/barcode.directive';

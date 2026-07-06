@@ -5,14 +5,11 @@
 
 namespace Allors.Server.Tests
 {
-    using System;
-
+    using System.Threading.Tasks;
     using Database.Domain;
-    using Protocol.Json.Auth;
     using Xunit;
 
     [Collection("Api")]
-
     public class SignInTests : ApiTest
     {
         public SignInTests()
@@ -24,66 +21,21 @@ namespace Allors.Server.Tests
         }
 
         [Fact]
-        public async void CorrectUserAndPassword()
-        {
-            var args = new AuthenticationTokenRequest
-            {
-                l = "Jane",
-                p = "p@ssw0rd",
-            };
-
-            var uri = new Uri("Authentication/Token", UriKind.Relative);
-            var response = await this.PostAsJsonAsync(uri, args);
-            var siginInResponse = await this.ReadAsAsync<AuthenticationTokenResponse>(response);
-
-            Assert.True(siginInResponse.a);
-        }
+        public async Task CorrectUserAndPassword() =>
+            Assert.True(await this.CookieLoginSucceedsAsync("Jane", "p@ssw0rd"));
 
         [Fact]
-        public async void NonExistingUser()
-        {
-            var args = new AuthenticationTokenRequest
-            {
-                l = "Jeff",
-                p = "p@ssw0rd",
-            };
-
-            var uri = new Uri("Authentication/Token", UriKind.Relative);
-            var response = await this.PostAsJsonAsync(uri, args);
-            var siginInResponse = await this.ReadAsAsync<AuthenticationTokenResponse>(response);
-
-            Assert.False(siginInResponse.a);
-        }
+        public async Task NonExistingUser() =>
+            Assert.False(await this.CookieLoginSucceedsAsync("Jeff", "p@ssw0rd"));
 
         [Fact]
-        public async void EmptyStringPassword()
-        {
-            var args = new AuthenticationTokenRequest
-            {
-                l = "John",
-                p = "",
-            };
+        public async Task EmptyStringPassword() =>
+            Assert.False(await this.CookieLoginSucceedsAsync("John", string.Empty));
 
-            var uri = new Uri("Authentication/Token", UriKind.Relative);
-            var response = await this.PostAsJsonAsync(uri, args);
-            var siginInResponse = await this.ReadAsAsync<AuthenticationTokenResponse>(response);
-
-            Assert.False(siginInResponse.a);
-        }
-
+        // John has no password; the Identity form login has no distinct "no password" case, so an
+        // empty submission stands in for it — it must still be rejected.
         [Fact]
-        public async void NoPassword()
-        {
-            var args = new AuthenticationTokenRequest
-            {
-                l = "John",
-            };
-
-            var uri = new Uri("Authentication/Token", UriKind.Relative);
-            var response = await this.PostAsJsonAsync(uri, args);
-            var signInResponse = await this.ReadAsAsync<AuthenticationTokenResponse>(response);
-
-            Assert.False(signInResponse.a);
-        }
+        public async Task NoPassword() =>
+            Assert.False(await this.CookieLoginSucceedsAsync("John", string.Empty));
     }
 }

@@ -21,6 +21,7 @@ namespace Allors.Database.Domain
 
         public void Execute()
         {
+            new Users(this.transaction).BackfillSecurityRoles();
         }
 
         private void Derive(Extent extent)

@@ -6,50 +6,40 @@
 namespace Allors.Server
 {
     using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.Logging;
     using Protocol.Json.Auth;
-    using Security;
 
+    [AllowAnonymous]
     public class TestAuthenticationController : Controller
     {
-        public TestAuthenticationController(UserManager<IdentityUser> userManager, ILogger<AuthenticationController> logger, IConfiguration config)
+        public TestAuthenticationController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
         {
             this.UserManager = userManager;
-            this.Logger = logger;
-            this.Configuration = config;
+            this.SignInManager = signInManager;
         }
 
         public UserManager<IdentityUser> UserManager { get; }
 
-        public ILogger Logger { get; }
+        public SignInManager<IdentityUser> SignInManager { get; }
 
-        public IConfiguration Configuration { get; }
-
+        // Passwordless cookie sign-in for browser-context tests: issues the Identity application
+        // cookie (no bearer token), mirroring how the real app authenticates.
         [HttpPost]
-        public async Task<IActionResult> Token([FromBody]AuthenticationTokenRequest request)
+        public async Task<IActionResult> SignIn([FromBody]AuthenticationTokenRequest request)
         {
             if (this.ModelState.IsValid && !string.IsNullOrWhiteSpace(request.l))
             {
                 var user = await this.UserManager.FindByNameAsync(request.l);
-
                 if (user != null)
                 {
-                    var token = user.CreateToken(this.Configuration);
-                    var response = new AuthenticationTokenResponse
-                    {
-                        a = true,
-                        u = user.Id,
-                        t = token,
-                    };
-
-                    return this.Ok(response);
+                    await this.SignInManager.SignInAsync(user, isPersistent: false);
+                    return this.Ok(new AuthenticationTokenResponse { a = true, u = user.Id });
                 }
             }
 
-            return this.Ok(new { Authenticated = false });
+            return this.Unauthorized();
         }
     }
 }
