@@ -14,6 +14,11 @@ under a dated version heading.
 
 ### Security
 
+- The demo/seed users (jane, john, jenny, and the Apps `administrator`) now have a confirmed
+  `UserEmail` equal to their username, so account recovery is reachable: Identity's ForgotPassword
+  no longer silently no-ops (it requires a confirmed e-mail), and the Apps `PersonDeniedPermissionRule`
+  un-revokes their `ResetPassword` permission (a user with a `UserEmail` may be reset). The normalized
+  e-mail derives automatically, so lookup by e-mail resolves them (F15 groundwork).
 - Queued e-mails are transmitted by a `Mailing` console command rather than an in-process background
   service. `Commands.dll Mailing` opens a transaction as the System automated agent and drains the
   send queue via `EmailMessages.Send`; the deployment's scheduler (the Immediate scheduler, run by

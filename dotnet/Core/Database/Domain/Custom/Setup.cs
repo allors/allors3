@@ -26,9 +26,9 @@ namespace Allors.Database.Domain
         private void CustomOnPostSetup(Config config)
         {
 
-            var jane = new PersonBuilder(this.transaction).WithFirstName("Jane").WithLastName("Doe").WithUserName("jane@example.com").Build();
-            var john = new PersonBuilder(this.transaction).WithFirstName("John").WithLastName("Doe").WithUserName("john@example.com").Build();
-            var jenny = new PersonBuilder(this.transaction).WithFirstName("Jenny").WithLastName("Doe").WithUserName("jenny@example.com").Build();
+            var jane = new PersonBuilder(this.transaction).WithFirstName("Jane").WithLastName("Doe").WithUserName("jane@example.com").WithUserEmail("jane@example.com").WithUserEmailConfirmed(true).Build();
+            var john = new PersonBuilder(this.transaction).WithFirstName("John").WithLastName("Doe").WithUserName("john@example.com").WithUserEmail("john@example.com").WithUserEmailConfirmed(true).Build();
+            var jenny = new PersonBuilder(this.transaction).WithFirstName("Jenny").WithLastName("Doe").WithUserName("jenny@example.com").WithUserEmail("jenny@example.com").WithUserEmailConfirmed(true).Build();
 
             var guest = new PersonBuilder(this.transaction).WithFirstName("Gu").WithLastName("Est").WithUserName("guest@example.com").Build();
 

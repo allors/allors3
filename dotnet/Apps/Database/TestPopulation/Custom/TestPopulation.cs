@@ -48,7 +48,7 @@ namespace Allors
 
             new Setup(database, this.Config).Apply();
 
-            var administrator = new PersonBuilder(this.Transaction).WithUserName("jane@example.com").Build();
+            var administrator = new PersonBuilder(this.Transaction).WithUserName("jane@example.com").WithUserEmail("jane@example.com").WithUserEmailConfirmed(true).Build();
             administrator.SetPassword("letmein");
 
             this.Transaction.Derive();
