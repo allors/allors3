@@ -14,6 +14,13 @@ under a dated version heading.
 
 ### Security
 
+- Queued e-mails are transmitted by a `Mailing` console command rather than an in-process background
+  service. `Commands.dll Mailing` opens a transaction as the System automated agent and drains the
+  send queue via `EmailMessages.Send`; the deployment's scheduler (the Immediate scheduler, run by
+  Windows Task Scheduler) invokes it. The Base and Apps `Commands` now build `DefaultDatabaseServices`
+  with configuration so the console mailer is configured (`Mail:Smtp`, `Mail:DefaultSender`). A failed
+  transport parks the message (its `DateSending` is set, so it is not retried on the next run) —
+  existing `EmailMessages.Send` behaviour, now covered by tests (F15 groundwork).
 - ASP.NET Core Identity account-recovery e-mails are now delivered through the Allors mail pipeline
   instead of being discarded. A new `AllorsEmailSender` (`Microsoft.AspNetCore.Identity.UI.Services.IEmailSender`)
   persists each Identity e-mail — the ForgotPassword reset link, e-mail confirmations, admin-triggered

@@ -18,6 +18,9 @@ namespace Allors.Database.Configuration
 
         protected override IDerivationService CreateDerivationFactory() => new DerivationService(this.Engine);
 
+        // Tests never talk to a real SMTP server; record sends instead of connecting.
+        protected override IMailer CreateMailer() => new RecordingMailer();
+
         private class TestPasswordHasher : IPasswordHasher
         {
             public string HashPassword(string user, string password) => password;
