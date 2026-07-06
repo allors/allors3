@@ -5,6 +5,7 @@
 
 namespace Allors.Server
 {
+    using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;
@@ -23,7 +24,8 @@ namespace Allors.Server
 
         public IWebHostEnvironment Environment { get; }
 
-        public void ConfigureServices(IServiceCollection services) =>
+        public void ConfigureServices(IServiceCollection services)
+        {
             services.AddAllorsServer(this.Configuration, this.Environment, new AllorsServerOptions
             {
                 ApplicationName = "Allors.Core",
@@ -36,6 +38,24 @@ namespace Allors.Server
                 },
                 UseControllersWithViews = true,
             });
+
+            // Test-harness only (jest + the remote C# suites hit this abstract server): a request with
+            // the X-Allors-TestUser header authenticates as that user. Registered here, in the abstract
+            // server's Startup, rather than the inherited seam, so a downstream inheritor never gets it.
+            services.AddAuthentication()
+                .AddScheme<AuthenticationSchemeOptions, TestUserAuthenticationHandler>(TestUserAuthenticationHandler.SchemeName, null);
+
+            services.PostConfigure<PolicySchemeOptions>(
+                AllorsServerServiceCollectionExtensions.AuthenticationScheme,
+                policySchemeOptions =>
+                {
+                    var forwardToBearerOrCookie = policySchemeOptions.ForwardDefaultSelector;
+                    policySchemeOptions.ForwardDefaultSelector = context =>
+                        context.Request.Headers.ContainsKey(TestUserAuthenticationHandler.HeaderName)
+                            ? TestUserAuthenticationHandler.SchemeName
+                            : forwardToBearerOrCookie?.Invoke(context);
+                });
+        }
 
         public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory) =>
             app.UseAllorsServer(this.Environment, loggerFactory);

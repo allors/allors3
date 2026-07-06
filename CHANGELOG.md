@@ -21,6 +21,12 @@ under a dated version heading.
   controllers (`Test`/`TestAuthentication`) are marked `[AllowAnonymous]` so the test rigs can still
   reset, populate and sign in. A controller added without an explicit policy is now denied by
   default rather than silently exposed — the core of the F1 fix for downstream inheritors.
+- Added a test-only `X-Allors-TestUser` header credential (scheme `AllorsTestUser`): a request
+  carrying the header authenticates as that user without a password, resolving to the same Allors
+  user as the JWT/cookie (identical `NameIdentifier` claim). The handler is registered only in the
+  Core abstract test-harness server's `Startup` — never in the inherited hosting seam — so it can
+  never reach a downstream inheritor. It gives jest and the remote C# suites a password-free
+  credential ahead of the JWT retirement. Test infrastructure.
 - The base **application-app** now authenticates with the Identity cookie instead of a bearer token:
   its API base URL is relative (`/allors/`, same-origin through the proxy, which engages Angular's
   built-in `X-XSRF-TOKEN`), an `APP_INITIALIZER` reads `GET /allors/UserInfo` to learn the user, a
