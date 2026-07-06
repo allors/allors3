@@ -50,6 +50,10 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+// Populates HttpContext.User from the Identity application cookie; without it the [Authorize]
+// media/image controllers (and the Blazor AuthorizeRouteView) deny even signed-in users.
+app.UseAuthentication();
+
 app.UseAuthorization();
 
 app.UseMiddleware<ClaimsPrincipalServiceMiddleware>();

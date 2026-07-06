@@ -14,6 +14,14 @@ under a dated version heading.
 
 ### Security
 
+- The Blazor Bootstrap demo site (`Blazor.Bootstrap.Site.Server`) now runs the authentication
+  middleware. Its pipeline had `UseAuthorization` without `UseAuthentication`, so
+  `HttpContext.User` was never populated from the Identity cookie and the `[Authorize]`
+  image/media endpoints (which its pages render via relative `/allors/image` URLs) denied even
+  signed-in users; the Blazor-side `AuthorizeRouteView` saw an anonymous user for the same reason.
+  Known pre-existing gaps of this local-only demo, left as future work: its plain `AddRazorPages()`
+  does not apply `DisableIdentityPagesConvention` (open `/Identity/Account/Register`), and it has
+  no authorization fallback policy or antiforgery middleware.
 - All 2FA pages of the Identity UI are disabled (404) by default, not just the
   `TwoFactorAuthentication` menu page: `EnableAuthenticator`, `ResetAuthenticator`,
   `GenerateRecoveryCodes`, `ShowRecoveryCodes`, `Disable2fa`, `LoginWith2fa` and
