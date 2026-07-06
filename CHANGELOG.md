@@ -27,6 +27,10 @@ under a dated version heading.
   Core abstract test-harness server's `Startup` — never in the inherited hosting seam — so it can
   never reach a downstream inheritor. It gives jest and the remote C# suites a password-free
   credential ahead of the JWT retirement. Test infrastructure.
+- The jest adapters-json test client authenticates with the `X-Allors-TestUser` header instead of a
+  bearer token: it drops the JWT token POST (and the dead `authUrl`), resolves the user id from
+  `GET /allors/UserInfo`, and sends the header on every request. Spec behaviour is unchanged. Test
+  infrastructure.
 - The base **application-app** now authenticates with the Identity cookie instead of a bearer token:
   its API base URL is relative (`/allors/`, same-origin through the proxy, which engages Angular's
   built-in `X-XSRF-TOKEN`), an `APP_INITIALIZER` reads `GET /allors/UserInfo` to learn the user, a

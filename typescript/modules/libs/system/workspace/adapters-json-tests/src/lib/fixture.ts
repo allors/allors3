@@ -16,7 +16,6 @@ import {
 import { C1, C2 } from '@allors/default/workspace/domain';
 
 const BASE_URL = 'http://localhost:5000/allors/';
-const AUTH_URL = 'TestAuthentication/Token';
 
 export const name_c1A = 'c1A';
 export const name_c1B = 'c1B';
@@ -59,7 +58,7 @@ export class Fixture {
   }
 
   async init(population?: string) {
-    this.jsonClient = new FetchClient(BASE_URL, AUTH_URL);
+    this.jsonClient = new FetchClient(BASE_URL);
 
     await this.jsonClient.setup(population);
     await this.jsonClient.login('jane@example.com', '');

@@ -16,23 +16,16 @@ import {
 } from '@allors/system/common/protocol-json';
 import { IDatabaseJsonClient } from '@allors/system/workspace/adapters-json';
 
-interface AuthenticationTokenRequest {
-  /** login */
-  l: string;
+// Test-only credential recognised by the Core test-harness server (see TestUserAuthenticationHandler):
+// a request carrying this header is authenticated as that user without a password.
+const TEST_USER_HEADER = 'X-Allors-TestUser';
 
-  /** password */
-  p: string;
-}
-
-interface AuthenticationTokenResponse {
-  /** Authenticated */
-  a: boolean;
-
+interface UserInfoResponse {
   /** User id */
-  u: number;
+  u: string;
 
-  /** Token */
-  t: string;
+  /** User name */
+  userName: string;
 }
 
 // Node 19+ defaults http(s) keep-alive to ON. node-fetch v2 (what cross-fetch uses) then
@@ -46,9 +39,9 @@ const withAgent = (init: RequestInit = {}): RequestInit =>
 
 export class FetchClient implements IDatabaseJsonClient {
   userId: number;
-  jwtToken: string;
+  userName: string;
 
-  constructor(public baseUrl: string, public authUrl: string) {}
+  constructor(public baseUrl: string) {}
 
   async setup(population = 'full') {
     const url = `${this.baseUrl}Test/Setup?population=${population}`;
@@ -56,32 +49,24 @@ export class FetchClient implements IDatabaseJsonClient {
   }
 
   async login(login: string, password?: string): Promise<boolean> {
-    const tokenRequest: Partial<AuthenticationTokenRequest> = {
-      l: login,
-      p: password,
-    };
+    // Bearer/JWT is retired; authenticate with the X-Allors-TestUser header and learn the user id
+    // from the authenticated UserInfo endpoint (replacing the old token response's `u`). The
+    // password argument is kept for call-site compatibility but is unused.
+    this.userName = login;
 
-    const url = `${this.baseUrl}${this.authUrl}`;
     const response = await fetch(
-      url,
+      `${this.baseUrl}UserInfo`,
       withAgent({
-        method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          [TEST_USER_HEADER]: login,
         },
-        body: JSON.stringify(tokenRequest),
       })
     );
 
     if (response.ok) {
-      const tokenResponse =
-        (await response.json()) as AuthenticationTokenResponse;
-
-      if (tokenResponse.a) {
-        this.userId = tokenResponse.u;
-        this.jwtToken = tokenResponse.t;
-        return true;
-      }
+      const userInfo = (await response.json()) as UserInfoResponse;
+      this.userId = Number(userInfo.u);
+      return true;
     }
 
     return false;
@@ -120,7 +105,7 @@ export class FetchClient implements IDatabaseJsonClient {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.jwtToken}`,
+          [TEST_USER_HEADER]: this.userName,
         },
         body: JSON.stringify(data),
       })
