@@ -1,9 +1,6 @@
 import { Component } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
 
 import {
-  ErrorService,
-  InvokeService,
   MediaService,
   RefreshService,
   SharedPullService,
@@ -23,7 +20,6 @@ import {
   OrganisationContactKind,
   OrganisationContactRelationship,
   Person,
-  User,
 } from '@allors/default/workspace/domain';
 
 @Component({
@@ -37,7 +33,6 @@ export class PersonSummaryPanelComponent extends AllorsViewSummaryPanelComponent
   organisation: Organisation;
   contactKindsText: string;
   organisationContactRelationships: OrganisationContactRelationship[];
-  user: User;
 
   constructor(
     scopedService: ScopedService,
@@ -46,9 +41,6 @@ export class PersonSummaryPanelComponent extends AllorsViewSummaryPanelComponent
     sharedPullService: SharedPullService,
     workspaceService: WorkspaceService,
     private mediaService: MediaService,
-    private snackBar: MatSnackBar,
-    private invokeService: InvokeService,
-    private errorService: ErrorService,
     public navigation: NavigationService
   ) {
     super(scopedService, panelService, sharedPullService, refreshService);
@@ -97,7 +89,6 @@ export class PersonSummaryPanelComponent extends AllorsViewSummaryPanelComponent
 
   onPostSharedPull(loaded: IPullResult, prefix?: string) {
     this.person = loaded.object<Person>(prefix);
-    this.user = loaded.object<User>(prefix);
 
     this.organisationContactRelationships =
       loaded.collection<OrganisationContactRelationship>(`${prefix}2`);
@@ -115,15 +106,6 @@ export class PersonSummaryPanelComponent extends AllorsViewSummaryPanelComponent
           )?.reduce((acc: string, cur: string) => acc + ', ' + cur);
       }
     }
-  }
-
-  public ResetPassword(): void {
-    this.invokeService.invoke(this.user.ResetPassword).subscribe(() => {
-      this.refreshService.refresh();
-      this.snackBar.open('Password reset mail send to user.', 'close', {
-        duration: 5000,
-      });
-    }, this.errorService.errorHandler);
   }
 
   get src(): string {

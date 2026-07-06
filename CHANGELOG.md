@@ -14,11 +14,18 @@ under a dated version heading.
 
 ### Security
 
+- **Breaking (Apps domain): the unused admin `ResetPassword` surface is removed.** With self-service
+  recovery in place (Identity ForgotPassword → e-mailed reset link), the admin-triggered
+  `Person.ResetPassword` — a server-side no-op wired to an orphaned intranet method with no button —
+  added no value (it would have e-mailed the same reset link, not let an admin set a password).
+  Removed: the `User.ResetPassword` method and its `Person`/`AutomatedAgent` implementations, the
+  generated `ResetPassword` permission, the `PersonResetPasswordRevocation` (definition, seed, and its
+  branch in `PersonDeniedPermissionRule`), and the dead Angular method. Password recovery is now solely
+  the self-service ForgotPassword flow.
 - The demo/seed users (jane, john, jenny, and the Apps `administrator`) now have a confirmed
   `UserEmail` equal to their username, so account recovery is reachable: Identity's ForgotPassword
-  no longer silently no-ops (it requires a confirmed e-mail), and the Apps `PersonDeniedPermissionRule`
-  un-revokes their `ResetPassword` permission (a user with a `UserEmail` may be reset). The normalized
-  e-mail derives automatically, so lookup by e-mail resolves them (F15 groundwork).
+  no longer silently no-ops (it requires a confirmed e-mail). The normalized e-mail derives
+  automatically, so lookup by e-mail resolves them (F15 groundwork).
 - Queued e-mails are transmitted by a `Mailing` console command rather than an in-process background
   service. `Commands.dll Mailing` opens a transaction as the System automated agent and drains the
   send queue via `EmailMessages.Send`; the deployment's scheduler (the Immediate scheduler, run by

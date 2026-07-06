@@ -26,11 +26,5 @@ namespace Allors.Repository
         [Derived]
         [Workspace]
         bool IsUser { get; set; }
-
-        #region Allors
-        [Id("fc3c192c-8d69-4e68-a996-825d89583ddf")]
-        #endregion
-        [Workspace(Default)]
-        void ResetPassword();
     }
 }

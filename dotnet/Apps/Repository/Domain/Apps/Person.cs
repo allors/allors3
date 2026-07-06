@@ -345,10 +345,6 @@ namespace Allors.Repository
         public string DisplayEmail { get; set; }
         #endregion
 
-        #region inherited methods
-        public void ResetPassword() { }
-        #endregion
-
         #region Allors
         [Id("20c13d80-d8cc-4f44-a0a1-15d364a1574f")]
         #endregion

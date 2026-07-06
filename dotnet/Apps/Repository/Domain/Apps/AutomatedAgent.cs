@@ -135,10 +135,5 @@ namespace Allors.Repository
         [Workspace(Default)]
         public AutomatedAgentVersion[] AllVersions { get; set; }
         #endregion
-
-        #region inherited methods
-        public void ResetPassword() { }
-
-        #endregion
     }
 }
