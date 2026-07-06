@@ -36,6 +36,10 @@ under a dated version heading.
   login-mechanism tests (`SignInTests`, `LockoutTests`) drive the Identity cookie form login (whose
   endpoint is the one that remains). This clears the last non-deletion bearer consumers ahead of
   removing the JWT stack. Test infrastructure.
+- Retired the `Blazor.Bootstrap.Site.Wasm` demo (removed from the solution). It authenticated with
+  the bearer `TestAuthentication/Token` flow, was built by no CI target and referenced by nothing;
+  it is removed ahead of the JWT retirement rather than migrated to cookie auth. The other Blazor
+  sample projects are unaffected.
 - The base **application-app** now authenticates with the Identity cookie instead of a bearer token:
   its API base URL is relative (`/allors/`, same-origin through the proxy, which engages Angular's
   built-in `X-XSRF-TOKEN`), an `APP_INITIALIZER` reads `GET /allors/UserInfo` to learn the user, a

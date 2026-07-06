@@ -46,7 +46,6 @@
   </Folder>
   <Folder Name="/Base/Workspace/Blazor/">
     <Project Path="Base/Workspace/Blazor/Blazor.Bootstrap.Site.Server/Allors.Workspace.Blazor.Bootstrap.Site.Server.csproj" />
-    <Project Path="Base/Workspace/Blazor/Blazor.Bootstrap.Site.Wasm/Allors.Workspace.Blazor.Bootstrap.Site.Wasm.csproj" />
     <Project Path="Base/Workspace/Blazor/Blazor.Bootstrap.Site/Allors.Workspace.Blazor.Bootstrap.Site.csproj" />
     <Project Path="Base/Workspace/Blazor/Blazor.Bootstrap/Allors.Workspace.Blazor.Bootstrap.csproj" />
     <Project Path="Base/Workspace/Blazor/Blazor/Allors.Workspace.Blazor.csproj" />
