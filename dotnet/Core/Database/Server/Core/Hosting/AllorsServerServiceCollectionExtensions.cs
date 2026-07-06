@@ -32,10 +32,17 @@ namespace Allors.Server
         {
             "/Account/Register",
             "/Account/RegisterConfirmation",
+            "/Account/LoginWith2fa",
+            "/Account/LoginWithRecoveryCode",
             "/Account/Manage/PersonalData",
             "/Account/Manage/DeletePersonalData",
             "/Account/Manage/DownloadPersonalData",
             "/Account/Manage/TwoFactorAuthentication",
+            "/Account/Manage/EnableAuthenticator",
+            "/Account/Manage/ResetAuthenticator",
+            "/Account/Manage/GenerateRecoveryCodes",
+            "/Account/Manage/ShowRecoveryCodes",
+            "/Account/Manage/Disable2fa",
         };
 
         public static IMvcBuilder AddAllorsServer(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment environment, AllorsServerOptions options)

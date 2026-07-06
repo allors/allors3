@@ -53,6 +53,40 @@ namespace Allors.Server.Tests
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
 
+        // The 2FA sign-in pages are [AllowAnonymous] in the default UI, so the 404 is observable
+        // without a cookie.
+        [Theory]
+        [InlineData("Identity/Account/LoginWith2fa")]
+        [InlineData("Identity/Account/LoginWithRecoveryCode")]
+        public async Task TwoFactorLoginPagesAreDisabled(string path)
+        {
+            using var client = new HttpClient(new HttpClientHandler { AllowAutoRedirect = false })
+            {
+                BaseAddress = new Uri("http://localhost:5000/"),
+            };
+
+            var response = await client.GetAsync(new Uri(path, UriKind.Relative));
+
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
+
+        // Manage pages sit behind the authenticated-user fallback policy (anonymous callers are
+        // redirected to login before the page filter runs), so the 404 needs a signed-in cookie.
+        [Theory]
+        [InlineData("Identity/Account/Manage/EnableAuthenticator")]
+        [InlineData("Identity/Account/Manage/ResetAuthenticator")]
+        [InlineData("Identity/Account/Manage/GenerateRecoveryCodes")]
+        [InlineData("Identity/Account/Manage/ShowRecoveryCodes")]
+        [InlineData("Identity/Account/Manage/Disable2fa")]
+        public async Task TwoFactorManagePagesAreDisabledForSignedInUsers(string path)
+        {
+            var client = await this.SignInWithCookieAsync("cookieuser", "cookie-password");
+
+            var response = await client.GetAsync(new Uri(path, UriKind.Relative));
+
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
+
         [Fact]
         public async Task CookieSignInGrantsAccessToManage()
         {

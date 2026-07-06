@@ -14,6 +14,14 @@ under a dated version heading.
 
 ### Security
 
+- All 2FA pages of the Identity UI are disabled (404) by default, not just the
+  `TwoFactorAuthentication` menu page: `EnableAuthenticator`, `ResetAuthenticator`,
+  `GenerateRecoveryCodes`, `ShowRecoveryCodes`, `Disable2fa`, `LoginWith2fa` and
+  `LoginWithRecoveryCode` were still directly URL-addressable and threw 500s, because
+  `AllorsUserStore` implements neither `IUserAuthenticatorKeyStore` nor
+  `IUserTwoFactorRecoveryCodeStore` (2FA remains future work). Note for deployments that override
+  `Identity:DisabledPages` in configuration: the array replaces the defaults wholesale, so add the
+  new entries to your override.
 - The `XSRF-TOKEN` cookie's lifetime now tracks the authentication session. The token was minted
   once — typically on the SPA's *anonymous* bootstrap GET — and antiforgery request tokens are
   bound to the authenticated identity, so after the Identity login every cookie-authenticated POST
