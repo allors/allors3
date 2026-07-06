@@ -10,7 +10,6 @@ namespace Allors.Database.Protocol.Json
     using System.Threading;
     using Allors.Protocol.Json.Api.Pull;
     using Allors.Services;
-    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using NLog;
 
@@ -35,8 +34,6 @@ namespace Allors.Database.Protocol.Json
         private IPolicyService PolicyService { get; }
 
         [HttpPost]
-        [Authorize]
-        [AllowAnonymous]
         public ActionResult<PullResponse> Post([FromBody] PullRequest request, CancellationToken cancellationToken) =>
             this.PolicyService.InvokePolicy.Execute(
                 () =>

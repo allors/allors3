@@ -14,6 +14,13 @@ under a dated version heading.
 
 ### Security
 
+- The JSON API is now **default-deny**: the server's authorization `FallbackPolicy` requires an
+  authenticated user, so every endpoint is closed unless it explicitly opts out with
+  `[AllowAnonymous]`. The six JSON API controllers (pull/push/sync/invoke/access/permission) drop
+  their per-action `[Authorize]`/`[AllowAnonymous]` and rely on the fallback; the test-harness
+  controllers (`Test`/`TestAuthentication`) are marked `[AllowAnonymous]` so the test rigs can still
+  reset, populate and sign in. A controller added without an explicit policy is now denied by
+  default rather than silently exposed — the core of the F1 fix for downstream inheritors.
 - The base **application-app** now authenticates with the Identity cookie instead of a bearer token:
   its API base URL is relative (`/allors/`, same-origin through the proxy, which engages Angular's
   built-in `X-XSRF-TOKEN`), an `APP_INITIALIZER` reads `GET /allors/UserInfo` to learn the user, a

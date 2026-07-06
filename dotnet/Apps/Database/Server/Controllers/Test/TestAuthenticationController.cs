@@ -9,11 +9,13 @@ namespace Allors.Database.Server.Controllers
     using Allors.Protocol.Json.Auth;
     using Allors.Security;
     using Allors.Server;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
 
+    [AllowAnonymous]
     public class TestAuthenticationController : Controller
     {
         public TestAuthenticationController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, ILogger<AuthenticationController> logger, IConfiguration config)

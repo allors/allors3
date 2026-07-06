@@ -14,6 +14,7 @@ namespace Allors.Server
     using Allors.Security;
     using Allors.Services;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.DataProtection;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
@@ -173,6 +174,14 @@ namespace Allors.Server
             // live cookies within ~5 minutes.
             services.Configure<SecurityStampValidatorOptions>(securityStampValidatorOptions =>
                 securityStampValidatorOptions.ValidationInterval = TimeSpan.FromMinutes(5));
+
+            // Default-deny: every endpoint requires an authenticated user unless it opts out with
+            // [AllowAnonymous] (the login page, the JWT token endpoint, the test-harness controllers).
+            // A controller added without an explicit policy is closed by default, not open [F1].
+            services.AddAuthorization(authorizationOptions =>
+                authorizationOptions.FallbackPolicy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .Build());
 
             services.AddAntiforgery(antiforgeryOptions =>
             {

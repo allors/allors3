@@ -6,6 +6,7 @@
 namespace Allors.Server
 {
     using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
@@ -13,6 +14,7 @@ namespace Allors.Server
     using Protocol.Json.Auth;
     using Security;
 
+    [AllowAnonymous]
     public class TestAuthenticationController : Controller
     {
         public TestAuthenticationController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, ILogger<AuthenticationController> logger, IConfiguration config)
