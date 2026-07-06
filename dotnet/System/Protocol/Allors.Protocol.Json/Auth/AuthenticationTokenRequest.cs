@@ -11,10 +11,5 @@ namespace Allors.Protocol.Json.Auth
         /// Login
         /// </summary>
         public string l { get; set; }
-
-        /// <summary>
-        /// Password
-        /// </summary>
-        public string p { get; set; }
     }
 }

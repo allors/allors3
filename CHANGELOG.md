@@ -53,6 +53,12 @@ under a dated version heading.
   client is now same-origin through the dev proxy (Phase 5), and the C# test clients call the server
   directly (CORS is browser-enforced only), so the policy is dead. JSNLog keeps its own origin regex
   (F14).
+- Retired the bearer login from the remote workspace adapters: `DatabaseConnection.Login`/`Logoff`
+  (which posted credentials and set the `Authorization: Bearer` header) are removed from both the
+  System.Text.Json and Newtonsoft adapters — the last bearer *behaviour* in the tree. Test clients
+  authenticate with the `X-Allors-TestUser` header instead. The `AuthenticationToken{Request,Response}`
+  DTOs are retained as the test sign-in shapes, with their JWT-era `p`/`t` (password/token) fields
+  dropped.
 - The base **application-app** now authenticates with the Identity cookie instead of a bearer token:
   its API base URL is relative (`/allors/`, same-origin through the proxy, which engages Angular's
   built-in `X-XSRF-TOKEN`), an `APP_INITIALIZER` reads `GET /allors/UserInfo` to learn the user, a
