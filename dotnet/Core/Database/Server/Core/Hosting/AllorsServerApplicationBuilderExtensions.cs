@@ -52,8 +52,6 @@ namespace Allors.Server
                 app.UseHttpsRedirection();
             }
 
-            app.UseCors();
-
             var jsnlogConfiguration = new JsnlogConfiguration
             {
                 corsAllowedOriginsRegex = configuration["Logging:JSNLog:CorsAllowedOriginsRegex"] ?? "^https?://localhost(:[0-9]+)?$",

@@ -34,13 +34,6 @@ namespace Allors.Server
             services.AddAllorsServer(this.Configuration, this.Environment, new AllorsServerOptions
             {
                 ApplicationName = "Allors.Core",
-                CorsOrigins = new[]
-                {
-                    "http://localhost",
-                    "http://localhost:4000",
-                    "http://localhost:4200",
-                    "http://localhost:9876",
-                },
                 UseControllersWithViews = true,
             });
 

@@ -49,6 +49,10 @@ under a dated version heading.
   long-lived token remains — only the revocable cookie) and F6 (the weak JWT defaults are gone), and
   removes the token endpoint's enumeration/timing surface (F13). The test harness now authenticates
   via the cookie (browser) or the `X-Allors-TestUser` header (jest / remote suites).
+- Removed the development CORS policy (`AddCors`/`UseCors` + the `CorsOrigins` origin lists). Every
+  client is now same-origin through the dev proxy (Phase 5), and the C# test clients call the server
+  directly (CORS is browser-enforced only), so the policy is dead. JSNLog keeps its own origin regex
+  (F14).
 - The base **application-app** now authenticates with the Identity cookie instead of a bearer token:
   its API base URL is relative (`/allors/`, same-origin through the proxy, which engages Angular's
   built-in `X-XSRF-TOKEN`), an `APP_INITIALIZER` reads `GET /allors/UserInfo` to learn the user, a

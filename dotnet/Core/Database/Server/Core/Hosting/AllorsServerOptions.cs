@@ -12,8 +12,6 @@ namespace Allors.Server
     {
         public string ApplicationName { get; set; }
 
-        public string[] CorsOrigins { get; set; }
-
         public IReadOnlyDictionary<HostString, string> WorkspaceNameByHost { get; set; } = new Dictionary<HostString, string>
         {
             { new HostString("localhost", 5000), "Default" },

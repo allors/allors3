@@ -64,7 +64,6 @@ namespace Tests
             services.AddAllorsServer(configuration, new StubWebHostEnvironment(), new AllorsServerOptions
             {
                 ApplicationName = "Allors.Tests",
-                CorsOrigins = new[] { "http://localhost" },
             });
 
             using var provider = services.BuildServiceProvider();

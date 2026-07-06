@@ -52,14 +52,6 @@ namespace Allors.Server
             services.AddScoped<ITransactionService, TransactionService>();
             services.AddScoped<IWorkspaceService, WorkspaceService>();
 
-            services.AddCors(corsOptions =>
-                corsOptions.AddDefaultPolicy(
-                    builder => builder
-                        .WithOrigins(options.CorsOrigins)
-                        .AllowAnyHeader()
-                        .AllowAnyMethod()
-                        .AllowCredentials()));
-
             var authenticationRateLimitSettings = AuthenticationRateLimitSettings.From(configuration);
             services.AddRateLimiter(rateLimiterOptions =>
             {
