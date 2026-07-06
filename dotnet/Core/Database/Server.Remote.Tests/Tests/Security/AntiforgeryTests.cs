@@ -42,13 +42,13 @@ namespace Allors.Server.Tests
         }
 
         [Fact]
-        public async Task BearerPostWithoutXsrfHeaderSucceeds()
+        public async Task TestHeaderPostWithoutXsrfHeaderSucceeds()
         {
             await this.SignIn(this.Administrator);
 
             var response = await this.HttpClient.PostAsync(new Uri("Organisations/Pull", UriKind.Relative), null);
 
-            Assert.True(response.IsSuccessStatusCode, $"Bearer clients are antiforgery-exempt; was {(int)response.StatusCode}.");
+            Assert.True(response.IsSuccessStatusCode, $"Non-cookie (test-header) clients are antiforgery-exempt; was {(int)response.StatusCode}.");
         }
 
         [Fact]

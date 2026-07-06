@@ -5,9 +5,8 @@
 
 namespace Allors.Server.Tests
 {
-    using System;
+    using System.Threading.Tasks;
     using Database.Domain;
-    using Protocol.Json.Auth;
     using Xunit;
 
     [Collection("Api")]
@@ -24,21 +23,16 @@ namespace Allors.Server.Tests
         }
 
         [Fact]
-        public async void LockedOutAfterFailedAttempts()
+        public async Task LockedOutAfterFailedAttempts()
         {
-            var tokenUri = new Uri("Authentication/Token", UriKind.Relative);
-
             // The configured lockout threshold (AllorsServerServiceCollectionExtensions) is 10 failed attempts.
             for (var i = 0; i < 10; i++)
             {
-                await this.PostAsJsonAsync(tokenUri, new AuthenticationTokenRequest { l = "Jane", p = "wrong" });
+                await this.CookieLoginSucceedsAsync("Jane", "wrong");
             }
 
-            // The account is now locked: even the correct password is rejected.
-            var response = await this.PostAsJsonAsync(tokenUri, new AuthenticationTokenRequest { l = "Jane", p = "p@ssw0rd" });
-            var signInResponse = await this.ReadAsAsync<AuthenticationTokenResponse>(response);
-
-            Assert.False(signInResponse.a);
+            // The account is now locked: even the correct password no longer authenticates.
+            Assert.False(await this.CookieLoginSucceedsAsync("Jane", "p@ssw0rd"));
         }
     }
 }

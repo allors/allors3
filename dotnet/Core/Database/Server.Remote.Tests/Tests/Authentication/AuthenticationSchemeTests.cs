@@ -27,15 +27,5 @@ namespace Allors.Server.Tests
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.False(response.Headers.Contains("Location"), "An /allors request must get a raw 401, not a login-page redirect.");
         }
-
-        [Fact]
-        public async Task BearerRequestStillAuthenticates()
-        {
-            await this.SignIn(this.Administrator);
-
-            var response = await this.HttpClient.PostAsync(new Uri("Organisations/Pull", UriKind.Relative), null);
-
-            Assert.True(response.IsSuccessStatusCode, $"Bearer-authenticated request should succeed, was {(int)response.StatusCode}.");
-        }
     }
 }

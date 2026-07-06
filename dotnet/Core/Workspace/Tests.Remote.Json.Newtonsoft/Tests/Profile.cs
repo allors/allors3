@@ -25,7 +25,6 @@ namespace Tests.Workspace.Remote
         public const string Url = "http://localhost:5000/allors/";
 
         public const string SetupUrl = "Test/Setup?population=full";
-        public const string LoginUrl = "TestAuthentication/Token";
 
         private readonly Func<IWorkspaceServices> servicesBuilder;
         private readonly IdGenerator idGenerator;
@@ -76,11 +75,13 @@ namespace Tests.Workspace.Remote
 
         public IWorkspace CreateWorkspace() => this.DatabaseConnection.CreateWorkspace();
 
-        public async Task Login(string user)
+        public Task Login(string user)
         {
-            var uri = new Uri(LoginUrl, UriKind.Relative);
-            var response = await this.DatabaseConnection.Login(uri, user, null);
-            Assert.True(response);
+            // Bearer/JWT is retired; authenticate with the test-only X-Allors-TestUser header, which the
+            // harness server resolves to the same Allors user.
+            this.httpClient.DefaultRequestHeaders.Remove("X-Allors-TestUser");
+            this.httpClient.DefaultRequestHeaders.Add("X-Allors-TestUser", user);
+            return Task.CompletedTask;
         }
     }
 }

@@ -22,7 +22,6 @@ namespace Allors.Server.Tests
     using Database.Configuration.Derivations.Default;
     using Database.Meta;
     using Microsoft.Extensions.Configuration;
-    using Protocol.Json.Auth;
     using Xunit;
     using C1 = Database.Domain.C1;
     using ObjectFactory = Database.ObjectFactory;
@@ -32,7 +31,9 @@ namespace Allors.Server.Tests
     {
         public const string Url = "http://localhost:5000/allors/";
         public const string SetupUrl = "Test/Setup?population=full";
-        public const string LoginUrl = "TestAuthentication/Token";
+
+        // Test-only credential recognised by this (Core) test-harness server; see TestUserAuthenticationHandler.
+        public const string TestUserHeaderName = "X-Allors-TestUser";
 
         protected ApiTest()
         {
@@ -86,20 +87,16 @@ namespace Allors.Server.Tests
             this.HttpClient = null;
         }
 
-        protected async Task SignIn(User user)
+        protected Task SignIn(User user)
         {
-            var args = new AuthenticationTokenRequest
-            {
-                l = user.UserName,
-            };
-
-            var uri = new Uri(LoginUrl, UriKind.Relative);
-            var response = await this.PostAsJsonAsync(uri, args);
-            var signInResponse = await this.ReadAsAsync<AuthenticationTokenResponse>(response);
-            this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", signInResponse.t);
+            // Bearer/JWT is retired; authenticate with the test-only X-Allors-TestUser header, which the
+            // harness server resolves to the same Allors user (same NameIdentifier claim as the cookie).
+            this.HttpClient.DefaultRequestHeaders.Remove(TestUserHeaderName);
+            this.HttpClient.DefaultRequestHeaders.Add(TestUserHeaderName, user.UserName);
+            return Task.CompletedTask;
         }
 
-        protected void SignOut() => this.HttpClient.DefaultRequestHeaders.Authorization = null;
+        protected void SignOut() => this.HttpClient.DefaultRequestHeaders.Remove(TestUserHeaderName);
 
         // Logs in through the real Identity Razor login page (GET to obtain the antiforgery token,
         // then POST the form) and returns a cookie-bearing client — no bearer token involved.
@@ -130,6 +127,16 @@ namespace Allors.Server.Tests
 
             await client.PostAsync(loginUri, new FormUrlEncodedContent(form));
             return client;
+        }
+
+        // True when the Identity form login for these credentials yields an authenticated session,
+        // verified by reaching the authenticated UserInfo endpoint with the resulting cookie. This is
+        // how the login mechanism is exercised now that the JWT token endpoint is being retired.
+        protected async Task<bool> CookieLoginSucceedsAsync(string userName, string password)
+        {
+            var client = await this.SignInWithCookieAsync(userName, password);
+            var response = await client.GetAsync(new Uri("allors/UserInfo", UriKind.Relative));
+            return response.IsSuccessStatusCode;
         }
 
         protected Stream GetResource(string name)
