@@ -53,6 +53,8 @@ namespace Allors.Repository
 
         public int UserAccessFailedCount { get; set; }
 
+        public bool IsDisabled { get; set; }
+
         public Login[] Logins { get; set; }
 
         public Revocation[] Revocations { get; set; }

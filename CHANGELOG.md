@@ -59,6 +59,9 @@ under a dated version heading.
   authenticate with the `X-Allors-TestUser` header instead. The `AuthenticationToken{Request,Response}`
   DTOs are retained as the test sign-in shapes, with their JWT-era `p`/`t` (password/token) fields
   dropped.
+- Added a required `IsDisabled` role to `User`, defaulting to `false` for new users (seeded in the
+  post-build), giving the model a first-class account-disabled flag (F10). The rule that acts on it —
+  lockout + security-stamp rotation — follows in the next change.
 - The base **application-app** now authenticates with the Identity cookie instead of a bearer token:
   its API base URL is relative (`/allors/`, same-origin through the proxy, which engages Angular's
   built-in `X-XSRF-TOKEN`), an `APP_INITIALIZER` reads `GET /allors/UserInfo` to learn the user, a

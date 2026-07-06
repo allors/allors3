@@ -98,6 +98,13 @@ namespace Allors.Repository
         int UserAccessFailedCount { get; set; }
 
         #region Allors
+        [Id("38af8c1b-94cb-4a35-a095-3824051fbcb7")]
+        #endregion
+        [Required]
+        [Workspace(Default)]
+        bool IsDisabled { get; set; }
+
+        #region Allors
         [Id("4C9FDD8A-D7D4-4F6C-9584-77C6E1FC90FD")]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]

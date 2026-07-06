@@ -57,6 +57,11 @@ namespace Allors.Database.Domain
             {
                 @this.UserSecurityStamp = Guid.NewGuid().ToString();
             }
+
+            if (!@this.ExistIsDisabled)
+            {
+                @this.IsDisabled = false;
+            }
         }
 
         public static void CoreDelete(this User @this, DeletableDelete method)
