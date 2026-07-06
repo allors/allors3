@@ -19,25 +19,33 @@ The authentication design is functional but ships defaults and structural gaps t
 
 This document confirms and extends a prior review, corrects two of its findings, and then proposes a **defense-in-depth architecture**: retire JWT in favour of ASP.NET Core Identity's revocable **HttpOnly cookie**, issued and consumed by **one origin per app** — a single browser-visible origin serving the Angular SPA, the JSON data API, and the shipped Identity account UI (login + manage), composed at the reverse proxy (Caddy serves the SPA; `/allors` + `/Identity` forward to the app server) or self-contained from one Kestrel. There is no separate identity deployable, no cross-host cookie sharing, and no shared DataProtection key ring. Credentials and account-management UX leave Angular entirely (deletion, not rewrite); the SPA calls a same-origin, default-deny API protected by antiforgery. Passkeys are deliberately deferred; TOTP two-factor keeps a reserved late phase.
 
-| # | Finding | Severity |
-|---|---------|----------|
-| F1 | Entire JSON API is `[AllowAnonymous]` | **Critical** |
-| F2 | Unauthenticated destructive test endpoints in the server tree (`Test/Init`, `Test/Setup`, passwordless token minter) | **Critical** (deploy-dependent) |
-| F3 | No token revocation / logout / refresh; `UserSecurityStamp` persisted but never validated | **High** |
-| F4 | Per-request principal trusted blindly; no stamp / existence / active check | **High** |
-| F5 | Account lockout non-functional by default (`UserLockoutEnabled` never set) | **High** |
-| F6 | Weak JWT defaults (no issuer/audience validation, 30-day expiry, ASCII/UTF-8 key mismatch, checked-in sample key) | **High** |
-| F7 | Anonymous request runs as `null` user → ACL evaluation faults (guest fallback commented out) | **High** |
-| F8 | `AllorsUserStore.HasPasswordAsync` inverted | **Medium** |
-| F9 | Anonymous business controllers in Apps (`PersonController`, `OrganisationContactRelationshipController`) | **Medium** |
-| F10 | No "account disabled/active" concept | **Medium** |
-| F11 | No login rate limiting / anti-automation | **Medium** |
-| F12 | Minimal password policy; no breach/history checks; no rehash-on-verify | **Medium** |
-| F13 | Username enumeration / timing side-channel in the token endpoint | **Low** |
-| F14 | Transport hardening left to the consumer (`UseHttpsRedirection` commented out; no forwarded headers/security headers; JSNLog CORS `.*`) | **Low** |
-| F15 | No account-recovery flow wired (real SMTP mailer exists but the reset flow + queue drainer are missing) | **Low / Info** |
+| # | Finding | Severity | Status |
+|---|---------|----------|--------|
+| F1 | Entire JSON API is `[AllowAnonymous]` | **Critical** | ✅ Fixed — P4.3 |
+| F2 | Unauthenticated destructive test endpoints in the server tree (`Test/Init`, `Test/Setup`, passwordless token minter) | **Critical** (deploy-dependent) | ✅ Fixed — Phase 2 |
+| F3 | No token revocation / logout / refresh; `UserSecurityStamp` persisted but never validated | **High** | ✅ Fixed — P3.1, P6.2, P8.3 |
+| F4 | Per-request principal trusted blindly; no stamp / existence / active check | **High** | ✅ Fixed — P3.1, P6.2 |
+| F5 | Account lockout non-functional by default (`UserLockoutEnabled` never set) | **High** | ✅ Fixed — P1.5, P8.5 |
+| F6 | Weak JWT defaults (no issuer/audience validation, 30-day expiry, ASCII/UTF-8 key mismatch, checked-in sample key) | **High** | ✅ Fixed — P6.2 (JWT removed) |
+| F7 | Anonymous request runs as `null` user → ACL evaluation faults (guest fallback commented out) | **High** | ✅ Fixed — P4.1 |
+| F8 | `AllorsUserStore.HasPasswordAsync` inverted | **Medium** | ✅ Fixed — P1.6 |
+| F9 | Anonymous business controllers in Apps (`PersonController`, `OrganisationContactRelationshipController`) | **Medium** | ✅ Fixed — P1.7 |
+| F10 | No "account disabled/active" concept | **Medium** | ✅ Fixed — P8.1–P8.5 |
+| F11 | No login rate limiting / anti-automation | **Medium** | ✅ Fixed — P1.4 |
+| F12 | Minimal password policy; no breach/history checks; no rehash-on-verify | **Medium** | ✅ Fixed — P1.5, P8.4 (history/HIBP deferred) |
+| F13 | Username enumeration / timing side-channel in the token endpoint | **Low** | ✅ Fixed — P3.2, P6.2 |
+| F14 | Transport hardening left to the consumer (`UseHttpsRedirection` commented out; no forwarded headers/security headers; JSNLog CORS `.*`) | **Low** | ✅ Fixed — P1.3, P6.3 |
+| F15 | No account-recovery flow wired (real SMTP mailer exists but the reset flow + queue drainer are missing) | **Low / Info** | ✅ Fixed — Phase 9 |
 
 **Corrections to the prior review:** (a) `EmailSender`/`MailKitMailer` is a *real* SMTP sender (`dotnet/Base/Database/Configuration/Base/Database/Mailer/MailKitMailer.cs`), registered in Base/Apps — only the reset *flow* and a queue drainer are missing, not the sender (F15). (b) Anonymous access is not a benign "guest view"; with the guest fallback commented out it hands a `null` user to the ACL and faults (F7).
+
+**Remediation status (branch `security-hardening`).** All 15 findings above are remediated; see the roadmap below and `CHANGELOG.md` for the per-step detail. The delivered architecture diverges from this review's original plan in a few deliberate ways:
+
+- **Cookie-only.** The JWT stack was *removed entirely* (not "hardened" or kept behind a permanent dual scheme); the ASP.NET Core Identity application cookie is the sole authentication scheme, with security-stamp revocation.
+- **F15 is self-service only.** The shipped Identity ForgotPassword flow is wired to the Allors `EmailMessage` queue; the admin-triggered `Person.ResetPassword` was *removed* rather than implemented, because self-service recovery covers it and it added no security value (it would have e-mailed the same reset link).
+- **The e-mail queue is drained by a `Mailing` console command** (invoked by the deployment's scheduler / Windows Task Scheduler), not an in-process hosted service.
+- **Recovery mail is verified by an in-process SMTP capture test** (`SmtpServer`), so no external mail server is needed in CI.
+- **Deferred:** password history and HIBP breach-check (the F12 extras). Phases 10–12 (API keys, security audit trail, TOTP 2FA + session lifecycle) remain available as future hardening beyond this review's findings.
 
 ---
 
