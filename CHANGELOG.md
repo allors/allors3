@@ -14,6 +14,14 @@ under a dated version heading.
 
 ### Security
 
+- ASP.NET Core Identity account-recovery e-mails are now delivered through the Allors mail pipeline
+  instead of being discarded. A new `AllorsEmailSender` (`Microsoft.AspNetCore.Identity.UI.Services.IEmailSender`)
+  persists each Identity e-mail — the ForgotPassword reset link, e-mail confirmations, admin-triggered
+  resets — as an Allors `EmailMessage` in the send queue. Identity's `DefaultMessageEmailSender<TUser>`
+  composes the subject/body and delegates to it; registering `AllorsEmailSender` after `AddAllorsServer`
+  makes it win over the framework's `NoOpEmailSender`. The sender lives in the Base layer folder, so it
+  is compiled into the Base and Apps servers but never into Core (no `EmailMessage` model → keeps NoOp).
+  The queued messages are transmitted by the hosted drainer that follows (F15 groundwork).
 - Mailer configuration plumbing for the account-recovery work (F15 groundwork): the Base and Apps
   `DatabaseServices` now build their `IMailer` through a `virtual CreateMailer()` seam that reads
   `Mail:Smtp`, `Mail:DefaultSender` (falling back to the legacy top-level `DefaultSender` key) and

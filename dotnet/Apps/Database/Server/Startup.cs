@@ -8,6 +8,7 @@ namespace Allors.Database.Server.Controllers
     using Allors.Server;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Identity.UI.Services;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
@@ -24,12 +25,18 @@ namespace Allors.Database.Server.Controllers
 
         public IWebHostEnvironment Environment { get; }
 
-        public void ConfigureServices(IServiceCollection services) =>
+        public void ConfigureServices(IServiceCollection services)
+        {
             services.AddAllorsServer(this.Configuration, this.Environment, new AllorsServerOptions
             {
                 ApplicationName = "Allors.Apps",
                 UseControllersWithViews = false,
             });
+
+            // Persist Identity e-mails (password reset, ...) as Allors EmailMessages. Registered
+            // after AddAllorsServer so it wins over Identity's NoOpEmailSender.
+            services.AddTransient<IEmailSender, AllorsEmailSender>();
+        }
 
         public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory) =>
             app.UseAllorsServer(this.Environment, loggerFactory);
