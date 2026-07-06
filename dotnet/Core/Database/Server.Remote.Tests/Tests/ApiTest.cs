@@ -110,6 +110,15 @@ namespace Allors.Server.Tests
             };
             var client = new HttpClient(handler) { BaseAddress = new Uri("http://localhost:5000/") };
 
+            await LoginWithCookieAsync(client, userName, password);
+            return client;
+        }
+
+        // Performs the Identity Razor form login on a caller-supplied cookie-bearing client (base
+        // address = site root), so a test can visit pages anonymously first and inspect its own
+        // CookieContainer across the sign-in transition.
+        protected static async Task LoginWithCookieAsync(HttpClient client, string userName, string password)
+        {
             var loginUri = new Uri("Identity/Account/Login", UriKind.Relative);
             var getResponse = await client.GetAsync(loginUri);
             var getBody = await getResponse.Content.ReadAsStringAsync();
@@ -126,7 +135,6 @@ namespace Allors.Server.Tests
             };
 
             await client.PostAsync(loginUri, new FormUrlEncodedContent(form));
-            return client;
         }
 
         // True when the Identity form login for these credentials yields an authenticated session,

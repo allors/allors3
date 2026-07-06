@@ -129,6 +129,21 @@ namespace Allors.Server
                     context.Response.Redirect(context.RedirectUri);
                     return Task.CompletedTask;
                 };
+
+                // An XSRF token minted for one identity does not validate for the next: drop the token
+                // cookie on sign-in and sign-out so the next safe /allors GET (the SPA re-bootstrap)
+                // re-issues one bound to the new authentication state.
+                var secureXsrfCookie = !environment.IsDevelopment();
+                cookieOptions.Events.OnSignedIn = context =>
+                {
+                    AllorsAntiforgeryMiddleware.DeleteCookie(context.HttpContext, secureXsrfCookie);
+                    return Task.CompletedTask;
+                };
+                cookieOptions.Events.OnSigningOut = context =>
+                {
+                    AllorsAntiforgeryMiddleware.DeleteCookie(context.HttpContext, secureXsrfCookie);
+                    return Task.CompletedTask;
+                };
             });
 
             // Revocation lever: the built-in SecurityStampValidator re-checks the persisted security

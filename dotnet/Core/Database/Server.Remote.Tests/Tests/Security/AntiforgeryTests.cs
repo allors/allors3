@@ -78,6 +78,95 @@ namespace Allors.Server.Tests
             Assert.True(response.IsSuccessStatusCode, $"Cookie POST with the XSRF header should succeed; was {(int)response.StatusCode}.");
         }
 
+        [Fact]
+        public async Task CookiePostAfterAnonymousFirstVisitSucceeds()
+        {
+            var (client, jar) = CreateCookieClient();
+
+            // The SPA's bootstrap GET mints a token while still anonymous; the token the browser
+            // holds after the login redirect must validate for the now-authenticated user.
+            await client.GetAsync(new Uri("allors/Test/Ready", UriKind.Relative));
+            await LoginWithCookieAsync(client, "xsrfuser", "xsrf-password");
+            await client.GetAsync(new Uri("allors/Test/Ready", UriKind.Relative));
+
+            var xsrf = JarXsrfToken(jar);
+            Assert.False(string.IsNullOrEmpty(xsrf), "A readable XSRF-TOKEN cookie should be present after login.");
+
+            var request = new HttpRequestMessage(HttpMethod.Post, new Uri("allors/Organisations/Pull", UriKind.Relative));
+            request.Headers.Add("X-XSRF-TOKEN", xsrf);
+            var response = await client.SendAsync(request);
+
+            Assert.True(response.IsSuccessStatusCode, $"Cookie POST after an anonymous first visit should succeed; was {(int)response.StatusCode}.");
+        }
+
+        [Fact]
+        public async Task LogoutAndReloginRotateTheXsrfToken()
+        {
+            var (client, jar) = CreateCookieClient();
+
+            await client.GetAsync(new Uri("allors/Test/Ready", UriKind.Relative));
+            await LoginWithCookieAsync(client, "xsrfuser", "xsrf-password");
+            await client.GetAsync(new Uri("allors/Test/Ready", UriKind.Relative));
+
+            // The Angular LogoutService shape: a POST with the XSRF header and no form body.
+            var logout = new HttpRequestMessage(HttpMethod.Post, new Uri("Identity/Account/Logout", UriKind.Relative));
+            logout.Headers.Add("X-XSRF-TOKEN", JarXsrfToken(jar));
+            var logoutResponse = await client.SendAsync(logout);
+            Assert.Equal(HttpStatusCode.Redirect, logoutResponse.StatusCode);
+
+            await client.GetAsync(new Uri("allors/Test/Ready", UriKind.Relative));
+            await LoginWithCookieAsync(client, "xsrfuser", "xsrf-password");
+            await client.GetAsync(new Uri("allors/Test/Ready", UriKind.Relative));
+
+            var request = new HttpRequestMessage(HttpMethod.Post, new Uri("allors/Organisations/Pull", UriKind.Relative));
+            request.Headers.Add("X-XSRF-TOKEN", JarXsrfToken(jar));
+            var response = await client.SendAsync(request);
+
+            Assert.True(response.IsSuccessStatusCode, $"Cookie POST after logout and re-login should succeed; was {(int)response.StatusCode}.");
+        }
+
+        [Fact]
+        public async Task CorruptedXsrfTokenSelfHeals()
+        {
+            var (client, jar) = CreateCookieClient();
+
+            await LoginWithCookieAsync(client, "xsrfuser", "xsrf-password");
+            await client.GetAsync(new Uri("allors/Test/Ready", UriKind.Relative));
+
+            // A token that no longer validates (corruption, data-protection key loss) must not
+            // wedge the session: the rejecting 400 drops it and the next safe GET re-mints.
+            jar.Add(new Cookie("XSRF-TOKEN", "garbage", "/", "localhost"));
+            var poisoned = new HttpRequestMessage(HttpMethod.Post, new Uri("allors/Organisations/Pull", UriKind.Relative));
+            poisoned.Headers.Add("X-XSRF-TOKEN", "garbage");
+            var poisonedResponse = await client.SendAsync(poisoned);
+            Assert.Equal(HttpStatusCode.BadRequest, poisonedResponse.StatusCode);
+
+            await client.GetAsync(new Uri("allors/Test/Ready", UriKind.Relative));
+
+            var request = new HttpRequestMessage(HttpMethod.Post, new Uri("allors/Organisations/Pull", UriKind.Relative));
+            request.Headers.Add("X-XSRF-TOKEN", JarXsrfToken(jar));
+            var response = await client.SendAsync(request);
+
+            Assert.True(response.IsSuccessStatusCode, $"Cookie POST after antiforgery self-heal should succeed; was {(int)response.StatusCode}.");
+        }
+
+        private static (HttpClient Client, CookieContainer Jar) CreateCookieClient()
+        {
+            var handler = new HttpClientHandler
+            {
+                UseCookies = true,
+                CookieContainer = new CookieContainer(),
+                AllowAutoRedirect = false,
+            };
+            var client = new HttpClient(handler) { BaseAddress = new Uri("http://localhost:5000/") };
+            return (client, handler.CookieContainer);
+        }
+
+        // The jar is what Angular's XSRF interceptor sees (document.cookie), unlike a single
+        // response's Set-Cookie header.
+        private static string JarXsrfToken(CookieContainer jar) =>
+            jar.GetCookies(new Uri("http://localhost:5000/"))["XSRF-TOKEN"]?.Value;
+
         private static string ExtractSetCookieValue(HttpResponseMessage response, string name)
         {
             var setCookies = response.Headers.TryGetValues("Set-Cookie", out var values) ? values : Enumerable.Empty<string>();

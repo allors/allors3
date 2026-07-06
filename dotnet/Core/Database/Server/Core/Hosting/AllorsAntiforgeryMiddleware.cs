@@ -37,17 +37,14 @@ namespace Allors.Server
                 var method = context.Request.Method;
                 if (HttpMethods.IsGet(method) || HttpMethods.IsHead(method) || HttpMethods.IsOptions(method) || HttpMethods.IsTrace(method))
                 {
-                    // Issue the readable token cookie once; keep cacheable responses Set-Cookie-free thereafter.
+                    // Issue the readable token cookie once; keep cacheable responses Set-Cookie-free
+                    // thereafter. Request tokens are bound to the authenticated identity, so sign-in and
+                    // sign-out delete the cookie (see the CookieAuthenticationEvents wired next to
+                    // ConfigureApplicationCookie) and the next safe GET re-mints it here.
                     if (!context.Request.Cookies.ContainsKey(XsrfCookieName))
                     {
                         var tokens = antiforgery.GetAndStoreTokens(context);
-                        context.Response.Cookies.Append(XsrfCookieName, tokens.RequestToken, new CookieOptions
-                        {
-                            HttpOnly = false,
-                            SameSite = SameSiteMode.Lax,
-                            Secure = this.secureCookie,
-                            Path = "/",
-                        });
+                        context.Response.Cookies.Append(XsrfCookieName, tokens.RequestToken, CookieOptionsFor(this.secureCookie));
                     }
                 }
                 else if (AuthenticatedViaApplicationCookie(context.User))
@@ -58,6 +55,9 @@ namespace Allors.Server
                     }
                     catch (AntiforgeryValidationException)
                     {
+                        // Drop the failing token so the next safe GET re-issues a valid pair — self-heals
+                        // an identity-binding mismatch or a token that no longer decrypts (key loss).
+                        DeleteCookie(context, this.secureCookie);
                         context.Response.StatusCode = StatusCodes.Status400BadRequest;
                         await context.Response.WriteAsJsonAsync(new { error = "antiforgery" });
                         return;
@@ -67,6 +67,18 @@ namespace Allors.Server
 
             await this.next(context);
         }
+
+        public static void DeleteCookie(HttpContext context, bool secureCookie) =>
+            context.Response.Cookies.Delete(XsrfCookieName, CookieOptionsFor(secureCookie));
+
+        // Mint and delete must agree on these attributes, or the delete misses the cookie.
+        private static CookieOptions CookieOptionsFor(bool secureCookie) => new CookieOptions
+        {
+            HttpOnly = false,
+            SameSite = SameSiteMode.Lax,
+            Secure = secureCookie,
+            Path = "/",
+        };
 
         private static bool AuthenticatedViaApplicationCookie(ClaimsPrincipal user) =>
             user?.Identities.Any(identity => identity.IsAuthenticated && identity.AuthenticationType == IdentityConstants.ApplicationScheme) == true;

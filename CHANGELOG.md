@@ -14,6 +14,14 @@ under a dated version heading.
 
 ### Security
 
+- The `XSRF-TOKEN` cookie's lifetime now tracks the authentication session. The token was minted
+  once — typically on the SPA's *anonymous* bootstrap GET — and antiforgery request tokens are
+  bound to the authenticated identity, so after the Identity login every cookie-authenticated POST
+  (JSON API and Identity logout) failed with 400 until the browser's cookies were cleared. Sign-in
+  and sign-out now delete the cookie (the next safe `/allors` GET re-issues one bound to the
+  current user), and an antiforgery validation failure deletes it too, so a stale or undecryptable
+  token (e.g. after data-protection key loss) heals on the next request instead of wedging the
+  session in a permanent 400 loop.
 - Mailer configuration for account recovery is completed and CI-verified. `MailKitMailer` reads
   `Mail:Smtp` as `host` or `host:port` (defaulting to port 25), so a dev SMTP sink on a
   non-privileged port (e.g. 1025) works; an unset `Mail:Smtp` now fails with an actionable message
