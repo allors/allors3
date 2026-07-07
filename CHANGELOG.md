@@ -29,6 +29,15 @@ under a dated version heading.
   Apps layer must not occupy the custom-domain hook slot (after the rename it would be dead code
   here, and it blocked an inheritor from defining its own `CustomOnBuild` for UnifiedProduct).
 
+### Fixed
+
+- The Apps `Setup` dispatch shim (`Domain/Virtual/Setup.v.cs`) now calls `BaseOnPrePrepare()` in
+  its pre-prepare phase; a copy-paste slip dispatched `BaseOnPreSetup()` there instead, so Base's
+  pre-prepare hook never ran during an Apps database setup and its pre-setup hook ran twice.
+  Latent today (both hooks are empty), but a silent ordering bug the moment a layer fills one in.
+  A new source-level guard test (`VirtualDispatchTests`) asserts that every `Virtual/*.v.cs`
+  wrapper dispatches only its phase-matched layer hooks.
+
 ### Security
 
 - The Blazor Bootstrap demo site (`Blazor.Bootstrap.Site.Server`) now runs the authentication

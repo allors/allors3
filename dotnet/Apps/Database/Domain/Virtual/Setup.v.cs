@@ -10,7 +10,7 @@ namespace Allors.Database.Domain
         private void OnPrePrepare()
         {
             this.CoreOnPrePrepare();
-            this.BaseOnPreSetup();
+            this.BaseOnPrePrepare();
             this.AppsOnPrePrepare();
             this.TestOnPrePrepare();
         }
