@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.5.1" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="bunit" Version="1.40.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Blazor.Bootstrap\Allors.Workspace.Blazor.Bootstrap.csproj" />
+    <ProjectReference Include="..\..\..\..\System\Database\Adapters\Allors.Database.Adapters.Memory\Allors.Database.Adapters.Memory.csproj" />
+    <ProjectReference Include="..\..\..\..\System\Workspace\Adapters\Allors.Workspace.Adapters.Local\Allors.Workspace.Adapters.Local.csproj" />
+    <ProjectReference Include="..\..\..\..\System\Workspace\Adapters\Allors.Workspace.Adapters\Allors.Workspace.Adapters.csproj" />
+    <ProjectReference Include="..\..\..\Database\Configuration\Configuration.csproj" />
+    <ProjectReference Include="..\..\..\Database\Meta\Meta.csproj" />
+    <ProjectReference Include="..\..\..\Database\Resources\Resources.csproj" />
+    <ProjectReference Include="..\..\Configuration\Workspace.Configuration.csproj" />
+    <ProjectReference Include="..\..\Domain\Workspace.Domain.csproj" />
+    <ProjectReference Include="..\..\Meta.Lazy\Workspace.Meta.Lazy.csproj" />
+  </ItemGroup>
+
+</Project>

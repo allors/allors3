@@ -12,6 +12,23 @@ under a dated version heading.
 
 <!-- Add entries under one of: Added, Changed, Deprecated, Removed, Fixed, Security -->
 
+### Added
+
+- bUnit test project `Blazor.Bootstrap.Tests` — the first automated coverage for the
+  `Allors.Workspace.Blazor.Bootstrap` components. It renders the real BlazorStrap V5 components
+  against a live Allors Local (in-memory) workspace, covering the checkbox role components' render
+  and toggle behaviour.
+
+### Fixed
+
+- The Blazor Bootstrap checkbox role components (`BootstrapCheckboxRole`,
+  `BootstrapCheckboxGroupRole`) now bind under BlazorStrap V5. They used the V4 idiom (one-way
+  `Value` + manual `@onchange`) without `CheckedValue`/`UnCheckedValue`, so under V5 — which derives
+  checked state from `object.Equals(CheckedValue, Value)` and toggles internally — the single
+  checkbox rendered inverted and stuck, and the group rendered incorrectly and ignored clicks. They
+  now set `CheckedValue`/`UnCheckedValue` and use `ValueChanged`. (`BootstrapRadioGroupRole` already
+  used the correct V5 pattern and is unchanged.)
+
 ### Security
 
 - The Blazor Bootstrap demo site (`Blazor.Bootstrap.Site.Server`) now runs the authentication

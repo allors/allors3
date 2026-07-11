@@ -15,15 +15,15 @@ namespace Allors.Workspace.Blazor.Bootstrap.Forms.Roles
 
         public string OptionName(IObject option) => this.Name + "_" + option.Id.ToString().Replace("-", "_");
 
-        public object IsSelected(IObject option)
+        public bool IsSelected(IObject option)
         {
             var model = (IEnumerable<IObject>)this.Model;
             return model.Contains(option);
         }
 
-        public void OnChanged(object checkedValue, IObject option)
+        public void OnChanged(bool checkedValue, IObject option)
         {
-            if ((bool)checkedValue)
+            if (checkedValue)
             {
                 this.Object.Strategy.AddCompositesRole(this.RoleType, option);
             }
