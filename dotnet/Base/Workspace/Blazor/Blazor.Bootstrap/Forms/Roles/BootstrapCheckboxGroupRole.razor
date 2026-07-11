@@ -5,7 +5,10 @@
     @foreach (var option in Options)
     {
         <BSInputGroup IsCheck="true">
-            <BSInputCheckbox Id="@OptionName(option)" Value="@IsSelected(option)" @onchange=@(v => OnChanged(v.Value, option)) />
+            <BSInputCheckbox TValue="bool" Id="@OptionName(option)"
+                             CheckedValue="true" UnCheckedValue="false"
+                             Value="@IsSelected(option)"
+                             ValueChanged="@(v => OnChanged(v, option))" />
             <BSLabel For="@OptionName(option)">@(DisplayOption(option))</BSLabel>
         </BSInputGroup>
     }

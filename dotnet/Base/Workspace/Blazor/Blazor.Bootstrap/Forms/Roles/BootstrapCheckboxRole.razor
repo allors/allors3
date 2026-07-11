@@ -1,7 +1,7 @@
 @inherits ABSCheckboxBase
 <BSInputGroup @attributes="Attributes">
     <BSInputGroup IsCheck="true">
-        <BSInputCheckbox Id="@Name" @bind-Value="BoolModel" />
+        <BSInputCheckbox Id="@Name" CheckedValue="true" UnCheckedValue="false" @bind-Value="BoolModel" />
         <BSLabel For="@Name">@Label</BSLabel>
     </BSInputGroup>
 </BSInputGroup>
