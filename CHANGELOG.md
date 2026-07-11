@@ -19,6 +19,23 @@ under a dated version heading.
   against a live Allors Local (in-memory) workspace, covering the checkbox role components' render
   and toggle behaviour.
 
+### Changed
+
+- **The internal `Custom` domain is renamed to `Test`; the name `Custom` is now reserved for
+  downstream inheritors' extension domains.** The rename covers the 26 dotnet and 4 e2e `Custom/`
+  folders, the domain struct in each layer's Repository (domain GUID unchanged), the runtime-bound
+  hook implementations (`CustomOn*` → `TestOn*`, `Custom{Setup,Secure,Prepare}` → `Test…` — Allors
+  binds method implementations by `domainName + methodName`), the `Virtual/*.v.cs` dispatch shims,
+  the test role `CustomFullName` → `TestFullName` with `PersonTestFullNameRule`, the resource key
+  `CustomError` → `TestError`, the Commands scratchpad subcommand (CLI verb `custom` → `test`), and
+  the TS workspace libs `derivations-custom` → `derivations-test`. Left unchanged because they mean
+  something else: the `extent/custom` panel base classes (the seam for hand-authored inheritor
+  panels), the `CustomOrganisationClassification`/`CustomEngagementItem` business types
+  (bespoke/user-defined), and Blazor's `CustomValidator`. One behavioral fix folded in: the
+  UnifiedProduct default `Scope` hook moved from `CustomOnBuild` to `AppsOnBuild` — the inheritable
+  Apps layer must not occupy the custom-domain hook slot (after the rename it would be dead code
+  here, and it blocked an inheritor from defining its own `CustomOnBuild` for UnifiedProduct).
+
 ### Fixed
 
 - The Blazor Bootstrap checkbox role components (`BootstrapCheckboxRole`,
@@ -28,6 +45,12 @@ under a dated version heading.
   checkbox rendered inverted and stuck, and the group rendered incorrectly and ignored clicks. They
   now set `CheckedValue`/`UnCheckedValue` and use `ValueChanged`. (`BootstrapRadioGroupRole` already
   used the correct V5 pattern and is unchanged.)
+- The Apps `Setup` dispatch shim (`Domain/Virtual/Setup.v.cs`) now calls `BaseOnPrePrepare()` in
+  its pre-prepare phase; a copy-paste slip dispatched `BaseOnPreSetup()` there instead, so Base's
+  pre-prepare hook never ran during an Apps database setup and its pre-setup hook ran twice.
+  Latent today (both hooks are empty), but a silent ordering bug the moment a layer fills one in.
+  A new source-level guard test (`VirtualDispatchTests`) asserts that every `Virtual/*.v.cs`
+  wrapper dispatches only its phase-matched layer hooks.
 
 ### Security
 

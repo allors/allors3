@@ -21,7 +21,7 @@ public partial class Paths
 
     public AbsolutePath DotnetCoreDatabaseResources => DotnetCoreDatabase / "Resources";
     public AbsolutePath DotnetCoreDatabaseResourcesCore => DotnetCoreDatabaseResources / "Core";
-    public AbsolutePath DotnetCoreDatabaseResourcesCustom => DotnetCoreDatabaseResources / "Custom";
+    public AbsolutePath DotnetCoreDatabaseResourcesTest => DotnetCoreDatabaseResources / "Test";
 
     public AbsolutePath DotnetCoreWorkspace => DotnetCore / "Workspace";
     public AbsolutePath DotnetCoreWorkspaceTestsLocal => DotnetCoreWorkspace / "Tests.Local";

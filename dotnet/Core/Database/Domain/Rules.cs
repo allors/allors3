@@ -21,9 +21,9 @@ namespace Allors.Database.Domain
                 new GrantEffectivePermissionsRule(m),
                 new SecurityTokenSecurityStampRule(m),
 
-                // Custom
+                // Test
                 new PersonFullNameRule(m),
-                new PersonCustomFullNameRule(m),
+                new PersonTestFullNameRule(m),
                 new PersonGreetingRule(m),
                 new PersonOwningRule(m),
                 new OrganisationJustDidItRule(m),

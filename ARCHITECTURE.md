@@ -1,8 +1,10 @@
 # Allors architecture — domains, inheritance, and where hardening lives
 
 This note exists to prevent a specific confusion (it has bitten at least one downstream
-reader): **the word "Custom" means two different things** depending on whether you are working
-*in* the Allors framework repository or *on top of* it.
+reader): **the word "Custom" used to mean two different things** depending on whether you were
+working *in* the Allors framework repository or *on top of* it. That overload is resolved: the
+framework's internal scaffolding domain is now named `Test`, and `Custom` is reserved for a
+downstream inheritor's own extension domain.
 
 ## Abstract domains: Core ← Base ← Apps
 
@@ -36,31 +38,37 @@ and the Apps server adds `Base*\**` on top. The load-bearing rule:
 A downstream inheritor's server does the same: it globs `Core*`, `Base*`, `Apps*` from the Allors
 layers it builds on, and compiles its own extension code alongside.
 
-## "Custom" is internal scaffolding — and is **never inherited**
+## "Test" is internal scaffolding — and is **never inherited**
 
-Within this repository, the `Custom/` folders (and, historically, the Apps server's
-`Controllers/` folder) hold **internal scaffolding**, of two kinds — neither of them production:
+Within this repository, the `Test/` folders (renamed from `Custom/` in 2026-07; historically the
+Apps server's `Controllers/` folder played the same role) hold **internal scaffolding**, of two
+kinds — neither of them production:
 
 - **Test scaffolding:** the concrete `Setup`/population that makes an abstract domain runnable
   *for automated tests*, plus test-only controllers such as the database-reset endpoints
   (`Test/Init`, `Test/Setup`, `Test/Restart`) and the passwordless token minter used by the suites.
-- **Showcase / demonstration:** examples of alternative patterns. For instance, the Apps
-  `Custom/Relation/{Person,OrganisationContactRelationship}Controller` are dedicated per-type pull
+- **Legacy showcase:** examples of superseded patterns. For instance, the Apps
+  `Test/Relation/{Person,OrganisationContactRelationship}Controller` are dedicated per-type pull
   controllers kept to illustrate the Allors2-era style; in production the idiomatic way to fetch
   those objects is the generic `/allors/pull` JSON API, not a hand-written controller per type.
 
-Because `Custom` does not match the `Core*` / `Base*` / `Apps*` globs, **no inheritor ever
+`Test` is a first-class domain: each layer's Repository declares a `Test` struct extending that
+layer, and Allors binds hook implementations by domain name (`TestOnPostDerive`, `TestSetup`, …).
+Because `Test` does not match the `Core*` / `Base*` / `Apps*` globs, **no inheritor ever
 compiles it.** The destructive test endpoints therefore cannot reach a downstream production
-build. The only projects that compile `Custom/` are the abstract servers themselves, which act as
+build. The only projects that compile `Test/` are the abstract servers themselves, which act as
 the test harness (and are never deployed).
 
-> **Naming caveat that causes confusion:** a downstream inheritor conventionally names *its own
-> production domain* `Custom`. That inheritor `Custom` is the developer's own code — unrelated to,
-> and not inherited from, Allors' internal `Custom/` scaffolding. A planned refactor will split
-> and rename Allors' internal `Custom`: pure test scaffolding becomes a `Test` domain, and the
-> showcase/demonstration material becomes a dedicated demo `Custom` domain — giving `apps` two
-> example inheritors (`test` and `custom`) that model the reusable pattern
-> (abstract domain → test domain → custom domain) for downstream developers.
+> **Naming rule:** a downstream inheritor conventionally names *its own production domain*
+> `Custom`. Nothing inside this repository is named `Custom` anymore, so every `Custom` an
+> inheritor meets is their own code. The remaining in-repo uses of the word mean something else:
+> the TS `extent/custom` panel base classes are the seam *for* hand-authored (inheritor) panels,
+> `CustomOrganisationClassification`/`CustomEngagementItem` are business types where "custom"
+> means bespoke/user-defined, and Blazor's `CustomValidator` is the standard forms pattern.
+> Still planned: a dedicated demo `custom` domain under `apps`, carrying **only minimal
+> infrastructure** (the generic pull/push/invoke endpoints plus Image/Media controllers — nothing
+> else), so `apps` ships two example inheritors (`test` and `custom`) that model the reusable
+> pattern (abstract domain → test domain → custom domain) for downstream developers.
 
 ## Where hardening lives — best defaults, overridable
 
@@ -75,8 +83,8 @@ that every downstream product inherits them without effort — "the pit of succe
   `appsettings.json` sections — e.g. `Identity`, `Security`, `DataProtection`, `ForwardedHeaders`,
   `Logging:JSNLog` — without touching Allors source.
 - **Test-only scaffolding must never leak into a layer folder.** Anything that must not reach
-  production stays in `Custom/`. An automated test guards this boundary (the inheritable
+  production stays in `Test/`. An automated test guards this boundary (the inheritable
   `Core`/`Base`/`Apps` server folders must expose no test/bypass controllers).
 
 If you are hardening Allors: put the inheritable default in the layer folder (usually `Core`),
-give it a configuration override, and keep any test hook in `Custom/`.
+give it a configuration override, and keep any test hook in `Test/`.

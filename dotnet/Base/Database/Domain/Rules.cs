@@ -26,7 +26,7 @@ namespace Allors.Database.Domain
                 new TransitionalDeniedPermissionRule(m),
                 new NotificationListRule(m),
 
-                // Custom
+                // Test
                 new DataRule(m),
                 new OrganisationEmployementRule(m),
                 new PersonAddressRule(m),
