@@ -2179,13 +2179,13 @@ namespace Allors.Database.Domain.Tests
 
             //var derivation = new Logging.Derivation(this.Transaction, new DerivationConfig
             //    {
-            //        DerivationLogFunc = () => new CustomListDerivationLog(),
+            //        DerivationLogFunc = () => new TestListDerivationLog(),
             //    }
             //);
 
             //derivation.Derive();
 
-            //var list = ((CustomListDerivationLog)derivation.DerivationLog).List;
+            //var list = ((TestListDerivationLog)derivation.DerivationLog).List;
             //list.RemoveAll(v => !v.StartsWith("Dependency"));
 
             this.Transaction.Derive();

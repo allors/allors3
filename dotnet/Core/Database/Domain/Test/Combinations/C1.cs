@@ -1,0 +1,14 @@
+// <copyright file="C1.cs" company="Allors bv">
+// Copyright (c) Allors bv. All rights reserved.
+// Licensed under the LGPL license. See LICENSE file in the project root for full license information.
+// </copyright>
+
+namespace Allors.Database.Domain
+{
+    public partial class C1
+    {
+        public void TestSum(C1Sum method) => method.Result = method.A + method.B;
+
+        public override string ToString() => this.Name;
+    }
+}

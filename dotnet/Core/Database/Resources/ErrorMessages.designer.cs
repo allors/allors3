@@ -61,11 +61,11 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Custom error message.
+        ///   Looks up a localized string similar to Test error message.
         /// </summary>
-        public static string CustomError {
+        public static string TestError {
             get {
-                return ResourceManager.GetString("CustomError", resourceCulture);
+                return ResourceManager.GetString("TestError", resourceCulture);
             }
         }
     }

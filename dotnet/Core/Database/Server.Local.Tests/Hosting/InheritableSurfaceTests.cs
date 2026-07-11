@@ -14,7 +14,7 @@ namespace Tests
 
     // Guards the inheritance boundary described in ARCHITECTURE.md: downstream products inherit the
     // layer folders (Core/Base/Apps) by compile-globbing Core*/Base*/Apps*. Test and showcase
-    // scaffolding lives in the non-inherited Custom/ (and Apps' Controllers/) folders and must never
+    // scaffolding lives in the non-inherited Test/ (and Apps' Controllers/) folders and must never
     // move into a layer folder, or every inheritor would compile it. This test fails loudly if a
     // test/bypass controller ever appears in an inherited folder.
     public class InheritableSurfaceTests
@@ -68,7 +68,7 @@ namespace Tests
 
             Assert.True(
                 violations.Count == 0,
-                "Test/bypass controllers must live in the non-inherited Custom/ folder, never in an " +
+                "Test/bypass controllers must live in the non-inherited Test/ folder, never in an " +
                 "inherited layer folder (Core/Base/Apps), or downstream inheritors would compile them. " +
                 "Offending: " + string.Join("; ", violations));
         }

@@ -30,7 +30,7 @@ import { QueryComponent } from './query/query.component';
 import { FetchComponent } from './fetch/fetch.component';
 import { CoreContext } from '../allors/core-context';
 import { Configuration } from '@allors/system/workspace/domain';
-import { ruleBuilder } from '@allors/base/workspace/derivations-custom';
+import { ruleBuilder } from '@allors/base/workspace/derivations-test';
 
 export function appInitFactory(
   workspaceService: WorkspaceService,

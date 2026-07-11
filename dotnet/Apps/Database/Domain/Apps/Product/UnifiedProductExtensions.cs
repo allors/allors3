@@ -9,7 +9,7 @@ namespace Allors.Database.Domain
 {
     public static partial class UnifiedProductExtensions
     {
-        public static void CustomOnBuild(this UnifiedProduct @this, ObjectOnBuild method)
+        public static void AppsOnBuild(this UnifiedProduct @this, ObjectOnBuild method)
         {
             if (!@this.ExistScope)
             {

@@ -3,7 +3,7 @@ import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 
 import { AppClient } from './app.client';
 import { Configuration } from '@allors/system/workspace/domain';
-import { ruleBuilder } from '@allors/base/workspace/derivations-custom';
+import { ruleBuilder } from '@allors/base/workspace/derivations-test';
 import { LazyMetaPopulation } from '@allors/system/workspace/meta-json';
 import { PrototypeObjectFactory } from '@allors/system/workspace/adapters';
 import { DatabaseConnection } from '@allors/system/workspace/adapters-json';

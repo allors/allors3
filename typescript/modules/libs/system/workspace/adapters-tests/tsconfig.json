@@ -31,8 +31,8 @@
       "@allors/core/workspace/derivations": [
         "libs/core/workspace/derivations/src/index.ts"
       ],
-      "@allors/core/workspace/derivations-custom": [
-        "libs/core/workspace/derivations-custom/src/index.ts"
+      "@allors/core/workspace/derivations-test": [
+        "libs/core/workspace/derivations-test/src/index.ts"
       ],
       "@allors/system/workspace/derivations": [
         "libs/system/workspace/derivations/src/index.ts"

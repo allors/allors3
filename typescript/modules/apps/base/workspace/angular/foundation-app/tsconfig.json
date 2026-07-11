@@ -48,8 +48,8 @@
       "@allors/base/workspace/derivations": [
         "libs/base/workspace/derivations/src/index.ts"
       ],
-      "@allors/base/workspace/derivations-custom": [
-        "libs/base/workspace/derivations-custom/src/index.ts"
+      "@allors/base/workspace/derivations-test": [
+        "libs/base/workspace/derivations-test/src/index.ts"
       ],
       "@allors/base/workspace/angular/foundation": [
         "libs/base/workspace/angular/foundation/src/index.ts"

@@ -21,7 +21,7 @@ namespace Allors.Database.Domain.Tests
 
             var classMethod = c1.ClassMethod();
 
-            Assert.Equal("C1CustomC1Core", classMethod.Value);
+            Assert.Equal("C1TestC1Core", classMethod.Value);
         }
 
         [Fact]
@@ -32,7 +32,7 @@ namespace Allors.Database.Domain.Tests
 
             var interfaceMethod = c1.InterfaceMethod();
 
-            Assert.Equal("I1CustomI1CoreC1CustomC1Core", interfaceMethod.Value);
+            Assert.Equal("I1TestI1CoreC1TestC1Core", interfaceMethod.Value);
         }
 
         [Fact]
@@ -43,7 +43,7 @@ namespace Allors.Database.Domain.Tests
 
             var interfaceMethod = c1.SuperinterfaceMethod();
 
-            Assert.Equal("S1CustomS1CoreI1CustomI1CoreC1CustomC1Core", interfaceMethod.Value);
+            Assert.Equal("S1TestS1CoreI1TestI1CoreC1TestC1Core", interfaceMethod.Value);
         }
 
         [Fact]
