@@ -38,6 +38,15 @@ under a dated version heading.
 
 ### Fixed
 
+- `Allors.Workspace.Adapters.Local` no longer throws a `NullReferenceException` when syncing an
+  object for a restricted (non-superset) workspace. `DatabaseConnection.Sync` selected the roles to
+  copy by membership in *any* workspace (`WorkspaceNames.Length > 0`) but resolved each relation in
+  *this* connection's workspace meta, so a relation belonging only to another workspace resolved to
+  `null` and threw. It now scopes the selection to the connection's own workspace
+  (`WorkspaceNames.Contains(Configuration.Name)`), matching the server/JSON path
+  (`MetaCache.GetWorkspaceRoleTypesByClass`). Behaviour is unchanged for single-workspace
+  (`"Default"`) consumers, where the two filters coincide; as a side effect the sync record no
+  longer loads roles the workspace cannot express.
 - The Blazor Bootstrap checkbox role components (`BootstrapCheckboxRole`,
   `BootstrapCheckboxGroupRole`) now bind under BlazorStrap V5. They used the V4 idiom (one-way
   `Value` + manual `@onchange`) without `CheckedValue`/`UnCheckedValue`, so under V5 — which derives
