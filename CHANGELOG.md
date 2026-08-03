@@ -38,6 +38,17 @@ under a dated version heading.
 
 ### Fixed
 
+- `UnauthorizedInterceptor` no longer lets a 401 turn into an endless reload loop. It rethrew the
+  error after starting the full-page navigation to the Identity login, so the aborted in-flight
+  requests surfaced as uncaught errors; an app whose global `ErrorHandler` responds by navigating
+  (e.g. `window.location.href = '/'`) then cancelled the login navigation and started the cycle
+  again. Safari/WebKit looped at ~8 iterations a second — Chromium happened to commit the login
+  navigation first and so escaped. The interceptor now latches on the first 401 (a `static` flag, as
+  several 401s land together during bootstrap), skips the redirect when already on the login path,
+  and returns `NEVER` instead of rethrowing: the document is being replaced, so callers should
+  simply await it. `NEVER` rather than `EMPTY` deliberately — `EMPTY` rejects `firstValueFrom` with
+  an `EmptyError`, which is not an `HttpErrorResponse` and so slips past callers' 401 handling into
+  their generic "server unreachable" fallback, reintroducing the same competing navigation.
 - `Allors.Workspace.Adapters.Local` no longer throws a `NullReferenceException` when syncing an
   object for a restricted (non-superset) workspace. `DatabaseConnection.Sync` selected the roles to
   copy by membership in *any* workspace (`WorkspaceNames.Length > 0`) but resolved each relation in
