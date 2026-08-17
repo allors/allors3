@@ -46,6 +46,9 @@ jobs:
       matrix:
         target:
           - CiDotnetSystemAdaptersTestMemory
+          # bUnit tests over the Blazor role components; they run against an in-memory
+          # workspace, so they need no database container.
+          - CiDotnetBaseWorkspaceBlazorTest
     steps:
       - name: Checkout
         uses: actions/checkout@v6

@@ -15,4 +15,5 @@ public partial class Paths
     public AbsolutePath DotnetBaseDatabaseResourcesBase => DotnetBaseDatabaseResources / "Base";
 
     public AbsolutePath DotnetBaseWorkspaceTypescript => DotnetBase / "Workspace/Typescript";
+    public AbsolutePath DotnetBaseWorkspaceBlazorBootstrapTests => DotnetBase / "Workspace/Blazor/Blazor.Bootstrap.Tests/Allors.Workspace.Blazor.Bootstrap.Tests.csproj";
 }

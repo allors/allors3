@@ -38,6 +38,10 @@ partial class Build
         .DependsOn(Reset)
         .DependsOn(DotnetBaseWorkspaceTest);
 
+    private Target CiDotnetBaseWorkspaceBlazorTest => _ => _
+        .DependsOn(Reset)
+        .DependsOn(DotnetBaseWorkspaceBlazorTest);
+
     private Target CiDotnetAppsDatabaseTest => _ => _
         .DependsOn(Reset)
         .DependsOn(DotnetAppsDatabaseTest);

@@ -18,6 +18,12 @@ under a dated version heading.
   `Allors.Workspace.Blazor.Bootstrap` components. It renders the real BlazorStrap V5 components
   against a live Allors Local (in-memory) workspace, covering the checkbox role components' render
   and toggle behaviour, and the `CustomValidator` assertion helpers across unit, one and many roles.
+- The `Blazor.Bootstrap.Tests` project now builds with the solution and runs in CI. It was added
+  without being registered anywhere, so neither `dotnet/Allors.slnx` nor any Nuke target referenced
+  it and none of its tests ever ran. It is now in the solution and behind a new
+  `DotnetBaseWorkspaceBlazorTest` target (reached from `DotnetBaseWorkspaceTest`/`DotnetBaseTest`),
+  wired into the CI **memory** job via `CiDotnetBaseWorkspaceBlazorTest` — it drives an in-memory
+  workspace, so unlike the other suites it needs no database container.
 
 ### Changed
 
