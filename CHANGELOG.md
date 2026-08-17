@@ -83,6 +83,16 @@ under a dated version heading.
 - `CustomValidator.AddShouldExistMessage` now renders "<Role> is required" instead of
   "<Role> is requried". The message is shown to end users, and `RoleField.Validate` already spelled
   the same message correctly, so the two validation paths were visibly inconsistent.
+- `AllorsUserStore.CreateAsync` no longer fails for every user created with a password.
+  `.WithUserPasswordHash(...)` appeared twice in the same `PersonBuilder` chain, and the generated
+  builder guards a single-multiplicity role against being set twice, so the second call threw
+  `ArgumentException("One multiplicity")` — the path `UserManager.CreateAsync(user, password)` takes.
+  The guard only trips on a non-null value, which is why creating a user *without* a password kept
+  working and the bug survived testing. The duplicate call is removed, along with the matching (but
+  harmless) duplicate assignment in `UpdateAsync`. The failure was also undiagnosable:
+  `CreateAsync`, `UpdateAsync` and `DeleteAsync` all discarded the caught exception and surfaced
+  only "Could not create user X."; they now log it through an optional injected
+  `ILogger<AllorsUserStore>`, leaving the user-facing message unchanged.
 
 ### Security
 
