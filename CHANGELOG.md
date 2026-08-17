@@ -93,6 +93,10 @@ under a dated version heading.
   `CreateAsync`, `UpdateAsync` and `DeleteAsync` all discarded the caught exception and surfaced
   only "Could not create user X."; they now log it through an optional injected
   `ILogger<AllorsUserStore>`, leaving the user-facing message unchanged.
+- The generated single-multiplicity builder guard in `Core/Database/Templates/domain.cs.stg` now
+  spells its message "One multiplicity" instead of "One multicplicity". Core, Base and Apps all
+  generate from this template, so the misspelling reached every generated `With<Role>` in the tree —
+  and it is the string people search for when they hit the guard.
 
 ### Security
 
