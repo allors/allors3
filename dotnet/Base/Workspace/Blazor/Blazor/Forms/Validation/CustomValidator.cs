@@ -1,7 +1,6 @@
 namespace Allors.Workspace.Blazor.Validation
 {
     using System;
-    using System.Collections;
     using System.Linq;
     using Meta;
     using Microsoft.AspNetCore.Components;
@@ -47,55 +46,31 @@ namespace Allors.Workspace.Blazor.Validation
             };
         }
 
+        // ExistRole covers unit, one and many roles; GetRole returns a lazy projection for a many
+        // role, so it can not be inspected as a collection.
         protected void AssertExists(IField field, ValidationMessageStore messages, IPropertyType propertyType)
         {
-            if (field.PropertyType == propertyType)
+            if (field.PropertyType == propertyType && field.PropertyType is IRoleType roleType)
             {
-                var model = field.Object;
-                var roleType = field.PropertyType as IRoleType;
-
-                if (roleType?.IsOne == true)
+                if (!field.Object.Strategy.ExistRole(roleType))
                 {
-                    if (model.Strategy.GetRole(roleType) == null)
-                    {
-                        this.AddShouldExistMessage(field, messages);
-                    }
-                }
-                else if (roleType?.IsMany == true)
-                {
-                    if (((ICollection)model.Strategy.GetRole(roleType)).Count == 0)
-                    {
-                        this.AddShouldExistMessage(field, messages);
-                    }
+                    this.AddShouldExistMessage(field, messages);
                 }
             }
         }
 
         protected void AssertNotExists(IField field, ValidationMessageStore messages, IPropertyType propertyType)
         {
-            if (field.PropertyType == propertyType)
+            if (field.PropertyType == propertyType && field.PropertyType is IRoleType roleType)
             {
-                var model = field.Object;
-                var roleType = field.PropertyType as IRoleType;
-
-                if (roleType?.IsOne == true)
+                if (field.Object.Strategy.ExistRole(roleType))
                 {
-                    if (model.Strategy.GetRole(roleType) != null)
-                    {
-                        this.AddShouldNotExistMessage(field, messages);
-                    }
-                }
-                else if (roleType?.IsMany == true)
-                {
-                    if (((ICollection)model.Strategy.GetRole(roleType)).Count > 0)
-                    {
-                        this.AddShouldNotExistMessage(field, messages);
-                    }
+                    this.AddShouldNotExistMessage(field, messages);
                 }
             }
         }
 
-        protected virtual void AddShouldExistMessage(IField field, ValidationMessageStore messages) => messages.Add(field.FieldIdentifier, $"{field.PropertyType.Name} is requried");
+        protected virtual void AddShouldExistMessage(IField field, ValidationMessageStore messages) => messages.Add(field.FieldIdentifier, $"{field.PropertyType.Name} is required");
 
         protected virtual void AddShouldNotExistMessage(IField field, ValidationMessageStore messages) => messages.Add(field.FieldIdentifier, $"{field.PropertyType.Name} is not allowed");
 

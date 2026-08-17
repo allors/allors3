@@ -17,7 +17,7 @@ under a dated version heading.
 - bUnit test project `Blazor.Bootstrap.Tests` — the first automated coverage for the
   `Allors.Workspace.Blazor.Bootstrap` components. It renders the real BlazorStrap V5 components
   against a live Allors Local (in-memory) workspace, covering the checkbox role components' render
-  and toggle behaviour.
+  and toggle behaviour, and the `CustomValidator` assertion helpers across unit, one and many roles.
 
 ### Changed
 
@@ -71,6 +71,18 @@ under a dated version heading.
   Latent today (both hooks are empty), but a silent ordering bug the moment a layer fills one in.
   A new source-level guard test (`VirtualDispatchTests`) asserts that every `Virtual/*.v.cs`
   wrapper dispatches only its phase-matched layer hooks.
+- `CustomValidator.AssertExists`/`AssertNotExists` no longer kill the Blazor circuit when asserting
+  on a many-valued role. Both cast `IStrategy.GetRole` to `ICollection` to read `.Count`, but for a
+  many role `GetRole` returns `GetCompositesRole<IObject>` — a lazy `Select` projection over the
+  origin state, never an `ICollection` — so the cast always threw `InvalidCastException`. Validation
+  runs during rendering, so the exception went unhandled and terminated the circuit: a form with a
+  required checkbox group could not be submitted at all, and only a reload recovered the page. Both
+  methods now delegate to `IStrategy.ExistRole`, which already covers unit, one and many roles
+  (`.Any()` for the many case). Unit and one roles are unaffected — `RoleType.Init` sets
+  `IsOne = !IsMany`, so unit roles already took the one-role branch.
+- `CustomValidator.AddShouldExistMessage` now renders "<Role> is required" instead of
+  "<Role> is requried". The message is shown to end users, and `RoleField.Validate` already spelled
+  the same message correctly, so the two validation paths were visibly inconsistent.
 
 ### Security
 
