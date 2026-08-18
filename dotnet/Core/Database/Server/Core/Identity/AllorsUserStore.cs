@@ -14,6 +14,7 @@ namespace Allors.Security
     using Database.Domain;
     using Database.Meta;
     using Microsoft.AspNetCore.Identity;
+    using Microsoft.Extensions.Logging;
     using Services;
     using Deletable = Database.Domain.Deletable;
     using Task = System.Threading.Tasks.Task;
@@ -28,8 +29,13 @@ namespace Allors.Security
                                    IUserPhoneNumberStore<IdentityUser>
     {
         private readonly IDatabase database;
+        private readonly ILogger<AllorsUserStore> logger;
 
-        public AllorsUserStore(IDatabaseService databaseService) => this.database = databaseService.Database;
+        public AllorsUserStore(IDatabaseService databaseService, ILogger<AllorsUserStore> logger = null)
+        {
+            this.database = databaseService.Database;
+            this.logger = logger;
+        }
 
         #region IUserStore
         public void Dispose()
@@ -78,7 +84,6 @@ namespace Allors.Security
                         .WithUserPasswordHash(identityUser.PasswordHash)
                         .WithUserEmail(identityUser.Email)
                         .WithUserEmailConfirmed(identityUser.EmailConfirmed)
-                        .WithUserPasswordHash(identityUser.PasswordHash)
                         .WithUserSecurityStamp(identityUser.SecurityStamp)
                         .WithUserPhoneNumber(identityUser.PhoneNumber)
                         .WithUserPhoneNumberConfirmed(identityUser.PhoneNumberConfirmed)
@@ -97,6 +102,7 @@ namespace Allors.Security
                 }
                 catch (Exception e)
                 {
+                    this.logger?.LogError(e, "Could not create user {UserName}.", identityUser.UserName);
                     return IdentityResult.Failed(new IdentityError { Description = $"Could not create user {identityUser.UserName}." });
                 }
             }
@@ -115,7 +121,6 @@ namespace Allors.Security
                     user.UserPasswordHash = identityUser.PasswordHash;
                     user.UserEmail = identityUser.Email;
                     user.UserEmailConfirmed = identityUser.EmailConfirmed;
-                    user.UserPasswordHash = identityUser.PasswordHash;
                     user.UserSecurityStamp = identityUser.SecurityStamp;
                     user.UserPhoneNumber = identityUser.PhoneNumber;
                     user.UserPhoneNumberConfirmed = identityUser.PhoneNumberConfirmed;
@@ -129,8 +134,9 @@ namespace Allors.Security
 
                     return IdentityResult.Success;
                 }
-                catch
+                catch (Exception e)
                 {
+                    this.logger?.LogError(e, "Could not update user {UserName}.", identityUser.UserName);
                     return IdentityResult.Failed(new IdentityError { Description = $"Could not update user {identityUser.UserName}." });
                 }
             }
@@ -155,8 +161,9 @@ namespace Allors.Security
 
                     return IdentityResult.Success;
                 }
-                catch
+                catch (Exception e)
                 {
+                    this.logger?.LogError(e, "Could not delete user {UserName}.", identityUser.UserName);
                     return IdentityResult.Failed(new IdentityError { Description = $"Could not delete user {identityUser.UserName}." });
                 }
             }

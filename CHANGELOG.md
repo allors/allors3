@@ -17,7 +17,13 @@ under a dated version heading.
 - bUnit test project `Blazor.Bootstrap.Tests` — the first automated coverage for the
   `Allors.Workspace.Blazor.Bootstrap` components. It renders the real BlazorStrap V5 components
   against a live Allors Local (in-memory) workspace, covering the checkbox role components' render
-  and toggle behaviour.
+  and toggle behaviour, and the `CustomValidator` assertion helpers across unit, one and many roles.
+- The `Blazor.Bootstrap.Tests` project now builds with the solution and runs in CI. It was added
+  without being registered anywhere, so neither `dotnet/Allors.slnx` nor any Nuke target referenced
+  it and none of its tests ever ran. It is now in the solution and behind a new
+  `DotnetBaseWorkspaceBlazorTest` target (reached from `DotnetBaseWorkspaceTest`/`DotnetBaseTest`),
+  wired into the CI **memory** job via `CiDotnetBaseWorkspaceBlazorTest` — it drives an in-memory
+  workspace, so unlike the other suites it needs no database container.
 
 ### Changed
 
@@ -71,6 +77,32 @@ under a dated version heading.
   Latent today (both hooks are empty), but a silent ordering bug the moment a layer fills one in.
   A new source-level guard test (`VirtualDispatchTests`) asserts that every `Virtual/*.v.cs`
   wrapper dispatches only its phase-matched layer hooks.
+- `CustomValidator.AssertExists`/`AssertNotExists` no longer kill the Blazor circuit when asserting
+  on a many-valued role. Both cast `IStrategy.GetRole` to `ICollection` to read `.Count`, but for a
+  many role `GetRole` returns `GetCompositesRole<IObject>` — a lazy `Select` projection over the
+  origin state, never an `ICollection` — so the cast always threw `InvalidCastException`. Validation
+  runs during rendering, so the exception went unhandled and terminated the circuit: a form with a
+  required checkbox group could not be submitted at all, and only a reload recovered the page. Both
+  methods now delegate to `IStrategy.ExistRole`, which already covers unit, one and many roles
+  (`.Any()` for the many case). Unit and one roles are unaffected — `RoleType.Init` sets
+  `IsOne = !IsMany`, so unit roles already took the one-role branch.
+- `CustomValidator.AddShouldExistMessage` now renders "<Role> is required" instead of
+  "<Role> is requried". The message is shown to end users, and `RoleField.Validate` already spelled
+  the same message correctly, so the two validation paths were visibly inconsistent.
+- `AllorsUserStore.CreateAsync` no longer fails for every user created with a password.
+  `.WithUserPasswordHash(...)` appeared twice in the same `PersonBuilder` chain, and the generated
+  builder guards a single-multiplicity role against being set twice, so the second call threw
+  `ArgumentException("One multiplicity")` — the path `UserManager.CreateAsync(user, password)` takes.
+  The guard only trips on a non-null value, which is why creating a user *without* a password kept
+  working and the bug survived testing. The duplicate call is removed, along with the matching (but
+  harmless) duplicate assignment in `UpdateAsync`. The failure was also undiagnosable:
+  `CreateAsync`, `UpdateAsync` and `DeleteAsync` all discarded the caught exception and surfaced
+  only "Could not create user X."; they now log it through an optional injected
+  `ILogger<AllorsUserStore>`, leaving the user-facing message unchanged.
+- The generated single-multiplicity builder guard in `Core/Database/Templates/domain.cs.stg` now
+  spells its message "One multiplicity" instead of "One multicplicity". Core, Base and Apps all
+  generate from this template, so the misspelling reached every generated `With<Role>` in the tree —
+  and it is the string people search for when they hit the guard.
 
 ### Security
 

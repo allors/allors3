@@ -74,12 +74,23 @@ partial class Build
     private Target DotnetBaseWorkspaceTypescriptTest => _ => _
         .DependsOn(DotnetBaseWorkspaceTypescriptSession);
 
+    // bUnit tests over the Blazor role components; they run against an in-memory workspace, so no
+    // database is needed.
+    private Target DotnetBaseWorkspaceBlazorTest => _ => _
+        .DependsOn(DotnetBaseGenerate)
+        .Executes(() => DotNetTest(s => s
+            .SetProjectFile(Paths.DotnetBaseWorkspaceBlazorBootstrapTests)
+            .AddLoggers("trx;LogFileName=BaseWorkspaceBlazor.trx")
+            .SetResultsDirectory(Paths.ArtifactsTests)));
+
     private Target DotnetBaseWorkspaceTest => _ => _
-        .DependsOn(DotnetBaseWorkspaceTypescriptTest);
+        .DependsOn(DotnetBaseWorkspaceTypescriptTest)
+        .DependsOn(DotnetBaseWorkspaceBlazorTest);
 
     private Target DotnetBaseTest => _ => _
         .DependsOn(DotnetBaseDatabaseTest)
-        .DependsOn(DotnetBaseWorkspaceTypescriptTest);
+        .DependsOn(DotnetBaseWorkspaceTypescriptTest)
+        .DependsOn(DotnetBaseWorkspaceBlazorTest);
 
     private Target DotnetBase => _ => _
         .DependsOn(Clean)
