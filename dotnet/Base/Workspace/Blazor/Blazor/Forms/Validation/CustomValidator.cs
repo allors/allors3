@@ -39,8 +39,10 @@ namespace Allors.Workspace.Blazor.Validation
             // Perform per-field validation on each field edit
             this.EditContext.OnFieldChanged += (sender, eventArgs) =>
             {
-                var field = this.Fields.Items.First(v => v == eventArgs.FieldIdentifier.Model);
-                this.Validate(field, messages);
+                foreach (var field in this.Fields.Items.Where(v => v == eventArgs.FieldIdentifier.Model))
+                {
+                    this.Validate(field, messages);
+                }
 
                 this.EditContext.NotifyValidationStateChanged();
             };
