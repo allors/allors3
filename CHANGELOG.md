@@ -16,9 +16,9 @@ under a dated version heading.
 
 - bUnit test project `Blazor.Bootstrap.Tests` — the first automated coverage for the
   `Allors.Workspace.Blazor.Bootstrap` components. It renders the real BlazorStrap V5 components
-  against a live Allors Local (in-memory) workspace, covering the checkbox role components' render
-  and toggle behaviour, the `CustomValidator` assertion helpers across unit, one and many roles, and
-  its per-field validation handler.
+  against a live Allors Local (in-memory) workspace, covering the checkbox and radio role
+  components' render, grouping and toggle behaviour, the `CustomValidator` assertion helpers across
+  unit, one and many roles, and its per-field validation handler.
 - The `Blazor.Bootstrap.Tests` project now builds with the solution and runs in CI. It was added
   without being registered anywhere, so neither `dotnet/Allors.slnx` nor any Nuke target referenced
   it and none of its tests ever ran. It is now in the solution and behind a new
@@ -56,6 +56,15 @@ under a dated version heading.
   had been rendered. The handler now iterates the matching fields with `Where`, as
   `DefaultValidator` already did, so a notification for an untracked model is ignored instead of
   fatal.
+- `BootstrapRadioGroupRole` now renders the role field's name as the radio group's `name`
+  attribute. It supplied no name, so BlazorStrap derived one from the `@bind-Value` target —
+  `RoleField.Model` — and every radio on a page came out as `name="Model"` whatever its role. The
+  browser groups radios by name, so all radio-backed roles on a form behaved as a single group:
+  selecting an option for one role silently cleared every other role's selection, which made a form
+  with more than one radio role impossible to complete. The name now comes from `RoleField.Name`
+  (`<RoleType>_<Object.Id>`), the value `OptionName` already uses to build the per-option ids;
+  `BSInputRadio` (5.2.104) has no `Name` parameter, so it is passed as an unmatched attribute,
+  which takes precedence over the derived value.
 - `UnauthorizedInterceptor` no longer lets a 401 turn into an endless reload loop. It rethrew the
   error after starting the full-page navigation to the Identity login, so the aborted in-flight
   requests surfaced as uncaught errors; an app whose global `ErrorHandler` responds by navigating

@@ -4,7 +4,7 @@
     @foreach (var option in Options)
     {
         <BSInputGroup IsCheck="true">
-            <BSInputRadio Id="@OptionName(option)" CheckedValue="@option" @bind-Value="Model" />
+            <BSInputRadio Id="@OptionName(option)" name="@Name" CheckedValue="@option" @bind-Value="Model" />
             <BSLabel For="@OptionName(option)">@(DisplayOption(option))</BSLabel>
         </BSInputGroup>
     }
