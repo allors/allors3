@@ -10,6 +10,7 @@ namespace Commands
     using System.IO;
     using System.Linq;
     using System.Xml;
+    using Allors.Database;
     using Allors.Database.Domain;
     using Allors.Database.Services;
     using McMaster.Extensions.CommandLineUtils;
@@ -36,6 +37,9 @@ namespace Commands
 
         [Option("-f", Description = "File to load")]
         public string FileName { get; set; } = "population.xml";
+
+        [Option("--v1-strings", Description = "String encoding (Raw|Base64) of the string unit roles, required for a version 1 population")]
+        public StringEncoding? Version1Strings { get; set; }
 
         public int OnExecute(CommandLineApplication app)
         {
@@ -72,7 +76,7 @@ namespace Commands
                 };
 
                 this.Logger.Info("Loading {file}", fileInfo.FullName);
-                this.Parent.Database.Load(reader);
+                this.Parent.Database.Load(reader, new LoadOptions { Version1StringEncoding = this.Version1Strings });
             }
 
             if (notLoadedObjectTypeIds.Count > 0)

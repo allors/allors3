@@ -21,15 +21,19 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         private readonly SqlConnection connection;
         private readonly ObjectNotLoadedEventHandler objectNotLoaded;
         private readonly RelationNotLoadedEventHandler relationNotLoaded;
+        private readonly LoadOptions options;
 
         private readonly Dictionary<long, IClass> classByObjectId;
 
-        public Load(Database database, SqlConnection connection, ObjectNotLoadedEventHandler objectNotLoaded, RelationNotLoadedEventHandler relationNotLoaded)
+        private StringEncoding stringEncoding;
+
+        public Load(Database database, SqlConnection connection, ObjectNotLoadedEventHandler objectNotLoaded, RelationNotLoadedEventHandler relationNotLoaded, LoadOptions options)
         {
             this.database = database;
             this.connection = connection;
             this.objectNotLoaded = objectNotLoaded;
             this.relationNotLoaded = relationNotLoaded;
+            this.options = options;
 
             this.classByObjectId = new Dictionary<long, IClass>();
         }
@@ -46,7 +50,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                         throw new ArgumentException("Save population has no version.");
                     }
 
-                    Serialization.CheckVersion(int.Parse(version));
+                    this.stringEncoding = Serialization.ResolveStringEncoding(int.Parse(version), this.options);
 
                     if (!reader.IsEmptyElement)
                     {
@@ -282,7 +286,7 @@ where c = '{@class.Id}'";
                                     {
                                         var unitType = (IUnit)relationType.RoleType.ObjectType;
                                         var unitTypeTag = unitType.Tag;
-                                        unit = Serialization.ReadString(value, unitTypeTag);
+                                        unit = Serialization.ReadString(value, unitTypeTag, this.stringEncoding);
                                     }
 
                                     unitRelations.Add(new UnitRelation(associationId, unit));
