@@ -7,6 +7,7 @@ namespace Commands
 {
     using System.IO;
     using System.Xml;
+    using Allors.Database;
     using McMaster.Extensions.CommandLineUtils;
     using NLog;
 
@@ -20,6 +21,9 @@ namespace Commands
         [Option("-f", Description = "File to load (default is population.xml)")]
         public string FileName { get; set; }
 
+        [Option("--v1-strings", Description = "String encoding (Raw|Base64) of the string unit roles, required for a version 1 population")]
+        public StringEncoding? Version1Strings { get; set; }
+
         public int OnExecute(CommandLineApplication app)
         {
             this.Logger.Info("Begin");
@@ -30,7 +34,7 @@ namespace Commands
             using (var reader = XmlReader.Create(fileInfo.FullName))
             {
                 this.Logger.Info("Loading {file}", fileInfo.FullName);
-                this.Parent.Database.Load(reader);
+                this.Parent.Database.Load(reader, new LoadOptions { Version1StringEncoding = this.Version1Strings });
             }
 
             this.Logger.Info("End");

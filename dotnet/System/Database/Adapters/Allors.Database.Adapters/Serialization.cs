@@ -30,7 +30,11 @@ namespace Allors.Database.Adapters
         /// <summary>
         /// The current <see cref="Serialization#Version"/> of the serialization schema.
         /// </summary>
-        public const int VersionCurrent = 1;
+        /// <remarks>
+        /// Version 1 is ambiguous, see <see cref="LoadOptions.Version1StringEncoding"/>.
+        /// Version 2 always stores string unit roles Base64 encoded.
+        /// </remarks>
+        public const int VersionCurrent = 2;
 
         /// <summary>
         /// This attribute holds the <see cref="ObjectId"/> of the association of a relation.
@@ -139,27 +143,34 @@ namespace Allors.Database.Adapters
         public static readonly char[] ObjectSplitterCharArray = { ObjectSplitter[0] };
 
         /// <summary>
-        /// Checks if the <see cref="IDatabase#Version"/> is correct.
+        /// Resolves the <see cref="StringEncoding"/> of the string unit roles of a population with the
+        /// given <see cref="Serialization#Version"/>, and rejects versions that are not supported.
         /// </summary>
-        /// <param name="reader">The reader.</param>
-        public static void CheckVersion(int version)
-        {
-            if (VersionCurrent != version)
+        /// <param name="version">The serialization version of the population.</param>
+        /// <param name="options">The load options, can be null.</param>
+        /// <returns>The encoding of the string unit roles.</returns>
+        public static StringEncoding ResolveStringEncoding(int version, LoadOptions options) =>
+            version switch
             {
-                throw new ArgumentException("Database supports version " + VersionCurrent + " but found version " + version + ".");
-            }
-        }
+                VersionCurrent => StringEncoding.Base64,
+                1 => options?.Version1StringEncoding ?? throw new ArgumentException(
+                        "Version 1 populations are ambiguous: those saved before 2023-07-05 store string unit roles as raw xml text, later ones store them Base64 encoded. " +
+                        "Set LoadOptions.Version1StringEncoding (command line: --v1-strings Raw|Base64) to state which one this is. " +
+                        "Saving the population again upgrades it to version " + VersionCurrent + "."),
+                _ => throw new ArgumentException("Database supports versions 1 and " + VersionCurrent + " but found version " + version + ".")
+            };
 
         /// <summary>
         /// <see cref="XmlConvert"/> from the xml unit value.
         /// </summary>
         /// <param name="value">The XML value.</param>
         /// <param name="tag">The unit type tag.</param>
+        /// <param name="stringEncoding">The encoding of the string unit roles.</param>
         /// <returns>The converted value.</returns>
-        public static object ReadString(string value, string tag) =>
+        public static object ReadString(string value, string tag, StringEncoding stringEncoding) =>
             tag switch
             {
-                UnitTags.String => value != null ? System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(value)) : null,
+                UnitTags.String => ReadStringUnit(value, stringEncoding),
                 UnitTags.Integer => XmlConvert.ToInt32(value),
                 UnitTags.Decimal => XmlConvert.ToDecimal(value),
                 UnitTags.Float => XmlConvert.ToDouble(value),
@@ -189,6 +200,21 @@ namespace Allors.Database.Adapters
                 UnitTags.Binary => Convert.ToBase64String((byte[])unit),
                 _ => throw new ArgumentException("Unknown Unit ObjectType: " + tag)
             };
+
+        private static string ReadStringUnit(string value, StringEncoding stringEncoding)
+        {
+            if (value == null)
+            {
+                return null;
+            }
+
+            return stringEncoding switch
+            {
+                StringEncoding.Base64 => System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(value)),
+                StringEncoding.Raw => value,
+                _ => throw new ArgumentException("Unknown StringEncoding: " + stringEncoding)
+            };
+        }
 
         public static long EnsureVersion(long version)
         {

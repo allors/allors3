@@ -134,6 +134,8 @@ namespace Allors.Database.Adapters.Sql
 
         public abstract void Load(XmlReader reader);
 
+        public abstract void Load(XmlReader reader, LoadOptions options);
+
         public abstract void Save(XmlWriter writer);
 
         public ISink Sink { get; set; }

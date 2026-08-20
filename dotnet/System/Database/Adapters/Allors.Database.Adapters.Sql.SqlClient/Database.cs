@@ -118,7 +118,9 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             }
         }
 
-        public override void Load(XmlReader reader)
+        public override void Load(XmlReader reader) => this.Load(reader, null);
+
+        public override void Load(XmlReader reader, LoadOptions options)
         {
             lock (this)
             {
@@ -130,7 +132,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                     {
                         connection.Open();
 
-                        var load = new Load(this, connection, this.ObjectNotLoaded, this.RelationNotLoaded);
+                        var load = new Load(this, connection, this.ObjectNotLoaded, this.RelationNotLoaded, options);
                         load.Execute(reader);
 
                         connection.Close();

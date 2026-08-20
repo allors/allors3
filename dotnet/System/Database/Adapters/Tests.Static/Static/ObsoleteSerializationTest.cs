@@ -102,7 +102,7 @@ namespace Allors.Database.Adapters
                     {
                     }
 
-                    populationElement.SetAttribute("version", "2");
+                    populationElement.SetAttribute("version", "3");
                     xml = xmlDocument.OuterXml;
 
                     try
@@ -743,7 +743,7 @@ namespace Allors.Database.Adapters
                 var stringReader = new StringReader(xml);
                 using (var reader = XmlReader.Create(stringReader))
                 {
-                    this.Population.Load(reader);
+                    this.Population.Load(reader, new LoadOptions { Version1StringEncoding = StringEncoding.Base64 });
                 }
 
                 using (var transaction = this.Population.CreateTransaction())
@@ -785,7 +785,7 @@ namespace Allors.Database.Adapters
                 var stringReader = new StringReader(xml);
                 using (var reader = XmlReader.Create(stringReader))
                 {
-                    this.Population.Load(reader);
+                    this.Population.Load(reader, new LoadOptions { Version1StringEncoding = StringEncoding.Base64 });
                 }
 
                 Assert.Single(notLoadedEventArgs);
@@ -848,7 +848,7 @@ namespace Allors.Database.Adapters
                 var stringReader = new StringReader(xml);
                 using (var reader = XmlReader.Create(stringReader))
                 {
-                    this.Population.Load(reader);
+                    this.Population.Load(reader, new LoadOptions { Version1StringEncoding = StringEncoding.Base64 });
                 }
 
                 Assert.Single(notLoadedEventArgs);
@@ -913,7 +913,7 @@ namespace Allors.Database.Adapters
                 var stringReader = new StringReader(xml);
                 using (var reader = XmlReader.Create(stringReader))
                 {
-                    this.Population.Load(reader);
+                    this.Population.Load(reader, new LoadOptions { Version1StringEncoding = StringEncoding.Base64 });
                 }
 
                 Assert.Single(notLoadedEventArgs);
@@ -977,7 +977,7 @@ namespace Allors.Database.Adapters
                 var stringReader = new StringReader(xml);
                 using (var reader = XmlReader.Create(stringReader))
                 {
-                    this.Population.Load(reader);
+                    this.Population.Load(reader, new LoadOptions { Version1StringEncoding = StringEncoding.Base64 });
                 }
 
                 Assert.Single(notLoadedEventArgs);
@@ -1046,7 +1046,7 @@ namespace Allors.Database.Adapters
                 var stringReader = new StringReader(xml);
                 using (var reader = XmlReader.Create(stringReader))
                 {
-                    this.Population.Load(reader);
+                    this.Population.Load(reader, new LoadOptions { Version1StringEncoding = StringEncoding.Base64 });
                 }
 
                 Assert.Single(notLoadedEventArgs);
@@ -1067,6 +1067,146 @@ namespace Allors.Database.Adapters
                     Assert.Equal(this.c1D, this.c1C.C1C1one2one);
                     Assert.Single(this.c1A.C1C1one2manies);
                     Assert.Contains(this.c1D, this.c1A.C1C1one2manies);
+                }
+            }
+        }
+
+        [Fact]
+        public void SaveWritesCurrentVersion()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+
+                var otherPopulation = this.CreatePopulation();
+                using (var otherTransaction = otherPopulation.CreateTransaction())
+                {
+                    this.Populate(otherTransaction);
+                    otherTransaction.Commit();
+                }
+
+                var xmlDocument = new XmlDocument();
+                xmlDocument.LoadXml(DoSave(otherPopulation));
+                var populationElement = (XmlElement)xmlDocument.SelectSingleNode("//population");
+
+                Assert.Equal("2", populationElement.GetAttribute("version"));
+            }
+        }
+
+        [Fact]
+        public void CantLoadVersion1WithoutLoadOptions()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+
+                var stringReader = new StringReader(UnitXml(1, "QSBTdHJpbmc="));
+                using (var reader = XmlReader.Create(stringReader))
+                {
+                    Assert.Throws<ArgumentException>(() => this.Population.Load(reader));
+                }
+            }
+        }
+
+        [Fact]
+        public void CantLoadVersion1WithoutStringEncoding()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+
+                var stringReader = new StringReader(UnitXml(1, "QSBTdHJpbmc="));
+                using (var reader = XmlReader.Create(stringReader))
+                {
+                    Assert.Throws<ArgumentException>(() => this.Population.Load(reader, new LoadOptions()));
+                }
+            }
+        }
+
+        [Fact]
+        public void LoadVersion1WithRawStrings()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+
+                var stringReader = new StringReader(UnitXml(1, "A String"));
+                using (var reader = XmlReader.Create(stringReader))
+                {
+                    this.Population.Load(reader, new LoadOptions { Version1StringEncoding = StringEncoding.Raw });
+                }
+
+                using (var transaction = this.Population.CreateTransaction())
+                {
+                    this.c1A = (C1)transaction.Instantiate(1);
+
+                    Assert.Equal("A String", this.c1A.C1AllorsString);
+                }
+            }
+        }
+
+        [Fact]
+        public void LoadVersion1WithBase64Strings()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+
+                var stringReader = new StringReader(UnitXml(1, "QSBTdHJpbmc="));
+                using (var reader = XmlReader.Create(stringReader))
+                {
+                    this.Population.Load(reader, new LoadOptions { Version1StringEncoding = StringEncoding.Base64 });
+                }
+
+                using (var transaction = this.Population.CreateTransaction())
+                {
+                    this.c1A = (C1)transaction.Instantiate(1);
+
+                    Assert.Equal("A String", this.c1A.C1AllorsString);
+                }
+            }
+        }
+
+        [Fact]
+        public void LoadVersion2WithoutLoadOptions()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+
+                var stringReader = new StringReader(UnitXml(2, "QSBTdHJpbmc="));
+                using (var reader = XmlReader.Create(stringReader))
+                {
+                    this.Population.Load(reader);
+                }
+
+                using (var transaction = this.Population.CreateTransaction())
+                {
+                    this.c1A = (C1)transaction.Instantiate(1);
+
+                    Assert.Equal("A String", this.c1A.C1AllorsString);
+                }
+            }
+        }
+
+        [Fact]
+        public void LoadVersion2IgnoresVersion1StringEncoding()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+
+                var stringReader = new StringReader(UnitXml(2, "QSBTdHJpbmc="));
+                using (var reader = XmlReader.Create(stringReader))
+                {
+                    this.Population.Load(reader, new LoadOptions { Version1StringEncoding = StringEncoding.Raw });
+                }
+
+                using (var transaction = this.Population.CreateTransaction())
+                {
+                    this.c1A = (C1)transaction.Instantiate(1);
+
+                    Assert.Equal("A String", this.c1A.C1AllorsString);
                 }
             }
         }
@@ -1092,6 +1232,32 @@ namespace Allors.Database.Adapters
                 database.Load(reader);
             }
         }
+
+        /// <summary>
+        /// A population with a single C1 whose C1AllorsString role holds <paramref name="stringRole"/>.
+        /// </summary>
+        private static string UnitXml(int version, string stringRole) =>
+            string.Format(
+                CultureInfo.InvariantCulture,
+                @"<?xml version=""1.0"" encoding=""utf-16""?>
+<allors>
+  <population version=""{0}"">
+    <objects>
+      <database>
+        <ot i=""7041c691d89646288f501c24f5d03414"">1:0</ot>
+      </database>
+    </objects>
+    <relations>
+      <database>
+        <rtu i=""207138608abd4d718ccc2b4d1b88bce3"">
+          <r a=""1"">{1}</r>
+        </rtu>
+      </database>
+    </relations>
+  </population>
+</allors>",
+                version,
+                stringRole);
 
         private void AssertPopulation(ITransaction transaction)
         {
