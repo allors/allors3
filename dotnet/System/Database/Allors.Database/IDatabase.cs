@@ -71,7 +71,18 @@ namespace Allors.Database
         /// Loads the population from the <see cref="XmlReader"/>.
         /// </summary>
         /// <param name="reader">The reader.</param>
+        /// <remarks>
+        /// A version 1 population can not be loaded with this overload, because the encoding of its
+        /// string unit roles is ambiguous. Use <see cref="Load(XmlReader, LoadOptions)"/> instead.
+        /// </remarks>
         void Load(XmlReader reader);
+
+        /// <summary>
+        /// Loads the population from the <see cref="XmlReader"/>.
+        /// </summary>
+        /// <param name="reader">The reader.</param>
+        /// <param name="options">The load options.</param>
+        void Load(XmlReader reader, LoadOptions options);
 
         /// <summary>
         /// Saves the population to the <see cref="XmlWriter"/>.

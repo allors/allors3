@@ -71,7 +71,16 @@
                 </xs:complexType>
               </xs:element>
             </xs:sequence>
-            <xs:attribute type="xs:byte" name="version"/>
+            <xs:attribute type="xs:byte" name="version">
+              <xs:annotation>
+                <xs:documentation>
+                  1: ambiguous. String unit roles are raw xml text in populations saved before
+                  2023-07-05 and Base64 encoded in populations saved after. Both declare version 1,
+                  so the encoding has to be supplied by the caller when loading.
+                  2: string unit roles are always the Base64 representation of their UTF-8 bytes.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
           </xs:complexType>
         </xs:element>
       </xs:sequence>

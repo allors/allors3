@@ -28,6 +28,18 @@ under a dated version heading.
 
 ### Changed
 
+- **Populations are saved as serialization version 2, and loading a version 1 population now
+  requires the caller to state its string encoding.** Version 1 is ambiguous: populations saved
+  before 2023-07-05 store string unit roles as raw xml text, later ones store them Base64 encoded
+  (changed in `4b4417dc8b` without a version bump), and both declare `version="1"`. Reading one
+  under the wrong assumption silently drops or corrupts every string role, so version 1 no longer
+  has a default — `IDatabase.Load(XmlReader)` throws for it, and the new
+  `IDatabase.Load(XmlReader, LoadOptions)` overload takes `LoadOptions.Version1StringEncoding`
+  (`StringEncoding.Raw` or `StringEncoding.Base64`) to resolve it. The `load` and `upgrade` commands
+  expose this as `--v1-strings Raw|Base64`. Version 2, written by every save from now on, is always
+  Base64 and needs no option; saving a version 1 population again upgrades it. `Serialization.CheckVersion`
+  is replaced by `Serialization.ResolveStringEncoding`, and `Serialization.ReadString` takes the
+  encoding as a third argument.
 - **The internal `Custom` domain is renamed to `Test`; the name `Custom` is now reserved for
   downstream inheritors' extension domains.** The rename covers the 26 dotnet and 4 e2e `Custom/`
   folders, the domain struct in each layer's Repository (domain GUID unchanged), the runtime-bound

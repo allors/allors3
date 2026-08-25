@@ -63,7 +63,9 @@ namespace Allors.Database.Adapters.Memory
 
         public ITransaction CreateDatabaseTransaction() => this.Transaction;
 
-        public void Load(XmlReader reader)
+        public void Load(XmlReader reader) => this.Load(reader, null);
+
+        public void Load(XmlReader reader, LoadOptions options)
         {
             this.Init();
 
@@ -71,7 +73,7 @@ namespace Allors.Database.Adapters.Memory
             {
                 this.IsLoading = true;
 
-                var load = new Load(this.Transaction, reader);
+                var load = new Load(this.Transaction, reader, options);
                 load.Execute();
 
                 this.Transaction.Commit();

@@ -20,11 +20,15 @@ namespace Allors.Database.Adapters.Memory
 
         private readonly Transaction transaction;
         private readonly XmlReader reader;
+        private readonly LoadOptions options;
 
-        public Load(Transaction transaction, XmlReader reader)
+        private StringEncoding stringEncoding;
+
+        public Load(Transaction transaction, XmlReader reader, LoadOptions options)
         {
             this.transaction = transaction;
             this.reader = reader;
+            this.options = options;
         }
 
         public void Execute()
@@ -40,7 +44,7 @@ namespace Allors.Database.Adapters.Memory
                         throw new ArgumentException("Save population has no version.");
                     }
 
-                    Serialization.CheckVersion(int.Parse(version));
+                    this.stringEncoding = Serialization.ResolveStringEncoding(int.Parse(version), this.options);
 
                     if (!this.reader.IsEmptyElement)
                     {
@@ -352,7 +356,7 @@ namespace Allors.Database.Adapters.Memory
                                         var unitType = (IUnit)relationType.RoleType.ObjectType;
                                         var unitTypeTag = unitType.Tag;
 
-                                        var unit = Serialization.ReadString(value, unitTypeTag);
+                                        var unit = Serialization.ReadString(value, unitTypeTag, this.stringEncoding);
                                         strategy.SetUnitRole(relationType.RoleType, unit);
                                     }
                                 }
