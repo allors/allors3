@@ -2,6 +2,35 @@
 
 [![CI](https://github.com/allors/allors3/actions/workflows/ci.yml/badge.svg)](https://github.com/allors/allors3/actions/workflows/ci.yml)
 
+Allors3 is an actively developed platform for applications built with **domain inheritance**.
+Domain inheritance remains its model for extending domains.
+
+## Direction for v3.2
+
+The agreed scope for v3.2 is:
+
+- Keep **System and Core**: the database and workspace engines, metadata, adapters, protocols,
+  generators, foundational domain behavior, security, identity, and hosting.
+- Remove **Base and Apps**, including their business domains, applications, and Angular/Material
+  and Blazor component libraries, without a separate continuation.
+- Make **signals the default workspace API**, with breaking API changes allowed for this transition.
+- Provide **thin UI integrations**. Downstream applications own their screens, forms, tables,
+  navigation, and component libraries.
+- Retain platform test domains, test servers, and small applications that exercise the integrations.
+
+**Implementation status:** Base and Apps are still present, and the signals API is planned.
+This documents the target; the code removal and reactive workspace changes have not landed yet.
+See [ARCHITECTURE.md](ARCHITECTURE.md) for the platform boundary and inheritance rules.
+
+## Development and releases
+
+Pull requests are the default contribution workflow. The retained version branches are `main`,
+`v3.0`, and `v3.1`. Work on `main` is intended for v3.2 once the transition settles.
+
+[version.json](version.json) already specifies `3.2.0-alpha.{height}`. This is the development
+version, not a completed v3.2 release. Changes are recorded in [CHANGELOG.md](CHANGELOG.md), and
+contribution rules are in [AGENTS.md](AGENTS.md).
+
 ## Configuration
 
 Runtime configuration lives **outside** the source tree. Each server, command-line tool and integration
@@ -12,8 +41,10 @@ $ALLORS_CONFIG_ROOT/<domain>/appsettings.json            # server
 $ALLORS_CONFIG_ROOT/<domain>/commands/appsettings.json   # command-line tools
 ```
 
-`<domain>` is `core`, `base` or `apps`. `ALLORS_CONFIG_ROOT` is **required**: if it is not set, or the
-expected `appsettings.json` is missing, the app fails to start with a message telling you what to set.
+For the retained platform, `<domain>` is `core`. The current tree also has `base` and `apps`
+configuration, which will be removed with those domains. `ALLORS_CONFIG_ROOT` is **required**:
+if it is not set, or the expected `appsettings.json` is missing, the app fails to start with a
+message telling you what to set.
 Environment variables override the JSON, so secrets can be supplied without editing files
 (e.g. `ConnectionStrings__DefaultConnection=…`, `adapter=npgsql`).
 
@@ -44,8 +75,8 @@ that set this for you.
 
 ### Installing config for deployment
 
-Copy a provider's templates to a stable, FHS-friendly location (`/opt/allors` by default) and point the
-apps at it:
+Copy a provider's templates to a stable, FHS-friendly location (`/opt/allors` by default) and point
+the server or command-line tool at it:
 
 ```bash
 ./build.sh InstallConfig --provider npgsql --config-root /opt/allors

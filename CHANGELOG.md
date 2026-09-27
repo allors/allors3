@@ -4,7 +4,7 @@ All notable changes to this project are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project uses [Nerdbank.GitVersioning](https://github.com/dotnet/Nerdbank.GitVersioning)
-(`3.1.0-alpha.{height}`), so the version auto-increments with each commit on `main`.
+(`3.2.0-alpha.{height}` in `version.json`), so the version auto-increments with each commit on `main`.
 Changes accumulate under **[Unreleased]** until a version is cut, at which point they move
 under a dated version heading.
 
@@ -28,6 +28,12 @@ under a dated version heading.
 
 ### Changed
 
+- Document the agreed v3.2 direction: System and Core as the platform, continued domain
+  inheritance, a planned signals-based workspace API with thin UI integrations, and retirement of
+  Base and Apps without a separate continuation. Clarify the retained version branches and the
+  default pull-request workflow. The documentation distinguishes planned implementation changes
+  from the current code.
+
 - **The internal `Custom` domain is renamed to `Test`; the name `Custom` is now reserved for
   downstream inheritors' extension domains.** The rename covers the 26 dotnet and 4 e2e `Custom/`
   folders, the domain struct in each layer's Repository (domain GUID unchanged), the runtime-bound
@@ -42,6 +48,10 @@ under a dated version heading.
   UnifiedProduct default `Scope` hook moved from `CustomOnBuild` to `AppsOnBuild` — the inheritable
   Apps layer must not occupy the custom-domain hook slot (after the rename it would be dead code
   here, and it blocked an inheritor from defining its own `CustomOnBuild` for UnifiedProduct).
+
+### Removed
+
+- The obsolete bugfix integration review checklist.
 
 ### Fixed
 
@@ -441,8 +451,8 @@ under a dated version heading.
 - `InstallConfig` Nuke target copies a provider's templates into the config root, e.g.
   `./build.sh InstallConfig --provider npgsql --config-root /opt/allors`.
 - Test databases are created on demand from an admin connection: `ALLORS_NPGSQL` / `ALLORS_SQLCLIENT`
-  (matching the allors4 CI names) hold a connection allowed to create databases, and each test's connection
-  string is derived from them by swapping the database name. The shared `DatabaseProvisioning` helper (over
+  hold a connection allowed to create databases, and each test's connection string is derived from them
+  by swapping the database name. The shared `DatabaseProvisioning` helper (over
   the provider-specific `Provisioning` types) drops/creates the database, and the in-process tests (the
   static adapter tests and the Core/Base `Server.Local.Tests`) self-provision a per-test-class database — so
   `dotnet test` runs against the containers with no pre-existing database and no SQL LocalDB. The legacy
