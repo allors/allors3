@@ -51,7 +51,7 @@ jobs:
           - CiDotnetBaseWorkspaceBlazorTest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           submodules: false
           fetch-depth: 0      # nbgv needs full history for git-height versioning
@@ -59,7 +59,7 @@ jobs:
       - name: Generate nl-BE locale
         run: sudo locale-gen nl_BE.UTF-8 && sudo update-locale
       - name: Setup .NET SDK (from global.json)
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v6
         with:
           global-json-file: global.json
       - name: Restore .NET local tools
@@ -117,7 +117,7 @@ jobs:
           - CiDotnetSystemAdaptersTestNpgsql
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           submodules: false
           fetch-depth: 0
@@ -128,7 +128,7 @@ jobs:
         # libfontconfig1: SkiaSharp/ZXing barcode generation (Base/Apps domain tests).
         run: sudo apt-get update && sudo apt-get install -y libfontconfig1
       - name: Setup .NET SDK (from global.json)
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v6
         with:
           global-json-file: global.json
       - name: Restore .NET local tools
@@ -136,7 +136,7 @@ jobs:
       - name: Compute version (nbgv)
         run: dotnet nbgv cloud
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: '24'
       - name: Run Nuke target ${{ matrix.target }}
@@ -196,7 +196,7 @@ jobs:
           - CiTypescriptWorkspacesE2EAngularAppsIntranetTest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           submodules: false
           fetch-depth: 0
@@ -207,7 +207,7 @@ jobs:
         # libfontconfig1: SkiaSharp/ZXing barcode generation (Base/Apps domain tests).
         run: sudo apt-get update && sudo apt-get install -y libfontconfig1
       - name: Setup .NET SDK (from global.json)
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v6
         with:
           global-json-file: global.json
       - name: Restore .NET local tools
@@ -215,7 +215,7 @@ jobs:
       - name: Compute version (nbgv)
         run: dotnet nbgv cloud
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: '24'
       - name: Run Nuke target ${{ matrix.target }}
