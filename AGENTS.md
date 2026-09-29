@@ -42,6 +42,16 @@
 
 ## Git
 
+- Pull requests are the default. Creating a pull request requires approval.
+- Use one branch and one pull request for an agreed body of work. Its parts land as focused
+  commits on that branch. Create the pull request only when that work is complete; if one already
+  exists, update it. Do not create a separate pull request for each part.
+- Use **Purpose Prefixes** for descriptive branch names: a prefix that states what the branch is
+  for, such as `feature/`, `fix/`, `docs/`, or `chore/`. Do not use **AI Agent Source Prefixes**:
+  a prefix that names the agent or tool that created the branch, such as `claude/`, `codex/`,
+  or `copilot/`.
+- The retained version branches are `main`, `v3.0`, and `v3.1`. Work on `main` is intended for
+  v3.2 once the transition settles; do not create the v3.2 branch or release early.
 - No AI attribution in commits (no "Generated with", "Co-authored-by", or similar trailers)
 - Keep commits focused and well-described
 - Use conventional commit format: type(scope): description
@@ -58,6 +68,9 @@
 - When fixing bugs, always write a failing test first or at least amend an existing test
 - When creating a new test, find a suitable existing class to add it to.
 - Record notable changes in `CHANGELOG.md` under the `[Unreleased]` section (Keep a Changelog format).
+- When porting a change between `main` and a version branch, keep the target branch's
+  `CHANGELOG.md` and add the entry by hand. The union merge would otherwise bring back old
+  entries without reporting a conflict.
 
 ## Testing — where test code may live (important)
 
