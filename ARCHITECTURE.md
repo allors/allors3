@@ -51,11 +51,9 @@ writable endpoints, and associations are the inverse, read-only endpoints.
 
 ## Identity domain
 
-Authentication with ASP.NET Core Identity will move out of Core into a domain of its own,
-Identity. Authorization stays in Core.
-
-Every inheriting domain uses Core. Identity is optional: an inheriting domain may use the
-platform's Identity domain or supply its own identity domain.
+Authentication with ASP.NET Core Identity will move out of Core into Identity, a plug-in that
+Core hosts. Authorization stays in Core. [docs/domains.md](docs/domains.md) describes the kinds
+of domains and how an application selects a plug-in.
 
 **Current implementation:** the Identity domain does not exist yet. The ASP.NET Core Identity
 integration is part of Core, in `dotnet/Core/Database/Server/Core/Identity` and in the hosting
