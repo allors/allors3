@@ -27,3 +27,5 @@ Changes accumulate under **[Unreleased]** until a version is released.
 - The obsolete bugfix integration review checklist.
 - The `CLAUDE.md` symlink to `AGENTS.md`. Claude Code reads `AGENTS.md` directly from version
   2.1.277.
+- Dependabot version updates for the GitHub Actions used in the workflows. Action versions are
+  updated by hand.
