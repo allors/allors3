@@ -1,90 +1,125 @@
-# Allors architecture — domains, inheritance, and where hardening lives
+# Allors3 architecture
 
-This note exists to prevent a specific confusion (it has bitten at least one downstream
-reader): **the word "Custom" used to mean two different things** depending on whether you were
-working *in* the Allors framework repository or *on top of* it. That overload is resolved: the
-framework's internal scaffolding domain is now named `Test`, and `Custom` is reserved for a
-downstream inheritor's own extension domain.
+Allors3 remains an actively maintained and developed platform built around **domain inheritance**.
+The direction for v3.2 narrows the repository to the platform, moves authentication into an
+Identity domain, and introduces a reactive workspace.
 
-## Abstract domains: Core ← Base ← Apps
+## Scope and implementation status
 
-Allors ships three **abstract** domains, layered by inheritance:
+The agreed platform boundary is:
 
-```
-Core   (foundational: security model, identity, the JSON API, hosting)
-  ▲
-Base   (workflow, content/media, mail, …)
-  ▲
-Apps   (business: relations, orders, …)
-```
+| Area | Responsibility |
+| --- | --- |
+| System | Database and workspace engines, adapters, protocols, metadata, and generation machinery. |
+| Core | Foundational domain behavior, authorization, security defaults, API, and hosting, reusable through domain inheritance. |
+| Identity | Authentication with ASP.NET Core Identity, as a domain of its own. |
+| Reactive workspace | Signals for workspace values and state in the .NET and TypeScript workspaces, with thin integrations for UI frameworks. |
+| Platform tests | Test domains, runnable test servers, and small applications that prove platform and integration behavior. |
+| Downstream applications | Business domains inheriting from Core, screens, forms, tables, navigation, and component libraries. |
 
-They are **abstract**: none of `Core`, `Base`, `Apps` is deployed to production directly. A real
-product is a **downstream inheritor** that builds on one of these layers.
+**Base and Apps will be removed without a separate continuation.** This includes their business
+domains, applications, Angular/Material and Blazor component libraries, configuration, and build
+targets. Their code remains available on the `v3.1` branch.
 
-## Inheritance works by compile-globbing the layer folders
+**Current implementation:** Base and Apps and their build/test infrastructure are still in the
+tree. The Identity domain and the signals workspace API described below are planned. These are
+the agreed design requirements for the transition, not a claim that removal, the Identity domain,
+or signals support has already shipped.
 
-Inheritance is not a runtime mechanism — it is the build. Each layer's projects **glob the
-layer-named folders of their ancestors**. For example the Base server compiles
+The platform-only baseline should build and pass its retained tests before the workspace API is
+changed. Platform behavior currently tested through Base or Apps should be represented in platform
+test domains where it remains relevant; business-specific tests retire with their domains.
 
-```xml
-<Compile Include="..\..\..\Core\Database\Server\Core*\**\*.cs" />
-```
+## Domain inheritance
 
-and the Apps server adds `Base*\**` on top. The load-bearing rule:
+Core is an abstract domain. A production application declares its own domain extending Core and
+may build further layers through domain inheritance. Allors3 will continue to use domain
+inheritance as it develops.
 
-> **Inheritable code lives in a folder named after its layer** (`Core/`, `Base/`, `Apps/`).
-> Only `Core*` / `Base*` / `Apps*` folders are globbed, so only those are inherited.
+The repository declarations describe the domain hierarchy. Generated metadata and dispatch code
+support the inherited model and behavior. The .NET projects also include the layer-named source
+folders of their ancestors through compile globs: for example, downstream server projects include
+the `Core*/**/*.cs` sources from `dotnet/Core/Database/Server` alongside their own implementation.
 
-A downstream inheritor's server does the same: it globs `Core*`, `Base*`, `Apps*` from the Allors
-layers it builds on, and compiles its own extension code alongside.
+**Inheritable implementation code belongs in folders named after its domain.** Project globs must
+select those folders explicitly. The existing Base and Apps projects follow the same convention
+while they remain in the tree; their retirement does not change the inheritance mechanism.
 
-## "Test" is internal scaffolding — and is **never inherited**
+Objects delegate operations to their strategies. Object creation and deletion, and all relation
+reads and writes, use the Allors APIs. Relations are bidirectional: roles are the forward,
+writable endpoints, and associations are the inverse, read-only endpoints.
 
-Within this repository, the `Test/` folders (renamed from `Custom/` in 2026-07; historically the
-Apps server's `Controllers/` folder played the same role) hold **internal scaffolding**, of two
-kinds — neither of them production:
+## Identity domain
 
-- **Test scaffolding:** the concrete `Setup`/population that makes an abstract domain runnable
-  *for automated tests*, plus test-only controllers such as the database-reset endpoints
-  (`Test/Init`, `Test/Setup`, `Test/Restart`) and the passwordless token minter used by the suites.
-- **Legacy showcase:** examples of superseded patterns. For instance, the Apps
-  `Test/Relation/{Person,OrganisationContactRelationship}Controller` are dedicated per-type pull
-  controllers kept to illustrate the Allors2-era style; in production the idiomatic way to fetch
-  those objects is the generic `/allors/pull` JSON API, not a hand-written controller per type.
+Authentication with ASP.NET Core Identity will move out of Core into a domain of its own,
+Identity. Authorization stays in Core.
 
-`Test` is a first-class domain: each layer's Repository declares a `Test` struct extending that
-layer, and Allors binds hook implementations by domain name (`TestOnPostDerive`, `TestSetup`, …).
-Because `Test` does not match the `Core*` / `Base*` / `Apps*` globs, **no inheritor ever
-compiles it.** The destructive test endpoints therefore cannot reach a downstream production
-build. The only projects that compile `Test/` are the abstract servers themselves, which act as
-the test harness (and are never deployed).
+Every inheriting domain uses Core. Identity is optional: an inheriting domain may use the
+platform's Identity domain or supply its own identity domain.
 
-> **Naming rule:** a downstream inheritor conventionally names *its own production domain*
-> `Custom`. Nothing inside this repository is named `Custom` anymore, so every `Custom` an
-> inheritor meets is their own code. The remaining in-repo uses of the word mean something else:
-> the TS `extent/custom` panel base classes are the seam *for* hand-authored (inheritor) panels,
-> `CustomOrganisationClassification`/`CustomEngagementItem` are business types where "custom"
-> means bespoke/user-defined, and Blazor's `CustomValidator` is the standard forms pattern.
-> Still planned: a dedicated demo `custom` domain under `apps`, carrying **only minimal
-> infrastructure** (the generic pull/push/invoke endpoints plus Image/Media controllers — nothing
-> else), so `apps` ships two example inheritors (`test` and `custom`) that model the reusable
-> pattern (abstract domain → test domain → custom domain) for downstream developers.
+**Current implementation:** the Identity domain does not exist yet. The ASP.NET Core Identity
+integration is part of Core, in `dotnet/Core/Database/Server/Core/Identity` and in the hosting
+configuration described under
+[Security defaults for inheritors](#security-defaults-for-inheritors).
 
-## Where hardening lives — best defaults, overridable
+## Reactive workspace direction
 
-Security hardening is **for inheritors**: the abstract layers are where the good defaults live so
-that every downstream product inherits them without effort — "the pit of success."
+Signals will be the default public API of every workspace. That covers both the .NET and the
+TypeScript workspace, and any workspace added from here on. Breaking changes to the generated
+workspace API are allowed for this transition; preserving the old property API alongside signals
+is not a requirement.
 
-- **Inheritable, foundational security code goes in the layer folders** — most in
-  `dotnet/Core/Database/Server/Core/**` (e.g. `Core/Hosting/` holds the shared
-  `AddAllorsServer`/`UseAllorsServer` seam: DataProtection, forwarded headers, security headers,
-  rate limiting, Identity lockout/password policy, the production-secrets guard).
-- **Defaults are secure by default but overridable by configuration.** Inheritors override via
-  `appsettings.json` sections — e.g. `Identity`, `Security`, `DataProtection`, `ForwardedHeaders`,
-  `Logging:JSNLog` — without touching Allors source.
-- **Test-only scaffolding must never leak into a layer folder.** Anything that must not reach
-  production stays in `Test/`. An automated test guards this boundary (the inheritable
-  `Core`/`Base`/`Apps` server folders must expose no test/bypass controllers).
+The reactive surface should cover:
 
-If you are hardening Allors: put the inheritable default in the layer folder (usually `Core`),
-give it a configuration override, and keep any test hook in `Test/`.
+- Role values and read-only associations, including inherited members.
+- Read and write permissions, and method execution permissions.
+- Existence and change state for members, objects, and sessions.
+- Changes caused by local edits, pull/synchronization, push, reset, and permission updates.
+
+Signals observe the workspace's own state. Writes continue through the Allors strategies so that
+relation consistency and change tracking remain managed by the workspace. UI integrations should
+not duplicate domain state in a separate store.
+
+Thin integrations adapt workspace signals to a UI framework's reactive and lifecycle mechanisms,
+including subscription cleanup. The platform does not supply production form/table components,
+application shells, or a view engine. Small test applications verify the integrations; downstream
+applications own their presentation.
+
+The concrete signal implementations and generated API details will be established during the
+workspace work. Domain inheritance, role/association semantics, and controlled writes remain the
+constraints on that design.
+
+## Test scaffolding is separate from inherited code
+
+The `Test/` folders hold internal scaffolding: concrete setup and population for automated tests,
+database-reset endpoints such as `Test/Init` and `Test/Setup`, and test-only authentication
+helpers.
+
+`Test` is a domain in its own right. Core's repository declares a `Test` struct extending Core,
+and Allors binds hook implementations by domain name, such as `TestOnPostDerive` and `TestSetup`.
+The `Core*` globs exclude `Test/`, so downstream projects using those globs do not compile the
+scaffolding. The repository's runnable test servers are test harnesses, not production deployments.
+
+`Custom` is conventionally the name of a downstream application's own production extension
+domain. Internal test scaffolding uses `Test` to keep those responsibilities distinct.
+
+Test coverage must continue to exercise inheritance across domain levels, as well as relations,
+permissions, generation, adapters, and workspace synchronization. Browser tests for thin UI
+integrations belong in isolated test applications. Reusable production libraries must not carry
+test routes, test hooks, or other scaffolding; dedicated test projects are the exception.
+
+## Security defaults for inheritors
+
+Foundational security behavior belongs in inheritable Core folders. In particular,
+`dotnet/Core/Database/Server/Core/Hosting` contains the shared `AddAllorsServer`/`UseAllorsServer`
+configuration for DataProtection, forwarded headers, security headers, rate limiting, Identity
+policy, and production-secret validation. Authentication is to move to the Identity domain, so
+the authentication parts of this configuration will move with it. Authorization stays in Core.
+
+Inheritors override the defaults through configuration sections such as `Identity`, `Security`,
+`DataProtection`, `ForwardedHeaders`, and `Logging:JSNLog`. Runtime configuration follows the
+[README](README.md#configuration).
+
+Test-only endpoints stay in `Test/`. The existing `InheritableSurfaceTests` check the inheritable
+server folders for test/bypass controllers. That boundary must remain enforced as the repository
+is narrowed to the platform.
