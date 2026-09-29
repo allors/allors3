@@ -24,3 +24,5 @@ Changes accumulate under **[Unreleased]** until a version is released.
 ### Removed
 
 - The obsolete bugfix integration review checklist.
+- The `CLAUDE.md` symlink to `AGENTS.md`. Claude Code reads `AGENTS.md` directly from version
+  2.1.277.
