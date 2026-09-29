@@ -9,6 +9,12 @@ Changes accumulate under **[Unreleased]** until a version is released.
 
 ## [Unreleased]
 
+### Added
+
+- Documentation for users and maintainers under `docs/`, starting with the domain model:
+  functional domains, plug-ins and their hosts, and the concrete domain that selects plug-ins.
+  `AGENTS.md` holds the rules for these pages.
+
 ### Changed
 
 - Document the v3.2 platform scope: System, Core, and a planned Identity domain for

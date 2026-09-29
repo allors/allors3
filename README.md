@@ -6,6 +6,9 @@ Allors3 is an actively developed platform for applications built with **domain i
 An application declares its own domain that extends Core and inherits its model and behavior;
 further domains can extend that domain in turn.
 
+The [documentation](docs/README.md) is written for users and for maintainers. It starts with
+the [kinds of domains](docs/domains.md).
+
 ## Direction for v3.2
 
 The agreed scope for v3.2 is:

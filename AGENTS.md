@@ -76,6 +76,28 @@
   `CHANGELOG.md` and add the entry by hand. The union merge would otherwise bring back old
   entries without reporting a conflict.
 
+## Documentation
+
+- Documentation lives in `docs/`, for two audiences. Pages for users, who build applications on
+  Allors3, sit at the top of `docs/`. Pages for maintainers, who change the platform, sit under
+  `docs/internals/`. [docs/README.md](docs/README.md) lists every page and defines the kinds and
+  the statuses.
+- Every page opens with a status line: Current, Planned, or Historical. Every user page is of
+  one kind: tutorial, how-to guide, reference, or explanation.
+- A user page never requires reading an internals page, and it says what an application can
+  rely on today.
+- An internals page assumes the user pages and links to them instead of repeating them. It is a
+  map: it says which part owns what, and why. Depth stays in code comments and tests.
+  Applications must not rely on internals pages.
+- Create a folder together with its first page, not before.
+- A fact has one home. Link to it instead of repeating it.
+- When a test can check a rule, write the test and name it in the page. The test is authoritative.
+- Update the pages that a change makes untrue in the same pull request.
+- A plan that has landed becomes Historical. It keeps its path and points to the page that holds
+  the current truth.
+- Use the vocabulary of [docs/domains.md](docs/domains.md): functional domain, plug-in, host, and
+  concrete domain.
+
 ## Testing — where test code may live (important)
 
 - `typescript/modules/apps/**` MAY contain isolated platform integration test applications and
