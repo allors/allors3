@@ -46,6 +46,10 @@
 - Use one branch and one pull request for an agreed body of work. Its parts land as focused
   commits on that branch. Create the pull request only when that work is complete; if one already
   exists, update it. Do not create a separate pull request for each part.
+- Keep the title and description of a pull request correct for everything on its branch, and
+  update them when the branch changes. A squash merge uses them as the commit message: the title
+  follows the conventional commit format, and the description says what changed and why, with
+  no AI attribution and nothing that stops being true after the merge.
 - Use **Purpose Prefixes** for descriptive branch names: a prefix that states what the branch is
   for, such as `feature/`, `fix/`, `docs/`, or `chore/`. Do not use **AI Agent Source Prefixes**:
   a prefix that names the agent or tool that created the branch, such as `claude/`, `codex/`,

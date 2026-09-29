@@ -17,8 +17,9 @@ Changes accumulate under **[Unreleased]** until a version is released.
   separate continuation; their removal, the Identity domain, and the reactive workspace changes
   have not landed yet.
 - Update development guidance for the platform scope, a default pull-request workflow in which
-  creating a pull request requires approval, one pull request per agreed body of work, Purpose
-  Prefixes for branch names, and changelog handling for changes ported between branches.
+  creating a pull request requires approval, one pull request per agreed body of work with a
+  correct title and description, Purpose Prefixes for branch names, and changelog handling for
+  changes ported between branches.
 - Start a new changelog from this point; the changelog up to v3.1 remains on the `v3.1` branch.
 
 ### Removed
