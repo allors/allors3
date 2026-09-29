@@ -11,4 +11,9 @@ Changes accumulate under **[Unreleased]** until a version is released.
 
 ### Changed
 
+- Document the v3.2 platform scope: System, Core, and a planned Identity domain for
+  authentication, continued domain inheritance, and a planned signals-based API for the .NET and
+  TypeScript workspaces with thin UI integrations. Base and Apps are to be removed without a
+  separate continuation; their removal, the Identity domain, and the reactive workspace changes
+  have not landed yet.
 - Start a new changelog from this point; the changelog up to v3.1 remains on the `v3.1` branch.
