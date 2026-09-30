@@ -54,3 +54,10 @@ Changes accumulate under **[Unreleased]** until a version is released.
   2.1.277.
 - Dependabot version updates for the GitHub Actions used in the workflows. Action versions are
   updated by hand.
+
+### Fixed
+
+- The .NET workspace sorts the collection that a composites role is set from. It kept the order
+  of the collection, such as objects in the order they were created, and lookups in the role
+  then missed objects: the association of such an object was empty and removing it from the role
+  had no effect.
