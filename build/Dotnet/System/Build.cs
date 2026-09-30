@@ -5,6 +5,13 @@ using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
 partial class Build
 {
+    // The Ranges tests of Allors.Shared; they need no generated code and no database.
+    private Target DotnetSystemSharedTest => _ => _
+        .Executes(() => DotNetTest(s => s
+            .SetProjectFile(Paths.DotnetSystemSharedTests)
+            .AddLoggers("trx;LogFileName=SystemShared.trx")
+            .SetResultsDirectory(Paths.ArtifactsTests)));
+
     private Target DotnetSystemAdaptersGenerate => _ => _
         .After(Clean)
         .Executes(() =>

@@ -36,7 +36,7 @@ env:
   HEADLESS: 'true'
 
 jobs:
-  # In-memory adapter: no database, no provider.
+  # Suites without a database: Allors.Shared and the in-memory adapter, no provider.
   memory:
     name: ${{ matrix.target }}
     runs-on: ubuntu-latest
@@ -45,6 +45,7 @@ jobs:
       fail-fast: false
       matrix:
         target:
+          - CiDotnetSystemSharedTest
           - CiDotnetSystemAdaptersTestMemory
     steps:
       - name: Checkout

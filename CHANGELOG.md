@@ -14,6 +14,8 @@ Changes accumulate under **[Unreleased]** until a version is released.
 - Documentation for users and maintainers under `docs/`, starting with the domain model:
   functional domains, plug-ins and their hosts, and the concrete domain that selects plug-ins.
   `AGENTS.md` holds the rules for these pages.
+- The build target `DotnetSystemSharedTest` and the CI job `CiDotnetSystemSharedTest` for the
+  `Ranges` tests in `dotnet/System/Shared.Tests`, which no target or job ran before.
 
 ### Changed
 
