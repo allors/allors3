@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.10.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.5.1" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\System\Workspace\Allors.Workspace.Meta.Lazy\Allors.Workspace.Meta.Lazy.csproj" />
+    <ProjectReference Include="..\Generate\Generate.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\Workspace\Templates\meta.cs.stg" Link="Templates\meta.cs.stg" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\Workspace\Templates\meta.lazy.cs.stg" Link="Templates\meta.lazy.cs.stg" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>
