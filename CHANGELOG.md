@@ -64,6 +64,8 @@ Changes accumulate under **[Unreleased]** until a version is released.
   of the collection, such as objects in the order they were created, and lookups in the role
   then missed objects: the association of such an object was empty and removing it from the role
   had no effect.
+- `ITransaction.Instantiate(IObject)` returns null for null in the SQL adapters, as it does in
+  the memory adapter. The SQL adapters threw a `NullReferenceException`.
 - The generated lazy meta of the .NET workspace compiles for a workspace without inheritance.
   The template `meta.lazy.cs.stg` wrote an untyped array in `BuildInheritances`, which is error
   CS0826 when the array is empty.
