@@ -86,6 +86,12 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   `42809: … is not a procedure`. The adapter connects to the lower-cased database name, the name
   PostgreSQL gives a database created without quotes, so `Database=AllorsCore` reaches `allorscore`;
   a database created under a quoted name with capitals has to be renamed.
+- The PostgreSQL adapter tests pool their connections, a fix of the archived line of `main` from
+  September 2026 (#273). Their connection string set `Pooling=false`, so every transaction opened
+  and closed a connection, and every close left a port in `TIME_WAIT`. Against a PostgreSQL in a
+  local container, whose port forwarder holds a second port per connection, the suite in parallel
+  used up the ephemeral ports of the host within seconds (`Can't assign requested address`). It now
+  passes in parallel.
 
 ### Security
 
