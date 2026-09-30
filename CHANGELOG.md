@@ -16,6 +16,9 @@ Changes accumulate under **[Unreleased]** until a version is released.
   `AGENTS.md` holds the rules for these pages.
 - The build target `DotnetSystemSharedTest` and the CI job `CiDotnetSystemSharedTest` for the
   `Ranges` tests in `dotnet/System/Shared.Tests`, which no target or job ran before.
+- A `Generate.Tests` project for the generator and its templates. `WorkspaceTemplateTests`
+  generates the workspace meta for each workspace of the Core test domain and for a workspace
+  without types, and compiles the result. It runs in the `DotnetCoreDatabaseTest` target.
 
 ### Changed
 
@@ -63,6 +66,9 @@ Changes accumulate under **[Unreleased]** until a version is released.
   had no effect.
 - `ITransaction.Instantiate(IObject)` returns null for null in the SQL adapters, as it does in
   the memory adapter. The SQL adapters threw a `NullReferenceException`.
+- The generated lazy meta of the .NET workspace compiles for a workspace without inheritance.
+  The template `meta.lazy.cs.stg` wrote an untyped array in `BuildInheritances`, which is error
+  CS0826 when the array is empty.
 - The PostgreSQL adapter tests pool their connections. `Provisioning.ConnectionString` in
   `Allors.Database.Adapters.Sql.Npgsql` set `Pooling=false`, so every transaction opened and
   closed a connection, and every close left a port in `TIME_WAIT`. Against a PostgreSQL in a
