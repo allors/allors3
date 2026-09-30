@@ -16,6 +16,9 @@ Changes accumulate under **[Unreleased]** until a version is released.
   `AGENTS.md` holds the rules for these pages.
 - The build target `DotnetSystemSharedTest` and the CI job `CiDotnetSystemSharedTest` for the
   `Ranges` tests in `dotnet/System/Shared.Tests`, which no target or job ran before.
+- A `Generate.Tests` project for the generator and its templates. `WorkspaceTemplateTests`
+  generates the workspace meta for each workspace of the Core test domain and for a workspace
+  without types, and compiles the result. It runs in the `DotnetCoreDatabaseTest` target.
 
 ### Changed
 
@@ -54,3 +57,9 @@ Changes accumulate under **[Unreleased]** until a version is released.
   2.1.277.
 - Dependabot version updates for the GitHub Actions used in the workflows. Action versions are
   updated by hand.
+
+### Fixed
+
+- The generated lazy meta of the .NET workspace compiles for a workspace without inheritance.
+  The template `meta.lazy.cs.stg` wrote an untyped array in `BuildInheritances`, which is error
+  CS0826 when the array is empty.

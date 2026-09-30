@@ -213,7 +213,7 @@ $meta.WorkspaceClassesByWorkspaceName.(workspaceName):{class|                m.$
 
         private Inheritance[] BuildInheritances(LazyM m)
         {
-            return new []
+            return new Inheritance[]
             {$meta.Composites:{composite|$inheritance(composite)$}$
             };
         }
