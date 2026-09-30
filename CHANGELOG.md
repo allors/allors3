@@ -61,6 +61,8 @@ Changes accumulate under **[Unreleased]** until a version is released.
   of the collection, such as objects in the order they were created, and lookups in the role
   then missed objects: the association of such an object was empty and removing it from the role
   had no effect.
+- `ITransaction.Instantiate(IObject)` returns null for null in the SQL adapters, as it does in
+  the memory adapter. The SQL adapters threw a `NullReferenceException`.
 - The PostgreSQL adapter tests pool their connections. `Provisioning.ConnectionString` in
   `Allors.Database.Adapters.Sql.Npgsql` set `Pooling=false`, so every transaction opened and
   closed a connection, and every close left a port in `TIME_WAIT`. Against a PostgreSQL in a
