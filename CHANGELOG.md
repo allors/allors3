@@ -54,3 +54,12 @@ Changes accumulate under **[Unreleased]** until a version is released.
   2.1.277.
 - Dependabot version updates for the GitHub Actions used in the workflows. Action versions are
   updated by hand.
+
+### Fixed
+
+- The PostgreSQL adapter tests pool their connections. `Provisioning.ConnectionString` in
+  `Allors.Database.Adapters.Sql.Npgsql` set `Pooling=false`, so every transaction opened and
+  closed a connection, and every close left a port in `TIME_WAIT`. Against a PostgreSQL in a
+  local container, whose port forwarder holds a second port per connection, the suite in
+  parallel used up the ephemeral ports of the host within seconds (`Can't assign requested
+  address`). It now passes in parallel.

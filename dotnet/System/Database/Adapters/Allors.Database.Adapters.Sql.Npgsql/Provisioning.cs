@@ -32,7 +32,6 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             new NpgsqlConnectionStringBuilder(RawConnectionString())
             {
                 Database = database.ToLowerInvariant(),
-                Pooling = false,
                 Enlist = false,
                 CommandTimeout = 300,
             }.ConnectionString;
