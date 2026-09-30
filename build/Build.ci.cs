@@ -42,14 +42,6 @@ partial class Build
         .DependsOn(Reset)
         .DependsOn(DotnetBaseWorkspaceBlazorTest);
 
-    private Target CiDotnetAppsDatabaseTest => _ => _
-        .DependsOn(Reset)
-        .DependsOn(DotnetAppsDatabaseTest);
-
-    private Target CiDotnetAppsWorkspaceTest => _ => _
-        .DependsOn(Reset)
-        .DependsOn(DotnetAppsWorkspaceTest);
-
     private Target CiTypescriptWorkspaceTest => _ => _
         .DependsOn(Reset)
         .DependsOn(TypescriptInstall)
@@ -64,9 +56,4 @@ partial class Build
         .DependsOn(Reset)
         .DependsOn(TypescriptInstall)
         .DependsOn(TypescriptE2EAngularBaseTest);
-
-    private Target CiTypescriptWorkspacesE2EAngularAppsIntranetTest => _ => _
-        .DependsOn(Reset)
-        .DependsOn(TypescriptInstall)
-        .DependsOn(TypescriptE2EAngularAppsIntranetTest);
 }

@@ -30,6 +30,10 @@ Changes accumulate under **[Unreleased]** until a version is released.
 
 ### Removed
 
+- Apps: the domain `dotnet/Apps`, the Angular application and libraries `apps-intranet`, the
+  end-to-end tests under `typescript/e2e/AppsIntranet` and `typescript/e2e/old`, their
+  configuration templates, build targets and CI jobs. Base and Apps continue on the `v3.1`
+  branch.
 - The obsolete bugfix integration review checklist.
 - The `CLAUDE.md` symlink to `AGENTS.md`. Claude Code reads `AGENTS.md` directly from version
   2.1.277.

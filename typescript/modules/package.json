@@ -7,7 +7,6 @@
     "build": "nx build",
     "test": "nx test",
     "postinstall": "ngcc --properties es2020 browser module main",
-    "angular-apps-intranet:serve": "npx nx serve apps-intranet-workspace-angular-material-app",
     "base-workspace-angular-foundation:serve": "npx nx serve base-workspace-angular-foundation-app",
     "base-workspace-angular-material-application:serve": "npx nx serve base-workspace-angular-material-application-app",
     "system-workspace-meta:test": "npx nx test system-workspace-meta-tests --skipNxCache",

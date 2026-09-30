@@ -18,9 +18,4 @@ public partial class Paths
     // Base
     public AbsolutePath ArtifactsBaseCommands => Artifacts / "Base/Commands";
     public AbsolutePath ArtifactsBaseServer => Artifacts / "Base/Server";
-
-
-    // Apps
-    public AbsolutePath ArtifactsAppsCommands => Artifacts / "Apps/Commands";
-    public AbsolutePath ArtifactsAppsServer => Artifacts / "Apps/Server";
 }

@@ -37,6 +37,5 @@
     "@nrwl/angular:component": {
       "style": "scss"
     }
-  },
-  "defaultProject": "apps-intranet-workspace-angular-material-app"
+  }
 }

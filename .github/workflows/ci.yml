@@ -125,7 +125,7 @@ jobs:
       - name: Generate nl-BE locale
         run: sudo locale-gen nl_BE.UTF-8 && sudo update-locale
       - name: Install native test dependencies
-        # libfontconfig1: SkiaSharp/ZXing barcode generation (Base/Apps domain tests).
+        # libfontconfig1: SkiaSharp/ZXing barcode generation (Base domain tests).
         run: sudo apt-get update && sudo apt-get install -y libfontconfig1
       - name: Setup .NET SDK (from global.json)
         uses: actions/setup-dotnet@v5
@@ -189,11 +189,9 @@ jobs:
           - CiDotnetCoreWorkspaceRemoteJsonSystemTextTest
           - CiDotnetCoreWorkspaceRemoteJsonNewtonsoftTest
           - CiDotnetBaseDatabaseTest
-          - CiDotnetAppsDatabaseTest
           - CiTypescriptWorkspaceTest
           - CiTypescriptWorkspaceAdaptersJsonTest
           - CiTypescriptE2EAngularBaseTest
-          - CiTypescriptWorkspacesE2EAngularAppsIntranetTest
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -204,7 +202,7 @@ jobs:
       - name: Generate nl-BE locale
         run: sudo locale-gen nl_BE.UTF-8 && sudo update-locale
       - name: Install native test dependencies
-        # libfontconfig1: SkiaSharp/ZXing barcode generation (Base/Apps domain tests).
+        # libfontconfig1: SkiaSharp/ZXing barcode generation (Base domain tests).
         run: sudo apt-get update && sudo apt-get install -y libfontconfig1
       - name: Setup .NET SDK (from global.json)
         uses: actions/setup-dotnet@v5

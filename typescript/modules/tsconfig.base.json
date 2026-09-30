@@ -15,21 +15,6 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@allors/apps-intranet/workspace/angular-material": [
-        "libs/apps-intranet/workspace/angular-material/src/index.ts"
-      ],
-      "@allors/apps-intranet/workspace/derivations": [
-        "libs/apps-intranet/workspace/derivations/src/index.ts"
-      ],
-      "@allors/apps-intranet/workspace/domain": [
-        "libs/apps-intranet/workspace/domain/src/index.ts"
-      ],
-      "@allors/apps-intranet/workspace/meta": [
-        "libs/apps-intranet/workspace/meta/src/index.ts"
-      ],
-      "@allors/apps-intranet/workspace/meta-json": [
-        "libs/apps-intranet/workspace/meta-json/src/index.ts"
-      ],
       "@allors/base/workspace/angular-material/application": [
         "libs/base/workspace/angular-material/application/src/index.ts"
       ],
