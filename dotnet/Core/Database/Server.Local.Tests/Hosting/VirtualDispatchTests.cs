@@ -21,7 +21,7 @@ namespace Tests
     {
         private static readonly Regex WrapperDeclaration = new(@"\bvoid\s+(\w+)\s*\(", RegexOptions.Compiled);
 
-        private static readonly Regex LayerHookCall = new(@"\bthis\.(Core|Base|Apps|Test)(\w+)\s*\(", RegexOptions.Compiled);
+        private static readonly Regex LayerHookCall = new(@"\bthis\.(Core|Test)(\w+)\s*\(", RegexOptions.Compiled);
 
         [Fact]
         public void VirtualShimsDispatchPhaseMatchedHooks()
@@ -71,8 +71,8 @@ namespace Tests
 
             // Sanity: the scan actually resolved shims and hook calls (guards against a silent
             // false-pass from a broken path or pattern).
-            Assert.True(shims.Length >= 9, $"Expected at least 9 Virtual/*.v.cs shims, found {shims.Length}.");
-            Assert.True(inspectedCalls >= 30, $"Expected at least 30 layer hook calls, inspected {inspectedCalls}.");
+            Assert.True(shims.Length >= 3, $"Expected at least 3 Virtual/*.v.cs shims, found {shims.Length}.");
+            Assert.True(inspectedCalls >= 20, $"Expected at least 20 layer hook calls, inspected {inspectedCalls}.");
 
             Assert.True(
                 violations.Count == 0,

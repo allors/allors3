@@ -15,49 +15,6 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@allors/apps-intranet/workspace/angular-material": [
-        "libs/apps-intranet/workspace/angular-material/src/index.ts"
-      ],
-      "@allors/apps-intranet/workspace/derivations": [
-        "libs/apps-intranet/workspace/derivations/src/index.ts"
-      ],
-      "@allors/apps-intranet/workspace/domain": [
-        "libs/apps-intranet/workspace/domain/src/index.ts"
-      ],
-      "@allors/apps-intranet/workspace/meta": [
-        "libs/apps-intranet/workspace/meta/src/index.ts"
-      ],
-      "@allors/apps-intranet/workspace/meta-json": [
-        "libs/apps-intranet/workspace/meta-json/src/index.ts"
-      ],
-      "@allors/base/workspace/angular-material/application": [
-        "libs/base/workspace/angular-material/application/src/index.ts"
-      ],
-      "@allors/base/workspace/angular-material/foundation": [
-        "libs/base/workspace/angular-material/foundation/src/index.ts"
-      ],
-      "@allors/base/workspace/angular/application": [
-        "libs/base/workspace/angular/application/src/index.ts"
-      ],
-      "@allors/base/workspace/angular/foundation": [
-        "libs/base/workspace/angular/foundation/src/index.ts"
-      ],
-      "@allors/base/workspace/angular/foundation-tests": [
-        "libs/base/workspace/angular/foundation-tests/src/index.ts"
-      ],
-      "@allors/base/workspace/derivations": [
-        "libs/base/workspace/derivations/src/index.ts"
-      ],
-      "@allors/base/workspace/derivations-test": [
-        "libs/base/workspace/derivations-test/src/index.ts"
-      ],
-      "@allors/base/workspace/domain": [
-        "libs/base/workspace/domain/src/index.ts"
-      ],
-      "@allors/base/workspace/meta": ["libs/base/workspace/meta/src/index.ts"],
-      "@allors/base/workspace/meta-json": [
-        "libs/base/workspace/meta-json/src/index.ts"
-      ],
       "@allors/core/workspace/derivations": [
         "libs/core/workspace/derivations/src/index.ts"
       ],

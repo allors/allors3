@@ -17,18 +17,19 @@ The agreed platform boundary is:
 | Platform tests | Test domains, runnable test servers, and small applications that prove platform and integration behavior. |
 | Downstream applications | Business domains inheriting from Core, screens, forms, tables, navigation, and component libraries. |
 
-**Base and Apps will be removed without a separate continuation.** This includes their business
-domains, applications, Angular/Material and Blazor component libraries, configuration, and build
-targets. Their code remains available on the `v3.1` branch.
+**Base and Apps were removed without a separate continuation.** Their business domains,
+applications, Angular/Material and Blazor component libraries, configuration, and build targets
+remain available on the `v3.1` branch.
 
-**Current implementation:** Base and Apps and their build/test infrastructure are still in the
-tree. The Identity domain and the signals workspace API described below are planned. These are
-the agreed design requirements for the transition, not a claim that removal, the Identity domain,
+**Current implementation:** the tree holds System and Core with their build and test
+infrastructure. The Identity domain and the signals workspace API described below are planned.
+These are the agreed design requirements for the transition, not a claim that the Identity domain
 or signals support has already shipped.
 
-The platform-only baseline should build and pass its retained tests before the workspace API is
-changed. Platform behavior currently tested through Base or Apps should be represented in platform
-test domains where it remains relevant; business-specific tests retire with their domains.
+The platform-only baseline must build and pass its retained tests before the workspace API is
+changed. The Base and Apps tests retired with their domains; platform behavior that only they
+covered is to be represented in platform test domains and test applications where it remains
+relevant.
 
 ## Domain inheritance
 
@@ -42,8 +43,7 @@ folders of their ancestors through compile globs: for example, downstream server
 the `Core*/**/*.cs` sources from `dotnet/Core/Database/Server` alongside their own implementation.
 
 **Inheritable implementation code belongs in folders named after its domain.** Project globs must
-select those folders explicitly. The existing Base and Apps projects follow the same convention
-while they remain in the tree; their retirement does not change the inheritance mechanism.
+select those folders explicitly.
 
 Objects delegate operations to their strategies. Object creation and deletion, and all relation
 reads and writes, use the Allors APIs. Relations are bidirectional: roles are the forward,
@@ -119,5 +119,4 @@ Inheritors override the defaults through configuration sections such as `Identit
 [README](README.md#configuration).
 
 Test-only endpoints stay in `Test/`. The existing `InheritableSurfaceTests` check the inheritable
-server folders for test/bypass controllers. That boundary must remain enforced as the repository
-is narrowed to the platform.
+server folder for test/bypass controllers. That boundary must remain enforced.

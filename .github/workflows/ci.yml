@@ -36,7 +36,7 @@ env:
   HEADLESS: 'true'
 
 jobs:
-  # In-memory adapter: no database, no provider.
+  # Suites without a database: Allors.Shared and the in-memory adapter, no provider.
   memory:
     name: ${{ matrix.target }}
     runs-on: ubuntu-latest
@@ -45,10 +45,8 @@ jobs:
       fail-fast: false
       matrix:
         target:
+          - CiDotnetSystemSharedTest
           - CiDotnetSystemAdaptersTestMemory
-          # bUnit tests over the Blazor role components; they run against an in-memory
-          # workspace, so they need no database container.
-          - CiDotnetBaseWorkspaceBlazorTest
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -124,9 +122,6 @@ jobs:
           fetch-tags: true
       - name: Generate nl-BE locale
         run: sudo locale-gen nl_BE.UTF-8 && sudo update-locale
-      - name: Install native test dependencies
-        # libfontconfig1: SkiaSharp/ZXing barcode generation (Base/Apps domain tests).
-        run: sudo apt-get update && sudo apt-get install -y libfontconfig1
       - name: Setup .NET SDK (from global.json)
         uses: actions/setup-dotnet@v5
         with:
@@ -188,12 +183,8 @@ jobs:
           - CiDotnetCoreWorkspaceLocalTest
           - CiDotnetCoreWorkspaceRemoteJsonSystemTextTest
           - CiDotnetCoreWorkspaceRemoteJsonNewtonsoftTest
-          - CiDotnetBaseDatabaseTest
-          - CiDotnetAppsDatabaseTest
           - CiTypescriptWorkspaceTest
           - CiTypescriptWorkspaceAdaptersJsonTest
-          - CiTypescriptE2EAngularBaseTest
-          - CiTypescriptWorkspacesE2EAngularAppsIntranetTest
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -203,9 +194,6 @@ jobs:
           fetch-tags: true
       - name: Generate nl-BE locale
         run: sudo locale-gen nl_BE.UTF-8 && sudo update-locale
-      - name: Install native test dependencies
-        # libfontconfig1: SkiaSharp/ZXing barcode generation (Base/Apps domain tests).
-        run: sudo apt-get update && sudo apt-get install -y libfontconfig1
       - name: Setup .NET SDK (from global.json)
         uses: actions/setup-dotnet@v5
         with:

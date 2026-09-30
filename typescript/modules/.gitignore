@@ -38,7 +38,5 @@ testem.log
 .DS_Store
 Thumbs.db
 
-.angular
-
 .cursor\rules\nx-rules.mdc
 .github\instructions\nx.instructions.md
