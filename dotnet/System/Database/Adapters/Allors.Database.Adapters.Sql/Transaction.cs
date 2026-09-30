@@ -128,7 +128,7 @@ namespace Allors.Database.Adapters.Sql
             return domainObjects;
         }
 
-        public IObject Instantiate(IObject obj) => this.Instantiate(obj.Strategy.ObjectId);
+        public IObject Instantiate(IObject obj) => obj != null ? this.Instantiate(obj.Strategy.ObjectId) : null;
 
         public IObject Instantiate(string objectId) => long.TryParse(objectId, out var id) ? this.Instantiate(id) : null;
 
