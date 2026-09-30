@@ -6,12 +6,10 @@
 - The agreed platform scope is **System, Core, and Identity**, a reactive workspace, thin UI
   integrations, and the test infrastructure needed to verify them. See
   [ARCHITECTURE.md](ARCHITECTURE.md).
-- Identity is to be a new domain for ASP.NET Core Identity. Authentication moves to Identity;
-  authorization stays in Core. Inheriting domains must use Core, and may use Identity or supply
-  their own identity domain. The Identity domain does not exist yet: authentication is still
-  part of Core.
-- Base and Apps are to be removed without a separate continuation, including their applications
-  and Angular/Material and Blazor component libraries. They are still present until removal lands.
+- Identity is to be a plug-in for authentication with ASP.NET Core Identity, hosted by Core;
+  authorization stays in Core. See [docs/domains.md](docs/domains.md). The Identity domain does
+  not exist yet: authentication is still part of Core.
+- Base and Apps were removed without a separate continuation. They continue on the `v3.1` branch.
 - Signals are to become the default API of every workspace, both .NET and TypeScript. Breaking
   workspace API changes for this transition are approved; a parallel compatibility API is not
   required. Signals are not yet implemented in the current workspace API.
@@ -103,15 +101,15 @@
 - `typescript/modules/apps/**` MAY contain isolated platform integration test applications and
   test-only pages/routes. App code is NOT inherited by other domains, so test scaffolding here
   is safe and isolated.
-- The platform test applications do not exist yet: the only applications are `apps-intranet` and
-  `base`, which leave with Base and Apps. Until the platform test applications exist, test-only
-  pages and routes go in those two applications.
+- The platform test applications do not exist yet: `typescript/modules/apps` is empty until they
+  do.
 - `typescript/modules/libs/**` is **inheritable** by other domains and MUST NOT contain test code or test-only scaffolding — keep it production-only. (The only exception is a dedicated test project, e.g. a `*-tests` lib.)
 - Consequence for e2e: exercise reusable workspace and UI integrations through **test-only pages
   in isolated test applications**, driven from `typescript/e2e/**`. Never add test hooks, test
   routes, or test-only config to the production library itself.
-- Preserve relevant platform coverage when retiring Base/Apps tests, including behavior across
-  inherited domain levels. Business-specific tests retire with their domains.
+- The Base and Apps tests retired with their domains. Platform coverage that only they provided,
+  including behavior across inherited domain levels, is to be restored in platform test domains
+  and test applications where it remains relevant.
 
 ## Build Commands
 

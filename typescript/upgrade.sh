@@ -4,20 +4,9 @@ npx create-nx-workspace@latest modules --preset=empty --cli=nx --nx-cloud=false
 
 cd modules
 
-npm install -D jest-chain
 npm install -D jest-trx-results-processor
-npm install -D @nrwl/angular
 
-npm install @angular/cdk
-npm install @angular/material
-npm install @angular/material-luxon-adapter
-npm install bootstrap@4.6.0
-npm install common-tags
 npm install cross-fetch
-npm install date-fns
-npm install easymde
-npm install jsnlog
-npm install luxon@2.5.0
 
 // Core
 npx nx g @nrwl/workspace:library core/workspace/derivations

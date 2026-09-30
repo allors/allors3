@@ -28,9 +28,9 @@ The agreed scope for v3.2 is:
   navigation, and component libraries.
 - Retain platform test domains, test servers, and small applications that exercise the integrations.
 
-**Implementation status:** Base and Apps are still present; the Identity domain and the signals
-API are planned. This documents the target; the code removal, the Identity domain, and the
-reactive workspace changes have not landed yet.
+**Implementation status:** Base and Apps have been removed; the Identity domain and the signals
+API are planned. This documents the target; the Identity domain and the reactive workspace
+changes have not landed yet.
 See [ARCHITECTURE.md](ARCHITECTURE.md) for the platform boundary and inheritance rules.
 
 ## Development and releases
@@ -52,10 +52,9 @@ $ALLORS_CONFIG_ROOT/<domain>/appsettings.json            # server
 $ALLORS_CONFIG_ROOT/<domain>/commands/appsettings.json   # command-line tools
 ```
 
-For the retained platform, `<domain>` is `core`. The current tree also has `base` and `apps`
-configuration, which will be removed with those domains. `ALLORS_CONFIG_ROOT` is **required**:
-if it is not set, or the expected `appsettings.json` is missing, the app fails to start with a
-message telling you what to set.
+For the platform, `<domain>` is `core`. `ALLORS_CONFIG_ROOT` is **required**: if it is not set,
+or the expected `appsettings.json` is missing, the app fails to start with a message telling you
+what to set.
 Environment variables override the JSON, so secrets can be supplied without editing files
 (e.g. `ConnectionStrings__DefaultConnection=…`, `adapter=npgsql`).
 

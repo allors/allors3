@@ -19,9 +19,8 @@ Changes accumulate under **[Unreleased]** until a version is released.
 
 - Document the v3.2 platform scope: System, Core, and a planned Identity domain for
   authentication, continued domain inheritance, and a planned signals-based API for the .NET and
-  TypeScript workspaces with thin UI integrations. Base and Apps are to be removed without a
-  separate continuation; their removal, the Identity domain, and the reactive workspace changes
-  have not landed yet.
+  TypeScript workspaces with thin UI integrations. Base and Apps are removed without a separate
+  continuation; the Identity domain and the reactive workspace changes have not landed yet.
 - Update development guidance for the platform scope, a default pull-request workflow in which
   creating a pull request requires approval, one pull request per agreed body of work with a
   correct title and description, Purpose Prefixes for branch names, and changelog handling for
@@ -40,6 +39,14 @@ Changes accumulate under **[Unreleased]** until a version is released.
   `typescript/e2e/Scaffold`, their configuration templates, build targets and CI jobs, and the
   `libfontconfig1` CI step that only the Base barcode tests needed. The inheritance guard tests
   in Core now cover Core and its test domain only.
+- Packages that only Base used, from Core's `Configuration` and `Server` projects:
+  `Allors.Documents`, `DataUtils.DataUrl`, `MailKit`, `SkiaSharp`, `SkiaSharp.NativeAssets.Linux`
+  and `ZXing.Net.Bindings.SkiaSharp`.
+- The Angular toolchain and the packages that only the Base applications used, from the
+  TypeScript workspace `typescript/modules`: every `@angular` and `@angular-eslint` package,
+  `@nrwl/angular`, `jest-preset-angular`, `jest-chain`, `bootstrap`, `common-tags`, `date-fns`,
+  `easymde`, `jsnlog`, `luxon`, `rxjs` and `zone.js`, with the `ngcc` post-install step. The
+  workspace keeps nx, jest and eslint; its libraries depend on `cross-fetch` and `tslib` only.
 - The obsolete bugfix integration review checklist.
 - The `CLAUDE.md` symlink to `AGENTS.md`. Claude Code reads `AGENTS.md` directly from version
   2.1.277.
