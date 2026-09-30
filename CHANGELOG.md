@@ -54,3 +54,8 @@ Changes accumulate under **[Unreleased]** until a version is released.
   2.1.277.
 - Dependabot version updates for the GitHub Actions used in the workflows. Action versions are
   updated by hand.
+
+### Fixed
+
+- `ITransaction.Instantiate(IObject)` returns null for null in the SQL adapters, as it does in
+  the memory adapter. The SQL adapters threw a `NullReferenceException`.
