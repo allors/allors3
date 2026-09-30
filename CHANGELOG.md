@@ -34,6 +34,12 @@ Changes accumulate under **[Unreleased]** until a version is released.
   end-to-end tests under `typescript/e2e/AppsIntranet` and `typescript/e2e/old`, their
   configuration templates, build targets and CI jobs. Base and Apps continue on the `v3.1`
   branch.
+- Base: the domain `dotnet/Base` with its Blazor component libraries, the Angular applications
+  and libraries under `typescript/modules/apps/base` and `typescript/modules/libs/base`, the
+  end-to-end tests under `typescript/e2e/Base` with the scaffold generator
+  `typescript/e2e/Scaffold`, their configuration templates, build targets and CI jobs, and the
+  `libfontconfig1` CI step that only the Base barcode tests needed. The inheritance guard tests
+  in Core now cover Core and its test domain only.
 - The obsolete bugfix integration review checklist.
 - The `CLAUDE.md` symlink to `AGENTS.md`. Claude Code reads `AGENTS.md` directly from version
   2.1.277.

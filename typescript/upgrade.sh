@@ -19,19 +19,6 @@ npm install easymde
 npm install jsnlog
 npm install luxon@2.5.0
 
-// Base
-npx nx g @nrwl/angular:application base/workspace/angular/foundation-app --routing=true --e2eTestRunner=none
-npx nx g @nrwl/angular:application base/workspace/angular-material/application-app --routing=true --style=scss --e2eTestRunner=none
-npx nx g @nrwl/angular:library base/workspace/angular/foundation
-npx nx g @nrwl/angular:library base/workspace/angular/application
-npx nx g @nrwl/angular:library base/workspace/angular-material/foundation
-npx nx g @nrwl/angular:library base/workspace/angular-material/application
-npx nx g @nrwl/workspace:library base/workspace/derivations
-npx nx g @nrwl/workspace:library base/workspace/derivations-test
-npx nx g @nrwl/workspace:library base/workspace/domain
-npx nx g @nrwl/workspace:library base/workspace/meta
-npx nx g @nrwl/workspace:library base/workspace/meta-json
-
 // Core
 npx nx g @nrwl/workspace:library core/workspace/derivations
 npx nx g @nrwl/workspace:library core/workspace/derivations-test

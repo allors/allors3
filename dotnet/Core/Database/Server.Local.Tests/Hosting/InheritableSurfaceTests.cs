@@ -13,8 +13,8 @@ namespace Tests
     using Xunit;
 
     // Guards the inheritance boundary described in ARCHITECTURE.md: downstream products inherit the
-    // layer folders (Core/Base) by compile-globbing Core*/Base*. Test and showcase scaffolding lives
-    // in the non-inherited Test/ folders and must never move into a layer folder, or every inheritor
+    // layer folder (Core) by compile-globbing Core*. Test and showcase scaffolding lives in the
+    // non-inherited Test/ folder and must never move into the layer folder, or every inheritor
     // would compile it. This test fails loudly if a test/bypass controller ever appears in an
     // inherited folder.
     public class InheritableSurfaceTests
@@ -22,7 +22,6 @@ namespace Tests
         private static readonly string[] InheritableServerFolders =
         {
             "dotnet/Core/Database/Server/Core",
-            "dotnet/Base/Database/Server/Base",
         };
 
         // Controllers whose name matches this pattern are test/bypass scaffolding, never production.
@@ -67,8 +66,8 @@ namespace Tests
 
             Assert.True(
                 violations.Count == 0,
-                "Test/bypass controllers must live in the non-inherited Test/ folder, never in an " +
-                "inherited layer folder (Core/Base), or downstream inheritors would compile them. " +
+                "Test/bypass controllers must live in the non-inherited Test/ folder, never in the " +
+                "inherited layer folder (Core), or downstream inheritors would compile them. " +
                 "Offending: " + string.Join("; ", violations));
         }
 

@@ -29,7 +29,7 @@ partial class Build : NukeBuild
                 }
             }
 
-            foreach (var path in new[] { Paths.DotnetSystem, Paths.DotnetCore, Paths.DotnetBase })
+            foreach (var path in new[] { Paths.DotnetSystem, Paths.DotnetCore })
             {
                 foreach (var child in new DirectoryInfo(path).GetDirectories().Where(v => !v.Name.Equals("build")))
                 {
@@ -45,21 +45,15 @@ partial class Build : NukeBuild
         .DependsOn(TypescriptInstall);
 
     private Target Merge => _ => _
-       .DependsOn(DotnetCoreMerge)
-       .DependsOn(DotnetBaseMerge);
+       .DependsOn(DotnetCoreMerge);
 
     private Target Generate => _ => _
         .DependsOn(DotnetSystemAdaptersGenerate)
-        .DependsOn(DotnetCoreGenerate)
-        .DependsOn(DotnetBaseGenerate);
-
-    private Target Scaffold => _ => _
-        .DependsOn(TypescriptE2EAngularBaseScaffold);
+        .DependsOn(DotnetCoreGenerate);
 
     private Target Default => _ => _
         .DependsOn(Install)
-        .DependsOn(Generate)
-        .DependsOn(Scaffold);
+        .DependsOn(Generate);
 
     private Target ShowVersion => _ => _
         .Executes(() =>

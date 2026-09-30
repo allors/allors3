@@ -30,18 +30,6 @@ partial class Build
         .DependsOn(Reset)
         .DependsOn(DotnetCoreWorkspaceRemoteJsonNewtonsoftTest);
 
-    private Target CiDotnetBaseDatabaseTest => _ => _
-        .DependsOn(Reset)
-        .DependsOn(DotnetBaseDatabaseTest);
-
-    private Target CiDotnetBaseWorkspaceTest => _ => _
-        .DependsOn(Reset)
-        .DependsOn(DotnetBaseWorkspaceTest);
-
-    private Target CiDotnetBaseWorkspaceBlazorTest => _ => _
-        .DependsOn(Reset)
-        .DependsOn(DotnetBaseWorkspaceBlazorTest);
-
     private Target CiTypescriptWorkspaceTest => _ => _
         .DependsOn(Reset)
         .DependsOn(TypescriptInstall)
@@ -51,9 +39,4 @@ partial class Build
         .DependsOn(Reset)
         .DependsOn(TypescriptInstall)
         .DependsOn(TypescriptWorkspaceAdaptersJsonTest);
-
-    private Target CiTypescriptE2EAngularBaseTest => _ => _
-        .DependsOn(Reset)
-        .DependsOn(TypescriptInstall)
-        .DependsOn(TypescriptE2EAngularBaseTest);
 }
