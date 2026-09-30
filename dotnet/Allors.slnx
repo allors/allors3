@@ -6,6 +6,7 @@
     <Project Path="Core/Database/Configuration/Configuration.csproj" />
     <Project Path="Core/Database/Domain.Tests/Domain.Tests.csproj" />
     <Project Path="Core/Database/Domain/Domain.csproj" />
+    <Project Path="Core/Database/Generate.Tests/Generate.Tests.csproj" />
     <Project Path="Core/Database/Generate/Generate.csproj" />
     <Project Path="Core/Database/Merge/Merge.csproj" />
     <Project Path="Core/Database/Meta.Tests/Meta.Tests.csproj" />
