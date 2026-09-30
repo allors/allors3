@@ -6,6 +6,7 @@
 namespace Tests.Workspace
 {
     using System;
+    using System.Linq;
     using System.Threading.Tasks;
     using Allors.Workspace.Domain;
     using Xunit;
@@ -96,6 +97,37 @@ namespace Tests.Workspace
             }
 
             Assert.True(hasErrors);
+        }
+
+        [Fact]
+        public void SetCompositesRoleUnsorted()
+        {
+            var session1 = this.Workspace.CreateSession();
+
+            var c2a = session1.Create<C2>();
+            var c2b = session1.Create<C2>();
+
+            // One of both orders is not the sorted order
+            foreach (var role in new[] { new[] { c2a, c2b }, new[] { c2b, c2a } })
+            {
+                var c1 = session1.Create<C1>();
+
+                c1.Strategy.SetCompositesRole(this.M.C1.C1C2Many2Manies, role);
+
+                Assert.Equal(2, c1.C1C2Many2Manies.Count());
+                Assert.Contains(c2a, c1.C1C2Many2Manies);
+                Assert.Contains(c2b, c1.C1C2Many2Manies);
+
+                Assert.Contains(c1, c2a.C1sWhereC1C2Many2Many);
+                Assert.Contains(c1, c2b.C1sWhereC1C2Many2Many);
+
+                c1.Strategy.RemoveCompositesRole(this.M.C1.C1C2Many2Manies, c2a);
+                c1.Strategy.RemoveCompositesRole(this.M.C1.C1C2Many2Manies, c2b);
+
+                Assert.Empty(c1.C1C2Many2Manies);
+                Assert.DoesNotContain(c1, c2a.C1sWhereC1C2Many2Many);
+                Assert.DoesNotContain(c1, c2b.C1sWhereC1C2Many2Many);
+            }
         }
 
         [Fact]
