@@ -115,6 +115,77 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void GivenAnAgentAndAnAccessControlledObjectWhenGettingTheAccessListThenAgentHasAccessToThePermissionsInTheRole()
+        {
+            var permission = this.FindPermission(this.M.Organisation.Name, Operations.Read);
+            var role = new RoleBuilder(this.Transaction).WithName("Role").WithPermission(permission).Build();
+            var agent = new AgentBuilder(this.Transaction).Build();
+            new GrantBuilder(this.Transaction).WithSubject(agent).WithRole(role).Build();
+
+            this.Transaction.Derive();
+            this.Transaction.Commit();
+
+            foreach (var session in new[] { this.Transaction })
+            {
+                session.Commit();
+
+                var organisation = new OrganisationBuilder(session).WithName("Organisation").Build();
+
+                var token = new SecurityTokenBuilder(session).Build();
+                organisation.AddSecurityToken(token);
+
+                var accessControl = (Grant)session.Instantiate(role.GrantsWhereRole.First());
+                token.AddGrant(accessControl);
+
+                this.Transaction.Derive();
+
+                Assert.False(this.Transaction.Derive(false).HasErrors);
+
+                var acl = new DatabaseAccessControl(this.Security, agent)[organisation];
+
+                Assert.True(acl.CanRead(this.M.Organisation.Name));
+
+                session.Rollback();
+            }
+        }
+
+        [Fact]
+        public void GivenAUserGroupWithAnAgentAndAnAccessControlledObjectWhenGettingTheAccessListThenAgentHasAccessToThePermissionsInTheRole()
+        {
+            var permission = this.FindPermission(this.M.Organisation.Name, Operations.Read);
+            var role = new RoleBuilder(this.Transaction).WithName("Role").WithPermission(permission).Build();
+            var agent = new AgentBuilder(this.Transaction).Build();
+            var group = new UserGroupBuilder(this.Transaction).WithName("Group").WithMember(agent).Build();
+
+            // Granted to the group only, so the agent's access comes from its membership.
+            new GrantBuilder(this.Transaction).WithSubjectGroup(group).WithRole(role).Build();
+
+            this.Transaction.Derive();
+            this.Transaction.Commit();
+
+            foreach (var session in new[] { this.Transaction })
+            {
+                session.Commit();
+
+                var organisation = new OrganisationBuilder(session).WithName("Organisation").Build();
+
+                var token = new SecurityTokenBuilder(session).Build();
+                organisation.AddSecurityToken(token);
+
+                var accessControl = (Grant)session.Instantiate(role.GrantsWhereRole.First());
+                token.AddGrant(accessControl);
+
+                Assert.False(this.Transaction.Derive(false).HasErrors);
+
+                var acl = new DatabaseAccessControl(this.Security, agent)[organisation];
+
+                Assert.True(acl.CanRead(this.M.Organisation.Name));
+
+                session.Rollback();
+            }
+        }
+
+        [Fact]
         public void GivenAnotherUserAndAnAccessControlledObjectWhenGettingTheAccessListThenUserHasAccessToThePermissionsInTheRole()
         {
             var readOrganisationName = this.FindPermission(this.M.Organisation.Name, Operations.Read);

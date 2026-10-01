@@ -49,6 +49,33 @@ namespace Tests.Workspace
         }
 
         [Fact]
+        public async void WithGrantAsAgent()
+        {
+            await this.Login("agent");
+
+            var session = this.Workspace.CreateSession();
+
+            var pull = new Pull
+            {
+                Extent = new Filter(this.M.C1)
+            };
+
+            var result = await session.PullAsync(pull);
+
+            var c1s = result.GetCollection<C1>();
+            Assert.NotEmpty(c1s);
+
+            foreach (var c1 in c1s)
+            {
+                foreach (var roleType in this.M.C1.DatabaseOriginRoleTypes)
+                {
+                    Assert.True(c1.Strategy.CanRead(roleType));
+                    Assert.True(c1.Strategy.CanWrite(roleType));
+                }
+            }
+        }
+
+        [Fact]
         public async void WithoutAccessControl()
         {
             await this.Login("noacl");

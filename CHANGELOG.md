@@ -27,6 +27,11 @@ Changes accumulate under **[Unreleased]** until a version is released.
   `DotnetIdentityGenerate`, `DotnetIdentityDatabaseTest` and `DotnetIdentityTest`, CI job
   `CiDotnetIdentityDatabaseTest`, configuration templates in `config/<provider>/identity`.
   `VirtualDispatchTests` checks the hooks of the Identity layer in the dispatch shims too.
+- `Agent`, a second `User` class in the Core test domain next to `Person`, so that the platform
+  tests do not assume that every user is a `Person`. The test population has an agent in the
+  Administrators group, and tests check access lists, pulls, the test sign-in header, the .NET
+  workspaces and the TypeScript adapters for it. With two classes, SQL extents over `User` take
+  the path for interfaces with more than one class.
 
 ### Changed
 
@@ -131,9 +136,9 @@ Changes accumulate under **[Unreleased]** until a version is released.
   local container, whose port forwarder holds a second port per connection, the suite in
   parallel used up the ephemeral ports of the host within seconds (`Can't assign requested
   address`). It now passes in parallel.
-- The server logs the errors of an invalid model. `AddAllorsServer` passed the title of the
-  problem details as the message template and the errors as an argument without a placeholder,
-  so the log said only "One or more validation errors occurred.".
 - Pulls retry a transient `DbException` again, as syncs do. `PullController` ran under
   `InvokePolicy` instead of `PullPolicy`, so pulls stopped retrying when Invoke and Push were
   given a policy without retries.
+- The server logs the errors of an invalid model. `AddAllorsServer` passed the title of the
+  problem details as the message template and the errors as an argument without a placeholder,
+  so the log said only "One or more validation errors occurred.".

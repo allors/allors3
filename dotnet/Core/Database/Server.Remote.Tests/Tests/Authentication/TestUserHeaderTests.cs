@@ -9,7 +9,9 @@ namespace Allors.Server.Tests
     using System.Net;
     using System.Net.Http;
     using System.Text;
+    using System.Text.Json;
     using System.Threading.Tasks;
+    using Database.Domain;
     using Xunit;
 
     [Collection("Api")]
@@ -35,6 +37,21 @@ namespace Allors.Server.Tests
             var response = await client.GetAsync(new Uri("UserInfo", UriKind.Relative));
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task HeaderAuthenticatesAnAgent()
+        {
+            var agent = new Users(this.Transaction).FindBy(this.M.User.UserName, "agent");
+
+            using var client = this.HeaderClient("agent");
+
+            var response = await client.GetAsync(new Uri("UserInfo", UriKind.Relative));
+            var body = await response.Content.ReadAsStringAsync();
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            using var document = JsonDocument.Parse(body);
+            Assert.Equal(agent.Id.ToString(), document.RootElement.GetProperty("u").GetString());
         }
 
         [Fact]

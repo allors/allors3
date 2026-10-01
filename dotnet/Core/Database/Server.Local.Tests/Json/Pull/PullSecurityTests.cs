@@ -252,5 +252,53 @@ namespace Tests
             Assert.Equal(data.Strategy.ObjectVersion, @object.v);
             Assert.Equal(acl.Grants.Select(v => v.Id), @object.g);
         }
+
+        [Fact]
+        public void WithoutDeniedPermissionsAsAgent()
+        {
+            var user = this.SetUser("agent");
+
+            var data = new DataBuilder(this.Transaction).WithString("First").Build();
+
+            this.Transaction.Derive();
+            this.Transaction.Commit();
+
+            var pull = new Pull { Extent = new Extent(this.M.Data) };
+
+            var pullRequest = new PullRequest
+            {
+                l = new[]
+                      {
+                          pull.ToJson(this.UnitConvert)
+                      },
+            };
+
+            var api = new Api(this.Transaction, "Default", CancellationToken.None);
+            var pullResponse = api.Pull(pullRequest);
+
+            var namedCollection = pullResponse.c["Datas"];
+
+            Assert.Single(namedCollection);
+
+            var namedObject = namedCollection.First();
+
+            Assert.Equal(data.Id, namedObject);
+
+            var objects = pullResponse.p;
+
+            Assert.Single(objects);
+
+            var @object = objects[0];
+
+            var acls = new DatabaseAccessControl(this.Security, user);
+            var acl = acls[data];
+
+            Assert.NotNull(@object);
+
+            Assert.Equal(data.Strategy.ObjectId, @object.i);
+            Assert.Equal(data.Strategy.ObjectVersion, @object.v);
+            Assert.NotEmpty(@object.g);
+            Assert.Equal(acl.Grants.Select(v => v.Id), @object.g);
+        }
     }
 }

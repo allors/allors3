@@ -28,6 +28,26 @@ test('withAccessControl', async () => {
   }
 });
 
+test('withAccessControlAsAgent', async () => {
+  await fixture.login('agent');
+
+  const { workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const pull: Pull = { extent: { kind: 'Filter', objectType: m.C1 } };
+  const result = await session.pull(pull);
+
+  const c1s = result.collection<C1>(m.C1);
+  expect(c1s.length).toBeGreaterThan(0);
+
+  for (const c1 of c1s) {
+    for (const roleType of c1.strategy.cls.roleTypes) {
+      expect(c1.strategy.canRead(roleType)).toBeTruthy();
+      expect(c1.strategy.canWrite(roleType)).toBeTruthy();
+    }
+  }
+});
+
 test('withoutAccessControl', async () => {
   await fixture.login('noacl');
 

@@ -23,6 +23,9 @@ namespace Allors.Database.Domain
 
             var acl = new GrantBuilder(this.transaction).WithRole(emptyRole).WithSubject(noperm).WithSecurityToken(defaultSecurityToken).Build();
 
+            var agent = new AgentBuilder(this.transaction).WithUserName("agent").Build();
+            new UserGroups(this.transaction).Administrators.AddMember(agent);
+
             var c1A = new C1Builder(this.transaction).WithName("c1A").WithOrder(4).Build();
             var c1B = new C1Builder(this.transaction).WithName("c1B").WithOrder(3).Build();
             var c1C = new C1Builder(this.transaction).WithName("c1C").WithOrder(8).Build();
