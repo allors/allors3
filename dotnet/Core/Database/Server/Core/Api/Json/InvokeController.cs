@@ -9,9 +9,11 @@ namespace Allors.Database.Protocol.Json
     using System.Threading;
     using Allors.Protocol.Json.Api.Invoke;
     using Allors.Services;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using NLog;
 
+    [Authorize]
     [ApiController]
     [Route("allors/invoke")]
     public class InvokeController : ControllerBase

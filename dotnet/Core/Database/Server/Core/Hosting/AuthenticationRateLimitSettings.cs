@@ -5,18 +5,14 @@
 
 namespace Allors.Server
 {
+    using System;
     using Microsoft.Extensions.Configuration;
 
     public class AuthenticationRateLimitSettings
     {
-        public string[] Paths { get; set; } =
-        {
-            "/allors/Authentication/Token",
-            "/allors/TestAuthentication/Token",
-            "/Identity/Account/Login",
-            "/Identity/Account/ForgotPassword",
-            "/Identity/Account/ResetPassword",
-        };
+        // No paths by default: the application decides which paths to limit, for example the paths
+        // its authentication plug-in signs in on (IdentityPaths.Authentication).
+        public string[] Paths { get; set; } = Array.Empty<string>();
 
         public int PermitLimit { get; set; } = 10;
 

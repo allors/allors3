@@ -29,6 +29,8 @@ namespace Tests
 
         private static readonly Regex AnyController = new(@"\bclass\s+(\w+Controller)\b", RegexOptions.Compiled);
 
+        private static readonly Regex AuthorizeAttribute = new(@"^\[Authorize[\]\(]", RegexOptions.Compiled);
+
         [Fact]
         public void InheritableServerFoldersExposeNoTestOrBypassControllers()
         {
@@ -69,6 +71,68 @@ namespace Tests
                 "Test/bypass controllers must live in the non-inherited Test/ folder, never in the " +
                 "inherited layer folder (Core), or downstream inheritors would compile them. " +
                 "Offending: " + string.Join("; ", violations));
+        }
+
+        // The Allors API endpoints always require an authenticated user. Each controller in the
+        // inheritable folder says so itself, so its protection does not depend on the fallback
+        // policy an application chooses, and none of its actions opts out.
+        [Fact]
+        public void InheritableServerControllersRequireAuthorization()
+        {
+            var root = RepositoryRoot();
+
+            var discovered = new List<string>();
+            var violations = new List<string>();
+
+            foreach (var relativeFolder in InheritableServerFolders)
+            {
+                var folder = Path.Combine(root, relativeFolder.Replace('/', Path.DirectorySeparatorChar));
+                if (!Directory.Exists(folder))
+                {
+                    continue;
+                }
+
+                foreach (var file in Directory.EnumerateFiles(folder, "*.cs", SearchOption.AllDirectories))
+                {
+                    var lines = File.ReadAllLines(file);
+                    for (var i = 0; i < lines.Length; i++)
+                    {
+                        var match = AnyController.Match(lines[i]);
+                        if (!match.Success)
+                        {
+                            continue;
+                        }
+
+                        var className = match.Groups[1].Value;
+                        discovered.Add(className);
+
+                        var classAttributes = new List<string>();
+                        for (var j = i - 1; j >= 0 && lines[j].TrimStart().StartsWith('['); j--)
+                        {
+                            classAttributes.Add(lines[j].Trim());
+                        }
+
+                        if (!classAttributes.Any(v => AuthorizeAttribute.IsMatch(v)))
+                        {
+                            violations.Add($"{className} in {Path.GetRelativePath(root, file)} has no [Authorize]");
+                        }
+
+                        if (lines.Any(v => v.Contains("[AllowAnonymous", StringComparison.Ordinal)))
+                        {
+                            violations.Add($"{className} in {Path.GetRelativePath(root, file)} has [AllowAnonymous]");
+                        }
+                    }
+                }
+            }
+
+            // Sanity: the scan actually resolved the folders and read controllers.
+            Assert.Contains("PullController", discovered);
+
+            Assert.True(
+                violations.Count == 0,
+                "Every controller in the inherited layer folder (Core) must carry [Authorize] on its " +
+                "class and no [AllowAnonymous], so the Allors API requires an authenticated user " +
+                "whatever fallback policy an application sets. Offending: " + string.Join("; ", violations));
         }
 
         private static string RepositoryRoot()

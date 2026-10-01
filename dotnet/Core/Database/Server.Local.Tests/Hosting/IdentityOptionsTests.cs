@@ -65,6 +65,7 @@ namespace Tests
             {
                 ApplicationName = "Allors.Tests",
             });
+            services.AddAllorsIdentity(configuration, new StubWebHostEnvironment());
 
             using var provider = services.BuildServiceProvider();
             return provider.GetRequiredService<IOptions<IdentityOptions>>().Value;

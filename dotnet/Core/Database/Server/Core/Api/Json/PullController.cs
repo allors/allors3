@@ -10,9 +10,11 @@ namespace Allors.Database.Protocol.Json
     using System.Threading;
     using Allors.Protocol.Json.Api.Pull;
     using Allors.Services;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using NLog;
 
+    [Authorize]
     [ApiController]
     [Route("allors/pull")]
     public class PullController : ControllerBase

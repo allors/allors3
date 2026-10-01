@@ -9,9 +9,11 @@ namespace Allors.Database.Protocol.Json
     using System.Threading;
     using Allors.Protocol.Json.Api.Push;
     using Allors.Services;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using NLog;
 
+    [Authorize]
     [ApiController]
     [Route("allors/push")]
     public class PushController : ControllerBase

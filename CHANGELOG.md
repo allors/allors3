@@ -31,8 +31,37 @@ Changes accumulate under **[Unreleased]** until a version is released.
   correct title and description, Purpose Prefixes for branch names, and changelog handling for
   changes ported between branches.
 - Start a new changelog from this point; the changelog up to v3.1 remains on the `v3.1` branch.
+- Core's server decides only what the Allors API needs, and offers the rest as building blocks
+  that an application switches on in its `Startup`. Breaking for every server `Startup`:
+  - The JSON API controllers carry `[Authorize]`, so the API always requires an authenticated
+    user, whatever the application decides for its own endpoints. A guard test in
+    `InheritableSurfaceTests` checks every controller in Core's inheritable server folder.
+  - An authentication plug-in tells Core who the signed-in user is through `IUserResolver`;
+    `UseAllorsServer` stops with an actionable error unless exactly one is registered.
+    `TransactionService` no longer reads the `NameIdentifier` claim itself.
+  - The application writes `UseRouting`, `UseAuthentication` and `UseAuthorization` itself and
+    calls `UseAllorsServer()` after them. `UseAllorsServer` adds antiforgery for cookie
+    sign-ins, the current user and the API endpoints. It no longer builds the database: the
+    `Startup` assigns `IDatabaseService.Database` with its own rules, services and command
+    timeout.
+  - Building blocks: `AddAllorsDefaultDeny` (the authorization fallback policy, before always
+    on), `AddAllorsRateLimiting`, `AddAllorsDataProtection`, `UseAllorsForwardedHeaders`,
+    `UseAllorsSecurityHeaders` and `ConfigureExceptionHandler`. Response caching, HSTS, HTTPS
+    redirection and static files are ASP.NET Core's own calls.
+  - ASP.NET Core Identity is registered by its own `AddAllorsIdentity`, which also registers the
+    Identity `IUserResolver` and names the Identity cookie for antiforgery
+    (`AllorsAntiforgeryOptions`). `IdentityPaths.Authentication` lists the Identity pages to
+    rate-limit; rate limiting has no default paths any more.
+  - `UserInfo` returns the user name of the signed-in identity.
 
 ### Removed
+
+- The guest user: the setting `Security:AnonymousUserName`. An anonymous request has no user.
+- The JSNLog endpoint and the `JSNLog` package from Core's server. No client in the repository
+  used it after the TypeScript `jsnlog` package went with Base; an application can add JSNLog
+  itself.
+- The exception handler's own log entry through NLog. ASP.NET Core's exception handler
+  middleware already logs the exception through the application's logger.
 
 - Apps: the domain `dotnet/Apps`, the Angular application and libraries `apps-intranet`, the
   end-to-end tests under `typescript/e2e/AppsIntranet` and `typescript/e2e/old`, their
