@@ -21,7 +21,8 @@ namespace Allors.Database.Domain
 
         public void Execute()
         {
-            new Users(this.transaction).BackfillSecurityRoles();
+            // Core's test domain has nothing to migrate. The authentication migration,
+            // BackfillSecurityRoles, runs in the test domain of the Identity tree.
         }
 
         private void Derive(Extent extent)

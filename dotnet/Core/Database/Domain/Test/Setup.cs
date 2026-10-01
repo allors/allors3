@@ -26,15 +26,11 @@ namespace Allors.Database.Domain
         private void TestOnPostSetup(Config config)
         {
 
-            var jane = new PersonBuilder(this.transaction).WithFirstName("Jane").WithLastName("Doe").WithUserName("jane@example.com").WithUniqueId(Users.JaneId).WithUserEmail("jane@example.com").WithUserEmailConfirmed(true).Build();
-            var john = new PersonBuilder(this.transaction).WithFirstName("John").WithLastName("Doe").WithUserName("john@example.com").WithUserEmail("john@example.com").WithUserEmailConfirmed(true).Build();
-            var jenny = new PersonBuilder(this.transaction).WithFirstName("Jenny").WithLastName("Doe").WithUserName("jenny@example.com").WithUserEmail("jenny@example.com").WithUserEmailConfirmed(true).Build();
+            var jane = new PersonBuilder(this.transaction).WithFirstName("Jane").WithLastName("Doe").WithUserName("jane@example.com").WithUniqueId(Users.JaneId).Build();
+            var john = new PersonBuilder(this.transaction).WithFirstName("John").WithLastName("Doe").WithUserName("john@example.com").Build();
+            var jenny = new PersonBuilder(this.transaction).WithFirstName("Jenny").WithLastName("Doe").WithUserName("jenny@example.com").Build();
 
             var guest = new PersonBuilder(this.transaction).WithFirstName("Gu").WithLastName("Est").WithUserName("guest@example.com").Build();
-
-            jane.SetPassword("jane");
-            john.SetPassword("john");
-            jenny.SetPassword("jenny");
 
             new UserGroups(this.transaction).Administrators.AddMember(jane);
             new UserGroups(this.transaction).Creators.AddMember(jane);

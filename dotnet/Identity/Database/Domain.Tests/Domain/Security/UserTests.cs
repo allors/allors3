@@ -14,6 +14,21 @@ namespace Allors.Database.Domain.Tests
 
         public override Config Config => new Config { SetupSecurity = true };
 
+        // The Identity domain gives a new user what cookie sign-in needs, next to the owner grant and
+        // security token Core gives it.
+        [Fact]
+        public void NewUserHasASecurityStampAndLockoutEnabled()
+        {
+            var user = new PersonBuilder(this.Transaction).WithUserName("new-user").Build();
+
+            this.Transaction.Derive();
+
+            Assert.True(user.ExistUserSecurityStamp);
+            Assert.True(user.UserLockoutEnabled);
+            Assert.True(user.ExistOwnerGrant);
+            Assert.True(user.ExistOwnerSecurityToken);
+        }
+
         [Fact]
         public void NewUserIsNotDisabled()
         {

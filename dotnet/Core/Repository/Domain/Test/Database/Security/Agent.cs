@@ -31,34 +31,6 @@ namespace Allors.Repository
 
         public string UserName { get; set; }
 
-        public string NormalizedUserName { get; set; }
-
-        public string UserPasswordHash { get; set; }
-
-        public string UserEmail { get; set; }
-
-        public string NormalizedUserEmail { get; set; }
-
-        public bool UserEmailConfirmed { get; set; }
-
-        public string UserSecurityStamp { get; set; }
-
-        public string UserPhoneNumber { get; set; }
-
-        public bool UserPhoneNumberConfirmed { get; set; }
-
-        public bool UserTwoFactorEnabled { get; set; }
-
-        public DateTime UserLockoutEnd { get; set; }
-
-        public bool UserLockoutEnabled { get; set; }
-
-        public int UserAccessFailedCount { get; set; }
-
-        public bool IsDisabled { get; set; }
-
-        public Login[] Logins { get; set; }
-
         #endregion
 
         #region inherited methods

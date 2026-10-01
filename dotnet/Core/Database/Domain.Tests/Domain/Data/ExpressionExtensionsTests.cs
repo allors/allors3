@@ -27,11 +27,11 @@ namespace Allors.Database.Data.Tests
         [Fact]
         public void InterfaceAssociation()
         {
-            Expression<Func<User, IPropertyType>> expression = v => v.Logins;
+            Expression<Func<User, IPropertyType>> expression = v => v.OwnerGrant;
 
             var path = expression.Node(this.M);
 
-            Assert.Equal(this.M.User.Logins, path.PropertyType);
+            Assert.Equal(this.M.User.OwnerGrant, path.PropertyType);
             Assert.Empty(path.Nodes);
         }
 

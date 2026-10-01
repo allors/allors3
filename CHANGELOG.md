@@ -98,6 +98,20 @@ Changes accumulate under **[Unreleased]** until a version is released.
   them in the new endpoints callback, `app.UseAllorsServer(endpoints => endpoints.MapRazorPages())`,
   as the Identity test server does. Before, `UseAllorsServer` mapped Razor Pages itself, so every
   server needed their services or failed at startup.
+- The database side of ASP.NET Core Identity lives in the Identity tree too. The Identity domain
+  declares the authentication fields of `User`, with the ids they had in Core: the user name,
+  e-mail, password hash, security stamp, phone number, two-factor, lockout and disabled fields and
+  `Logins`, with the `Login` class, the rules that normalize the name and the e-mail and lock a
+  disabled user out, `SetPassword` and `VerifyPassword`, the `IPasswordHasher` service with its
+  ASP.NET Core implementation, and the migration `BackfillSecurityRoles`. Core's `User` keeps no
+  authentication field: it is a `UniquelyIdentifiable`, `SecurityTokenOwner` and `Deletable`, which
+  is all authorization needs, and Core's `Configuration` project no longer references
+  `Microsoft.Extensions.Identity.Core`. Breaking for a repository that reads these fields off `User`
+  without extending Identity. Two guard tests in `InheritableSurfaceTests` check that nothing under
+  `dotnet/Core` references ASP.NET Core Identity and that Core's inheritable folders name no
+  authentication field. The Core test domain gives `User` a `UserName` of its own, a name of the
+  test population; the test domain of the Identity tree runs the migration in its `Upgrade`, and the
+  login, user and upgrade tests run there.
 
 ### Removed
 
