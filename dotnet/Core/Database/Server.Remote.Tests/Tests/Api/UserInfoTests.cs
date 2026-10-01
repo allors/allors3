@@ -39,7 +39,7 @@ namespace Allors.Server.Tests
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             using var document = JsonDocument.Parse(body);
-            Assert.Equal(this.Administrator.UserName, document.RootElement.GetProperty("userName").GetString());
+            Assert.Equal(this.Administrator.UniqueId.ToString(), document.RootElement.GetProperty("userName").GetString());
         }
 
         [Fact]

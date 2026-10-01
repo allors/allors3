@@ -19,6 +19,7 @@ namespace Tests.Workspace.Remote
     using Configuration = Allors.Workspace.Adapters.Remote.Configuration;
     using DatabaseConnection = Allors.Workspace.Adapters.Remote.Newtonsoft.DatabaseConnection;
     using IWorkspaceServices = Allors.Workspace.IWorkspaceServices;
+    using Users = Allors.Database.Domain.Users;
 
     public class Profile : IProfile
     {
@@ -77,10 +78,10 @@ namespace Tests.Workspace.Remote
 
         public Task Login(string user)
         {
-            // Bearer/JWT is retired; authenticate with the test-only X-Allors-TestUser header, which the
-            // harness server resolves to the same Allors user.
+            // Authenticate with the test-only X-Allors-TestUser header, which carries the UniqueId of a
+            // user of the test population; the harness server resolves it to the same Allors user.
             this.httpClient.DefaultRequestHeaders.Remove("X-Allors-TestUser");
-            this.httpClient.DefaultRequestHeaders.Add("X-Allors-TestUser", user);
+            this.httpClient.DefaultRequestHeaders.Add("X-Allors-TestUser", Users.TestUserId(user).ToString());
             return Task.CompletedTask;
         }
     }

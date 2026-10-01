@@ -76,7 +76,7 @@ namespace Allors.Server.Tests
 
         protected HttpClientHandler HttpClientHandler { get; set; }
 
-        protected User Administrator => new Users(this.Transaction).FindBy(this.M.User.UserName, "jane@example.com");
+        protected User Administrator => new Users(this.Transaction).FindBy(this.M.User.UniqueId, Users.JaneId);
 
         public void Dispose()
         {
@@ -89,10 +89,10 @@ namespace Allors.Server.Tests
 
         protected Task SignIn(User user)
         {
-            // Bearer/JWT is retired; authenticate with the test-only X-Allors-TestUser header, which the
-            // harness server resolves to the same Allors user (same NameIdentifier claim as the cookie).
+            // Authenticate with the test-only X-Allors-TestUser header, which carries the user's
+            // UniqueId; the harness server resolves it to the same Allors user.
             this.HttpClient.DefaultRequestHeaders.Remove(TestUserHeaderName);
-            this.HttpClient.DefaultRequestHeaders.Add(TestUserHeaderName, user.UserName);
+            this.HttpClient.DefaultRequestHeaders.Add(TestUserHeaderName, user.UniqueId.ToString());
             return Task.CompletedTask;
         }
 

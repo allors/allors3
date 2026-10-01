@@ -17,8 +17,18 @@ import {
 import { IDatabaseJsonClient } from '@allors/system/workspace/adapters-json';
 
 // Test-only credential recognised by the Core test-harness server (see TestUserAuthenticationHandler):
-// a request carrying this header is authenticated as that user without a password.
+// a request carrying this header is authenticated, without a password, as the user with that UniqueId.
 const TEST_USER_HEADER = 'X-Allors-TestUser';
+
+// The UniqueIds of the users of the Core test population (Users in the Core test domain); the tests
+// keep naming the users by these aliases.
+const TEST_USER_IDS: Record<string, string> = {
+  administrator: '880AFBDD-E1D3-4382-A54B-1E008DA58CB7',
+  'jane@example.com': '52396749-5CFF-4D1D-889F-DFD12753945F',
+  agent: 'E0310978-B016-40D6-926B-1155A4B9BC82',
+  noacl: '5CF05A59-C6E2-44DD-87F8-ADB6A670ED0A',
+  noperm: '171125FF-E79A-447C-86D8-018BB88C09A7',
+};
 
 interface UserInfoResponse {
   /** User id */
@@ -40,6 +50,7 @@ const withAgent = (init: RequestInit = {}): RequestInit =>
 export class FetchClient implements IDatabaseJsonClient {
   userId: number;
   userName: string;
+  testUserId: string;
 
   constructor(public baseUrl: string) {}
 
@@ -49,16 +60,26 @@ export class FetchClient implements IDatabaseJsonClient {
   }
 
   async login(login: string, password?: string): Promise<boolean> {
-    // Bearer/JWT is retired; authenticate with the X-Allors-TestUser header and learn the user id
-    // from the authenticated UserInfo endpoint (replacing the old token response's `u`). The
-    // password argument is kept for call-site compatibility but is unused.
+    // Authenticate with the X-Allors-TestUser header, which carries the UniqueId of the user, and
+    // learn the user id from the authenticated UserInfo endpoint. The password argument is kept for
+    // call-site compatibility but is unused.
+    const testUserId = TEST_USER_IDS[login];
+    if (testUserId === undefined) {
+      throw new Error(
+        `'${login}' is not a user of the test population. Sign in as one of: ${Object.keys(
+          TEST_USER_IDS
+        ).join(', ')}.`
+      );
+    }
+
     this.userName = login;
+    this.testUserId = testUserId;
 
     const response = await fetch(
       `${this.baseUrl}UserInfo`,
       withAgent({
         headers: {
-          [TEST_USER_HEADER]: login,
+          [TEST_USER_HEADER]: testUserId,
         },
       })
     );
@@ -105,7 +126,7 @@ export class FetchClient implements IDatabaseJsonClient {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          [TEST_USER_HEADER]: this.userName,
+          [TEST_USER_HEADER]: this.testUserId,
         },
         body: JSON.stringify(data),
       })

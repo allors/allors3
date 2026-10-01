@@ -79,6 +79,11 @@ Changes accumulate under **[Unreleased]** until a version is released.
   - The servers and commands of Core and Identity log to the console, one line per message. The
     server configuration templates log `Microsoft.Hosting.Lifetime` at `Information`, so the
     startup lines show; everything else stays at `Warning`.
+- The test sign-in header `X-Allors-TestUser` of Core's test server carries the `UniqueId` of a
+  user of the test population instead of a user name, and the server finds that user in the
+  Allors database instead of through ASP.NET Core Identity. The users the tests sign in as have
+  fixed ids, `Users.JaneId` and the others in the Core test domain; the .NET and TypeScript test
+  clients keep naming them as before.
 
 ### Removed
 
