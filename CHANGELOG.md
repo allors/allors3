@@ -19,6 +19,14 @@ Changes accumulate under **[Unreleased]** until a version is released.
 - A `Generate.Tests` project for the generator and its templates. `WorkspaceTemplateTests`
   generates the workspace meta for each workspace of the Core test domain and for a workspace
   without types, and compiles the result. It runs in the `DotnetCoreDatabaseTest` target.
+- The Identity tree, `dotnet/Identity`, where the concrete `Test` domain selects the Identity
+  plug-in: Core ← Identity ← Test. It inherits Core through the compile globs on Core's `Core*`
+  folders, as an application does, and has a database side, commands and a server that signs
+  users in with ASP.NET Core Identity; it has no workspace. The Identity domain is still empty:
+  ASP.NET Core Identity remains in Core until it moves. Build targets `DotnetIdentityMerge`,
+  `DotnetIdentityGenerate`, `DotnetIdentityDatabaseTest` and `DotnetIdentityTest`, CI job
+  `CiDotnetIdentityDatabaseTest`, configuration templates in `config/<provider>/identity`.
+  `VirtualDispatchTests` checks the hooks of the Identity layer in the dispatch shims too.
 
 ### Changed
 

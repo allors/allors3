@@ -14,4 +14,8 @@ public partial class Paths
     // Core
     public AbsolutePath ArtifactsCoreCommands => Artifacts / "Core/Commands";
     public AbsolutePath ArtifactsCoreServer => Artifacts / "Core/Server";
+
+    // Identity
+    public AbsolutePath ArtifactsIdentityCommands => Artifacts / "Identity/Commands";
+    public AbsolutePath ArtifactsIdentityServer => Artifacts / "Identity/Server";
 }
