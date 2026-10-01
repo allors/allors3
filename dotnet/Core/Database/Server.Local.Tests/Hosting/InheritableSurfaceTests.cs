@@ -31,6 +31,12 @@ namespace Tests
 
         private static readonly Regex AuthorizeAttribute = new(@"^\[Authorize[\]\(]", RegexOptions.Compiled);
 
+        private static readonly Regex LoggingFrameworkUsing = new(@"^\s*(global\s+)?using\s+(NLog|Serilog|log4net)\b", RegexOptions.Compiled | RegexOptions.Multiline);
+
+        private static readonly Regex LoggingFrameworkPackage = new(@"Include=""(NLog|Serilog|log4net)\b", RegexOptions.Compiled);
+
+        private static readonly string[] LoggingFrameworkConfigFiles = { "nlog.config", "log4net.config" };
+
         [Fact]
         public void InheritableServerFoldersExposeNoTestOrBypassControllers()
         {
@@ -133,6 +139,61 @@ namespace Tests
                 "Every controller in the inherited layer folder (Core) must carry [Authorize] on its " +
                 "class and no [AllowAnonymous], so the Allors API requires an authenticated user " +
                 "whatever fallback policy an application sets. Offending: " + string.Join("; ", violations));
+        }
+
+        // Allors logs through Microsoft.Extensions.Logging, and the host of an application decides
+        // where the logs go. No project depends on a logging framework, so no inheritor has to ship one.
+        [Fact]
+        public void NoProjectDependsOnALoggingFramework()
+        {
+            var root = RepositoryRoot();
+
+            var scanned = new List<string>();
+            var violations = new List<string>();
+
+            foreach (var file in Directory.EnumerateFiles(Path.Combine(root, "dotnet"), "*", SearchOption.AllDirectories))
+            {
+                var relativePath = Path.GetRelativePath(root, file);
+                var folders = relativePath.Split(Path.DirectorySeparatorChar);
+                if (folders.Contains("bin") || folders.Contains("obj"))
+                {
+                    continue;
+                }
+
+                var fileName = Path.GetFileName(file);
+                if (LoggingFrameworkConfigFiles.Contains(fileName, StringComparer.OrdinalIgnoreCase))
+                {
+                    violations.Add(relativePath);
+                    continue;
+                }
+
+                var pattern = Path.GetExtension(file) switch
+                {
+                    ".cs" => LoggingFrameworkUsing,
+                    ".csproj" => LoggingFrameworkPackage,
+                    _ => null,
+                };
+
+                if (pattern == null)
+                {
+                    continue;
+                }
+
+                scanned.Add(fileName);
+                if (pattern.IsMatch(File.ReadAllText(file)))
+                {
+                    violations.Add(relativePath);
+                }
+            }
+
+            // Sanity: the scan actually resolved the folder and read the API.
+            Assert.Contains("Api.cs", scanned);
+
+            Assert.True(
+                violations.Count == 0,
+                "Log through Microsoft.Extensions.Logging (ILogger<T>, [LoggerMessage]) and let the host " +
+                "choose the providers; do not reference a logging framework from a project. " +
+                "Offending: " + string.Join("; ", violations));
         }
 
         private static string RepositoryRoot()

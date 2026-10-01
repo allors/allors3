@@ -6,6 +6,8 @@
 
 namespace Tests
 {
+    using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
     using Allors.Database.Data;
@@ -14,6 +16,7 @@ namespace Tests
     using Allors.Protocol.Json;
     using Allors.Protocol.Json.Api.Pull;
     using Allors.Protocol.Json.SystemTextJson;
+    using Microsoft.Extensions.Logging;
     using Xunit;
 
     public class PullInstantiateTests : ApiTest, IClassFixture<Fixture>
@@ -245,6 +248,47 @@ namespace Tests
             var pullResponse = api.Pull(pullRequest);
 
             Assert.Equal(c1b.Id, pullResponse.o["Data"]);
+        }
+
+        [Fact]
+        public void UnknownPullDependencyTagIsLogged()
+        {
+            this.SetUser("jane@example.com");
+
+            var c1b = new C1s(this.Transaction).Extent().First(v => "c1B".Equals(v.Name));
+
+            this.Transaction.Derive();
+            this.Transaction.Commit();
+
+            var pull = new Pull { Object = c1b, Results = new[] { new Result { Name = "Data" }, } };
+
+            var pullRequest = new PullRequest
+            {
+                l = new[] { pull.ToJson(this.UnitConvert) },
+                d = new[]
+                {
+                    new PullDependency { o = "an-unknown-object-type-tag", r = this.M.C1.C1C2One2One.RelationType.Tag },
+                },
+            };
+
+            var logger = new RecordingLogger();
+            var api = new Api(this.Transaction, "Default", CancellationToken.None, logger);
+
+            api.Pull(pullRequest);
+
+            Assert.Contains(logger.Entries, v => v.LogLevel == LogLevel.Warning && v.Message.Contains("an-unknown-object-type-tag", StringComparison.Ordinal));
+        }
+
+        private sealed class RecordingLogger : ILogger
+        {
+            public List<(LogLevel LogLevel, string Message)> Entries { get; } = new();
+
+            public IDisposable BeginScope<TState>(TState state) => null;
+
+            public bool IsEnabled(LogLevel logLevel) => true;
+
+            public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter) =>
+                this.Entries.Add((logLevel, formatter(state, exception)));
         }
     }
 }

@@ -6,24 +6,24 @@
 
 namespace Allors.Database.Protocol.Json
 {
-    using System;
     using System.Threading;
     using Allors.Protocol.Json.Api.Pull;
     using Allors.Services;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    using NLog;
+    using Microsoft.Extensions.Logging;
 
     [Authorize]
     [ApiController]
     [Route("allors/pull")]
     public class PullController : ControllerBase
     {
-        public PullController(ITransactionService transactionService, IWorkspaceService workspaceService, IPolicyService policyService)
+        public PullController(ITransactionService transactionService, IWorkspaceService workspaceService, IPolicyService policyService, ILogger<Api> apiLogger = null)
         {
             this.TransactionService = transactionService;
             this.WorkspaceService = workspaceService;
             this.PolicyService = policyService;
+            this.ApiLogger = apiLogger;
         }
 
         private ITransactionService TransactionService { get; }
@@ -31,7 +31,7 @@ namespace Allors.Database.Protocol.Json
         public IWorkspaceService WorkspaceService { get; }
 
 
-        public Logger Logger => LogManager.GetCurrentClassLogger();
+        private ILogger<Api> ApiLogger { get; }
 
         private IPolicyService PolicyService { get; }
 
@@ -43,13 +43,8 @@ namespace Allors.Database.Protocol.Json
                     try
                     {
                         using var transaction = this.TransactionService.Transaction;
-                        var api = new Api(transaction, this.WorkspaceService.Name, cancellationToken);
+                        var api = new Api(transaction, this.WorkspaceService.Name, cancellationToken, this.ApiLogger);
                         return api.Pull(request);
-                    }
-                    catch (Exception e)
-                    {
-                        this.Logger.Error(e, "PullRequest {request}", request);
-                        throw;
                     }
                     finally
                     {

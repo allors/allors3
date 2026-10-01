@@ -61,6 +61,19 @@ Changes accumulate under **[Unreleased]** until a version is released.
     (`AllorsAntiforgeryOptions`). `IdentityPaths.Authentication` lists the Identity pages to
     rate-limit; rate limiting has no default paths any more.
   - `UserInfo` returns the user name of the signed-in identity.
+- Allors logs through `Microsoft.Extensions.Logging` instead of NLog's static `LogManager`, and
+  the host of an application decides where the logs go. Before, an application without NLog
+  configuration lost these messages, among them the warnings for ignored pull dependencies.
+  - `Api` takes an optional `ILogger`; the JSON API controllers pass an `ILogger<Api>`.
+  - The commands `Load` and `Save` and the Test commands take an `ILogger<T>` in their
+    constructor. Breaking for every commands `Program`: it registers logging and lets McMaster
+    inject it with `UseConstructorInjection`.
+  - The code generator takes an `ILoggerFactory` in `Generate.Execute`; its command line tool
+    logs to the console.
+  - Messages are declared once, with `[LoggerMessage]`.
+  - The servers and commands of Core and Identity log to the console, one line per message. The
+    server configuration templates log `Microsoft.Hosting.Lifetime` at `Information`, so the
+    startup lines show; everything else stays at `Warning`.
 
 ### Removed
 
@@ -70,6 +83,12 @@ Changes accumulate under **[Unreleased]** until a version is released.
   itself.
 - The exception handler's own log entry through NLog. ASP.NET Core's exception handler
   middleware already logs the exception through the application's logger.
+- NLog: the packages `NLog`, `NLog.Extensions.Logging` and `NLog.Web.AspNetCore`, the
+  `nlog.config` files and the static loggers, from Core, Identity and the code generator. Their
+  file targets wrote below `/logs`, which a normal user cannot create on macOS or Linux. A guard
+  test in `InheritableSurfaceTests` checks that no project references a logging framework.
+- The JSON API controllers' own log entry for a failed request. They rethrew the exception, and
+  ASP.NET Core logs it through the application's logger.
 
 - Apps: the domain `dotnet/Apps`, the Angular application and libraries `apps-intranet`, the
   end-to-end tests under `typescript/e2e/AppsIntranet` and `typescript/e2e/old`, their
@@ -112,3 +131,6 @@ Changes accumulate under **[Unreleased]** until a version is released.
   local container, whose port forwarder holds a second port per connection, the suite in
   parallel used up the ephemeral ports of the host within seconds (`Can't assign requested
   address`). It now passes in parallel.
+- The server logs the errors of an invalid model. `AddAllorsServer` passed the title of the
+  problem details as the message template and the errors as an argument without a placeholder,
+  so the log said only "One or more validation errors occurred.".

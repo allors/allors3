@@ -13,11 +13,15 @@ namespace Allors.Repository.Roslyn
     using Buildalyzer.Workspaces;
     using Domain;
     using Generation;
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Logging.Abstractions;
 
     public class Generate
     {
-        public static void Execute(string projectPath, string template, string output)
+        public static void Execute(string projectPath, string template, string output, ILoggerFactory loggerFactory = null)
         {
+            loggerFactory ??= NullLoggerFactory.Instance;
+
             var log = new StringWriter();
             var analyzerManager = new AnalyzerManager(
                 new AnalyzerManagerOptions
@@ -29,7 +33,7 @@ namespace Allors.Repository.Roslyn
             var workspace = projectAnalyzer.GetWorkspace();
             var solution = workspace.CurrentSolution;
             var project = solution.Projects.First();
-            var repository = new Repository(project);
+            var repository = new Repository(project, loggerFactory.CreateLogger<Repository>());
 
             if (repository.HasErrors)
             {
@@ -37,7 +41,7 @@ namespace Allors.Repository.Roslyn
             }
 
             var templateFileInfo = new FileInfo(template);
-            var stringTemplate = new StringTemplate(templateFileInfo);
+            var stringTemplate = new StringTemplate(templateFileInfo, loggerFactory.CreateLogger<StringTemplate>());
             var outputDirectoryInfo = new DirectoryInfo(output);
 
             stringTemplate.Generate(repository, outputDirectoryInfo);

@@ -7,42 +7,46 @@ namespace Allors.Tools.Cmd
 {
     using System;
     using System.IO;
-    using NLog;
+    using Microsoft.Extensions.Logging;
     using Repository;
     using Repository.Roslyn;
 
-    public class Program
+    public partial class Program
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
         public static int Main(string[] args)
         {
+            using var loggerFactory = LoggerFactory.Create(builder => builder.AddSimpleConsole(options =>
+            {
+                options.SingleLine = true;
+                options.TimestampFormat = "HH:mm:ss ";
+            }));
+            var logger = loggerFactory.CreateLogger<Program>();
+
             try
             {
                 if (args.Length < 3)
                 {
-                    Logger.Error("missing required arguments");
+                    LogMissingArguments(logger);
                 }
 
-                RepositoryGenerate(args);
+                RepositoryGenerate(args, loggerFactory, logger);
             }
             catch (RepositoryException e)
             {
-                Logger.Error(e.Message);
+                LogRepositoryError(logger, e.Message);
                 return 1;
             }
             catch (Exception e)
             {
-                Logger.Error(e);
-                Logger.Info("Finished with errors");
+                LogFinishedWithErrors(logger, e);
                 return 1;
             }
 
-            Logger.Info("Finished");
+            LogFinished(logger);
             return 0;
         }
 
-        private static void RepositoryGenerate(string[] args)
+        private static void RepositoryGenerate(string[] args, ILoggerFactory loggerFactory, ILogger logger)
         {
             var projectPath = args[0];
             var template = args[1];
@@ -50,8 +54,23 @@ namespace Allors.Tools.Cmd
 
             var fileInfo = new FileInfo(projectPath);
 
-            Logger.Info("Generate " + fileInfo.FullName);
-            Generate.Execute(fileInfo.FullName, template, output);
+            LogGenerating(logger, fileInfo.FullName);
+            Generate.Execute(fileInfo.FullName, template, output, loggerFactory);
         }
+
+        [LoggerMessage(EventId = 1, Level = LogLevel.Error, Message = "missing required arguments")]
+        private static partial void LogMissingArguments(ILogger logger);
+
+        [LoggerMessage(EventId = 2, Level = LogLevel.Error, Message = "{ErrorMessage}")]
+        private static partial void LogRepositoryError(ILogger logger, string errorMessage);
+
+        [LoggerMessage(EventId = 3, Level = LogLevel.Error, Message = "Finished with errors")]
+        private static partial void LogFinishedWithErrors(ILogger logger, Exception exception);
+
+        [LoggerMessage(EventId = 4, Level = LogLevel.Information, Message = "Finished")]
+        private static partial void LogFinished(ILogger logger);
+
+        [LoggerMessage(EventId = 5, Level = LogLevel.Information, Message = "Generate {Project}")]
+        private static partial void LogGenerating(ILogger logger, string project);
     }
 }

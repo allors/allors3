@@ -21,7 +21,7 @@ namespace Allors.Server
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
 
-    public static class AllorsServerServiceCollectionExtensions
+    public static partial class AllorsServerServiceCollectionExtensions
     {
         // What Core decides: the services behind the Allors API. The API endpoints require an
         // authenticated user themselves ([Authorize]), and the selected authentication plug-in tells
@@ -72,7 +72,7 @@ namespace Allors.Server
 
                     var problemDetails = new ValidationProblemDetails(context.ModelState);
                     var message = string.Join("; ", problemDetails.Errors.Select(v => $"{string.Join(",", v.Value)}"));
-                    logger.LogError(problemDetails.Title, message);
+                    LogInvalidModelState(logger, problemDetails.Title, message);
 
                     return builtInFactory(context);
                 };
@@ -118,5 +118,8 @@ namespace Allors.Server
 
             return services.AddDataProtection().PersistKeysToFileSystem(new DirectoryInfo(keysDirectory));
         }
+
+        [LoggerMessage(EventId = 1, Level = LogLevel.Error, Message = "{Title} {Errors}")]
+        private static partial void LogInvalidModelState(ILogger logger, string title, string errors);
     }
 }

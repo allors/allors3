@@ -7,18 +7,20 @@ namespace Commands
 {
     using Allors.Database.Domain;
     using McMaster.Extensions.CommandLineUtils;
-    using NLog;
+    using Microsoft.Extensions.Logging;
 
     [Command(Description = "Initialize the configured database and set up its population")]
-    public class Populate
+    public partial class Populate
     {
-        public Program Parent { get; set; }
+        private readonly ILogger<Populate> logger;
 
-        public Logger Logger => LogManager.GetCurrentClassLogger();
+        public Populate(ILogger<Populate> logger) => this.logger = logger;
+
+        public Program Parent { get; set; }
 
         public int OnExecute(CommandLineApplication app)
         {
-            this.Logger.Info("Begin");
+            this.LogBegin();
 
             var database = this.Parent.Database;
 
@@ -26,9 +28,15 @@ namespace Commands
 
             new Setup(database, new Config()).Apply();
 
-            this.Logger.Info("End");
+            this.LogEnd();
 
             return ExitCode.Success;
         }
+
+        [LoggerMessage(EventId = 1, Level = LogLevel.Information, Message = "Begin")]
+        private partial void LogBegin();
+
+        [LoggerMessage(EventId = 2, Level = LogLevel.Information, Message = "End")]
+        private partial void LogEnd();
     }
 }

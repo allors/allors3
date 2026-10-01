@@ -15,21 +15,23 @@ namespace Allors.Repository.Domain
     using Inflector;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using NLog;
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Logging.Abstractions;
     using Roslyn;
 
-    public class Repository
+    public partial class Repository
     {
         public const string RepositoryNamespaceName = "Allors.Repository";
 
         public const string AttributeNamespace = RepositoryNamespaceName + ".Attributes";
 
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private readonly ILogger logger;
 
         private readonly Inflector inflector;
 
-        public Repository(Project project)
+        public Repository(Project project, ILogger logger = null)
         {
+            this.logger = logger ?? NullLogger.Instance;
             this.DomainByName = new Dictionary<string, Domain>();
             this.UnitBySingularName = new Dictionary<string, Unit>();
             this.InterfaceBySingularName = new Dictionary<string, Interface>();
@@ -72,7 +74,7 @@ namespace Allors.Repository.Domain
                     if (!method.AttributeByName.ContainsKey(AttributeNames.Id))
                     {
                         this.HasErrors = true;
-                        Logger.Error($"{method} has no {AttributeNames.Id} attribute.");
+                        this.LogMethodWithoutId(method);
                     }
                 }
             }
@@ -412,7 +414,7 @@ namespace Allors.Repository.Domain
                     if (reflectedProperty == null)
                     {
                         this.HasErrors = true;
-                        Logger.Error($"{reflectedType.Name}.{property.RoleName} should be public");
+                        this.LogRoleNotPublic(reflectedType.Name, property.RoleName);
                         continue;
                     }
 
@@ -454,13 +456,13 @@ namespace Allors.Repository.Domain
                             if (property.IsRoleOne)
                             {
                                 this.HasErrors = true;
-                                Logger.Error($"{reflectedType.Name}.{property.RoleName} should be many");
+                                this.LogRoleShouldBeMany(reflectedType.Name, property.RoleName);
                             }
                         }
                         else if (property.IsRoleMany)
                         {
                             this.HasErrors = true;
-                            Logger.Error($"{reflectedType.Name}.{property.RoleName} should be one");
+                            this.LogRoleShouldBeOne(reflectedType.Name, property.RoleName);
                         }
                     }
                 }
@@ -595,7 +597,7 @@ namespace Allors.Repository.Domain
             if (!Guid.TryParse(id, out var idGuid))
             {
                 this.HasErrors = true;
-                Logger.Error($"{name} has a non GUID {key}: {id}");
+                this.LogNonGuidId(name, key, id);
             }
 
             this.CheckId(ids, idGuid, name, key);
@@ -606,10 +608,28 @@ namespace Allors.Repository.Domain
             if (ids.Contains(id))
             {
                 this.HasErrors = true;
-                Logger.Error($"{name} has a duplicate {key}: {id}");
+                this.LogDuplicateId(name, key, id);
             }
 
             ids.Add(id);
         }
+
+        [LoggerMessage(EventId = 1, Level = LogLevel.Error, Message = "{Method} has no " + AttributeNames.Id + " attribute.")]
+        private partial void LogMethodWithoutId(Method method);
+
+        [LoggerMessage(EventId = 2, Level = LogLevel.Error, Message = "{Type}.{Role} should be public")]
+        private partial void LogRoleNotPublic(string type, string role);
+
+        [LoggerMessage(EventId = 3, Level = LogLevel.Error, Message = "{Type}.{Role} should be many")]
+        private partial void LogRoleShouldBeMany(string type, string role);
+
+        [LoggerMessage(EventId = 4, Level = LogLevel.Error, Message = "{Type}.{Role} should be one")]
+        private partial void LogRoleShouldBeOne(string type, string role);
+
+        [LoggerMessage(EventId = 5, Level = LogLevel.Error, Message = "{Name} has a non GUID {Key}: {Id}")]
+        private partial void LogNonGuidId(string name, string key, string id);
+
+        [LoggerMessage(EventId = 6, Level = LogLevel.Error, Message = "{Name} has a duplicate {Key}: {Id}")]
+        private partial void LogDuplicateId(string name, string key, Guid id);
     }
 }

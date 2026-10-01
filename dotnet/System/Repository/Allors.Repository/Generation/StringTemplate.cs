@@ -14,9 +14,10 @@ namespace Allors.Repository.Generation
     using Antlr4.StringTemplate;
     using Antlr4.StringTemplate.Misc;
     using Domain;
-    using NLog;
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Logging.Abstractions;
 
-    public class StringTemplate
+    public partial class StringTemplate
     {
         private const string TemplateId = "TemplateId";
         private const string TemplateName = "TemplateName";
@@ -29,13 +30,14 @@ namespace Allors.Repository.Generation
         private const string OutputKey = "output";
         private const string GenerationKey = "generation";
 
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
         private readonly FileInfo fileInfo;
 
-        public StringTemplate(FileInfo fileInfo)
+        private readonly ILogger logger;
+
+        public StringTemplate(FileInfo fileInfo, ILogger logger = null)
         {
             this.fileInfo = fileInfo;
+            this.logger = logger ?? NullLogger.Instance;
 
             this.fileInfo.Refresh();
             if (!this.fileInfo.Exists)
@@ -67,7 +69,7 @@ namespace Allors.Repository.Generation
         {
             TemplateGroup templateGroup = new TemplateGroupFile(this.fileInfo.FullName, '$', '$');
 
-            templateGroup.ErrorManager = new ErrorManager(new LogAdapter());
+            templateGroup.ErrorManager = new ErrorManager(new LogAdapter(this.logger));
 
             var configurationTemplate = templateGroup.GetInstanceOf(TemplateConfiguration);
             configurationTemplate.Add(RepositoryKey, repository);
@@ -138,17 +140,31 @@ namespace Allors.Repository.Generation
             return null;
         }
 
-        private class LogAdapter : ITemplateErrorListener
+        private partial class LogAdapter : ITemplateErrorListener
         {
-            private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+            private readonly ILogger logger;
 
-            public void CompiletimeError(TemplateMessage msg) => Logger.Error(msg.ToString());
+            public LogAdapter(ILogger logger) => this.logger = logger;
 
-            public void RuntimeError(TemplateMessage msg) => Logger.Error(msg.ToString());
+            public void CompiletimeError(TemplateMessage msg) => this.LogCompiletimeError(msg.ToString());
 
-            public void IOError(TemplateMessage msg) => Logger.Error(msg.ToString());
+            public void RuntimeError(TemplateMessage msg) => this.LogRuntimeError(msg.ToString());
 
-            public void InternalError(TemplateMessage msg) => Logger.Error(msg.ToString());
+            public void IOError(TemplateMessage msg) => this.LogIOError(msg.ToString());
+
+            public void InternalError(TemplateMessage msg) => this.LogInternalError(msg.ToString());
+
+            [LoggerMessage(EventId = 1, Level = LogLevel.Error, Message = "Template compile-time error: {TemplateMessage}")]
+            private partial void LogCompiletimeError(string templateMessage);
+
+            [LoggerMessage(EventId = 2, Level = LogLevel.Error, Message = "Template runtime error: {TemplateMessage}")]
+            private partial void LogRuntimeError(string templateMessage);
+
+            [LoggerMessage(EventId = 3, Level = LogLevel.Error, Message = "Template IO error: {TemplateMessage}")]
+            private partial void LogIOError(string templateMessage);
+
+            [LoggerMessage(EventId = 4, Level = LogLevel.Error, Message = "Template internal error: {TemplateMessage}")]
+            private partial void LogInternalError(string templateMessage);
         }
     }
 }

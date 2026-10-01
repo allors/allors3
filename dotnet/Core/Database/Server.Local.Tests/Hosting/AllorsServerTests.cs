@@ -6,6 +6,7 @@
 namespace Tests
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.IO;
     using System.Net;
@@ -21,10 +22,14 @@ namespace Tests
     using Microsoft.AspNetCore.DataProtection.Repositories;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.Abstractions;
     using Microsoft.AspNetCore.RateLimiting;
+    using Microsoft.AspNetCore.Routing;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.FileProviders;
+    using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
     using Xunit;
 
@@ -144,6 +149,24 @@ namespace Tests
             Assert.Contains(nameof(IDatabaseService), exception.Message);
         }
 
+        // A request with an invalid model is logged with its errors, not only with the title of the
+        // problem details.
+        [Fact]
+        public void InvalidModelStateIsLoggedWithItsErrors()
+        {
+            var loggerProvider = new RecordingLoggerProvider();
+            var services = Services();
+            services.AddLogging(builder => builder.AddProvider(loggerProvider));
+            using var provider = services.BuildServiceProvider();
+
+            var actionContext = new ActionContext(new DefaultHttpContext { RequestServices = provider }, new RouteData(), new ActionDescriptor());
+            actionContext.ModelState.AddModelError("name", "The name field is required.");
+
+            provider.GetRequiredService<IOptions<ApiBehaviorOptions>>().Value.InvalidModelStateResponseFactory(actionContext);
+
+            Assert.Contains(loggerProvider.Messages, v => v.Contains("The name field is required.", StringComparison.Ordinal));
+        }
+
         private static ServiceCollection Services()
         {
             var services = new ServiceCollection();
@@ -167,6 +190,31 @@ namespace Tests
             context.Request.Path = path;
             context.Connection.RemoteIpAddress = IPAddress.Parse("203.0.113.7");
             return context;
+        }
+
+        private sealed class RecordingLoggerProvider : ILoggerProvider
+        {
+            public ConcurrentQueue<string> Messages { get; } = new();
+
+            public ILogger CreateLogger(string categoryName) => new RecordingLogger(this.Messages);
+
+            public void Dispose()
+            {
+            }
+
+            private sealed class RecordingLogger : ILogger
+            {
+                private readonly ConcurrentQueue<string> messages;
+
+                public RecordingLogger(ConcurrentQueue<string> messages) => this.messages = messages;
+
+                public IDisposable BeginScope<TState>(TState state) => null;
+
+                public bool IsEnabled(LogLevel logLevel) => true;
+
+                public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter) =>
+                    this.messages.Enqueue(formatter(state, exception));
+            }
         }
 
         private sealed class FirstUserResolver : IUserResolver
