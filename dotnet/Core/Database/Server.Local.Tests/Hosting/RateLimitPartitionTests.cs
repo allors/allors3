@@ -47,14 +47,6 @@ namespace Tests
         }
 
         [Fact]
-        public void IdentityLoginPathIsAnAuthenticationPath()
-        {
-            var partition = AuthenticationRateLimitPolicy.Partition(Context("/Identity/Account/Login", "203.0.113.7"), Settings(IdentityPaths.Authentication));
-
-            Assert.Equal("authentication:203.0.113.7", partition.PartitionKey);
-        }
-
-        [Fact]
         public void PerIpLimiterExhaustsAtThePermitLimit()
         {
             var settings = new AuthenticationRateLimitSettings { PermitLimit = 2, Paths = new[] { "/sign-in" } };

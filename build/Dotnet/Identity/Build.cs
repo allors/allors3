@@ -44,6 +44,13 @@ partial class Build
             .AddLoggers("trx;LogFileName=IdentityDatabaseDomain.trx")
             .SetResultsDirectory(Paths.ArtifactsTests)));
 
+    private Target DotnetIdentityDatabaseTestServerLocal => _ => _
+        .DependsOn(DotnetIdentityGenerate)
+        .Executes(() => DotNetTest(s => s
+            .SetProjectFile(Paths.DotnetIdentityDatabaseServerLocalTests)
+            .AddLoggers("trx;LogFileName=IdentityDatabaseApi.trx")
+            .SetResultsDirectory(Paths.ArtifactsTests)));
+
     private Target DotnetIdentityPublishCommands => _ => _
         .DependsOn(DotnetIdentityGenerate)
         .Executes(() =>
@@ -82,6 +89,7 @@ partial class Build
 
     private Target DotnetIdentityDatabaseTest => _ => _
         .DependsOn(DotnetIdentityDatabaseTestDomain)
+        .DependsOn(DotnetIdentityDatabaseTestServerLocal)
         .DependsOn(DotnetIdentityDatabaseTestServerRemote);
 
     private Target DotnetIdentityTest => _ => _

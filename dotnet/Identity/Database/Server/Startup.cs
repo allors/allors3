@@ -19,7 +19,9 @@ namespace Allors.Server
     using User = Database.Domain.User;
 
     // The test-harness server of the Identity tree: Core's server with the Identity plug-in, so
-    // users sign in with ASP.NET Core Identity.
+    // users sign in with ASP.NET Core Identity. It switches on the building blocks the plug-in's
+    // tests need: rate limiting on the sign-in pages, forwarded headers for the client address, and
+    // static files for the Identity UI.
     public class Startup
     {
         public Startup(IConfiguration configuration, IWebHostEnvironment environment)
@@ -39,6 +41,8 @@ namespace Allors.Server
                 ApplicationName = "Allors.Identity",
             });
 
+            services.AddAllorsRateLimiting(this.Configuration, IdentityPaths.Authentication);
+
             services.AddAllorsIdentity(this.Configuration, this.Environment);
         }
 
@@ -52,11 +56,18 @@ namespace Allors.Server
             databaseService.Build = () => databaseBuilder.Build();
             databaseService.Database = databaseService.Build();
 
+            app.UseAllorsForwardedHeaders(this.Configuration);
+
+            // Serves the Identity UI's static web assets (/Identity/lib/*).
+            app.UseStaticFiles();
+
             app.UseRouting();
+            app.UseRateLimiter();
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseAllorsServer();
+            // Core maps the Allors API; the Identity pages are Razor Pages.
+            app.UseAllorsServer(endpoints => endpoints.MapRazorPages());
         }
     }
 }

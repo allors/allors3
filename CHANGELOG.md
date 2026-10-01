@@ -84,6 +84,20 @@ Changes accumulate under **[Unreleased]** until a version is released.
   Allors database instead of through ASP.NET Core Identity. The users the tests sign in as have
   fixed ids, `Users.JaneId` and the others in the Core test domain; the .NET and TypeScript test
   clients keep naming them as before.
+- The server side of ASP.NET Core Identity lives in the Identity tree, in the plug-in's
+  inheritable folder `dotnet/Identity/Database/Server/Identity`: `AddAllorsIdentity`, the Allors
+  user and role stores, the Identity `IUserResolver`, `IdentityPaths` and the login page that
+  signs in by user name. Core's server projects no longer reference ASP.NET Core Identity, which
+  a guard test in `InheritableSurfaceTests` checks; Core's test server signs in through the test
+  header only, with a resolver of its own. The tests of the plug-in moved with it: the cookie
+  sign-in, lockout, disabled-user, rate-limit, Identity UI and cookie antiforgery tests run
+  against the Identity test server, which pulls an `Organisation` of its test domain for them,
+  and the store, resolver and options tests run in the new `Server.Local.Tests` project of the
+  Identity tree, through the build target `DotnetIdentityDatabaseTestServerLocal`.
+- `UseAllorsServer` maps the Allors API only. Breaking for a server with Razor Pages: it maps
+  them in the new endpoints callback, `app.UseAllorsServer(endpoints => endpoints.MapRazorPages())`,
+  as the Identity test server does. Before, `UseAllorsServer` mapped Razor Pages itself, so every
+  server needed their services or failed at startup.
 
 ### Removed
 

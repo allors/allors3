@@ -12,6 +12,7 @@ namespace Allors.Server
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.HttpOverrides;
+    using Microsoft.AspNetCore.Routing;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
@@ -21,8 +22,9 @@ namespace Allors.Server
         // What Core decides, after the application's UseRouting(), UseAuthentication() and
         // UseAuthorization(): antiforgery for cookie sign-ins, the current user, and the Allors API.
         // The API controllers carry [Authorize], so a missing UseAuthorization() fails the first API
-        // request instead of leaving the API open.
-        public static void UseAllorsServer(this IApplicationBuilder app)
+        // request instead of leaving the API open. The application maps its own endpoints, such as
+        // the Razor Pages of an authentication plug-in, in the endpoints callback.
+        public static void UseAllorsServer(this IApplicationBuilder app, Action<IEndpointRouteBuilder> endpoints = null)
         {
             var userResolvers = app.ApplicationServices.GetServices<IUserResolver>().ToArray();
             if (userResolvers.Length == 0)
@@ -51,13 +53,13 @@ namespace Allors.Server
             app.UseMiddleware<AllorsAntiforgeryMiddleware>(!environment.IsDevelopment());
             app.UseMiddleware<ClaimsPrincipalServiceMiddleware>();
 
-            app.UseEndpoints(endpoints =>
+            app.UseEndpoints(endpointRouteBuilder =>
             {
-                endpoints.MapRazorPages();
-                endpoints.MapControllerRoute(
+                endpointRouteBuilder.MapControllerRoute(
                     name: "default",
                     pattern: "allors/{controller=Home}/{action=Index}/{id?}");
-                endpoints.MapControllers();
+                endpointRouteBuilder.MapControllers();
+                endpoints?.Invoke(endpointRouteBuilder);
             });
         }
 

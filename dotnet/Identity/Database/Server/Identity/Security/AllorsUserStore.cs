@@ -15,18 +15,19 @@ namespace Allors.Security
     using Database.Meta;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Logging.Abstractions;
     using Services;
     using Deletable = Database.Domain.Deletable;
     using Task = System.Threading.Tasks.Task;
     using User = Database.Domain.User;
 
-    public class AllorsUserStore : IUserPasswordStore<IdentityUser>,
-                                   IUserLoginStore<IdentityUser>,
-                                   IUserSecurityStampStore<IdentityUser>,
-                                   IUserTwoFactorStore<IdentityUser>,
-                                   IUserEmailStore<IdentityUser>,
-                                   IUserLockoutStore<IdentityUser>,
-                                   IUserPhoneNumberStore<IdentityUser>
+    public partial class AllorsUserStore : IUserPasswordStore<IdentityUser>,
+                                           IUserLoginStore<IdentityUser>,
+                                           IUserSecurityStampStore<IdentityUser>,
+                                           IUserTwoFactorStore<IdentityUser>,
+                                           IUserEmailStore<IdentityUser>,
+                                           IUserLockoutStore<IdentityUser>,
+                                           IUserPhoneNumberStore<IdentityUser>
     {
         private readonly IDatabase database;
         private readonly ILogger<AllorsUserStore> logger;
@@ -34,7 +35,7 @@ namespace Allors.Security
         public AllorsUserStore(IDatabaseService databaseService, ILogger<AllorsUserStore> logger = null)
         {
             this.database = databaseService.Database;
-            this.logger = logger;
+            this.logger = logger ?? NullLogger<AllorsUserStore>.Instance;
         }
 
         #region IUserStore
@@ -102,7 +103,7 @@ namespace Allors.Security
                 }
                 catch (Exception e)
                 {
-                    this.logger?.LogError(e, "Could not create user {UserName}.", identityUser.UserName);
+                    this.LogCreateFailed(e, identityUser.UserName);
                     return IdentityResult.Failed(new IdentityError { Description = $"Could not create user {identityUser.UserName}." });
                 }
             }
@@ -136,7 +137,7 @@ namespace Allors.Security
                 }
                 catch (Exception e)
                 {
-                    this.logger?.LogError(e, "Could not update user {UserName}.", identityUser.UserName);
+                    this.LogUpdateFailed(e, identityUser.UserName);
                     return IdentityResult.Failed(new IdentityError { Description = $"Could not update user {identityUser.UserName}." });
                 }
             }
@@ -163,7 +164,7 @@ namespace Allors.Security
                 }
                 catch (Exception e)
                 {
-                    this.logger?.LogError(e, "Could not delete user {UserName}.", identityUser.UserName);
+                    this.LogDeleteFailed(e, identityUser.UserName);
                     return IdentityResult.Failed(new IdentityError { Description = $"Could not delete user {identityUser.UserName}." });
                 }
             }
@@ -437,5 +438,14 @@ namespace Allors.Security
         }
 
         #endregion
+
+        [LoggerMessage(EventId = 1, Level = LogLevel.Error, Message = "Could not create user {UserName}.")]
+        private partial void LogCreateFailed(Exception exception, string userName);
+
+        [LoggerMessage(EventId = 2, Level = LogLevel.Error, Message = "Could not update user {UserName}.")]
+        private partial void LogUpdateFailed(Exception exception, string userName);
+
+        [LoggerMessage(EventId = 3, Level = LogLevel.Error, Message = "Could not delete user {UserName}.")]
+        private partial void LogDeleteFailed(Exception exception, string userName);
     }
 }

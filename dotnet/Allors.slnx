@@ -39,6 +39,7 @@
     <Project Path="Identity/Database/Generate/Generate.csproj" />
     <Project Path="Identity/Database/Meta/Meta.csproj" />
     <Project Path="Identity/Database/Resources/Resources.csproj" />
+    <Project Path="Identity/Database/Server.Local.Tests/Server.Local.Tests.csproj" />
     <Project Path="Identity/Database/Server.Remote.Tests/Server.Remote.Tests.csproj" />
     <Project Path="Identity/Database/Server/Server.csproj" />
   </Folder>

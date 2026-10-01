@@ -98,55 +98,6 @@ namespace Allors.Server.Tests
 
         protected void SignOut() => this.HttpClient.DefaultRequestHeaders.Remove(TestUserHeaderName);
 
-        // Logs in through the real Identity Razor login page (GET to obtain the antiforgery token,
-        // then POST the form) and returns a cookie-bearing client — no bearer token involved.
-        protected async Task<HttpClient> SignInWithCookieAsync(string userName, string password)
-        {
-            var handler = new HttpClientHandler
-            {
-                UseCookies = true,
-                CookieContainer = new System.Net.CookieContainer(),
-                AllowAutoRedirect = false,
-            };
-            var client = new HttpClient(handler) { BaseAddress = new Uri("http://localhost:5000/") };
-
-            await LoginWithCookieAsync(client, userName, password);
-            return client;
-        }
-
-        // Performs the Identity Razor form login on a caller-supplied cookie-bearing client (base
-        // address = site root), so a test can visit pages anonymously first and inspect its own
-        // CookieContainer across the sign-in transition.
-        protected static async Task LoginWithCookieAsync(HttpClient client, string userName, string password)
-        {
-            var loginUri = new Uri("Identity/Account/Login", UriKind.Relative);
-            var getResponse = await client.GetAsync(loginUri);
-            var getBody = await getResponse.Content.ReadAsStringAsync();
-            var token = System.Text.RegularExpressions.Regex.Match(
-                getBody,
-                "name=\"__RequestVerificationToken\"[^>]*value=\"([^\"]+)\"").Groups[1].Value;
-
-            var form = new System.Collections.Generic.Dictionary<string, string>
-            {
-                ["Input.UserName"] = userName,
-                ["Input.Password"] = password,
-                ["Input.RememberMe"] = "false",
-                ["__RequestVerificationToken"] = token,
-            };
-
-            await client.PostAsync(loginUri, new FormUrlEncodedContent(form));
-        }
-
-        // True when the Identity form login for these credentials yields an authenticated session,
-        // verified by reaching the authenticated UserInfo endpoint with the resulting cookie. This is
-        // how the login mechanism is exercised now that the JWT token endpoint is being retired.
-        protected async Task<bool> CookieLoginSucceedsAsync(string userName, string password)
-        {
-            var client = await this.SignInWithCookieAsync(userName, password);
-            var response = await client.GetAsync(new Uri("allors/UserInfo", UriKind.Relative));
-            return response.IsSuccessStatusCode;
-        }
-
         protected Stream GetResource(string name)
         {
             var assembly = this.GetType().GetTypeInfo().Assembly;

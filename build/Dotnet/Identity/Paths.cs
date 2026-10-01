@@ -11,6 +11,7 @@ public partial class Paths
     public AbsolutePath DotnetIdentityDatabaseServer => DotnetIdentityDatabase / "Server";
     public AbsolutePath DotnetIdentityDatabaseCommands => DotnetIdentityDatabase / "Commands";
     public AbsolutePath DotnetIdentityDatabaseDomainTests => DotnetIdentityDatabase / "Domain.Tests/Domain.Tests.csproj";
+    public AbsolutePath DotnetIdentityDatabaseServerLocalTests => DotnetIdentityDatabase / "Server.Local.Tests/Server.Local.Tests.csproj";
     public AbsolutePath DotnetIdentityDatabaseServerRemoteTests => DotnetIdentityDatabase / "Server.Remote.Tests/Server.Remote.Tests.csproj";
 
     public AbsolutePath DotnetIdentityDatabaseResources => DotnetIdentityDatabase / "Resources";

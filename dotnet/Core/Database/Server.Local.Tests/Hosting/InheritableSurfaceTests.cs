@@ -22,7 +22,21 @@ namespace Tests
         private static readonly string[] InheritableServerFolders =
         {
             "dotnet/Core/Database/Server/Core",
+            "dotnet/Identity/Database/Server/Identity",
         };
+
+        // Core's server and the two test projects of Core's tree.
+        private static readonly string[] CoreServerProjectFolders =
+        {
+            "dotnet/Core/Database/Server",
+            "dotnet/Core/Database/Server.Local.Tests",
+            "dotnet/Core/Database/Server.Remote.Tests",
+        };
+
+        private static readonly string[] SourceFileExtensions = { ".cs", ".cshtml", ".csproj" };
+
+        // The namespaces and packages of ASP.NET Core Identity.
+        private static readonly Regex AspNetCoreIdentity = new(@"\bMicrosoft\.(AspNetCore|Extensions)\.Identity\b", RegexOptions.Compiled);
 
         // Controllers whose name matches this pattern are test/bypass scaffolding, never production.
         private static readonly Regex ForbiddenController = new(@"\b(Test\w*|Ping)Controller\b", RegexOptions.Compiled);
@@ -139,6 +153,52 @@ namespace Tests
                 "Every controller in the inherited layer folder (Core) must carry [Authorize] on its " +
                 "class and no [AllowAnonymous], so the Allors API requires an authenticated user " +
                 "whatever fallback policy an application sets. Offending: " + string.Join("; ", violations));
+        }
+
+        // Authentication is a plug-in's concern. Core's server and the tests of Core's tree know nothing
+        // of ASP.NET Core Identity, neither its packages nor its namespaces: that lives in the Identity
+        // tree. Core's database side still names it, through its password hasher, until the database
+        // side moves to the Identity tree too.
+        [Fact]
+        public void CoreServerProjectsReferenceNoAspNetCoreIdentity()
+        {
+            var root = RepositoryRoot();
+
+            var scanned = new List<string>();
+            var violations = new List<string>();
+
+            foreach (var relativeFolder in CoreServerProjectFolders)
+            {
+                var folder = Path.Combine(root, relativeFolder.Replace('/', Path.DirectorySeparatorChar));
+                foreach (var file in Directory.EnumerateFiles(folder, "*", SearchOption.AllDirectories))
+                {
+                    var relativePath = Path.GetRelativePath(root, file);
+                    var folders = relativePath.Split(Path.DirectorySeparatorChar);
+                    if (folders.Contains("bin") || folders.Contains("obj"))
+                    {
+                        continue;
+                    }
+
+                    if (!SourceFileExtensions.Contains(Path.GetExtension(file), StringComparer.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
+
+                    scanned.Add(Path.GetFileName(file));
+                    if (AspNetCoreIdentity.IsMatch(File.ReadAllText(file)))
+                    {
+                        violations.Add(relativePath);
+                    }
+                }
+            }
+
+            // Sanity: the scan actually resolved the folders and read the server's Startup.
+            Assert.Contains("Startup.cs", scanned);
+
+            Assert.True(
+                violations.Count == 0,
+                "Core's server projects must not reference ASP.NET Core Identity: authentication belongs to " +
+                "a plug-in, such as the Identity tree under dotnet/Identity. Offending: " + string.Join("; ", violations));
         }
 
         // Allors logs through Microsoft.Extensions.Logging, and the host of an application decides

@@ -17,7 +17,7 @@ namespace Allors.Server.IdentityUi.Account
     // [EmailAddress] Input.Email — Allors user names are not necessarily e-mail addresses
     // (e.g. "administrator"), which could never pass e-mail validation.
     [AllowAnonymous]
-    public class LoginModel : PageModel
+    public partial class LoginModel : PageModel
     {
         private readonly SignInManager<IdentityUser> signInManager;
         private readonly ILogger<LoginModel> logger;
@@ -45,13 +45,13 @@ namespace Allors.Server.IdentityUi.Account
                 var result = await this.signInManager.PasswordSignInAsync(this.Input.UserName, this.Input.Password, this.Input.RememberMe, lockoutOnFailure: true);
                 if (result.Succeeded)
                 {
-                    this.logger.LogInformation("User {UserName} logged in.", this.Input.UserName);
+                    this.LogLoggedIn(this.Input.UserName);
                     return this.LocalRedirect(returnUrl);
                 }
 
                 if (result.IsLockedOut)
                 {
-                    this.logger.LogWarning("User {UserName} account locked out.", this.Input.UserName);
+                    this.LogLockedOut(this.Input.UserName);
                     return this.RedirectToPage("./Lockout");
                 }
 
@@ -60,6 +60,12 @@ namespace Allors.Server.IdentityUi.Account
 
             return this.Page();
         }
+
+        [LoggerMessage(EventId = 1, Level = LogLevel.Information, Message = "User {UserName} logged in.")]
+        private partial void LogLoggedIn(string userName);
+
+        [LoggerMessage(EventId = 2, Level = LogLevel.Warning, Message = "User {UserName} account locked out.")]
+        private partial void LogLockedOut(string userName);
 
         public class InputModel
         {

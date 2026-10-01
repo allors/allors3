@@ -14,7 +14,6 @@ namespace Allors.Server
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
-    using Microsoft.AspNetCore.Identity;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
@@ -22,7 +21,8 @@ namespace Allors.Server
     using User = Database.Domain.User;
 
     // The test-harness server of the Core test domain. It switches on every building block Core
-    // offers, so the platform tests all of them.
+    // offers, so the platform tests all of them. It selects no authentication plug-in: its only
+    // credential is the test sign-in header.
     public class Startup
     {
         public Startup(IConfiguration configuration, IWebHostEnvironment environment)
@@ -35,10 +35,6 @@ namespace Allors.Server
 
         public IWebHostEnvironment Environment { get; }
 
-        // Default scheme for this (test-harness) server: routes the X-Allors-TestUser header to the
-        // test handler and everything else to the Identity application cookie.
-        private const string TestUserOrCookieScheme = "AllorsTestUserOrCookie";
-
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddAllorsServer(this.Configuration, this.Environment, new AllorsServerOptions
@@ -49,24 +45,17 @@ namespace Allors.Server
 
             services.AddAllorsDefaultDeny();
             services.AddAllorsDataProtection(this.Configuration, this.Environment);
-            services.AddAllorsRateLimiting(this.Configuration, IdentityPaths.Authentication);
+            // No sign-in page to limit: the paths, if any, come from Security:AuthenticationRateLimit.
+            services.AddAllorsRateLimiting(this.Configuration);
             services.AddResponseCaching();
 
-            services.AddAllorsIdentity(this.Configuration, this.Environment);
-
             // Test-harness only (jest + the remote C# suites hit this abstract server): a request with
-            // the X-Allors-TestUser header authenticates as that user. A policy scheme becomes the
-            // default and routes the header to the test handler, everything else to the Identity
-            // cookie. Registered here, in the abstract server's Startup, not the inherited seam, so a
-            // downstream inheritor never gets it.
-            services.AddAuthentication(authenticationOptions =>
-                    authenticationOptions.DefaultScheme = TestUserOrCookieScheme)
-                .AddScheme<AuthenticationSchemeOptions, TestUserAuthenticationHandler>(TestUserAuthenticationHandler.SchemeName, null)
-                .AddPolicyScheme(TestUserOrCookieScheme, "X-Allors-TestUser header, else Identity cookie", policySchemeOptions =>
-                    policySchemeOptions.ForwardDefaultSelector = context =>
-                        context.Request.Headers.ContainsKey(TestUserAuthenticationHandler.HeaderName)
-                            ? TestUserAuthenticationHandler.SchemeName
-                            : IdentityConstants.ApplicationScheme);
+            // the X-Allors-TestUser header authenticates as that user, and the test resolver tells Core
+            // who that user is. Registered here, in the abstract server's Startup, not in an inherited
+            // seam, so a downstream inheritor never gets it.
+            services.AddAuthentication(TestUserAuthenticationHandler.SchemeName)
+                .AddScheme<AuthenticationSchemeOptions, TestUserAuthenticationHandler>(TestUserAuthenticationHandler.SchemeName, null);
+            services.AddSingleton<IUserResolver, TestUserResolver>();
         }
 
         public void Configure(IApplicationBuilder app)
@@ -91,9 +80,6 @@ namespace Allors.Server
                 app.UseHsts();
                 app.UseHttpsRedirection();
             }
-
-            // Serves the Identity UI's static web assets (/Identity/lib/*).
-            app.UseStaticFiles();
 
             app.UseRouting();
             app.UseRateLimiter();

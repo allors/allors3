@@ -8,11 +8,17 @@ namespace Tests
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.IO;
+    using System.Linq;
     using System.Net;
     using System.Security.Claims;
+    using System.Threading.Tasks;
     using Allors.Database;
+    using Allors.Database.Configuration;
+    using Allors.Database.Configuration.Derivations.Default;
     using Allors.Database.Domain;
+    using Allors.Database.Meta;
     using Allors.Server;
     using Allors.Services;
     using Microsoft.AspNetCore.Authorization;
@@ -32,6 +38,10 @@ namespace Tests
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
     using Xunit;
+    using MemoryConfiguration = Allors.Database.Adapters.Memory.Configuration;
+    using MemoryDatabase = Allors.Database.Adapters.Memory.Database;
+    using ObjectFactory = Allors.Database.ObjectFactory;
+    using User = Allors.Database.Domain.User;
 
     // AddAllorsServer registers what Core decides: the services behind the Allors API. Everything an
     // application may want around it is a building block it switches on itself.
@@ -149,6 +159,36 @@ namespace Tests
             Assert.Contains(nameof(IDatabaseService), exception.Message);
         }
 
+        // Core maps the Allors API. An application maps its own endpoints, such as Razor Pages, in the
+        // endpoints callback of UseAllorsServer, so a server without Razor Pages needs none of its
+        // services.
+        [Fact]
+        public void UseAllorsServerNeedsNoRazorPages()
+        {
+            using var provider = ProviderForUseAllorsServer();
+            var app = new ApplicationBuilder(provider);
+            app.UseRouting();
+
+            app.UseAllorsServer();
+        }
+
+        [Fact]
+        public void UseAllorsServerMapsTheApplicationsEndpoints()
+        {
+            using var provider = ProviderForUseAllorsServer();
+            var app = new ApplicationBuilder(provider);
+            app.UseRouting();
+
+            IEndpointRouteBuilder mapped = null;
+            app.UseAllorsServer(endpoints =>
+            {
+                endpoints.MapGet("/sign-in", _ => Task.CompletedTask);
+                mapped = endpoints;
+            });
+
+            Assert.Contains(mapped.DataSources.SelectMany(v => v.Endpoints).OfType<RouteEndpoint>(), v => v.RoutePattern.RawText == "/sign-in");
+        }
+
         // A request with an invalid model is logged with its errors, not only with the title of the
         // problem details.
         [Fact]
@@ -177,6 +217,36 @@ namespace Tests
             });
 
             return services;
+        }
+
+        // What UseAllorsServer requires: routing (UseRouting comes from the application), one user
+        // resolver, an environment, a built database, and the diagnostic listener the web host
+        // registers, which the controller endpoints need.
+        private static ServiceProvider ProviderForUseAllorsServer()
+        {
+            var services = Services();
+            services.AddSingleton<IWebHostEnvironment>(new StubWebHostEnvironment());
+            services.AddSingleton<IUserResolver, FirstUserResolver>();
+            services.AddSingleton(new DiagnosticListener("Allors.Tests"));
+            services.AddSingleton<DiagnosticSource>(provider => provider.GetRequiredService<DiagnosticListener>());
+
+            var provider = services.BuildServiceProvider();
+            provider.GetRequiredService<IDatabaseService>().Database = NewDatabase();
+            return provider;
+        }
+
+        private static MemoryDatabase NewDatabase()
+        {
+            var metaPopulation = new MetaBuilder().Build();
+            var database = new MemoryDatabase(
+                new DefaultDatabaseServices(new Engine(Rules.Create(metaPopulation))),
+                new MemoryConfiguration
+                {
+                    ObjectFactory = new ObjectFactory(metaPopulation, typeof(User)),
+                });
+
+            database.Init();
+            return database;
         }
 
         private static IConfiguration Configuration(IDictionary<string, string> configurationValues = null) =>
