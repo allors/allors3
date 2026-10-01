@@ -75,3 +75,6 @@ Changes accumulate under **[Unreleased]** until a version is released.
   local container, whose port forwarder holds a second port per connection, the suite in
   parallel used up the ephemeral ports of the host within seconds (`Can't assign requested
   address`). It now passes in parallel.
+- Pulls retry a transient `DbException` again, as syncs do. `PullController` ran under
+  `InvokePolicy` instead of `PullPolicy`, so pulls stopped retrying when Invoke and Push were
+  given a policy without retries.
