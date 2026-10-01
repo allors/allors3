@@ -85,9 +85,10 @@ namespace Allors.Database.Domain.Tests
             var permission = this.FindPermission(this.M.Organisation.Name, Operations.Read);
             var role = new RoleBuilder(this.Transaction).WithName("Role").WithPermission(permission).Build();
             var person = new PersonBuilder(this.Transaction).WithFirstName("John").WithLastName("Doe").Build();
-            new UserGroupBuilder(this.Transaction).WithName("Group").WithMember(person).Build();
+            var group = new UserGroupBuilder(this.Transaction).WithName("Group").WithMember(person).Build();
 
-            new GrantBuilder(this.Transaction).WithSubject(person).WithRole(role).Build();
+            // Granted to the group only, so the user's access comes from its membership.
+            new GrantBuilder(this.Transaction).WithSubjectGroup(group).WithRole(role).Build();
 
             this.Transaction.Derive();
             this.Transaction.Commit();
