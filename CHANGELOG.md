@@ -134,3 +134,6 @@ Changes accumulate under **[Unreleased]** until a version is released.
 - The server logs the errors of an invalid model. `AddAllorsServer` passed the title of the
   problem details as the message template and the errors as an argument without a placeholder,
   so the log said only "One or more validation errors occurred.".
+- Pulls retry a transient `DbException` again, as syncs do. `PullController` ran under
+  `InvokePolicy` instead of `PullPolicy`, so pulls stopped retrying when Invoke and Push were
+  given a policy without retries.
