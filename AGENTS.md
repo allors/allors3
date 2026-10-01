@@ -6,9 +6,9 @@
 - The agreed platform scope is **System, Core, and Identity**, a reactive workspace, thin UI
   integrations, and the test infrastructure needed to verify them. See
   [ARCHITECTURE.md](ARCHITECTURE.md).
-- Identity is to be a plug-in for authentication with ASP.NET Core Identity, hosted by Core;
-  authorization stays in Core. See [docs/domains.md](docs/domains.md). The Identity domain does
-  not exist yet: authentication is still part of Core.
+- Identity is a plug-in for authentication with ASP.NET Core Identity, hosted by Core;
+  authorization stays in Core. See [docs/domains.md](docs/domains.md). The Identity domain holds
+  authentication; Core's `User` keeps no authentication field.
 - Base and Apps were removed without a separate continuation. They continue on the `v3.1` branch.
 - Signals are to become the default API of every workspace, both .NET and TypeScript. Breaking
   workspace API changes for this transition are approved; a parallel compatibility API is not

@@ -14,10 +14,9 @@ the [kinds of domains](docs/domains.md).
 The agreed scope for v3.2 is:
 
 - Keep **System and Core**: the database and workspace engines, metadata, adapters, protocols,
-  generators, foundational domain behavior, authorization, security defaults, and hosting.
-- Add an **Identity** domain for authentication with ASP.NET Core Identity. Authorization stays
-  in Core. Inheriting domains must use Core, and may use Identity or supply their own identity
-  domain.
+  generators, foundational domain behavior, authorization, and hosting building blocks.
+- Add an **Identity** plug-in for authentication with ASP.NET Core Identity. Authorization stays
+  in Core. An application selects Identity or another authentication plug-in.
 - Remove **Base and Apps**, including their business domains, applications, and Angular/Material
   and Blazor component libraries, without a separate continuation. Their code remains available
   on the `v3.1` branch. For applications built on Base or Apps, partners can be reached through
@@ -28,9 +27,9 @@ The agreed scope for v3.2 is:
   navigation, and component libraries.
 - Retain platform test domains, test servers, and small applications that exercise the integrations.
 
-**Implementation status:** Base and Apps have been removed; the Identity domain and the signals
-API are planned. This documents the target; the Identity domain and the reactive workspace
-changes have not landed yet.
+**Implementation status:** Base and Apps have been removed and the Identity plug-in has landed;
+the signals API is planned. This documents the target; the reactive workspace changes have not
+landed yet.
 See [ARCHITECTURE.md](ARCHITECTURE.md) for the platform boundary and inheritance rules.
 
 ## Development and releases
@@ -52,9 +51,9 @@ $ALLORS_CONFIG_ROOT/<domain>/appsettings.json            # server
 $ALLORS_CONFIG_ROOT/<domain>/commands/appsettings.json   # command-line tools
 ```
 
-For the platform, `<domain>` is `core`. `ALLORS_CONFIG_ROOT` is **required**: if it is not set,
-or the expected `appsettings.json` is missing, the app fails to start with a message telling you
-what to set.
+For the platform, `<domain>` is `core` or `identity`. `ALLORS_CONFIG_ROOT` is **required**: if it
+is not set, or the expected `appsettings.json` is missing, the app fails to start with a message
+telling you what to set.
 Environment variables override the JSON, so secrets can be supplied without editing files
 (e.g. `ConnectionStrings__DefaultConnection=…`, `adapter=npgsql`).
 
@@ -80,8 +79,8 @@ export ALLORS_CONFIG_ROOT="$(pwd)/config/npgsql"
 set ALLORS_CONFIG_ROOT=%CD%\config\sqlclient
 ```
 
-In an IDE, the servers ship `launchSettings.json` profiles (e.g. *Core (Postgres)* / *Core (SqlClient)*)
-that set this for you.
+In an IDE, the servers ship `launchSettings.json` profiles (e.g. *Core (Postgres)* / *Core (SqlClient)*,
+*Identity (Postgres)* / *Identity (SqlClient)*) that set this for you.
 
 ### Installing config for deployment
 

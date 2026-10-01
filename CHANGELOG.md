@@ -13,7 +13,8 @@ Changes accumulate under **[Unreleased]** until a version is released.
 
 - Documentation for users and maintainers under `docs/`, starting with the domain model:
   functional domains, plug-ins and their hosts, and the concrete domain that selects plug-ins.
-  `AGENTS.md` holds the rules for these pages.
+  A page on logging says how the host receives the logs of Allors. `AGENTS.md` holds the rules
+  for these pages.
 - The build target `DotnetSystemSharedTest` and the CI job `CiDotnetSystemSharedTest` for the
   `Ranges` tests in `dotnet/System/Shared.Tests`, which no target or job ran before.
 - A `Generate.Tests` project for the generator and its templates. `WorkspaceTemplateTests`
@@ -22,8 +23,8 @@ Changes accumulate under **[Unreleased]** until a version is released.
 - The Identity tree, `dotnet/Identity`, where the concrete `Test` domain selects the Identity
   plug-in: Core ← Identity ← Test. It inherits Core through the compile globs on Core's `Core*`
   folders, as an application does, and has a database side, commands and a server that signs
-  users in with ASP.NET Core Identity; it has no workspace. The Identity domain is still empty:
-  ASP.NET Core Identity remains in Core until it moves. Build targets `DotnetIdentityMerge`,
+  users in with ASP.NET Core Identity; it has no workspace. The Identity domain holds the ASP.NET
+  Core Identity integration that was in Core; see Changed. Build targets `DotnetIdentityMerge`,
   `DotnetIdentityGenerate`, `DotnetIdentityDatabaseTest` and `DotnetIdentityTest`, CI job
   `CiDotnetIdentityDatabaseTest`, configuration templates in `config/<provider>/identity`.
   `VirtualDispatchTests` checks the hooks of the Identity layer in the dispatch shims too.
@@ -35,10 +36,10 @@ Changes accumulate under **[Unreleased]** until a version is released.
 
 ### Changed
 
-- Document the v3.2 platform scope: System, Core, and a planned Identity domain for
-  authentication, continued domain inheritance, and a planned signals-based API for the .NET and
-  TypeScript workspaces with thin UI integrations. Base and Apps are removed without a separate
-  continuation; the Identity domain and the reactive workspace changes have not landed yet.
+- Document the v3.2 platform scope: System, Core and the Identity plug-in for authentication,
+  continued domain inheritance, and a planned signals-based API for the .NET and TypeScript
+  workspaces with thin UI integrations. Base and Apps are removed without a separate
+  continuation; the reactive workspace changes have not landed yet.
 - Update development guidance for the platform scope, a default pull-request workflow in which
   creating a pull request requires approval, one pull request per agreed body of work with a
   correct title and description, Purpose Prefixes for branch names, and changelog handling for
@@ -127,7 +128,6 @@ Changes accumulate under **[Unreleased]** until a version is released.
   test in `InheritableSurfaceTests` checks that no project references a logging framework.
 - The JSON API controllers' own log entry for a failed request. They rethrew the exception, and
   ASP.NET Core logs it through the application's logger.
-
 - Apps: the domain `dotnet/Apps`, the Angular application and libraries `apps-intranet`, the
   end-to-end tests under `typescript/e2e/AppsIntranet` and `typescript/e2e/old`, their
   configuration templates, build targets and CI jobs. Base and Apps continue on the `v3.1`
