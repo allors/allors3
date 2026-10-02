@@ -33,13 +33,14 @@ namespace Tests
         // The namespaces and packages of ASP.NET Core Identity.
         private static readonly Regex AspNetCoreIdentity = new(@"\bMicrosoft\.(AspNetCore|Extensions)\.Identity\b", RegexOptions.Compiled);
 
-        // The authentication fields of User, which the Identity domain declares, and its Login class.
-        // Substrings on purpose: they also catch WithUserName, ExistUserEmail, RemoveUserLockoutEnd,
-        // NormalizedUserName, LoginBuilder and the like. One name is not Identity's: the cookie
-        // handler of ASP.NET Core calls its challenge event RedirectToLogin, and Core sets the
-        // rules of the browser session on that event.
+        // The authentication fields of User, which the Identity domain declares, and its Login class,
+        // followed by the fields the Entra domain declares. Substrings on purpose: they also catch
+        // WithUserName, ExistUserEmail, RemoveUserLockoutEnd, NormalizedUserName, LoginBuilder,
+        // EntraUserName and the like. One name is not Identity's: the cookie handler of ASP.NET Core
+        // calls its challenge event RedirectToLogin, and Core sets the rules of the browser session
+        // on that event.
         private static readonly Regex AuthenticationField = new(
-            @"UserName|UserEmail|UserPasswordHash|UserSecurityStamp|UserPhoneNumber|UserTwoFactorEnabled|UserLockout|UserAccessFailedCount|IsDisabled|(?<!RedirectTo)Login",
+            @"UserName|UserEmail|UserPasswordHash|UserSecurityStamp|UserPhoneNumber|UserTwoFactorEnabled|UserLockout|UserAccessFailedCount|IsDisabled|(?<!RedirectTo)Login|EntraTenantId|EntraObjectId|EntraDisplayName|EntraEmail",
             RegexOptions.Compiled);
 
         // Controllers whose name matches this pattern are test/bypass scaffolding, never production.
@@ -54,6 +55,7 @@ namespace Tests
         private static readonly (string Tree, string PlugIn)[] PlugInTrees =
         {
             ("dotnet/Identity", "Identity"),
+            ("dotnet/Entra", "Entra"),
         };
 
         // A declaration at the start of a line, not the word class in a comment.
@@ -237,7 +239,8 @@ namespace Tests
                 violations.Count == 0,
                 "Core's inheritable folders (Core*) must not name an authentication field of User or the " +
                 "Login class: those belong to an authentication plug-in, such as the Identity tree under " +
-                "dotnet/Identity, and an inheritor without that plug-in has no such field. " +
+                "dotnet/Identity or the Entra tree under dotnet/Entra, and an inheritor without that " +
+                "plug-in has no such field. " +
                 "Offending: " + string.Join("; ", violations.Distinct()));
         }
 
@@ -297,8 +300,10 @@ namespace Tests
                 }
             }
 
-            // Sanity: the scan actually resolved the plug-in folders and read the user store.
+            // Sanity: the scan actually resolved the plug-in folders of both trees, and read the user
+            // store of Identity and the domain declaration of Entra.
             Assert.Contains("AllorsUserStore.cs", scanned);
+            Assert.Contains("Entra.cs", scanned);
 
             Assert.True(
                 violations.Count == 0,

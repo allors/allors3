@@ -28,6 +28,15 @@ Changes accumulate under **[Unreleased]** until a version is released.
   `DotnetIdentityGenerate`, `DotnetIdentityDatabaseTest` and `DotnetIdentityTest`, CI job
   `CiDotnetIdentityDatabaseTest`, configuration templates in `config/<provider>/identity`.
   `VirtualDispatchTests` checks the hooks of the Identity layer in the dispatch shims too.
+- The Entra tree, `dotnet/Entra`, where the concrete `Test` domain selects the Entra plug-in for
+  signing in with Microsoft Entra ID: Core ← Entra ← Test. So far it has a database side only;
+  the server that signs users in follows. The Entra domain declares the Entra identity of a
+  `User`, the pair `EntraTenantId` and `EntraObjectId`, and what the directory says about the
+  person: `EntraUserName`, `EntraDisplayName` and `EntraEmail`. All five are derived, so nobody
+  writes them through the API. Build targets `DotnetEntraMerge`, `DotnetEntraGenerate`,
+  `DotnetEntraDatabaseTest` and `DotnetEntraTest`, CI job `CiDotnetEntraDatabaseTest`.
+  `VirtualDispatchTests` and the plug-in guards of `InheritableSurfaceTests` cover the Entra
+  tree too.
 - `Agent`, a second `User` class in the Core test domain next to `Person`, so that the platform
   tests do not assume that every user is a `Person`. The test population has an agent in the
   Administrators group, and tests check access lists, pulls, the test sign-in header, the .NET
