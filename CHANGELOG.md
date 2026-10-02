@@ -91,6 +91,9 @@ under a dated version heading.
 
 ### Fixed
 
+- Pulls retry a transient `DbException` again, as syncs do. `PullController` ran under
+  `InvokePolicy` instead of `PullPolicy`, so pulls stopped retrying when Invoke and Push were
+  given a policy without retries.
 - CI no longer fails intermittently with `Unable to process file command 'env' successfully. Invalid
   format '<version>'`. Under GitHub Actions, Nerdbank.GitVersioning's `SetCloudBuildVersionVars` MSBuild
   target appended its (unused) `Git*` version variables to the shared `$GITHUB_ENV` on every project
