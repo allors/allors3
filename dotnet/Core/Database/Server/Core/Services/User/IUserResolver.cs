@@ -14,9 +14,10 @@ namespace Allors.Services
     // Exactly one resolver is registered, by the selected plug-in.
     public interface IUserResolver
     {
-        // The user the signed-in principal stands for, or null when there is none. A plug-in that
-        // creates or updates users does so in a transaction of its own and commits it: the request's
-        // transaction is rolled back when the request ends.
+        // The user the signed-in principal stands for, or null when there is none. A plug-in does
+        // not create users itself: for a principal it has no user for, it asks the application's
+        // IUserFactory. A plug-in that has a user created or updates one does so in a transaction
+        // of its own and commits it: the request's transaction is rolled back when the request ends.
         User Resolve(ClaimsPrincipal principal, ITransaction transaction);
     }
 }

@@ -113,6 +113,16 @@ Changes accumulate under **[Unreleased]** until a version is released.
   authentication field. The Core test domain gives `User` a `UserName` of its own, a name of the
   test population; the test domain of the Identity tree runs the migration in its `Upgrade`, and the
   login, user and upgrade tests run there.
+- An authentication plug-in no longer creates users itself: the application's own domain does,
+  through the new `IUserFactory` in Core's server folder. Core and the plug-ins know `User` as an
+  interface only, so `AllorsUserStore.CreateAsync` of the Identity plug-in asks the factory for
+  the user and then writes the fields of ASP.NET Core Identity on it. Registering a factory is
+  optional and Core registers none: without one no plug-in creates users, and `CreateAsync`
+  returns a failed result that names the seam. Breaking for an application that creates users
+  through `UserManager.CreateAsync`: it registers the factory of its domain in `Startup`, with
+  `services.AddSingleton<IUserFactory, …>()`. Before, the store built a `Person`, so the plug-in
+  compiled only for a domain with a class of that name. A guard test in `InheritableSurfaceTests`
+  checks that the folders of a plug-in name no class of the concrete domain that selects it.
 
 ### Removed
 

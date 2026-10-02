@@ -47,6 +47,22 @@ namespace Tests
 
         private static readonly Regex AuthorizeAttribute = new(@"^\[Authorize[\]\(]", RegexOptions.Compiled);
 
+        // The trees in which the concrete Test domain selects a plug-in, each with the name of the
+        // folders that hold the plug-in's inheritable code.
+        private static readonly (string Tree, string PlugIn)[] PlugInTrees =
+        {
+            ("dotnet/Identity", "Identity"),
+        };
+
+        // A declaration at the start of a line, not the word class in a comment.
+        private static readonly Regex ClassDeclaration = new(@"^\s*public\s+(?:partial\s+)?class\s+(\w+)\b", RegexOptions.Compiled | RegexOptions.Multiline);
+
+        // The plurals that the name with an s does not give.
+        private static readonly Dictionary<string, string> IrregularPlurals = new()
+        {
+            ["Person"] = "People",
+        };
+
         private static readonly Regex LoggingFrameworkUsing = new(@"^\s*(global\s+)?using\s+(NLog|Serilog|log4net)\b", RegexOptions.Compiled | RegexOptions.Multiline);
 
         private static readonly Regex LoggingFrameworkPackage = new(@"Include=""(NLog|Serilog|log4net)\b", RegexOptions.Compiled);
@@ -220,6 +236,73 @@ namespace Tests
                 "Core's inheritable folders (Core*) must not name an authentication field of User or the " +
                 "Login class: those belong to an authentication plug-in, such as the Identity tree under " +
                 "dotnet/Identity, and an inheritor without that plug-in has no such field. " +
+                "Offending: " + string.Join("; ", violations.Distinct()));
+        }
+
+        // A plug-in is abstract: it knows the classes of the domains it extends, and none of the
+        // concrete domain that selects it. In a plug-in's tree that concrete domain is Test. A
+        // plug-in folder that named one of its classes, a PersonBuilder for instance, would not
+        // compile for an application whose user class has another name: creating users is the
+        // application's part, through IUserFactory.
+        [Fact]
+        public void PlugInFoldersNameNoClassOfTheConcreteDomain()
+        {
+            var root = RepositoryRoot();
+
+            var scanned = new List<string>();
+            var violations = new List<string>();
+
+            foreach (var (tree, plugIn) in PlugInTrees)
+            {
+                var treeFolder = Path.Combine(root, tree.Replace('/', Path.DirectorySeparatorChar));
+
+                var concreteClasses = SourceFiles(root, Path.Combine(treeFolder, "Repository", "Domain", "Test"))
+                    .SelectMany(file => ClassDeclaration.Matches(File.ReadAllText(file)).Select(match => match.Groups[1].Value))
+                    .Distinct()
+                    .ToArray();
+
+                // Sanity: the scan actually found the classes the concrete domain declares.
+                Assert.Contains("Person", concreteClasses);
+
+                // The class, its builder and its extent.
+                var names = concreteClasses.SelectMany(name => new[]
+                {
+                    name,
+                    name + "Builder",
+                    IrregularPlurals.TryGetValue(name, out var plural) ? plural : name + "s",
+                });
+                var concreteClassName = new Regex(@"\b(" + string.Join("|", names.Select(Regex.Escape)) + @")\b");
+
+                // The folders an inheritor compiles: those named after the plug-in, directly in a
+                // project that is not a test project.
+                var plugInFolders = SourceFiles(root, treeFolder)
+                    .Where(file => Path.GetExtension(file) == ".csproj")
+                    .Select(Path.GetDirectoryName)
+                    .Where(project => !Path.GetFileName(project).EndsWith("Tests", StringComparison.Ordinal))
+                    .SelectMany(project => Directory.EnumerateDirectories(project, plugIn + "*", SearchOption.TopDirectoryOnly));
+
+                foreach (var folder in plugInFolders)
+                {
+                    foreach (var file in SourceFiles(root, folder))
+                    {
+                        scanned.Add(Path.GetFileName(file));
+                        var match = concreteClassName.Match(File.ReadAllText(file));
+                        if (match.Success)
+                        {
+                            violations.Add($"{match.Value} in {Path.GetRelativePath(root, file)}");
+                        }
+                    }
+                }
+            }
+
+            // Sanity: the scan actually resolved the plug-in folders and read the user store.
+            Assert.Contains("AllorsUserStore.cs", scanned);
+
+            Assert.True(
+                violations.Count == 0,
+                "A plug-in's folders must not name a class of the concrete domain that selects it, nor " +
+                "its builder or extent: an application's own classes have other names. Ask the " +
+                "application for what only it knows, as IUserFactory does for a new user. " +
                 "Offending: " + string.Join("; ", violations.Distinct()));
         }
 
