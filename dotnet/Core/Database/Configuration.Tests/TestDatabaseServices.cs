@@ -8,21 +8,11 @@ namespace Allors.Database.Configuration
 {
     using Database.Derivations;
     using Derivations.Default;
-    using Domain;
 
     public class TestDatabaseServices : DatabaseServices
     {
         public TestDatabaseServices(Engine engine) : base(engine) { }
 
-        protected override IPasswordHasher CreatePasswordHasher() => new TestPasswordHasher();
-
         protected override IDerivationService CreateDerivationFactory() => new DerivationService(this.Engine);
-
-        private class TestPasswordHasher : IPasswordHasher
-        {
-            public string HashPassword(string user, string password) => password;
-
-            public bool VerifyHashedPassword(string user, string hashedPassword, string providedPassword) => hashedPassword == providedPassword;
-        }
     }
 }

@@ -5,58 +5,70 @@
 
 namespace Allors.Server
 {
+    using System;
+    using System.Globalization;
     using System.Security.Claims;
     using System.Text.Encodings.Web;
     using System.Threading.Tasks;
+    using Allors.Services;
+    using Database.Domain;
+    using Database.Meta;
     using Microsoft.AspNetCore.Authentication;
-    using Microsoft.AspNetCore.Identity;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
 
-    // Test-only credential: a request carrying the "X-Allors-TestUser" header is authenticated as that
-    // user without a password (used by jest and the remote C# suites). This handler is registered only
-    // in the abstract test-harness server's Startup, never in the inherited hosting seam, so it can
-    // never reach a downstream inheritor's production build.
+    // Test-only credential: a request carrying the "X-Allors-TestUser" header is authenticated as the
+    // user with that UniqueId, without a password (used by jest and the remote C# suites). The user is
+    // looked up in the Allors database, so the test sign-in does not depend on an authentication
+    // plug-in. This handler is registered only in the abstract test-harness server's Startup, never in
+    // the inherited hosting seam, so it can never reach a downstream inheritor's production build.
     public class TestUserAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {
         public const string SchemeName = "AllorsTestUser";
 
         public const string HeaderName = "X-Allors-TestUser";
 
-        private readonly UserManager<IdentityUser> userManager;
+        private readonly IDatabaseService databaseService;
 
         public TestUserAuthenticationHandler(
             IOptionsMonitor<AuthenticationSchemeOptions> options,
             ILoggerFactory logger,
             UrlEncoder encoder,
-            UserManager<IdentityUser> userManager)
+            IDatabaseService databaseService)
             : base(options, logger, encoder) =>
-            this.userManager = userManager;
+            this.databaseService = databaseService;
 
-        protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
+        protected override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
             if (!this.Request.Headers.TryGetValue(HeaderName, out var headerValues))
             {
-                return AuthenticateResult.NoResult();
+                return Task.FromResult(AuthenticateResult.NoResult());
             }
 
-            var userName = headerValues.ToString();
-            var user = await this.userManager.FindByNameAsync(userName);
+            var value = headerValues.ToString();
+            if (!Guid.TryParse(value, out var uniqueId))
+            {
+                return Task.FromResult(AuthenticateResult.Fail($"Test user '{value}' is not a UniqueId: send the UniqueId of a user of the test population."));
+            }
+
+            using var transaction = this.databaseService.Database.CreateTransaction();
+            var m = transaction.Database.Services.Get<MetaPopulation>();
+            var user = new Users(transaction).FindBy(m.User.UniqueId, uniqueId);
             if (user == null)
             {
-                return AuthenticateResult.Fail($"Unknown test user '{userName}'.");
+                return Task.FromResult(AuthenticateResult.Fail($"Unknown test user '{value}'."));
             }
 
-            // The same claims the JWT and Identity cookie emit, so the request resolves to the same
-            // Allors user: TransactionService reads ClaimTypes.NameIdentifier as the user's object id.
+            // The name is the UniqueId the client sent; the name identifier is the Allors object id,
+            // which the server's IUserResolver turns into the user.
             var claims = new[]
             {
-                new Claim(ClaimTypes.Name, user.UserName),
-                new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim(ClaimTypes.Name, uniqueId.ToString()),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString(CultureInfo.InvariantCulture)),
             };
             var identity = new ClaimsIdentity(claims, this.Scheme.Name);
             var ticket = new AuthenticationTicket(new ClaimsPrincipal(identity), this.Scheme.Name);
-            return AuthenticateResult.Success(ticket);
+            return Task.FromResult(AuthenticateResult.Success(ticket));
         }
     }
 }

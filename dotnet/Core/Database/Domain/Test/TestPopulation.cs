@@ -15,13 +15,16 @@ namespace Allors.Database.Domain
 
         public void Apply()
         {
-            new PersonBuilder(this.transaction).WithUserName("noacl").WithFirstName("no").WithLastName("acl").Build();
+            new PersonBuilder(this.transaction).WithUserName("noacl").WithUniqueId(Users.NoAclId).WithFirstName("no").WithLastName("acl").Build();
 
-            var noperm = new PersonBuilder(this.transaction).WithUserName("noperm").WithFirstName("no").WithLastName("perm").Build();
+            var noperm = new PersonBuilder(this.transaction).WithUserName("noperm").WithUniqueId(Users.NoPermId).WithFirstName("no").WithLastName("perm").Build();
             var emptyRole = new RoleBuilder(this.transaction).WithName("Empty").Build();
             var defaultSecurityToken = new SecurityTokens(this.transaction).DefaultSecurityToken;
 
             var acl = new GrantBuilder(this.transaction).WithRole(emptyRole).WithSubject(noperm).WithSecurityToken(defaultSecurityToken).Build();
+
+            var agent = new AgentBuilder(this.transaction).WithUserName("agent").WithUniqueId(Users.AgentId).Build();
+            new UserGroups(this.transaction).Administrators.AddMember(agent);
 
             var c1A = new C1Builder(this.transaction).WithName("c1A").WithOrder(4).Build();
             var c1B = new C1Builder(this.transaction).WithName("c1B").WithOrder(3).Build();

@@ -23,7 +23,6 @@ namespace Allors.Database.Meta
             AddWorkspace(methodTypes.DeletableDelete, "Default");
 
             // Relations
-            AddWorkspace(relationTypes.UserUserEmail, "Default");
             AddWorkspace(relationTypes.UserUserName, "Default");
 
             AddWorkspace(relationTypes.RoleName, "Default");

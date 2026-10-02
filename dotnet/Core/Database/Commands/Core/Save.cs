@@ -8,21 +8,23 @@ namespace Commands
     using System.IO;
     using System.Xml;
     using McMaster.Extensions.CommandLineUtils;
-    using NLog;
+    using Microsoft.Extensions.Logging;
 
     [Command(Description = "Save the population to file")]
-    public class Save
+    public partial class Save
     {
-        public Program Parent { get; set; }
+        private readonly ILogger<Save> logger;
 
-        public Logger Logger => LogManager.GetCurrentClassLogger();
+        public Save(ILogger<Save> logger) => this.logger = logger;
+
+        public Program Parent { get; set; }
 
         [Option("-f", Description = "File to save")]
         public string FileName { get; set; } = "population.xml";
 
         public int OnExecute(CommandLineApplication app)
         {
-            this.Logger.Info("Begin");
+            this.LogBegin();
 
             var fileName = this.FileName ?? this.Parent.Configuration["populationFile"];
             var fileInfo = new FileInfo(fileName);
@@ -31,13 +33,22 @@ namespace Commands
             {
                 using (var writer = XmlWriter.Create(stream))
                 {
-                    this.Logger.Info("Saving {file}", fileInfo.FullName);
+                    this.LogSaving(fileInfo.FullName);
                     this.Parent.Database.Save(writer);
                 }
             }
 
-            this.Logger.Info("End");
+            this.LogEnd();
             return ExitCode.Success;
         }
+
+        [LoggerMessage(EventId = 1, Level = LogLevel.Information, Message = "Begin")]
+        private partial void LogBegin();
+
+        [LoggerMessage(EventId = 2, Level = LogLevel.Information, Message = "Saving {File}")]
+        private partial void LogSaving(string file);
+
+        [LoggerMessage(EventId = 3, Level = LogLevel.Information, Message = "End")]
+        private partial void LogEnd();
     }
 }

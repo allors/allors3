@@ -28,6 +28,20 @@ namespace Allors.Server.Tests
             Assert.Equal(this.Administrator.Id.ToString(), document.RootElement.GetProperty("u").GetString());
         }
 
+        // The user name comes from the signed-in identity, which every authentication plug-in fills.
+        [Fact]
+        public async Task AuthenticatedRequestReturnsTheUserName()
+        {
+            await this.SignIn(this.Administrator);
+
+            var response = await this.HttpClient.GetAsync(new Uri("UserInfo", UriKind.Relative));
+            var body = await response.Content.ReadAsStringAsync();
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            using var document = JsonDocument.Parse(body);
+            Assert.Equal(this.Administrator.UniqueId.ToString(), document.RootElement.GetProperty("userName").GetString());
+        }
+
         [Fact]
         public async Task AnonymousRequestIsDenied()
         {

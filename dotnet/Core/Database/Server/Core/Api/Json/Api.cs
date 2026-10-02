@@ -22,12 +22,16 @@ namespace Allors.Database.Protocol.Json
     using Security;
     using Services;
     using Tracing;
-    using NLog;
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Logging.Abstractions;
 
-    public class Api
+    public partial class Api
     {
-        public Api(ITransaction transaction, string workspaceName, CancellationToken cancellationToken)
+        private readonly ILogger logger;
+
+        public Api(ITransaction transaction, string workspaceName, CancellationToken cancellationToken, ILogger logger = null)
         {
+            this.logger = logger ?? NullLogger.Instance;
             this.Transaction = transaction;
             this.WorkspaceName = workspaceName;
             this.CancellationToken = cancellationToken;
@@ -90,8 +94,6 @@ namespace Allors.Database.Protocol.Json
         public Func<IValidation> Derive { get; }
 
         public UnitConvert UnitConvert { get; }
-
-        private Logger Logger => LogManager.GetCurrentClassLogger();
 
         public InvokeResponse Invoke(InvokeRequest invokeRequest)
         {
@@ -195,7 +197,7 @@ namespace Allors.Database.Protocol.Json
             {
                 if (this.M.FindByTag(pullDependency.o) is not IComposite objectType)
                 {
-                    this.Logger.Warn("Ignoring pull dependency: unknown or non-composite object type tag {ObjectTypeTag}", pullDependency.o);
+                    this.LogIgnoredObjectTypeTag(pullDependency.o);
                     continue;
                 }
 
@@ -204,7 +206,7 @@ namespace Allors.Database.Protocol.Json
                 {
                     if (this.M.FindByTag(pullDependency.a) is not IRelationType associationRelationType)
                     {
-                        this.Logger.Warn("Ignoring pull dependency: unknown or non-relation association tag {AssociationTag}", pullDependency.a);
+                        this.LogIgnoredAssociationTag(pullDependency.a);
                         continue;
                     }
 
@@ -214,7 +216,7 @@ namespace Allors.Database.Protocol.Json
                 {
                     if (this.M.FindByTag(pullDependency.r) is not IRelationType roleRelationType)
                     {
-                        this.Logger.Warn("Ignoring pull dependency: unknown or non-relation role tag {RoleTag}", pullDependency.r);
+                        this.LogIgnoredRoleTag(pullDependency.r);
                         continue;
                     }
 
@@ -235,5 +237,14 @@ namespace Allors.Database.Protocol.Json
 
             return classDependencies;
         }
+
+        [LoggerMessage(EventId = 1, Level = LogLevel.Warning, Message = "Ignoring pull dependency: unknown or non-composite object type tag {ObjectTypeTag}")]
+        private partial void LogIgnoredObjectTypeTag(string objectTypeTag);
+
+        [LoggerMessage(EventId = 2, Level = LogLevel.Warning, Message = "Ignoring pull dependency: unknown or non-relation association tag {AssociationTag}")]
+        private partial void LogIgnoredAssociationTag(string associationTag);
+
+        [LoggerMessage(EventId = 3, Level = LogLevel.Warning, Message = "Ignoring pull dependency: unknown or non-relation role tag {RoleTag}")]
+        private partial void LogIgnoredRoleTag(string roleTag);
     }
 }

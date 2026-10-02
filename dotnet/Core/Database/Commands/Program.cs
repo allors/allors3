@@ -17,7 +17,8 @@ namespace Commands
     using McMaster.Extensions.CommandLineUtils;
 
     using Microsoft.Extensions.Configuration;
-    using NLog;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Logging;
     using ObjectFactory = Allors.Database.ObjectFactory;
     using User = Allors.Database.Domain.User;
 
@@ -29,7 +30,7 @@ namespace Commands
         typeof(Populate),
         typeof(Init)
         )]
-    public class Program
+    public partial class Program
     {
         private IConfigurationRoot configuration;
 
@@ -87,18 +88,30 @@ namespace Commands
 
         public static int Main(string[] args)
         {
+            using var services = new ServiceCollection()
+                .AddLogging(builder => builder.AddSimpleConsole(options =>
+                {
+                    options.SingleLine = true;
+                    options.TimestampFormat = "HH:mm:ss ";
+                }))
+                .BuildServiceProvider();
+
             try
             {
                 var app = new CommandLineApplication<Program>();
-                app.Conventions.UseDefaultConventions();
+                app.Conventions
+                    .UseDefaultConventions()
+                    .UseConstructorInjection(services);
                 return app.Execute(args);
             }
             catch (Exception e)
             {
-                var logger = LogManager.GetCurrentClassLogger();
-                logger.Error(e, e.Message);
+                LogFailed(services.GetRequiredService<ILogger<Program>>(), e, e.Message);
                 return ExitCode.Error;
             }
         }
+
+        [LoggerMessage(EventId = 1, Level = LogLevel.Error, Message = "{ErrorMessage}")]
+        private static partial void LogFailed(ILogger logger, Exception exception, string errorMessage);
     }
 }

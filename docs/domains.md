@@ -72,4 +72,10 @@ These are possible, but not common.
 - Extending more than one domain is planned, together with a defined order for the hooks of
   domains that do not extend each other. Until then a concrete domain cannot extend two
   functional domains, or a functional domain and a plug-in.
-- Authentication is still part of Core. The Identity plug-in does not exist yet.
+- Identity provides authentication with ASP.NET Core Identity. Its tree, `dotnet/Identity`, is
+  Core ← Identity ← Test. Core's `User` has no authentication field; Identity declares them.
+  `InheritableSurfaceTests.InheritableCoreFoldersNameNoAuthenticationField` checks that.
+- An application that selects no plug-in hosts the Allors API only if it registers an
+  `IUserResolver` of its own, as Core's test server does for its test sign-in header. Without
+  one, `UseAllorsServer` stops with an actionable error, which
+  `AllorsServerTests.UseAllorsServerWithoutAUserResolverFails` checks.

@@ -14,8 +14,10 @@ namespace Allors.Server
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Hosting;
-    using NLog;
 
+    // Building block: unhandled exceptions become a JSON 500 without exception detail outside
+    // development. ASP.NET Core's exception handler middleware logs the exception itself, through the
+    // application's logger.
     public static class ExceptionHandler
     {
         public static IApplicationBuilder ConfigureExceptionHandler(this IApplicationBuilder appBuilder, IWebHostEnvironment env) =>
@@ -29,9 +31,6 @@ namespace Allors.Server
                 if (exceptionHandler != null)
                 {
                     var error = exceptionHandler.Error;
-
-                    var logger = LogManager.GetCurrentClassLogger();
-                    logger.Error(error, "Unhandled Exception");
 
                     context.Response.ContentType = "application/json";
                     context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;

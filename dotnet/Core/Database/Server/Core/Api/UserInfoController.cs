@@ -31,7 +31,8 @@ namespace Allors.Server
                 return this.Unauthorized();
             }
 
-            return this.Ok(new UserInfoResponse { u = user.Id.ToString(), userName = user.UserName });
+            // The name comes from the signed-in identity, which every authentication plug-in fills.
+            return this.Ok(new UserInfoResponse { u = user.Id.ToString(), userName = this.User.Identity?.Name });
         }
 
         public class UserInfoResponse

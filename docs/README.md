@@ -15,6 +15,7 @@ The pages in this folder are written for users. Maintainers read them too.
 | Page | Kind | Status | Content |
 | --- | --- | --- | --- |
 | [Domains](domains.md) | Explanation | Planned | The kinds of domains: functional domains, plug-ins and their hosts, and the concrete domain that selects plug-ins. |
+| [Logging](logging.md) | Reference | Current | How Allors logs through `Microsoft.Extensions.Logging`, what the host does to receive the logs, and which messages Allors writes. |
 
 ## For maintainers
 

@@ -43,8 +43,6 @@ namespace Allors.Database.Configuration
 
         private ICaches caches;
 
-        private IPasswordHasher passwordHasher;
-
         private IDerivationService derivationService;
 
         private IProcedures procedures;
@@ -103,12 +101,9 @@ namespace Allors.Database.Configuration
                 { } type when type == typeof(IPermissions) => (T)(this.permissions ??= new Permissions()),
                 { } type when type == typeof(ITime) => (T)(this.time ??= new Time()),
                 { } type when type == typeof(ICaches) => (T)(this.caches ??= new Caches()),
-                { } type when type == typeof(IPasswordHasher) => (T)(this.passwordHasher ??= this.CreatePasswordHasher()),
                 { } type when type == typeof(IWorkspaceMask) => (T)(this.workspaceMask ??= new WorkspaceMask(this.M)),
                 _ => throw new NotSupportedException($"Service {typeof(T)} not supported")
             };
-
-        protected abstract IPasswordHasher CreatePasswordHasher();
 
         protected abstract IDerivationService CreateDerivationFactory();
 

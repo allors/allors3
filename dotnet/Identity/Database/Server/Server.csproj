@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="10.0.7" />
+    <PackageReference Include="Polly" Version="8.6.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\System\Database\Adapters\Allors.Database.Builder\Allors.Database.Builder.csproj" />
+    <ProjectReference Include="..\..\..\System\Database\Allors.Database.Workspace.Json\Allors.Database.Workspace.Json.csproj" />
+    <ProjectReference Include="..\..\..\System\Protocol\Allors.Protocol.Json.SystemText\Allors.Protocol.Json.SystemText.csproj" />
+    <ProjectReference Include="..\..\..\System\Workspace\Allors.Workspace.Domain\Allors.Workspace.Domain.csproj" />
+    <ProjectReference Include="..\Configuration\Configuration.csproj" />
+    <ProjectReference Include="..\Meta\Meta.csproj" />
+    <ProjectReference Include="..\Resources\Resources.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\..\Core\Database\Server\Core*\**\*.cs" />
+  </ItemGroup>
+
+  <!-- The Identity UI override pages live in the inheritable Identity layer folder; re-link them into
+       the Identity area (the SDK includes in-cone .cshtml by default, hence the Remove). -->
+  <ItemGroup>
+    <Content Remove="Identity\IdentityUi\**\*.cshtml" />
+    <Content Include="Identity\IdentityUi\**\*.cshtml">
+      <Link>Areas\Identity\Pages\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Content>
+  </ItemGroup>
+
+</Project>

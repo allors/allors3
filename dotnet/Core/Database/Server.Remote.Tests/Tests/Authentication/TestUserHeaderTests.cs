@@ -9,7 +9,9 @@ namespace Allors.Server.Tests
     using System.Net;
     using System.Net.Http;
     using System.Text;
+    using System.Text.Json;
     using System.Threading.Tasks;
+    using Database.Domain;
     using Xunit;
 
     [Collection("Api")]
@@ -17,13 +19,14 @@ namespace Allors.Server.Tests
     {
         private const string HeaderName = "X-Allors-TestUser";
 
-        private HttpClient HeaderClient(string userName)
+        // A user of the test population is sent as its UniqueId; any other value is sent as is.
+        private HttpClient HeaderClient(string alias)
         {
             var client = new HttpClient(new HttpClientHandler { AllowAutoRedirect = false })
             {
                 BaseAddress = new Uri(Url),
             };
-            client.DefaultRequestHeaders.Add(HeaderName, userName);
+            client.DefaultRequestHeaders.Add(HeaderName, Users.TryGetTestUserId(alias, out var uniqueId) ? uniqueId.ToString() : alias);
             return client;
         }
 
@@ -35,6 +38,21 @@ namespace Allors.Server.Tests
             var response = await client.GetAsync(new Uri("UserInfo", UriKind.Relative));
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task HeaderAuthenticatesAnAgent()
+        {
+            var agent = new Users(this.Transaction).FindBy(this.M.User.UserName, "agent");
+
+            using var client = this.HeaderClient("agent");
+
+            var response = await client.GetAsync(new Uri("UserInfo", UriKind.Relative));
+            var body = await response.Content.ReadAsStringAsync();
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            using var document = JsonDocument.Parse(body);
+            Assert.Equal(agent.Id.ToString(), document.RootElement.GetProperty("u").GetString());
         }
 
         [Fact]
@@ -55,6 +73,22 @@ namespace Allors.Server.Tests
         public async Task UnknownHeaderUserIsUnauthorized()
         {
             using var client = this.HeaderClient("nobody@example.com");
+
+            var response = await client.GetAsync(new Uri("UserInfo", UriKind.Relative));
+
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+        }
+
+        // The header carries the UniqueId of a user of the test population, so the test sign-in does
+        // not depend on how an authentication plug-in names a user: a user name no longer signs in.
+        [Fact]
+        public async Task HeaderWithAUserNameIsUnauthorized()
+        {
+            using var client = new HttpClient(new HttpClientHandler { AllowAutoRedirect = false })
+            {
+                BaseAddress = new Uri(Url),
+            };
+            client.DefaultRequestHeaders.Add(HeaderName, "jane@example.com");
 
             var response = await client.GetAsync(new Uri("UserInfo", UriKind.Relative));
 

@@ -15,19 +15,19 @@ namespace Allors.Server.Controllers
     using Services;
 
     [AllowAnonymous]
-    public class TestController : Controller
+    public partial class TestController : Controller
     {
+        private readonly ILogger<TestController> logger;
+
         public TestController(IDatabaseService databaseService, ILogger<TestController> logger)
         {
             this.DatabaseService = databaseService;
-            this.Logger = logger;
+            this.logger = logger;
         }
 
         public IDatabaseService DatabaseService { get; set; }
 
         public IDatabase Database => this.DatabaseService.Database;
-
-        private ILogger<TestController> Logger { get; set; }
 
         [HttpGet]
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
@@ -46,7 +46,7 @@ namespace Allors.Server.Controllers
             }
             catch (Exception e)
             {
-                this.Logger.LogError(e, "Exception");
+                this.LogActionFailed(e, nameof(this.Init));
                 return this.BadRequest(e.Message);
             }
         }
@@ -68,7 +68,7 @@ namespace Allors.Server.Controllers
                     transaction.Derive();
                     transaction.Commit();
 
-                    var administrator = new PersonBuilder(transaction).WithUserName("administrator").Build();
+                    var administrator = new PersonBuilder(transaction).WithUserName("administrator").WithUniqueId(Users.AdministratorId).Build();
                     new UserGroups(transaction).Administrators.AddMember(administrator);
                     transaction.Services.Get<IUserService>().User = administrator;
 
@@ -81,7 +81,7 @@ namespace Allors.Server.Controllers
             }
             catch (Exception e)
             {
-                this.Logger.LogError(e, "Exception");
+                this.LogActionFailed(e, nameof(this.Setup));
                 return this.BadRequest(e.Message);
             }
         }
@@ -98,9 +98,12 @@ namespace Allors.Server.Controllers
             }
             catch (Exception e)
             {
-                this.Logger.LogError(e, "Exception");
+                this.LogActionFailed(e, nameof(this.TimeShift));
                 return this.BadRequest(e.Message);
             }
         }
+
+        [LoggerMessage(EventId = 1, Level = LogLevel.Error, Message = "Test action {Action} failed")]
+        private partial void LogActionFailed(Exception exception, string action);
     }
 }

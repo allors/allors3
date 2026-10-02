@@ -90,7 +90,7 @@ namespace Tests
             }
         }
 
-        protected IUser SetUser(string userName) => this.Transaction.Services.Get<IUserService>().User = new Users(this.Transaction).FindBy(this.M.User.UserName, userName);
+        protected IUser SetUser(string alias) => this.Transaction.Services.Get<IUserService>().User = new Users(this.Transaction).FindBy(this.M.User.UniqueId, Users.TestUserId(alias));
 
         protected Stream GetResource(string name)
         {

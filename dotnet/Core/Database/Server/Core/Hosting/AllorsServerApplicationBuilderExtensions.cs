@@ -6,85 +6,72 @@
 namespace Allors.Server
 {
     using System;
+    using System.Linq;
     using System.Net;
     using Allors.Services;
-    using Database.Adapters;
-    using Database.Configuration;
-    using Database.Configuration.Derivations.Default;
-    using Database.Domain;
-    using Database.Meta;
-    using JSNLog;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.HttpOverrides;
+    using Microsoft.AspNetCore.Routing;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
-    using Microsoft.Extensions.Logging;
-    using ObjectFactory = Database.ObjectFactory;
-    using User = Database.Domain.User;
 
     public static class AllorsServerApplicationBuilderExtensions
     {
-        public static void UseAllorsServer(this IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
+        // What Core decides, after the application's UseRouting(), UseAuthentication() and
+        // UseAuthorization(): antiforgery for cookie sign-ins, the current user, and the Allors API.
+        // The API controllers carry [Authorize], so a missing UseAuthorization() fails the first API
+        // request instead of leaving the API open. The application maps its own endpoints, such as
+        // the Razor Pages of an authentication plug-in, in the endpoints callback.
+        public static void UseAllorsServer(this IApplicationBuilder app, Action<IEndpointRouteBuilder> endpoints = null)
         {
-            // Allors
-            var metaPopulation = new MetaBuilder().Build();
-            var engine = new Engine(Rules.Create(metaPopulation));
-            var objectFactory = new ObjectFactory(metaPopulation, typeof(User));
-            var configuration = app.ApplicationServices.GetRequiredService<IConfiguration>();
-            var databaseScope = new DefaultDatabaseServices(engine, configuration);
-            var databaseBuilder = new DatabaseBuilder(databaseScope, configuration, objectFactory, null, 60);
+            var userResolvers = app.ApplicationServices.GetServices<IUserResolver>().ToArray();
+            if (userResolvers.Length == 0)
+            {
+                throw new InvalidOperationException(
+                    $"No {nameof(IUserResolver)} is registered, so the Allors API cannot tell which user a request is for. " +
+                    "Select one authentication plug-in, for example with services.AddAllorsIdentity(...), before app.UseAllorsServer().");
+            }
+
+            if (userResolvers.Length > 1)
+            {
+                throw new InvalidOperationException(
+                    $"More than one {nameof(IUserResolver)} is registered: {string.Join(", ", userResolvers.Select(v => v.GetType().Name))}. " +
+                    "Select exactly one authentication plug-in.");
+            }
+
             var databaseService = app.ApplicationServices.GetRequiredService<IDatabaseService>();
-            databaseService.Build = () => databaseBuilder.Build();
-            databaseService.Database = databaseService.Build();
-
-            app.UseForwardedHeaders(CreateForwardedHeadersOptions(configuration));
-            app.UseMiddleware<SecurityHeadersMiddleware>();
-
-            if (env.IsDevelopment())
+            if (databaseService.Database == null)
             {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseHsts();
-                app.UseHttpsRedirection();
+                throw new InvalidOperationException(
+                    $"The Allors database is not set. Build it and assign {nameof(IDatabaseService)}.{nameof(IDatabaseService.Database)} before app.UseAllorsServer().");
             }
 
-            var jsnlogConfiguration = new JsnlogConfiguration
-            {
-                corsAllowedOriginsRegex = configuration["Logging:JSNLog:CorsAllowedOriginsRegex"] ?? "^https?://localhost(:[0-9]+)?$",
-                serverSideMessageFormat = env.IsDevelopment() ?
-                                            "%requestId | %url | %message" :
-                                            "%requestId | %url | %userHostAddress | %userAgent | %message",
-            };
+            var environment = app.ApplicationServices.GetRequiredService<IWebHostEnvironment>();
 
-            app.UseJSNLog(new LoggingAdapter(loggerFactory), jsnlogConfiguration);
-
-            // Serves the Identity UI's static web assets (/Identity/lib/*) and any app static files.
-            app.UseStaticFiles();
-
-            app.UseRouting();
-            app.UseRateLimiter();
-            app.UseAuthentication();
-            app.UseMiddleware<AllorsAntiforgeryMiddleware>(!env.IsDevelopment());
-            app.UseAuthorization();
-
-            app.ConfigureExceptionHandler(env);
-            app.UseResponseCaching();
-
+            app.UseMiddleware<AllorsAntiforgeryMiddleware>(!environment.IsDevelopment());
             app.UseMiddleware<ClaimsPrincipalServiceMiddleware>();
 
-            app.UseEndpoints(endpoints =>
+            app.UseEndpoints(endpointRouteBuilder =>
             {
-                endpoints.MapRazorPages();
-                endpoints.MapControllerRoute(
+                endpointRouteBuilder.MapControllerRoute(
                     name: "default",
                     pattern: "allors/{controller=Home}/{action=Index}/{id?}");
-                endpoints.MapControllers();
+                endpointRouteBuilder.MapControllers();
+                endpoints?.Invoke(endpointRouteBuilder);
             });
         }
+
+        // Building block: trusts X-Forwarded-For and X-Forwarded-Proto from loopback, and from the
+        // proxies and networks in ForwardedHeaders:KnownProxies and ForwardedHeaders:KnownNetworks.
+        public static IApplicationBuilder UseAllorsForwardedHeaders(this IApplicationBuilder app, IConfiguration configuration) =>
+            app.UseForwardedHeaders(CreateForwardedHeadersOptions(configuration));
+
+        // Building block: baseline security headers, with the content security policy from
+        // Security:ContentSecurityPolicy.
+        public static IApplicationBuilder UseAllorsSecurityHeaders(this IApplicationBuilder app) =>
+            app.UseMiddleware<SecurityHeadersMiddleware>();
 
         private static ForwardedHeadersOptions CreateForwardedHeadersOptions(IConfiguration configuration)
         {

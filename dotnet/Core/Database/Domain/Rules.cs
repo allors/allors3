@@ -14,9 +14,6 @@ namespace Allors.Database.Domain
             new Rule[]
             {
                 // Core
-                new UserNormalizedUserNameRule(m),
-                new UserNormalizedUserEmailRule(m),
-                new UserIsDisabledRule(m),
                 new GrantEffectiveUsersRule(m),
                 new GrantEffectivePermissionsRule(m),
                 new SecurityTokenSecurityStampRule(m),

@@ -14,8 +14,8 @@ namespace Allors.Server.Tests
     [Collection("Api")]
     public class DefaultDenyTests : ApiTest
     {
-        // The JSON API endpoints carry no authorization attributes; they are protected solely by the
-        // server's default-deny fallback policy. An anonymous request therefore proves the fallback.
+        // The JSON API endpoints carry [Authorize] themselves, so an anonymous request is denied
+        // whatever fallback policy the application sets.
         [Theory]
         [InlineData("pull")]
         [InlineData("push")]

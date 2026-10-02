@@ -25,7 +25,7 @@ namespace Tests
         [Fact]
         public void LoopbackClientGetsTheSharedHeadroomPartition()
         {
-            var partition = AuthenticationRateLimitPolicy.Partition(Context("/allors/Authentication/Token", "127.0.0.1"), new AuthenticationRateLimitSettings());
+            var partition = AuthenticationRateLimitPolicy.Partition(Context("/sign-in", "127.0.0.1"), Settings("/sign-in"));
 
             Assert.Equal(AuthenticationRateLimitPolicy.LoopbackPartitionKey, partition.PartitionKey);
         }
@@ -33,7 +33,7 @@ namespace Tests
         [Fact]
         public void RemoteClientGetsAPerIpPartition()
         {
-            var partition = AuthenticationRateLimitPolicy.Partition(Context("/allors/Authentication/Token", "203.0.113.7"), new AuthenticationRateLimitSettings());
+            var partition = AuthenticationRateLimitPolicy.Partition(Context("/sign-in", "203.0.113.7"), Settings("/sign-in"));
 
             Assert.Equal("authentication:203.0.113.7", partition.PartitionKey);
         }
@@ -41,15 +41,7 @@ namespace Tests
         [Fact]
         public void PathMatchingIgnoresCase()
         {
-            var partition = AuthenticationRateLimitPolicy.Partition(Context("/allors/testauthentication/token", "203.0.113.7"), new AuthenticationRateLimitSettings());
-
-            Assert.Equal("authentication:203.0.113.7", partition.PartitionKey);
-        }
-
-        [Fact]
-        public void IdentityLoginPathIsLimitedByDefault()
-        {
-            var partition = AuthenticationRateLimitPolicy.Partition(Context("/Identity/Account/Login", "203.0.113.7"), new AuthenticationRateLimitSettings());
+            var partition = AuthenticationRateLimitPolicy.Partition(Context("/SIGN-IN", "203.0.113.7"), Settings("/sign-in"));
 
             Assert.Equal("authentication:203.0.113.7", partition.PartitionKey);
         }
@@ -57,8 +49,8 @@ namespace Tests
         [Fact]
         public void PerIpLimiterExhaustsAtThePermitLimit()
         {
-            var settings = new AuthenticationRateLimitSettings { PermitLimit = 2 };
-            var partition = AuthenticationRateLimitPolicy.Partition(Context("/allors/Authentication/Token", "203.0.113.7"), settings);
+            var settings = new AuthenticationRateLimitSettings { PermitLimit = 2, Paths = new[] { "/sign-in" } };
+            var partition = AuthenticationRateLimitPolicy.Partition(Context("/sign-in", "203.0.113.7"), settings);
 
             using var limiter = partition.Factory(partition.PartitionKey);
 
@@ -75,6 +67,7 @@ namespace Tests
                 ["Security:AuthenticationRateLimit:PermitLimit"] = "3",
                 ["Security:AuthenticationRateLimit:WindowSeconds"] = "30",
                 ["Security:AuthenticationRateLimit:LoopbackPermitLimit"] = "42",
+                ["Security:AuthenticationRateLimit:Paths:0"] = "/sign-in",
             }).Build();
 
             var settings = AuthenticationRateLimitSettings.From(configuration);
@@ -82,8 +75,10 @@ namespace Tests
             Assert.Equal(3, settings.PermitLimit);
             Assert.Equal(30, settings.WindowSeconds);
             Assert.Equal(42, settings.LoopbackPermitLimit);
-            Assert.Contains("/allors/Authentication/Token", settings.Paths);
+            Assert.Equal(new[] { "/sign-in" }, settings.Paths);
         }
+
+        private static AuthenticationRateLimitSettings Settings(params string[] paths) => new() { Paths = paths };
 
         private static HttpContext Context(string path, string remoteIp)
         {

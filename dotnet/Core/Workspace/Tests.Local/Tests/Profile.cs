@@ -68,7 +68,7 @@ namespace Tests.Workspace.Local
 
             using var transaction = this.Database.CreateTransaction();
 
-            var administrator = new PersonBuilder(transaction).WithUserName("administrator").Build();
+            var administrator = new PersonBuilder(transaction).WithUserName("administrator").WithUniqueId(Users.AdministratorId).Build();
             new UserGroups(transaction).Administrators.AddMember(administrator);
             transaction.Services.Get<IUserService>().User = administrator;
 
@@ -91,7 +91,8 @@ namespace Tests.Workspace.Local
         public Task Login(string userName)
         {
             using var transaction = this.Database.CreateTransaction();
-            this.user = new Users(transaction).Extent().ToArray().First(v => v.UserName.Equals(userName, StringComparison.InvariantCultureIgnoreCase));
+            var uniqueId = Users.TestUserId(userName);
+            this.user = new Users(transaction).Extent().ToArray().First(v => v.UniqueId == uniqueId);
             transaction.Services.Get<IUserService>().User = this.user;
 
             this.DatabaseConnection = new DatabaseConnection(this.configuration, this.Database, this.servicesBuilder, this.rangesFactory) { UserId = this.user.Id };

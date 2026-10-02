@@ -5,18 +5,19 @@
 
 namespace Allors.Server
 {
+    using System.Collections.Generic;
     using System.Linq;
     using System.Security.Claims;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Antiforgery;
     using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Identity;
+    using Microsoft.Extensions.Options;
 
     // Antiforgery for the JSON API, scoped to browser (cookie) callers only. Safe /allors responses
     // hand out a readable XSRF-TOKEN cookie; unsafe /allors requests are validated ONLY when the
-    // caller authenticated via the Identity application cookie. Bearer, test-header and future
-    // API-key clients carry a different authentication type and are therefore exempt by construction,
-    // which is what lets this ship during the dual-scheme window without touching non-browser clients.
+    // caller authenticated with a scheme that an authentication plug-in listed as a cookie scheme
+    // (AllorsAntiforgeryOptions). Bearer, test-header and API-key clients carry a different
+    // authentication type and are therefore exempt by construction.
     public class AllorsAntiforgeryMiddleware
     {
         public const string XsrfCookieName = "XSRF-TOKEN";
@@ -30,7 +31,7 @@ namespace Allors.Server
             this.secureCookie = secureCookie;
         }
 
-        public async Task InvokeAsync(HttpContext context, IAntiforgery antiforgery)
+        public async Task InvokeAsync(HttpContext context, IAntiforgery antiforgery, IOptions<AllorsAntiforgeryOptions> options)
         {
             if (context.Request.Path.StartsWithSegments("/allors"))
             {
@@ -39,15 +40,15 @@ namespace Allors.Server
                 {
                     // Issue the readable token cookie once; keep cacheable responses Set-Cookie-free
                     // thereafter. Request tokens are bound to the authenticated identity, so sign-in and
-                    // sign-out delete the cookie (see the CookieAuthenticationEvents wired next to
-                    // ConfigureApplicationCookie) and the next safe GET re-mints it here.
+                    // sign-out delete the cookie (a cookie plug-in wires that into its cookie events)
+                    // and the next safe GET re-mints it here.
                     if (!context.Request.Cookies.ContainsKey(XsrfCookieName))
                     {
                         var tokens = antiforgery.GetAndStoreTokens(context);
                         context.Response.Cookies.Append(XsrfCookieName, tokens.RequestToken, CookieOptionsFor(this.secureCookie));
                     }
                 }
-                else if (AuthenticatedViaApplicationCookie(context.User))
+                else if (AuthenticatedWithCookie(context.User, options.Value.AuthenticationTypes))
                 {
                     try
                     {
@@ -80,7 +81,7 @@ namespace Allors.Server
             Path = "/",
         };
 
-        private static bool AuthenticatedViaApplicationCookie(ClaimsPrincipal user) =>
-            user?.Identities.Any(identity => identity.IsAuthenticated && identity.AuthenticationType == IdentityConstants.ApplicationScheme) == true;
+        private static bool AuthenticatedWithCookie(ClaimsPrincipal user, ISet<string> cookieAuthenticationTypes) =>
+            user?.Identities.Any(identity => identity.IsAuthenticated && cookieAuthenticationTypes.Contains(identity.AuthenticationType)) == true;
     }
 }

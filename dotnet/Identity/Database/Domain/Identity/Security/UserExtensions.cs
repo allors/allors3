@@ -1,0 +1,65 @@
+// <copyright file="UserExtensions.cs" company="Allors bv">
+// Copyright (c) Allors bv. All rights reserved.
+// Licensed under the LGPL license. See LICENSE file in the project root for full license information.
+// </copyright>
+
+namespace Allors.Database.Domain
+{
+    using System;
+
+    // The authentication side of a user. Core's part of this class gives every user its owner grant
+    // and security token; this part gives it a security stamp, a password and lockout, and deletes
+    // its logins with it. The hooks bind by name, {Domain}{Method}, and run next to Core's.
+    public static partial class UserExtensions
+    {
+        public static T SetPassword<T>(this T @this, string clearTextPassword)
+            where T : User
+        {
+            var passwordService = @this.Transaction().Database.Services.Get<IPasswordHasher>();
+            @this.UserPasswordHash = passwordService.HashPassword(@this.UserName, clearTextPassword);
+
+            // Rotate the security stamp so any live session is invalidated on the next revalidation.
+            // (Done here rather than in a derive rule on UserPasswordHash: Identity's own UpdateAsync
+            // already rotates the stamp when it changes the hash, and a rule would clobber that.)
+            @this.UserSecurityStamp = Guid.NewGuid().ToString();
+
+            return @this;
+        }
+
+        public static bool VerifyPassword(this User @this, string clearTextPassword)
+        {
+            if (string.IsNullOrWhiteSpace(clearTextPassword))
+            {
+                return false;
+            }
+
+            var passwordService = @this.Transaction().Database.Services.Get<IPasswordHasher>();
+            return passwordService.VerifyHashedPassword(@this.UserName, @this.UserPasswordHash, clearTextPassword);
+        }
+
+        public static void IdentityOnPostBuild(this User @this, ObjectOnPostBuild method)
+        {
+            if (!@this.ExistUserSecurityStamp)
+            {
+                @this.UserSecurityStamp = Guid.NewGuid().ToString();
+            }
+
+            if (!@this.ExistIsDisabled)
+            {
+                @this.IsDisabled = false;
+            }
+
+            // Lockout is enabled by default for new users so the configured failed-attempt threshold
+            // actually applies (a required bool otherwise defaults to false, leaving lockout inert).
+            @this.UserLockoutEnabled = true;
+        }
+
+        public static void IdentityDelete(this User @this, DeletableDelete method)
+        {
+            foreach (var login in @this.Logins)
+            {
+                login.CascadingDelete();
+            }
+        }
+    }
+}

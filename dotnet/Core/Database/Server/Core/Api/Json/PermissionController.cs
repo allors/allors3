@@ -5,22 +5,24 @@
 
 namespace Allors.Database.Protocol.Json
 {
-    using System;
     using System.Threading;
     using Allors.Protocol.Json.Api.Security;
     using Allors.Services;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    using NLog;
+    using Microsoft.Extensions.Logging;
 
+    [Authorize]
     [ApiController]
     [Route("allors/permission")]
     public class PermissionController : ControllerBase
     {
-        public PermissionController(ITransactionService transactionService, IWorkspaceService workspaceService, IPolicyService policyService)
+        public PermissionController(ITransactionService transactionService, IWorkspaceService workspaceService, IPolicyService policyService, ILogger<Api> apiLogger = null)
         {
             this.TransactionService = transactionService;
             this.WorkspaceService = workspaceService;
             this.PolicyService = policyService;
+            this.ApiLogger = apiLogger;
         }
 
         private ITransactionService TransactionService { get; }
@@ -29,24 +31,16 @@ namespace Allors.Database.Protocol.Json
 
         private IPolicyService PolicyService { get; }
 
-        public Logger Logger => LogManager.GetCurrentClassLogger();
+        private ILogger<Api> ApiLogger { get; }
 
         [HttpPost]
         public ActionResult<PermissionResponse> Post([FromBody] PermissionRequest permissionRequest, CancellationToken cancellationToken) =>
             this.PolicyService.SyncPolicy.Execute(
                 () =>
                 {
-                    try
-                    {
-                        using var transaction = this.TransactionService.Transaction;
-                        var api = new Api(transaction, this.WorkspaceService.Name, cancellationToken);
-                        return api.Permission(permissionRequest);
-                    }
-                    catch (Exception e)
-                    {
-                        this.Logger.Error(e, "PermissionRequest {request}", permissionRequest);
-                        throw;
-                    }
+                    using var transaction = this.TransactionService.Transaction;
+                    var api = new Api(transaction, this.WorkspaceService.Name, cancellationToken, this.ApiLogger);
+                    return api.Permission(permissionRequest);
                 });
     }
 }
