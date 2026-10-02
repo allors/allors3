@@ -33,6 +33,13 @@ namespace Tests
         // The namespaces and packages of ASP.NET Core Identity.
         private static readonly Regex AspNetCoreIdentity = new(@"\bMicrosoft\.(AspNetCore|Extensions)\.Identity\b", RegexOptions.Compiled);
 
+        // The namespaces and packages for signing in with an identity provider: the OpenID Connect and
+        // JWT bearer handlers of ASP.NET Core, Microsoft's Entra libraries and the token libraries
+        // underneath them.
+        private static readonly Regex IdentityProviderLibrary = new(
+            @"\bMicrosoft\.AspNetCore\.Authentication\.(OpenIdConnect|JwtBearer)\b|\bMicrosoft\.Identity\.(Web|Client|Abstractions)\b|\bMicrosoft\.IdentityModel\b",
+            RegexOptions.Compiled);
+
         // The authentication fields of User, which the Identity domain declares, and its Login class,
         // followed by the fields the Entra domain declares. Substrings on purpose: they also catch
         // WithUserName, ExistUserEmail, RemoveUserLockoutEnd, NormalizedUserName, LoginBuilder,
@@ -204,6 +211,37 @@ namespace Tests
                 violations.Count == 0,
                 "Core's tree must not reference ASP.NET Core Identity: authentication belongs to " +
                 "a plug-in, such as the Identity tree under dotnet/Identity. Offending: " + string.Join("; ", violations));
+        }
+
+        // Signing in with an identity provider is a plug-in's concern as well. Core names the schemes a
+        // plug-in registers and selects between them; it knows nothing of OpenID Connect, bearer
+        // tokens or Microsoft Entra: that lives in the Entra tree.
+        [Fact]
+        public void CoreTreeReferencesNoIdentityProviderLibrary()
+        {
+            var root = RepositoryRoot();
+            var coreTree = Path.Combine(root, CoreTreeFolder.Replace('/', Path.DirectorySeparatorChar));
+
+            var scanned = new List<string>();
+            var violations = new List<string>();
+
+            foreach (var file in SourceFiles(root, coreTree))
+            {
+                scanned.Add(Path.GetFileName(file));
+                if (IdentityProviderLibrary.IsMatch(File.ReadAllText(file)))
+                {
+                    violations.Add(Path.GetRelativePath(root, file));
+                }
+            }
+
+            // Sanity: the scan actually resolved the folder and read the file that names the schemes.
+            Assert.Contains("AllorsAuthenticationOptions.cs", scanned);
+
+            Assert.True(
+                violations.Count == 0,
+                "Core's tree must not reference the OpenID Connect or JWT bearer handlers, Microsoft's Entra " +
+                "libraries or the token libraries underneath them: signing in with an identity provider " +
+                "belongs to a plug-in, such as the Entra tree under dotnet/Entra. Offending: " + string.Join("; ", violations));
         }
 
         // Core's User carries no authentication field: the user name, e-mail, password hash, security

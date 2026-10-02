@@ -40,6 +40,21 @@ Changes accumulate under **[Unreleased]** until a version is released.
   `DotnetEntraGenerate`, `DotnetEntraDatabaseTest` and `DotnetEntraTest`, CI job
   `CiDotnetEntraDatabaseTest`. `VirtualDispatchTests` and the plug-in guards of
   `InheritableSurfaceTests` cover the Entra tree too.
+- Core selects the scheme that authenticates a request, for an authentication plug-in with both a
+  browser session and bearer tokens. `AddAllorsServer` registers the scheme
+  `AllorsAuthenticationDefaults.AuthenticationScheme` (`Allors`), which forwards a request with an
+  `Authorization: Bearer` header to the scheme a plug-in names in
+  `AllorsAuthenticationOptions.BearerScheme` and every other request to the `SessionScheme`; the
+  plug-in makes it the default scheme. `UseAllorsServer` stops with an actionable error when a
+  named scheme is not registered, or when the selecting scheme is the default and no scheme is
+  named. Two more rules of the browser session, each only when asked for: outside the Allors API
+  the session's challenge goes to `AllorsAuthenticationOptions.ChallengeScheme`, the OpenID Connect
+  scheme of a plug-in that signs in elsewhere; and a session ends `SessionLifetime` after its
+  sign-in, however often its sliding expiration renewed it, for a plug-in whose identity provider
+  cannot end the application's session. Nothing changes for an application that names none of
+  them. A guard test in `InheritableSurfaceTests` checks that nothing under `dotnet/Core`
+  references the OpenID Connect or JWT bearer handlers, Microsoft's Entra libraries or the token
+  libraries underneath them: signing in with an identity provider belongs to a plug-in.
 - `Agent`, a second `User` class in the Core test domain next to `Person`, so that the platform
   tests do not assume that every user is a `Person`. The test population has an agent in the
   Administrators group, and tests check access lists, pulls, the test sign-in header, the .NET
