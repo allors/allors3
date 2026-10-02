@@ -13,6 +13,9 @@ namespace Allors.Database.Domain
         public static Rule[] Create(MetaPopulation m) =>
             new Rule[]
             {
+                // Entra
+                new UserEntraIdentityRule(m),
+
                 // Core
                 new GrantEffectiveUsersRule(m),
                 new GrantEffectivePermissionsRule(m),

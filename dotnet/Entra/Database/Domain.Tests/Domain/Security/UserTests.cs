@@ -6,14 +6,17 @@
 namespace Allors.Database.Domain.Tests
 {
     using System;
+    using Database.Derivations;
     using Database.Security;
     using Xunit;
 
     // The Entra identity of a user is the pair of a tenant id and an object id. The Entra domain
-    // declares it, together with what the directory says about the person.
+    // declares it, finds a user by it and keeps it to one user as far as a transaction can see.
     public class UserTests : DomainTest, IClassFixture<Fixture>
     {
         private static readonly Guid Tenant = new Guid("cd3598ab-ef18-4774-bfce-c1b3cebe5a42");
+
+        private static readonly Guid OtherTenant = new Guid("2baf9a07-5a2e-4065-adf2-2cf6a9bccff5");
 
         public UserTests(Fixture fixture) : base(fixture) { }
 
@@ -36,6 +39,130 @@ namespace Allors.Database.Domain.Tests
             Assert.False(user.ExistEntraEmail);
             Assert.True(user.ExistOwnerGrant);
             Assert.True(user.ExistOwnerSecurityToken);
+        }
+
+        [Fact]
+        public void FindByEntraIdentityFindsTheUser()
+        {
+            var objectId = Guid.NewGuid();
+            var user = this.NewUser(Tenant, objectId);
+            this.NewUser(Tenant, Guid.NewGuid());
+            new PersonBuilder(this.Transaction).Build();
+
+            this.Transaction.Derive();
+
+            Assert.Equal(user, new Users(this.Transaction).FindByEntraIdentity(Tenant, objectId));
+        }
+
+        // An object id is unique within its tenant only, so the lookup takes both.
+        [Fact]
+        public void FindByEntraIdentityNeedsTheTenantAndTheObject()
+        {
+            var objectId = Guid.NewGuid();
+            this.NewUser(Tenant, objectId);
+
+            this.Transaction.Derive();
+
+            var users = new Users(this.Transaction);
+            Assert.Null(users.FindByEntraIdentity(OtherTenant, objectId));
+            Assert.Null(users.FindByEntraIdentity(Tenant, Guid.NewGuid()));
+        }
+
+        // No token carries an empty id, so an empty id finds nobody, not even a user that has one.
+        [Fact]
+        public void FindByEntraIdentityFindsNobodyForAnEmptyId()
+        {
+            var objectId = Guid.NewGuid();
+            this.NewUser(Guid.Empty, Guid.Empty);
+            this.NewUser(Tenant, Guid.Empty);
+            this.NewUser(Guid.Empty, objectId);
+
+            var users = new Users(this.Transaction);
+            Assert.Null(users.FindByEntraIdentity(Guid.Empty, Guid.Empty));
+            Assert.Null(users.FindByEntraIdentity(Tenant, Guid.Empty));
+            Assert.Null(users.FindByEntraIdentity(Guid.Empty, objectId));
+        }
+
+        // The rule counts in the view of its own transaction: it refuses a second user with an
+        // identity that the transaction can see. It does not see a parallel transaction, see
+        // OfTwoUsersWithTheSameEntraIdentityTheOldestIsFound.
+        [Fact]
+        public void ASecondUserWithTheSameEntraIdentityIsRefused()
+        {
+            var objectId = Guid.NewGuid();
+            this.NewUser(Tenant, objectId);
+
+            Assert.False(this.Transaction.Derive(false).HasErrors);
+
+            var second = this.NewUser(Tenant, objectId);
+
+            var validation = this.Transaction.Derive(false);
+
+            var error = Assert.Single(validation.Errors);
+            Assert.IsType<IDerivationErrorUnique>(error, exactMatch: false);
+            Assert.All(error.Relations, v => Assert.Equal(second, v.Association));
+            Assert.Contains(this.M.User.EntraTenantId, error.RoleTypes);
+            Assert.Contains(this.M.User.EntraObjectId, error.RoleTypes);
+        }
+
+        [Fact]
+        public void TheSameObjectIdInAnotherTenantIsAllowed()
+        {
+            var objectId = Guid.NewGuid();
+            this.NewUser(Tenant, objectId);
+            this.NewUser(OtherTenant, objectId);
+
+            Assert.False(this.Transaction.Derive(false).HasErrors);
+        }
+
+        // Half an identity finds nobody, so the plug-in would have a second user created for the
+        // same person at the next sign-in.
+        [Fact]
+        public void HalfAnEntraIdentityIsRefused()
+        {
+            var withoutTenant = new PersonBuilder(this.Transaction).Build();
+            withoutTenant.EntraObjectId = Guid.NewGuid();
+
+            var validation = this.Transaction.Derive(false);
+
+            var error = Assert.Single(validation.Errors);
+            Assert.IsType<IDerivationErrorRequired>(error, exactMatch: false);
+            Assert.All(error.Relations, v => Assert.Equal(withoutTenant, v.Association));
+            Assert.Contains(this.M.User.EntraTenantId, error.RoleTypes);
+
+            withoutTenant.EntraTenantId = Tenant;
+
+            Assert.False(this.Transaction.Derive(false).HasErrors);
+
+            var withoutObject = new PersonBuilder(this.Transaction).Build();
+            withoutObject.EntraTenantId = Tenant;
+
+            validation = this.Transaction.Derive(false);
+
+            error = Assert.Single(validation.Errors);
+            Assert.IsType<IDerivationErrorRequired>(error, exactMatch: false);
+            Assert.All(error.Relations, v => Assert.Equal(withoutObject, v.Association));
+            Assert.Contains(this.M.User.EntraObjectId, error.RoleTypes);
+        }
+
+        // The store cannot keep an identity unique: two servers that each handle the first sign-in
+        // of one person create a user each, and the rule in neither transaction sees the other. The
+        // two users below are not derived, as such transactions leave them. Every server then finds
+        // the same user, the oldest.
+        [Fact]
+        public void OfTwoUsersWithTheSameEntraIdentityTheOldestIsFound()
+        {
+            var objectId = Guid.NewGuid();
+            var oldest = new PersonBuilder(this.Transaction).Build();
+            var newest = new PersonBuilder(this.Transaction).Build();
+
+            newest.EntraTenantId = Tenant;
+            newest.EntraObjectId = objectId;
+            oldest.EntraTenantId = Tenant;
+            oldest.EntraObjectId = objectId;
+
+            Assert.True(oldest.Id < newest.Id);
+            Assert.Equal(oldest, new Users(this.Transaction).FindByEntraIdentity(Tenant, objectId));
         }
 
         // The Entra fields are derived: the plug-in writes them from a validated token, and an
