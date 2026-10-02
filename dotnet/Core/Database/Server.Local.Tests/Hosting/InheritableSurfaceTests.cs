@@ -35,9 +35,11 @@ namespace Tests
 
         // The authentication fields of User, which the Identity domain declares, and its Login class.
         // Substrings on purpose: they also catch WithUserName, ExistUserEmail, RemoveUserLockoutEnd,
-        // NormalizedUserName, LoginBuilder and the like.
+        // NormalizedUserName, LoginBuilder and the like. One name is not Identity's: the cookie
+        // handler of ASP.NET Core calls its challenge event RedirectToLogin, and Core sets the
+        // rules of the browser session on that event.
         private static readonly Regex AuthenticationField = new(
-            @"UserName|UserEmail|UserPasswordHash|UserSecurityStamp|UserPhoneNumber|UserTwoFactorEnabled|UserLockout|UserAccessFailedCount|IsDisabled|Login",
+            @"UserName|UserEmail|UserPasswordHash|UserSecurityStamp|UserPhoneNumber|UserTwoFactorEnabled|UserLockout|UserAccessFailedCount|IsDisabled|(?<!RedirectTo)Login",
             RegexOptions.Compiled);
 
         // Controllers whose name matches this pattern are test/bypass scaffolding, never production.

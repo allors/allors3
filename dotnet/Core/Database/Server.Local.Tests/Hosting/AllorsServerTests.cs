@@ -21,6 +21,8 @@ namespace Tests
     using Allors.Database.Meta;
     using Allors.Server;
     using Allors.Services;
+    using Microsoft.AspNetCore.Authentication;
+    using Microsoft.AspNetCore.Authentication.Cookies;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Authorization.Infrastructure;
     using Microsoft.AspNetCore.Builder;
@@ -206,6 +208,185 @@ namespace Tests
 
             Assert.Contains(loggerProvider.Messages, v => v.Contains("The name field is required.", StringComparison.Ordinal));
         }
+
+        // An authentication plug-in names the cookie scheme of its browser session once. Core then
+        // applies the rules of that session to the scheme, wherever the plug-in registers it.
+        [Fact]
+        public void SessionCookieGetsCoresDefaults()
+        {
+            using var provider = SessionProvider();
+
+            var options = SessionOptions(provider);
+
+            Assert.Equal("Allors.Auth", options.Cookie.Name);
+            Assert.True(options.Cookie.HttpOnly);
+            Assert.Equal(SameSiteMode.Lax, options.Cookie.SameSite);
+            Assert.Equal(CookieSecurePolicy.SameAsRequest, options.Cookie.SecurePolicy);
+            Assert.True(options.SlidingExpiration);
+            Assert.Equal(TimeSpan.FromHours(8), options.ExpireTimeSpan);
+        }
+
+        [Fact]
+        public void SessionCookieIsSecureAndBoundToTheHostOutsideDevelopment()
+        {
+            using var provider = SessionProvider(environmentName: "Production");
+
+            var options = SessionOptions(provider);
+
+            Assert.Equal("__Host-Allors.Auth", options.Cookie.Name);
+            Assert.Equal(CookieSecurePolicy.Always, options.Cookie.SecurePolicy);
+        }
+
+        // Core's values are defaults: what the application configures after them wins.
+        [Fact]
+        public void ApplicationOverridesASessionCookieDefault()
+        {
+            using var provider = SessionProvider(configure: services =>
+                services.Configure<CookieAuthenticationOptions>(SessionScheme, v => v.ExpireTimeSpan = TimeSpan.FromHours(2)));
+
+            Assert.Equal(TimeSpan.FromHours(2), SessionOptions(provider).ExpireTimeSpan);
+        }
+
+        // A caller of the Allors API gets a status code, never a redirect to a sign-in page. Other
+        // paths keep the answer the cookie had.
+        [Fact]
+        public async Task SessionChallengeAnswersTheApiWith401()
+        {
+            using var provider = SessionProvider();
+            var options = SessionOptions(provider);
+
+            var api = Redirect(provider, options, "/allors/pull");
+            await options.Events.RedirectToLogin(api);
+            var page = Redirect(provider, options, "/account");
+            await options.Events.RedirectToLogin(page);
+
+            Assert.Equal(StatusCodes.Status401Unauthorized, api.Response.StatusCode);
+            Assert.False(api.Response.Headers.ContainsKey("Location"));
+            Assert.Equal(StatusCodes.Status302Found, page.Response.StatusCode);
+            Assert.Equal("/sign-in", page.Response.Headers.Location);
+        }
+
+        [Fact]
+        public async Task SessionForbidAnswersTheApiWith403()
+        {
+            using var provider = SessionProvider();
+            var options = SessionOptions(provider);
+
+            var api = Redirect(provider, options, "/allors/pull");
+            await options.Events.RedirectToAccessDenied(api);
+            var page = Redirect(provider, options, "/account");
+            await options.Events.RedirectToAccessDenied(page);
+
+            Assert.Equal(StatusCodes.Status403Forbidden, api.Response.StatusCode);
+            Assert.False(api.Response.Headers.ContainsKey("Location"));
+            Assert.Equal(StatusCodes.Status302Found, page.Response.StatusCode);
+        }
+
+        // A plug-in registers its cookie after Core and may replace the events of the cookie, as
+        // ASP.NET Core Identity does for its security stamp validator. Core wraps what is there, so
+        // the plug-in's events stay and the rule for the API still holds.
+        [Fact]
+        public async Task SessionRulesKeepTheEventsOfThePlugIn()
+        {
+            var validated = 0;
+            var redirected = 0;
+            using var provider = SessionProvider(configureCookie: v => v.Events = new CookieAuthenticationEvents
+            {
+                OnValidatePrincipal = _ =>
+                {
+                    validated++;
+                    return Task.CompletedTask;
+                },
+                OnRedirectToLogin = _ =>
+                {
+                    redirected++;
+                    return Task.CompletedTask;
+                },
+            });
+            var options = SessionOptions(provider);
+
+            await options.Events.ValidatePrincipal(null);
+            var api = Redirect(provider, options, "/allors/pull");
+            await options.Events.RedirectToLogin(api);
+            await options.Events.RedirectToLogin(Redirect(provider, options, "/account"));
+
+            Assert.Equal(1, validated);
+            Assert.Equal(StatusCodes.Status401Unauthorized, api.Response.StatusCode);
+            Assert.Equal(1, redirected);
+        }
+
+        // An antiforgery token is bound to the user it was issued for. Signing in or out drops the
+        // token cookie, and the next safe request to the API issues one for the new state.
+        [Fact]
+        public async Task SessionSignInAndSignOutDropTheAntiforgeryCookie()
+        {
+            using var provider = SessionProvider();
+            var options = SessionOptions(provider);
+
+            var signedIn = new DefaultHttpContext { RequestServices = provider };
+            await options.Events.SignedIn(new CookieSignedInContext(signedIn, CookieScheme(), new ClaimsPrincipal(new ClaimsIdentity()), new AuthenticationProperties(), options));
+            var signingOut = new DefaultHttpContext { RequestServices = provider };
+            await options.Events.SigningOut(new CookieSigningOutContext(signingOut, CookieScheme(), options, new AuthenticationProperties(), new CookieOptions()));
+
+            Assert.Contains(signedIn.Response.Headers.SetCookie, v => v.StartsWith("XSRF-TOKEN=;", StringComparison.Ordinal));
+            Assert.Contains(signingOut.Response.Headers.SetCookie, v => v.StartsWith("XSRF-TOKEN=;", StringComparison.Ordinal));
+        }
+
+        [Fact]
+        public void ACookieThatIsNotTheSessionIsLeftAlone()
+        {
+            using var provider = SessionProvider(configure: services => services.AddAuthentication().AddCookie("Tests.Other"));
+
+            var other = provider.GetRequiredService<IOptionsMonitor<CookieAuthenticationOptions>>().Get("Tests.Other");
+
+            Assert.NotEqual("Allors.Auth", other.Cookie.Name);
+            Assert.Equal(TimeSpan.FromDays(14), other.ExpireTimeSpan);
+        }
+
+        // Core applies its rules through the events of the cookie. A cookie that takes its events
+        // from a type would skip them without a word, so Core refuses it.
+        [Fact]
+        public void SessionCookieWithAnEventsTypeIsRefused()
+        {
+            using var provider = SessionProvider(configureCookie: v => v.EventsType = typeof(CookieAuthenticationEvents));
+
+            var exception = Assert.Throws<InvalidOperationException>(() => SessionOptions(provider));
+
+            Assert.Contains(SessionScheme, exception.Message);
+            Assert.Contains(nameof(CookieAuthenticationOptions.EventsType), exception.Message);
+        }
+
+        private const string SessionScheme = "Tests.Session";
+
+        // A server whose plug-in registers a cookie scheme after AddAllorsServer, as AddAllorsIdentity
+        // does, and names it as its session.
+        private static ServiceProvider SessionProvider(string environmentName = "Development", Action<CookieAuthenticationOptions> configureCookie = null, Action<IServiceCollection> configure = null)
+        {
+            var services = new ServiceCollection();
+            services.AddLogging();
+            services.AddAllorsServer(Configuration(), new StubWebHostEnvironment { EnvironmentName = environmentName }, new AllorsServerOptions
+            {
+                ApplicationName = "Allors.Tests",
+            });
+
+            services.AddAuthentication().AddCookie(SessionScheme, configureCookie ?? (_ => { }));
+            services.Configure<AllorsAuthenticationOptions>(v => v.SessionScheme = SessionScheme);
+            configure?.Invoke(services);
+
+            return services.BuildServiceProvider();
+        }
+
+        private static CookieAuthenticationOptions SessionOptions(IServiceProvider provider) =>
+            provider.GetRequiredService<IOptionsMonitor<CookieAuthenticationOptions>>().Get(SessionScheme);
+
+        private static RedirectContext<CookieAuthenticationOptions> Redirect(IServiceProvider provider, CookieAuthenticationOptions options, string path)
+        {
+            var context = new DefaultHttpContext { RequestServices = provider };
+            context.Request.Path = path;
+            return new RedirectContext<CookieAuthenticationOptions>(context, CookieScheme(), options, new AuthenticationProperties(), "/sign-in");
+        }
+
+        private static AuthenticationScheme CookieScheme() => new(SessionScheme, null, typeof(CookieAuthenticationHandler));
 
         private static ServiceCollection Services()
         {

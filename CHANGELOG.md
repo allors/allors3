@@ -63,9 +63,9 @@ Changes accumulate under **[Unreleased]** until a version is released.
     `UseAllorsSecurityHeaders` and `ConfigureExceptionHandler`. Response caching, HSTS, HTTPS
     redirection and static files are ASP.NET Core's own calls.
   - ASP.NET Core Identity is registered by its own `AddAllorsIdentity`, which also registers the
-    Identity `IUserResolver` and names the Identity cookie for antiforgery
-    (`AllorsAntiforgeryOptions`). `IdentityPaths.Authentication` lists the Identity pages to
-    rate-limit; rate limiting has no default paths any more.
+    Identity `IUserResolver` and names the Identity application cookie as the browser session
+    (`AllorsAuthenticationOptions.SessionScheme`). `IdentityPaths.Authentication` lists the
+    Identity pages to rate-limit; rate limiting has no default paths any more.
   - `UserInfo` returns the user name of the signed-in identity.
 - Allors logs through `Microsoft.Extensions.Logging` instead of NLog's static `LogManager`, and
   the host of an application decides where the logs go. Before, an application without NLog
@@ -123,6 +123,24 @@ Changes accumulate under **[Unreleased]** until a version is released.
   `services.AddSingleton<IUserFactory, …>()`. Before, the store built a `Person`, so the plug-in
   compiled only for a domain with a class of that name. A guard test in `InheritableSurfaceTests`
   checks that the folders of a plug-in name no class of the concrete domain that selects it.
+- Core owns the browser session, so that every authentication plug-in gets the same one. A
+  plug-in names the cookie scheme that keeps a browser signed in, in
+  `AllorsAuthenticationOptions.SessionScheme`, and Core applies the rules to that scheme,
+  whichever plug-in registers it:
+  - The cookie's defaults: the name `__Host-Allors.Auth`, `HttpOnly`, `SameSite=Lax`, `Secure`,
+    and a sliding lifetime of 8 hours. What the plug-in or the application configures after
+    `AddAllorsServer` wins; the Identity plug-in keeps `Identity:Cookie:ExpireTimeSpan`.
+  - A challenge or a refusal for the Allors API answers 401 or 403 instead of a redirect, and
+    signing in or out drops the antiforgery cookie. Core wraps the events a plug-in sets on its
+    cookie, such as the security stamp validator of ASP.NET Core Identity, and refuses a session
+    cookie that takes its events from `EventsType`.
+  - Antiforgery asks which scheme authenticated the request, not which type the identity has: an
+    unsafe API request that the session scheme authenticated needs a token. A session that signed
+    in with OpenID Connect and a bearer token carry the same identity type.
+
+  These rules were part of `AddAllorsIdentity`. One difference for an application with the
+  Identity plug-in: outside the Allors API the cookie now follows ASP.NET Core's own rule, which
+  answers 401 for an endpoint marked as an API, where the plug-in redirected every request.
 
 ### Removed
 
