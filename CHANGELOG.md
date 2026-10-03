@@ -31,9 +31,12 @@ Changes accumulate under **[Unreleased]** until a version is released.
 - The Entra tree, `dotnet/Entra`, where the concrete `Test` domain selects the Entra plug-in for
   signing in with Microsoft Entra ID: Core ← Entra ← Test. So far it has a database side only;
   the server that signs users in follows. The Entra domain declares the Entra identity of a
-  `User`, the pair `EntraTenantId` and `EntraObjectId`, and what the directory says about the
-  person: `EntraUserName`, `EntraDisplayName` and `EntraEmail`. All five are derived, so nobody
-  writes them through the API. `Users.FindByEntraIdentity` finds the user of an identity.
+  `User`, the pair `EntraTenantId` and `EntraObjectId`, what the directory says about the
+  person: `EntraUserName`, `EntraDisplayName` and `EntraEmail`, and for a guest invited from
+  another organization its home and status: `EntraIdentityProvider` and `EntraIsGuest`. All
+  seven are derived, so nobody writes them through the API. `Users.FindByEntraIdentity` finds
+  the user of an identity. The concrete `Test` domain has two `User` classes, `Person` and
+  `Agent`, the second for programs that call the application with a token of their own.
   `UserEntraIdentityRule` refuses half an identity and a second user with an identity that the
   transaction can see; the store cannot keep an identity unique across transactions, so of
   several users with one identity the lookup finds the oldest. Build targets `DotnetEntraMerge`,

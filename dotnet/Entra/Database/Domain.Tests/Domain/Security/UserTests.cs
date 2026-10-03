@@ -236,6 +236,70 @@ namespace Allors.Database.Domain.Tests
             Assert.False(clone.ExistEntraEmail);
         }
 
+        // A guest of the tenant comes from another organization: the directory names its home in the
+        // identity provider and marks the account as a guest. Both are derived like the other Entra
+        // fields, and both are for showing, so they are assigned to the Default workspace.
+        [Fact]
+        public void TheGuestFieldsAreDerivedAndAssignedToTheDefaultWorkspace()
+        {
+            var administrator = new PersonBuilder(this.Transaction).Build();
+            new UserGroups(this.Transaction).Administrators.AddMember(administrator);
+            var user = this.NewUser(Tenant, Guid.NewGuid());
+
+            this.Transaction.Derive();
+            this.Transaction.Commit();
+
+            Assert.False(user.ExistEntraIdentityProvider);
+            Assert.False(user.ExistEntraIsGuest);
+
+            var security = this.Transaction.Database.Services.Get<ISecurity>();
+            var acl = new DatabaseAccessControl(security, administrator)[user];
+
+            foreach (var guestField in new Meta.IRoleType[] { this.M.User.EntraIdentityProvider, this.M.User.EntraIsGuest })
+            {
+                Assert.True(guestField.RelationType.IsDerived);
+                Assert.True(acl.CanRead(guestField));
+                Assert.False(acl.CanWrite(guestField));
+                Assert.Equal("Default", Assert.Single(guestField.RelationType.AssignedWorkspaceNames));
+            }
+        }
+
+        [Fact]
+        public void ACloneHasNoGuestFields()
+        {
+            var user = this.NewUser(Tenant, Guid.NewGuid());
+            user.EntraIdentityProvider = "https://login.microsoftonline.com/" + OtherTenant + "/v2.0";
+            user.EntraIsGuest = true;
+
+            this.Transaction.Derive();
+
+            var clone = user.Clone();
+
+            Assert.False(clone.ExistEntraIdentityProvider);
+            Assert.False(clone.ExistEntraIsGuest);
+        }
+
+        // A program that calls the application is a user too, of another class than a person. The
+        // Entra domain knows only User, so an agent has the identity, is found by it and shares the
+        // rule with every other user.
+        [Fact]
+        public void AnAgentHasAnEntraIdentityLikeAPerson()
+        {
+            var objectId = Guid.NewGuid();
+            var agent = new AgentBuilder(this.Transaction).Build();
+            agent.EntraTenantId = Tenant;
+            agent.EntraObjectId = objectId;
+
+            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.Equal(agent, new Users(this.Transaction).FindByEntraIdentity(Tenant, objectId));
+
+            var person = this.NewUser(Tenant, objectId);
+
+            var error = Assert.Single(this.Transaction.Derive(false).Errors);
+            Assert.IsType<IDerivationErrorUnique>(error, exactMatch: false);
+            Assert.All(error.Relations, v => Assert.Equal(person, v.Association));
+        }
+
         private Person NewUser(Guid tenantId, Guid objectId)
         {
             var user = new PersonBuilder(this.Transaction).Build();
