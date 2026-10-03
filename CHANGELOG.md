@@ -29,20 +29,44 @@ Changes accumulate under **[Unreleased]** until a version is released.
   `CiDotnetIdentityDatabaseTest`, configuration templates in `config/<provider>/identity`.
   `VirtualDispatchTests` checks the hooks of the Identity layer in the dispatch shims too.
 - The Entra tree, `dotnet/Entra`, where the concrete `Test` domain selects the Entra plug-in for
-  signing in with Microsoft Entra ID: Core ← Entra ← Test. So far it has a database side only;
-  the server that signs users in follows. The Entra domain declares the Entra identity of a
-  `User`, the pair `EntraTenantId` and `EntraObjectId`, what the directory says about the
-  person: `EntraUserName`, `EntraDisplayName` and `EntraEmail`, and for a guest invited from
-  another organization its home and status: `EntraIdentityProvider` and `EntraIsGuest`. All
-  seven are derived, so nobody writes them through the API. `Users.FindByEntraIdentity` finds
-  the user of an identity. The concrete `Test` domain has two `User` classes, `Person` and
-  `Agent`, the second for programs that call the application with a token of their own.
-  `UserEntraIdentityRule` refuses half an identity and a second user with an identity that the
-  transaction can see; the store cannot keep an identity unique across transactions, so of
-  several users with one identity the lookup finds the oldest. Build targets `DotnetEntraMerge`,
-  `DotnetEntraGenerate`, `DotnetEntraDatabaseTest` and `DotnetEntraTest`, CI job
-  `CiDotnetEntraDatabaseTest`. `VirtualDispatchTests` and the plug-in guards of
-  `InheritableSurfaceTests` cover the Entra tree too.
+  signing in with Microsoft Entra ID: Core ← Entra ← Test. It inherits Core as the Identity tree
+  does and has a database side, commands and a server; it has no workspace. The Entra domain
+  declares the Entra identity of a `User`, the pair `EntraTenantId` and `EntraObjectId`, what
+  the directory says about the person: `EntraUserName`, `EntraDisplayName` and `EntraEmail`, and
+  for a guest invited from another organization its home and status: `EntraIdentityProvider` and
+  `EntraIsGuest`. All seven are derived, so nobody writes them through the API.
+  `Users.FindByEntraIdentity` finds the user of an identity. The concrete `Test` domain has two
+  `User` classes, `Person` and `Agent`, the second for programs that call the application with a
+  token of their own. `UserEntraIdentityRule` refuses half an identity and a second user with an
+  identity that the transaction can see; the store cannot keep an identity unique across
+  transactions, so of several users with one identity the lookup finds the oldest.
+  The server side of the plug-in, in the inheritable `Server/Entra` folder, is a thin layer over
+  Microsoft.Identity.Web, which validates every token: `AddAllorsEntra` registers the
+  authorization code flow with PKCE for a browser and the JWT bearer scheme for a client, from
+  the configuration section `Entra` (`TenantId`, `ClientId`, `ClientSecret`, `Instance`,
+  `SessionLifetime`), under the scheme names of `EntraDefaults`, and names them to Core, which
+  selects between session and token per request and owns the session. The server refuses to
+  start without a tenant id, which must be the GUID of one tenant, a client id and a client
+  credential. `EntraAdmission` connects a validated principal to a user: it finds the user of the
+  principal's identity, or has the application's `IUserFactory` create one at the first sign-in
+  and writes the seven fields; a browser sign-in refreshes the profile fields, a bearer token
+  does not. The plug-in never decides who is admitted or of which class a user is, a person's or
+  a program's token alike; `EntraClaims` reads the claims an application's factory decides on.
+  `EntraUserResolver` looks the user up by its identity on every request. `MapAllorsEntra` maps
+  `/entra/sign-in?returnUrl=` for a browser without a session and `POST /entra/sign-out`, which
+  validates the antiforgery token. The session cookie keeps only the Entra identity and the user
+  name. `AddAllorsEntraUsers` connects the users of an application that registers
+  Microsoft.Identity.Web itself. The test server signs in against a fake Entra of its own in its
+  non-inherited `Test/FakeEntra` folder, which serves Microsoft's documents under Microsoft's
+  issuer with endpoints on the test server and signs tokens of Microsoft's shape; the test server
+  routes the requests of the handlers and of Microsoft.Identity.Web's issuer validator for
+  Microsoft's host to it, so the plug-in is tested as configured for production, with every
+  validation on, and without a tenant. Pointed at a real tenant by configuration
+  (`FakeEntra:Enabled` false), the same server signs in against Microsoft. Build targets
+  `DotnetEntraMerge`, `DotnetEntraGenerate`, `DotnetEntraDatabaseTest` and `DotnetEntraTest`,
+  CI job `CiDotnetEntraDatabaseTest`, configuration templates in `config/<provider>/entra`.
+  `VirtualDispatchTests` and the plug-in guards of `InheritableSurfaceTests` cover the Entra
+  tree too.
 - Core selects the scheme that authenticates a request, for an authentication plug-in with both a
   browser session and bearer tokens. `AddAllorsServer` registers the scheme
   `AllorsAuthenticationDefaults.AuthenticationScheme` (`Allors`), which forwards a request with an

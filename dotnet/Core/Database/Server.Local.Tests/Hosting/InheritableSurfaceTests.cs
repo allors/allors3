@@ -23,6 +23,7 @@ namespace Tests
         {
             "dotnet/Core/Database/Server/Core",
             "dotnet/Identity/Database/Server/Identity",
+            "dotnet/Entra/Database/Server/Entra",
         };
 
         // Core's tree: its repository, database side, workspace and tests.

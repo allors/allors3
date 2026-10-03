@@ -31,6 +31,7 @@
   </Folder>
   <Folder Name="/Entra/" />
   <Folder Name="/Entra/Database/">
+    <Project Path="Entra/Database/Commands/Commands.csproj" />
     <Project Path="Entra/Database/Configuration.Tests/Configuration.Tests.csproj" />
     <Project Path="Entra/Database/Configuration/Configuration.csproj" />
     <Project Path="Entra/Database/Domain.Tests/Domain.Tests.csproj" />
@@ -38,6 +39,9 @@
     <Project Path="Entra/Database/Generate/Generate.csproj" />
     <Project Path="Entra/Database/Meta/Meta.csproj" />
     <Project Path="Entra/Database/Resources/Resources.csproj" />
+    <Project Path="Entra/Database/Server.Local.Tests/Server.Local.Tests.csproj" />
+    <Project Path="Entra/Database/Server.Remote.Tests/Server.Remote.Tests.csproj" />
+    <Project Path="Entra/Database/Server/Server.csproj" />
   </Folder>
   <Folder Name="/Entra/Repository/">
     <Project Path="Entra/Repository/Domain/Repository.csproj" />
