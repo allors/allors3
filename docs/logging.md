@@ -9,10 +9,10 @@ repository references NLog, Serilog or log4net.
 
 ## What the host does
 
-- A server registers its providers in `Program`. Core's and Identity's servers log to the
-  console, one line per message. The `Logging` section of `appsettings.json` sets the levels; the
-  templates under `config/` keep `Default` at `Warning` and `Microsoft.Hosting.Lifetime` at
-  `Information`, so the startup lines show.
+- A server registers its providers in `Program`. The servers of Core, Identity and Entra log to
+  the console, one line per message. The `Logging` section of `appsettings.json` sets the
+  levels; the templates under `config/` keep `Default` at `Warning` and
+  `Microsoft.Hosting.Lifetime` at `Information`, so the startup lines show.
 - A commands `Program` registers logging on its service collection and lets McMaster inject it
   with `UseConstructorInjection`. `Load`, `Save` and the Test commands take an `ILogger<T>` in
   their constructor.
@@ -28,6 +28,7 @@ repository references NLog, Serilog or log4net.
 | The commands, by class | Information: begin and end, and the file loaded or saved. Error: the object and relation types that `Upgrade` could not load, and the exception that ends a command. |
 | The code generator | Error: a repository error or a template error. |
 | Identity's `AllorsUserStore` and `LoginModel` | Error: a user could not be created, updated or deleted. Information and warning: a user signed in or was locked out. |
+| Entra's `EntraAdmission` | Information: a user was created for a principal. Warning: a principal was refused, because its token carries no identity or the application's factory did not admit it, or a value of the directory was cut to the size of its field. Error: a user could not be created, because no `IUserFactory` is registered, the factory returned an existing user, the new user is not valid, or the creation failed. |
 
 The server logs no exception of its own. An exception reaches ASP.NET Core, whose exception
 handler middleware logs it once through the application's logger;

@@ -13,8 +13,10 @@ Changes accumulate under **[Unreleased]** until a version is released.
 
 - Documentation for users and maintainers under `docs/`, starting with the domain model:
   functional domains, plug-ins and their hosts, and the concrete domain that selects plug-ins.
-  A page on logging says how the host receives the logs of Allors. `AGENTS.md` holds the rules
-  for these pages.
+  A page on logging says how the host receives the logs of Allors. A page on authentication
+  says how Core, an authentication plug-in and the application's domain share a sign-in, and a
+  how-to guide takes an application through signing in with Microsoft Entra ID. `AGENTS.md`
+  holds the rules for these pages.
 - The build target `DotnetSystemSharedTest` and the CI job `CiDotnetSystemSharedTest` for the
   `Ranges` tests in `dotnet/System/Shared.Tests`, which no target or job ran before.
 - A `Generate.Tests` project for the generator and its templates. `WorkspaceTemplateTests`
@@ -90,9 +92,9 @@ Changes accumulate under **[Unreleased]** until a version is released.
 
 ### Changed
 
-- Document the v3.2 platform scope: System, Core and the Identity plug-in for authentication,
-  continued domain inheritance, and a planned signals-based API for the .NET and TypeScript
-  workspaces with thin UI integrations. Base and Apps are removed without a separate
+- Document the v3.2 platform scope: System, Core and the authentication plug-ins Identity and
+  Entra, continued domain inheritance, and a planned signals-based API for the .NET and
+  TypeScript workspaces with thin UI integrations. Base and Apps are removed without a separate
   continuation; the reactive workspace changes have not landed yet.
 - Update development guidance for the platform scope, a default pull-request workflow in which
   creating a pull request requires approval, one pull request per agreed body of work with a

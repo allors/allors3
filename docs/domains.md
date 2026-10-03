@@ -28,11 +28,10 @@ is not optional: an application that builds on it gets all of it.
 ### Plug-ins
 
 A plug-in provides a functionality that can be provided in more than one way. Identity provides
-authentication with ASP.NET Core Identity. Another plug-in could provide authentication against
-an external OAuth server.
+authentication with ASP.NET Core Identity; Entra provides it with Microsoft Entra ID.
 
 A plug-in extends its host, the domain that leaves the functionality open. Any domain can be a
-host. Core is the host of Identity.
+host. Core is the host of Identity and of Entra.
 
 Plug-ins that provide the same functionality are alternatives, and an application selects one.
 
@@ -73,8 +72,12 @@ These are possible, but not common.
   domains that do not extend each other. Until then a concrete domain cannot extend two
   functional domains, or a functional domain and a plug-in.
 - Identity provides authentication with ASP.NET Core Identity. Its tree, `dotnet/Identity`, is
-  Core ← Identity ← Test. Core's `User` has no authentication field; Identity declares them.
-  `InheritableSurfaceTests.InheritableCoreFoldersNameNoAuthenticationField` checks that.
+  Core ← Identity ← Test. Entra provides authentication with Microsoft Entra ID. Its tree,
+  `dotnet/Entra`, is Core ← Entra ← Test. Core's `User` has no authentication field; each
+  plug-in declares its own, which
+  `InheritableSurfaceTests.InheritableCoreFoldersNameNoAuthenticationField` checks.
+  [Authentication](authentication.md) says how a plug-in connects to Core and to the
+  application's domain.
 - An application that selects no plug-in hosts the Allors API only if it registers an
   `IUserResolver` of its own, as Core's test server does for its test sign-in header. Without
   one, `UseAllorsServer` stops with an actionable error, which

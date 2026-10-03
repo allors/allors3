@@ -15,6 +15,8 @@ The pages in this folder are written for users. Maintainers read them too.
 | Page | Kind | Status | Content |
 | --- | --- | --- | --- |
 | [Domains](domains.md) | Explanation | Planned | The kinds of domains: functional domains, plug-ins and their hosts, and the concrete domain that selects plug-ins. |
+| [Authentication](authentication.md) | Explanation | Current | How Core, an authentication plug-in and the application's domain share a sign-in: the session and the scheme per request, the user resolver, and the user factory. |
+| [Sign in with Microsoft Entra ID](entra.md) | How-to guide | Current | The steps for an application that selects the Entra plug-in: the app registration, the configuration, `Startup`, the user factory, browsers, clients and programs, guests, and a check against a tenant. |
 | [Logging](logging.md) | Reference | Current | How Allors logs through `Microsoft.Extensions.Logging`, what the host does to receive the logs, and which messages Allors writes. |
 
 ## For maintainers

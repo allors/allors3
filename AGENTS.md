@@ -3,12 +3,13 @@
 ## Direction for v3.2
 
 - Allors3 remains actively maintained and developed around **domain inheritance**.
-- The agreed platform scope is **System, Core, and Identity**, a reactive workspace, thin UI
-  integrations, and the test infrastructure needed to verify them. See
-  [ARCHITECTURE.md](ARCHITECTURE.md).
-- Identity is a plug-in for authentication with ASP.NET Core Identity, hosted by Core;
-  authorization stays in Core. See [docs/domains.md](docs/domains.md). The Identity domain holds
-  authentication; Core's `User` keeps no authentication field.
+- The agreed platform scope is **System, Core, and the authentication plug-ins Identity and
+  Entra**, a reactive workspace, thin UI integrations, and the test infrastructure needed to
+  verify them. See [ARCHITECTURE.md](ARCHITECTURE.md).
+- Identity and Entra are plug-ins for authentication, with ASP.NET Core Identity and with
+  Microsoft Entra ID, hosted by Core; authorization stays in Core. See
+  [docs/domains.md](docs/domains.md). The plug-ins hold authentication; Core's `User` keeps no
+  authentication field.
 - Base and Apps were removed without a separate continuation. They continue on the `v3.1` branch.
 - Signals are to become the default API of every workspace, both .NET and TypeScript. Breaking
   workspace API changes for this transition are approved; a parallel compatibility API is not
