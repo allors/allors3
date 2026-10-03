@@ -1,0 +1,217 @@
+# Sign in with Microsoft Entra ID
+
+> **Status: Current.**
+
+How an application signs its users in with Microsoft Entra ID through the Entra plug-in: the
+members of its tenant, the guests invited into it, and the programs registered in it. The
+plug-in is a thin layer over Microsoft.Identity.Web, which validates every token; the plug-in
+connects a validated principal to an Allors user. [Authentication](authentication.md) explains
+how Core, the plug-in and the application's domain share the work; this page gives the steps.
+
+The application's domain extends Entra, as the concrete `Test` domain of the Entra tree does:
+Core ← Entra ← Test. The plug-in signs in one tenant, and it never decides whom the application
+admits: that is the application's factory, step 4.
+
+## 1. Register the application in the tenant
+
+The plug-in needs one app registration, with:
+
+- A **Web** redirect URI for the sign-in, `https://<host>/signin-oidc`, and one for the
+  sign-out, `https://<host>/signout-callback-oidc`: the paths of the OpenID Connect handler.
+  `SignInTests.TheSignInEndpointSendsTheBrowserToEntraWithTheCodeFlow` checks the first.
+- A **client secret**, or a certificate; the browser sign-in redeems its authorization code
+  with it.
+- For clients that call the Allors API on behalf of a person: an **Application ID URI** with a
+  **scope**, which the client asks a token for. A v2.0 token names the application by its client
+  id and a v1.0 token by `api://<client id>`; the plug-in takes both, as
+  `BearerTests.AV1TokenIsAcceptedToo` checks.
+- For programs that call the API with a token of their own: an **app role** that applications
+  may hold, granted to the program's registration.
+- Optional claims where the application needs them: `acct` for guests, `email` for the
+  profile, `idtyp` for programs. Without `acct` nobody counts as a guest, and without `idtyp`
+  a program is recognized by its roles alone.
+
+The tenant id must be the GUID of the application's own tenant: the plug-in signs in that
+tenant's members and guests, and refuses `common`, `organizations` and `consumers` at start-up
+(`EntraOptionsTests.StartUpRefusesAMissingOrSharedTenant`).
+
+## 2. Configure the plug-in
+
+The plug-in reads the `Entra` section, in the shape of the template
+`config/<provider>/entra/appsettings.json`:
+
+```json
+"Entra": {
+  "Instance": "https://login.microsoftonline.com/",
+  "TenantId": "<directory (tenant) id>",
+  "ClientId": "<application (client) id>",
+  "ClientSecret": "<client secret>",
+  "SessionLifetime": "12:00:00"
+}
+```
+
+The section takes the keys of Microsoft.Identity.Web, so a certificate goes under
+`ClientCredentials` as its documentation says. `Instance` defaults to the public cloud and
+`SessionLifetime` to 12 hours, both in `EntraDefaults`. A secret goes in the environment
+rather than the file: `Entra__ClientSecret=…`, as the [README](../README.md#configuration)
+describes. The server refuses to start without a tenant id, a client id or a client
+credential, each with a message that says what to set
+(`EntraOptionsTests.StartUpRefusesAMissingClientId` and `StartUpRefusesAMissingClientCredential`).
+
+## 3. Register the plug-in in `Startup`
+
+After `AddAllorsServer`, register the plug-in and the application's factory; after
+`UseAuthentication` and `UseAuthorization`, map the plug-in's endpoints in the callback of
+`UseAllorsServer`. The test server of the Entra tree, `dotnet/Entra/Database/Server/Startup.cs`,
+does this, and adds its fake Entra for the tests:
+
+```csharp
+services.AddAllorsServer(this.Configuration, this.Environment, new AllorsServerOptions
+{
+    ApplicationName = "Allors.Entra",
+});
+
+services.AddAllorsEntra(this.Configuration, this.Environment);
+
+// The concrete domain creates the users that the plug-in asks for.
+services.AddSingleton<IUserFactory, TestUserFactory>();
+…
+app.UseRouting();
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseAllorsServer(endpoints => endpoints.MapAllorsEntra());
+```
+
+`AddAllorsEntra` registers the authorization code flow with PKCE under the scheme
+`EntraDefaults.OpenIdConnectScheme`, the session cookie under `EntraDefaults.SessionScheme`
+and the JWT bearer scheme under `EntraDefaults.BearerScheme`, and names them to Core together
+with the session lifetime; `EntraOptionsTests` checks each. An application that registers
+Microsoft.Identity.Web itself, with scheme names of its own, calls `AddAllorsEntraUsers` with
+those names instead, and names its schemes to Core in `AllorsAuthenticationOptions`.
+
+## 4. Decide whom the application admits
+
+The plug-in identifies every principal by its tenant id and object id, a person's and a
+program's alike, and finds the user of that identity with `Users.FindByEntraIdentity`. For an
+identity it has no user for, it asks the application's `IUserFactory`, once, at the first
+sign-in. The factory sees the full claims and decides two things: whether the principal is
+admitted, and of which class the user is. `EntraClaims` reads the claims for it:
+`IsApplication()` for a program's own token, `IsGuest()` for a guest, `IdentityProvider()`
+for where the account lives, `UserName()`, `DisplayName()`, `Email()`, `Scopes()`, `Roles()`
+and `ClientApplicationId()`.
+
+The factory of the Entra tree's test domain, `TestUserFactory`, is the example: a program
+becomes an `Agent`, a person a `Person`, and an account whose user name starts with `refused`
+is not admitted:
+
+```csharp
+public User Create(ITransaction transaction, ClaimsPrincipal principal)
+{
+    if (principal.IsApplication())
+    {
+        return new AgentBuilder(transaction).Build();
+    }
+
+    var userName = principal.UserName();
+    if (userName == null || userName.StartsWith(RefusedPrefix, StringComparison.OrdinalIgnoreCase))
+    {
+        return null;
+    }
+
+    return new PersonBuilder(transaction).Build();
+}
+```
+
+The factory returns a new user or null, never an existing one
+(`EntraAdmissionTests.AFactoryThatReturnsAnExistingUserIsRefused`). It gives the user no
+group unless the application wants it to: a new user sees what the access control gives every
+authenticated user. After the factory, the plug-in writes the seven derived fields of the
+Entra domain on the user: the identity, `EntraTenantId` and `EntraObjectId`; what the directory
+says about the account, `EntraUserName`, `EntraDisplayName` and `EntraEmail`; and for a guest
+its home and status, `EntraIdentityProvider` and `EntraIsGuest`. Nobody writes them through
+the API (`UserTests.NobodyWritesTheEntraFieldsThroughAnAccessList`). A browser sign-in
+refreshes the five profile fields when the directory says something new; a bearer token does
+not (`EntraAdmissionTests.ASignInRefreshesTheProfileFieldsAndABearerTokenDoesNot`).
+
+Without a factory the plug-in creates nobody, refuses the sign-in and logs why
+(`EntraAdmissionTests.WithoutAFactoryNobodyIsCreated`). A principal whose token carries no
+`tid` or `oid` claim is refused before the factory is asked.
+
+## 5. A browser
+
+The application sends a browser that has no session to `/entra/sign-in?returnUrl=/…`: the
+plug-in signs it in with Entra and sends it on to the `returnUrl`, a local path only
+(`SignInTests.TheReturnUrlMustBeLocal`). The session cookie keeps the Entra identity and the
+user name, nothing else of the token
+(`EntraAdmissionTests.TheSessionPrincipalCarriesTheIdentityAndTheName`), and Core's rules apply
+to it: an anonymous request to the Allors API gets 401 without a redirect or a cookie
+(`SignInTests.AnAnonymousApiRequestGets401WithoutARedirectOrACookie`), and
+an unsafe API request needs the antiforgery token. An account the factory refuses gets 403, no
+session and no user (`SignInTests.ARefusedAccountGets403WithoutASessionOrAUser`).
+
+The session ends `SessionLifetime` after its sign-in, 12 hours by default, however often the
+browser renewed it: Entra cannot end the application's session, so the application bounds it.
+Each request looks the user up by its identity (`EntraUserResolverTests`), so a user that was
+deleted is gone at its next request.
+
+To sign out, the browser posts to `/entra/sign-out` with the header `X-XSRF-TOKEN` set to the
+value of the `XSRF-TOKEN` cookie that a safe API request handed out, `GET /allors/UserInfo` for
+instance. That ends the session and the sign-in with Entra; without the token the request is
+refused with 400 (`SignOutTests`).
+
+## 6. A client or a program
+
+A client sends an access token of the tenant in the `Authorization: Bearer` header, and Core
+forwards the request to the bearer scheme. A person's token, with a scope of the application,
+creates the person's user at its first request as a browser sign-in does
+(`BearerTests.APersonsTokenCreatesThePersonAtItsFirstRequest`); a program's own token, with an
+app role, creates the user the factory decides on, an `Agent` in the test domain
+(`BearerTests.AProgramsTokenCreatesAnAgent`). The same token finds the same user, and parallel
+first requests of one principal create one user
+(`BearerTests.TheSameTokenFindsTheSameUserAndParallelFirstRequestsCreateOneUser`).
+
+The token rules are Microsoft.Identity.Web's: the signature, the lifetime, the audience, the
+issuer of the tenant, and a scope or an app role. `BearerTests.ATokenMicrosoftWouldNotIssueIs401`
+lists tokens that are refused, among them a token of another tenant and a token with neither
+scope nor role. A request with a bearer token needs no antiforgery token
+(`AntiforgeryTests.ABearerPostNeedsNoXsrfHeader`).
+
+## 7. Guests: the extranet
+
+An application that serves the employees of its customers invites them as B2B guests into its
+own tenant; inviting is the tenant's job, by hand or through Microsoft Graph, not the
+plug-in's. A guest signs in like a member, and the token says where the account comes from:
+`tid` is the application's tenant, `oid` the guest's object in it, `idp` where the account
+lives, the issuer of the home tenant for the employee of another organization, and `acct` is
+`1` when the registration asks for that optional claim.
+
+The plug-in keeps that in two fields. `EntraIdentityProvider` holds the `idp` claim, an issuer
+that carries the home tenant's id, so it is the stable key for which customer a guest belongs
+to; for a member it holds the application's own issuer. `EntraIsGuest` holds the `acct` claim.
+The factory sees the same claims and can map a guest to a class of its own or refuse a home
+tenant it does not know. `SignInTests.AGuestIsAPersonWithItsHomeAndItsStatus` and
+`EntraAdmissionTests.AGuestKeepsItsHomeAndItsStatus` check the fields.
+
+## 8. Check it
+
+The Entra tree's test server signs in against a fake Entra of its own by default, in its
+non-inherited `Test/FakeEntra` folder: it serves Microsoft's documents under Microsoft's issuer,
+with endpoints on the test server, and signs tokens of Microsoft's shape, so the plug-in runs as
+configured for production, with every validation on, without a tenant. Its accounts are in
+`FakeEntraAccounts`: a member, a refused member, a guest and a program.
+
+Pointed at a real tenant, the same server signs in against Microsoft: set `Entra__TenantId`,
+`Entra__ClientId` and `Entra__ClientSecret` to a registration of step 1 whose redirect URIs
+name the server's own address, `https://localhost:5001/signin-oidc` and
+`https://localhost:5001/signout-callback-oidc` for its launch profile, and set
+`FakeEntra__Enabled=false`. Then open `/entra/sign-in?returnUrl=/allors/UserInfo` in a browser
+and sign in.
+
+## What the plug-in leaves to the application
+
+- Authorization. A new user has no group; which Entra groups or roles mean what is the
+  application's mapping, if it wants one.
+- Microsoft Graph, and tokens for other APIs: the plug-in validates tokens and acquires none.
+- Other tenants, and Microsoft Entra External ID: the plug-in signs in one tenant, its members
+  and its guests.
+- Inviting guests and provisioning users ahead of their first sign-in.

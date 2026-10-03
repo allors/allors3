@@ -38,6 +38,10 @@ partial class Build
         .DependsOn(Reset)
         .DependsOn(DotnetIdentityDatabaseTest);
 
+    private Target CiDotnetEntraDatabaseTest => _ => _
+        .DependsOn(Reset)
+        .DependsOn(DotnetEntraDatabaseTest);
+
     private Target CiTypescriptWorkspaceTest => _ => _
         .DependsOn(Reset)
         .DependsOn(TypescriptInstall)

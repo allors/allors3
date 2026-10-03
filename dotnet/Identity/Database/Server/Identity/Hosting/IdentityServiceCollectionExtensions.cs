@@ -6,11 +6,9 @@
 namespace Allors.Server
 {
     using System;
-    using System.Threading.Tasks;
     using Allors.Security;
     using Allors.Services;
     using Microsoft.AspNetCore.Hosting;
-    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
@@ -63,59 +61,13 @@ namespace Allors.Server
             services.Configure<IdentityOptions>(configuration.GetSection("Identity"));
 
             // Authentication is the ASP.NET Core Identity application cookie, configured as the default
-            // scheme by AddDefaultIdentity above. Its hardening and revocation lever follow.
-            services.ConfigureApplicationCookie(cookieOptions =>
+            // scheme by AddDefaultIdentity above. It is the browser session of this plug-in: Core
+            // applies the rules of the session to it. Identity:Cookie:ExpireTimeSpan sets its
+            // lifetime, in place of Core's default.
+            if (TimeSpan.TryParse(configuration["Identity:Cookie:ExpireTimeSpan"], out var expireTimeSpan))
             {
-                cookieOptions.Cookie.Name = environment.IsDevelopment() ? "Allors.Auth" : "__Host-Allors.Auth";
-                cookieOptions.Cookie.HttpOnly = true;
-                cookieOptions.Cookie.SameSite = SameSiteMode.Lax;
-                // Development runs over plain http (the C#/Playwright fixtures use CookieContainer,
-                // which refuses Secure cookies over http); production is https at the edge.
-                cookieOptions.Cookie.SecurePolicy = environment.IsDevelopment() ? CookieSecurePolicy.SameAsRequest : CookieSecurePolicy.Always;
-                cookieOptions.SlidingExpiration = true;
-                cookieOptions.ExpireTimeSpan = TimeSpan.TryParse(configuration["Identity:Cookie:ExpireTimeSpan"], out var expireTimeSpan)
-                    ? expireTimeSpan
-                    : TimeSpan.FromHours(8);
-
-                // JSON API callers get a raw status code, not a login-page redirect.
-                cookieOptions.Events.OnRedirectToLogin = context =>
-                {
-                    if (context.Request.Path.StartsWithSegments("/allors"))
-                    {
-                        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                        return Task.CompletedTask;
-                    }
-
-                    context.Response.Redirect(context.RedirectUri);
-                    return Task.CompletedTask;
-                };
-                cookieOptions.Events.OnRedirectToAccessDenied = context =>
-                {
-                    if (context.Request.Path.StartsWithSegments("/allors"))
-                    {
-                        context.Response.StatusCode = StatusCodes.Status403Forbidden;
-                        return Task.CompletedTask;
-                    }
-
-                    context.Response.Redirect(context.RedirectUri);
-                    return Task.CompletedTask;
-                };
-
-                // An XSRF token minted for one identity does not validate for the next: drop the token
-                // cookie on sign-in and sign-out so the next safe /allors GET (the SPA re-bootstrap)
-                // re-issues one bound to the new authentication state.
-                var secureXsrfCookie = !environment.IsDevelopment();
-                cookieOptions.Events.OnSignedIn = context =>
-                {
-                    AllorsAntiforgeryMiddleware.DeleteCookie(context.HttpContext, secureXsrfCookie);
-                    return Task.CompletedTask;
-                };
-                cookieOptions.Events.OnSigningOut = context =>
-                {
-                    AllorsAntiforgeryMiddleware.DeleteCookie(context.HttpContext, secureXsrfCookie);
-                    return Task.CompletedTask;
-                };
-            });
+                services.ConfigureApplicationCookie(cookieOptions => cookieOptions.ExpireTimeSpan = expireTimeSpan);
+            }
 
             // Revocation lever: the built-in SecurityStampValidator re-checks the persisted security
             // stamp on this interval, so a rotated stamp (disable / "log out everywhere") invalidates
@@ -130,10 +82,11 @@ namespace Allors.Server
                 razorPagesOptions.Conventions.Add(new DisableIdentityPagesConvention(disabledIdentityPages)));
 
             // How Identity connects to Core: it tells Core who the signed-in user is, and names its
-            // cookie scheme so that Core's antiforgery protects the API against that cookie.
+            // application cookie as the session, so that Core hardens that cookie, answers the Allors
+            // API with a status code and protects it against the cookie with antiforgery.
             services.AddSingleton<IUserResolver, IdentityUserResolver>();
-            services.Configure<AllorsAntiforgeryOptions>(antiforgeryOptions =>
-                antiforgeryOptions.AuthenticationTypes.Add(IdentityConstants.ApplicationScheme));
+            services.Configure<AllorsAuthenticationOptions>(authenticationOptions =>
+                authenticationOptions.SessionScheme = IdentityConstants.ApplicationScheme);
 
             return services;
         }

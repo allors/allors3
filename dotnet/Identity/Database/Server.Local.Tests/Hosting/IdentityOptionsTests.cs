@@ -7,8 +7,12 @@ namespace Tests
 {
     using System;
     using System.Collections.Generic;
+    using System.Threading.Tasks;
     using Allors.Server;
+    using Microsoft.AspNetCore.Authentication;
+    using Microsoft.AspNetCore.Authentication.Cookies;
     using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
@@ -52,6 +56,91 @@ namespace Tests
 
             Assert.Equal(3, identityOptions.Lockout.MaxFailedAccessAttempts);
             Assert.Equal(20, identityOptions.Password.RequiredLength);
+        }
+
+        // The application cookie of ASP.NET Core Identity is the browser session of this plug-in. The
+        // plug-in names it, and Core applies the rules of the session to it: the cookie of every
+        // plug-in is hardened in one place.
+        [Fact]
+        public void TheApplicationCookieIsTheSession()
+        {
+            using var provider = Provider();
+
+            Assert.Equal(IdentityConstants.ApplicationScheme, provider.GetRequiredService<IOptions<AllorsAuthenticationOptions>>().Value.SessionScheme);
+            Assert.Equal("Allors.Auth", ApplicationCookie(provider).Cookie.Name);
+        }
+
+        // Identity registers its cookie after Core and sets the events of the cookie itself. Core
+        // wraps them, so Identity keeps revalidating the security stamp of a signed-in user.
+        [Fact]
+        public void TheSessionKeepsTheSecurityStampValidatorOfIdentity()
+        {
+            using var provider = Provider();
+
+            var validatePrincipal = ApplicationCookie(provider).Events.OnValidatePrincipal;
+
+            Assert.Equal(typeof(SecurityStampValidator), validatePrincipal.Method.DeclaringType);
+        }
+
+        // The same holds the other way round: Identity replaces the events of the cookie after Core
+        // registered, and Core's rule for the Allors API still applies.
+        [Fact]
+        public async Task TheSessionAnswersTheApiWith401UnderIdentity()
+        {
+            using var provider = Provider();
+            var cookie = ApplicationCookie(provider);
+            var context = new DefaultHttpContext { RequestServices = provider };
+            context.Request.Path = "/allors/pull";
+            var scheme = new AuthenticationScheme(IdentityConstants.ApplicationScheme, null, typeof(CookieAuthenticationHandler));
+
+            await cookie.Events.RedirectToLogin(new RedirectContext<CookieAuthenticationOptions>(context, scheme, cookie, new AuthenticationProperties(), "/Identity/Account/Login"));
+
+            Assert.Equal(StatusCodes.Status401Unauthorized, context.Response.StatusCode);
+            Assert.False(context.Response.Headers.ContainsKey("Location"));
+        }
+
+        [Fact]
+        public void SessionLifetimeFollowsConfiguration()
+        {
+            using var provider = Provider(new Dictionary<string, string>
+            {
+                ["Identity:Cookie:ExpireTimeSpan"] = "01:30:00",
+            });
+
+            Assert.Equal(TimeSpan.FromMinutes(90), ApplicationCookie(provider).ExpireTimeSpan);
+        }
+
+        [Fact]
+        public void SessionLifetimeIsCoresDefaultWithoutConfiguration()
+        {
+            using var provider = Provider();
+
+            Assert.Equal(TimeSpan.FromHours(8), ApplicationCookie(provider).ExpireTimeSpan);
+        }
+
+        private static CookieAuthenticationOptions ApplicationCookie(IServiceProvider provider) =>
+            provider.GetRequiredService<IOptionsMonitor<CookieAuthenticationOptions>>().Get(IdentityConstants.ApplicationScheme);
+
+        // The services of a server that selects the Identity plug-in, with the environment the web
+        // host registers and the Identity UI asks for.
+        private static ServiceProvider Provider(IDictionary<string, string> configurationValues = null)
+        {
+            var configuration = new ConfigurationBuilder()
+                .AddInMemoryCollection(configurationValues ?? new Dictionary<string, string>())
+                .Build();
+
+            var services = new ServiceCollection();
+            services.AddLogging();
+            services.AddAllorsServer(configuration, new StubWebHostEnvironment(), new AllorsServerOptions
+            {
+                ApplicationName = "Allors.Tests",
+            });
+            services.AddAllorsIdentity(configuration, new StubWebHostEnvironment());
+
+            // Registered last: MVC would otherwise look for an assembly with the application's name.
+            services.AddSingleton<IWebHostEnvironment>(new StubWebHostEnvironment());
+
+            return services.BuildServiceProvider();
         }
 
         private static IdentityOptions Resolve(IDictionary<string, string> configurationValues = null)

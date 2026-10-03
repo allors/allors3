@@ -7,6 +7,7 @@ namespace Tests
 {
     using System;
     using System.Linq;
+    using System.Security.Claims;
     using System.Threading;
     using System.Threading.Tasks;
     using Allors.Database;
@@ -81,6 +82,78 @@ namespace Tests
             Assert.True(result.Succeeded, string.Join(", ", result.Errors.Select(v => v.Description)));
         }
 
+        // The plug-in does not know the classes of the application's domain, so it creates no user
+        // itself: the application's user factory does, and without one nobody is created.
+        [Fact]
+        public async Task CreateAsyncWithoutAUserFactoryFailsAndNamesTheSeam()
+        {
+            var database = NewDatabase();
+            var store = new AllorsUserStore(new StubDatabaseService { Database = database });
+
+            var result = await store.CreateAsync(NewIdentityUser(), CancellationToken.None);
+
+            Assert.False(result.Succeeded);
+            Assert.Contains(result.Errors, v => v.Description.Contains(nameof(IUserFactory), StringComparison.Ordinal));
+            Assert.False(ExistsUser(database, "jane@example.com"));
+        }
+
+        [Fact]
+        public async Task CreateAsyncFailsWhenTheApplicationDoesNotAdmitTheUser()
+        {
+            var database = NewDatabase();
+            var store = new AllorsUserStore(new StubDatabaseService { Database = database }, userFactory: new RefusingUserFactory());
+
+            var result = await store.CreateAsync(NewIdentityUser(), CancellationToken.None);
+
+            Assert.False(result.Succeeded);
+            Assert.False(ExistsUser(database, "jane@example.com"));
+        }
+
+        // What ASP.NET Core Identity knows about the person it is asked to store: a name and an
+        // e-mail address. Nobody signed in, so the principal is not authenticated.
+        [Fact]
+        public async Task CreateAsyncTellsTheFactoryWhatIdentityKnowsAboutTheUser()
+        {
+            var factory = new PersonFactory();
+            var store = new AllorsUserStore(new StubDatabaseService { Database = NewDatabase() }, userFactory: factory);
+
+            await store.CreateAsync(NewIdentityUser(), CancellationToken.None);
+
+            Assert.Equal("jane@example.com", factory.Principal?.FindFirstValue(ClaimTypes.Name));
+            Assert.Equal("jane@example.com", factory.Principal?.FindFirstValue(ClaimTypes.Email));
+            Assert.False(factory.Principal?.Identity?.IsAuthenticated);
+        }
+
+        // The build hooks of the Identity domain give a new user a security stamp and switch lockout
+        // on. The store writes what ASP.NET Core Identity handed it, and must not undo either with
+        // an IdentityUser that carries neither.
+        [Fact]
+        public async Task CreateAsyncLeavesANewUserWithASecurityStampAndLockoutEnabled()
+        {
+            var store = NewStore();
+            var identityUser = NewIdentityUser();
+            identityUser.SecurityStamp = null;
+            identityUser.LockoutEnabled = false;
+
+            await store.CreateAsync(identityUser, CancellationToken.None);
+            var created = await store.FindByIdAsync(identityUser.Id, CancellationToken.None);
+
+            Assert.False(string.IsNullOrEmpty(created?.SecurityStamp));
+            Assert.True(created?.LockoutEnabled);
+        }
+
+        [Fact]
+        public async Task CreateAsyncStoresTheSecurityStampOfTheIdentityUser()
+        {
+            var store = NewStore();
+            var identityUser = NewIdentityUser();
+
+            await store.CreateAsync(identityUser, CancellationToken.None);
+            var created = await store.FindByIdAsync(identityUser.Id, CancellationToken.None);
+
+            Assert.Equal("a-stamp", created?.SecurityStamp);
+        }
+
         private static IdentityUser NewIdentityUser() =>
             new IdentityUser
             {
@@ -91,7 +164,14 @@ namespace Tests
                 SecurityStamp = "a-stamp",
             };
 
-        private static AllorsUserStore NewStore() => new AllorsUserStore(new StubDatabaseService { Database = NewDatabase() });
+        private static AllorsUserStore NewStore() => new AllorsUserStore(new StubDatabaseService { Database = NewDatabase() }, userFactory: new PersonFactory());
+
+        private static bool ExistsUser(IDatabase database, string userName)
+        {
+            using var transaction = database.CreateTransaction();
+            var m = database.Services.Get<MetaPopulation>();
+            return new Users(transaction).FindBy(m.User.UserName, userName) != null;
+        }
 
         private static IDatabase NewDatabase()
         {
@@ -107,6 +187,23 @@ namespace Tests
             new Setup(database, new Config { SetupSecurity = false }).Apply();
 
             return database;
+        }
+
+        // The user factory of this tree's concrete domain, Test, whose users are people.
+        private sealed class PersonFactory : IUserFactory
+        {
+            public ClaimsPrincipal Principal { get; private set; }
+
+            public User Create(ITransaction transaction, ClaimsPrincipal principal)
+            {
+                this.Principal = principal;
+                return new PersonBuilder(transaction).Build();
+            }
+        }
+
+        private sealed class RefusingUserFactory : IUserFactory
+        {
+            public User Create(ITransaction transaction, ClaimsPrincipal principal) => null;
         }
 
         private sealed class StubDatabaseService : IDatabaseService

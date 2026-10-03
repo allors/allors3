@@ -9,6 +9,7 @@ namespace Allors.Server
     using System.Linq;
     using System.Net;
     using Allors.Services;
+    using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.HttpOverrides;
@@ -16,6 +17,7 @@ namespace Allors.Server
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
+    using Microsoft.Extensions.Options;
 
     public static class AllorsServerApplicationBuilderExtensions
     {
@@ -46,6 +48,31 @@ namespace Allors.Server
             {
                 throw new InvalidOperationException(
                     $"The Allors database is not set. Build it and assign {nameof(IDatabaseService)}.{nameof(IDatabaseService.Database)} before app.UseAllorsServer().");
+            }
+
+            // The schemes a plug-in names must exist, and the selecting scheme has nothing to select
+            // until a plug-in names its schemes: a server that makes it the default without them
+            // stops here, not at its first request.
+            var authentication = app.ApplicationServices.GetRequiredService<IOptions<AllorsAuthenticationOptions>>().Value;
+            var schemes = app.ApplicationServices.GetRequiredService<IAuthenticationSchemeProvider>();
+            foreach (var scheme in new[] { authentication.SessionScheme, authentication.BearerScheme, authentication.ChallengeScheme }.Where(v => v != null))
+            {
+                if (schemes.GetSchemeAsync(scheme).GetAwaiter().GetResult() == null)
+                {
+                    throw new InvalidOperationException(
+                        $"{nameof(AllorsAuthenticationOptions)} names the scheme '{scheme}', but no such scheme is registered. " +
+                        "Register it, or name the scheme that the authentication plug-in registered.");
+                }
+            }
+
+            var defaults = app.ApplicationServices.GetRequiredService<IOptions<AuthenticationOptions>>().Value;
+            if (string.Equals(defaults.DefaultAuthenticateScheme ?? defaults.DefaultScheme, AllorsAuthenticationDefaults.AuthenticationScheme, StringComparison.Ordinal) &&
+                authentication.SessionScheme == null && authentication.BearerScheme == null)
+            {
+                throw new InvalidOperationException(
+                    $"The default authentication scheme is '{AllorsAuthenticationDefaults.AuthenticationScheme}', which selects the session or the bearer scheme per request, " +
+                    $"but {nameof(AllorsAuthenticationOptions)} names neither a {nameof(AllorsAuthenticationOptions.SessionScheme)} nor a {nameof(AllorsAuthenticationOptions.BearerScheme)}. " +
+                    "Select an authentication plug-in that names them, or set another default scheme.");
             }
 
             var environment = app.ApplicationServices.GetRequiredService<IWebHostEnvironment>();

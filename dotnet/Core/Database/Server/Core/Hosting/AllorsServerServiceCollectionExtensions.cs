@@ -10,6 +10,7 @@ namespace Allors.Server
     using System.Linq;
     using System.Threading.RateLimiting;
     using Allors.Services;
+    using Microsoft.AspNetCore.Authentication.Cookies;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.DataProtection;
@@ -20,6 +21,7 @@ namespace Allors.Server
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Options;
 
     public static partial class AllorsServerServiceCollectionExtensions
     {
@@ -48,10 +50,30 @@ namespace Allors.Server
 
             services.AddAuthorization();
 
+            // The browser session. An authentication plug-in names its session scheme in
+            // AllorsAuthenticationOptions, and Core applies the rules of the session to that cookie,
+            // whichever plug-in registers it and whenever it does.
+            services.AddOptions<AllorsAuthenticationOptions>();
+            services.AddSingleton<IConfigureOptions<CookieAuthenticationOptions>>(provider =>
+                new AllorsSessionCookie(provider.GetRequiredService<IOptions<AllorsAuthenticationOptions>>(), environment));
+            services.AddSingleton<IPostConfigureOptions<CookieAuthenticationOptions>>(provider =>
+                new AllorsSessionCookie(provider.GetRequiredService<IOptions<AllorsAuthenticationOptions>>(), environment));
+
+            // The scheme that selects which named scheme authenticates a request: the bearer scheme
+            // for a request that carries a bearer token, the session scheme for every other request.
+            // A plug-in with both makes it the default scheme; until then it does nothing.
+            services.AddAuthentication().AddPolicyScheme(AllorsAuthenticationDefaults.AuthenticationScheme, null, policySchemeOptions =>
+                policySchemeOptions.ForwardDefaultSelector = context =>
+                {
+                    var authentication = context.RequestServices.GetRequiredService<IOptions<AllorsAuthenticationOptions>>().Value;
+                    var bearer = authentication.BearerScheme != null &&
+                                 context.Request.Headers.Authorization.ToString().StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase);
+                    return bearer ? authentication.BearerScheme : authentication.SessionScheme ?? authentication.BearerScheme;
+                });
+
             // A browser that signs in with a cookie sends that cookie with every request on its own, so
-            // an unsafe API request authenticated by it must also carry an antiforgery token. The
-            // authentication plug-ins name their cookie schemes in AllorsAntiforgeryOptions.
-            services.AddOptions<AllorsAntiforgeryOptions>();
+            // an unsafe API request that the session scheme authenticated must also carry an
+            // antiforgery token.
             services.AddAntiforgery(antiforgeryOptions =>
             {
                 antiforgeryOptions.HeaderName = "X-XSRF-TOKEN";
