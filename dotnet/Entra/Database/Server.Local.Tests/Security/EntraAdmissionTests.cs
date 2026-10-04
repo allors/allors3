@@ -96,6 +96,34 @@ namespace Tests
             Assert.False(user.EntraIsGuest);
         }
 
+        [Theory]
+        [InlineData(EntraClaims.RolesClaim)]
+        [InlineData(ClaimTypes.Role)]
+        public void APersonWithAnApplicationRoleAndNoScopesIsAdmittedAsAPerson(string roleClaim)
+        {
+            var database = NewDatabase();
+            var admission = new EntraAdmission(new StubDatabaseService { Database = database }, userFactory: new Allors.Server.TestUserFactory());
+
+            var reason = admission.Admit(BrowserPersonWithRole(roleClaim), signIn: true);
+
+            Assert.Null(reason);
+            Assert.IsType<Person>(FindUser(database, Tenant, ObjectId));
+        }
+
+        [Theory]
+        [InlineData(EntraClaims.RolesClaim)]
+        [InlineData(ClaimTypes.Role)]
+        public void ARefusedPersonWithAnApplicationRoleLeavesNoUser(string roleClaim)
+        {
+            var database = NewDatabase();
+            var admission = new EntraAdmission(new StubDatabaseService { Database = database }, userFactory: new Allors.Server.TestUserFactory());
+
+            var reason = admission.Admit(BrowserPersonWithRole(roleClaim, "refused@example.com"), signIn: true);
+
+            Assert.Contains("did not admit", reason, StringComparison.Ordinal);
+            Assert.Empty(AllUsers(database));
+        }
+
         [Fact]
         public void AKnownIdentityIsFoundAndTheFactoryIsNotAsked()
         {
@@ -265,6 +293,18 @@ namespace Tests
                 new(EntraClaims.ScopeClaim, "access_as_user"),
             };
             claims.AddRange(more);
+            return new ClaimsPrincipal(new ClaimsIdentity(claims, "Tests", EntraClaims.PreferredUserNameClaim, ClaimTypes.Role));
+        }
+
+        private static ClaimsPrincipal BrowserPersonWithRole(string roleClaim, string userName = "jane@example.com")
+        {
+            var claims = Person().Claims
+                .Where(v => v.Type != EntraClaims.ScopeClaim && v.Type != EntraClaims.PreferredUserNameClaim)
+                .Concat(new[]
+                {
+                    new Claim(EntraClaims.PreferredUserNameClaim, userName),
+                    new Claim(roleClaim, "People.Access"),
+                });
             return new ClaimsPrincipal(new ClaimsIdentity(claims, "Tests", EntraClaims.PreferredUserNameClaim, ClaimTypes.Role));
         }
 

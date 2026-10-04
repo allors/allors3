@@ -28,8 +28,8 @@ The plug-in needs one app registration, with:
 - For programs that call the API with a token of their own: an **app role** that applications
   may hold, granted to the program's registration.
 - Optional claims where the application needs them: `acct` for guests, `email` for the
-  profile, `idtyp` for programs. Without `acct` nobody counts as a guest, and without `idtyp`
-  a program is recognized by its roles alone.
+  profile, and `idtyp` on access tokens when the factory uses `IsApplication()` to distinguish
+  programs (step 4). Without `acct` nobody counts as a guest.
 
 The tenant id must be the GUID of the application's own tenant: the plug-in signs in that
 tenant's members and guests, and refuses `common`, `organizations` and `consumers` at start-up
@@ -94,11 +94,18 @@ those names instead, and names its schemes to Core in `AllorsAuthenticationOptio
 The plug-in identifies every principal by its tenant id and object id, a person's and a
 program's alike, and finds the user of that identity with `Users.FindByEntraIdentity`. For an
 identity it has no user for, it asks the application's `IUserFactory`, once, at the first
-sign-in. The factory sees the full claims and decides two things: whether the principal is
-admitted, and of which class the user is. `EntraClaims` reads the claims for it:
+sign-in. The factory sees the validated principal’s claims and decides two things: whether
+the principal is admitted, and of which class the user is. `EntraClaims` reads the claims for it:
 `IsApplication()` for a program's own token, `IsGuest()` for a guest, `IdentityProvider()`
 for where the account lives, `UserName()`, `DisplayName()`, `Email()`, `Scopes()`, `Roles()`
 and `ClientApplicationId()`.
+
+`IsApplication()` recognizes only `idtyp=app`. An application that uses this helper must
+configure the optional `idtyp` access-token claim in its registration. A person's ID token
+can contain application roles without scopes, so those claims alone do not identify a
+program. `EntraAdmissionTests.APersonWithAnApplicationRoleAndNoScopesIsAdmittedAsAPerson` and
+`ARefusedPersonWithAnApplicationRoleLeavesNoUser` check that these users remain subject to
+the factory's person-admission rules.
 
 The factory of the Entra tree's test domain, `TestUserFactory`, is the example: a program
 becomes an `Agent`, a person a `Person`, and an account whose user name starts with `refused`
@@ -147,7 +154,9 @@ user name, nothing else of the token
 to it: an anonymous request to the Allors API gets 401 without a redirect or a cookie
 (`SignInTests.AnAnonymousApiRequestGets401WithoutARedirectOrACookie`), and
 an unsafe API request needs the antiforgery token. An account the factory refuses gets 403, no
-session and no user (`SignInTests.ARefusedAccountGets403WithoutASessionOrAUser`).
+session and no user (`SignInTests.ARefusedAccountGets403WithoutASessionOrAUser`). Admission
+runs only after the protocol checks succeed, including the nonce; a rejected callback leaves
+no user or session (`SignInTests.ASignInWithTheWrongNonceLeavesNoSessionOrUser`).
 
 The session ends `SessionLifetime` after its sign-in, 12 hours by default, however often the
 browser renewed it: Entra cannot end the application's session, so the application bounds it.
@@ -169,6 +178,11 @@ app role, creates the user the factory decides on, an `Agent` in the test domain
 (`BearerTests.AProgramsTokenCreatesAnAgent`). The same token finds the same user, and parallel
 first requests of one principal create one user
 (`BearerTests.TheSameTokenFindsTheSameUserAndParallelFirstRequestsCreateOneUser`).
+`UserInfo` returns the person's name from either a v2 token's `preferred_username` or a v1
+token's `upn`, including its mapped form (`BearerTests.AV1TokenReturnsTheUserName` and
+`EntraOptionsTests.AV1UserNameIsAvailableToTheApplicationsTokenHandler`). An application that
+selects its own name claim or retriever keeps that choice
+(`EntraOptionsTests.TheApplicationsBearerNameSelectionIsPreserved`).
 
 The token rules are Microsoft.Identity.Web's: the signature, the lifetime, the audience, the
 issuer of the tenant, and a scope or an app role. `BearerTests.ATokenMicrosoftWouldNotIssueIs401`

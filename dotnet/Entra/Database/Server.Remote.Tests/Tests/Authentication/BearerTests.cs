@@ -66,6 +66,37 @@ namespace Allors.Server.Tests
             Assert.Equal(FakeEntra.IssuerV1(this.TenantId), user.EntraIdentityProvider);
         }
 
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task AV1TokenReturnsTheUserName(bool alreadyAdmitted)
+        {
+            string existingUserId = null;
+            if (alreadyAdmitted)
+            {
+                var firstToken = await this.PersonTokenAsync(FakeEntraAccounts.Tester);
+                var firstResponse = await this.HttpClient.SendAsync(Bearer(HttpMethod.Get, "/allors/UserInfo", firstToken));
+                Assert.Equal(HttpStatusCode.OK, firstResponse.StatusCode);
+                existingUserId = (await JsonAsync(firstResponse)).GetProperty("u").GetString();
+            }
+
+            var token = await this.PersonTokenAsync(FakeEntraAccounts.Tester, ("x_token_version", "1"));
+
+            var response = await this.HttpClient.SendAsync(Bearer(HttpMethod.Get, "/allors/UserInfo", token));
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            var userInfo = await JsonAsync(response);
+            var user = this.FindUser(FakeEntraAccounts.Tester);
+            Assert.IsType<Person>(user);
+            Assert.Equal(user.Id.ToString(), userInfo.GetProperty("u").GetString());
+            Assert.Equal(FakeEntraAccounts.Tester.UserName, userInfo.GetProperty("userName").GetString());
+            Assert.Single(this.AllUsers());
+            if (alreadyAdmitted)
+            {
+                Assert.Equal(existingUserId, userInfo.GetProperty("u").GetString());
+            }
+        }
+
         [Fact]
         public async Task TheSameTokenFindsTheSameUserAndParallelFirstRequestsCreateOneUser()
         {

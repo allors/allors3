@@ -7,6 +7,9 @@ namespace Tests
 {
     using System;
     using System.Collections.Generic;
+    using System.Security.Claims;
+    using System.Text.Json;
+    using System.Threading.Tasks;
     using Allors.Security;
     using Allors.Server;
     using Allors.Services;
@@ -131,6 +134,215 @@ namespace Tests
             Assert.NotNull(provider.GetRequiredService<EntraAdmission>());
         }
 
+        // A v1 token's upn may already have been mapped by the handler. Both forms name the
+        // principal before the application's callback and the admission factory inspect it.
+        [Theory]
+        [InlineData(EntraClaims.UpnClaim)]
+        [InlineData(ClaimTypes.Upn)]
+        public async Task AV1UserNameIsAvailableToTheApplicationsTokenHandler(string claimType)
+        {
+            string observedName = null;
+            using var provider = Provider(configure: services =>
+                services.Configure<JwtBearerOptions>(EntraDefaults.BearerScheme, options =>
+                    options.Events.OnTokenValidated = context =>
+                    {
+                        observedName = context.Principal.Identity.Name;
+                        context.Fail("Stop before admission in this test.");
+                        return Task.CompletedTask;
+                    }));
+            var options = provider.GetRequiredService<IOptionsMonitor<JwtBearerOptions>>().Get(EntraDefaults.BearerScheme);
+            var principal = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(claimType, "jane@example.com") }, "Tests", options.TokenValidationParameters.NameClaimType, ClaimTypes.Role));
+            var context = new Microsoft.AspNetCore.Authentication.JwtBearer.TokenValidatedContext(
+                new DefaultHttpContext { RequestServices = provider },
+                new AuthenticationScheme(EntraDefaults.BearerScheme, null, typeof(JwtBearerHandler)), options)
+            {
+                Principal = principal,
+            };
+
+            await options.Events.TokenValidated(context);
+
+            Assert.Equal("jane@example.com", observedName);
+        }
+
+        // Choosing a name claim or a retriever belongs to the application. The plug-in does not
+        // supply a preferred_username that the application's choice deliberately did not select.
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task TheApplicationsBearerNameSelectionIsPreserved(bool useRetriever)
+        {
+            using var provider = Provider(configure: services =>
+                services.Configure<JwtBearerOptions>(EntraDefaults.BearerScheme, options =>
+                {
+                    if (useRetriever)
+                    {
+                        options.TokenValidationParameters.NameClaimTypeRetriever = (_, _) => EntraClaims.PreferredUserNameClaim;
+                    }
+                    else
+                    {
+                        options.TokenValidationParameters.NameClaimType = "custom_name";
+                    }
+
+                    options.Events.OnTokenValidated = context =>
+                    {
+                        context.Fail("Stop before admission in this test.");
+                        return Task.CompletedTask;
+                    };
+                }));
+            var options = provider.GetRequiredService<IOptionsMonitor<JwtBearerOptions>>().Get(EntraDefaults.BearerScheme);
+            var nameClaimType = options.TokenValidationParameters.NameClaimTypeRetriever?.Invoke(null, null) ?? options.TokenValidationParameters.NameClaimType;
+            var principal = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(ClaimTypes.Upn, "jane@example.com") }, "Tests", nameClaimType, ClaimTypes.Role));
+            var context = new Microsoft.AspNetCore.Authentication.JwtBearer.TokenValidatedContext(
+                new DefaultHttpContext { RequestServices = provider },
+                new AuthenticationScheme(EntraDefaults.BearerScheme, null, typeof(JwtBearerHandler)), options)
+            {
+                Principal = principal,
+            };
+
+            await options.Events.TokenValidated(context);
+
+            Assert.Null(principal.Identity.Name);
+            Assert.False(principal.HasClaim(v => v.Type == EntraClaims.PreferredUserNameClaim));
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task TheApplicationsTicketHandlerCanStopAdmission(bool skip)
+        {
+            using var provider = Provider(configure: services =>
+                services.Configure<OpenIdConnectOptions>(EntraDefaults.OpenIdConnectScheme, options =>
+                    options.Events.OnTicketReceived = context =>
+                    {
+                        if (skip)
+                        {
+                            context.SkipHandler();
+                        }
+                        else
+                        {
+                            context.HandleResponse();
+                        }
+
+                        return Task.CompletedTask;
+                    }));
+            var options = OpenIdConnect(provider);
+            var principal = new ClaimsPrincipal(new ClaimsIdentity("Tests"));
+            var context = new TicketReceivedContext(
+                new DefaultHttpContext { RequestServices = provider },
+                new AuthenticationScheme(EntraDefaults.OpenIdConnectScheme, null, typeof(OpenIdConnectHandler)), options,
+                new AuthenticationTicket(principal, new AuthenticationProperties(), EntraDefaults.OpenIdConnectScheme));
+
+            await options.Events.TicketReceived(context);
+
+            Assert.Same(principal, context.Principal);
+            Assert.Equal(skip, context.Result.Skipped);
+            Assert.Equal(!skip, context.Result.Handled);
+        }
+
+        [Fact]
+        public async Task AFailureFromTheApplicationsTicketHandlerStopsSignIn()
+        {
+            var rejection = new InvalidOperationException("The application refused the ticket.");
+            using var provider = Provider(configure: services =>
+                services.Configure<OpenIdConnectOptions>(EntraDefaults.OpenIdConnectScheme, options =>
+                    options.Events.OnTicketReceived = context =>
+                    {
+                        context.Fail(rejection);
+                        return Task.CompletedTask;
+                    }));
+            var options = OpenIdConnect(provider);
+            var principal = new ClaimsPrincipal(new ClaimsIdentity("Tests"));
+            var context = new TicketReceivedContext(
+                new DefaultHttpContext { RequestServices = provider },
+                new AuthenticationScheme(EntraDefaults.OpenIdConnectScheme, null, typeof(OpenIdConnectHandler)), options,
+                new AuthenticationTicket(principal, new AuthenticationProperties(), EntraDefaults.OpenIdConnectScheme));
+
+            var exception = await Assert.ThrowsAsync<AuthenticationFailureException>(() => options.Events.TicketReceived(context));
+
+            Assert.Same(rejection, exception.InnerException);
+            Assert.Same(principal, context.Principal);
+        }
+
+        // Admission uses the application's current failure callback, including a callback installed
+        // by a later PostConfigure. Each outcome must stop cookie issuance on an admission refusal.
+        [Theory]
+        [InlineData("Handled")]
+        [InlineData("Skipped")]
+        [InlineData("Failed")]
+        public async Task TheApplicationsLaterFailureHandlerControlsAdmissionRefusal(string outcome)
+        {
+            Exception observedFailure = null;
+            var rejection = new InvalidOperationException("The application refused the sign-in.");
+            using var provider = Provider(configure: services =>
+                services.PostConfigure<OpenIdConnectOptions>(EntraDefaults.OpenIdConnectScheme, options =>
+                    options.Events.OnRemoteFailure = context =>
+                    {
+                        observedFailure = context.Failure;
+                        if (outcome == "Handled")
+                        {
+                            context.Response.StatusCode = StatusCodes.Status418ImATeapot;
+                            context.HandleResponse();
+                        }
+                        else if (outcome == "Skipped")
+                        {
+                            context.SkipHandler();
+                        }
+                        else
+                        {
+                            context.Failure = rejection;
+                        }
+
+                        return Task.CompletedTask;
+                    }));
+            var options = OpenIdConnect(provider);
+            var principal = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(EntraClaims.TenantIdClaim, TenantId) }, "Tests"));
+            var context = new TicketReceivedContext(
+                new DefaultHttpContext { RequestServices = provider },
+                new AuthenticationScheme(EntraDefaults.OpenIdConnectScheme, null, typeof(OpenIdConnectHandler)), options,
+                new AuthenticationTicket(principal, new AuthenticationProperties(), EntraDefaults.OpenIdConnectScheme));
+
+            if (outcome == "Failed")
+            {
+                var exception = await Assert.ThrowsAsync<AuthenticationFailureException>(() => options.Events.TicketReceived(context));
+                Assert.Same(rejection, exception.InnerException);
+            }
+            else
+            {
+                await options.Events.TicketReceived(context);
+                Assert.Equal(outcome == "Handled", context.Result.Handled);
+                Assert.Equal(outcome == "Skipped", context.Result.Skipped);
+                Assert.Equal(outcome == "Handled" ? StatusCodes.Status418ImATeapot : StatusCodes.Status200OK, context.Response.StatusCode);
+            }
+
+            Assert.IsType<EntraAdmission.NotAdmittedException>(observedFailure);
+            Assert.Same(principal, context.Principal);
+        }
+
+        [Fact]
+        public void ClaimActionsKeepTheIssuerAndClientForAdmission()
+        {
+            using var provider = Provider();
+            var options = OpenIdConnect(provider);
+            var issuer = $"https://login.microsoftonline.com/{TenantId}/v2.0";
+            var identity = new ClaimsIdentity(new[]
+            {
+                new Claim(EntraClaims.IssuerClaim, issuer),
+                new Claim(EntraClaims.AuthorizedPartyClaim, ClientId),
+                new Claim("nonce", "the-validated-nonce"),
+            }, "Tests");
+            using var userData = JsonDocument.Parse("{}");
+
+            foreach (var action in options.ClaimActions)
+            {
+                action.Run(userData.RootElement, identity, issuer);
+            }
+
+            var principal = new ClaimsPrincipal(identity);
+            Assert.Equal(issuer, principal.IdentityProvider());
+            Assert.Equal(ClientId, principal.ClientApplicationId());
+            Assert.False(principal.HasClaim(v => v.Type == "nonce"));
+        }
+
         // One tenant: the plug-in signs in the members and guests of the application's tenant, so it
         // refuses to start without a tenant id, or with one of the shared authorities.
         [Theory]
@@ -177,7 +389,7 @@ namespace Tests
             provider.GetRequiredService<IOptionsMonitor<OpenIdConnectOptions>>().Get(EntraDefaults.OpenIdConnectScheme);
 
         // The services of a server that selects the Entra plug-in, configured for a tenant.
-        private static ServiceProvider Provider(IDictionary<string, string> configurationValues = null, string environmentName = "Development")
+        private static ServiceProvider Provider(IDictionary<string, string> configurationValues = null, string environmentName = "Development", Action<IServiceCollection> configure = null)
         {
             var values = new Dictionary<string, string>
             {
@@ -201,6 +413,7 @@ namespace Tests
                 ApplicationName = "Allors.Tests",
             });
             services.AddAllorsEntra(configuration, environment);
+            configure?.Invoke(services);
 
             // Registered last: MVC would otherwise look for an assembly with the application's name.
             services.AddSingleton<IWebHostEnvironment>(environment);

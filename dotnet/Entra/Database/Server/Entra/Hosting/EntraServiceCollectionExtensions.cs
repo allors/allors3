@@ -101,13 +101,24 @@ namespace Allors.Server
             {
                 services.PostConfigure<OpenIdConnectOptions>(openIdConnectScheme, options =>
                 {
-                    // After the handlers of the application and of Microsoft.Identity.Web: the sign-in
-                    // admits the principal, and the session keeps only its Entra identity.
-                    var tokenValidated = options.Events.OnTokenValidated;
-                    options.Events.OnTokenValidated = async context =>
+                    // The factory still needs these token claims after the handler's claim actions.
+                    // SessionPrincipal removes them from the session after admission.
+                    options.ClaimActions.Remove(EntraClaims.IssuerClaim);
+                    options.ClaimActions.Remove(EntraClaims.AuthorizedPartyClaim);
+
+                    // TicketReceived runs after the protocol checks, including the nonce. Persisting
+                    // admission at TokenValidated would leave users behind after a rejected sign-in.
+                    var ticketReceived = options.Events.OnTicketReceived;
+                    options.Events.OnTicketReceived = async context =>
                     {
-                        await tokenValidated(context);
+                        await ticketReceived(context);
                         if (context.Result?.Failure != null)
+                        {
+                            // The remote handler only honors Handled and Skipped here, not Fail.
+                            throw new AuthenticationFailureException("The application rejected the sign-in ticket.", context.Result.Failure);
+                        }
+
+                        if (context.Result?.Handled == true || context.Result?.Skipped == true)
                         {
                             return;
                         }
@@ -115,28 +126,37 @@ namespace Allors.Server
                         var reason = context.HttpContext.RequestServices.GetRequiredService<EntraAdmission>().Admit(context.Principal, signIn: true);
                         if (reason != null)
                         {
-                            context.Fail(new EntraAdmission.NotAdmittedException(reason));
+                            // TicketReceived is outside the handler's remote-failure handling. Give
+                            // the application its failure callback, then stop cookie issuance explicitly.
+                            var failure = new RemoteFailureContext(context.HttpContext, context.Scheme, options, new EntraAdmission.NotAdmittedException(reason))
+                            {
+                                Properties = context.Properties,
+                            };
+                            await options.Events.RemoteFailure(failure);
+
+                            if (failure.Result?.Skipped == true)
+                            {
+                                context.SkipHandler();
+                                return;
+                            }
+
+                            if (failure.Result?.Handled != true)
+                            {
+                                if (failure.Failure != null && failure.Failure is not EntraAdmission.NotAdmittedException)
+                                {
+                                    throw new AuthenticationFailureException("The application rejected the sign-in.", failure.Failure);
+                                }
+
+                                context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                                context.Response.ContentType = "text/plain; charset=utf-8";
+                                await context.Response.WriteAsync("The application does not admit this account.");
+                            }
+
+                            context.HandleResponse();
                             return;
                         }
 
                         context.Principal = EntraAdmission.SessionPrincipal(context.Principal);
-                    };
-
-                    // A browser whose account is not admitted gets an answer, not an exception page,
-                    // unless the application answered already.
-                    var remoteFailure = options.Events.OnRemoteFailure;
-                    options.Events.OnRemoteFailure = async context =>
-                    {
-                        await remoteFailure(context);
-                        if (context.Result?.Handled == true || context.Failure is not EntraAdmission.NotAdmittedException)
-                        {
-                            return;
-                        }
-
-                        context.Response.StatusCode = StatusCodes.Status403Forbidden;
-                        context.Response.ContentType = "text/plain; charset=utf-8";
-                        await context.Response.WriteAsync("The application does not admit this account.");
-                        context.HandleResponse();
                     };
                 });
             }
@@ -145,9 +165,12 @@ namespace Allors.Server
             {
                 services.PostConfigure<JwtBearerOptions>(bearerScheme, options =>
                 {
-                    // Core's API reads the user name from the identity's name; an access token names
-                    // the person in preferred_username. An application that chose another claim keeps it.
-                    if (options.TokenValidationParameters.NameClaimType == ClaimsIdentity.DefaultNameClaimType)
+                    // Core reads Identity.Name. Use preferred_username by default, and fill it from
+                    // a v1 token's raw or mapped upn after validation. Keep an application's own
+                    // name claim or retriever, including a later post-configuration override.
+                    var defaultName = options.TokenValidationParameters.NameClaimType == ClaimsIdentity.DefaultNameClaimType &&
+                                      options.TokenValidationParameters.NameClaimTypeRetriever == null;
+                    if (defaultName)
                     {
                         options.TokenValidationParameters.NameClaimType = EntraClaims.PreferredUserNameClaim;
                     }
@@ -156,6 +179,17 @@ namespace Allors.Server
                     var tokenValidated = options.Events.OnTokenValidated;
                     options.Events.OnTokenValidated = async context =>
                     {
+                        if (defaultName &&
+                            options.TokenValidationParameters.NameClaimType == EntraClaims.PreferredUserNameClaim &&
+                            options.TokenValidationParameters.NameClaimTypeRetriever == null &&
+                            context.Principal?.Identity is ClaimsIdentity identity &&
+                            identity.NameClaimType == EntraClaims.PreferredUserNameClaim &&
+                            identity.Name == null &&
+                            context.Principal.UserName() is { } userName)
+                        {
+                            identity.AddClaim(new Claim(EntraClaims.PreferredUserNameClaim, userName));
+                        }
+
                         await tokenValidated(context);
                         if (context.Result?.Failure != null)
                         {

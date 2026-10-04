@@ -238,6 +238,15 @@ Changes accumulate under **[Unreleased]** until a version is released.
 
 ### Fixed
 
+- Entra distinguishes programs by the explicit `idtyp=app` claim. A browser user's ID token
+  with app roles and no scopes no longer looks like a program or bypasses a factory's rules
+  for people. Applications whose factories use `IsApplication()` request `idtyp` in access tokens.
+- Entra admits a browser user only after OpenID Connect protocol validation, including the nonce.
+  A rejected sign-in no longer leaves a committed user behind; admission refusals still return
+  403 without a session, and application callbacks keep control of their responses.
+- Entra fills the default bearer principal's name from raw or mapped `upn` in v1 tokens, so
+  `UserInfo` returns the user name for both token versions. An application's custom name claim
+  or name-claim retriever is preserved.
 - The .NET workspace sorts the collection that a composites role is set from. It kept the order
   of the collection, such as objects in the order they were created, and lookups in the role
   then missed objects: the association of such an object was empty and removing it from the role

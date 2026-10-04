@@ -56,10 +56,9 @@ namespace Allors.Security
         // registration.
         public static bool IsGuest(this ClaimsPrincipal principal) => principal.First(AccountTypeClaim) == "1";
 
-        // A program's own token, not a person's: the optional idtyp claim says app, and such a token
-        // carries roles and no scopes.
-        public static bool IsApplication(this ClaimsPrincipal principal) =>
-            principal.First(IdentityTypeClaim) == "app" || (principal.Scopes().Length == 0 && principal.Roles().Length > 0);
+        // A program's own token is identified by the optional idtyp claim. Roles without scopes
+        // do not distinguish programs: a person's ID token may also have application roles.
+        public static bool IsApplication(this ClaimsPrincipal principal) => principal.First(IdentityTypeClaim) == "app";
 
         // The delegated permissions of a person's token.
         public static string[] Scopes(this ClaimsPrincipal principal) =>

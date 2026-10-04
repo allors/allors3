@@ -81,6 +81,35 @@ namespace Allors.Server.Tests
             Assert.DoesNotContain(jar.GetAllCookies(), v => v.Name.Contains("Correlation", StringComparison.Ordinal) && !v.Expired);
         }
 
+        // A validly signed token still has to match this browser's nonce before the factory may
+        // create anything: a failed protocol check must leave no admitted user or session.
+        [Fact]
+        public async Task ASignInWithTheWrongNonceLeavesNoSessionOrUser()
+        {
+            var (browser, jar) = NewBrowser();
+            var challenge = await browser.GetAsync("entra/sign-in?returnUrl=%2Fallors%2FUserInfo");
+            Assert.Equal(HttpStatusCode.Redirect, challenge.StatusCode);
+
+            var authorization = challenge.Headers.Location;
+            var query = QueryHelpers.ParseQuery(authorization.Query);
+            query["nonce"] = Guid.NewGuid().ToString("N");
+            query["account"] = FakeEntraAccounts.Tester.Id;
+            var authorizeUrl = QueryHelpers.AddQueryString(
+                authorization.GetLeftPart(UriPartial.Path),
+                query.ToDictionary(v => v.Key, v => v.Value.ToString()));
+            var callback = await browser.GetAsync(authorizeUrl);
+            Assert.Equal(HttpStatusCode.Redirect, callback.StatusCode);
+
+            var response = await FollowRedirectsAsync(browser, callback);
+
+            Assert.InRange((int)response.StatusCode, 400, 599);
+            Assert.Null(Cookie(jar, "Allors.Auth"));
+            Assert.Null(this.FindUser(FakeEntraAccounts.Tester));
+            Assert.Empty(this.AllUsers());
+            var api = await browser.GetAsync("allors/UserInfo");
+            Assert.Equal(HttpStatusCode.Unauthorized, api.StatusCode);
+        }
+
         [Fact]
         public async Task ASecondSignInFindsTheSameUser()
         {

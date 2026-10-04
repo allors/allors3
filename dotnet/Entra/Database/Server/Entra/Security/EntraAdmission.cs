@@ -20,8 +20,8 @@ namespace Allors.Security
     // created at its first sign-in by the application's IUserFactory. The plug-in identifies every
     // principal by the pair of its tenant id and object id, a person's and a program's alike, and
     // never decides which class a new user is of, nor whom the application admits: the factory sees
-    // the full claims and decides both. One instance serves a server, so that parallel first requests
-    // of one principal create one user.
+    // the validated principal's claims and decides both. One instance serves a server, so that
+    // parallel first requests of one principal create one user.
     public partial class EntraAdmission
     {
         // The role types of the strings the directory sends; a value longer than the role allows is
