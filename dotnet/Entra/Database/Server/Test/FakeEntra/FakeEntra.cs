@@ -202,7 +202,12 @@ namespace Allors.Server
             claims["acct"] = account.IsGuest ? "1" : "0";
             if (version == 1)
             {
-                claims["upn"] = account.UserName;
+                // Exercise a guest token without the optional resource-tenant UPN.
+                if (!account.IsGuest)
+                {
+                    claims["upn"] = account.UserName;
+                }
+
                 claims["unique_name"] = account.UserName;
                 claims["idp"] = IssuerV1(account.IsGuest ? Guid.Parse(account.HomeTenantId) : tid);
             }

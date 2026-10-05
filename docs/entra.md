@@ -154,6 +154,14 @@ the principal is admitted, and of which class the user is. `EntraClaims` reads t
 for where the account lives, `UserName()`, `DisplayName()`, `Email()`, `Scopes()`, `Roles()`
 and `ClientApplicationId()`.
 
+`UserName()` takes the first nonempty `preferred_username`, `upn`, `unique_name` or `email`,
+in that order. It also accepts the mapped forms `ClaimTypes.Upn`, `ClaimTypes.Name` and
+`ClaimTypes.Email`, each after its raw form. The raw `name` claim is a display name and is
+not a user-name fallback. These mutable labels are not authorization or account identity
+keys; the plug-in identifies the account by `tid` and `oid`.
+`EntraAdmissionTests.AGuestWithoutUpnIsAdmittedWithAnotherUserNameClaim` covers admission and
+the session name, and `AUserNameFallbackCannotBypassTheFactorysRefusal` checks precedence.
+
 `IsApplication()` recognizes only `idtyp=app`. An application that uses this helper must
 configure the optional `idtyp` access-token claim in its registration. A person's ID token
 can contain application roles without scopes, so those claims alone do not identify a
@@ -193,7 +201,11 @@ its home and status, `EntraIdentityProvider` and `EntraIsGuest`. Nobody writes t
 the API (`UserTests.NobodyWritesTheEntraFieldsThroughAnAccessList`). A browser sign-in
 refreshes the profile fields supplied by the token; a bearer token does not
 (`EntraAdmissionTests.ASignInRefreshesTheProfileFieldsAndABearerTokenDoesNot`). Missing or
-empty user name, display name and email claims preserve their stored values, so these fields
+empty display name and email claims preserve their stored values; the user name is preserved
+when all of its candidates above are missing or empty. A supplied email can therefore refresh
+the user name when no higher-priority candidate is present
+(`EntraAdmissionTests.ASignInCanRefreshTheUserNameFromEmailWithoutChangingTheIdentity` and
+`ASignInKeepsTheUserNameWhenAllUserNameClaimsAreMissing`). These fields
 hold the last information supplied, not necessarily a complete snapshot of the directory
 (`EntraAdmissionTests.ASignInKeepsProfileFieldsWhoseClaimsAreMissing`). Guest status and
 provider follow the rules in [step 7](#7-guests-the-extranet).
@@ -292,9 +304,11 @@ app role, creates the user the factory decides on, an `Agent` in the test domain
 (`BearerTests.AProgramsTokenCreatesAnAgent`). The same token finds the same user, and parallel
 first requests of one principal create one user
 (`BearerTests.TheSameTokenFindsTheSameUserAndParallelFirstRequestsCreateOneUser`).
-`UserInfo` returns the person's name from either a v2 token's `preferred_username` or a v1
-token's `upn`, including its mapped form (`BearerTests.AV1TokenReturnsTheUserName` and
-`EntraOptionsTests.AV1UserNameIsAvailableToTheApplicationsTokenHandler`). An application that
+`UserInfo` uses the [user-name selection in step 4](#4-decide-whom-the-application-admits)
+for both token versions, including a v1 guest token without `upn`
+(`BearerTests.AV1TokenReturnsTheUserName` and `AV1GuestWithoutUpnReturnsTheUserName`).
+The name is also available to the application's token callback
+(`EntraOptionsTests.AV1GuestUserNameWithoutUpnIsAvailableToTheApplicationsTokenHandler`). An application that
 selects its own name claim or retriever keeps that choice
 (`EntraOptionsTests.TheApplicationsBearerNameSelectionIsPreserved`).
 
@@ -342,7 +356,8 @@ The Entra tree's test server signs in against a fake Entra of its own by default
 non-inherited `Test/FakeEntra` folder: it serves Microsoft's documents under Microsoft's issuer,
 with endpoints on the test server, and signs tokens of Microsoft's shape, so the plug-in runs as
 configured for production, with every validation on, without a tenant. Its accounts are in
-`FakeEntraAccounts`: a member, a refused member, a guest and a program.
+`FakeEntraAccounts`: a member, a refused member, a guest and a program. Its v1 guest tokens
+omit `upn` to exercise admission with the other available user-name claims.
 
 Pointed at a real tenant, the same server signs in against Microsoft: set `Entra__TenantId`,
 `Entra__ClientId` and a secret or certificate from step 2 to a registration of step 1 whose redirect URIs

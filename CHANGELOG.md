@@ -238,6 +238,12 @@ Changes accumulate under **[Unreleased]** until a version is released.
 
 ### Fixed
 
+- Entra resolves user names from raw or mapped `unique_name` and then `email` when neither
+  `preferred_username` nor `upn` is available. A v1 guest token without `upn` can now satisfy
+  the test factory's user-name requirement, and `UserInfo` and browser sessions retain the
+  available name. Existing claim precedence and application-selected bearer name claims are
+  preserved; account identity still uses `tid` and `oid`. The fake emits v1 guest tokens
+  without `upn` to cover this case.
 - Core sets `Path=/` for its default `__Host-Allors.Auth` session cookie outside Development,
   so browsers can accept it when the application has a path base such as `/app`. Sign-in,
   renewal and sign-out use the same root path. Development keeps its existing path-base scope,

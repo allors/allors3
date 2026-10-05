@@ -97,6 +97,42 @@ namespace Allors.Server.Tests
             }
         }
 
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task AV1GuestWithoutUpnReturnsTheUserName(bool alreadyAdmitted)
+        {
+            string existingUserId = null;
+            if (alreadyAdmitted)
+            {
+                var firstToken = await this.PersonTokenAsync(FakeEntraAccounts.Guest);
+                var firstResponse = await this.HttpClient.SendAsync(Bearer(HttpMethod.Get, "/allors/UserInfo", firstToken));
+                Assert.Equal(HttpStatusCode.OK, firstResponse.StatusCode);
+                existingUserId = (await JsonAsync(firstResponse)).GetProperty("u").GetString();
+            }
+
+            var token = await this.PersonTokenAsync(FakeEntraAccounts.Guest, ("x_token_version", "1"));
+            var claims = new Microsoft.IdentityModel.JsonWebTokens.JsonWebToken(token).Claims.ToArray();
+            Assert.DoesNotContain(claims, v => v.Type == "upn" || v.Type == "preferred_username");
+            Assert.Contains(claims, v => v.Type == "unique_name" && v.Value == FakeEntraAccounts.Guest.UserName);
+
+            var response = await this.HttpClient.SendAsync(Bearer(HttpMethod.Get, "/allors/UserInfo", token));
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            var userInfo = await JsonAsync(response);
+            var user = this.FindUser(FakeEntraAccounts.Guest);
+            Assert.IsType<Person>(user);
+            Assert.True(user.EntraIsGuest);
+            Assert.Equal(user.Id.ToString(System.Globalization.CultureInfo.InvariantCulture), userInfo.GetProperty("u").GetString());
+            Assert.Equal(FakeEntraAccounts.Guest.UserName, userInfo.GetProperty("userName").GetString());
+            Assert.Equal(FakeEntraAccounts.Guest.UserName, user.EntraUserName);
+            Assert.Single(this.AllUsers());
+            if (alreadyAdmitted)
+            {
+                Assert.Equal(existingUserId, userInfo.GetProperty("u").GetString());
+            }
+        }
+
         [Fact]
         public async Task TheSameTokenFindsTheSameUserAndParallelFirstRequestsCreateOneUser()
         {

@@ -603,6 +603,145 @@ namespace Tests
             Assert.Single(AllUsers(database));
         }
 
+        [Theory]
+        [InlineData("unique_name", false)]
+        [InlineData("unique_name", true)]
+        [InlineData(ClaimTypes.Name, false)]
+        [InlineData(ClaimTypes.Name, true)]
+        [InlineData(EntraClaims.EmailClaim, false)]
+        [InlineData(EntraClaims.EmailClaim, true)]
+        [InlineData(ClaimTypes.Email, false)]
+        [InlineData(ClaimTypes.Email, true)]
+        public void AGuestWithoutUpnIsAdmittedWithAnotherUserNameClaim(string claimType, bool signIn)
+        {
+            var database = NewDatabase();
+            var admission = new EntraAdmission(new StubDatabaseService { Database = database }, userFactory: new TestUserFactory());
+            var claims = Person().Claims
+                .Where(v => v.Type != EntraClaims.PreferredUserNameClaim && v.Type != EntraClaims.EmailClaim)
+                .Concat(new[]
+                {
+                    new Claim(claimType, "guest@customer.example"),
+                    new Claim(EntraClaims.AccountTypeClaim, "1"),
+                });
+            var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, "Tests"));
+
+            Assert.Null(admission.Admit(principal, signIn));
+
+            var user = FindUser(database, Tenant, ObjectId);
+            Assert.IsType<Person>(user);
+            Assert.True(user.EntraIsGuest);
+            Assert.Equal("guest@customer.example", user.EntraUserName);
+            Assert.Single(AllUsers(database));
+            var session = EntraAdmission.SessionPrincipal(principal);
+            Assert.Equal(Tenant, session.TenantId());
+            Assert.Equal(ObjectId, session.ObjectId());
+            Assert.Equal("guest@customer.example", session.Identity.Name);
+        }
+
+        [Theory]
+        [InlineData(EntraClaims.PreferredUserNameClaim, EntraClaims.UpnClaim)]
+        [InlineData(EntraClaims.UpnClaim, ClaimTypes.Upn)]
+        [InlineData(ClaimTypes.Upn, "unique_name")]
+        [InlineData("unique_name", ClaimTypes.Name)]
+        [InlineData(ClaimTypes.Name, EntraClaims.EmailClaim)]
+        [InlineData(EntraClaims.EmailClaim, ClaimTypes.Email)]
+        public void AUserNameFallbackCannotBypassTheFactorysRefusal(string preferredClaim, string fallbackClaim)
+        {
+            var database = NewDatabase();
+            var admission = new EntraAdmission(new StubDatabaseService { Database = database }, userFactory: new TestUserFactory());
+            var claims = Person().Claims
+                .Where(v => v.Type != EntraClaims.PreferredUserNameClaim && v.Type != EntraClaims.EmailClaim)
+                .Concat(new[]
+                {
+                    new Claim(fallbackClaim, "guest@customer.example"),
+                    new Claim(preferredClaim, "refused@customer.example"),
+                });
+            var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, "Tests"));
+
+            Assert.Equal("refused@customer.example", principal.UserName());
+            Assert.Contains("did not admit", admission.Admit(principal, signIn: false), StringComparison.Ordinal);
+            Assert.Empty(AllUsers(database));
+        }
+
+        [Fact]
+        public void EmptyUserNameClaimsDoNotHideAnAvailableEmail()
+        {
+            var database = NewDatabase();
+            var admission = new EntraAdmission(new StubDatabaseService { Database = database }, userFactory: new TestUserFactory());
+            var claims = Person().Claims
+                .Where(v => v.Type != EntraClaims.PreferredUserNameClaim && v.Type != EntraClaims.EmailClaim)
+                .Concat(new[]
+                {
+                    new Claim(EntraClaims.PreferredUserNameClaim, string.Empty),
+                    new Claim(EntraClaims.UpnClaim, string.Empty),
+                    new Claim(ClaimTypes.Upn, string.Empty),
+                    new Claim("unique_name", string.Empty),
+                    new Claim(ClaimTypes.Name, string.Empty),
+                    new Claim(EntraClaims.EmailClaim, string.Empty),
+                    new Claim(ClaimTypes.Email, "guest@customer.example"),
+                });
+
+            Assert.Null(admission.Admit(new ClaimsPrincipal(new ClaimsIdentity(claims, "Tests")), signIn: false));
+            Assert.Equal("guest@customer.example", FindUser(database, Tenant, ObjectId).EntraUserName);
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void ADisplayNameAloneDoesNotSatisfyTheFactorysUserNameRequirement(bool empty)
+        {
+            var database = NewDatabase();
+            var admission = new EntraAdmission(new StubDatabaseService { Database = database }, userFactory: new TestUserFactory());
+            var claims = Person().Claims
+                .Where(v => v.Type != EntraClaims.PreferredUserNameClaim && v.Type != EntraClaims.EmailClaim).ToList();
+            if (empty)
+            {
+                claims.AddRange(new[] { EntraClaims.PreferredUserNameClaim, EntraClaims.UpnClaim, ClaimTypes.Upn,
+                    "unique_name", ClaimTypes.Name, EntraClaims.EmailClaim, ClaimTypes.Email }
+                    .Select(type => new Claim(type, string.Empty)));
+            }
+
+            var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, "Tests"));
+
+            Assert.Null(principal.UserName());
+            Assert.Contains("did not admit", admission.Admit(principal, signIn: false), StringComparison.Ordinal);
+            Assert.Empty(AllUsers(database));
+        }
+
+        [Fact]
+        public void ASignInCanRefreshTheUserNameFromEmailWithoutChangingTheIdentity()
+        {
+            var database = NewDatabase();
+            var admission = new EntraAdmission(new StubDatabaseService { Database = database }, userFactory: new TestUserFactory());
+            Assert.Null(admission.Admit(Person(), signIn: true));
+            var existingId = FindUser(database, Tenant, ObjectId).Id;
+            var claims = Person(email: "jane.smith@example.com").Claims
+                .Where(v => v.Type != EntraClaims.PreferredUserNameClaim);
+
+            Assert.Null(admission.Admit(new ClaimsPrincipal(new ClaimsIdentity(claims, "Tests")), signIn: true));
+
+            var user = FindUser(database, Tenant, ObjectId);
+            Assert.Equal(existingId, user.Id);
+            Assert.Equal("jane.smith@example.com", user.EntraUserName);
+            Assert.Equal("jane.smith@example.com", user.EntraEmail);
+            Assert.Single(AllUsers(database));
+        }
+
+        [Fact]
+        public void ASignInKeepsTheUserNameWhenAllUserNameClaimsAreMissing()
+        {
+            var database = NewDatabase();
+            var admission = new EntraAdmission(new StubDatabaseService { Database = database }, userFactory: new TestUserFactory());
+            Assert.Null(admission.Admit(Person(), signIn: true));
+            var claims = Person().Claims
+                .Where(v => v.Type != EntraClaims.PreferredUserNameClaim && v.Type != EntraClaims.EmailClaim);
+
+            Assert.Null(admission.Admit(new ClaimsPrincipal(new ClaimsIdentity(claims, "Tests")), signIn: true));
+
+            Assert.Equal("jane@example.com", FindUser(database, Tenant, ObjectId).EntraUserName);
+            Assert.Single(AllUsers(database));
+        }
+
         private static ClaimsPrincipal PersonWith(params Claim[] more) => Person(more: more);
 
         private static ClaimsPrincipal Person(string name = "Jane Doe", string email = "jane@example.com", Guid? objectId = null, params Claim[] more)

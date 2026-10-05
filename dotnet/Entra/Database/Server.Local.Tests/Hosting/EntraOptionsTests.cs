@@ -254,6 +254,81 @@ namespace Tests
             Assert.Equal("jane@example.com", observedName);
         }
 
+        [Theory]
+        [InlineData("unique_name")]
+        [InlineData(ClaimTypes.Name)]
+        [InlineData(EntraClaims.EmailClaim)]
+        [InlineData(ClaimTypes.Email)]
+        public async Task AV1GuestUserNameWithoutUpnIsAvailableToTheApplicationsTokenHandler(string claimType)
+        {
+            string observedName = null;
+            using var provider = Provider(configure: services =>
+                services.Configure<JwtBearerOptions>(EntraDefaults.BearerScheme, options =>
+                    options.Events.OnTokenValidated = context =>
+                    {
+                        observedName = context.Principal.Identity.Name;
+                        context.Fail("Stop before admission in this test.");
+                        return Task.CompletedTask;
+                    }));
+            var options = provider.GetRequiredService<IOptionsMonitor<JwtBearerOptions>>().Get(EntraDefaults.BearerScheme);
+            var principal = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(claimType, "guest@example.com") }, "Tests", options.TokenValidationParameters.NameClaimType, ClaimTypes.Role));
+            var context = new Microsoft.AspNetCore.Authentication.JwtBearer.TokenValidatedContext(
+                new DefaultHttpContext { RequestServices = provider },
+                new AuthenticationScheme(EntraDefaults.BearerScheme, null, typeof(JwtBearerHandler)), options)
+            {
+                Principal = principal,
+            };
+
+            await options.Events.TokenValidated(context);
+
+            Assert.Equal("guest@example.com", observedName);
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task TheApplicationsBearerNameSelectionIsPreservedForAGuestWithoutUpn(bool useRetriever)
+        {
+            using var provider = Provider(configure: services =>
+                services.Configure<JwtBearerOptions>(EntraDefaults.BearerScheme, options =>
+                {
+                    if (useRetriever)
+                    {
+                        options.TokenValidationParameters.NameClaimTypeRetriever = (_, _) => EntraClaims.PreferredUserNameClaim;
+                    }
+                    else
+                    {
+                        options.TokenValidationParameters.NameClaimType = "custom_name";
+                    }
+
+                    options.Events.OnTokenValidated = context =>
+                    {
+                        context.Fail("Stop before admission in this test.");
+                        return Task.CompletedTask;
+                    };
+                }));
+            var options = provider.GetRequiredService<IOptionsMonitor<JwtBearerOptions>>().Get(EntraDefaults.BearerScheme);
+            var nameClaimType = options.TokenValidationParameters.NameClaimTypeRetriever?.Invoke(null, null) ?? options.TokenValidationParameters.NameClaimType;
+            var principal = new ClaimsPrincipal(new ClaimsIdentity(new[]
+            {
+                new Claim("unique_name", "guest@example.com"),
+                new Claim(ClaimTypes.Name, "guest@example.com"),
+                new Claim(EntraClaims.EmailClaim, "guest@example.com"),
+                new Claim(ClaimTypes.Email, "guest@example.com"),
+            }, "Tests", nameClaimType, ClaimTypes.Role));
+            var context = new Microsoft.AspNetCore.Authentication.JwtBearer.TokenValidatedContext(
+                new DefaultHttpContext { RequestServices = provider },
+                new AuthenticationScheme(EntraDefaults.BearerScheme, null, typeof(JwtBearerHandler)), options)
+            {
+                Principal = principal,
+            };
+
+            await options.Events.TokenValidated(context);
+
+            Assert.Null(principal.Identity.Name);
+            Assert.False(principal.HasClaim(v => v.Type == EntraClaims.PreferredUserNameClaim));
+        }
+
         // Choosing a name claim or a retriever belongs to the application. The plug-in does not
         // supply a preferred_username that the application's choice deliberately did not select.
         [Theory]

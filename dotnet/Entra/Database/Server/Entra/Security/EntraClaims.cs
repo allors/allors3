@@ -40,8 +40,9 @@ namespace Allors.Security
         // The object the token stands for in that tenant, a user or a service principal, or null.
         public static Guid? ObjectId(this ClaimsPrincipal principal) => AsGuid(principal.First(ObjectIdClaim, ObjectIdMappedClaim));
 
-        // The user name: preferred_username of a v2.0 token, upn of a v1.0 token; null for a program.
-        public static string UserName(this ClaimsPrincipal principal) => principal.First(PreferredUserNameClaim, UpnClaim, ClaimTypes.Upn);
+        // A user-name label, including v1 guests without upn. Identity is always the tid/oid pair.
+        public static string UserName(this ClaimsPrincipal principal) =>
+            principal.First(PreferredUserNameClaim, UpnClaim, ClaimTypes.Upn, "unique_name", ClaimTypes.Name, EmailClaim, ClaimTypes.Email);
 
         public static string DisplayName(this ClaimsPrincipal principal) => principal.First(NameClaim);
 

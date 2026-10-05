@@ -208,7 +208,7 @@ namespace Allors.Server
                 services.PostConfigure<JwtBearerOptions>(bearerScheme, options =>
                 {
                     // Core reads Identity.Name. Use preferred_username by default, and fill it from
-                    // a v1 token's raw or mapped upn after validation. Keep an application's own
+                    // the available user-name claims after validation. Keep an application's own
                     // name claim or retriever, including a later post-configuration override.
                     var defaultName = options.TokenValidationParameters.NameClaimType == ClaimsIdentity.DefaultNameClaimType &&
                                       options.TokenValidationParameters.NameClaimTypeRetriever == null;
