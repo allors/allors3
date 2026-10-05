@@ -54,6 +54,16 @@ The plug-in reads the `Entra` section, in the shape of the template
 `EntraDefaults`. A secret goes in the environment rather than the file:
 `Entra__ClientSecret=…`, as the [README](../README.md#configuration) describes.
 
+Omit `SessionLifetime` to use the default. If supplied, it must be a positive duration in
+`hh:mm:ss` or `d.hh:mm:ss` format, with two digits each for hours (00–23), minutes and seconds
+(00–59). An optional fractional second has a dot followed by one to seven digits: `00:00:00.5`
+is half a second. Use `12:00:00` for 12 hours and `1.00:00:00` for one day. Empty or null values,
+zero, negative durations, overflow, and shorthand such as `12`, `12h`, `12:00` or `24:00:00`
+stop startup with an actionable error. The value is validated and captured when the plug-in is
+registered; restart the server after changing it. `EntraOptionsTests.StartUpRefusesAnInvalidSessionLifetime`,
+`SessionLifetimeAcceptsExplicitPositiveDurations` and `SessionLifetimeUsesTheValueValidatedAtRegistration`
+check this contract.
+
 For a certificate, omit `ClientSecret` (or clear an inherited value) and configure
 `ClientCredentials` in the same section:
 

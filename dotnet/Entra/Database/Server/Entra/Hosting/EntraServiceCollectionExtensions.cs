@@ -39,6 +39,7 @@ namespace Allors.Server
         {
             var section = configuration.GetSection(EntraDefaults.ConfigurationSection);
             RequireTenant(section);
+            var sessionLifetime = ReadSessionLifetime(section);
 
             // The authorization code flow with PKCE, as RFC 9700 and Microsoft recommend; the public
             // cloud unless the section names another instance. The section may override either.
@@ -104,9 +105,7 @@ namespace Allors.Server
                 options.SessionScheme = EntraDefaults.SessionScheme;
                 options.BearerScheme = EntraDefaults.BearerScheme;
                 options.ChallengeScheme = EntraDefaults.OpenIdConnectScheme;
-                options.SessionLifetime = TimeSpan.TryParse(section["SessionLifetime"], CultureInfo.InvariantCulture, out var lifetime)
-                    ? lifetime
-                    : EntraDefaults.SessionLifetime;
+                options.SessionLifetime = sessionLifetime;
             });
 
             return services.AddAllorsEntraUsers(EntraDefaults.OpenIdConnectScheme, EntraDefaults.BearerScheme);
@@ -242,6 +241,31 @@ namespace Allors.Server
             }
 
             return services;
+        }
+
+        private static TimeSpan ReadSessionLifetime(IConfigurationSection section)
+        {
+            // Only an absent setting gets the default. A present null or object value is invalid
+            // too; IConfigurationSection.Exists cannot distinguish null from an absent key.
+            var setting = section.GetChildren().FirstOrDefault(v => string.Equals(v.Key, "SessionLifetime", StringComparison.OrdinalIgnoreCase));
+            if (setting == null)
+            {
+                return EntraDefaults.SessionLifetime;
+            }
+
+            var value = setting.Value;
+            var formats = new[] { @"hh\:mm\:ss", @"d\.hh\:mm\:ss", @"hh\:mm\:ss\.FFFFFFF", @"d\.hh\:mm\:ss\.FFFFFFF" };
+            // F accepts up to seven fractional digits, including none: do not accept a bare dot.
+            if (value == null || value.EndsWith('.') ||
+                !TimeSpan.TryParseExact(value, formats, CultureInfo.InvariantCulture, out var lifetime) || lifetime <= TimeSpan.Zero)
+            {
+                throw new InvalidOperationException(
+                    $"{setting.Path} is '{value ?? "<null>"}', but it must be a positive duration in hh:mm:ss or d.hh:mm:ss format, " +
+                    "optionally followed by 1 to 7 fractional-second digits. " +
+                    "Set it to '12:00:00' for 12 hours or '1.00:00:00' for one day, or omit the setting to use the 12-hour default.");
+            }
+
+            return lifetime;
         }
 
         // The settings without which no sign-in can work, checked at start-up rather than at the first

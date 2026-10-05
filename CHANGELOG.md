@@ -238,6 +238,11 @@ Changes accumulate under **[Unreleased]** until a version is released.
 
 ### Fixed
 
+- Entra validates `SessionLifetime` at startup and uses the validated value for its session
+  options. Only an omitted setting defaults to 12 hours; supplied values must be positive
+  `hh:mm:ss` or `d.hh:mm:ss` durations, with optional fractional seconds. Malformed, null,
+  empty, nonpositive, overflowing and shorthand values now fail with an actionable error
+  instead of silently falling back or creating immediately expired sessions.
 - Entra rejects and clears a browser session whose local user is missing, so the next sign-in
   challenges Entra instead of repeatedly redirecting to an API that returns 401. The check
   runs inside Core's protected cookie validation, including for custom sessions without an

@@ -78,6 +78,73 @@ namespace Tests
             Assert.Equal(TimeSpan.FromHours(2), provider.GetRequiredService<IOptions<AllorsAuthenticationOptions>>().Value.SessionLifetime);
         }
 
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData(" ")]
+        [InlineData("12h")]
+        [InlineData("garbage")]
+        [InlineData("00:00:00")]
+        [InlineData("00:00:00.0000000")]
+        [InlineData("-00:00:01")]
+        [InlineData("-1.00:00:00")]
+        [InlineData("12")]
+        [InlineData("24:00:00")]
+        [InlineData("12:00")]
+        [InlineData("1:00:00")]
+        [InlineData("12:0:00")]
+        [InlineData("12:00:0")]
+        [InlineData("00:60:00")]
+        [InlineData("00:00:60")]
+        [InlineData("12:00:00.")]
+        [InlineData("12:00:00.12345678")]
+        [InlineData("10675200.00:00:00")]
+        [InlineData(" 12:00:00 ")]
+        [InlineData("1:12:00:00")]
+        public void StartUpRefusesAnInvalidSessionLifetime(string value)
+        {
+            var exception = Assert.Throws<InvalidOperationException>(() =>
+                Provider(new Dictionary<string, string> { ["Entra:SessionLifetime"] = value }));
+
+            Assert.Contains("Entra:SessionLifetime", exception.Message, StringComparison.Ordinal);
+            Assert.Contains("positive", exception.Message, StringComparison.Ordinal);
+            Assert.Contains("hh:mm:ss", exception.Message, StringComparison.Ordinal);
+            Assert.Contains("12:00:00", exception.Message, StringComparison.Ordinal);
+            Assert.Contains("1.00:00:00", exception.Message, StringComparison.Ordinal);
+            Assert.Contains("omit", exception.Message, StringComparison.Ordinal);
+        }
+
+        [Theory]
+        [InlineData("12:00:00", 12 * TimeSpan.TicksPerHour)]
+        [InlineData("1.00:00:00", TimeSpan.TicksPerDay)]
+        [InlineData("2.03:04:05", 2 * TimeSpan.TicksPerDay + 3 * TimeSpan.TicksPerHour + 4 * TimeSpan.TicksPerMinute + 5 * TimeSpan.TicksPerSecond)]
+        [InlineData("00:00:00.5", TimeSpan.TicksPerSecond / 2)]
+        [InlineData("00:00:00.0000001", 1)]
+        [InlineData("1.02:03:04.1234567", TimeSpan.TicksPerDay + 2 * TimeSpan.TicksPerHour + 3 * TimeSpan.TicksPerMinute + 4 * TimeSpan.TicksPerSecond + 1234567)]
+        [InlineData("0.00:00:01", TimeSpan.TicksPerSecond)]
+        [InlineData("10675199.02:48:05.4775807", long.MaxValue)]
+        public void SessionLifetimeAcceptsExplicitPositiveDurations(string value, long ticks)
+        {
+            using var provider = Provider(new Dictionary<string, string> { ["Entra:SessionLifetime"] = value });
+
+            Assert.Equal(TimeSpan.FromTicks(ticks), provider.GetRequiredService<IOptions<AllorsAuthenticationOptions>>().Value.SessionLifetime);
+        }
+
+        // The registered options use the value that passed startup validation, even if the
+        // configuration provider changes before those options are first requested.
+        [Fact]
+        public void SessionLifetimeUsesTheValueValidatedAtRegistration()
+        {
+            using var provider = Provider(new Dictionary<string, string> { ["Entra:SessionLifetime"] = "02:00:00" },
+                configure: services =>
+                {
+                    var configuration = (IConfiguration)services.Single(v => v.ServiceType == typeof(IConfiguration)).ImplementationInstance;
+                    configuration["Entra:SessionLifetime"] = "00:00:00";
+                });
+
+            Assert.Equal(TimeSpan.FromHours(2), provider.GetRequiredService<IOptions<AllorsAuthenticationOptions>>().Value.SessionLifetime);
+        }
+
         // Core's selecting scheme is the default: it sends a request with a bearer token to the bearer
         // scheme and every other request to the session.
         [Fact]
