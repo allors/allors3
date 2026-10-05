@@ -30,9 +30,15 @@ names its schemes; Core applies the rules that every plug-in shares, in one plac
 changes for a plug-in that names none of them.
 
 - **`SessionScheme`**, the cookie that keeps a browser signed in. Core gives the cookie its
-  defaults: the name `__Host-Allors.Auth`, `HttpOnly`, `SameSite=Lax`, `Secure` and a sliding
-  lifetime of 8 hours; in Development the cookie is `Allors.Auth` and follows the scheme of the
-  request, so plain http works. The plug-in or the application may override these cookie defaults.
+  defaults: the name `__Host-Allors.Auth`, `Path=/`, `HttpOnly`, `SameSite=Lax`, `Secure` and a
+  sliding lifetime of 8 hours. The root path is required by the `__Host-` prefix, including when
+  the application uses `UsePathBase("/app")`. In Development the cookie is `Allors.Auth`, its path
+  follows the request's path base, and its `Secure` flag follows the scheme of the request, so
+  plain http works. The plug-in or the application may override these cookie defaults. An
+  application choosing a path other than `/` must also choose a name without the `__Host-`
+  prefix. `AllorsServerTests.SessionCookieSignInAndSignOutUseTheRequiredPath` and
+  `SessionCookieRenewalUsesTheRequiredPath` check the emitted cookie paths, and
+  `ApplicationCanOverrideTheSessionCookieNameAndPath` checks an application override.
   A challenge or a refusal for the Allors API answers 401 or 403 instead of a redirect, and
   signing in or out drops the antiforgery cookie. An unsafe API request that this scheme
   authenticated needs the antiforgery token: a safe API request hands out the readable cookie

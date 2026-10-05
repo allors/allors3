@@ -238,6 +238,10 @@ Changes accumulate under **[Unreleased]** until a version is released.
 
 ### Fixed
 
+- Core sets `Path=/` for its default `__Host-Allors.Auth` session cookie outside Development,
+  so browsers can accept it when the application has a path base such as `/app`. Sign-in,
+  renewal and sign-out use the same root path. Development keeps its existing path-base scope,
+  and application overrides of the cookie name and path remain supported.
 - Core rejects a cookie session's `ChallengeScheme` at startup when it names that session or
   the `Allors` selector, preventing recursive login challenges. The error directs applications
   to a distinct sign-in scheme, or an unset value for the cookie's own login page. These names

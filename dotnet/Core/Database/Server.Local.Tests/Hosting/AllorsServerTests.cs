@@ -27,10 +27,12 @@ namespace Tests
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Authorization.Infrastructure;
     using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.DataProtection;
     using Microsoft.AspNetCore.DataProtection.KeyManagement;
     using Microsoft.AspNetCore.DataProtection.Repositories;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Http.Features;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Abstractions;
     using Microsoft.AspNetCore.RateLimiting;
@@ -44,6 +46,7 @@ namespace Tests
     using MemoryConfiguration = Allors.Database.Adapters.Memory.Configuration;
     using MemoryDatabase = Allors.Database.Adapters.Memory.Database;
     using ObjectFactory = Allors.Database.ObjectFactory;
+    using SetCookieHeaderValue = Microsoft.Net.Http.Headers.SetCookieHeaderValue;
     using User = Allors.Database.Domain.User;
 
     // AddAllorsServer registers what Core decides: the services behind the Allors API. Everything an
@@ -236,6 +239,115 @@ namespace Tests
 
             Assert.Equal("__Host-Allors.Auth", options.Cookie.Name);
             Assert.Equal(CookieSecurePolicy.Always, options.Cookie.SecurePolicy);
+        }
+
+        [Theory]
+        [InlineData("Production", "/app", "/")]
+        [InlineData("Production", "", "/")]
+        [InlineData("Staging", "/app", "/")]
+        [InlineData("Development", "/app", "/app")]
+        [InlineData("Development", "", "/")]
+        public async Task SessionCookieSignInAndSignOutUseTheRequiredPath(string environment, string pathBase, string expectedPath)
+        {
+            using var provider = SessionProvider(environmentName: environment, configure: services =>
+                services.AddDataProtection().UseEphemeralDataProtectionProvider());
+            var expectedName = environment == "Development" ? "Allors.Auth" : "__Host-Allors.Auth";
+            using var signInScope = provider.CreateScope();
+            var signIn = CookieRequest(signInScope.ServiceProvider, pathBase);
+
+            await signIn.SignInAsync(SessionScheme, new ClaimsPrincipal(new ClaimsIdentity("Tests")));
+
+            var issued = SetCookieHeaderValue.ParseList(signIn.Response.Headers.SetCookie.ToArray()).Single(v => v.Name == expectedName);
+            Assert.Equal(expectedPath, issued.Path.ToString());
+            Assert.True(issued.Secure);
+            Assert.False(issued.Domain.HasValue);
+
+            using var signOutScope = provider.CreateScope();
+            var signOut = CookieRequest(signOutScope.ServiceProvider, pathBase);
+            signOut.Request.Headers.Cookie = $"{issued.Name}={issued.Value}";
+
+            await signOut.SignOutAsync(SessionScheme);
+
+            var deleted = SetCookieHeaderValue.ParseList(signOut.Response.Headers.SetCookie.ToArray()).Single(v => v.Name == expectedName);
+            Assert.Equal(expectedPath, deleted.Path.ToString());
+            Assert.True(deleted.Secure);
+            Assert.False(deleted.Domain.HasValue);
+            Assert.Equal(string.Empty, deleted.Value.ToString());
+            Assert.True(deleted.Expires < DateTimeOffset.UtcNow);
+        }
+
+        [Theory]
+        [InlineData("Production", "/")]
+        [InlineData("Development", "/app")]
+        public async Task SessionCookieRenewalUsesTheRequiredPath(string environment, string expectedPath)
+        {
+            var clock = new Clock();
+            using var provider = SessionProvider(environmentName: environment, configure: services =>
+            {
+                services.AddDataProtection().UseEphemeralDataProtectionProvider();
+                services.Configure<CookieAuthenticationOptions>(SessionScheme, v => v.TimeProvider = clock);
+            });
+            var cookieName = environment == "Development" ? "Allors.Auth" : "__Host-Allors.Auth";
+            using var signInScope = provider.CreateScope();
+            var signIn = CookieRequest(signInScope.ServiceProvider, "/app");
+            await signIn.SignInAsync(SessionScheme, new ClaimsPrincipal(new ClaimsIdentity("Tests")));
+            var issued = SetCookieHeaderValue.ParseList(signIn.Response.Headers.SetCookie.ToArray()).Single(v => v.Name == cookieName);
+
+            clock.Advance(TimeSpan.FromHours(5));
+            using var renewalScope = provider.CreateScope();
+            var renewal = CookieRequest(renewalScope.ServiceProvider, "/app");
+            var response = new StartingCookieResponseFeature();
+            renewal.Features.Set<IHttpResponseFeature>(response);
+            renewal.Request.Headers.Cookie = $"{issued.Name}={issued.Value}";
+
+            var authentication = await renewal.AuthenticateAsync(SessionScheme);
+            await response.FireOnStartingAsync();
+
+            Assert.True(authentication.Succeeded);
+            var renewed = SetCookieHeaderValue.ParseList(renewal.Response.Headers.SetCookie.ToArray()).Single(v => v.Name == cookieName);
+            Assert.Equal(expectedPath, renewed.Path.ToString());
+            Assert.True(renewed.Secure);
+            Assert.False(renewed.Domain.HasValue);
+        }
+
+        [Fact]
+        public async Task ApplicationCanOverrideTheSessionCookieNameAndPath()
+        {
+            using var provider = SessionProvider(environmentName: "Production", configure: services =>
+            {
+                services.AddDataProtection().UseEphemeralDataProtectionProvider();
+                services.Configure<CookieAuthenticationOptions>(SessionScheme, options =>
+                {
+                    options.Cookie.Name = "Application.Auth";
+                    options.Cookie.Path = "/application";
+                });
+            });
+            using var scope = provider.CreateScope();
+            var context = CookieRequest(scope.ServiceProvider, "/app");
+
+            await context.SignInAsync(SessionScheme, new ClaimsPrincipal(new ClaimsIdentity("Tests")));
+
+            var cookie = SetCookieHeaderValue.ParseList(context.Response.Headers.SetCookie.ToArray()).Single(v => v.Name == "Application.Auth");
+            Assert.Equal("/application", cookie.Path.ToString());
+        }
+
+        [Fact]
+        public async Task AnotherCookieKeepsItsPathBaseOutsideDevelopment()
+        {
+            const string otherScheme = "Tests.Other";
+            using var provider = SessionProvider(environmentName: "Production", configure: services =>
+            {
+                services.AddDataProtection().UseEphemeralDataProtectionProvider();
+                services.AddAuthentication().AddCookie(otherScheme);
+            });
+            using var scope = provider.CreateScope();
+            var context = CookieRequest(scope.ServiceProvider, "/app");
+
+            await context.SignInAsync(otherScheme, new ClaimsPrincipal(new ClaimsIdentity("Tests")));
+
+            var cookie = Assert.Single(SetCookieHeaderValue.ParseList(context.Response.Headers.SetCookie.ToArray()));
+            Assert.Equal(".AspNetCore.Tests.Other", cookie.Name.ToString());
+            Assert.Equal("/app", cookie.Path.ToString());
         }
 
         // Core's values are defaults: what the application configures after them wins.
@@ -1174,6 +1286,31 @@ namespace Tests
             var provider = services.BuildServiceProvider();
             provider.GetRequiredService<IDatabaseService>().Database = NewDatabase();
             return provider;
+        }
+
+        private static HttpContext CookieRequest(IServiceProvider provider, string pathBase)
+        {
+            var context = Context(provider);
+            context.Request.Scheme = "https";
+            context.Request.PathBase = pathBase;
+            return context;
+        }
+
+        // DefaultHttpContext does not run OnStarting; a real response does so in reverse order.
+        private sealed class StartingCookieResponseFeature : HttpResponseFeature
+        {
+            private readonly List<(Func<object, Task> Callback, object State)> callbacks = new();
+
+            public override void OnStarting(Func<object, Task> callback, object state) => this.callbacks.Add((callback, state));
+
+            public async Task FireOnStartingAsync()
+            {
+                for (var i = this.callbacks.Count - 1; i >= 0; --i)
+                {
+                    var (callback, state) = this.callbacks[i];
+                    await callback(state);
+                }
+            }
         }
 
         // A clock the test moves, for the cookie handler and for Core's rules of the session.

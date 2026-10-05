@@ -55,6 +55,12 @@ namespace Allors.Server
             var development = this.environment.IsDevelopment();
 
             options.Cookie.Name = development ? "Allors.Auth" : "__Host-Allors.Auth";
+            if (!development)
+            {
+                // The __Host- prefix requires a root path, even when the application has a PathBase.
+                options.Cookie.Path = "/";
+            }
+
             options.Cookie.HttpOnly = true;
             options.Cookie.SameSite = SameSiteMode.Lax;
 
