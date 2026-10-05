@@ -13,7 +13,8 @@ namespace Allors.Security
     // A signed-in principal of the Entra plug-in names its Entra identity, the tenant id and the
     // object id, whether it comes from the browser session or from a bearer token. The user is looked
     // up by that identity on every request: a stored object id would denote another object after a
-    // database reset, and a user that was deleted is gone at its next request.
+    // database reset. A missing user resolves to null; session validation then ends its browser
+    // session, while a new sign-in or bearer request may admit the identity again through the factory.
     public class EntraUserResolver : IUserResolver
     {
         public User Resolve(ClaimsPrincipal principal, ITransaction transaction)

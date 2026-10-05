@@ -28,11 +28,18 @@ namespace Allors.Server
     {
         private readonly IOptions<AllorsAuthenticationOptions> authenticationOptions;
         private readonly IWebHostEnvironment environment;
+        private readonly IAllorsSessionValidator[] validators;
 
         public AllorsSessionCookie(IOptions<AllorsAuthenticationOptions> authenticationOptions, IWebHostEnvironment environment)
+            : this(authenticationOptions, environment, Array.Empty<IAllorsSessionValidator>())
+        {
+        }
+
+        internal AllorsSessionCookie(IOptions<AllorsAuthenticationOptions> authenticationOptions, IWebHostEnvironment environment, IAllorsSessionValidator[] validators)
         {
             this.authenticationOptions = authenticationOptions;
             this.environment = environment;
+            this.validators = validators;
         }
 
         public void Configure(CookieAuthenticationOptions options) => this.Configure(Options.DefaultName, options);
@@ -109,8 +116,7 @@ namespace Allors.Server
 
             // A session may get an absolute lifetime next to its sliding one: the start is stamped at
             // sign-in and travels with the ticket, which a renewal copies, and a cookie past the
-            // lifetime is refused and signed out. Only wrapped when a lifetime is set, so that the
-            // sign-in and validation events of a plug-in without one stay its own.
+            // lifetime is refused and signed out. Stamp sign-in only when a lifetime is set.
             var lifetime = authentication.SessionLifetime;
             if (lifetime != null)
             {
@@ -120,13 +126,19 @@ namespace Allors.Server
                     context.Properties.Items[SessionStartKey] = Now(context.Options).ToString("o", CultureInfo.InvariantCulture);
                     return signingIn(context);
                 };
+            }
 
+            // Plug-in checks run on the principal left by the application's callback. Keep them
+            // inside this protected wrapper even when the session has no absolute lifetime.
+            var validateSession = lifetime != null || this.validators.Length != 0;
+            if (validateSession)
+            {
                 var validatePrincipal = options.Events.OnValidatePrincipal;
                 options.Events.OnValidatePrincipal = async context =>
                 {
-                    if (!context.Properties.Items.TryGetValue(SessionStartKey, out var value) ||
+                    if (lifetime != null && (!context.Properties.Items.TryGetValue(SessionStartKey, out var value) ||
                         !DateTimeOffset.TryParse(value, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out var start) ||
-                        Now(context.Options) - start > lifetime.Value)
+                        Now(context.Options) - start > lifetime.Value))
                     {
                         context.RejectPrincipal();
                         await context.HttpContext.SignOutAsync(context.Scheme.Name);
@@ -134,10 +146,19 @@ namespace Allors.Server
                     }
 
                     await validatePrincipal(context);
+                    foreach (var validator in this.validators)
+                    {
+                        if (context.Principal == null)
+                        {
+                            return;
+                        }
+
+                        await validator.ValidateAsync(context);
+                    }
                 };
             }
 
-            AllorsSessionCookieValidation.Capture(options, lifetime != null);
+            AllorsSessionCookieValidation.Capture(options, lifetime != null, validateSession);
         }
 
         // The sign-in time of a session, in the authentication properties of its ticket.

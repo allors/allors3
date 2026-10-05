@@ -57,7 +57,8 @@ namespace Allors.Server
             services.AddSingleton<IConfigureOptions<CookieAuthenticationOptions>>(provider =>
                 new AllorsSessionCookie(provider.GetRequiredService<IOptions<AllorsAuthenticationOptions>>(), environment));
             services.AddSingleton<IPostConfigureOptions<CookieAuthenticationOptions>>(provider =>
-                new AllorsSessionCookie(provider.GetRequiredService<IOptions<AllorsAuthenticationOptions>>(), environment));
+                new AllorsSessionCookie(provider.GetRequiredService<IOptions<AllorsAuthenticationOptions>>(), environment,
+                    provider.GetServices<IAllorsSessionValidator>().ToArray()));
             services.AddSingleton<IValidateOptions<CookieAuthenticationOptions>, AllorsSessionCookieValidation>();
 
             // The scheme that selects which named scheme authenticates a request: the bearer scheme

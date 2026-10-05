@@ -475,6 +475,206 @@ namespace Tests
             }
         }
 
+        [Theory]
+        [InlineData("Original")]
+        [InlineData("ExistingReplacement")]
+        [InlineData("MissingReplacement")]
+        [InlineData("NoIdentity")]
+        [InlineData("Rejected")]
+        public async Task SessionValidationChecksTheApplicationsFinalPrincipal(string outcome)
+        {
+            var database = NewSessionDatabase();
+            var original = NewSessionUser(database);
+            var replacement = outcome == "ExistingReplacement"
+                ? NewSessionUser(database)
+                : new ClaimsPrincipal(new ClaimsIdentity(new[]
+                {
+                    new Claim(EntraClaims.TenantIdClaim, TenantId),
+                    new Claim(EntraClaims.ObjectIdClaim, Guid.NewGuid().ToString()),
+                }, "Tests"));
+            var authentication = new SessionAuthenticationService();
+            var calls = 0;
+            using var provider = Provider(configure: services =>
+            {
+                services.AddSingleton<IAuthenticationService>(authentication);
+                services.Configure<CookieAuthenticationOptions>(EntraDefaults.SessionScheme, options =>
+                    options.Events.OnValidatePrincipal = context =>
+                    {
+                        calls++;
+                        Assert.Same(original, context.Principal);
+                        if (outcome == "Rejected")
+                        {
+                            context.RejectPrincipal();
+                        }
+                        else if (outcome == "NoIdentity")
+                        {
+                            context.ReplacePrincipal(new ClaimsPrincipal(new ClaimsIdentity("Tests")));
+                        }
+                        else if (outcome != "Original")
+                        {
+                            context.ReplacePrincipal(replacement);
+                        }
+
+                        return Task.CompletedTask;
+                    });
+            });
+            provider.GetRequiredService<IDatabaseService>().Database = database;
+            var options = provider.GetRequiredService<IOptionsMonitor<CookieAuthenticationOptions>>().Get(EntraDefaults.SessionScheme);
+            var context = SessionValidationContext(provider, options, EntraDefaults.SessionScheme, original);
+
+            await options.Events.ValidatePrincipal(context);
+
+            Assert.Equal(1, calls);
+            if (outcome == "Original" || outcome == "ExistingReplacement")
+            {
+                Assert.Same(outcome == "Original" ? original : replacement, context.Principal);
+            }
+            else
+            {
+                Assert.Null(context.Principal);
+            }
+
+            Assert.Equal(outcome == "MissingReplacement" || outcome == "NoIdentity"
+                ? new[] { EntraDefaults.SessionScheme }
+                : Array.Empty<string>(), authentication.SignedOut);
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task CustomSessionsWithoutALifetimeStillCheckEntraUsers(bool coreFirst)
+        {
+            const string sessionScheme = "Custom.Session";
+            var configuration = new ConfigurationBuilder().Build();
+            var environment = new StubWebHostEnvironment();
+            var services = new ServiceCollection();
+            services.AddLogging();
+            if (coreFirst)
+            {
+                services.AddAllorsServer(configuration, environment, new AllorsServerOptions());
+            }
+
+            services.AddAllorsEntraUsers("Custom.Oidc", null);
+            services.AddAuthentication().AddCookie(sessionScheme);
+            if (!coreFirst)
+            {
+                services.AddAllorsServer(configuration, environment, new AllorsServerOptions());
+            }
+
+            services.Configure<AllorsAuthenticationOptions>(options => options.SessionScheme = sessionScheme);
+            var authentication = new SessionAuthenticationService();
+            services.AddSingleton<IAuthenticationService>(authentication);
+            using var provider = services.BuildServiceProvider();
+            var database = NewSessionDatabase();
+            provider.GetRequiredService<IDatabaseService>().Database = database;
+            var principal = NewSessionUser(database);
+            var options = provider.GetRequiredService<IOptionsMonitor<CookieAuthenticationOptions>>().Get(sessionScheme);
+            Assert.Null(provider.GetRequiredService<IOptions<AllorsAuthenticationOptions>>().Value.SessionLifetime);
+            var existing = SessionValidationContext(provider, options, sessionScheme, principal);
+            await options.Events.ValidatePrincipal(existing);
+            Assert.Same(principal, existing.Principal);
+            Assert.Empty(authentication.SignedOut);
+            using (var transaction = database.CreateTransaction())
+            {
+                new Users(transaction).FindByEntraIdentity(principal.TenantId().Value, principal.ObjectId().Value).Delete();
+                transaction.Derive();
+                transaction.Commit();
+            }
+
+            var missing = SessionValidationContext(provider, options, sessionScheme, principal);
+            await options.Events.ValidatePrincipal(missing);
+
+            Assert.Null(missing.Principal);
+            Assert.Equal(new[] { sessionScheme }, authentication.SignedOut);
+        }
+
+        [Theory]
+        [InlineData("Callback")]
+        [InlineData("Override")]
+        public void EntraSessionValidationCannotBeReplacedWithoutALifetime(string replacement)
+        {
+            using var provider = Provider(configure: services =>
+            {
+                services.Configure<AllorsAuthenticationOptions>(options => options.SessionLifetime = null);
+                if (replacement == "Callback")
+                {
+                    services.PostConfigure<CookieAuthenticationOptions>(EntraDefaults.SessionScheme,
+                        options => options.Events.OnValidatePrincipal = _ => Task.CompletedTask);
+                }
+                else
+                {
+                    services.Configure<CookieAuthenticationOptions>(EntraDefaults.SessionScheme,
+                        options => options.Events = new SkippedSessionValidationEvents());
+                }
+            });
+
+            var exception = Assert.Throws<OptionsValidationException>(() =>
+                provider.GetRequiredService<IOptionsMonitor<CookieAuthenticationOptions>>().Get(EntraDefaults.SessionScheme));
+
+            Assert.Contains(EntraDefaults.SessionScheme, exception.Message, StringComparison.Ordinal);
+            Assert.Contains("ValidatePrincipal", exception.Message, StringComparison.Ordinal);
+        }
+
+        private static IDatabase NewSessionDatabase()
+        {
+            var meta = new MetaBuilder().Build();
+            var database = new MemoryDatabase(new DefaultDatabaseServices(new Engine(Rules.Create(meta))),
+                new MemoryConfiguration { ObjectFactory = new Allors.Database.ObjectFactory(meta, typeof(User)) });
+            database.Init();
+            new Setup(database, new Config { SetupSecurity = false }).Apply();
+            return database;
+        }
+
+        private static ClaimsPrincipal NewSessionUser(IDatabase database)
+        {
+            var objectId = Guid.NewGuid();
+            using var transaction = database.CreateTransaction();
+            var user = new PersonBuilder(transaction).Build();
+            user.EntraTenantId = Guid.Parse(TenantId);
+            user.EntraObjectId = objectId;
+            transaction.Derive();
+            transaction.Commit();
+            return new ClaimsPrincipal(new ClaimsIdentity(new[]
+            {
+                new Claim(EntraClaims.TenantIdClaim, TenantId),
+                new Claim(EntraClaims.ObjectIdClaim, objectId.ToString()),
+            }, "Tests"));
+        }
+
+        private static CookieValidatePrincipalContext SessionValidationContext(IServiceProvider provider,
+            CookieAuthenticationOptions options, string scheme, ClaimsPrincipal principal)
+        {
+            var properties = new AuthenticationProperties();
+            properties.Items[AllorsSessionCookie.SessionStartKey] = DateTimeOffset.UtcNow.ToString("o");
+            return new CookieValidatePrincipalContext(new DefaultHttpContext { RequestServices = provider },
+                new AuthenticationScheme(scheme, null, typeof(CookieAuthenticationHandler)), options,
+                new AuthenticationTicket(principal, properties, scheme));
+        }
+
+        private sealed class SkippedSessionValidationEvents : CookieAuthenticationEvents
+        {
+            public override Task ValidatePrincipal(CookieValidatePrincipalContext context) => Task.CompletedTask;
+        }
+
+        private sealed class SessionAuthenticationService : IAuthenticationService
+        {
+            public List<string> SignedOut { get; } = new();
+
+            public Task<AuthenticateResult> AuthenticateAsync(HttpContext context, string scheme) => throw new NotSupportedException();
+
+            public Task ChallengeAsync(HttpContext context, string scheme, AuthenticationProperties properties) => throw new NotSupportedException();
+
+            public Task ForbidAsync(HttpContext context, string scheme, AuthenticationProperties properties) => throw new NotSupportedException();
+
+            public Task SignInAsync(HttpContext context, string scheme, ClaimsPrincipal principal, AuthenticationProperties properties) => throw new NotSupportedException();
+
+            public Task SignOutAsync(HttpContext context, string scheme, AuthenticationProperties properties)
+            {
+                this.SignedOut.Add(scheme);
+                return Task.CompletedTask;
+            }
+        }
+
         private static void ReplaceEntraEvents(IServiceCollection services, bool browser, string replacement)
         {
             if (replacement == "MicrosoftIdentityEventsType")

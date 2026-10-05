@@ -25,8 +25,8 @@ namespace Allors.Server
         public AllorsSessionCookieValidation(IOptions<AllorsAuthenticationOptions> authenticationOptions) =>
             this.authenticationOptions = authenticationOptions;
 
-        internal static void Capture(CookieAuthenticationOptions options, bool lifetime) =>
-            CapturedEvents.AddOrUpdate(options, new RequiredEvents(options.Events, lifetime));
+        internal static void Capture(CookieAuthenticationOptions options, bool lifetime, bool validateSession) =>
+            CapturedEvents.AddOrUpdate(options, new RequiredEvents(options.Events, lifetime, validateSession));
 
         public ValidateOptionsResult Validate(string name, CookieAuthenticationOptions options)
         {
@@ -45,7 +45,7 @@ namespace Allors.Server
                 return Fail(name, nameof(CookieAuthenticationOptions.Events));
             }
 
-            var overridden = OverriddenHandlers(options.Events.GetType(), required.Lifetime);
+            var overridden = OverriddenHandlers(options.Events.GetType(), required.Lifetime, required.ValidateSession);
             if (overridden.Count != 0)
             {
                 return ValidateOptionsResult.Fail(
@@ -74,17 +74,14 @@ namespace Allors.Server
                 changed.Add(nameof(CookieAuthenticationEvents.OnSigningOut));
             }
 
-            if (required.Lifetime)
+            if (required.Lifetime && !ReferenceEquals(options.Events.OnSigningIn, required.SigningIn))
             {
-                if (!ReferenceEquals(options.Events.OnSigningIn, required.SigningIn))
-                {
-                    changed.Add(nameof(CookieAuthenticationEvents.OnSigningIn));
-                }
+                changed.Add(nameof(CookieAuthenticationEvents.OnSigningIn));
+            }
 
-                if (!ReferenceEquals(options.Events.OnValidatePrincipal, required.ValidatePrincipal))
-                {
-                    changed.Add(nameof(CookieAuthenticationEvents.OnValidatePrincipal));
-                }
+            if (required.ValidateSession && !ReferenceEquals(options.Events.OnValidatePrincipal, required.ValidatePrincipal))
+            {
+                changed.Add(nameof(CookieAuthenticationEvents.OnValidatePrincipal));
             }
 
             return changed.Count == 0 ? ValidateOptionsResult.Success : Fail(name, string.Join(", ", changed));
@@ -96,7 +93,7 @@ namespace Allors.Server
                 $"Leave {nameof(CookieAuthenticationOptions.EventsType)} unset and customize {nameof(CookieAuthenticationOptions)}.{nameof(CookieAuthenticationOptions.Events)} " +
                 "with services.Configure instead of replacing the session handlers in PostConfigure.");
 
-        private static HashSet<string> OverriddenHandlers(Type eventsType, bool lifetime)
+        private static HashSet<string> OverriddenHandlers(Type eventsType, bool lifetime, bool validateSession)
         {
             var overridden = new HashSet<string>(StringComparer.Ordinal);
             for (var type = eventsType; type != typeof(CookieAuthenticationEvents); type = type.BaseType)
@@ -107,7 +104,8 @@ namespace Allors.Server
                     if (definition.DeclaringType == typeof(CookieAuthenticationEvents) &&
                         (definition.Name is nameof(CookieAuthenticationEvents.RedirectToLogin) or nameof(CookieAuthenticationEvents.RedirectToAccessDenied) or
                              nameof(CookieAuthenticationEvents.SignedIn) or nameof(CookieAuthenticationEvents.SigningOut) ||
-                         (lifetime && definition.Name is nameof(CookieAuthenticationEvents.SigningIn) or nameof(CookieAuthenticationEvents.ValidatePrincipal))))
+                         (lifetime && definition.Name == nameof(CookieAuthenticationEvents.SigningIn)) ||
+                         (validateSession && definition.Name == nameof(CookieAuthenticationEvents.ValidatePrincipal))))
                     {
                         overridden.Add(definition.Name);
                     }
@@ -119,10 +117,11 @@ namespace Allors.Server
 
         private sealed class RequiredEvents
         {
-            internal RequiredEvents(CookieAuthenticationEvents events, bool lifetime)
+            internal RequiredEvents(CookieAuthenticationEvents events, bool lifetime, bool validateSession)
             {
                 this.Events = events;
                 this.Lifetime = lifetime;
+                this.ValidateSession = validateSession;
                 this.RedirectToLogin = events.OnRedirectToLogin;
                 this.RedirectToAccessDenied = events.OnRedirectToAccessDenied;
                 this.SignedIn = events.OnSignedIn;
@@ -134,6 +133,8 @@ namespace Allors.Server
             internal CookieAuthenticationEvents Events { get; }
 
             internal bool Lifetime { get; }
+
+            internal bool ValidateSession { get; }
 
             internal Func<RedirectContext<CookieAuthenticationOptions>, Task> RedirectToLogin { get; }
 

@@ -11,6 +11,7 @@ namespace Allors.Server.Tests
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Threading.Tasks;
+    using Database.Domain;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authentication.Cookies;
     using Microsoft.AspNetCore.DataProtection;
@@ -152,6 +153,33 @@ namespace Allors.Server.Tests
             }
 
             Assert.Equal(includeToken ? HttpStatusCode.Unauthorized : HttpStatusCode.OK, (await browser.GetAsync("allors/UserInfo")).StatusCode);
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task SignOutAfterUserDeletionClearsTheSessionWithoutAChallenge(bool includeToken)
+        {
+            var (browser, jar) = NewBrowser();
+            Assert.Equal(HttpStatusCode.OK, (await SignInAsync(browser, FakeEntraAccounts.Tester)).StatusCode);
+            var token = Cookie(jar, "XSRF-TOKEN");
+            this.FindUser(FakeEntraAccounts.Tester).Delete();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
+            var request = new HttpRequestMessage(HttpMethod.Post, EntraPaths.SignOut);
+            if (includeToken)
+            {
+                request.Headers.Add("X-XSRF-TOKEN", token);
+            }
+
+            var response = await browser.SendAsync(request);
+
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+            Assert.Null(response.Headers.Location);
+            Assert.Null(Cookie(jar, "Allors.Auth"));
+            Assert.Empty(await response.Content.ReadAsStringAsync());
+            Assert.Equal(HttpStatusCode.Unauthorized, (await browser.GetAsync("allors/UserInfo")).StatusCode);
+            Assert.Empty(this.AllUsers());
         }
 
         // The published test server and its tests run under the same account with the same default

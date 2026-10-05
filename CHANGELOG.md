@@ -238,6 +238,12 @@ Changes accumulate under **[Unreleased]** until a version is released.
 
 ### Fixed
 
+- Entra rejects and clears a browser session whose local user is missing, so the next sign-in
+  challenges Entra instead of repeatedly redirecting to an API that returns 401. The check
+  runs inside Core's protected cookie validation, including for custom sessions without an
+  absolute lifetime, and preserves application callbacks. Automatic admission remains enabled:
+  deletion alone does not prevent a later sign-in or bearer request from creating another user
+  when the application's factory still admits the identity.
 - Entra sign-out returns 204 when the browser session has expired or is absent, instead of
   starting a new sign-in and returning to a POST-only endpoint with GET. This leaves Entra SSO
   unchanged. Active sessions still require a valid antiforgery token before local and Entra

@@ -211,8 +211,25 @@ no user or session (`SignInTests.ASignInWithTheWrongNonceLeavesNoSessionOrUser`)
 
 The session ends `SessionLifetime` after its sign-in, 12 hours by default, however often the
 browser renewed it: Entra cannot end the application's session, so the application bounds it.
-Each request looks the user up by its identity (`EntraUserResolverTests`), so a user that was
-deleted is gone at its next request.
+Each request looks the user up by its identity (`EntraUserResolverTests`). If the browser
+session's user is missing, the plug-in rejects the session and clears its cookie. The API
+returns 401, and `/entra/sign-in` starts a new Entra sign-in instead of sending the browser
+back to an API that still refuses it
+(`SignInTests.ADeletedUserLosesItsBrowserSessionAtTheNextRequest` and
+`ADeletedUserMustSignInAgainAndMayBeReadmitted`). This check also applies to custom session
+schemes without an absolute lifetime, and runs on the principal left by the application's
+validation callback (`EntraOptionsTests.CustomSessionsWithoutALifetimeStillCheckEntraUsers`
+and `SessionValidationChecksTheApplicationsFinalPrincipal`).
+
+Deleting a local user does not permanently revoke its Entra identity. A later browser sign-in
+or bearer request can create another user if the application's factory still admits it
+(`SignInTests.ADeletedUserMustSignInAgainAndMayBeReadmitted` and
+`BearerTests.ADeletedUserMayBeReadmittedWithTheSameBearerToken`). The replacement receives
+the factory's current grants, not the deleted user's memberships. If a replacement exists
+before an old browser session is checked, that session resolves to the replacement
+(`BearerTests.AnExistingSessionResolvesAUserReadmittedBeforeItsNextRequest`). To prevent
+readmission, the application must retain its refusal policy independently of the deleted user
+and have its factory refuse that identity.
 
 To sign out, the browser posts to `/entra/sign-out` with the header `X-XSRF-TOKEN` set to the
 value of the `XSRF-TOKEN` cookie that a safe API request handed out, `GET /allors/UserInfo` for

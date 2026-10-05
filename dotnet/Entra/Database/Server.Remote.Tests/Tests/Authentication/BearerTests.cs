@@ -110,6 +110,66 @@ namespace Allors.Server.Tests
             Assert.Single(this.AllUsers());
         }
 
+        // Deletion removes the local user, but the application's factory still owns admission.
+        // A valid token may create another user when that factory continues to admit the identity.
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task ADeletedUserMayBeReadmittedWithTheSameBearerToken(bool application)
+        {
+            var account = application ? FakeEntraAccounts.Program : FakeEntraAccounts.Tester;
+            var token = application ? await this.ProgramTokenAsync() : await this.PersonTokenAsync(account);
+            Assert.Equal(HttpStatusCode.OK, (await this.HttpClient.SendAsync(Bearer(HttpMethod.Get, "/allors/UserInfo", token))).StatusCode);
+            var user = this.FindUser(account);
+            var deletedUserId = user.Id;
+            user.Delete();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
+            Assert.Null(this.FindUser(account));
+
+            var response = await this.HttpClient.SendAsync(Bearer(HttpMethod.Get, "/allors/UserInfo", token));
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            var replacement = this.FindUser(account);
+            Assert.NotEqual(deletedUserId, replacement.Id);
+            Assert.Equal(replacement.Id.ToString(), (await JsonAsync(response)).GetProperty("u").GetString());
+            if (application)
+            {
+                Assert.IsType<Agent>(replacement);
+            }
+            else
+            {
+                Assert.IsType<Person>(replacement);
+            }
+
+            Assert.Single(this.AllUsers());
+        }
+
+        [Fact]
+        public async Task AnExistingSessionResolvesAUserReadmittedBeforeItsNextRequest()
+        {
+            var (browser, jar) = NewBrowser();
+            Assert.Equal(HttpStatusCode.OK, (await SignInAsync(browser, FakeEntraAccounts.Tester)).StatusCode);
+            var sessionCookie = Cookie(jar, "Allors.Auth");
+            var token = await this.PersonTokenAsync(FakeEntraAccounts.Tester);
+            var user = this.FindUser(FakeEntraAccounts.Tester);
+            var deletedUserId = user.Id;
+            user.Delete();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
+            var admitted = await this.HttpClient.SendAsync(Bearer(HttpMethod.Get, "/allors/UserInfo", token));
+            Assert.Equal(HttpStatusCode.OK, admitted.StatusCode);
+            var replacementId = (await JsonAsync(admitted)).GetProperty("u").GetString();
+            Assert.NotEqual(deletedUserId.ToString(), replacementId);
+
+            var response = await browser.GetAsync("allors/UserInfo");
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal(replacementId, (await JsonAsync(response)).GetProperty("u").GetString());
+            Assert.Equal(sessionCookie, Cookie(jar, "Allors.Auth"));
+            Assert.Single(this.AllUsers());
+        }
+
         // The tokens Microsoft never issues for the tenant, each refused by Microsoft.Identity.Web's
         // validation before the plug-in sees a principal: no user is created for any of them.
         [Theory]

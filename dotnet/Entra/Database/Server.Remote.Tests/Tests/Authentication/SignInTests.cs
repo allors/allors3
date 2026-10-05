@@ -123,6 +123,56 @@ namespace Allors.Server.Tests
             Assert.Single(this.AllUsers());
         }
 
+        [Fact]
+        public async Task ADeletedUserLosesItsBrowserSessionAtTheNextRequest()
+        {
+            var (browser, jar) = NewBrowser();
+            Assert.Equal(HttpStatusCode.OK, (await SignInAsync(browser, FakeEntraAccounts.Tester)).StatusCode);
+            Assert.NotNull(Cookie(jar, "Allors.Auth"));
+            this.FindUser(FakeEntraAccounts.Tester).Delete();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
+
+            var response = await browser.GetAsync("allors/UserInfo");
+
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+            Assert.Null(response.Headers.Location);
+            Assert.Null(Cookie(jar, "Allors.Auth"));
+            Assert.Null(this.FindUser(FakeEntraAccounts.Tester));
+            Assert.Empty(this.AllUsers());
+            Assert.Equal(HttpStatusCode.Unauthorized, (await browser.GetAsync("allors/UserInfo")).StatusCode);
+        }
+
+        [Fact]
+        public async Task ADeletedUserMustSignInAgainAndMayBeReadmitted()
+        {
+            var (browser, jar) = NewBrowser();
+            Assert.Equal(HttpStatusCode.OK, (await SignInAsync(browser, FakeEntraAccounts.Tester)).StatusCode);
+            var user = this.FindUser(FakeEntraAccounts.Tester);
+            var deletedUserId = user.Id;
+            user.Delete();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
+
+            var challenge = await browser.GetAsync("entra/sign-in?returnUrl=%2Fallors%2FUserInfo");
+
+            Assert.Equal(HttpStatusCode.Redirect, challenge.StatusCode);
+            Assert.Equal($"{FakeEntra.PathPrefix}/{this.TenantId}/oauth2/v2.0/authorize", challenge.Headers.Location.AbsolutePath);
+            Assert.Null(Cookie(jar, "Allors.Auth"));
+            Assert.Empty(this.AllUsers());
+
+            var callback = await browser.GetAsync(challenge.Headers.Location + "&account=" + FakeEntraAccounts.Tester.Id);
+            var response = await FollowRedirectsAsync(browser, callback);
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            var replacement = this.FindUser(FakeEntraAccounts.Tester);
+            Assert.IsType<Person>(replacement);
+            Assert.NotEqual(deletedUserId, replacement.Id);
+            Assert.Equal(replacement.Id.ToString(), (await JsonAsync(response)).GetProperty("u").GetString());
+            Assert.NotNull(Cookie(jar, "Allors.Auth"));
+            Assert.Single(this.AllUsers());
+        }
+
         // A guest of the tenant, invited from the customer's tenant, is a person like the others; the
         // directory says where it comes from.
         [Fact]

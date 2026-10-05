@@ -122,6 +122,7 @@ namespace Allors.Server
 
             if (openIdConnectScheme != null)
             {
+                services.TryAddEnumerable(ServiceDescriptor.Singleton<IAllorsSessionValidator, EntraSessionValidator>());
                 var events = new EntraEventsValidation<OpenIdConnectOptions>(openIdConnectScheme,
                     nameof(OpenIdConnectEvents.OnTicketReceived), options => options.Events?.OnTicketReceived,
                     typeof(OpenIdConnectEvents).GetMethod(nameof(OpenIdConnectEvents.TicketReceived)));
