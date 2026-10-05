@@ -238,6 +238,12 @@ Changes accumulate under **[Unreleased]** until a version is released.
 
 ### Fixed
 
+- Entra and Core validate their authentication event callbacks after all post-configuration
+  and refuse invalid configuration at startup. `EventsType` and later replacement of the
+  protected callbacks can no longer silently bypass Entra admission, certificate code
+  redemption or Core's session rules. Event subclasses cannot override the protected dispatch
+  methods. Application callbacks configured before wrapping and later customization of
+  unprotected callbacks remain supported.
 - Entra refuses admission when reading an existing user or refreshing its profile fails,
   instead of letting the exception escape the authentication callback. Profile validation
   errors and exceptions are logged with the Entra object id; callers receive an admission

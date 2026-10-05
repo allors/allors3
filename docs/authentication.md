@@ -32,7 +32,7 @@ changes for a plug-in that names none of them.
 - **`SessionScheme`**, the cookie that keeps a browser signed in. Core gives the cookie its
   defaults: the name `__Host-Allors.Auth`, `HttpOnly`, `SameSite=Lax`, `Secure` and a sliding
   lifetime of 8 hours; in Development the cookie is `Allors.Auth` and follows the scheme of the
-  request, so plain http works. What the plug-in or the application configures afterwards wins.
+  request, so plain http works. The plug-in or the application may override these cookie defaults.
   A challenge or a refusal for the Allors API answers 401 or 403 instead of a redirect, and
   signing in or out drops the antiforgery cookie. An unsafe API request that this scheme
   authenticated needs the antiforgery token: a safe API request hands out the readable cookie
@@ -65,6 +65,16 @@ changes for a plug-in that names none of them.
 scheme is the default and no scheme is named, so that a misconfigured server fails before its
 first request; `AllorsServerTests.UseAllorsServerFailsWhenANamedSchemeIsNotRegistered` and
 `UseAllorsServerFailsWhenTheSelectingSchemeIsTheDefaultAndNoSchemeIsNamed` check that.
+
+Core's session rules run through cookie events. Set application callbacks with
+`services.Configure<CookieAuthenticationOptions>(sessionScheme, options => ...)`: Core wraps
+them after configuration. Leave `EventsType` unset. A later `PostConfigure` may customize
+unprotected events, but must not replace `Events` or the callbacks Core wraps. The final
+options are checked at startup, so replacing the rules causes an actionable configuration
+error instead of silently disabling them. Event subclasses must inherit the framework methods
+for the events Core wraps; customize their `On…` callbacks instead of overriding those methods.
+`AllorsServerTests.SessionRulesCannotBeReplacedAfterPostConfiguration`
+and `UseAllorsServerRefusesReplacedSessionRulesAtStartup` check this contract.
 
 ## What a plug-in does
 

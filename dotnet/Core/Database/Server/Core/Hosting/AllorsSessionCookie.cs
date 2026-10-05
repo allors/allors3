@@ -136,6 +136,8 @@ namespace Allors.Server
                     await validatePrincipal(context);
                 };
             }
+
+            AllorsSessionCookieValidation.Capture(options, lifetime != null);
         }
 
         // The sign-in time of a session, in the authentication properties of its ticket.

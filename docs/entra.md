@@ -118,6 +118,20 @@ with the session lifetime; `EntraOptionsTests` checks each. An application that 
 Microsoft.Identity.Web itself, with scheme names of its own, calls `AddAllorsEntraUsers` with
 those names instead, and names its schemes to Core in `AllorsAuthenticationOptions`.
 
+Configure application event callbacks with `services.Configure<OpenIdConnectOptions>` or
+`services.Configure<JwtBearerOptions>`, using the corresponding scheme name. The plug-in wraps
+`OnTicketReceived` for browser admission and `OnTokenValidated` for bearer admission, and
+also wraps `OnAuthorizationCodeReceived` to support certificate credentials when registered
+with `AddAllorsEntra`. Leave `EventsType` unset, including on `MicrosoftIdentityOptions`.
+Startup refuses a later `PostConfigure` that replaces
+`Events` or one of those protected callbacks. Other callbacks, including `OnRemoteFailure`,
+remain customizable in `PostConfigure`. An event subclass must inherit the corresponding
+framework event methods, so they still invoke the protected callbacks. This applies to custom
+scheme names registered with `AddAllorsEntraUsers` too
+(`EntraOptionsTests.EntraRefusesConfigurationThatReplacesItsEvents`,
+`StartUpRefusesReplacedEntraEvents` and `CustomEntraSchemeNamesCannotBypassAdmission`).
+The [session cookie follows Core's event rules](authentication.md#what-core-does).
+
 ## 4. Decide whom the application admits
 
 The plug-in identifies every principal by its tenant id and object id, a person's and a

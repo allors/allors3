@@ -34,8 +34,10 @@ namespace Tests
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.FileProviders;
+    using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
+    using Microsoft.Identity.Web;
     using Microsoft.IdentityModel.JsonWebTokens;
     using Microsoft.IdentityModel.Protocols.OpenIdConnect;
     using Microsoft.IdentityModel.Tokens;
@@ -362,6 +364,191 @@ namespace Tests
             Assert.Equal(issuer, principal.IdentityProvider());
             Assert.Equal(ClientId, principal.ClientApplicationId());
             Assert.False(principal.HasClaim(v => v.Type == "nonce"));
+        }
+
+        [Theory]
+        [InlineData(true, "EventsType")]
+        [InlineData(false, "EventsType")]
+        [InlineData(true, "LateEventsType")]
+        [InlineData(false, "LateEventsType")]
+        [InlineData(true, "Events")]
+        [InlineData(false, "Events")]
+        [InlineData(true, "Admission")]
+        [InlineData(false, "Admission")]
+        [InlineData(true, "MicrosoftIdentityEventsType")]
+        [InlineData(true, "Certificate")]
+        [InlineData(true, "AdmissionOverride")]
+        [InlineData(false, "AdmissionOverride")]
+        [InlineData(true, "CertificateOverride")]
+        public void EntraRefusesConfigurationThatReplacesItsEvents(bool browser, string replacement)
+        {
+            using var provider = Provider(configure: services => ReplaceEntraEvents(services, browser, replacement));
+
+            var exception = Assert.Throws<OptionsValidationException>(() =>
+            {
+                if (browser)
+                {
+                    OpenIdConnect(provider);
+                }
+                else
+                {
+                    provider.GetRequiredService<IOptionsMonitor<JwtBearerOptions>>().Get(EntraDefaults.BearerScheme);
+                }
+            });
+
+            Assert.Contains(browser ? EntraDefaults.OpenIdConnectScheme : EntraDefaults.BearerScheme, exception.Message, StringComparison.Ordinal);
+            Assert.Contains("Configure", exception.Message, StringComparison.Ordinal);
+            Assert.Contains(replacement.Contains("EventsType", StringComparison.Ordinal) ? "EventsType" : "Events", exception.Message, StringComparison.Ordinal);
+        }
+
+        // Resolve the startup validator without first requesting either scheme's options: a broken
+        // registration must fail before the first authentication request.
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void StartUpRefusesReplacedEntraEvents(bool browser)
+        {
+            using var provider = Provider(configure: services => ReplaceEntraEvents(services, browser, "Events"));
+
+            var exception = Assert.Throws<OptionsValidationException>(() => provider.GetRequiredService<IStartupValidator>().Validate());
+
+            Assert.Contains(browser ? EntraDefaults.OpenIdConnectScheme : EntraDefaults.BearerScheme, exception.Message, StringComparison.Ordinal);
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void CustomEntraSchemeNamesCannotBypassAdmission(bool browser)
+        {
+            var services = new ServiceCollection();
+            services.AddAllorsEntraUsers(browser ? "Custom.Oidc" : null, browser ? null : "Custom.Bearer");
+            services.Configure<OpenIdConnectOptions>("Custom.Oidc", options => options.EventsType = typeof(OpenIdConnectEvents));
+            services.Configure<JwtBearerOptions>("Custom.Bearer", options => options.EventsType = typeof(JwtBearerEvents));
+            using var provider = services.BuildServiceProvider();
+
+            var exception = Assert.Throws<OptionsValidationException>(() => provider.GetRequiredService<IStartupValidator>().Validate());
+
+            Assert.Contains(browser ? "Custom.Oidc" : "Custom.Bearer", exception.Message, StringComparison.Ordinal);
+        }
+
+        [Fact]
+        public void EntraEventValidationLeavesOtherSchemesAlone()
+        {
+            var services = new ServiceCollection();
+            services.AddAllorsEntraUsers("Custom.Oidc", "Custom.Bearer");
+            services.Configure<OpenIdConnectOptions>("Other.Oidc", options => options.EventsType = typeof(OpenIdConnectEvents));
+            services.Configure<JwtBearerOptions>("Other.Bearer", options => options.EventsType = typeof(JwtBearerEvents));
+            using var provider = services.BuildServiceProvider();
+
+            Assert.Equal(typeof(OpenIdConnectEvents), provider.GetRequiredService<IOptionsMonitor<OpenIdConnectOptions>>().Get("Other.Oidc").EventsType);
+            Assert.Equal(typeof(JwtBearerEvents), provider.GetRequiredService<IOptionsMonitor<JwtBearerOptions>>().Get("Other.Bearer").EventsType);
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void EntraAllowsOverridesOfUnprotectedEvents(bool browser)
+        {
+            using var provider = Provider(configure: services =>
+            {
+                if (browser)
+                {
+                    services.Configure<OpenIdConnectOptions>(EntraDefaults.OpenIdConnectScheme,
+                        options => options.Events = new CustomRemoteFailureEvents());
+                }
+                else
+                {
+                    services.Configure<JwtBearerOptions>(EntraDefaults.BearerScheme,
+                        options => options.Events = new CustomAuthenticationFailedEvents());
+                }
+            });
+
+            provider.GetRequiredService<IStartupValidator>().Validate();
+
+            if (browser)
+            {
+                Assert.IsType<CustomRemoteFailureEvents>(OpenIdConnect(provider).Events);
+            }
+            else
+            {
+                Assert.IsType<CustomAuthenticationFailedEvents>(provider.GetRequiredService<IOptionsMonitor<JwtBearerOptions>>().Get(EntraDefaults.BearerScheme).Events);
+            }
+        }
+
+        private static void ReplaceEntraEvents(IServiceCollection services, bool browser, string replacement)
+        {
+            if (replacement == "MicrosoftIdentityEventsType")
+            {
+                services.Configure<MicrosoftIdentityOptions>(EntraDefaults.OpenIdConnectScheme, options => options.EventsType = typeof(OpenIdConnectEvents));
+                return;
+            }
+
+            if (browser)
+            {
+                Action<OpenIdConnectOptions> replace = options =>
+                {
+                    switch (replacement)
+                    {
+                        case "EventsType":
+                        case "LateEventsType":
+                            options.EventsType = typeof(OpenIdConnectEvents);
+                            break;
+                        case "Events":
+                            options.Events = new OpenIdConnectEvents();
+                            break;
+                        case "Admission":
+                            options.Events.OnTicketReceived = _ => Task.CompletedTask;
+                            break;
+                        case "Certificate":
+                            options.Events.OnAuthorizationCodeReceived = _ => Task.CompletedTask;
+                            break;
+                        case "AdmissionOverride":
+                            options.Events = new SkippedTicketReceivedEvents();
+                            break;
+                        case "CertificateOverride":
+                            options.Events = new SkippedAuthorizationCodeReceivedEvents();
+                            break;
+                    }
+                };
+                if (replacement == "EventsType" || replacement.EndsWith("Override", StringComparison.Ordinal))
+                {
+                    services.Configure(EntraDefaults.OpenIdConnectScheme, replace);
+                }
+                else
+                {
+                    services.PostConfigure(EntraDefaults.OpenIdConnectScheme, replace);
+                }
+            }
+            else
+            {
+                Action<JwtBearerOptions> replace = options =>
+                {
+                    switch (replacement)
+                    {
+                        case "EventsType":
+                        case "LateEventsType":
+                            options.EventsType = typeof(JwtBearerEvents);
+                            break;
+                        case "Events":
+                            options.Events = new JwtBearerEvents();
+                            break;
+                        case "Admission":
+                            options.Events.OnTokenValidated = _ => Task.CompletedTask;
+                            break;
+                        case "AdmissionOverride":
+                            options.Events = new SkippedTokenValidatedEvents();
+                            break;
+                    }
+                };
+                if (replacement == "EventsType" || replacement.EndsWith("Override", StringComparison.Ordinal))
+                {
+                    services.Configure(EntraDefaults.BearerScheme, replace);
+                }
+                else
+                {
+                    services.PostConfigure(EntraDefaults.BearerScheme, replace);
+                }
+            }
         }
 
         // One tenant: the plug-in signs in the members and guests of the application's tenant, so it
@@ -812,6 +999,31 @@ namespace Tests
                 context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                 await context.Response.WriteAsJsonAsync(new { error = "invalid_client", error_description = "The code exchange requires a valid certificate assertion." });
             }
+        }
+
+        private sealed class SkippedTicketReceivedEvents : OpenIdConnectEvents
+        {
+            public override Task TicketReceived(TicketReceivedContext context) => Task.CompletedTask;
+        }
+
+        private sealed class SkippedAuthorizationCodeReceivedEvents : OpenIdConnectEvents
+        {
+            public override Task AuthorizationCodeReceived(AuthorizationCodeReceivedContext context) => Task.CompletedTask;
+        }
+
+        private sealed class SkippedTokenValidatedEvents : JwtBearerEvents
+        {
+            public override Task TokenValidated(Microsoft.AspNetCore.Authentication.JwtBearer.TokenValidatedContext context) => Task.CompletedTask;
+        }
+
+        private sealed class CustomRemoteFailureEvents : OpenIdConnectEvents
+        {
+            public override Task RemoteFailure(RemoteFailureContext context) => Task.CompletedTask;
+        }
+
+        private sealed class CustomAuthenticationFailedEvents : JwtBearerEvents
+        {
+            public override Task AuthenticationFailed(Microsoft.AspNetCore.Authentication.JwtBearer.AuthenticationFailedContext context) => Task.CompletedTask;
         }
 
         private sealed class StubWebHostEnvironment : IWebHostEnvironment

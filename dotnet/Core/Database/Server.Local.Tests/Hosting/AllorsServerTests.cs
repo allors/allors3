@@ -357,6 +357,197 @@ namespace Tests
             Assert.Contains(nameof(CookieAuthenticationOptions.EventsType), exception.Message);
         }
 
+        [Theory]
+        [InlineData(nameof(CookieAuthenticationOptions.Events))]
+        [InlineData(nameof(CookieAuthenticationOptions.EventsType))]
+        [InlineData(nameof(CookieAuthenticationEvents.OnRedirectToLogin))]
+        [InlineData(nameof(CookieAuthenticationEvents.OnRedirectToAccessDenied))]
+        [InlineData(nameof(CookieAuthenticationEvents.OnSignedIn))]
+        [InlineData(nameof(CookieAuthenticationEvents.OnSigningOut))]
+        [InlineData(nameof(CookieAuthenticationEvents.OnSigningIn))]
+        [InlineData(nameof(CookieAuthenticationEvents.OnValidatePrincipal))]
+        public void SessionRulesCannotBeReplacedAfterPostConfiguration(string member)
+        {
+            using var provider = SessionProvider(configure: services =>
+            {
+                services.Configure<AllorsAuthenticationOptions>(v => v.SessionLifetime = TimeSpan.FromHours(12));
+                services.PostConfigure<CookieAuthenticationOptions>(SessionScheme, v => ReplaceSessionEvent(v, member));
+            });
+
+            var exception = Assert.Throws<OptionsValidationException>(() => SessionOptions(provider));
+
+            Assert.Contains(SessionScheme, exception.Message);
+            Assert.Contains(member, exception.Message);
+            Assert.Contains("Configure", exception.Message);
+        }
+
+        [Theory]
+        [InlineData(nameof(CookieAuthenticationOptions.Events))]
+        [InlineData(nameof(CookieAuthenticationOptions.EventsType))]
+        [InlineData(nameof(CookieAuthenticationEvents.OnSigningIn))]
+        public void UseAllorsServerRefusesReplacedSessionRulesAtStartup(string member)
+        {
+            using var provider = ProviderForUseAllorsServer(services =>
+            {
+                services.AddAuthentication().AddCookie(SessionScheme);
+                services.Configure<AllorsAuthenticationOptions>(v =>
+                {
+                    v.SessionScheme = SessionScheme;
+                    v.SessionLifetime = TimeSpan.FromHours(12);
+                });
+                services.PostConfigure<CookieAuthenticationOptions>(SessionScheme, v => ReplaceSessionEvent(v, member));
+            });
+            var app = new ApplicationBuilder(provider);
+            app.UseRouting();
+
+            var exception = Assert.Throws<OptionsValidationException>(() => app.UseAllorsServer());
+
+            Assert.Contains(SessionScheme, exception.Message);
+            Assert.Contains(member, exception.Message);
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task SessionRulesAllowLaterCustomizationOfUnprotectedEvents(bool lifetime)
+        {
+            var callbacks = 0;
+            using var provider = SessionProvider(configure: services =>
+            {
+                if (lifetime)
+                {
+                    services.Configure<AllorsAuthenticationOptions>(v => v.SessionLifetime = TimeSpan.FromHours(12));
+                }
+
+                services.PostConfigure<CookieAuthenticationOptions>(SessionScheme, v =>
+                {
+                    v.Events.OnRedirectToLogout = _ =>
+                    {
+                        callbacks++;
+                        return Task.CompletedTask;
+                    };
+                    if (!lifetime)
+                    {
+                        v.Events.OnSigningIn = _ =>
+                        {
+                            callbacks++;
+                            return Task.CompletedTask;
+                        };
+                        v.Events.OnValidatePrincipal = _ =>
+                        {
+                            callbacks++;
+                            return Task.CompletedTask;
+                        };
+                    }
+                });
+            });
+            var options = SessionOptions(provider);
+
+            await options.Events.RedirectToLogout(Redirect(provider, options, "/account"));
+            if (!lifetime)
+            {
+                await options.Events.SigningIn(null);
+                await options.Events.ValidatePrincipal(null);
+            }
+
+            var api = Redirect(provider, options, "/allors/pull");
+            await options.Events.RedirectToLogin(api);
+
+            Assert.Equal(lifetime ? 1 : 3, callbacks);
+            Assert.Equal(StatusCodes.Status401Unauthorized, api.Response.StatusCode);
+        }
+
+        [Theory]
+        [InlineData(nameof(CookieAuthenticationOptions.Events))]
+        [InlineData(nameof(CookieAuthenticationOptions.EventsType))]
+        public void OtherCookiesAllowEventsReplacedAfterPostConfiguration(string member)
+        {
+            var events = new CookieAuthenticationEvents();
+            using var provider = SessionProvider(configure: services =>
+            {
+                services.AddAuthentication().AddCookie("Tests.Other");
+                services.PostConfigure<CookieAuthenticationOptions>("Tests.Other", v =>
+                {
+                    v.Events = events;
+                    if (member == nameof(CookieAuthenticationOptions.EventsType))
+                    {
+                        v.EventsType = typeof(CookieAuthenticationEvents);
+                    }
+                });
+            });
+
+            var other = provider.GetRequiredService<IOptionsMonitor<CookieAuthenticationOptions>>().Get("Tests.Other");
+
+            Assert.Same(events, other.Events);
+            Assert.Equal(member == nameof(CookieAuthenticationOptions.EventsType) ? typeof(CookieAuthenticationEvents) : null, other.EventsType);
+        }
+
+        [Theory]
+        [InlineData(typeof(OverriddenLoginEvents), nameof(CookieAuthenticationEvents.RedirectToLogin))]
+        [InlineData(typeof(OverriddenAccessDeniedEvents), nameof(CookieAuthenticationEvents.RedirectToAccessDenied))]
+        [InlineData(typeof(OverriddenSignedInEvents), nameof(CookieAuthenticationEvents.SignedIn))]
+        [InlineData(typeof(OverriddenSigningOutEvents), nameof(CookieAuthenticationEvents.SigningOut))]
+        [InlineData(typeof(OverriddenSigningInEvents), nameof(CookieAuthenticationEvents.SigningIn))]
+        [InlineData(typeof(OverriddenValidatePrincipalEvents), nameof(CookieAuthenticationEvents.ValidatePrincipal))]
+        public void SessionRulesCannotBeSkippedByOverriddenEvents(Type eventsType, string member)
+        {
+            using var provider = SessionProvider(
+                configureCookie: v => v.Events = (CookieAuthenticationEvents)Activator.CreateInstance(eventsType, true),
+                configure: services => services.Configure<AllorsAuthenticationOptions>(v => v.SessionLifetime = TimeSpan.FromHours(12)));
+
+            var exception = Assert.Throws<OptionsValidationException>(() => SessionOptions(provider));
+
+            Assert.Contains(SessionScheme, exception.Message);
+            Assert.Contains(member, exception.Message);
+            Assert.Contains("Configure", exception.Message);
+        }
+
+        [Fact]
+        public void UseAllorsServerRefusesOverriddenSessionRulesAtStartup()
+        {
+            using var provider = ProviderForUseAllorsServer(services =>
+            {
+                services.AddAuthentication().AddCookie(SessionScheme, v => v.Events = new OverriddenValidatePrincipalEvents());
+                services.Configure<AllorsAuthenticationOptions>(v =>
+                {
+                    v.SessionScheme = SessionScheme;
+                    v.SessionLifetime = TimeSpan.FromHours(12);
+                });
+            });
+            var app = new ApplicationBuilder(provider);
+            app.UseRouting();
+
+            var exception = Assert.Throws<OptionsValidationException>(() => app.UseAllorsServer());
+
+            Assert.Contains(SessionScheme, exception.Message);
+            Assert.Contains(nameof(CookieAuthenticationEvents.ValidatePrincipal), exception.Message);
+        }
+
+        [Theory]
+        [InlineData(typeof(PlainCookieEvents), true)]
+        [InlineData(typeof(OverriddenLogoutEvents), true)]
+        [InlineData(typeof(HiddenLoginEvents), true)]
+        [InlineData(typeof(OverriddenSigningInEvents), false)]
+        [InlineData(typeof(OverriddenValidatePrincipalEvents), false)]
+        public async Task SessionRulesKeepHarmlessEventSubclasses(Type eventsType, bool lifetime)
+        {
+            var events = (CookieAuthenticationEvents)Activator.CreateInstance(eventsType, true);
+            using var provider = SessionProvider(configureCookie: v => v.Events = events, configure: services =>
+            {
+                if (lifetime)
+                {
+                    services.Configure<AllorsAuthenticationOptions>(v => v.SessionLifetime = TimeSpan.FromHours(12));
+                }
+            });
+            var options = SessionOptions(provider);
+
+            var api = Redirect(provider, options, "/allors/pull");
+            await options.Events.RedirectToLogin(api);
+
+            Assert.Same(events, options.Events);
+            Assert.Equal(StatusCodes.Status401Unauthorized, api.Response.StatusCode);
+        }
+
         // Core registers one scheme that selects, per request, the session or the bearer scheme a
         // plug-in named. A plug-in makes it the default scheme; Core's own test server keeps its
         // header scheme as the default.
@@ -588,6 +779,67 @@ namespace Tests
             configure?.Invoke(services);
 
             return services.BuildServiceProvider();
+        }
+
+        private sealed class OverriddenLoginEvents : CookieAuthenticationEvents
+        {
+            public override Task RedirectToLogin(RedirectContext<CookieAuthenticationOptions> context) => Task.CompletedTask;
+        }
+
+        private sealed class OverriddenAccessDeniedEvents : CookieAuthenticationEvents
+        {
+            public override Task RedirectToAccessDenied(RedirectContext<CookieAuthenticationOptions> context) => Task.CompletedTask;
+        }
+
+        private sealed class OverriddenSignedInEvents : CookieAuthenticationEvents
+        {
+            public override Task SignedIn(CookieSignedInContext context) => Task.CompletedTask;
+        }
+
+        private sealed class OverriddenSigningOutEvents : CookieAuthenticationEvents
+        {
+            public override Task SigningOut(CookieSigningOutContext context) => Task.CompletedTask;
+        }
+
+        private sealed class OverriddenSigningInEvents : CookieAuthenticationEvents
+        {
+            public override Task SigningIn(CookieSigningInContext context) => Task.CompletedTask;
+        }
+
+        private sealed class OverriddenValidatePrincipalEvents : CookieAuthenticationEvents
+        {
+            public override Task ValidatePrincipal(CookieValidatePrincipalContext context) => Task.CompletedTask;
+        }
+
+        private sealed class PlainCookieEvents : CookieAuthenticationEvents
+        {
+        }
+
+        private sealed class OverriddenLogoutEvents : CookieAuthenticationEvents
+        {
+            public override Task RedirectToLogout(RedirectContext<CookieAuthenticationOptions> context) => Task.CompletedTask;
+        }
+
+        private sealed class HiddenLoginEvents : CookieAuthenticationEvents
+        {
+            public new Task RedirectToLogin(RedirectContext<CookieAuthenticationOptions> context) => Task.CompletedTask;
+        }
+
+        private static void ReplaceSessionEvent(CookieAuthenticationOptions options, string member)
+        {
+            if (member == nameof(CookieAuthenticationOptions.Events))
+            {
+                options.Events = new CookieAuthenticationEvents();
+            }
+            else if (member == nameof(CookieAuthenticationOptions.EventsType))
+            {
+                options.EventsType = typeof(CookieAuthenticationEvents);
+            }
+            else
+            {
+                var property = typeof(CookieAuthenticationEvents).GetProperty(member);
+                property.SetValue(options.Events, property.GetValue(new CookieAuthenticationEvents()));
+            }
         }
 
         private static CookieAuthenticationOptions SessionOptions(IServiceProvider provider) =>

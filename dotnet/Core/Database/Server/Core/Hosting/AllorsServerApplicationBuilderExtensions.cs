@@ -10,6 +10,7 @@ namespace Allors.Server
     using System.Net;
     using Allors.Services;
     using Microsoft.AspNetCore.Authentication;
+    using Microsoft.AspNetCore.Authentication.Cookies;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.HttpOverrides;
@@ -73,6 +74,14 @@ namespace Allors.Server
                     $"The default authentication scheme is '{AllorsAuthenticationDefaults.AuthenticationScheme}', which selects the session or the bearer scheme per request, " +
                     $"but {nameof(AllorsAuthenticationOptions)} names neither a {nameof(AllorsAuthenticationOptions.SessionScheme)} nor a {nameof(AllorsAuthenticationOptions.BearerScheme)}. " +
                     "Select an authentication plug-in that names them, or set another default scheme.");
+            }
+
+            // Resolve the final options at start-up: replacing the session events in a later
+            // PostConfigure must fail before the server accepts any requests.
+            var session = authentication.SessionScheme == null ? null : schemes.GetSchemeAsync(authentication.SessionScheme).GetAwaiter().GetResult();
+            if (session != null && typeof(CookieAuthenticationHandler).IsAssignableFrom(session.HandlerType))
+            {
+                app.ApplicationServices.GetRequiredService<IOptionsMonitor<CookieAuthenticationOptions>>().Get(session.Name);
             }
 
             var environment = app.ApplicationServices.GetRequiredService<IWebHostEnvironment>();

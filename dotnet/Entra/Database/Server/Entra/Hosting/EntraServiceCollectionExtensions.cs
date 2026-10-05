@@ -20,6 +20,7 @@ namespace Allors.Server
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.DependencyInjection.Extensions;
     using Microsoft.Extensions.Hosting;
+    using Microsoft.Extensions.Options;
     using Microsoft.Identity.Abstractions;
     using Microsoft.Identity.Web;
     using Microsoft.IdentityModel.Protocols.OpenIdConnect;
@@ -54,6 +55,10 @@ namespace Allors.Server
                     EntraDefaults.SessionScheme);
 
             services.TryAddSingleton<ICredentialsLoader, DefaultCertificateLoader>();
+            var certificateEvents = new EntraEventsValidation<OpenIdConnectOptions>(EntraDefaults.OpenIdConnectScheme,
+                nameof(OpenIdConnectEvents.OnAuthorizationCodeReceived), options => options.Events?.OnAuthorizationCodeReceived,
+                typeof(OpenIdConnectEvents).GetMethod(nameof(OpenIdConnectEvents.AuthorizationCodeReceived)));
+            services.AddSingleton<IValidateOptions<OpenIdConnectOptions>>(certificateEvents);
             services.PostConfigure<OpenIdConnectOptions>(EntraDefaults.OpenIdConnectScheme, options =>
             {
                 var authorizationCodeReceived = options.Events.OnAuthorizationCodeReceived;
@@ -67,6 +72,7 @@ namespace Allors.Server
 
                     await EntraClientAssertion.AddAsync(context);
                 };
+                certificateEvents.Capture(options);
             });
 
             services.AddAuthentication()
@@ -116,6 +122,11 @@ namespace Allors.Server
 
             if (openIdConnectScheme != null)
             {
+                var events = new EntraEventsValidation<OpenIdConnectOptions>(openIdConnectScheme,
+                    nameof(OpenIdConnectEvents.OnTicketReceived), options => options.Events?.OnTicketReceived,
+                    typeof(OpenIdConnectEvents).GetMethod(nameof(OpenIdConnectEvents.TicketReceived)));
+                services.AddSingleton<IValidateOptions<OpenIdConnectOptions>>(events);
+                services.AddOptions<OpenIdConnectOptions>(openIdConnectScheme).ValidateOnStart();
                 services.PostConfigure<OpenIdConnectOptions>(openIdConnectScheme, options =>
                 {
                     // The factory still needs these token claims after the handler's claim actions.
@@ -175,11 +186,17 @@ namespace Allors.Server
 
                         context.Principal = EntraAdmission.SessionPrincipal(context.Principal);
                     };
+                    events.Capture(options);
                 });
             }
 
             if (bearerScheme != null)
             {
+                var events = new EntraEventsValidation<JwtBearerOptions>(bearerScheme,
+                    nameof(JwtBearerEvents.OnTokenValidated), options => options.Events?.OnTokenValidated,
+                    typeof(JwtBearerEvents).GetMethod(nameof(JwtBearerEvents.TokenValidated)));
+                services.AddSingleton<IValidateOptions<JwtBearerOptions>>(events);
+                services.AddOptions<JwtBearerOptions>(bearerScheme).ValidateOnStart();
                 services.PostConfigure<JwtBearerOptions>(bearerScheme, options =>
                 {
                     // Core reads Identity.Name. Use preferred_username by default, and fill it from
@@ -219,6 +236,7 @@ namespace Allors.Server
                             context.Fail(reason);
                         }
                     };
+                    events.Capture(options);
                 });
             }
 
