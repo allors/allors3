@@ -29,7 +29,8 @@ The plug-in needs one app registration, with:
   may hold, granted to the program's registration.
 - Optional claims where the application needs them: `acct` for guests, `email` for the
   profile, and `idtyp` on access tokens when the factory uses `IsApplication()` to distinguish
-  programs (step 4). Without `acct` nobody counts as a guest.
+  programs (step 4). Without `acct`, `IsGuest()` returns false; browser sign-in preserves a
+  previously recorded guest status when the claim is missing (step 7).
 
 The tenant id must be the GUID of the application's own tenant: the plug-in signs in that
 tenant's members and guests, and refuses `common`, `organizations` and `consumers` at start-up
@@ -190,8 +191,12 @@ Entra domain on the user: the identity, `EntraTenantId` and `EntraObjectId`; wha
 says about the account, `EntraUserName`, `EntraDisplayName` and `EntraEmail`; and for a guest
 its home and status, `EntraIdentityProvider` and `EntraIsGuest`. Nobody writes them through
 the API (`UserTests.NobodyWritesTheEntraFieldsThroughAnAccessList`). A browser sign-in
-refreshes the five profile fields when the directory says something new; a bearer token does
-not (`EntraAdmissionTests.ASignInRefreshesTheProfileFieldsAndABearerTokenDoesNot`).
+refreshes the profile fields supplied by the token; a bearer token does not
+(`EntraAdmissionTests.ASignInRefreshesTheProfileFieldsAndABearerTokenDoesNot`). Missing or
+empty user name, display name and email claims preserve their stored values, so these fields
+hold the last information supplied, not necessarily a complete snapshot of the directory
+(`EntraAdmissionTests.ASignInKeepsProfileFieldsWhoseClaimsAreMissing`). Guest status and
+provider follow the rules in [step 7](#7-guests-the-extranet).
 
 If the existing user cannot be read or its refreshed profile cannot be saved, admission is
 refused and the server logs the details. A rejected or failed profile derivation leaves the
@@ -286,12 +291,28 @@ plug-in's. A guest signs in like a member, and the token says where the account 
 lives, the issuer of the home tenant for the employee of another organization, and `acct` is
 `1` when the registration asks for that optional claim.
 
-The plug-in keeps that in two fields. `EntraIdentityProvider` holds the `idp` claim, an issuer
-that carries the home tenant's id, so it is the stable key for which customer a guest belongs
-to; for a member it holds the application's own issuer. `EntraIsGuest` holds the `acct` claim.
-The factory sees the same claims and can map a guest to a class of its own or refuse a home
-tenant it does not know. `SignInTests.AGuestIsAPersonWithItsHomeAndItsStatus` and
-`EntraAdmissionTests.AGuestKeepsItsHomeAndItsStatus` check the fields.
+The plug-in keeps that in two fields. `EntraIsGuest` records an explicit `acct=1` as guest and
+`acct=0` as member. Missing, empty or unrecognized values preserve the stored status; without
+a previously known status it defaults to false. An explicit change still updates the status
+(`EntraAdmissionTests.ASignInKeepsGuestStatusWithoutAnExplicitAccountType` and
+`ASignInAppliesAnExplicitGuestStatus`).
+
+`EntraIdentityProvider` records a supplied `idp`, falling back to `iss` only when no provider
+is stored yet. A later sign-in without `idp` preserves the known provider, even if `acct`
+changes: member status does not imply that the account authenticates in the application's
+tenant ([Microsoft's account conversion documentation](https://learn.microsoft.com/en-us/entra/identity/users/convert-external-users-internal)).
+`EntraAdmissionTests.ASignInKeepsTheKnownProviderWhenIdpIsMissing` and
+`ASparseBrowserSignInKeepsAV1GuestsProfile` check that partial tokens keep the stored home.
+
+For the same tenant GUID, the public-cloud forms `https://sts.windows.net/{tenant}/` and
+`https://login.microsoftonline.com/{tenant}/v2.0` are treated as the same provider during
+refresh, keeping that user's stored representation. Other explicit provider changes update
+the field (`EntraAdmissionTests.ASignInKeepsTheProviderRepresentationWhenOnlyTheTokenVersionChanges`
+and `ASignInRecordsAnExplicitlyDifferentProvider`). These strings are profile metadata, not a
+canonical customer key across users: different users can retain different representations,
+and other identity providers need not name an organizational tenant. The application's domain
+owns the mapping to its customers. Its factory sees the current token's claims and can map a
+guest to a class of its own or refuse a home tenant it does not know.
 
 ## 8. Check it
 

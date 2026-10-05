@@ -420,6 +420,189 @@ namespace Tests
             Assert.Equal("Tests", session.Identity?.AuthenticationType);
         }
 
+        [Theory]
+        [InlineData(EntraClaims.PreferredUserNameClaim, false)]
+        [InlineData(EntraClaims.PreferredUserNameClaim, true)]
+        [InlineData(EntraClaims.NameClaim, false)]
+        [InlineData(EntraClaims.NameClaim, true)]
+        [InlineData(EntraClaims.EmailClaim, false)]
+        [InlineData(EntraClaims.EmailClaim, true)]
+        public void ASignInKeepsProfileFieldsWhoseClaimsAreMissing(string claimType, bool empty)
+        {
+            var database = NewDatabase();
+            var admission = new EntraAdmission(new StubDatabaseService { Database = database }, userFactory: new TestFactory());
+            Assert.Null(admission.Admit(Person(), signIn: false));
+            var claims = Person().Claims.Where(v => v.Type != claimType).ToList();
+            if (empty)
+            {
+                claims.Add(new Claim(claimType, string.Empty));
+            }
+
+            Assert.Null(admission.Admit(new ClaimsPrincipal(new ClaimsIdentity(claims, "Tests")), signIn: true));
+
+            var user = FindUser(database, Tenant, ObjectId);
+            Assert.Equal("jane@example.com", user.EntraUserName);
+            Assert.Equal("Jane Doe", user.EntraDisplayName);
+            Assert.Equal("jane@example.com", user.EntraEmail);
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("2")]
+        [InlineData("guest")]
+        public void ASignInKeepsGuestStatusWithoutAnExplicitAccountType(string accountType)
+        {
+            var database = NewDatabase();
+            var admission = new EntraAdmission(new StubDatabaseService { Database = database }, userFactory: new TestFactory());
+            Assert.Null(admission.Admit(PersonWith(new Claim(EntraClaims.AccountTypeClaim, "1")), signIn: false));
+            var principal = accountType == null ? Person() : PersonWith(new Claim(EntraClaims.AccountTypeClaim, accountType));
+
+            Assert.Null(admission.Admit(principal, signIn: true));
+
+            Assert.True(FindUser(database, Tenant, ObjectId).EntraIsGuest);
+        }
+
+        [Theory]
+        [InlineData("0", false)]
+        [InlineData("1", true)]
+        public void ASignInAppliesAnExplicitGuestStatus(string accountType, bool isGuest)
+        {
+            var database = NewDatabase();
+            var admission = new EntraAdmission(new StubDatabaseService { Database = database }, userFactory: new TestFactory());
+            Assert.Null(admission.Admit(PersonWith(new Claim(EntraClaims.AccountTypeClaim, isGuest ? "0" : "1")), signIn: false));
+
+            Assert.Null(admission.Admit(PersonWith(new Claim(EntraClaims.AccountTypeClaim, accountType)), signIn: true));
+
+            Assert.Equal(isGuest, FindUser(database, Tenant, ObjectId).EntraIsGuest);
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("0")]
+        [InlineData("1")]
+        public void ASignInKeepsTheKnownProviderWhenIdpIsMissing(string accountType)
+        {
+            var database = NewDatabase();
+            var admission = new EntraAdmission(new StubDatabaseService { Database = database }, userFactory: new TestFactory());
+            var home = $"https://sts.windows.net/{CustomerTenant}/";
+            Assert.Null(admission.Admit(PersonWith(
+                new Claim(EntraClaims.IdentityProviderClaim, home),
+                new Claim(EntraClaims.AccountTypeClaim, "1")), signIn: false));
+            var principal = accountType == null ? Person() : PersonWith(new Claim(EntraClaims.AccountTypeClaim, accountType));
+
+            Assert.Null(admission.Admit(principal, signIn: true));
+
+            var user = FindUser(database, Tenant, ObjectId);
+            Assert.Equal(home, user.EntraIdentityProvider);
+            Assert.Equal(accountType != "0", user.EntraIsGuest);
+        }
+
+        [Theory]
+        [InlineData(false, EntraClaims.IdentityProviderClaim, false)]
+        [InlineData(true, EntraClaims.IdentityProviderClaim, false)]
+        [InlineData(false, EntraClaims.IdentityProviderMappedClaim, false)]
+        [InlineData(true, EntraClaims.IdentityProviderMappedClaim, false)]
+        [InlineData(false, EntraClaims.IdentityProviderClaim, true)]
+        [InlineData(true, EntraClaims.IdentityProviderClaim, true)]
+        public void ASignInKeepsTheProviderRepresentationWhenOnlyTheTokenVersionChanges(bool firstV2, string claimType, bool trailingSlash)
+        {
+            var database = NewDatabase();
+            var admission = new EntraAdmission(new StubDatabaseService { Database = database }, userFactory: new TestFactory());
+            var v1 = $"https://sts.windows.net/{CustomerTenant}/";
+            var v2 = $"https://login.microsoftonline.com/{CustomerTenant}/v2.0" + (trailingSlash ? "/" : string.Empty);
+            var first = firstV2 ? v2 : v1;
+            var next = firstV2 ? v1 : v2;
+            Assert.Null(admission.Admit(PersonWith(
+                new Claim(claimType, first), new Claim(EntraClaims.AccountTypeClaim, "1")), signIn: false));
+
+            Assert.Null(admission.Admit(PersonWith(
+                new Claim(claimType, next),
+                new Claim(EntraClaims.IdentityProviderClaim, string.Empty)), signIn: true));
+
+            var user = FindUser(database, Tenant, ObjectId);
+            Assert.Equal(first, user.EntraIdentityProvider);
+            Assert.True(user.EntraIsGuest);
+        }
+
+        [Theory]
+        [InlineData("https://login.microsoftonline.com/{0}/v2.0", EntraClaims.IdentityProviderClaim)]
+        [InlineData("https://login.microsoftonline.com/{0}/v2.0", EntraClaims.IdentityProviderMappedClaim)]
+        [InlineData("live.com", EntraClaims.IdentityProviderClaim)]
+        [InlineData("https://example.com/2baf9a07-5a2e-4065-adf2-2cf6a9bccff5/v2.0", EntraClaims.IdentityProviderClaim)]
+        [InlineData("http://login.microsoftonline.com/2baf9a07-5a2e-4065-adf2-2cf6a9bccff5/v2.0", EntraClaims.IdentityProviderClaim)]
+        [InlineData("https://login.microsoftonline.com:444/2baf9a07-5a2e-4065-adf2-2cf6a9bccff5/v2.0", EntraClaims.IdentityProviderClaim)]
+        [InlineData("https://login.microsoftonline.com/2baf9a07-5a2e-4065-adf2-2cf6a9bccff5/v2.0?other", EntraClaims.IdentityProviderClaim)]
+        [InlineData("https://login.microsoftonline.com/2baf9a07-5a2e-4065-adf2-2cf6a9bccff5/v2.0#other", EntraClaims.IdentityProviderClaim)]
+        [InlineData("https://other@login.microsoftonline.com/2baf9a07-5a2e-4065-adf2-2cf6a9bccff5/v2.0", EntraClaims.IdentityProviderClaim)]
+        [InlineData("https://login.microsoftonline.com/2baf9a07-5a2e-4065-adf2-2cf6a9bccff5/v2.0/extra", EntraClaims.IdentityProviderClaim)]
+        public void ASignInRecordsAnExplicitlyDifferentProvider(string providerFormat, string claimType)
+        {
+            var database = NewDatabase();
+            var admission = new EntraAdmission(new StubDatabaseService { Database = database }, userFactory: new TestFactory());
+            Assert.Null(admission.Admit(PersonWith(
+                new Claim(EntraClaims.IdentityProviderClaim, $"https://sts.windows.net/{CustomerTenant}/")), signIn: false));
+            var provider = string.Format(System.Globalization.CultureInfo.InvariantCulture, providerFormat, Tenant);
+
+            Assert.Null(admission.Admit(PersonWith(new Claim(claimType, provider)), signIn: true));
+
+            Assert.Equal(provider, FindUser(database, Tenant, ObjectId).EntraIdentityProvider);
+        }
+
+        [Fact]
+        public void ASignInInitializesAMissingProviderFromTheIssuer()
+        {
+            var database = NewDatabase();
+            NewUser(database, Tenant, ObjectId);
+            var admission = new EntraAdmission(new StubDatabaseService { Database = database });
+
+            Assert.Null(admission.Admit(Person(), signIn: true));
+
+            Assert.Equal($"https://login.microsoftonline.com/{Tenant}/v2.0", FindUser(database, Tenant, ObjectId).EntraIdentityProvider);
+        }
+
+        [Fact]
+        public void ASparseBrowserSignInKeepsAV1GuestsProfile()
+        {
+            var database = NewDatabase();
+            var factory = new TestFactory();
+            var admission = new EntraAdmission(new StubDatabaseService { Database = database }, userFactory: factory);
+            var home = $"https://sts.windows.net/{CustomerTenant}/";
+            var bearer = new ClaimsPrincipal(new ClaimsIdentity(new[]
+            {
+                new Claim(EntraClaims.TenantIdClaim, Tenant.ToString()),
+                new Claim(EntraClaims.ObjectIdClaim, ObjectId.ToString()),
+                new Claim(EntraClaims.IssuerClaim, $"https://sts.windows.net/{Tenant}/"),
+                new Claim(EntraClaims.UpnClaim, "jane@example.com"),
+                new Claim(EntraClaims.NameClaim, "Jane Doe"),
+                new Claim(EntraClaims.EmailClaim, "jane@example.com"),
+                new Claim(EntraClaims.IdentityProviderClaim, home),
+                new Claim(EntraClaims.AccountTypeClaim, "1"),
+            }, "Tests"));
+            Assert.Null(admission.Admit(bearer, signIn: false));
+            var browser = new ClaimsPrincipal(new ClaimsIdentity(new[]
+            {
+                new Claim(EntraClaims.TenantIdMappedClaim, Tenant.ToString()),
+                new Claim(EntraClaims.ObjectIdMappedClaim, ObjectId.ToString()),
+                new Claim(EntraClaims.IssuerClaim, $"https://login.microsoftonline.com/{Tenant}/v2.0"),
+                new Claim(EntraClaims.PreferredUserNameClaim, "jane.smith@example.com"),
+                new Claim(EntraClaims.NameClaim, "Jane Doe-Smith"),
+                new Claim(EntraClaims.IdentityProviderClaim, string.Empty),
+            }, "Tests"));
+
+            Assert.Null(admission.Admit(browser, signIn: true));
+
+            var user = FindUser(database, Tenant, ObjectId);
+            Assert.Equal("jane.smith@example.com", user.EntraUserName);
+            Assert.Equal("Jane Doe-Smith", user.EntraDisplayName);
+            Assert.Equal("jane@example.com", user.EntraEmail);
+            Assert.True(user.EntraIsGuest);
+            Assert.Equal(home, user.EntraIdentityProvider);
+            Assert.Equal(1, factory.Calls);
+            Assert.Single(AllUsers(database));
+        }
+
         private static ClaimsPrincipal PersonWith(params Claim[] more) => Person(more: more);
 
         private static ClaimsPrincipal Person(string name = "Jane Doe", string email = "jane@example.com", Guid? objectId = null, params Claim[] more)

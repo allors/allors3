@@ -238,6 +238,11 @@ Changes accumulate under **[Unreleased]** until a version is released.
 
 ### Fixed
 
+- Entra browser sign-in preserves stored profile values when claims are missing or empty,
+  and changes guest status only for an explicit `acct=0` or `acct=1`. Missing `idp` no longer
+  replaces a known home provider with the token issuer. Equivalent public-cloud v1/v2 provider
+  URLs keep the user's stored representation; explicit provider changes still update it.
+  Document that the provider string is profile metadata, not a canonical customer key.
 - Entra validates `SessionLifetime` at startup and uses the validated value for its session
   options. Only an omitted setting defaults to 12 hours; supplied values must be positive
   `hh:mm:ss` or `d.hh:mm:ss` durations, with optional fractional seconds. Malformed, null,

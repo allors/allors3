@@ -42,7 +42,7 @@ namespace Allors.Security
 
         // Null when the principal is admitted, else why it is not; the reason is also logged. A
         // browser sign-in refreshes what the directory says about an existing user; a bearer token does
-        // not, so that the fields are what the person last signed in with.
+        // not, so that each field keeps the last value supplied at admission or browser sign-in.
         public string Admit(ClaimsPrincipal principal, bool signIn)
         {
             var tenantId = principal.TenantId();
@@ -171,16 +171,38 @@ namespace Allors.Security
             }
         }
 
-        // Writes what the directory says about the account; true when a field changed.
+        // Missing claims leave the last known values intact; true when a field changed.
         private bool Refresh(User user, ClaimsPrincipal principal)
         {
             var changed = false;
             changed |= Set(user.EntraUserName, this.Cut(principal.UserName(), nameof(user.EntraUserName)), v => user.EntraUserName = v);
             changed |= Set(user.EntraDisplayName, this.Cut(principal.DisplayName(), nameof(user.EntraDisplayName)), v => user.EntraDisplayName = v);
             changed |= Set(user.EntraEmail, this.Cut(principal.Email(), nameof(user.EntraEmail)), v => user.EntraEmail = v);
-            changed |= Set(user.EntraIdentityProvider, this.Cut(principal.IdentityProvider(), nameof(user.EntraIdentityProvider)), v => user.EntraIdentityProvider = v);
+            var provider = principal.FindFirstValue(EntraClaims.IdentityProviderClaim);
+            if (string.IsNullOrEmpty(provider))
+            {
+                provider = principal.FindFirstValue(EntraClaims.IdentityProviderMappedClaim);
+            }
 
-            var isGuest = principal.IsGuest();
+            // The issuer initializes an unknown provider, but cannot replace a known home when
+            // idp is omitted. Guest/member status does not identify the authentication home.
+            if (string.IsNullOrEmpty(provider) && string.IsNullOrEmpty(user.EntraIdentityProvider))
+            {
+                provider = principal.FindFirstValue(EntraClaims.IssuerClaim);
+            }
+
+            if (!SameProvider(user.EntraIdentityProvider, provider))
+            {
+                changed |= Set(user.EntraIdentityProvider, this.Cut(provider, nameof(user.EntraIdentityProvider)), v => user.EntraIdentityProvider = v);
+            }
+
+            var accountType = principal.FindFirstValue(EntraClaims.AccountTypeClaim);
+            var isGuest = accountType switch
+            {
+                "0" => false,
+                "1" => true,
+                _ => user.EntraIsGuest ?? false,
+            };
             if (user.EntraIsGuest != isGuest)
             {
                 user.EntraIsGuest = isGuest;
@@ -192,13 +214,48 @@ namespace Allors.Security
 
         private static bool Set(string current, string value, Action<string> set)
         {
-            if (string.Equals(current, value, StringComparison.Ordinal))
+            if (string.IsNullOrEmpty(value) || string.Equals(current, value, StringComparison.Ordinal))
             {
                 return false;
             }
 
             set(value);
             return true;
+        }
+
+        // Preserve this user's stored representation across the public-cloud v1/v2 formats.
+        // Other providers remain opaque strings; a GUID in an arbitrary URL is not enough.
+        private static bool SameProvider(string current, string value)
+        {
+            if (string.Equals(current, value, StringComparison.Ordinal))
+            {
+                return true;
+            }
+
+            var tenant = ProviderTenant(current);
+            return tenant != null && tenant == ProviderTenant(value);
+        }
+
+        private static Guid? ProviderTenant(string provider)
+        {
+            if (!Uri.TryCreate(provider, UriKind.Absolute, out var uri) ||
+                uri.Scheme != Uri.UriSchemeHttps || !uri.IsDefaultPort ||
+                uri.UserInfo.Length != 0 || uri.Query.Length != 0 || uri.Fragment.Length != 0)
+            {
+                return null;
+            }
+
+            var path = uri.AbsolutePath.Split('/');
+            if (path.Length < 2 || !Guid.TryParseExact(path[1], "D", out var tenant) || tenant == Guid.Empty)
+            {
+                return null;
+            }
+
+            var v1 = uri.Host == "sts.windows.net" && path.Length == 3 && path[2].Length == 0;
+            var v2 = uri.Host == "login.microsoftonline.com" &&
+                ((path.Length == 3 && path[2] == "v2.0") ||
+                 (path.Length == 4 && path[2] == "v2.0" && path[3].Length == 0));
+            return v1 || v2 ? tenant : null;
         }
 
         private string Cut(string value, string field)
