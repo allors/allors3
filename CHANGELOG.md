@@ -204,6 +204,8 @@ Changes accumulate under **[Unreleased]** until a version is released.
 
 ### Removed
 
+- The empty transaction after the Entra test server's database setup. `Setup.Apply()` already
+  derives and commits the test population and its permissions.
 - The guest user: the setting `Security:AnonymousUserName`. An anonymous request has no user.
 - The JSNLog endpoint and the `JSNLog` package from Core's server. No client in the repository
   used it after the TypeScript `jsnlog` package went with Base; an application can add JSNLog

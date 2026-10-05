@@ -45,12 +45,6 @@ namespace Allors.Server.Controllers
 
                 new Setup(database, new Config()).Apply();
 
-                using (var transaction = database.CreateTransaction())
-                {
-                    transaction.Derive();
-                    transaction.Commit();
-                }
-
                 return this.Ok();
             }
             catch (Exception e)
