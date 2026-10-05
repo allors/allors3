@@ -15,6 +15,52 @@ namespace Allors.Server.Tests
     [Collection("Api")]
     public class AntiforgeryTests : ApiTest
     {
+        [Theory]
+        [InlineData(EntraDefaults.SessionScheme, false)]
+        [InlineData(EntraDefaults.SessionScheme, true)]
+        [InlineData(AllorsAuthenticationDefaults.AuthenticationScheme, false)]
+        public async Task AMultiSchemeSessionPostWithoutTheXsrfHeaderIs400(string scheme, bool withBearerToken)
+        {
+            var (browser, _) = NewBrowser();
+            await SignInAsync(browser, FakeEntraAccounts.Tester);
+            await browser.GetAsync("allors/Test/Ready");
+
+            var request = withBearerToken
+                ? Bearer(HttpMethod.Post, "/allors/Test/MultiScheme/" + scheme, await this.PersonTokenAsync(FakeEntraAccounts.Tester))
+                : new HttpRequestMessage(HttpMethod.Post, "allors/Test/MultiScheme/" + scheme);
+            var response = await browser.SendAsync(request);
+
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Theory]
+        [InlineData(EntraDefaults.SessionScheme)]
+        [InlineData(AllorsAuthenticationDefaults.AuthenticationScheme)]
+        public async Task AMultiSchemeSessionPostWithTheXsrfHeaderSucceeds(string scheme)
+        {
+            var (browser, jar) = NewBrowser();
+            await SignInAsync(browser, FakeEntraAccounts.Tester);
+            await browser.GetAsync("allors/Test/Ready");
+
+            var request = new HttpRequestMessage(HttpMethod.Post, "allors/Test/MultiScheme/" + scheme);
+            request.Headers.Add("X-XSRF-TOKEN", Cookie(jar, "XSRF-TOKEN"));
+            var response = await browser.SendAsync(request);
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
+
+        [Theory]
+        [InlineData(EntraDefaults.SessionScheme)]
+        [InlineData(AllorsAuthenticationDefaults.AuthenticationScheme)]
+        public async Task AMultiSchemeBearerPostNeedsNoXsrfHeader(string scheme)
+        {
+            var token = await this.PersonTokenAsync(FakeEntraAccounts.Tester);
+
+            var response = await this.HttpClient.SendAsync(Bearer(HttpMethod.Post, "/allors/Test/MultiScheme/" + scheme, token));
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
+
         [Fact]
         public async Task ASessionPostWithoutTheXsrfHeaderIs400()
         {

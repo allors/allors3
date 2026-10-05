@@ -11,8 +11,10 @@ namespace Allors.Server
     using Database.Configuration.Derivations.Default;
     using Database.Domain;
     using Database.Meta;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using ObjectFactory = Database.ObjectFactory;
@@ -75,6 +77,16 @@ namespace Allors.Server
             app.UseAllorsServer(endpoints =>
             {
                 endpoints.MapAllorsEntra();
+
+                // Exercise Core's antiforgery after authorization has joined the two schemes.
+                foreach (var scheme in new[] { EntraDefaults.SessionScheme, AllorsAuthenticationDefaults.AuthenticationScheme })
+                {
+                    endpoints.MapPost("/allors/Test/MultiScheme/" + scheme, () => Results.Ok())
+                        .RequireAuthorization(new AuthorizeAttribute
+                        {
+                            AuthenticationSchemes = scheme + "," + EntraDefaults.BearerScheme,
+                        });
+                }
 
                 if (this.FakeEntraEnabled)
                 {

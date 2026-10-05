@@ -37,11 +37,17 @@ changes for a plug-in that names none of them.
   signing in or out drops the antiforgery cookie. An unsafe API request that this scheme
   authenticated needs the antiforgery token: a safe API request hands out the readable cookie
   `XSRF-TOKEN`, and the browser sends its value back in the header `X-XSRF-TOKEN`. A request
-  that another scheme authenticated, with a bearer token for instance, needs none.
+  authenticated only by another scheme, with a bearer token for instance, needs none. When an
+  endpoint's authorization policy names several schemes, a session that authenticated the
+  request still requires the token, even if a bearer token authenticated too. This also applies
+  when a policy names the `Allors` selecting scheme and it forwards to the session.
   `AllorsServerTests.SessionCookieGetsCoresDefaults`, `SessionChallengeAnswersTheApiWith401`
   and `SessionSignInAndSignOutDropTheAntiforgeryCookie` check the cookie, and
   `AllorsAntiforgeryMiddlewareTests.UnsafeRequestAuthenticatedByTheSessionSchemeIsValidated`
-  the antiforgery.
+  the antiforgery. The Entra HTTP `AntiforgeryTests` check multi-scheme endpoints with
+  `AMultiSchemeSessionPostWithoutTheXsrfHeaderIs400`,
+  `AMultiSchemeSessionPostWithTheXsrfHeaderSucceeds` and
+  `AMultiSchemeBearerPostNeedsNoXsrfHeader`.
 - **`BearerScheme`**, the scheme that takes a bearer token. `AddAllorsServer` registers the
   selecting scheme `AllorsAuthenticationDefaults.AuthenticationScheme`, `Allors`, which forwards
   a request with an `Authorization: Bearer` header to the bearer scheme and every other request

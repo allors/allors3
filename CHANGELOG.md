@@ -238,6 +238,9 @@ Changes accumulate under **[Unreleased]** until a version is released.
 
 ### Fixed
 
+- Core requires antiforgery for session-cookie API requests authorized by a policy naming
+  multiple authentication schemes, including when the `Allors` selector forwards to the session.
+  A joined authorization ticket no longer bypasses validation; bearer-only requests remain exempt.
 - Entra distinguishes programs by the explicit `idtyp=app` claim. A browser user's ID token
   with app roles and no scopes no longer looks like a program or bypasses a factory's rules
   for people. Applications whose factories use `IsApplication()` request `idtyp` in access tokens.

@@ -49,7 +49,7 @@ namespace Allors.Server
                         context.Response.Cookies.Append(XsrfCookieName, tokens.RequestToken, CookieOptionsFor(this.secureCookie));
                     }
                 }
-                else if (AuthenticatedBySession(context, options.Value.SessionScheme))
+                else if (await AuthenticatedBySessionAsync(context, options.Value.SessionScheme))
                 {
                     try
                     {
@@ -82,9 +82,38 @@ namespace Allors.Server
             Path = "/",
         };
 
-        // The authentication middleware records which scheme authenticated the request.
-        private static bool AuthenticatedBySession(HttpContext context, string sessionScheme) =>
-            sessionScheme != null &&
-            string.Equals(context.Features.Get<IAuthenticateResultFeature>()?.AuthenticateResult?.Ticket?.AuthenticationScheme, sessionScheme, StringComparison.Ordinal);
+        private static async Task<bool> AuthenticatedBySessionAsync(HttpContext context, string sessionScheme)
+        {
+            if (sessionScheme == null)
+            {
+                return false;
+            }
+
+            var schemes = context.Features.Get<IAuthenticateResultFeature>()?.AuthenticateResult?.Ticket?.AuthenticationScheme;
+            if (string.Equals(schemes, sessionScheme, StringComparison.Ordinal))
+            {
+                return true;
+            }
+
+            if (schemes == null || !schemes.Contains(';'))
+            {
+                return false;
+            }
+
+            // Authorization replaces the authentication result with a ticket naming every scheme
+            // in a multi-scheme policy, including those that did not authenticate. Read their cached
+            // results to find whether the session really authenticated; a selecting scheme may have
+            // forwarded to it, so compare the returned ticket's scheme rather than the policy name.
+            foreach (var scheme in schemes.Split(';'))
+            {
+                var result = await context.AuthenticateAsync(scheme);
+                if (result.Succeeded && string.Equals(result.Ticket.AuthenticationScheme, sessionScheme, StringComparison.Ordinal))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 }
