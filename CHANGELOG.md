@@ -238,6 +238,11 @@ Changes accumulate under **[Unreleased]** until a version is released.
 
 ### Fixed
 
+- Core rejects a cookie session's `ChallengeScheme` at startup when it names that session or
+  the `Allors` selector, preventing recursive login challenges. The error directs applications
+  to a distinct sign-in scheme, or an unset value for the cookie's own login page. These names
+  remain invalid when their forwarding is overridden; a separately named sign-in policy is
+  still supported.
 - Core preserves the original absolute session lifetime when an application refreshes a cookie
   with its existing authentication properties, including through Identity's `RefreshSignInAsync`.
   Reissuing a cookie no longer restarts `SessionLifetime`; a new sign-in with fresh properties

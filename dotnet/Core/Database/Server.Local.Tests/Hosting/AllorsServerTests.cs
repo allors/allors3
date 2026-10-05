@@ -635,6 +635,143 @@ namespace Tests
             app.UseAllorsServer();
         }
 
+        [Theory]
+        [InlineData(SessionScheme, false)]
+        [InlineData(AllorsAuthenticationDefaults.AuthenticationScheme, false)]
+        [InlineData(SessionScheme, true)]
+        [InlineData(AllorsAuthenticationDefaults.AuthenticationScheme, true)]
+        public void SessionChallengeCannotNameTheSessionOrTheSelectingScheme(string challengeScheme, bool forwardChallenge)
+        {
+            using var provider = SessionProvider(configure: services =>
+            {
+                services.AddAuthentication().AddScheme<AuthenticationSchemeOptions, StubAuthenticationHandler>(SignInScheme, null);
+                services.Configure<AllorsAuthenticationOptions>(v => v.ChallengeScheme = challengeScheme);
+                if (forwardChallenge)
+                {
+                    services.PostConfigure<CookieAuthenticationOptions>(SessionScheme, v => v.ForwardChallenge = SignInScheme);
+                    services.PostConfigure<PolicySchemeOptions>(AllorsAuthenticationDefaults.AuthenticationScheme, v => v.ForwardChallenge = SignInScheme);
+                }
+            });
+
+            var exception = Assert.Throws<OptionsValidationException>(() => SessionOptions(provider));
+
+            Assert.Contains(nameof(AllorsAuthenticationOptions.ChallengeScheme), exception.Message);
+            Assert.Contains(challengeScheme, exception.Message);
+            Assert.Contains(SessionScheme, exception.Message);
+            Assert.Contains("distinct sign-in scheme", exception.Message);
+            Assert.Contains("unset", exception.Message);
+        }
+
+        [Theory]
+        [InlineData(SessionScheme)]
+        [InlineData(AllorsAuthenticationDefaults.AuthenticationScheme)]
+        public void UseAllorsServerRefusesAChallengeBackToTheSessionAtStartup(string challengeScheme)
+        {
+            using var provider = ProviderForUseAllorsServer(services =>
+            {
+                services.AddAuthentication().AddCookie(SessionScheme);
+                services.Configure<AllorsAuthenticationOptions>(v =>
+                {
+                    v.SessionScheme = SessionScheme;
+                    v.ChallengeScheme = challengeScheme;
+                });
+            });
+            var app = new ApplicationBuilder(provider);
+            app.UseRouting();
+
+            var exception = Assert.Throws<OptionsValidationException>(() => app.UseAllorsServer());
+
+            Assert.Contains(nameof(AllorsAuthenticationOptions.ChallengeScheme), exception.Message);
+            Assert.Contains(challengeScheme, exception.Message);
+            Assert.Contains(SessionScheme, exception.Message);
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData(SignInScheme)]
+        public void UseAllorsServerAcceptsASeparateOrUnsetSessionChallenge(string challengeScheme)
+        {
+            using var provider = ProviderForUseAllorsServer(services =>
+            {
+                services.AddAuthentication().AddCookie(SessionScheme)
+                    .AddScheme<AuthenticationSchemeOptions, StubAuthenticationHandler>(SignInScheme, null);
+                services.Configure<AllorsAuthenticationOptions>(v =>
+                {
+                    v.SessionScheme = SessionScheme;
+                    v.ChallengeScheme = challengeScheme;
+                });
+            });
+            var app = new ApplicationBuilder(provider);
+            app.UseRouting();
+
+            app.UseAllorsServer();
+        }
+
+        [Fact]
+        public async Task SessionChallengeMayUseASeparatePolicyScheme()
+        {
+            const string policyScheme = "Tests.ChooseSignIn";
+            using var provider = ProviderForUseAllorsServer(services =>
+            {
+                services.AddAuthentication().AddCookie(SessionScheme)
+                    .AddScheme<AuthenticationSchemeOptions, StubAuthenticationHandler>(SignInScheme, null)
+                    .AddPolicyScheme(policyScheme, null, v => v.ForwardChallenge = SignInScheme);
+                services.Configure<AllorsAuthenticationOptions>(v =>
+                {
+                    v.SessionScheme = SessionScheme;
+                    v.ChallengeScheme = policyScheme;
+                });
+            });
+            var app = new ApplicationBuilder(provider);
+            app.UseRouting();
+            app.UseAllorsServer();
+            using var scope = provider.CreateScope();
+            var page = Redirect(scope.ServiceProvider, SessionOptions(provider), "/account");
+
+            await page.Options.Events.RedirectToLogin(page);
+
+            Assert.Equal(SignInScheme, page.Response.Headers[StubAuthenticationHandler.ChallengedHeader]);
+        }
+
+        [Theory]
+        [InlineData(SessionScheme)]
+        [InlineData(AllorsAuthenticationDefaults.AuthenticationScheme)]
+        public void SessionChallengeValidationLeavesOtherCookiesAlone(string challengeScheme)
+        {
+            using var provider = SessionProvider(configure: services =>
+            {
+                services.AddAuthentication().AddCookie("Tests.Other");
+                services.Configure<AllorsAuthenticationOptions>(v => v.ChallengeScheme = challengeScheme);
+            });
+
+            var other = provider.GetRequiredService<IOptionsMonitor<CookieAuthenticationOptions>>().Get("Tests.Other");
+
+            Assert.NotEqual("Allors.Auth", other.Cookie.Name);
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void UseAllorsServerDoesNotApplyCookieChallengeRulesWithoutACookieSession(bool session)
+        {
+            using var provider = ProviderForUseAllorsServer(services =>
+            {
+                services.AddAuthentication(AllorsAuthenticationDefaults.AuthenticationScheme)
+                    .AddScheme<AuthenticationSchemeOptions, StubAuthenticationHandler>(SessionScheme, null)
+                    .AddScheme<AuthenticationSchemeOptions, StubAuthenticationHandler>(BearerScheme, null);
+                services.Configure<AllorsAuthenticationOptions>(v =>
+                {
+                    v.SessionScheme = session ? SessionScheme : null;
+                    v.BearerScheme = BearerScheme;
+                    v.ChallengeScheme = session ? SessionScheme : AllorsAuthenticationDefaults.AuthenticationScheme;
+                });
+            });
+            var app = new ApplicationBuilder(provider);
+            app.UseRouting();
+
+            app.UseAllorsServer();
+        }
+
         // A plug-in that signs a browser in elsewhere, with OpenID Connect for instance, names the
         // scheme to challenge. Outside the API the session's challenge goes there; the API still
         // gets a status code.

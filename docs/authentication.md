@@ -57,6 +57,14 @@ changes for a plug-in that names none of them.
 - **`ChallengeScheme`**, the scheme that signs a browser in elsewhere, an OpenID Connect scheme
   for instance. Outside the Allors API the session's challenge goes to it; the API still answers
   401. `AllorsServerTests.SessionChallengeOutsideTheApiGoesToTheNamedScheme` checks that.
+  Leave it unset to use the cookie's own login page. For a cookie session, it must name neither
+  `SessionScheme` nor the `Allors` selector: those targets can send the challenge back to the
+  cookie repeatedly. Core rejects these names at startup, even if an application overrides
+  their forwarding; name the actual sign-in scheme directly instead.
+  `AllorsServerTests.SessionChallengeCannotNameTheSessionOrTheSelectingScheme` and
+  `UseAllorsServerRefusesAChallengeBackToTheSessionAtStartup` check the rejection. A separately
+  named policy scheme may forward to the sign-in scheme (`SessionChallengeMayUseASeparatePolicyScheme`);
+  the application must ensure its custom forwarding does not lead back to the session.
 - **`SessionLifetime`**. A session ends that long after its original sign-in, however often
   sliding expiration renews it or the application refreshes it with the existing authentication
   properties, including through Identity's `RefreshSignInAsync`. A new sign-in with fresh

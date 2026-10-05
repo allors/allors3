@@ -30,9 +30,20 @@ namespace Allors.Server
 
         public ValidateOptionsResult Validate(string name, CookieAuthenticationOptions options)
         {
-            if (!string.Equals(name, this.authenticationOptions.Value.SessionScheme, StringComparison.Ordinal))
+            var authentication = this.authenticationOptions.Value;
+            if (!string.Equals(name, authentication.SessionScheme, StringComparison.Ordinal))
             {
                 return ValidateOptionsResult.Skip;
+            }
+
+            var challengeScheme = authentication.ChallengeScheme;
+            if (challengeScheme != null &&
+                (string.Equals(challengeScheme, name, StringComparison.Ordinal) ||
+                 string.Equals(challengeScheme, AllorsAuthenticationDefaults.AuthenticationScheme, StringComparison.Ordinal)))
+            {
+                return ValidateOptionsResult.Fail(
+                    $"The session scheme '{name}' has {nameof(AllorsAuthenticationOptions.ChallengeScheme)} '{challengeScheme}', which can send a login challenge back to the session. " +
+                    $"Choose a distinct sign-in scheme, or leave {nameof(AllorsAuthenticationOptions.ChallengeScheme)} unset to use the cookie's own login page.");
             }
 
             if (options.EventsType != null)
