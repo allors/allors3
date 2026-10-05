@@ -6,6 +6,7 @@
 namespace Tests
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Security.Claims;
     using System.Threading;
@@ -18,6 +19,7 @@ namespace Tests
     using Allors.Security;
     using Allors.Services;
     using Microsoft.AspNetCore.Identity;
+    using Microsoft.Extensions.Logging;
     using Xunit;
     using MemoryConfiguration = Allors.Database.Adapters.Memory.Configuration;
     using MemoryDatabase = Allors.Database.Adapters.Memory.Database;
@@ -107,6 +109,82 @@ namespace Tests
 
             Assert.False(result.Succeeded);
             Assert.False(ExistsUser(database, "jane@example.com"));
+        }
+
+        // Reusing a person by email must not replace their credentials or retain any changes the
+        // factory made in the store's transaction before returning the existing person.
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task CreateAsyncRefusesAnExistingUserWithoutChangingCredentialsOrPermissions(bool factoryChangesUser)
+        {
+            var database = NewDatabase();
+            var lockoutEnd = new System.DateTime(2030, 1, 2, 3, 4, 5, DateTimeKind.Utc);
+            long userId;
+            long groupId;
+            int groupCount;
+            using (var transaction = database.CreateTransaction())
+            {
+                var user = new PersonBuilder(transaction).Build();
+                user.UserName = "original-user";
+                user.UserPasswordHash = "original-password-hash";
+                user.UserEmail = "jane@example.com";
+                user.UserEmailConfirmed = true;
+                user.UserPhoneNumber = "+32000000001";
+                user.UserPhoneNumberConfirmed = true;
+                user.UserTwoFactorEnabled = true;
+                user.UserLockoutEnd = lockoutEnd;
+                user.UserLockoutEnabled = true;
+                user.UserAccessFailedCount = 5;
+                user.UserSecurityStamp = "original-security-stamp";
+                var group = new UserGroupBuilder(transaction).WithName("Original access").WithMember(user).Build();
+                transaction.Derive();
+                transaction.Commit();
+                userId = user.Id;
+                groupId = group.Id;
+                groupCount = new UserGroups(transaction).Extent().Count;
+            }
+
+            var factory = new ReusingUserFactory(factoryChangesUser);
+            var logger = new RecordingLogger();
+            var store = new AllorsUserStore(new StubDatabaseService { Database = database }, logger, factory);
+            var identityUser = NewIdentityUser();
+            identityUser.EmailConfirmed = false;
+            identityUser.PhoneNumber = "+32000000002";
+            var incomingId = identityUser.Id;
+
+            var result = await store.CreateAsync(identityUser, CancellationToken.None);
+
+            Assert.True(factory.ReturnedExistingUser);
+            Assert.False(result.Succeeded);
+            var error = Assert.Single(result.Errors);
+            Assert.Equal("ExistingUserFromFactory", error.Code);
+            Assert.Contains(nameof(IUserFactory), error.Description, StringComparison.Ordinal);
+            Assert.Contains("new user or null", error.Description, StringComparison.Ordinal);
+            Assert.Equal(incomingId, identityUser.Id);
+            var log = Assert.Single(logger.Messages);
+            Assert.Equal(LogLevel.Error, log.Level);
+            Assert.Contains(nameof(IUserFactory), log.Message, StringComparison.Ordinal);
+            Assert.Contains("existing user", log.Message, StringComparison.Ordinal);
+
+            using var verification = database.CreateTransaction();
+            var unchanged = (User)verification.Instantiate(userId);
+            Assert.Equal("original-user", unchanged.UserName);
+            Assert.Equal("ORIGINAL-USER", unchanged.NormalizedUserName);
+            Assert.Equal("original-password-hash", unchanged.UserPasswordHash);
+            Assert.Equal("jane@example.com", unchanged.UserEmail);
+            Assert.Equal("JANE@EXAMPLE.COM", unchanged.NormalizedUserEmail);
+            Assert.True(unchanged.UserEmailConfirmed);
+            Assert.Equal("+32000000001", unchanged.UserPhoneNumber);
+            Assert.True(unchanged.UserPhoneNumberConfirmed);
+            Assert.True(unchanged.UserTwoFactorEnabled);
+            Assert.Equal(lockoutEnd, unchanged.UserLockoutEnd);
+            Assert.True(unchanged.UserLockoutEnabled);
+            Assert.Equal(5, unchanged.UserAccessFailedCount);
+            Assert.Equal("original-security-stamp", unchanged.UserSecurityStamp);
+            Assert.Equal(groupId, Assert.Single(unchanged.UserGroupsWhereMember).Id);
+            Assert.Equal(groupCount, new UserGroups(verification).Extent().Count);
+            Assert.False(ExistsUser(database, identityUser.UserName));
         }
 
         // What ASP.NET Core Identity knows about the person it is asked to store: a name and an
@@ -204,6 +282,41 @@ namespace Tests
         private sealed class RefusingUserFactory : IUserFactory
         {
             public User Create(ITransaction transaction, ClaimsPrincipal principal) => null;
+        }
+
+        private sealed class ReusingUserFactory : IUserFactory
+        {
+            private readonly bool changesUser;
+
+            public ReusingUserFactory(bool changesUser) => this.changesUser = changesUser;
+
+            public bool ReturnedExistingUser { get; private set; }
+
+            public User Create(ITransaction transaction, ClaimsPrincipal principal)
+            {
+                var m = transaction.Database.Services.Get<MetaPopulation>();
+                var user = new Users(transaction).FindBy(m.User.UserEmail, principal.FindFirstValue(ClaimTypes.Email));
+                this.ReturnedExistingUser = user != null && !user.Strategy.IsNewInTransaction;
+                if (this.changesUser)
+                {
+                    user.UserEmailConfirmed = false;
+                    new UserGroupBuilder(transaction).WithName("Factory access").WithMember(user).Build();
+                }
+
+                return user;
+            }
+        }
+
+        private sealed class RecordingLogger : ILogger<AllorsUserStore>
+        {
+            public List<(LogLevel Level, string Message)> Messages { get; } = new();
+
+            public IDisposable BeginScope<TState>(TState state) => null;
+
+            public bool IsEnabled(LogLevel logLevel) => true;
+
+            public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter) =>
+                this.Messages.Add((logLevel, formatter(state, exception)));
         }
 
         private sealed class StubDatabaseService : IDatabaseService

@@ -99,8 +99,12 @@ folder. The application registers its factory in `Startup`, with
 
 The factory sees the claims of the principal and decides both admission and class: it returns
 a new user, or null to refuse. It never returns an existing user: a user is created for an
-identity, not chosen for it; `EntraAdmissionTests.AFactoryThatReturnsAnExistingUserIsRefused`
-checks that for Entra. Registering a factory is optional, and without one no plug-in creates a
+identity, not chosen for it. Both plug-ins refuse an existing user before writing authentication
+fields and log the factory's contract violation.
+`EntraAdmissionTests.AFactoryThatReturnsAnExistingUserIsRefused` checks Entra;
+`AllorsUserStoreTests.CreateAsyncRefusesAnExistingUserWithoutChangingCredentialsOrPermissions`
+checks Identity, including rollback of the factory's uncommitted profile and group changes.
+Registering a factory is optional, and without one no plug-in creates a
 user: the plug-in refuses to, names the seam in its answer and in its log, and an application
 that has not said whom it admits admits nobody new.
 `EntraAdmissionTests.WithoutAFactoryNobodyIsCreated` and

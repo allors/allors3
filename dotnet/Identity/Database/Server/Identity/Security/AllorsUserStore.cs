@@ -107,6 +107,17 @@ namespace Allors.Security
                         });
                     }
 
+                    // Reusing a user here would replace their credentials with the incoming identity's.
+                    if (!user.Strategy.IsNewInTransaction)
+                    {
+                        this.LogExistingUser(identityUser.UserName, user.Id);
+                        return IdentityResult.Failed(new IdentityError
+                        {
+                            Code = "ExistingUserFromFactory",
+                            Description = $"Could not create user {identityUser.UserName}: the {nameof(IUserFactory)} returned an existing user. Change the factory to return a new user or null.",
+                        });
+                    }
+
                     user.UserName = identityUser.UserName;
                     user.UserPasswordHash = identityUser.PasswordHash;
                     user.UserEmail = identityUser.Email;
@@ -502,5 +513,8 @@ namespace Allors.Security
 
         [LoggerMessage(EventId = 5, Level = LogLevel.Error, Message = "Could not create user {UserName}: the IUserFactory of the application did not admit it.")]
         private partial void LogUserNotAdmitted(string userName);
+
+        [LoggerMessage(EventId = 6, Level = LogLevel.Error, Message = "Could not create user {UserName}: the IUserFactory returned the existing user {UserId}; a factory must return a new user or null.")]
+        private partial void LogExistingUser(string userName, long userId);
     }
 }

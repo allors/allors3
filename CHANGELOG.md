@@ -238,6 +238,10 @@ Changes accumulate under **[Unreleased]** until a version is released.
 
 ### Fixed
 
+- Identity refuses an existing user returned by the application's `IUserFactory` before writing
+  authentication fields, preventing account creation from replacing that user's credentials.
+  The refusal returns a specific error, logs the factory contract violation and rolls back its
+  uncommitted changes.
 - Entra browser sign-in redeems authorization codes with certificate credentials from
   `Entra:ClientCredentials`, using a signed client assertion while retaining PKCE and nonce
   validation. Certificate-only configuration no longer sends an unauthenticated token request.
