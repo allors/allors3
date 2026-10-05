@@ -50,11 +50,40 @@ The plug-in reads the `Entra` section, in the shape of the template
 }
 ```
 
-The section takes the keys of Microsoft.Identity.Web, so a certificate goes under
-`ClientCredentials` as its documentation says. `Instance` defaults to the public cloud and
-`SessionLifetime` to 12 hours, both in `EntraDefaults`. A secret goes in the environment
-rather than the file: `Entra__ClientSecret=…`, as the [README](../README.md#configuration)
-describes. The server refuses to start without a tenant id, a client id or a client
+`Instance` defaults to the public cloud and `SessionLifetime` to 12 hours, both in
+`EntraDefaults`. A secret goes in the environment rather than the file:
+`Entra__ClientSecret=…`, as the [README](../README.md#configuration) describes.
+
+For a certificate, omit `ClientSecret` (or clear an inherited value) and configure
+`ClientCredentials` in the same section:
+
+```json
+"ClientCredentials": [
+  {
+    "SourceType": "Base64Encoded",
+    "Base64EncodedValue": "<base64-encoded PFX with its RSA private key>"
+  }
+]
+```
+
+Supply the PFX through a secret store or `Entra__ClientCredentials__0__Base64EncodedValue`,
+not a checked-in file. Register its public certificate on the app registration and give the
+server access to the private key. The plug-in uses Microsoft.Identity.Web's credential loader;
+its [certificate configuration](https://learn.microsoft.com/en-us/entra/msidweb/authentication/certificates)
+also describes file, certificate-store and Key Vault sources. Certificate loading is lazy and
+cached; restart the server after replacing its configured certificate.
+
+`AddAllorsEntra` signs a short-lived client assertion for each code exchange. ASP.NET Core
+still redeems the code with the PKCE verifier and validates the nonce. No downstream token
+acquisition or token cache is needed. `EntraOptionsTests.ACertificateCredentialCompletesTheBrowserCodeFlow`
+checks two sign-ins against a token endpoint that verifies the certificate signature;
+`AnUnregisteredCertificateCannotCreateASessionOrUser`,
+`ACertificateWithoutAPrivateKeyCannotCreateASessionOrUser` and
+`ACertificateSignInWithTheWrongNonceCreatesNoSessionOrUser` check the refusal paths.
+The application's code-received callback can still handle redemption or supply its own credential
+(`TheApplicationsCodeHandlerControlsCertificateRedemption`).
+
+The server refuses to start without a tenant id, a client id or a client
 credential, each with a message that says what to set
 (`EntraOptionsTests.StartUpRefusesAMissingClientId` and `StartUpRefusesAMissingClientCredential`).
 
@@ -215,7 +244,7 @@ configured for production, with every validation on, without a tenant. Its accou
 `FakeEntraAccounts`: a member, a refused member, a guest and a program.
 
 Pointed at a real tenant, the same server signs in against Microsoft: set `Entra__TenantId`,
-`Entra__ClientId` and `Entra__ClientSecret` to a registration of step 1 whose redirect URIs
+`Entra__ClientId` and a secret or certificate from step 2 to a registration of step 1 whose redirect URIs
 name the server's own address, `https://localhost:5001/signin-oidc` and
 `https://localhost:5001/signout-callback-oidc` for its launch profile, and set
 `FakeEntra__Enabled=false`. Then open `/entra/sign-in?returnUrl=/allors/UserInfo` in a browser
@@ -225,7 +254,7 @@ and sign in.
 
 - Authorization. A new user has no group; which Entra groups or roles mean what is the
   application's mapping, if it wants one.
-- Microsoft Graph, and tokens for other APIs: the plug-in validates tokens and acquires none.
+- Acquiring tokens for Microsoft Graph or other downstream APIs.
 - Other tenants, and Microsoft Entra External ID: the plug-in signs in one tenant, its members
   and its guests.
 - Inviting guests and provisioning users ahead of their first sign-in.

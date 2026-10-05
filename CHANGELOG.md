@@ -238,6 +238,9 @@ Changes accumulate under **[Unreleased]** until a version is released.
 
 ### Fixed
 
+- Entra browser sign-in redeems authorization codes with certificate credentials from
+  `Entra:ClientCredentials`, using a signed client assertion while retaining PKCE and nonce
+  validation. Certificate-only configuration no longer sends an unauthenticated token request.
 - Core requires antiforgery for session-cookie API requests authorized by a policy naming
   multiple authentication schemes, including when the `Allors` selector forwards to the session.
   A joined authorization ticket no longer bypasses validation; bearer-only requests remain exempt.

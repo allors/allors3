@@ -20,6 +20,7 @@ namespace Allors.Server
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.DependencyInjection.Extensions;
     using Microsoft.Extensions.Hosting;
+    using Microsoft.Identity.Abstractions;
     using Microsoft.Identity.Web;
     using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
@@ -51,6 +52,22 @@ namespace Allors.Server
                     null,
                     EntraDefaults.OpenIdConnectScheme,
                     EntraDefaults.SessionScheme);
+
+            services.TryAddSingleton<ICredentialsLoader, DefaultCertificateLoader>();
+            services.PostConfigure<OpenIdConnectOptions>(EntraDefaults.OpenIdConnectScheme, options =>
+            {
+                var authorizationCodeReceived = options.Events.OnAuthorizationCodeReceived;
+                options.Events.OnAuthorizationCodeReceived = async context =>
+                {
+                    await authorizationCodeReceived(context);
+                    if (context.Result != null || context.HandledCodeRedemption)
+                    {
+                        return;
+                    }
+
+                    await EntraClientAssertion.AddAsync(context);
+                };
+            });
 
             services.AddAuthentication()
                 .AddMicrosoftIdentityWebApi(
