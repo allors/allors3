@@ -238,6 +238,10 @@ Changes accumulate under **[Unreleased]** until a version is released.
 
 ### Fixed
 
+- Entra sign-out returns 204 when the browser session has expired or is absent, instead of
+  starting a new sign-in and returning to a POST-only endpoint with GET. This leaves Entra SSO
+  unchanged. Active sessions still require a valid antiforgery token before local and Entra
+  sign-out, validated against the cookie's user even when a bearer token is also present.
 - Entra and Core validate their authentication event callbacks after all post-configuration
   and refuse invalid configuration at startup. `EventsType` and later replacement of the
   protected callbacks can no longer silently bypass Entra admission, certificate code

@@ -17,9 +17,8 @@ namespace Allors.Server
     public static class EntraEndpointRouteBuilderExtensions
     {
         // The two endpoints a browser application needs: a sign-in to send the browser to, and a
-        // sign-out to post to. Both require an authenticated user, so neither opts out of the
-        // application's authorization: a browser without a session that asks to sign in is challenged
-        // by Core's session rules, which send it to Entra and back here.
+        // sign-out to post to. Sign-in requires authentication: Core's session rules send a browser
+        // without a session to Entra and back here. Sign-out must never start a new sign-in.
         public static IEndpointRouteBuilder MapAllorsEntra(this IEndpointRouteBuilder endpoints, string openIdConnectScheme = EntraDefaults.OpenIdConnectScheme)
         {
             // Signed in, the browser goes on to the local returnUrl, and nowhere else: an open redirect
@@ -38,6 +37,18 @@ namespace Allors.Server
             // a person out. The session ends, and so does the sign-in with Entra.
             endpoints.MapPost(EntraPaths.SignOut, async (HttpContext context) =>
                 {
+                    // The default identity may come from a bearer token. Only a valid browser
+                    // session needs to end; an absent or expired one is already signed out locally.
+                    var sessionScheme = context.RequestServices.GetRequiredService<IOptions<AllorsAuthenticationOptions>>().Value.SessionScheme;
+                    var session = await context.AuthenticateAsync(sessionScheme);
+                    if (!session.Succeeded)
+                    {
+                        return Results.NoContent();
+                    }
+
+                    // The antiforgery token belongs to the cookie's user, even when the request
+                    // also carried a bearer token that authenticated a different principal.
+                    context.User = session.Principal;
                     try
                     {
                         await context.RequestServices.GetRequiredService<IAntiforgery>().ValidateRequestAsync(context);
@@ -47,10 +58,9 @@ namespace Allors.Server
                         return Results.BadRequest($"The sign-out request carries no valid antiforgery token: {e.Message}");
                     }
 
-                    var sessionScheme = context.RequestServices.GetRequiredService<IOptions<AllorsAuthenticationOptions>>().Value.SessionScheme;
                     return Results.SignOut(new AuthenticationProperties { RedirectUri = "/" }, new[] { sessionScheme, openIdConnectScheme });
                 })
-                .RequireAuthorization();
+                .AllowAnonymous();
 
             return endpoints;
         }

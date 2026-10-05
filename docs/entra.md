@@ -216,8 +216,17 @@ deleted is gone at its next request.
 
 To sign out, the browser posts to `/entra/sign-out` with the header `X-XSRF-TOKEN` set to the
 value of the `XSRF-TOKEN` cookie that a safe API request handed out, `GET /allors/UserInfo` for
-instance. That ends the session and the sign-in with Entra; without the token the request is
-refused with 400 (`SignOutTests`).
+instance. For an active session, that ends the session and the sign-in with Entra; without a
+valid token the request is refused with 400. The token is validated against the session's user,
+even if the request also carries a bearer token
+(`SignOutTests.SignOutWithABearerHeaderStillProtectsTheSession`).
+
+If the app session has expired or is absent, sign-out returns 204 without redirecting or
+starting a new sign-in. This is a successful no-op and needs no antiforgery token, including
+when the browser still holds a token from its expired session. Any Entra SSO session remains
+active, so a later sign-in to the app may not ask for a password
+(`SignOutTests.SignOutWithoutASessionIsANoOp`, `SignOutWithAnExpiredSessionIsANoOp` and
+`SignOutWithOnlyABearerTokenIsANoOp`).
 
 ## 6. A client or a program
 
