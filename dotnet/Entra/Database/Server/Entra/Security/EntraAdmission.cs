@@ -20,8 +20,7 @@ namespace Allors.Security
     // created at its first sign-in by the application's IUserFactory. The plug-in identifies every
     // principal by the pair of its tenant id and object id, a person's and a program's alike, and
     // never decides which class a new user is of, nor whom the application admits: the factory sees
-    // the validated principal's claims and decides both. One instance serves a server, so that
-    // parallel first requests of one principal create one user.
+    // the validated principal's claims and decides both.
     public partial class EntraAdmission
     {
         // The role types of the strings the directory sends; a value longer than the role allows is
@@ -31,7 +30,6 @@ namespace Allors.Security
         private readonly IDatabaseService databaseService;
         private readonly IUserFactory userFactory;
         private readonly ILogger<EntraAdmission> logger;
-        private readonly object creating = new();
 
         public EntraAdmission(IDatabaseService databaseService, ILogger<EntraAdmission> logger = null, IUserFactory userFactory = null)
         {
@@ -89,11 +87,10 @@ namespace Allors.Security
                 return $"No {nameof(IUserFactory)} is registered, so no user is created for a first sign-in. Register the user factory of the application's domain in Startup, for example services.AddSingleton<{nameof(IUserFactory)}, CustomUserFactory>().";
             }
 
-            // One creation at a time: a parallel request of the same principal may have created the
-            // user meanwhile, and finds it then.
-            lock (this.creating)
+            // Another request may have created the user since the first lookup. Check again in a
+            // fresh transaction before invoking the factory.
+            using (var transaction = database.CreateTransaction())
             {
-                using var transaction = database.CreateTransaction();
                 try
                 {
                     if (new Users(transaction).FindByEntraIdentity(tenantId.Value, objectId.Value) != null)

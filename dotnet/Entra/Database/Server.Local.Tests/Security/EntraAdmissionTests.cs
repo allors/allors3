@@ -68,6 +68,50 @@ namespace Tests
             Assert.False(user.EntraIsGuest);
         }
 
+        [Fact]
+        public async Task ASlowFactoryDoesNotBlockAdmissionOfAnotherPrincipal()
+        {
+            var database = NewDatabase();
+            using var entered = new System.Threading.ManualResetEventSlim();
+            using var release = new System.Threading.ManualResetEventSlim();
+            var otherObjectId = Guid.NewGuid();
+            var factory = new HoldingFactory(ObjectId, entered, release);
+            var admission = new EntraAdmission(new StubDatabaseService { Database = database }, userFactory: factory);
+            var first = Task.Factory.StartNew(
+                () => admission.Admit(Person(), signIn: true),
+                System.Threading.CancellationToken.None,
+                TaskCreationOptions.LongRunning,
+                TaskScheduler.Default);
+            Task<string> other = null;
+
+            try
+            {
+                Assert.True(entered.Wait(TimeSpan.FromSeconds(10)), "The first principal did not reach the factory.");
+                other = Task.Factory.StartNew(
+                    () => admission.Admit(Person(objectId: otherObjectId), signIn: true),
+                    System.Threading.CancellationToken.None,
+                    TaskCreationOptions.LongRunning,
+                    TaskScheduler.Default);
+
+                Assert.Null(await other.WaitAsync(TimeSpan.FromSeconds(5)));
+                Assert.False(first.IsCompleted);
+                Assert.NotNull(FindUser(database, Tenant, otherObjectId));
+            }
+            finally
+            {
+                release.Set();
+                await first;
+                if (other != null)
+                {
+                    await other;
+                }
+            }
+
+            Assert.Contains("did not admit", await first);
+            Assert.Null(FindUser(database, Tenant, ObjectId));
+            Assert.Single(AllUsers(database));
+        }
+
         // A guest of the tenant comes from another organization: the idp claim names its home, and the
         // acct claim marks it.
         [Fact]
@@ -908,6 +952,30 @@ namespace Tests
         private sealed class RefusingFactory : IUserFactory
         {
             public User Create(ITransaction transaction, ClaimsPrincipal principal) => null;
+        }
+
+        // The held call neither reads nor writes its transaction while the other call uses the
+        // memory adapter. Only the second call creates a user; the first refuses after release.
+        private sealed class HoldingFactory(
+            Guid heldObjectId,
+            System.Threading.ManualResetEventSlim entered,
+            System.Threading.ManualResetEventSlim release) : IUserFactory
+        {
+            public User Create(ITransaction transaction, ClaimsPrincipal principal)
+            {
+                if (principal.ObjectId() == heldObjectId)
+                {
+                    entered.Set();
+                    if (!release.Wait(TimeSpan.FromSeconds(30)))
+                    {
+                        throw new TimeoutException("The held admission was not released.");
+                    }
+
+                    return null;
+                }
+
+                return new PersonBuilder(transaction).Build();
+            }
         }
 
         private sealed class RebindingFactory : IUserFactory

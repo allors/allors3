@@ -92,6 +92,10 @@ Changes accumulate under **[Unreleased]** until a version is released.
 
 ### Changed
 
+- Entra admission no longer serializes user creation, so a slow factory call does not block
+  admission of another principal. Concurrent first requests for the same identity can create
+  duplicate users or be refused by derivation; lookups continue to select the oldest user
+  when duplicates exist.
 - Document the v3.2 platform scope: System, Core and the authentication plug-ins Identity and
   Entra, continued domain inheritance, and a planned signals-based API for the .NET and
   TypeScript workspaces with thin UI integrations. Base and Apps are removed without a separate

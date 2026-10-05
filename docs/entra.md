@@ -301,9 +301,17 @@ forwards the request to the bearer scheme. A person's token, with a scope of the
 creates the person's user at its first request as a browser sign-in does
 (`BearerTests.APersonsTokenCreatesThePersonAtItsFirstRequest`); a program's own token, with an
 app role, creates the user the factory decides on, an `Agent` in the test domain
-(`BearerTests.AProgramsTokenCreatesAnAgent`). The same token finds the same user, and parallel
-first requests of one principal create one user
-(`BearerTests.TheSameTokenFindsTheSameUserAndParallelFirstRequestsCreateOneUser`).
+(`BearerTests.AProgramsTokenCreatesAnAgent`). Admission does not serialize calls to the
+application's factory: a slow first admission does not block another principal
+(`EntraAdmissionTests.ASlowFactoryDoesNotBlockAdmissionOfAnotherPrincipal`). Factories must
+support concurrent calls. Concurrent first requests for the same identity can create more
+than one user, or one request can be refused if its derivation sees the other user's commit.
+When several committed users have the same identity, subsequent lookups select the oldest
+user, the one with the smallest object id
+(`UserTests.OfTwoUsersWithTheSameEntraIdentityTheOldestIsFound`). Admission does not guarantee
+one user per identity across concurrent transactions.
+Once a user is admitted, parallel requests with the same token reuse it
+(`BearerTests.TheSameTokenFindsTheSameUserAcrossParallelRequests`).
 `UserInfo` uses the [user-name selection in step 4](#4-decide-whom-the-application-admits)
 for both token versions, including a v1 guest token without `upn`
 (`BearerTests.AV1TokenReturnsTheUserName` and `AV1GuestWithoutUpnReturnsTheUserName`).

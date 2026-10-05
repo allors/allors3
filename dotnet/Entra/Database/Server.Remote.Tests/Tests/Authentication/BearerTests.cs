@@ -134,15 +134,19 @@ namespace Allors.Server.Tests
         }
 
         [Fact]
-        public async Task TheSameTokenFindsTheSameUserAndParallelFirstRequestsCreateOneUser()
+        public async Task TheSameTokenFindsTheSameUserAcrossParallelRequests()
         {
             var token = await this.PersonTokenAsync(FakeEntraAccounts.Tester);
+            var firstResponse = await this.HttpClient.SendAsync(Bearer(HttpMethod.Get, "/allors/UserInfo", token));
+            Assert.Equal(HttpStatusCode.OK, firstResponse.StatusCode);
+            var firstUserId = (await JsonAsync(firstResponse)).GetProperty("u").GetString();
 
             var responses = await Task.WhenAll(Enumerable.Range(0, 20).Select(_ => this.HttpClient.SendAsync(Bearer(HttpMethod.Get, "/allors/UserInfo", token))));
 
             Assert.All(responses, v => Assert.Equal(HttpStatusCode.OK, v.StatusCode));
             var ids = await Task.WhenAll(responses.Select(async v => (await JsonAsync(v)).GetProperty("u").GetString()));
             Assert.Single(ids.Distinct());
+            Assert.All(ids, v => Assert.Equal(firstUserId, v));
             Assert.Single(this.AllUsers());
         }
 
