@@ -238,6 +238,9 @@ Changes accumulate under **[Unreleased]** until a version is released.
 
 ### Fixed
 
+- Entra uses ASP.NET Core's local-URL validation for the sign-in return URL. Control characters
+  return 400 instead of causing a 500 during redirect execution, and valid `~/` application-relative
+  paths are accepted. External destinations and authority prefixes remain rejected.
 - Entra disables incoming OpenID Connect front-channel logout, so unsolicited requests to
   `/signout-oidc` cannot clear a browser session without antiforgery validation. Startup rejects
   later configuration that re-enables `RemoteSignOutPath`, including for custom connected

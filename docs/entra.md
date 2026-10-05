@@ -214,8 +214,14 @@ Without a factory the plug-in creates nobody, refuses the sign-in and logs why
 
 The application sends a browser that has no session to `/entra/sign-in?returnUrl=/…`: the
 plug-in signs it in with Entra and sends it on to the `returnUrl`, a local path only
-(`SignInTests.TheReturnUrlMustBeLocal`). The session cookie keeps the Entra identity and the
-user name, nothing else of the token
+(`SignInTests.TheReturnUrlMustBeLocal`). Root-relative paths such as `/orders` and
+application-relative paths such as `~/orders` are accepted, including query strings and
+fragments (`SignInTests.AValidLocalReturnUrlKeepsItsDestination`). Control characters return
+400 instead of failing during redirect execution (`SignInTests.AReturnUrlWithControlCharactersIs400`);
+authority prefixes, including slash/backslash variants, remain invalid
+(`SignInTests.AReturnUrlCannotStartWithAnAuthority`).
+
+The session cookie keeps the Entra identity and the user name, nothing else of the token
 (`EntraAdmissionTests.TheSessionPrincipalCarriesTheIdentityAndTheName`), and Core's rules apply
 to it: an anonymous request to the Allors API gets 401 without a redirect or a cookie
 (`SignInTests.AnAnonymousApiRequestGets401WithoutARedirectOrACookie`), and

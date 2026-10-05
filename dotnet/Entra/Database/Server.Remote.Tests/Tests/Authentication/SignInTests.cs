@@ -224,5 +224,61 @@ namespace Allors.Server.Tests
             var protocolRelative = await browser.GetAsync("entra/sign-in?returnUrl=" + Uri.EscapeDataString("//example.com/"));
             Assert.Equal(HttpStatusCode.BadRequest, protocolRelative.StatusCode);
         }
+
+        [Theory]
+        [InlineData("/x\n")]
+        [InlineData("/x\r")]
+        [InlineData("/x\t")]
+        [InlineData("/x\0")]
+        [InlineData("/x\u007f")]
+        [InlineData("/x\u0085")]
+        [InlineData("/x?value=\n")]
+        [InlineData("/x#\n")]
+        [InlineData("~/x\n")]
+        public async Task AReturnUrlWithControlCharactersIs400(string returnUrl)
+        {
+            var (browser, _) = NewBrowser();
+            Assert.Equal(HttpStatusCode.OK, (await SignInAsync(browser, FakeEntraAccounts.Tester)).StatusCode);
+
+            // Encode the actual control character once; query binding decodes it before validation.
+            var response = await browser.GetAsync("entra/sign-in?returnUrl=" + Uri.EscapeDataString(returnUrl));
+
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Null(response.Headers.Location);
+            Assert.Equal(HttpStatusCode.OK, (await browser.GetAsync("allors/UserInfo")).StatusCode);
+        }
+
+        [Theory]
+        [InlineData("/", "/")]
+        [InlineData("~/", "/")]
+        [InlineData("~/allors/Test/Ready", "/allors/Test/Ready")]
+        [InlineData("/allors/Test/Ready?value=1#part", "/allors/Test/Ready?value=1#part")]
+        [InlineData("~/allors/Test/Ready?value=1#part", "/allors/Test/Ready?value=1#part")]
+        [InlineData("/allors/Test/Ready?value=%0A#part", "/allors/Test/Ready?value=%0A#part")]
+        public async Task AValidLocalReturnUrlKeepsItsDestination(string returnUrl, string destination)
+        {
+            var (browser, _) = NewBrowser();
+            Assert.Equal(HttpStatusCode.OK, (await SignInAsync(browser, FakeEntraAccounts.Tester)).StatusCode);
+
+            var response = await browser.GetAsync("entra/sign-in?returnUrl=" + Uri.EscapeDataString(returnUrl));
+
+            Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
+            Assert.Equal(destination, response.Headers.Location?.ToString());
+        }
+
+        [Theory]
+        [InlineData("/\\example.com/")]
+        [InlineData("~//example.com/")]
+        [InlineData("~/\\example.com/")]
+        public async Task AReturnUrlCannotStartWithAnAuthority(string returnUrl)
+        {
+            var (browser, _) = NewBrowser();
+            Assert.Equal(HttpStatusCode.OK, (await SignInAsync(browser, FakeEntraAccounts.Tester)).StatusCode);
+
+            var response = await browser.GetAsync("entra/sign-in?returnUrl=" + Uri.EscapeDataString(returnUrl));
+
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Null(response.Headers.Location);
+        }
     }
 }

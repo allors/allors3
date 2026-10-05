@@ -10,6 +10,7 @@ namespace Allors.Server
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Http.HttpResults;
     using Microsoft.AspNetCore.Routing;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Options;
@@ -26,7 +27,7 @@ namespace Allors.Server
             endpoints.MapGet(EntraPaths.SignIn, (string returnUrl) =>
                 {
                     returnUrl ??= "/";
-                    return IsLocal(returnUrl)
+                    return RedirectHttpResult.IsLocalUrl(returnUrl)
                         ? Results.LocalRedirect(returnUrl)
                         : Results.BadRequest($"returnUrl must be a local path, such as /, and not '{returnUrl}'.");
                 })
@@ -64,9 +65,5 @@ namespace Allors.Server
 
             return endpoints;
         }
-
-        // A path of this site: it starts with one slash, so it is neither absolute nor protocol-relative.
-        private static bool IsLocal(string url) =>
-            url.Length > 0 && url[0] == '/' && (url.Length == 1 || (url[1] != '/' && url[1] != '\\'));
     }
 }
