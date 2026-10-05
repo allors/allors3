@@ -238,6 +238,10 @@ Changes accumulate under **[Unreleased]** until a version is released.
 
 ### Fixed
 
+- Entra refuses admission when reading an existing user or refreshing its profile fails,
+  instead of letting the exception escape the authentication callback. Profile validation
+  errors and exceptions are logged with the Entra object id; callers receive an admission
+  reason without the internal failure details, and uncommitted profile changes are discarded.
 - Identity refuses an existing user returned by the application's `IUserFactory` before writing
   authentication fields, preventing account creation from replacing that user's credentials.
   The refusal returns a specific error, logs the factory contract violation and rolls back its

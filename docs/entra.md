@@ -169,6 +169,14 @@ the API (`UserTests.NobodyWritesTheEntraFieldsThroughAnAccessList`). A browser s
 refreshes the five profile fields when the directory says something new; a bearer token does
 not (`EntraAdmissionTests.ASignInRefreshesTheProfileFieldsAndABearerTokenDoesNot`).
 
+If the existing user cannot be read or its refreshed profile cannot be saved, admission is
+refused and the server logs the details. A rejected or failed profile derivation leaves the
+stored profile unchanged (`EntraAdmissionTests.AFailedProfileRefreshIsRefusedAndRolledBack`).
+Failures during lookup or refresh return an admission reason without exposing the exception
+details; by default, the browser receives 403 and the bearer handler fails authentication
+(`EntraAdmissionTests.ATransactionFailureRefusesAdmissionAndIsLogged` and
+`ATransactionFailureStopsTheAuthenticationHandler`).
+
 Without a factory the plug-in creates nobody, refuses the sign-in and logs why
 (`EntraAdmissionTests.WithoutAFactoryNobodyIsCreated`). A principal whose token carries no
 `tid` or `oid` claim is refused before the factory is asked.

@@ -9,17 +9,29 @@ namespace Tests
     using System.Collections.Generic;
     using System.Linq;
     using System.Security.Claims;
+    using System.Threading.Tasks;
     using Allors.Database;
     using Allors.Database.Configuration;
     using Allors.Database.Configuration.Derivations.Default;
+    using Allors.Database.Derivations;
     using Allors.Database.Domain;
+    using Allors.Database.Domain.Derivations.Rules;
     using Allors.Database.Meta;
     using Allors.Security;
+    using Allors.Server;
     using Allors.Services;
+    using Microsoft.AspNetCore.Authentication;
+    using Microsoft.AspNetCore.Authentication.JwtBearer;
+    using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Options;
     using Xunit;
     using MemoryConfiguration = Allors.Database.Adapters.Memory.Configuration;
     using Agent = Allors.Database.Domain.Agent;
     using MemoryDatabase = Allors.Database.Adapters.Memory.Database;
+    using ObjectFactory = Allors.Database.ObjectFactory;
     using Person = Allors.Database.Domain.Person;
     using User = Allors.Database.Domain.User;
 
@@ -157,6 +169,136 @@ namespace Tests
             user = FindUser(database, Tenant, ObjectId);
             Assert.Equal("Jane Doe-Smith", user.EntraDisplayName);
             Assert.Equal("jane.smith@example.com", user.EntraEmail);
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void AFailedProfileRefreshIsRefusedAndRolledBack(bool throwException)
+        {
+            var database = NewFailingDatabase(out var rule);
+            var logger = new RecordingLogger();
+            var factory = new TestFactory();
+            var admission = new EntraAdmission(new StubDatabaseService { Database = database }, logger, factory);
+            Assert.Null(admission.Admit(Person(), signIn: true));
+            logger.Messages.Clear();
+            var failure = new InvalidOperationException("Private derivation failure details.");
+            rule.Enabled = true;
+            rule.Failure = throwException ? failure : null;
+
+            var reason = admission.Admit(Person(
+                name: "Jane Updated", email: "updated@example.com",
+                more: new[]
+                {
+                    new Claim(EntraClaims.AccountTypeClaim, "1"),
+                    new Claim(EntraClaims.IdentityProviderClaim, $"https://login.microsoftonline.com/{CustomerTenant}/v2.0"),
+                }), signIn: true);
+
+            Assert.False(string.IsNullOrWhiteSpace(reason));
+            Assert.DoesNotContain(failure.Message, reason, StringComparison.Ordinal);
+            Assert.DoesNotContain(RejectingProfileRule.ValidationError, reason, StringComparison.Ordinal);
+            var log = Assert.Single(logger.Messages);
+            Assert.Equal(LogLevel.Error, log.Level);
+            Assert.Contains(ObjectId.ToString(), log.Message, StringComparison.Ordinal);
+            Assert.Same(throwException ? failure : null, log.Exception);
+            if (!throwException)
+            {
+                Assert.Contains(RejectingProfileRule.ValidationError, log.Message, StringComparison.Ordinal);
+                Assert.Contains("not valid", reason, StringComparison.Ordinal);
+            }
+
+            Assert.Equal(1, rule.Calls);
+            Assert.Equal(1, factory.Calls);
+            using var verification = database.CreateTransaction();
+            var user = Assert.Single(new Users(verification).Extent());
+            Assert.Equal(Tenant, user.EntraTenantId);
+            Assert.Equal(ObjectId, user.EntraObjectId);
+            Assert.Equal("jane@example.com", user.EntraUserName);
+            Assert.Equal("Jane Doe", user.EntraDisplayName);
+            Assert.Equal("jane@example.com", user.EntraEmail);
+            Assert.Equal($"https://login.microsoftonline.com/{Tenant}/v2.0", user.EntraIdentityProvider);
+            Assert.False(user.EntraIsGuest);
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void ATransactionFailureRefusesAdmissionAndIsLogged(bool signIn)
+        {
+            var database = NewFailingDatabase(out _);
+            NewUser(database, Tenant, ObjectId);
+            var failure = new InvalidOperationException("Private database connection details.");
+            database.TransactionFailure = failure;
+            var logger = new RecordingLogger();
+            var factory = new TestFactory();
+            var admission = new EntraAdmission(new StubDatabaseService { Database = database }, logger, factory);
+
+            var reason = admission.Admit(Person(), signIn);
+
+            Assert.False(string.IsNullOrWhiteSpace(reason));
+            Assert.DoesNotContain(failure.Message, reason, StringComparison.Ordinal);
+            var log = Assert.Single(logger.Messages);
+            Assert.Equal(LogLevel.Error, log.Level);
+            Assert.Same(failure, log.Exception);
+            Assert.Contains(ObjectId.ToString(), log.Message, StringComparison.Ordinal);
+            Assert.Equal(0, factory.Calls);
+            database.TransactionFailure = null;
+            Assert.Single(AllUsers(database));
+        }
+
+        // The admission reason must reach the handlers' existing refusal path instead of escaping
+        // TicketReceived or TokenValidated as an unhandled infrastructure exception.
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task ATransactionFailureStopsTheAuthenticationHandler(bool signIn)
+        {
+            var database = NewFailingDatabase(out _);
+            NewUser(database, Tenant, ObjectId);
+            database.TransactionFailure = new InvalidOperationException("Private database connection details.");
+            var services = new ServiceCollection();
+            services.AddLogging();
+            services.AddSingleton<IDatabaseService>(new StubDatabaseService { Database = database });
+            services.AddAllorsEntraUsers(EntraDefaults.OpenIdConnectScheme, EntraDefaults.BearerScheme);
+            using var provider = services.BuildServiceProvider();
+            var http = new DefaultHttpContext { RequestServices = provider };
+            var principal = Person();
+
+            if (signIn)
+            {
+                var options = provider.GetRequiredService<IOptionsMonitor<OpenIdConnectOptions>>().Get(EntraDefaults.OpenIdConnectScheme);
+                Exception failure = null;
+                options.Events.OnRemoteFailure = context =>
+                {
+                    failure = context.Failure;
+                    return Task.CompletedTask;
+                };
+                var context = new TicketReceivedContext(http,
+                    new AuthenticationScheme(EntraDefaults.OpenIdConnectScheme, null, typeof(OpenIdConnectHandler)), options,
+                    new AuthenticationTicket(principal, new AuthenticationProperties(), EntraDefaults.OpenIdConnectScheme));
+
+                await options.Events.TicketReceived(context);
+
+                Assert.IsType<EntraAdmission.NotAdmittedException>(failure);
+                Assert.Equal(StatusCodes.Status403Forbidden, http.Response.StatusCode);
+                Assert.True(context.Result.Handled);
+                Assert.Same(principal, context.Principal);
+            }
+            else
+            {
+                var options = provider.GetRequiredService<IOptionsMonitor<JwtBearerOptions>>().Get(EntraDefaults.BearerScheme);
+                var context = new Microsoft.AspNetCore.Authentication.JwtBearer.TokenValidatedContext(http,
+                    new AuthenticationScheme(EntraDefaults.BearerScheme, null, typeof(JwtBearerHandler)), options)
+                {
+                    Principal = principal,
+                };
+
+                await options.Events.TokenValidated(context);
+
+                Assert.NotNull(context.Result.Failure);
+                Assert.False(context.Result.Succeeded);
+                Assert.DoesNotContain(database.TransactionFailure.Message, context.Result.Failure.Message, StringComparison.Ordinal);
+            }
         }
 
         // The identity is the pair of the tenant id and the object id; a token without either stands
@@ -358,6 +500,72 @@ namespace Tests
             new Setup(database, new Config { SetupSecurity = false }).Apply();
 
             return database;
+        }
+
+        private static FailingDatabase NewFailingDatabase(out RejectingProfileRule rule)
+        {
+            var metaPopulation = new MetaBuilder().Build();
+            rule = new RejectingProfileRule(metaPopulation);
+            var database = new FailingDatabase(
+                new DefaultDatabaseServices(new Engine(Rules.Create(metaPopulation).Append(rule).ToArray())),
+                new MemoryConfiguration { ObjectFactory = new ObjectFactory(metaPopulation, typeof(User)) });
+            database.Init();
+            new Setup(database, new Config { SetupSecurity = false }).Apply();
+            return database;
+        }
+
+        private sealed class RejectingProfileRule : Rule
+        {
+            public const string ValidationError = "The application rejected the refreshed profile.";
+
+            public RejectingProfileRule(MetaPopulation m) : base(m, new Guid("e8a7b438-062e-4817-aac5-4d7e5caa8830")) =>
+                this.Patterns = new[] { m.User.RolePattern(v => v.EntraDisplayName) };
+
+            public bool Enabled { get; set; }
+
+            public Exception Failure { get; set; }
+
+            public int Calls { get; private set; }
+
+            public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
+            {
+                if (!this.Enabled)
+                {
+                    return;
+                }
+
+                this.Calls++;
+                if (this.Failure != null)
+                {
+                    throw this.Failure;
+                }
+
+                cycle.Validation.AddError(ValidationError);
+            }
+        }
+
+        private sealed class FailingDatabase : MemoryDatabase
+        {
+            public FailingDatabase(IDatabaseServices services, MemoryConfiguration configuration) : base(services, configuration)
+            {
+            }
+
+            public InvalidOperationException TransactionFailure { get; set; }
+
+            protected override Allors.Database.Adapters.Memory.Transaction Transaction =>
+                this.TransactionFailure != null ? throw this.TransactionFailure : base.Transaction;
+        }
+
+        private sealed class RecordingLogger : ILogger<EntraAdmission>
+        {
+            public List<(LogLevel Level, string Message, Exception Exception)> Messages { get; } = new();
+
+            public IDisposable BeginScope<TState>(TState state) => null;
+
+            public bool IsEnabled(LogLevel logLevel) => true;
+
+            public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter) =>
+                this.Messages.Add((logLevel, formatter(state, exception), exception));
         }
 
         // The factory of this tree's concrete domain, as the test server has it: an agent for a

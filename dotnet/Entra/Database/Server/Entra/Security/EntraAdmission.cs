@@ -55,19 +55,32 @@ namespace Allors.Security
 
             var database = this.databaseService.Database;
 
-            using (var transaction = database.CreateTransaction())
+            try
             {
+                using var transaction = database.CreateTransaction();
                 var user = new Users(transaction).FindByEntraIdentity(tenantId.Value, objectId.Value);
                 if (user != null)
                 {
                     if (signIn && this.Refresh(user, principal))
                     {
-                        transaction.Derive();
+                        var validation = transaction.Derive(false);
+                        if (validation.HasErrors)
+                        {
+                            var errors = string.Join("; ", validation.Errors.Select(v => v.Message));
+                            this.LogRefreshValidationFailed(user.Id, objectId.Value, errors);
+                            return $"The refreshed profile for the principal with object id {objectId} is not valid. Check the server logs.";
+                        }
+
                         transaction.Commit();
                     }
 
                     return null;
                 }
+            }
+            catch (Exception e)
+            {
+                this.LogAdmissionFailed(e, objectId.Value);
+                return $"Could not read or refresh the user for the principal with object id {objectId}. Check the server logs.";
             }
 
             if (this.userFactory == null)
@@ -222,5 +235,11 @@ namespace Allors.Security
 
         [LoggerMessage(EventId = 8, Level = LogLevel.Warning, Message = "The directory sent {Field} with {Length} characters; the first {Size} are kept.")]
         private partial void LogCut(string field, int length, int size);
+
+        [LoggerMessage(EventId = 9, Level = LogLevel.Error, Message = "The refreshed profile of user {UserId} for the Entra principal with object id {ObjectId} is not valid: {Errors}")]
+        private partial void LogRefreshValidationFailed(long userId, Guid objectId, string errors);
+
+        [LoggerMessage(EventId = 10, Level = LogLevel.Error, Message = "Could not read or refresh the user for the Entra principal with object id {ObjectId}.")]
+        private partial void LogAdmissionFailed(Exception exception, Guid objectId);
     }
 }
