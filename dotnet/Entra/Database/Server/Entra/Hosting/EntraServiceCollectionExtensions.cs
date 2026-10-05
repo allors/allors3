@@ -98,8 +98,8 @@ namespace Allors.Server
                 options.NonceCookie.SecurePolicy = securePolicy;
             });
 
-            // How Entra connects to Core: the names of its schemes, and a lifetime of the session, as
-            // Entra cannot end the application's session.
+            // How Entra connects to Core: the names of its schemes, and a lifetime of the session,
+            // since the plug-in does not accept incoming Entra sign-out requests.
             services.Configure<AllorsAuthenticationOptions>(options =>
             {
                 options.SessionScheme = EntraDefaults.SessionScheme;
@@ -126,9 +126,17 @@ namespace Allors.Server
                     nameof(OpenIdConnectEvents.OnTicketReceived), options => options.Events?.OnTicketReceived,
                     typeof(OpenIdConnectEvents).GetMethod(nameof(OpenIdConnectEvents.TicketReceived)));
                 services.AddSingleton<IValidateOptions<OpenIdConnectOptions>>(events);
-                services.AddOptions<OpenIdConnectOptions>(openIdConnectScheme).ValidateOnStart();
+                services.AddOptions<OpenIdConnectOptions>(openIdConnectScheme)
+                    .Validate(options => !options.RemoteSignOutPath.HasValue,
+                        $"The Entra scheme '{openIdConnectScheme}' has enabled RemoteSignOutPath after the plug-in disabled incoming front-channel logout. " +
+                        $"Leave RemoteSignOutPath empty and remove any PostConfigure that enables it; use POST {EntraPaths.SignOut} with an antiforgery token to sign out.")
+                    .ValidateOnStart();
                 services.PostConfigure<OpenIdConnectOptions>(openIdConnectScheme, options =>
                 {
+                    // The session carries no logout correlation claims, so the handler would accept
+                    // an unsolicited remote logout. Outgoing sign-out and its callback stay enabled.
+                    options.RemoteSignOutPath = PathString.Empty;
+
                     // The factory still needs these token claims after the handler's claim actions.
                     // SessionPrincipal removes them from the session after admission.
                     options.ClaimActions.Remove(EntraClaims.IssuerClaim);

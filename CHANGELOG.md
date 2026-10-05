@@ -238,6 +238,11 @@ Changes accumulate under **[Unreleased]** until a version is released.
 
 ### Fixed
 
+- Entra disables incoming OpenID Connect front-channel logout, so unsolicited requests to
+  `/signout-oidc` cannot clear a browser session without antiforgery validation. Startup rejects
+  later configuration that re-enables `RemoteSignOutPath`, including for custom connected
+  schemes. The protected `/entra/sign-out` POST still ends the local and Entra sign-ins and
+  returns through the sign-out callback; sign-out from other Entra applications is unsupported.
 - Entra browser sign-in preserves stored profile values when claims are missing or empty,
   and changes guest status only for an explicit `acct=0` or `acct=1`. Missing `idp` no longer
   replaces a known home provider with the token issuer. Equivalent public-cloud v1/v2 provider

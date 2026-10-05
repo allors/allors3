@@ -6,6 +6,7 @@
 namespace Allors.Server.Tests
 {
     using System;
+    using System.Collections.Generic;
     using System.Globalization;
     using System.Net;
     using System.Net.Http;
@@ -15,6 +16,7 @@ namespace Allors.Server.Tests
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authentication.Cookies;
     using Microsoft.AspNetCore.DataProtection;
+    using Microsoft.AspNetCore.WebUtilities;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Options;
     using Xunit;
@@ -180,6 +182,77 @@ namespace Allors.Server.Tests
             Assert.Empty(await response.Content.ReadAsStringAsync());
             Assert.Equal(HttpStatusCode.Unauthorized, (await browser.GetAsync("allors/UserInfo")).StatusCode);
             Assert.Empty(this.AllUsers());
+        }
+
+        [Theory]
+        [InlineData(false, "none")]
+        [InlineData(false, "known-issuer")]
+        [InlineData(false, "forged")]
+        [InlineData(true, "known-issuer")]
+        [InlineData(true, "forged")]
+        public async Task RemoteSignOutRequestsCannotEndTheSession(bool post, string claims)
+        {
+            var (browser, jar) = NewBrowser();
+            Assert.Equal(HttpStatusCode.OK, (await SignInAsync(browser, FakeEntraAccounts.Tester)).StatusCode);
+            var sessionCookie = Cookie(jar, "Allors.Auth");
+            Assert.False(string.IsNullOrEmpty(sessionCookie));
+            var fields = new Dictionary<string, string>();
+            if (claims != "none")
+            {
+                fields["iss"] = claims == "known-issuer" ? FakeEntra.IssuerV2(this.TenantId) : "https://untrusted.example/tenant/v2.0";
+            }
+
+            if (claims == "forged")
+            {
+                fields["sid"] = "an-invented-session";
+            }
+
+            using var form = new FormUrlEncodedContent(fields);
+            var path = "/signout-oidc";
+            if (!post && fields.Count != 0)
+            {
+                path += "?" + await form.ReadAsStringAsync();
+            }
+
+            using var request = post
+                ? new HttpRequestMessage(HttpMethod.Post, path) { Content = form }
+                : new HttpRequestMessage(HttpMethod.Get, path);
+
+            var response = await browser.SendAsync(request);
+
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+            Assert.Null(response.Headers.Location);
+            Assert.False(response.Headers.Contains("Set-Cookie"));
+            Assert.Equal(sessionCookie, Cookie(jar, "Allors.Auth"));
+            Assert.Equal(HttpStatusCode.OK, (await browser.GetAsync("allors/UserInfo")).StatusCode);
+        }
+
+        [Fact]
+        public async Task SignOutReturnsThroughTheOidcCallback()
+        {
+            var (browser, jar) = NewBrowser();
+            Assert.Equal(HttpStatusCode.OK, (await SignInAsync(browser, FakeEntraAccounts.Tester)).StatusCode);
+            var request = new HttpRequestMessage(HttpMethod.Post, EntraPaths.SignOut);
+            request.Headers.Add("X-XSRF-TOKEN", Cookie(jar, "XSRF-TOKEN"));
+
+            var signOut = await browser.SendAsync(request);
+            Assert.Equal(HttpStatusCode.Redirect, signOut.StatusCode);
+            Assert.Equal($"{FakeEntra.PathPrefix}/{this.TenantId}/oauth2/v2.0/logout", signOut.Headers.Location?.AbsolutePath);
+
+            var provider = await browser.GetAsync(signOut.Headers.Location);
+            Assert.Equal(HttpStatusCode.Redirect, provider.StatusCode);
+            Assert.Equal("/signout-callback-oidc", provider.Headers.Location?.AbsolutePath);
+
+            // The fake redirects without echoing state. Supply the outgoing protocol state here
+            // to exercise the callback with the response an OpenID Connect provider returns.
+            var parameters = QueryHelpers.ParseQuery(signOut.Headers.Location.Query);
+            Assert.False(string.IsNullOrEmpty(parameters["state"]));
+            var callbackUri = QueryHelpers.AddQueryString(provider.Headers.Location.ToString(), "state", parameters["state"]);
+            var callback = await browser.GetAsync(callbackUri);
+            Assert.Equal(HttpStatusCode.Redirect, callback.StatusCode);
+            Assert.Equal("/", callback.Headers.Location?.ToString());
+            Assert.Null(Cookie(jar, "Allors.Auth"));
+            Assert.Equal(HttpStatusCode.Unauthorized, (await browser.GetAsync("allors/UserInfo")).StatusCode);
         }
 
         // The published test server and its tests run under the same account with the same default

@@ -225,7 +225,8 @@ runs only after the protocol checks succeed, including the nonce; a rejected cal
 no user or session (`SignInTests.ASignInWithTheWrongNonceLeavesNoSessionOrUser`).
 
 The session ends `SessionLifetime` after its sign-in, 12 hours by default, however often the
-browser renewed it: Entra cannot end the application's session, so the application bounds it.
+browser renewed it. The plug-in does not accept incoming Entra sign-out requests, so the
+application bounds the session locally.
 Each request looks the user up by its identity (`EntraUserResolverTests`). If the browser
 session's user is missing, the plug-in rejects the session and clears its cookie. The API
 returns 401, and `/entra/sign-in` starts a new Entra sign-in instead of sending the browser
@@ -252,6 +253,21 @@ instance. For an active session, that ends the session and the sign-in with Entr
 valid token the request is refused with 400. The token is validated against the session's user,
 even if the request also carries a bearer token
 (`SignOutTests.SignOutWithABearerHeaderStillProtectsTheSession`).
+
+Incoming Entra front-channel logout is disabled. The session does not retain the `sid` and
+`iss` claims needed to correlate those requests, so the framework's remote logout handler
+could otherwise clear the session on an unsolicited request. `/signout-oidc` does not end the
+session, with or without issuer and session parameters, on GET or form POST
+(`SignOutTests.RemoteSignOutRequestsCannotEndTheSession`). Do not register that path as a
+front-channel logout URL. Signing out of another Entra application does not end this app's
+session.
+
+`AddAllorsEntraUsers`, also called by `AddAllorsEntra`, clears `RemoteSignOutPath` for each
+connected OpenID Connect scheme, including custom scheme names. Leave that option empty:
+startup rejects a later `PostConfigure` that re-enables it
+(`EntraOptionsTests.StartUpRefusesReenabledRemoteSignOut`). Other authentication schemes are
+unaffected. Outgoing sign-out through `/entra/sign-out` and the separate
+`/signout-callback-oidc` return path remain enabled (`SignOutTests.SignOutReturnsThroughTheOidcCallback`).
 
 If the app session has expired or is absent, sign-out returns 204 without redirecting or
 starting a new sign-in. This is a successful no-op and needs no antiforgery token, including

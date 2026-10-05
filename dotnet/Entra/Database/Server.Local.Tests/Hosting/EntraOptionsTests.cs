@@ -1031,6 +1031,81 @@ namespace Tests
             Assert.Equal(outcome == "Secret" ? "application-secret" : options.ClientSecret, request.ClientSecret);
         }
 
+        [Theory]
+        [InlineData(null)]
+        [InlineData("/configured-remote-sign-out")]
+        public void EntraDisablesIncomingRemoteSignOut(string configuredPath)
+        {
+            using var provider = Provider(configuredPath == null ? null :
+                new Dictionary<string, string> { ["Entra:RemoteSignOutPath"] = configuredPath });
+
+            provider.GetRequiredService<IStartupValidator>().Validate();
+            var options = OpenIdConnect(provider);
+
+            Assert.False(options.RemoteSignOutPath.HasValue);
+            Assert.Equal("/signin-oidc", options.CallbackPath.Value);
+            Assert.Equal("/signout-callback-oidc", options.SignedOutCallbackPath.Value);
+            Assert.Equal(EntraDefaults.SessionScheme, options.SignOutScheme);
+        }
+
+        [Theory]
+        [InlineData(false, "/signout-oidc")]
+        [InlineData(false, "/custom-remote-sign-out")]
+        [InlineData(true, "/signout-oidc")]
+        [InlineData(true, "/custom-remote-sign-out")]
+        public void StartUpRefusesReenabledRemoteSignOut(bool customScheme, string path)
+        {
+            var scheme = customScheme ? "Custom.Oidc" : EntraDefaults.OpenIdConnectScheme;
+            var services = new ServiceCollection();
+            services.AddAllorsEntraUsers(scheme, null);
+            services.PostConfigure<OpenIdConnectOptions>(scheme, options => options.RemoteSignOutPath = path);
+            using var provider = customScheme ? services.BuildServiceProvider() : Provider(configure: registered =>
+                registered.PostConfigure<OpenIdConnectOptions>(scheme, options => options.RemoteSignOutPath = path));
+
+            var exception = Assert.Throws<OptionsValidationException>(() => provider.GetRequiredService<IStartupValidator>().Validate());
+
+            Assert.Contains(scheme, exception.Message, StringComparison.Ordinal);
+            Assert.Contains("RemoteSignOutPath", exception.Message, StringComparison.Ordinal);
+            Assert.Contains("empty", exception.Message, StringComparison.OrdinalIgnoreCase);
+            Assert.Contains(EntraPaths.SignOut, exception.Message, StringComparison.Ordinal);
+        }
+
+        [Fact]
+        public void CustomEntraSchemesDisableOnlyIncomingRemoteSignOut()
+        {
+            var services = new ServiceCollection();
+            services.Configure<OpenIdConnectOptions>("Custom.Oidc", options =>
+            {
+                options.RemoteSignOutPath = "/custom-remote-sign-out";
+                options.SignedOutCallbackPath = "/custom-sign-out-callback";
+                options.SignOutScheme = "Custom.Session";
+            });
+            services.Configure<OpenIdConnectOptions>("Other.Oidc", options => options.RemoteSignOutPath = "/other-remote-sign-out");
+            services.AddAllorsEntraUsers("Custom.Oidc", null);
+            using var provider = services.BuildServiceProvider();
+
+            provider.GetRequiredService<IStartupValidator>().Validate();
+            var options = provider.GetRequiredService<IOptionsMonitor<OpenIdConnectOptions>>();
+
+            Assert.False(options.Get("Custom.Oidc").RemoteSignOutPath.HasValue);
+            Assert.Equal("/custom-sign-out-callback", options.Get("Custom.Oidc").SignedOutCallbackPath.Value);
+            Assert.Equal("Custom.Session", options.Get("Custom.Oidc").SignOutScheme);
+            Assert.Equal("/other-remote-sign-out", options.Get("Other.Oidc").RemoteSignOutPath.Value);
+        }
+
+        [Fact]
+        public void BearerOnlyEntraRegistrationLeavesRemoteSignOutAlone()
+        {
+            var services = new ServiceCollection();
+            services.AddAllorsEntraUsers(null, "Custom.Bearer");
+            using var provider = services.BuildServiceProvider();
+
+            provider.GetRequiredService<IStartupValidator>().Validate();
+
+            Assert.Equal("/signout-oidc", provider.GetRequiredService<IOptionsMonitor<OpenIdConnectOptions>>()
+                .Get("Other.Oidc").RemoteSignOutPath.Value);
+        }
+
         private static byte[] NewClientCertificate()
         {
             using var key = RSA.Create(2048);
