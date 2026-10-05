@@ -57,9 +57,14 @@ changes for a plug-in that names none of them.
 - **`ChallengeScheme`**, the scheme that signs a browser in elsewhere, an OpenID Connect scheme
   for instance. Outside the Allors API the session's challenge goes to it; the API still answers
   401. `AllorsServerTests.SessionChallengeOutsideTheApiGoesToTheNamedScheme` checks that.
-- **`SessionLifetime`**. A session ends that long after its sign-in, however often its sliding
-  expiration renewed it: for a plug-in whose identity provider cannot end the application's
-  session. `AllorsServerTests.SessionLifetimeEndsTheSessionAfterItsLifetime` checks that.
+- **`SessionLifetime`**. A session ends that long after its original sign-in, however often
+  sliding expiration renews it or the application refreshes it with the existing authentication
+  properties, including through Identity's `RefreshSignInAsync`. A new sign-in with fresh
+  `AuthenticationProperties` starts a new lifetime. This lets a plug-in bound the session when
+  its identity provider cannot end the application's session.
+  `AllorsServerTests.SessionLifetimeEndsTheSessionAfterItsLifetime`,
+  `SessionLifetimeRefreshKeepsTheOriginalDeadline` and
+  `SessionLifetimeStartsAgainWithNewSignInProperties` check these rules.
 
 `UseAllorsServer` stops at start-up when a named scheme is not registered, or when the selecting
 scheme is the default and no scheme is named, so that a misconfigured server fails before its

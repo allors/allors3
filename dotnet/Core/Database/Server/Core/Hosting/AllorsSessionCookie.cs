@@ -6,6 +6,7 @@
 namespace Allors.Server
 {
     using System;
+    using System.Collections.Generic;
     using System.Globalization;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Authentication;
@@ -116,14 +117,15 @@ namespace Allors.Server
 
             // A session may get an absolute lifetime next to its sliding one: the start is stamped at
             // sign-in and travels with the ticket, which a renewal copies, and a cookie past the
-            // lifetime is refused and signed out. Stamp sign-in only when a lifetime is set.
+            // lifetime is refused and signed out. Keep the start when a sign-in refreshes existing
+            // properties. Stamp a new session only when a lifetime is set.
             var lifetime = authentication.SessionLifetime;
             if (lifetime != null)
             {
                 var signingIn = options.Events.OnSigningIn;
                 options.Events.OnSigningIn = context =>
                 {
-                    context.Properties.Items[SessionStartKey] = Now(context.Options).ToString("o", CultureInfo.InvariantCulture);
+                    context.Properties.Items.TryAdd(SessionStartKey, Now(context.Options).ToString("o", CultureInfo.InvariantCulture));
                     return signingIn(context);
                 };
             }

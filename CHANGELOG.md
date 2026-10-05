@@ -238,6 +238,10 @@ Changes accumulate under **[Unreleased]** until a version is released.
 
 ### Fixed
 
+- Core preserves the original absolute session lifetime when an application refreshes a cookie
+  with its existing authentication properties, including through Identity's `RefreshSignInAsync`.
+  Reissuing a cookie no longer restarts `SessionLifetime`; a new sign-in with fresh properties
+  still starts a new lifetime, and invalid existing start timestamps remain rejected.
 - Entra uses ASP.NET Core's local-URL validation for the sign-in return URL. Control characters
   return 400 instead of causing a 500 during redirect execution, and valid `~/` application-relative
   paths are accepted. External destinations and authority prefixes remain rejected.

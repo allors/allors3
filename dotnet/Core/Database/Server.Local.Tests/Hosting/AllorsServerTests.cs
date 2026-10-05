@@ -689,6 +689,96 @@ namespace Tests
             Assert.Contains(pastLifetime.HttpContext.Response.Headers.SetCookie, v => v.StartsWith("Allors.Auth=;", StringComparison.Ordinal));
         }
 
+        [Fact]
+        public async Task SessionLifetimeRefreshKeepsTheOriginalDeadline()
+        {
+            var clock = new Clock();
+            var signingInCalls = 0;
+            using var provider = SessionProvider(configureCookie: options =>
+                options.Events.OnSigningIn = _ =>
+                {
+                    ++signingInCalls;
+                    return Task.CompletedTask;
+                }, configure: services =>
+                {
+                    services.Configure<AllorsAuthenticationOptions>(v => v.SessionLifetime = TimeSpan.FromHours(12));
+                    services.Configure<CookieAuthenticationOptions>(SessionScheme, v => v.TimeProvider = clock);
+                });
+            using var scope = provider.CreateScope();
+            var options = SessionOptions(provider);
+            var principal = new ClaimsPrincipal(new ClaimsIdentity("Tests"));
+            var properties = new AuthenticationProperties();
+
+            await options.Events.SigningIn(new CookieSigningInContext(Context(scope.ServiceProvider), CookieScheme(), options, principal, properties, new CookieOptions()));
+            var start = properties.Items[AllorsSessionCookie.SessionStartKey];
+            clock.Advance(TimeSpan.FromHours(11));
+
+            // RefreshSignInAsync and SignInAsync with the existing properties issue the cookie again.
+            await options.Events.SigningIn(new CookieSigningInContext(Context(scope.ServiceProvider), CookieScheme(), options, principal, properties, new CookieOptions()));
+            var withinLifetime = Validate(scope.ServiceProvider, options, principal, properties);
+            await options.Events.ValidatePrincipal(withinLifetime);
+            clock.Advance(TimeSpan.FromHours(2));
+            var pastLifetime = Validate(scope.ServiceProvider, options, principal, properties);
+            await options.Events.ValidatePrincipal(pastLifetime);
+
+            Assert.NotNull(withinLifetime.Principal);
+            Assert.Null(pastLifetime.Principal);
+            Assert.Equal(start, properties.Items[AllorsSessionCookie.SessionStartKey]);
+            Assert.Equal(2, signingInCalls);
+            Assert.Contains(pastLifetime.HttpContext.Response.Headers.SetCookie, v => v.StartsWith("Allors.Auth=;", StringComparison.Ordinal));
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("not-a-date")]
+        public async Task SessionLifetimeRefreshDoesNotReplaceAnInvalidStart(string start)
+        {
+            using var provider = SessionProvider(configure: services =>
+                services.Configure<AllorsAuthenticationOptions>(v => v.SessionLifetime = TimeSpan.FromHours(12)));
+            using var scope = provider.CreateScope();
+            var options = SessionOptions(provider);
+            var principal = new ClaimsPrincipal(new ClaimsIdentity("Tests"));
+            var properties = new AuthenticationProperties();
+            properties.Items[AllorsSessionCookie.SessionStartKey] = start;
+
+            await options.Events.SigningIn(new CookieSigningInContext(Context(scope.ServiceProvider), CookieScheme(), options, principal, properties, new CookieOptions()));
+            var invalid = Validate(scope.ServiceProvider, options, principal, properties);
+            await options.Events.ValidatePrincipal(invalid);
+
+            Assert.Null(invalid.Principal);
+            Assert.Equal(start, properties.Items[AllorsSessionCookie.SessionStartKey]);
+        }
+
+        [Fact]
+        public async Task SessionLifetimeStartsAgainWithNewSignInProperties()
+        {
+            var clock = new Clock();
+            using var provider = SessionProvider(configure: services =>
+            {
+                services.Configure<AllorsAuthenticationOptions>(v => v.SessionLifetime = TimeSpan.FromHours(12));
+                services.Configure<CookieAuthenticationOptions>(SessionScheme, v => v.TimeProvider = clock);
+            });
+            using var scope = provider.CreateScope();
+            var options = SessionOptions(provider);
+            var principal = new ClaimsPrincipal(new ClaimsIdentity("Tests"));
+            var originalProperties = new AuthenticationProperties();
+
+            await options.Events.SigningIn(new CookieSigningInContext(Context(scope.ServiceProvider), CookieScheme(), options, principal, originalProperties, new CookieOptions()));
+            clock.Advance(TimeSpan.FromHours(11));
+            var newProperties = new AuthenticationProperties();
+            await options.Events.SigningIn(new CookieSigningInContext(Context(scope.ServiceProvider), CookieScheme(), options, principal, newProperties, new CookieOptions()));
+            clock.Advance(TimeSpan.FromHours(2));
+            var originalSession = Validate(scope.ServiceProvider, options, principal, originalProperties);
+            await options.Events.ValidatePrincipal(originalSession);
+            var newSession = Validate(scope.ServiceProvider, options, principal, newProperties);
+            await options.Events.ValidatePrincipal(newSession);
+
+            Assert.Null(originalSession.Principal);
+            Assert.NotNull(newSession.Principal);
+            Assert.NotEqual(originalProperties.Items[AllorsSessionCookie.SessionStartKey], newProperties.Items[AllorsSessionCookie.SessionStartKey]);
+        }
+
         // A cookie without a start, issued before the lifetime was set, is refused too.
         [Fact]
         public async Task SessionLifetimeRefusesASessionWithoutAStart()
