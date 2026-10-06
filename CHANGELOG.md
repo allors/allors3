@@ -244,6 +244,8 @@ Changes accumulate under **[Unreleased]** until a version is released.
 
 ### Fixed
 
+- The Entra guide links to the shared user-factory contract and clarifies that existing users
+  need no factory. Factory calls are not limited to an identity's first sign-in.
 - Entra resolves user names from raw or mapped `unique_name` and then `email` when neither
   `preferred_username` nor `upn` is available. A v1 guest token without `upn` can now satisfy
   the test factory's user-name requirement, and `UserInfo` and browser sessions retain the

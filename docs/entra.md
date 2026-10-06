@@ -146,10 +146,14 @@ The [session cookie follows Core's event rules](authentication.md#what-core-does
 ## 4. Decide whom the application admits
 
 The plug-in identifies every principal by its tenant id and object id, a person's and a
-program's alike, and finds the user of that identity with `Users.FindByEntraIdentity`. For an
-identity it has no user for, it asks the application's `IUserFactory`, once, at the first
-sign-in. The factory sees the validated principal’s claims and decides two things: whether
-the principal is admitted, and of which class the user is. `EntraClaims` reads the claims for it:
+program's alike, and finds the user of that identity with `Users.FindByEntraIdentity`. When no
+local user is found, browser sign-in or bearer admission uses the application's registered
+`IUserFactory`, following the [application admission contract](authentication.md#what-the-application-does).
+Existing users are reused without calling the factory, even when no factory is registered
+(`EntraAdmissionTests.AKnownIdentityIsFoundAndTheFactoryIsNotAsked` and
+`WithoutAFactoryNobodyIsCreated`).
+
+`EntraClaims` reads the validated principal's claims for the factory:
 `IsApplication()` for a program's own token, `IsGuest()` for a guest, `IdentityProvider()`
 for where the account lives, `UserName()`, `DisplayName()`, `Email()`, `Scopes()`, `Roles()`
 and `ClientApplicationId()`.
@@ -191,10 +195,7 @@ public User Create(ITransaction transaction, ClaimsPrincipal principal)
 }
 ```
 
-The factory returns a new user or null, never an existing one
-(`EntraAdmissionTests.AFactoryThatReturnsAnExistingUserIsRefused`). It gives the user no
-group unless the application wants it to: a new user sees what the access control gives every
-authenticated user. After the factory, the plug-in writes the seven derived fields of the
+After the factory creates a user, the plug-in writes the seven derived fields of the
 Entra domain on the user: the identity, `EntraTenantId` and `EntraObjectId`; what the directory
 says about the account, `EntraUserName`, `EntraDisplayName` and `EntraEmail`; and for a guest
 its home and status, `EntraIdentityProvider` and `EntraIsGuest`. Nobody writes them through
@@ -218,9 +219,8 @@ details; by default, the browser receives 403 and the bearer handler fails authe
 (`EntraAdmissionTests.ATransactionFailureRefusesAdmissionAndIsLogged` and
 `ATransactionFailureStopsTheAuthenticationHandler`).
 
-Without a factory the plug-in creates nobody, refuses the sign-in and logs why
-(`EntraAdmissionTests.WithoutAFactoryNobodyIsCreated`). A principal whose token carries no
-`tid` or `oid` claim is refused before the factory is asked.
+A principal whose token carries no `tid` or `oid` claim is refused before the factory is asked
+(`EntraAdmissionTests.WithoutTheTenantOrTheObjectTheTokenIsRefused`).
 
 ## 5. A browser
 
