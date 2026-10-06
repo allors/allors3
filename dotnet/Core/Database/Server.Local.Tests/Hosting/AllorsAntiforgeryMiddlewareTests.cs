@@ -9,15 +9,17 @@ namespace Tests
     using System.Threading.Tasks;
     using Allors.Server;
     using Microsoft.AspNetCore.Antiforgery;
+    using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Http;
     using Xunit;
 
     // Antiforgery protects the Allors API against requests a browser sends with its cookie on its own.
-    // An authentication plug-in names the schemes that sign in with such a cookie.
+    // An authentication plug-in names the scheme of its browser session, and a request which that
+    // scheme authenticated needs a token.
     public class AllorsAntiforgeryMiddlewareTests
     {
         [Fact]
-        public async Task UnsafeRequestAuthenticatedByAListedSchemeIsValidated()
+        public async Task UnsafeRequestAuthenticatedByTheSessionSchemeIsValidated()
         {
             var antiforgery = new RecordingAntiforgery();
 
@@ -27,7 +29,7 @@ namespace Tests
         }
 
         [Fact]
-        public async Task UnsafeRequestAuthenticatedByAnUnlistedSchemeIsNotValidated()
+        public async Task UnsafeRequestAuthenticatedByAnotherSchemeIsNotValidated()
         {
             var antiforgery = new RecordingAntiforgery();
 
@@ -37,7 +39,49 @@ namespace Tests
             Assert.True(nextCalled);
         }
 
-        private static async Task<bool> Invoke(HttpContext context, IAntiforgery antiforgery, AllorsAntiforgeryOptions options)
+        // A session that signed in with OpenID Connect and a bearer token carry the same identity
+        // type, so the type cannot tell a browser from another client. The scheme that authenticated
+        // the request can.
+        [Fact]
+        public async Task TheAuthenticatingSchemeDecidesNotTheTypeOfTheIdentity()
+        {
+            var session = new RecordingAntiforgery();
+            var bearer = new RecordingAntiforgery();
+
+            await Invoke(Post("Tests.Cookie", "AuthenticationTypes.Federation"), session, Options("Tests.Cookie"));
+            await Invoke(Post("Tests.Bearer", "AuthenticationTypes.Federation"), bearer, Options("Tests.Cookie"));
+
+            Assert.True(session.Validated);
+            Assert.False(bearer.Validated);
+        }
+
+        // A server without a browser session, such as one that takes bearer tokens only.
+        [Fact]
+        public async Task UnsafeRequestIsNotValidatedWhenNoSessionSchemeIsNamed()
+        {
+            var antiforgery = new RecordingAntiforgery();
+
+            var nextCalled = await Invoke(Post("Tests.Cookie"), antiforgery, Options(null));
+
+            Assert.False(antiforgery.Validated);
+            Assert.True(nextCalled);
+        }
+
+        [Fact]
+        public async Task AnonymousUnsafeRequestIsNotValidated()
+        {
+            var antiforgery = new RecordingAntiforgery();
+            var context = new DefaultHttpContext();
+            context.Request.Method = HttpMethods.Post;
+            context.Request.Path = "/allors/pull";
+
+            var nextCalled = await Invoke(context, antiforgery, Options("Tests.Cookie"));
+
+            Assert.False(antiforgery.Validated);
+            Assert.True(nextCalled);
+        }
+
+        private static async Task<bool> Invoke(HttpContext context, IAntiforgery antiforgery, AllorsAuthenticationOptions options)
         {
             var nextCalled = false;
             var middleware = new AllorsAntiforgeryMiddleware(
@@ -52,20 +96,26 @@ namespace Tests
             return nextCalled;
         }
 
-        private static AllorsAntiforgeryOptions Options(string authenticationType)
-        {
-            var options = new AllorsAntiforgeryOptions();
-            options.AuthenticationTypes.Add(authenticationType);
-            return options;
-        }
+        private static AllorsAuthenticationOptions Options(string sessionScheme) => new() { SessionScheme = sessionScheme };
 
-        private static HttpContext Post(string authenticationType)
+        // An unsafe request to the API that the given scheme authenticated, as the authentication
+        // middleware leaves it: the user, and the result that names the scheme.
+        private static HttpContext Post(string scheme, string identityType = null)
         {
             var context = new DefaultHttpContext();
             context.Request.Method = HttpMethods.Post;
             context.Request.Path = "/allors/pull";
-            context.User = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, "jane@example.com") }, authenticationType));
+            context.User = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, "jane@example.com") }, identityType ?? scheme));
+            context.Features.Set<IAuthenticateResultFeature>(new AuthenticateResultFeature
+            {
+                AuthenticateResult = AuthenticateResult.Success(new AuthenticationTicket(context.User, scheme)),
+            });
             return context;
+        }
+
+        private sealed class AuthenticateResultFeature : IAuthenticateResultFeature
+        {
+            public AuthenticateResult AuthenticateResult { get; set; }
         }
 
         private sealed class RecordingAntiforgery : IAntiforgery

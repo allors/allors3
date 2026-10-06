@@ -23,6 +23,7 @@ namespace Tests
         {
             "dotnet/Core/Database/Server/Core",
             "dotnet/Identity/Database/Server/Identity",
+            "dotnet/Entra/Database/Server/Entra",
         };
 
         // Core's tree: its repository, database side, workspace and tests.
@@ -33,11 +34,21 @@ namespace Tests
         // The namespaces and packages of ASP.NET Core Identity.
         private static readonly Regex AspNetCoreIdentity = new(@"\bMicrosoft\.(AspNetCore|Extensions)\.Identity\b", RegexOptions.Compiled);
 
-        // The authentication fields of User, which the Identity domain declares, and its Login class.
+        // The namespaces and packages for signing in with an identity provider: the OpenID Connect and
+        // JWT bearer handlers of ASP.NET Core, Microsoft's Entra libraries and the token libraries
+        // underneath them.
+        private static readonly Regex IdentityProviderLibrary = new(
+            @"\bMicrosoft\.AspNetCore\.Authentication\.(OpenIdConnect|JwtBearer)\b|\bMicrosoft\.Identity\.(Web|Client|Abstractions)\b|\bMicrosoft\.IdentityModel\b",
+            RegexOptions.Compiled);
+
+        // The authentication fields of User, which the Identity domain declares, and its Login class,
+        // followed by the fields the Entra domain declares, its identity, profile and guest fields.
         // Substrings on purpose: they also catch WithUserName, ExistUserEmail, RemoveUserLockoutEnd,
-        // NormalizedUserName, LoginBuilder and the like.
+        // NormalizedUserName, LoginBuilder, EntraUserName and the like. One name is not Identity's:
+        // the cookie handler of ASP.NET Core calls its challenge event RedirectToLogin, and Core sets
+        // the rules of the browser session on that event.
         private static readonly Regex AuthenticationField = new(
-            @"UserName|UserEmail|UserPasswordHash|UserSecurityStamp|UserPhoneNumber|UserTwoFactorEnabled|UserLockout|UserAccessFailedCount|IsDisabled|Login",
+            @"UserName|UserEmail|UserPasswordHash|UserSecurityStamp|UserPhoneNumber|UserTwoFactorEnabled|UserLockout|UserAccessFailedCount|IsDisabled|(?<!RedirectTo)Login|EntraTenantId|EntraObjectId|EntraDisplayName|EntraEmail|EntraIdentityProvider|EntraIsGuest",
             RegexOptions.Compiled);
 
         // Controllers whose name matches this pattern are test/bypass scaffolding, never production.
@@ -46,6 +57,23 @@ namespace Tests
         private static readonly Regex AnyController = new(@"\bclass\s+(\w+Controller)\b", RegexOptions.Compiled);
 
         private static readonly Regex AuthorizeAttribute = new(@"^\[Authorize[\]\(]", RegexOptions.Compiled);
+
+        // The trees in which the concrete Test domain selects a plug-in, each with the name of the
+        // folders that hold the plug-in's inheritable code.
+        private static readonly (string Tree, string PlugIn)[] PlugInTrees =
+        {
+            ("dotnet/Identity", "Identity"),
+            ("dotnet/Entra", "Entra"),
+        };
+
+        // A declaration at the start of a line, not the word class in a comment.
+        private static readonly Regex ClassDeclaration = new(@"^\s*public\s+(?:partial\s+)?class\s+(\w+)\b", RegexOptions.Compiled | RegexOptions.Multiline);
+
+        // The plurals that the name with an s does not give.
+        private static readonly Dictionary<string, string> IrregularPlurals = new()
+        {
+            ["Person"] = "People",
+        };
 
         private static readonly Regex LoggingFrameworkUsing = new(@"^\s*(global\s+)?using\s+(NLog|Serilog|log4net)\b", RegexOptions.Compiled | RegexOptions.Multiline);
 
@@ -186,6 +214,37 @@ namespace Tests
                 "a plug-in, such as the Identity tree under dotnet/Identity. Offending: " + string.Join("; ", violations));
         }
 
+        // Signing in with an identity provider is a plug-in's concern as well. Core names the schemes a
+        // plug-in registers and selects between them; it knows nothing of OpenID Connect, bearer
+        // tokens or Microsoft Entra: that lives in the Entra tree.
+        [Fact]
+        public void CoreTreeReferencesNoIdentityProviderLibrary()
+        {
+            var root = RepositoryRoot();
+            var coreTree = Path.Combine(root, CoreTreeFolder.Replace('/', Path.DirectorySeparatorChar));
+
+            var scanned = new List<string>();
+            var violations = new List<string>();
+
+            foreach (var file in SourceFiles(root, coreTree))
+            {
+                scanned.Add(Path.GetFileName(file));
+                if (IdentityProviderLibrary.IsMatch(File.ReadAllText(file)))
+                {
+                    violations.Add(Path.GetRelativePath(root, file));
+                }
+            }
+
+            // Sanity: the scan actually resolved the folder and read the file that names the schemes.
+            Assert.Contains("AllorsAuthenticationOptions.cs", scanned);
+
+            Assert.True(
+                violations.Count == 0,
+                "Core's tree must not reference the OpenID Connect or JWT bearer handlers, Microsoft's Entra " +
+                "libraries or the token libraries underneath them: signing in with an identity provider " +
+                "belongs to a plug-in, such as the Entra tree under dotnet/Entra. Offending: " + string.Join("; ", violations));
+        }
+
         // Core's User carries no authentication field: the user name, e-mail, password hash, security
         // stamp, phone number, two-factor, lockout and disabled fields and the logins belong to an
         // authentication plug-in, such as the Identity tree. Core's own test domain adds a UserName to
@@ -219,7 +278,77 @@ namespace Tests
                 violations.Count == 0,
                 "Core's inheritable folders (Core*) must not name an authentication field of User or the " +
                 "Login class: those belong to an authentication plug-in, such as the Identity tree under " +
-                "dotnet/Identity, and an inheritor without that plug-in has no such field. " +
+                "dotnet/Identity or the Entra tree under dotnet/Entra, and an inheritor without that " +
+                "plug-in has no such field. " +
+                "Offending: " + string.Join("; ", violations.Distinct()));
+        }
+
+        // A plug-in is abstract: it knows the classes of the domains it extends, and none of the
+        // concrete domain that selects it. In a plug-in's tree that concrete domain is Test. A
+        // plug-in folder that named one of its classes, a PersonBuilder for instance, would not
+        // compile for an application whose user class has another name: creating users is the
+        // application's part, through IUserFactory.
+        [Fact]
+        public void PlugInFoldersNameNoClassOfTheConcreteDomain()
+        {
+            var root = RepositoryRoot();
+
+            var scanned = new List<string>();
+            var violations = new List<string>();
+
+            foreach (var (tree, plugIn) in PlugInTrees)
+            {
+                var treeFolder = Path.Combine(root, tree.Replace('/', Path.DirectorySeparatorChar));
+
+                var concreteClasses = SourceFiles(root, Path.Combine(treeFolder, "Repository", "Domain", "Test"))
+                    .SelectMany(file => ClassDeclaration.Matches(File.ReadAllText(file)).Select(match => match.Groups[1].Value))
+                    .Distinct()
+                    .ToArray();
+
+                // Sanity: the scan actually found the classes the concrete domain declares.
+                Assert.Contains("Person", concreteClasses);
+
+                // The class, its builder and its extent.
+                var names = concreteClasses.SelectMany(name => new[]
+                {
+                    name,
+                    name + "Builder",
+                    IrregularPlurals.TryGetValue(name, out var plural) ? plural : name + "s",
+                });
+                var concreteClassName = new Regex(@"\b(" + string.Join("|", names.Select(Regex.Escape)) + @")\b");
+
+                // The folders an inheritor compiles: those named after the plug-in, directly in a
+                // project that is not a test project.
+                var plugInFolders = SourceFiles(root, treeFolder)
+                    .Where(file => Path.GetExtension(file) == ".csproj")
+                    .Select(Path.GetDirectoryName)
+                    .Where(project => !Path.GetFileName(project).EndsWith("Tests", StringComparison.Ordinal))
+                    .SelectMany(project => Directory.EnumerateDirectories(project, plugIn + "*", SearchOption.TopDirectoryOnly));
+
+                foreach (var folder in plugInFolders)
+                {
+                    foreach (var file in SourceFiles(root, folder))
+                    {
+                        scanned.Add(Path.GetFileName(file));
+                        var match = concreteClassName.Match(File.ReadAllText(file));
+                        if (match.Success)
+                        {
+                            violations.Add($"{match.Value} in {Path.GetRelativePath(root, file)}");
+                        }
+                    }
+                }
+            }
+
+            // Sanity: the scan actually resolved the plug-in folders of both trees, and read the user
+            // store of Identity and the domain declaration of Entra.
+            Assert.Contains("AllorsUserStore.cs", scanned);
+            Assert.Contains("Entra.cs", scanned);
+
+            Assert.True(
+                violations.Count == 0,
+                "A plug-in's folders must not name a class of the concrete domain that selects it, nor " +
+                "its builder or extent: an application's own classes have other names. Ask the " +
+                "application for what only it knows, as IUserFactory does for a new user. " +
                 "Offending: " + string.Join("; ", violations.Distinct()));
         }
 

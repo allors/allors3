@@ -29,7 +29,7 @@ partial class Build : NukeBuild
                 }
             }
 
-            foreach (var path in new[] { Paths.DotnetSystem, Paths.DotnetCore, Paths.DotnetIdentity })
+            foreach (var path in new[] { Paths.DotnetSystem, Paths.DotnetCore, Paths.DotnetIdentity, Paths.DotnetEntra })
             {
                 foreach (var child in new DirectoryInfo(path).GetDirectories().Where(v => !v.Name.Equals("build")))
                 {
@@ -46,12 +46,14 @@ partial class Build : NukeBuild
 
     private Target Merge => _ => _
        .DependsOn(DotnetCoreMerge)
-       .DependsOn(DotnetIdentityMerge);
+       .DependsOn(DotnetIdentityMerge)
+       .DependsOn(DotnetEntraMerge);
 
     private Target Generate => _ => _
         .DependsOn(DotnetSystemAdaptersGenerate)
         .DependsOn(DotnetCoreGenerate)
-        .DependsOn(DotnetIdentityGenerate);
+        .DependsOn(DotnetIdentityGenerate)
+        .DependsOn(DotnetEntraGenerate);
 
     private Target Default => _ => _
         .DependsOn(Install)

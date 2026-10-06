@@ -21,7 +21,7 @@ namespace Tests
     {
         private static readonly Regex WrapperDeclaration = new(@"\bvoid\s+(\w+)\s*\(", RegexOptions.Compiled);
 
-        private static readonly Regex LayerHookCall = new(@"\bthis\.(Core|Identity|Test)(\w+)\s*\(", RegexOptions.Compiled);
+        private static readonly Regex LayerHookCall = new(@"\bthis\.(Core|Identity|Entra|Test)(\w+)\s*\(", RegexOptions.Compiled);
 
         [Fact]
         public void VirtualShimsDispatchPhaseMatchedHooks()

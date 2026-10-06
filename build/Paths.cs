@@ -18,4 +18,8 @@ public partial class Paths
     // Identity
     public AbsolutePath ArtifactsIdentityCommands => Artifacts / "Identity/Commands";
     public AbsolutePath ArtifactsIdentityServer => Artifacts / "Identity/Server";
+
+    // Entra
+    public AbsolutePath ArtifactsEntraCommands => Artifacts / "Entra/Commands";
+    public AbsolutePath ArtifactsEntraServer => Artifacts / "Entra/Server";
 }

@@ -8,6 +8,7 @@ namespace Allors.Security
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Security.Claims;
     using System.Threading;
     using System.Threading.Tasks;
     using Database;
@@ -31,11 +32,13 @@ namespace Allors.Security
     {
         private readonly IDatabase database;
         private readonly ILogger<AllorsUserStore> logger;
+        private readonly IUserFactory userFactory;
 
-        public AllorsUserStore(IDatabaseService databaseService, ILogger<AllorsUserStore> logger = null)
+        public AllorsUserStore(IDatabaseService databaseService, ILogger<AllorsUserStore> logger = null, IUserFactory userFactory = null)
         {
             this.database = databaseService.Database;
             this.logger = logger ?? NullLogger<AllorsUserStore>.Instance;
+            this.userFactory = userFactory;
         }
 
         #region IUserStore
@@ -73,26 +76,65 @@ namespace Allors.Security
             user.NormalizedUserName = normalizedName;
         }
 
+        // The plug-in knows a user as an interface only, so it creates none itself: the application's
+        // user factory does, and the store then writes the fields of ASP.NET Core Identity on it.
         public async Task<IdentityResult> CreateAsync(IdentityUser identityUser, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
+
+            if (this.userFactory == null)
+            {
+                this.LogNoUserFactory(identityUser.UserName);
+                return IdentityResult.Failed(new IdentityError
+                {
+                    Code = "NoUserFactory",
+                    Description = $"Could not create user {identityUser.UserName}: no {nameof(IUserFactory)} is registered. Register the user factory of the application's domain in Startup, for example services.AddSingleton<{nameof(IUserFactory)}, CustomUserFactory>().",
+                });
+            }
+
             using (var transaction = this.database.CreateTransaction())
             {
                 try
                 {
-                    var user = new PersonBuilder(transaction)
-                        .WithUserName(identityUser.UserName)
-                        .WithUserPasswordHash(identityUser.PasswordHash)
-                        .WithUserEmail(identityUser.Email)
-                        .WithUserEmailConfirmed(identityUser.EmailConfirmed)
-                        .WithUserSecurityStamp(identityUser.SecurityStamp)
-                        .WithUserPhoneNumber(identityUser.PhoneNumber)
-                        .WithUserPhoneNumberConfirmed(identityUser.PhoneNumberConfirmed)
-                        .WithUserTwoFactorEnabled(identityUser.TwoFactorEnabled)
-                        .WithUserLockoutEnd(identityUser.LockoutEnd?.UtcDateTime)
-                        .WithUserLockoutEnabled(identityUser.LockoutEnabled)
-                        .WithUserAccessFailedCount(identityUser.AccessFailedCount)
-                        .Build();
+                    var user = this.userFactory.Create(transaction, Principal(identityUser));
+                    if (user == null)
+                    {
+                        this.LogUserNotAdmitted(identityUser.UserName);
+                        return IdentityResult.Failed(new IdentityError
+                        {
+                            Code = "UserNotAdmitted",
+                            Description = $"Could not create user {identityUser.UserName}: the {nameof(IUserFactory)} of the application did not admit it.",
+                        });
+                    }
+
+                    // Reusing a user here would replace their credentials with the incoming identity's.
+                    if (!user.Strategy.IsNewInTransaction)
+                    {
+                        this.LogExistingUser(identityUser.UserName, user.Id);
+                        return IdentityResult.Failed(new IdentityError
+                        {
+                            Code = "ExistingUserFromFactory",
+                            Description = $"Could not create user {identityUser.UserName}: the {nameof(IUserFactory)} returned an existing user. Change the factory to return a new user or null.",
+                        });
+                    }
+
+                    user.UserName = identityUser.UserName;
+                    user.UserPasswordHash = identityUser.PasswordHash;
+                    user.UserEmail = identityUser.Email;
+                    user.UserEmailConfirmed = identityUser.EmailConfirmed;
+                    user.UserPhoneNumber = identityUser.PhoneNumber;
+                    user.UserPhoneNumberConfirmed = identityUser.PhoneNumberConfirmed;
+                    user.UserTwoFactorEnabled = identityUser.TwoFactorEnabled;
+                    user.UserLockoutEnd = identityUser.LockoutEnd?.UtcDateTime;
+                    user.UserAccessFailedCount = identityUser.AccessFailedCount;
+
+                    // The build hooks of the Identity domain ran when the factory built the user: it
+                    // has a security stamp, and lockout is enabled. Keep both unless Identity has a
+                    // stamp of its own for the user.
+                    if (!string.IsNullOrEmpty(identityUser.SecurityStamp))
+                    {
+                        user.UserSecurityStamp = identityUser.SecurityStamp;
+                    }
 
                     transaction.Derive();
                     transaction.Commit();
@@ -439,6 +481,24 @@ namespace Allors.Security
 
         #endregion
 
+        // What ASP.NET Core Identity knows about the person it asks the store to create. Nobody signed
+        // in, so the identity has no authentication type.
+        private static ClaimsPrincipal Principal(IdentityUser identityUser)
+        {
+            var claims = new List<Claim>();
+            if (!string.IsNullOrEmpty(identityUser.UserName))
+            {
+                claims.Add(new Claim(ClaimTypes.Name, identityUser.UserName));
+            }
+
+            if (!string.IsNullOrEmpty(identityUser.Email))
+            {
+                claims.Add(new Claim(ClaimTypes.Email, identityUser.Email));
+            }
+
+            return new ClaimsPrincipal(new ClaimsIdentity(claims));
+        }
+
         [LoggerMessage(EventId = 1, Level = LogLevel.Error, Message = "Could not create user {UserName}.")]
         private partial void LogCreateFailed(Exception exception, string userName);
 
@@ -447,5 +507,14 @@ namespace Allors.Security
 
         [LoggerMessage(EventId = 3, Level = LogLevel.Error, Message = "Could not delete user {UserName}.")]
         private partial void LogDeleteFailed(Exception exception, string userName);
+
+        [LoggerMessage(EventId = 4, Level = LogLevel.Error, Message = "Could not create user {UserName}: no IUserFactory is registered.")]
+        private partial void LogNoUserFactory(string userName);
+
+        [LoggerMessage(EventId = 5, Level = LogLevel.Error, Message = "Could not create user {UserName}: the IUserFactory of the application did not admit it.")]
+        private partial void LogUserNotAdmitted(string userName);
+
+        [LoggerMessage(EventId = 6, Level = LogLevel.Error, Message = "Could not create user {UserName}: the IUserFactory returned the existing user {UserId}; a factory must return a new user or null.")]
+        private partial void LogExistingUser(string userName, long userId);
     }
 }

@@ -5,19 +5,20 @@
 
 namespace Allors.Server
 {
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Security.Claims;
+    using System;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Antiforgery;
+    using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Options;
 
     // Antiforgery for the JSON API, scoped to browser (cookie) callers only. Safe /allors responses
     // hand out a readable XSRF-TOKEN cookie; unsafe /allors requests are validated ONLY when the
-    // caller authenticated with a scheme that an authentication plug-in listed as a cookie scheme
-    // (AllorsAntiforgeryOptions). Bearer, test-header and API-key clients carry a different
-    // authentication type and are therefore exempt by construction.
+    // session scheme authenticated the caller, the cookie scheme an authentication plug-in names in
+    // AllorsAuthenticationOptions. Bearer, test-header and API-key clients are authenticated by
+    // another scheme and are therefore exempt by construction. The scheme decides, not the type of
+    // the identity: a session that signed in with OpenID Connect and a bearer token carry the same
+    // identity type.
     public class AllorsAntiforgeryMiddleware
     {
         public const string XsrfCookieName = "XSRF-TOKEN";
@@ -31,7 +32,7 @@ namespace Allors.Server
             this.secureCookie = secureCookie;
         }
 
-        public async Task InvokeAsync(HttpContext context, IAntiforgery antiforgery, IOptions<AllorsAntiforgeryOptions> options)
+        public async Task InvokeAsync(HttpContext context, IAntiforgery antiforgery, IOptions<AllorsAuthenticationOptions> options)
         {
             if (context.Request.Path.StartsWithSegments("/allors"))
             {
@@ -40,15 +41,15 @@ namespace Allors.Server
                 {
                     // Issue the readable token cookie once; keep cacheable responses Set-Cookie-free
                     // thereafter. Request tokens are bound to the authenticated identity, so sign-in and
-                    // sign-out delete the cookie (a cookie plug-in wires that into its cookie events)
-                    // and the next safe GET re-mints it here.
+                    // sign-out delete the cookie (AllorsSessionCookie wires that into the events of the
+                    // session scheme) and the next safe GET re-mints it here.
                     if (!context.Request.Cookies.ContainsKey(XsrfCookieName))
                     {
                         var tokens = antiforgery.GetAndStoreTokens(context);
                         context.Response.Cookies.Append(XsrfCookieName, tokens.RequestToken, CookieOptionsFor(this.secureCookie));
                     }
                 }
-                else if (AuthenticatedWithCookie(context.User, options.Value.AuthenticationTypes))
+                else if (await AuthenticatedBySessionAsync(context, options.Value.SessionScheme))
                 {
                     try
                     {
@@ -81,7 +82,38 @@ namespace Allors.Server
             Path = "/",
         };
 
-        private static bool AuthenticatedWithCookie(ClaimsPrincipal user, ISet<string> cookieAuthenticationTypes) =>
-            user?.Identities.Any(identity => identity.IsAuthenticated && cookieAuthenticationTypes.Contains(identity.AuthenticationType)) == true;
+        private static async Task<bool> AuthenticatedBySessionAsync(HttpContext context, string sessionScheme)
+        {
+            if (sessionScheme == null)
+            {
+                return false;
+            }
+
+            var schemes = context.Features.Get<IAuthenticateResultFeature>()?.AuthenticateResult?.Ticket?.AuthenticationScheme;
+            if (string.Equals(schemes, sessionScheme, StringComparison.Ordinal))
+            {
+                return true;
+            }
+
+            if (schemes == null || !schemes.Contains(';'))
+            {
+                return false;
+            }
+
+            // Authorization replaces the authentication result with a ticket naming every scheme
+            // in a multi-scheme policy, including those that did not authenticate. Read their cached
+            // results to find whether the session really authenticated; a selecting scheme may have
+            // forwarded to it, so compare the returned ticket's scheme rather than the policy name.
+            foreach (var scheme in schemes.Split(';'))
+            {
+                var result = await context.AuthenticateAsync(scheme);
+                if (result.Succeeded && string.Equals(result.Ticket.AuthenticationScheme, sessionScheme, StringComparison.Ordinal))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 }
