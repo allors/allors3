@@ -204,6 +204,9 @@ Changes accumulate under **[Unreleased]** until a version is released.
 
 ### Removed
 
+- `AllorsAntiforgeryOptions` and its `AuthenticationTypes` collection. Custom authentication
+  integrations must set `AllorsAuthenticationOptions.SessionScheme` to their browser cookie's
+  registered scheme name instead. The Identity and Entra plug-ins configure this automatically.
 - The empty transaction after the Entra test server's database setup. `Setup.Apply()` already
   derives and commits the test population and its permissions.
 - The guest user: the setting `Security:AnonymousUserName`. An anonymous request has no user.
