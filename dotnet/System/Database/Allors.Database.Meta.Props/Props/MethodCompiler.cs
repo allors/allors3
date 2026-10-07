@@ -21,8 +21,7 @@ namespace Allors.Database.Meta
         public MethodCompiler(IMetaPopulationBase metaPopulation, Dictionary<Type, MethodInfo[]> extensionMethodsByInterface)
         {
             this.extensionMethodsByInterface = extensionMethodsByInterface;
-            this.sortedDomains = new List<IDomainBase>(metaPopulation.Domains);
-            this.sortedDomains.Sort((a, b) => a.Superdomains.Contains(b) ? -1 : 1);
+            this.sortedDomains = new List<IDomainBase>(metaPopulation.SortedDomains);
 
             this.actionByMethodInfoByType = new ConcurrentDictionary<Type, Dictionary<MethodInfo, Action<object, object>>>();
         }

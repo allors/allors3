@@ -8,11 +8,15 @@ namespace Allors.Repository.Attributes
 {
     using System;
 
+    /// <summary>
+    /// Names the domains that a domain extends. Their order plays no part: the order of the domains
+    /// follows from the inheritance graph and the domain ids.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Struct)]
     public class ExtendsAttribute : RepositoryAttribute
     {
-        public ExtendsAttribute(string value) => this.Value = value;
+        public ExtendsAttribute(params string[] values) => this.Values = values;
 
-        public string Value { get; set; }
+        public string[] Values { get; set; }
     }
 }

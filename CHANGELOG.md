@@ -11,6 +11,15 @@ Changes accumulate under **[Unreleased]** until a version is released.
 
 ### Added
 
+- A domain extends several domains: `[Extends]` takes the names of all of them, and the graph
+  may hold diamonds. The order of the domains, for the hooks of domains that do not extend each
+  other, is defined: a domain before the domains it extends; branches in the id order of their
+  top domain, each branch kept whole. It is the C3 linearization over the superdomains sorted by
+  id, after a superdomain that another superdomain already extends is dropped; names and the
+  order in `[Extends]` play no part, so the order survives a rename and a reordering of the
+  declaration. `DomainLinearization` holds the one implementation, `MetaPopulation.SortedDomains`
+  exposes the result and `MethodCompiler` runs the hooks in that order. `DomainOrderTests` pins
+  the rule and `RepositoryDomainsTests` the parser, on repository projects built in memory.
 - Documentation for users and maintainers under `docs/`, starting with the domain model:
   functional domains, plug-ins and their hosts, and the concrete domain that selects plug-ins.
   A page on logging says how the host receives the logs of Allors. A page on authentication
@@ -92,6 +101,16 @@ Changes accumulate under **[Unreleased]** until a version is released.
 
 ### Changed
 
+- Domain inheritance, breaking for code that reads the repository model or builds a meta
+  population by hand: `ExtendsAttribute.Value` is `Values`, the repository `Domain.Base` is
+  `DirectSuperdomains`, and `Repository.SortedDomains`, which no code used, is gone. The
+  generator stops with an actionable error on a `[Extends]` it used to swallow: a name that is no
+  domain, a domain listed twice, a domain that extends itself, or two domains with one name.
+  `MetaPopulation.StructuralDerive` stops on a cycle, on a conflicting order and on a second
+  domain that no domain extends, naming the domains, where a cycle was cut silently before. The
+  generated `MetaBuilder` calls the `Build<Domain>` methods base first, in the order of
+  `SortedDomains`, instead of in the order of the repository files. `Domain.Superdomains` lists
+  the superdomains nearest first.
 - Entra admission no longer serializes user creation, so a slow factory call does not block
   admission of another principal. Concurrent first requests for the same identity can create
   duplicate users or be refused by derivation; lookups continue to select the oldest user

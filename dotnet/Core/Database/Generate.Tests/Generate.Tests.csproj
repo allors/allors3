@@ -16,6 +16,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\System\Repository\Allors.Repository\Allors.Repository.csproj" />
+    <ProjectReference Include="..\..\..\System\Repository\Attributes\Attributes.csproj" />
     <ProjectReference Include="..\..\..\System\Workspace\Allors.Workspace.Meta.Lazy\Allors.Workspace.Meta.Lazy.csproj" />
     <ProjectReference Include="..\Generate\Generate.csproj" />
   </ItemGroup>

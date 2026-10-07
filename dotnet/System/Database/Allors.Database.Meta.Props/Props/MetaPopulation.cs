@@ -34,6 +34,7 @@ namespace Allors.Database.Meta
         private bool isDeriving;
         private bool isStructuralDeriving;
 
+        private IDomainBase[] structuralDerivedSortedDomains;
         private ICompositeBase[] structuralDerivedComposites;
 
         private ICompositeBase[] structuralDerivedDatabaseComposites;
@@ -75,6 +76,12 @@ namespace Allors.Database.Meta
 
         IEnumerable<IDomain> IMetaPopulation.Domains => this.Domains;
         public IEnumerable<IDomainBase> Domains => this.domains;
+
+        /// <summary>
+        /// Gets the domains in hook order, most derived first: a domain before the domains it extends;
+        /// branches in the id order of their top domain, each branch kept whole. See <see cref="DomainLinearization"/>.
+        /// </summary>
+        public IEnumerable<IDomainBase> SortedDomains => this.structuralDerivedSortedDomains;
 
         IEnumerable<IClass> IMetaPopulation.Classes => this.classes;
         public IEnumerable<IClassBase> Classes => this.classes;
@@ -314,7 +321,6 @@ namespace Allors.Database.Meta
                 this.roleTypes = this.roleTypes.ToArray();
                 this.methodTypes = this.methodTypes.ToArray();
 
-                var sharedDomains = new HashSet<Domain>();
                 var sharedComposites = new HashSet<ICompositeBase>();
                 var sharedInterfaces = new HashSet<IInterfaceBase>();
                 var sharedClasses = new HashSet<IClassBase>();
@@ -322,11 +328,13 @@ namespace Allors.Database.Meta
                 var sharedRoleTypes = new HashSet<IRoleTypeBase>();
                 var sharedMethodTypeList = new HashSet<IMethodTypeBase>();
 
-                // Domains
+                // Domains: a cycle, a conflicting order or a second domain that nothing extends stops here, naming the domains.
                 foreach (var domain in this.domains)
                 {
-                    domain.StructuralDeriveSuperdomains(sharedDomains);
+                    domain.StructuralDeriveSuperdomains();
                 }
+
+                this.structuralDerivedSortedDomains = DomainLinearization.Sort(this.domains).Cast<IDomainBase>().ToArray();
 
                 // Unit & IComposite ObjectTypes
                 var compositeTypes = new List<ICompositeBase>(this.interfaces);
