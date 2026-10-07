@@ -115,10 +115,11 @@ that names the domains:
   extend the other. This needs two domains that each extend several domains; it cannot arise
   when the concrete domain is the only domain that extends several domains.
 
-The order of the domains covers the hooks that Allors binds by name. Three lists that the
+The order of the domains covers the hooks that Allors binds by name. Two lists that the
 concrete domain writes by hand follow the same order, base first: the dispatch of the setup and
-security phases to the hooks of each domain in its `Virtual` shims, the rules in `Rules.Create`,
-and the resource folders that its build merges. The Diamond tree is the example.
+security phases to the hooks of each domain in its `Virtual` shims, and the resource folders
+that its build merges. Rule registration is separate: `Rules.Create` lists the rules of every
+domain. In the Diamond tree, it lists the rules of `Plugin1`, `Level2`, `Level1`, then Core.
 
 ## Current implementation
 
