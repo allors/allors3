@@ -23,19 +23,24 @@ applications, Angular/Material and Blazor component libraries, configuration, an
 remain available on the `v3.1` branch.
 
 **Current implementation:** the tree holds System, Core, Identity and Entra with their build and
-test infrastructure. The signals workspace API described below is planned: that section states the
-agreed design requirements, not a claim that signals support has shipped.
+test infrastructure, and the Diamond tree with the platform test domains. The signals workspace
+API described below is planned: that section states the agreed design requirements, not a claim
+that signals support has shipped.
 
 The platform-only baseline must build and pass its retained tests before the workspace API is
 changed. The Base and Apps tests retired with their domains; platform behavior that only they
-covered is to be represented in platform test domains and test applications where it remains
-relevant.
+covered is to be represented in the platform test domains, which exist, and in test
+applications, which do not exist yet, where it remains relevant.
 
 ## Domain inheritance
 
-Core is an abstract domain. A production application declares its own domain extending Core and
-may build further layers through domain inheritance. Allors3 will continue to use domain
-inheritance as it develops.
+Core is an abstract domain. A production application declares its own domain, which extends Core
+directly or through other domains, and a domain extends one or more domains: the domains of an
+application form a directed acyclic graph. [docs/domains.md](docs/domains.md) describes the kinds
+of domains and the order of the domains, which decides the order of the hooks;
+[docs/internals/domain-inheritance.md](docs/internals/domain-inheritance.md) maps which part owns
+what, from the declaration to the hooks. Allors3 will continue to use domain inheritance as it
+develops.
 
 The repository declarations describe the domain hierarchy. Generated metadata and dispatch code
 support the inherited model and behavior. The .NET projects also include the layer-named source
@@ -116,13 +121,21 @@ database-reset endpoints such as `Test/Init` and `Test/Setup`, and test-only aut
 helpers.
 
 `Test` is a domain in its own right. Each tree's repository declares a `Test` struct, Core's
-extending Core, Identity's extending Identity and Entra's extending Entra, and Allors binds hook
-implementations by domain name, such as `TestOnPostDerive` and `TestSetup`.
+extending Core, Identity's extending Identity, Entra's extending Entra and the Diamond tree's
+extending Level2 and Plugin1, and Allors binds hook implementations by domain name, such as
+`TestOnPostDerive` and `TestSetup`.
 The `Core*` globs exclude `Test/`, so downstream projects using those globs do not compile the
 scaffolding. The repository's runnable test servers are test harnesses, not production deployments.
 
 `Custom` is conventionally the name of a downstream application's own production extension
 domain. Internal test scaffolding uses `Test` to keep those responsibilities distinct.
+
+The platform test domains live in the Diamond tree, `dotnet/Diamond`: the functional domains
+Level1 and Level2 and the test plug-in Plugin1, hosted by Core. They exist to prove the platform
+across domain levels and carry no production behavior. The tree's `Test` domain extends Level2
+and Plugin1, so its population is a diamond, and its tests pin the order of the domains and of
+the hooks; [docs/internals/domain-inheritance.md](docs/internals/domain-inheritance.md) says
+which test pins what.
 
 Test coverage must continue to exercise inheritance across domain levels, as well as relations,
 permissions, generation, adapters, and workspace synchronization. Browser tests for thin UI

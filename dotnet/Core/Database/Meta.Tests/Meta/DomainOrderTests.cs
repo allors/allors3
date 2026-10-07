@@ -84,6 +84,18 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void TheIdsCompareAsWritten()
+        {
+            // 8… sorts after 7…, as the written ids do; read as a signed number it would come first.
+            var core = new TestDomain("Core", Guid.Parse("00000000-0000-0000-0000-000000000001"));
+            var seven = new TestDomain("Seven", Guid.Parse("7fffffff-ffff-ffff-ffff-ffffffffffff")).Extends(core);
+            var eight = new TestDomain("Eight", Guid.Parse("80000000-0000-0000-0000-000000000000")).Extends(core);
+            var test = new TestDomain("Test", Guid.Parse("ffffffff-ffff-ffff-ffff-ffffffffffff")).Extends(eight, seven);
+
+            Assert.Equal(new[] { "Test", "Seven", "Eight", "Core" }, Names(DomainLinearization.Linearize(test)));
+        }
+
+        [Fact]
         public void OppositeOrdersInTheSuperdomainsAreAnError()
         {
             // Sales puts Level1 before Plugin1 (Level2 sorts first and brings Level1), Stock puts Plugin1 before Level1.
@@ -188,9 +200,14 @@ namespace Allors.Database.Domain.Tests
             private readonly List<IDomain> directSuperdomains = new List<IDomain>();
 
             public TestDomain(string name, int id)
+                : this(name, new Guid(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, (byte)id))
+            {
+            }
+
+            public TestDomain(string name, Guid id)
             {
                 this.Name = name;
-                this.Id = new Guid(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, (byte)id);
+                this.Id = id;
             }
 
             public Guid Id { get; }

@@ -16,7 +16,8 @@ namespace Allors.Database.Meta
     /// direct superdomain that another direct superdomain already extends. Names and the declared
     /// order of the superdomains play no part, so the order survives a rename and a reordering of
     /// [Extends], and a domain is ordered the same in every population that holds it. The ids compare
-    /// as <see cref="Guid.CompareTo(Guid)"/> does, which is not the alphabetical order of the written id.
+    /// as <see cref="Guid.CompareTo(Guid)"/> does: as written, character by character, ignoring case,
+    /// which DomainOrderTests pins.
     /// </summary>
     public static class DomainLinearization
     {

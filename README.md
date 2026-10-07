@@ -3,8 +3,8 @@
 [![CI](https://github.com/allors/allors3/actions/workflows/ci.yml/badge.svg)](https://github.com/allors/allors3/actions/workflows/ci.yml)
 
 Allors3 is an actively developed platform for applications built with **domain inheritance**.
-An application declares its own domain that extends Core and inherits its model and behavior;
-further domains can extend that domain in turn.
+An application declares its own domain that extends Core and inherits its model and behavior,
+directly or through other domains; a domain can extend several domains.
 
 The [documentation](docs/README.md) is written for users and for maintainers. It starts with
 the [kinds of domains](docs/domains.md).
@@ -27,9 +27,10 @@ The agreed scope for v3.2 is:
   navigation, and component libraries.
 - Retain platform test domains, test servers, and small applications that exercise the integrations.
 
-**Implementation status:** Base and Apps have been removed and the Identity and Entra plug-ins
-have landed; the signals API is planned. This documents the target; the reactive workspace
-changes have not landed yet.
+**Implementation status:** Base and Apps have been removed, the Identity and Entra plug-ins have
+landed, a domain extends several domains, and the Diamond tree holds the platform test domains;
+the signals API is planned. This documents the target; the reactive workspace changes have not
+landed yet.
 See [ARCHITECTURE.md](ARCHITECTURE.md) for the platform boundary and inheritance rules.
 
 ## Development and releases

@@ -33,6 +33,10 @@
 - Object ids: `0` denotes null (no object). Database object ids are positive and start at 1;
   workspace/session ids are negative and start at -1 (`Session.IsNewId(id) => id < 0`).
   Object-id ranges (`IRanges<long>`) therefore never contain `0`.
+- A domain extends one or more domains, and the order of the domains, which decides the order
+  of the hooks, follows from the inheritance graph and the domain ids; see
+  [docs/domains.md](docs/domains.md). Generate the id of a new domain; never choose it to
+  steer the order.
 - Follow existing patterns; keep public API changes focused on the agreed work.
 - Never edit generated files (`*.g.ts`, `*.g.cs`); regenerate with `./build.sh Generate` when needed.
 - Follow existing naming and structure; avoid new conventions without reason.
@@ -111,9 +115,12 @@
 - Consequence for e2e: exercise reusable workspace and UI integrations through **test-only pages
   in isolated test applications**, driven from `typescript/e2e/**`. Never add test hooks, test
   routes, or test-only config to the production library itself.
+- The platform test domains are `Level1`, `Level2` and the test plug-in `Plugin1` in the Diamond
+  tree, `dotnet/Diamond`. They exist to prove the platform across domain levels and carry no
+  production behavior.
 - The Base and Apps tests retired with their domains. Platform coverage that only they provided,
-  including behavior across inherited domain levels, is to be restored in platform test domains
-  and test applications where it remains relevant.
+  including behavior across inherited domain levels, is still to be restored in the platform
+  test domains and, once they exist, in test applications, where it remains relevant.
 
 ## Build Commands
 

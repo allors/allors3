@@ -14,7 +14,7 @@ The pages in this folder are written for users. Maintainers read them too.
 
 | Page | Kind | Status | Content |
 | --- | --- | --- | --- |
-| [Domains](domains.md) | Explanation | Planned | The kinds of domains: functional domains, plug-ins and their hosts, and the concrete domain that selects plug-ins. |
+| [Domains](domains.md) | Explanation | Current | The kinds of domains: functional domains, plug-ins and their hosts, and the concrete domain that selects plug-ins; extending several domains, and the order of the domains, which decides the order of the hooks. |
 | [Authentication](authentication.md) | Explanation | Current | How Core, an authentication plug-in and the application's domain share a sign-in: the session and the scheme per request, the user resolver, and the user factory. |
 | [Sign in with Microsoft Entra ID](entra.md) | How-to guide | Current | The steps for an application that selects the Entra plug-in: the app registration, the configuration, `Startup`, the user factory, browsers, clients and programs, guests, and a check against a tenant. |
 | [Logging](logging.md) | Reference | Current | How Allors logs through `Microsoft.Extensions.Logging`, what the host does to receive the logs, and which messages Allors writes. |
@@ -24,7 +24,9 @@ The pages in this folder are written for users. Maintainers read them too.
 The pages under `internals/` describe how the platform is built and how work on it is planned.
 An application must not rely on them: they can change with any version.
 
-No internals page exists yet.
+| Page | Status | Content |
+| --- | --- | --- |
+| [Domain inheritance](internals/domain-inheritance.md) | Current | Which part owns what, from `[Extends]` to the order of the hooks: the attribute, the parser, the template, the meta sort, the method compiler and the hand-written dispatch; why the ids decide the order; and the platform test domains of the Diamond tree. |
 
 ## Kind
 

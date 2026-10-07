@@ -38,7 +38,11 @@ Changes accumulate under **[Unreleased]** until a version is released.
   `CiDotnetDiamondTest` in the `memory` job. `VirtualDispatchTests` checks the hooks of the three
   new domains in the dispatch shims too.
 - Documentation for users and maintainers under `docs/`, starting with the domain model:
-  functional domains, plug-ins and their hosts, and the concrete domain that selects plug-ins.
+  functional domains, plug-ins and their hosts, the concrete domain that selects plug-ins, and
+  the order of the domains. The first page for maintainers,
+  `docs/internals/domain-inheritance.md`, maps domain inheritance from `[Extends]` to the order
+  of the hooks: which part owns what, why the ids decide the order, and which test of the
+  Diamond tree pins what.
   A page on logging says how the host receives the logs of Allors. A page on authentication
   says how Core, an authentication plug-in and the application's domain share a sign-in, and a
   how-to guide takes an application through signing in with Microsoft Entra ID. `AGENTS.md`
