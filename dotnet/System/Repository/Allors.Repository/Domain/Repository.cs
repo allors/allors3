@@ -104,16 +104,6 @@ namespace Allors.Repository.Domain
 
         public Dictionary<string, Composite> CompositeByName { get; }
 
-        public Domain[] SortedDomains
-        {
-            get
-            {
-                var assemblies = this.Domains.ToList();
-                assemblies.Sort((x, y) => x.Base == y ? 1 : -1);
-                return assemblies.ToArray();
-            }
-        }
-
         public bool HasErrors { get; set; }
 
         protected void CreateUnits()
@@ -153,54 +143,85 @@ namespace Allors.Repository.Domain
 
         private void CreateDomains(RepositoryProject repositoryProject)
         {
-            try
+            var superdomainNamesByDomain = new List<(Domain Domain, string[] SuperdomainNames)>();
+
+            foreach (var syntaxTree in repositoryProject.DocumentBySyntaxTree.Keys)
             {
-                var parentByChild = new Dictionary<string, string>();
-
-                foreach (var syntaxTree in repositoryProject.DocumentBySyntaxTree.Keys)
+                var root = syntaxTree.GetRoot();
+                foreach (var structDeclaration in root.DescendantNodes().OfType<StructDeclarationSyntax>())
                 {
-                    var root = syntaxTree.GetRoot();
-                    foreach (var structDeclaration in root.DescendantNodes().OfType<StructDeclarationSyntax>())
+                    var semanticModel = repositoryProject.Compilation.GetSemanticModel(syntaxTree);
+                    var structureModel = (ITypeSymbol)semanticModel.GetDeclaredSymbol(structDeclaration);
+                    var domainAttribute = structureModel.GetAttributes()
+                        .FirstOrDefault(v => v.AttributeClass.Name.Equals("DomainAttribute"));
+
+                    if (domainAttribute != null)
                     {
-                        var semanticModel = repositoryProject.Compilation.GetSemanticModel(syntaxTree);
-                        var structureModel = (ITypeSymbol)semanticModel.GetDeclaredSymbol(structDeclaration);
-                        var domainAttribute = structureModel.GetAttributes()
-                            .FirstOrDefault(v => v.AttributeClass.Name.Equals("DomainAttribute"));
+                        var id = Guid.Parse((string)domainAttribute.ConstructorArguments.First().Value);
 
-                        if (domainAttribute != null)
+                        var document = repositoryProject.DocumentBySyntaxTree[syntaxTree];
+                        var fileInfo = new FileInfo(document.FilePath);
+                        var directoryInfo = new DirectoryInfo(fileInfo.DirectoryName);
+
+                        var domain = new Domain(id, structureModel.Name, directoryInfo);
+
+                        if (this.DomainByName.TryGetValue(domain.Name, out var other))
                         {
-                            var id = Guid.Parse((string)domainAttribute.ConstructorArguments.First().Value);
-
-                            var document = repositoryProject.DocumentBySyntaxTree[syntaxTree];
-                            var fileInfo = new FileInfo(document.FilePath);
-                            var directoryInfo = new DirectoryInfo(fileInfo.DirectoryName);
-
-                            var domain = new Domain(id, structureModel.Name, directoryInfo);
-                            this.DomainByName.Add(domain.Name, domain);
-
-                            var extendsAttribute = structureModel.GetAttributes()
-                                .FirstOrDefault(v => v.AttributeClass.Name.Equals("ExtendsAttribute"));
-                            var parent = (string)extendsAttribute?.ConstructorArguments.First().Value;
-
-                            if (!string.IsNullOrEmpty(parent))
-                            {
-                                parentByChild.Add(domain.Name, parent);
-                            }
+                            this.HasErrors = true;
+                            this.LogDuplicateDomainName(domain.Name, other.DirectoryInfo.FullName, domain.DirectoryInfo.FullName);
+                            continue;
                         }
+
+                        this.DomainByName.Add(domain.Name, domain);
+
+                        var extendsAttribute = structureModel.GetAttributes()
+                            .FirstOrDefault(v => v.AttributeClass.Name.Equals("ExtendsAttribute"));
+                        superdomainNamesByDomain.Add((domain, SuperdomainNames(extendsAttribute)));
                     }
                 }
+            }
 
-                foreach (var child in parentByChild.Keys)
+            var declaredDomains = string.Join(", ", this.DomainByName.Keys.OrderBy(v => v));
+
+            foreach (var (domain, superdomainNames) in superdomainNamesByDomain)
+            {
+                var seen = new HashSet<string>();
+                foreach (var superdomainName in superdomainNames)
                 {
-                    var parent = parentByChild[child];
-                    this.DomainByName[child].Base = this.DomainByName[parent];
+                    if (superdomainName.Equals(domain.Name))
+                    {
+                        this.HasErrors = true;
+                        this.LogDomainExtendsItself(domain.Name);
+                    }
+                    else if (!seen.Add(superdomainName))
+                    {
+                        this.HasErrors = true;
+                        this.LogDomainExtendsTwice(domain.Name, superdomainName);
+                    }
+                    else if (!this.DomainByName.TryGetValue(superdomainName, out var superdomain))
+                    {
+                        this.HasErrors = true;
+                        this.LogUnknownSuperdomain(domain.Name, superdomainName, declaredDomains);
+                    }
+                    else
+                    {
+                        domain.AddDirectSuperdomain(superdomain);
+                    }
                 }
             }
-            catch (Exception e)
+        }
+
+        // [Extends] takes the names as params, so Roslyn hands them over as one array argument.
+        private static string[] SuperdomainNames(AttributeData extendsAttribute)
+        {
+            if (extendsAttribute == null || extendsAttribute.ConstructorArguments.Length == 0)
             {
-                Console.WriteLine(e);
+                return Array.Empty<string>();
             }
 
+            var argument = extendsAttribute.ConstructorArguments[0];
+            var values = argument.Kind == TypedConstantKind.Array ? argument.Values.Select(v => (string)v.Value) : new[] { (string)argument.Value };
+            return values.Where(v => !string.IsNullOrEmpty(v)).ToArray();
         }
 
         private void CreateTypes(RepositoryProject repositoryProject)
@@ -631,5 +652,17 @@ namespace Allors.Repository.Domain
 
         [LoggerMessage(EventId = 6, Level = LogLevel.Error, Message = "{Name} has a duplicate {Key}: {Id}")]
         private partial void LogDuplicateId(string name, string key, Guid id);
+
+        [LoggerMessage(EventId = 7, Level = LogLevel.Error, Message = "Two [Domain] structs are named {Name}: in {Directory} and in {OtherDirectory}. Give each domain its own name.")]
+        private partial void LogDuplicateDomainName(string name, string directory, string otherDirectory);
+
+        [LoggerMessage(EventId = 8, Level = LogLevel.Error, Message = "{Name} extends itself. Remove {Name} from its [Extends].")]
+        private partial void LogDomainExtendsItself(string name);
+
+        [LoggerMessage(EventId = 9, Level = LogLevel.Error, Message = "{Name} extends {Superdomain} twice. List each domain once in [Extends].")]
+        private partial void LogDomainExtendsTwice(string name, string superdomain);
+
+        [LoggerMessage(EventId = 10, Level = LogLevel.Error, Message = "{Name} extends {Superdomain}, but no [Domain] struct has that name. Declared domains: {DeclaredDomains}.")]
+        private partial void LogUnknownSuperdomain(string name, string superdomain, string declaredDomains);
     }
 }

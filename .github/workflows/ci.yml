@@ -36,7 +36,7 @@ env:
   HEADLESS: 'true'
 
 jobs:
-  # Suites without a database: Allors.Shared and the in-memory adapter, no provider.
+  # Suites without a database: Allors.Shared, the in-memory adapter and the Diamond tree, no provider.
   memory:
     name: ${{ matrix.target }}
     runs-on: ubuntu-latest
@@ -47,6 +47,7 @@ jobs:
         target:
           - CiDotnetSystemSharedTest
           - CiDotnetSystemAdaptersTestMemory
+          - CiDotnetDiamondTest
     steps:
       - name: Checkout
         uses: actions/checkout@v6

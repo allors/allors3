@@ -11,6 +11,8 @@ namespace Allors.Database.Meta
     {
         new IEnumerable<IDomainBase> Domains { get; }
 
+        IEnumerable<IDomainBase> SortedDomains { get; }
+
         IEnumerable<IInheritanceBase> Inheritances { get; }
 
         MethodCompiler MethodCompiler { get; }

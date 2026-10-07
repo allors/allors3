@@ -70,9 +70,6 @@
       <Property Name="UnitBySingularName" />
       <Property Name="Units" />
     </ShowAsAssociation>
-    <ShowAsCollectionAssociation>
-      <Property Name="SortedDomains" />
-    </ShowAsCollectionAssociation>
   </Class>
   <Class Name="Allors.Repository.Domain.Class">
     <Position X="9.25" Y="6.25" Width="2" />
@@ -131,9 +128,9 @@
       <HashCode>AQASAAAAAAAAACAEAAAAAAQABAAAAAAAAAAAAAAAQAA=</HashCode>
       <FileName>Domain\Domain.cs</FileName>
     </TypeIdentifier>
-    <ShowAsAssociation>
-      <Property Name="Base" />
-    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="DirectSuperdomains" />
+    </ShowAsCollectionAssociation>
   </Class>
   <Class Name="Allors.Repository.Domain.Interface">
     <Position X="7.5" Y="6.25" Width="1.5" />

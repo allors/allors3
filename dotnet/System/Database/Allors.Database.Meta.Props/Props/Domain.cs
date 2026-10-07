@@ -48,8 +48,15 @@ namespace Allors.Database.Meta
         }
 
         IEnumerable<IDomain> IDomain.DirectSuperdomains => this.directSuperdomains;
+
+        /// <summary>
+        /// Gets the domains this domain extends, as declared. Their order plays no part.
+        /// </summary>
         public IEnumerable<Domain> DirectSuperdomains => this.directSuperdomains;
 
+        /// <summary>
+        /// Gets all domains this domain extends, nearest first: the order of <see cref="DomainLinearization"/> without the domain itself.
+        /// </summary>
         public IEnumerable<IDomainBase> Superdomains => this.structuralDerivedSuperdomains;
 
         IMetaPopulationBase IMetaObjectBase.MetaPopulation => this.metaPopulation;
@@ -72,16 +79,8 @@ namespace Allors.Database.Meta
             }
         }
 
-        public void AddDirectSuperdomain(Domain superdomain)
-        {
-            // TODO: Cyclic check
-            //if (superdomain.Equals(this) || superdomain.Superdomains.Contains(this))
-            //{
-            //    throw new Exception("Cycle in domain inheritance");
-            //}
-
-            this.directSuperdomains.Add(superdomain);
-        }
+        // A cycle is an error of MetaPopulation.StructuralDerive, which names the domains on the cycle.
+        public void AddDirectSuperdomain(Domain superdomain) => this.directSuperdomains.Add(superdomain);
 
         public override bool Equals(object other) => this.Id.Equals((other as Domain)?.Id);
 
@@ -116,16 +115,8 @@ namespace Allors.Database.Meta
 
         internal void Bind() => this.directSuperdomains = this.directSuperdomains.ToArray();
 
-        internal void StructuralDeriveSuperdomains(HashSet<Domain> sharedDomains)
-        {
-            sharedDomains.Clear();
-            foreach (var directSuperdomain in this.DirectSuperdomains)
-            {
-                directSuperdomain.StructuralDeriveSuperdomains(this, sharedDomains);
-            }
-
-            this.structuralDerivedSuperdomains = sharedDomains.ToArray();
-        }
+        internal void StructuralDeriveSuperdomains() =>
+            this.structuralDerivedSuperdomains = DomainLinearization.Linearize(this).Skip(1).Cast<Domain>().ToArray();
 
         /// <summary>
         /// Validates the domain.
@@ -161,25 +152,6 @@ namespace Allors.Database.Meta
             if (this.Id == Guid.Empty)
             {
                 validationLog.AddError(this.ValidationName + " has no id", this, ValidationKind.Required, "IMetaObject.Id");
-            }
-        }
-
-        private void StructuralDeriveSuperdomains(Domain subdomain, HashSet<Domain> superdomains)
-        {
-            if (this.Equals(subdomain))
-            {
-                // We have a cycle
-                return;
-            }
-
-            superdomains.Add(this);
-
-            foreach (var directSuperdomain in this.DirectSuperdomains)
-            {
-                if (!superdomains.Contains(directSuperdomain))
-                {
-                    directSuperdomain.StructuralDeriveSuperdomains(subdomain, superdomains);
-                }
             }
         }
     }

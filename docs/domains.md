@@ -1,7 +1,7 @@
 # Domains
 
-> **Status: Planned.** The model is agreed. [Current implementation](#current-implementation)
-> says which parts the code supports today.
+> **Status: Current.** [Current implementation](#current-implementation) names the trees and
+> the tests.
 
 An Allors3 application is built from domains. Inheritance is the only relationship between
 domains: the application has one domain of its own, and every other domain takes part because a
@@ -64,13 +64,79 @@ These are possible, but not common.
 - **An application selects no authentication plug-in.** It then has direct database access only,
   as a console application has.
 
+## Extending several domains
+
+`[Extends]` names every domain that a domain extends. The concrete domain of the Diamond tree
+extends the functional domain `Level2` and selects the plug-in `Plugin1`:
+
+```csharp
+[Domain("bec75779-2d99-4980-866b-0e75755ae9bf")]
+[Extends(nameof(Level2), nameof(Plugin1))]
+public struct Test
+{
+}
+```
+
+The order of the names plays no part. Generation stops with a message that names the domains
+when a name in `[Extends]` is no declared domain, when a name is listed twice, when a domain
+extends itself, or when two domains share a name.
+
+## The order of the domains
+
+Allors binds a hook by the name of its domain, `Level1OnPostBuild` for example, and runs the
+hooks of the domains in one order, the order of the domains:
+
+- a domain comes before the domains it extends;
+- domains that do not extend each other are ordered by branch. A branch is a domain with the
+  domains it brings in. The branches follow the ids of their top domains, and each branch is
+  kept whole.
+
+In the normal arrangement above, `Custom` comes first and Core last; between them come the
+branches of `Sales`, of `Stock` and of Identity, in the order of their three ids. In the Diamond
+tree, where the concrete domain extends `Level2` and `Plugin1`, the id of `Plugin1` sorts before
+the id of `Level2`, so the order is Test, `Plugin1`, `Level2`, `Level1`, Core: `Level1` follows
+`Level2` because the branch of `Level2` is kept whole.
+
+The ids decide so that the order is stable. It depends on nothing but the graph and the ids: a
+domain keeps its place when a domain is renamed and when the names in `[Extends]` are reordered,
+and the domains that a domain extends keep their order in every application that holds that
+domain. The ids compare as written, character by character, ignoring case. A domain's id is
+generated, never chosen to steer the order.
+
+Two structures have no order. Generation and the start of the application stop with a message
+that names the domains:
+
+- a cycle: a domain extends itself through other domains;
+- two domains that nothing extends: an application has one domain of its own, so one of the two
+  extends the other, or a domain extends both;
+- opposite orders: two domains that one domain extends order the same two domains in opposite
+  ways, for example `Sales` with `Level1` before `Plugin1` and `Stock` with `Plugin1` before
+  `Level1`, both extended by `Custom`. The fix is structural, for example letting one of the two
+  extend the other. This needs two domains that each extend several domains; it cannot arise
+  when the concrete domain is the only domain that extends several domains.
+
+The order of the domains covers the hooks that Allors binds by name. Two lists that the
+concrete domain writes by hand follow the same order, base first: the dispatch of the setup and
+security phases to the hooks of each domain in its `Virtual` shims, and the resource folders
+that its build merges. Rule registration is separate: `Rules.Create` lists the rules of every
+domain. In the Diamond tree, it lists the rules of `Plugin1`, `Level2`, `Level1`, then Core.
+
 ## Current implementation
 
-- A domain extends one domain. An application whose domains form one chain needs nothing more:
-  `Custom` extends Identity, and Identity extends Core.
-- Extending more than one domain is planned, together with a defined order for the hooks of
-  domains that do not extend each other. Until then a concrete domain cannot extend two
-  functional domains, or a functional domain and a plug-in.
+- A domain extends one or more domains, and the order of the domains is as described above.
+  `DomainOrderTests` checks the rule on hand-built graphs: the chain, the diamond with both id
+  orders, the dropped superdomain, the cycle, the second domain that nothing extends, the
+  opposite orders, and the stability under a rename and a reorder of `[Extends]`;
+  `DomainOrderTests.TheIdsCompareAsWritten` checks that the ids compare as written.
+  `RepositoryDomainsTests` checks the errors of `[Extends]` at generation.
+- The Diamond tree, `dotnet/Diamond`, holds the platform test domains: the functional domains
+  `Level1`, which extends Core, and `Level2`, which extends `Level1`; the test plug-in `Plugin1`,
+  hosted by Core; and the concrete domain Test, which extends `Level2` and `Plugin1`, so that
+  the population is a diamond. `DomainsTests.TheSortedDomainsFollowTheIdOrderOfTheBranches`
+  checks the order Test, `Plugin1`, `Level2`, `Level1`, Core; `HookOrderTests` checks that the
+  hooks run in that order; `SetupOrderTests` checks that the shims run the setup and security
+  hooks base first; `DomainIsolationTests` checks that the folders of a domain name no type of a
+  domain it does not extend.
 - Identity provides authentication with ASP.NET Core Identity. Its tree, `dotnet/Identity`, is
   Core ← Identity ← Test. Entra provides authentication with Microsoft Entra ID. Its tree,
   `dotnet/Entra`, is Core ← Entra ← Test. Core's `User` has no authentication field; each
