@@ -29,6 +29,19 @@
     <Project Path="Core/Workspace/Tests.Remote.Json.SystemText/Workspace.Tests.Remote.Json.SystemText.csproj" />
     <Project Path="Core/Workspace/Tests/Workspace.Tests.csproj" />
   </Folder>
+  <Folder Name="/Diamond/" />
+  <Folder Name="/Diamond/Database/">
+    <Project Path="Diamond/Database/Configuration.Tests/Configuration.Tests.csproj" />
+    <Project Path="Diamond/Database/Configuration/Configuration.csproj" />
+    <Project Path="Diamond/Database/Domain.Tests/Domain.Tests.csproj" />
+    <Project Path="Diamond/Database/Domain/Domain.csproj" />
+    <Project Path="Diamond/Database/Generate/Generate.csproj" />
+    <Project Path="Diamond/Database/Meta/Meta.csproj" />
+    <Project Path="Diamond/Database/Resources/Resources.csproj" />
+  </Folder>
+  <Folder Name="/Diamond/Repository/">
+    <Project Path="Diamond/Repository/Domain/Repository.csproj" />
+  </Folder>
   <Folder Name="/Entra/" />
   <Folder Name="/Entra/Database/">
     <Project Path="Entra/Database/Commands/Commands.csproj" />

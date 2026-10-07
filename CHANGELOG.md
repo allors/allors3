@@ -20,6 +20,23 @@ Changes accumulate under **[Unreleased]** until a version is released.
   declaration. `DomainLinearization` holds the one implementation, `MetaPopulation.SortedDomains`
   exposes the result and `MethodCompiler` runs the hooks in that order. `DomainOrderTests` pins
   the rule and `RepositoryDomainsTests` the parser, on repository projects built in memory.
+- The Diamond tree, `dotnet/Diamond`, with the platform test domains: the functional domains
+  `Level1` and `Level2`, the test plug-in `Plugin1`, hosted by Core, and the concrete `Test`
+  domain that extends `Level2` and `Plugin1`, so the population is a diamond: Core ← Level1 ←
+  Level2 ← Test and Core ← Plugin1 ← Test. It inherits Core as the Identity tree does and has a
+  database side with domain tests on the memory adapter; it has no commands, server or
+  workspace. Level1 declares a class with a derived role and a rule, and the service
+  `ILevel1Log`; Level2 adds a role to Level1's class and declares a class with a rule of its own;
+  Plugin1 declares a derived role on `User` with a rule, and the service `IPlugin1Log`. Every
+  hook of the four domains records that it ran, in the one hook log that the concrete domain
+  provides for both services. `DomainsTests` pins the order of the five domains, which follows
+  from their ids: Test, Plugin1, Level2, Level1, Core. `HookOrderTests` checks that the
+  `OnPostBuild` hooks run in that order, `SetupOrderTests` that the dispatch shims run the setup
+  and security hooks base first, and `DomainIsolationTests` that no folder of Level1, Level2 or
+  Plugin1 names a type of a domain it does not extend. Build targets `DotnetDiamondMerge`,
+  `DotnetDiamondGenerate`, `DotnetDiamondDatabaseTest` and `DotnetDiamondTest`, CI job
+  `CiDotnetDiamondTest` in the `memory` job. `VirtualDispatchTests` checks the hooks of the three
+  new domains in the dispatch shims too.
 - Documentation for users and maintainers under `docs/`, starting with the domain model:
   functional domains, plug-ins and their hosts, and the concrete domain that selects plug-ins.
   A page on logging says how the host receives the logs of Allors. A page on authentication
