@@ -6,8 +6,10 @@
 namespace Tests.Workspace
 {
     using System.Threading.Tasks;
+    using Allors;
     using Allors.Workspace;
     using Allors.Workspace.Connection;
+    using Allors.Workspace.Meta;
     using Xunit;
 
     public interface IProfile : IAsyncLifetime
@@ -30,5 +32,17 @@ namespace Tests.Workspace
         /// itself.
         /// </summary>
         ITransport CreateTransport(string userName);
+
+        /// <summary>
+        /// Takes the permission for the operation on the role type away from the Administrator
+        /// role, in the database, so that the grant of the administrators changes version.
+        /// </summary>
+        Task RemoveAdministratorPermission(IRoleType roleType, Operations operation);
+
+        /// <summary>
+        /// Adds the permission for the operation on the role type to the revocation that the
+        /// Denied objects carry, in the database, so that the revocation changes version.
+        /// </summary>
+        Task DenyPermission(IRoleType roleType, Operations operation);
     }
 }

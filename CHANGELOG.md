@@ -388,6 +388,19 @@ Changes accumulate under **[Unreleased]** until a version is released.
 
 ### Fixed
 
+- The workspace connection requests a grant or a revocation again when a pull advertises it at
+  another version than the connection holds, or does not hold at all. A pull response names the
+  version of every grant and revocation of the objects it answers (`PullResponse.g` and `r`),
+  and the clients compared only the version, grant ids and revocation ids of each object, so a
+  permission set that changed on the server, by a role losing or gaining a permission or a
+  revocation denying more, never reached a client that already held the objects: `CanWrite`
+  stayed true after the permission was taken away. Now the stale grants and revocations go
+  into the access request of the pull, with the ones the new records name, and the permissions
+  they name for the first time are requested as well. `AccessVersionTests` pins the mechanism
+  on the fake transport; `ConnectionTests` and `SecurityTests.WithGrantChangedOnTheServer` pin
+  it on the three transports, with two test routes on the Core test server,
+  `Test/RemoveAdministratorPermission` and `Test/DenyPermission`, that change a grant and a
+  revocation between two pulls.
 - The Entra guide links to the shared user-factory contract and clarifies that existing users
   need no factory. Factory calls are not limited to an identity's first sign-in.
 - Entra resolves user names from raw or mapped `unique_name` and then `email` when neither

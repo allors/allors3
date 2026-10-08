@@ -8,6 +8,7 @@ namespace Tests.Workspace.Remote
     using System;
     using System.Net.Http;
     using System.Threading.Tasks;
+    using Allors;
     using Allors.Ranges;
     using Allors.Workspace;
     using Allors.Workspace.Connection;
@@ -96,6 +97,18 @@ namespace Tests.Workspace.Remote
             var httpClient = this.CreateHttpClient();
             httpClient.DefaultRequestHeaders.Add("X-Allors-TestUser", Users.TestUserId(userName).ToString());
             return new HttpTransport(httpClient);
+        }
+
+        public Task RemoveAdministratorPermission(IRoleType roleType, Operations operation) =>
+            this.GetTestRoute($"Test/RemoveAdministratorPermission?relationType={Uri.EscapeDataString(roleType.RelationType.Tag)}&operation={operation}");
+
+        public Task DenyPermission(IRoleType roleType, Operations operation) =>
+            this.GetTestRoute($"Test/DenyPermission?relationType={Uri.EscapeDataString(roleType.RelationType.Tag)}&operation={operation}");
+
+        private async Task GetTestRoute(string route)
+        {
+            var response = await this.CreateHttpClient().GetAsync(route);
+            Assert.True(response.IsSuccessStatusCode, $"{route}: {response.StatusCode} {await response.Content.ReadAsStringAsync()}");
         }
 
         private HttpClient CreateHttpClient() => new HttpClient(this.httpMessageHandler, false) { BaseAddress = new Uri(Url), Timeout = TimeSpan.FromMinutes(30) };

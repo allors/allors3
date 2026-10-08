@@ -246,19 +246,31 @@ namespace Allors.Workspace.Connection
 
         private async Task SyncAsync(PullResponse pullResponse)
         {
+            var ctx = new ResponseContext(this.cache);
+            var replaced = new List<IRecord>();
+
             var syncRequest = this.OnPullResponse(pullResponse);
-            if (syncRequest.o.Length == 0)
+            if (syncRequest.o.Length > 0)
             {
-                return;
+                var syncResponse = await this.transport.SyncAsync(this.Address(syncRequest));
+                this.OnResponse(syncResponse);
+                this.ThrowIfRefused(syncResponse, "sync");
+                this.OnSyncResponse(syncResponse, ctx, replaced);
             }
 
-            var syncResponse = await this.transport.SyncAsync(this.Address(syncRequest));
-            this.OnResponse(syncResponse);
-            this.ThrowIfRefused(syncResponse, "sync");
-            var (accessRequest, replaced) = this.OnSyncResponse(syncResponse);
+            // The grants and revocations to request: the ones the new records name that the
+            // cache lacks, and the ones the pull advertises at another version than the cache
+            // holds, or does not hold at all.
+            this.CollectStaleAccess(pullResponse, ctx);
 
-            if (accessRequest != null)
+            if (ctx.MissingGrantIds.Count > 0 || ctx.MissingRevocationIds.Count > 0)
             {
+                var accessRequest = new AccessRequest
+                {
+                    g = ctx.MissingGrantIds.ToArray(),
+                    r = ctx.MissingRevocationIds.ToArray(),
+                };
+
                 var accessResponse = await this.transport.AccessAsync(this.Address(accessRequest));
                 this.OnResponse(accessResponse);
                 this.ThrowIfRefused(accessResponse, "access");
@@ -275,6 +287,33 @@ namespace Allors.Workspace.Connection
             foreach (var record in replaced)
             {
                 this.RecordChanged?.Invoke(this, new RecordChangedEventArgs(record));
+            }
+        }
+
+        private void CollectStaleAccess(PullResponse pullResponse, ResponseContext ctx)
+        {
+            if (pullResponse.g != null)
+            {
+                foreach (var pair in pullResponse.g)
+                {
+                    var grant = this.cache.GetGrant(pair[0]);
+                    if (grant == null || grant.Version != pair[1])
+                    {
+                        ctx.MissingGrantIds.Add(pair[0]);
+                    }
+                }
+            }
+
+            if (pullResponse.r != null)
+            {
+                foreach (var pair in pullResponse.r)
+                {
+                    var revocation = this.cache.GetRevocation(pair[0]);
+                    if (revocation == null || revocation.Version != pair[1])
+                    {
+                        ctx.MissingRevocationIds.Add(pair[0]);
+                    }
+                }
             }
         }
 
@@ -320,11 +359,8 @@ namespace Allors.Workspace.Connection
                     .Select(v => v.i).ToArray(),
             };
 
-        private (AccessRequest AccessRequest, List<IRecord> Replaced) OnSyncResponse(SyncResponse syncResponse)
+        private void OnSyncResponse(SyncResponse syncResponse, ResponseContext ctx, List<IRecord> replaced)
         {
-            var ctx = new ResponseContext(this.cache);
-            var replaced = new List<IRecord>();
-
             foreach (var syncResponseObject in syncResponse.o)
             {
                 var record = new Record(this.cache, this.MetaPopulation, this.transport.UnitConvert, this.Ranges, ctx, syncResponseObject);
@@ -335,19 +371,6 @@ namespace Allors.Workspace.Connection
                     replaced.Add(record);
                 }
             }
-
-            if (ctx.MissingGrantIds.Count > 0 || ctx.MissingRevocationIds.Count > 0)
-            {
-                var accessRequest = new AccessRequest
-                {
-                    g = ctx.MissingGrantIds.ToArray(),
-                    r = ctx.MissingRevocationIds.ToArray(),
-                };
-
-                return (accessRequest, replaced);
-            }
-
-            return (null, replaced);
         }
 
         private PermissionRequest OnAccessResponse(AccessResponse accessResponse)

@@ -7,6 +7,7 @@ namespace Tests.Workspace.Local
 {
     using System.Linq;
     using System.Threading.Tasks;
+    using Allors;
     using Allors.Database;
     using Allors.Database.Adapters.Memory;
     using Allors.Database.Configuration;
@@ -99,6 +100,20 @@ namespace Tests.Workspace.Local
         }
 
         public ITransport CreateTransport(string userName) => new LocalTransport(this.Database, this.FindUser(userName).Id, WorkspaceName);
+
+        public Task RemoveAdministratorPermission(IRoleType roleType, Operations operation)
+        {
+            using var transaction = this.Database.CreateTransaction();
+            TestSecurity.RemoveAdministratorPermission(transaction, roleType.RelationType.Tag, operation);
+            return Task.CompletedTask;
+        }
+
+        public Task DenyPermission(IRoleType roleType, Operations operation)
+        {
+            using var transaction = this.Database.CreateTransaction();
+            TestSecurity.DenyPermission(transaction, roleType.RelationType.Tag, operation);
+            return Task.CompletedTask;
+        }
 
         private User FindUser(string userName)
         {

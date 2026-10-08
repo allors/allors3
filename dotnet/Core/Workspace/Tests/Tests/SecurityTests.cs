@@ -140,6 +140,25 @@ namespace Tests.Workspace
         }
 
         [Fact]
+        public async void WithGrantChangedOnTheServer()
+        {
+            var session = this.Workspace.CreateSession();
+            var pull = new Pull { Extent = new Filter(this.M.C1) };
+
+            var result = await session.PullAsync(pull);
+            var c1s = result.GetCollection<C1>();
+            Assert.NotEmpty(c1s);
+            Assert.All(c1s, c1 => Assert.True(c1.Strategy.CanWrite(this.M.C1.C1AllorsString)));
+
+            await this.Profile.RemoveAdministratorPermission(this.M.C1.C1AllorsString, Operations.Write);
+
+            await session.PullAsync(pull);
+
+            Assert.All(c1s, c1 => Assert.False(c1.Strategy.CanWrite(this.M.C1.C1AllorsString)));
+            Assert.All(c1s, c1 => Assert.True(c1.Strategy.CanRead(this.M.C1.C1AllorsString)));
+        }
+
+        [Fact]
         public async void WithRevocation()
         {
             var session = this.Workspace.CreateSession();

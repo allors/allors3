@@ -384,6 +384,47 @@ namespace Tests.Workspace
             Assert.Null(connection.DatabaseId);
         }
 
+        [Fact]
+        public async void AGrantWhoseVersionChangedIsRequestedAgain()
+        {
+            await this.Login("administrator");
+            var connection = this.DatabaseConnection;
+
+            var pull = new Pull { Extent = new Filter(this.M.C1) };
+            var result = await connection.PullAsync(new[] { pull });
+            var write = connection.GetPermission(this.M.C1, this.M.C1.C1AllorsString, Operations.Write);
+            var read = connection.GetPermission(this.M.C1, this.M.C1.C1AllorsString, Operations.Read);
+            Assert.All(result.Pool, id => Assert.True(connection.GetRecord(id).IsPermitted(write)));
+
+            await this.Profile.RemoveAdministratorPermission(this.M.C1.C1AllorsString, Operations.Write);
+
+            await connection.PullAsync(new[] { pull });
+
+            Assert.All(result.Pool, id => Assert.False(connection.GetRecord(id).IsPermitted(write)));
+            Assert.All(result.Pool, id => Assert.True(connection.GetRecord(id).IsPermitted(read)));
+        }
+
+        [Fact]
+        public async void ARevocationWhoseVersionChangedIsRequestedAgain()
+        {
+            await this.Login("administrator");
+            var connection = this.DatabaseConnection;
+
+            var pull = new Pull { Extent = new Filter(this.M.Denied) };
+            var result = await connection.PullAsync(new[] { pull });
+            var read = connection.GetPermission(this.M.Denied, this.M.Denied.DefaultWorkspaceProperty, Operations.Read);
+            var write = connection.GetPermission(this.M.Denied, this.M.Denied.DefaultWorkspaceProperty, Operations.Write);
+            Assert.NotEmpty(result.Pool);
+            Assert.All(result.Pool, id => Assert.True(connection.GetRecord(id).IsPermitted(read)));
+            Assert.All(result.Pool, id => Assert.False(connection.GetRecord(id).IsPermitted(write)));
+
+            await this.Profile.DenyPermission(this.M.Denied.DefaultWorkspaceProperty, Operations.Read);
+
+            await connection.PullAsync(new[] { pull });
+
+            Assert.All(result.Pool, id => Assert.False(connection.GetRecord(id).IsPermitted(read)));
+        }
+
         private DatabaseConnection CreateConnection(string userName, ICache cache)
         {
             var template = this.DatabaseConnection;

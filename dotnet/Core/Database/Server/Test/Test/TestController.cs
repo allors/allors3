@@ -86,6 +86,42 @@ namespace Allors.Server.Controllers
             }
         }
 
+        // The two security changes the workspace tests make between two pulls, so that a grant or a
+        // revocation changes version on the server; see TestSecurity.
+        [HttpGet]
+        [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult RemoveAdministratorPermission(string relationType, string operation)
+        {
+            try
+            {
+                using var transaction = this.Database.CreateTransaction();
+                TestSecurity.RemoveAdministratorPermission(transaction, relationType, Enum.Parse<Operations>(operation, true));
+                return this.Ok();
+            }
+            catch (Exception e)
+            {
+                this.LogActionFailed(e, nameof(this.RemoveAdministratorPermission));
+                return this.BadRequest(e.Message);
+            }
+        }
+
+        [HttpGet]
+        [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult DenyPermission(string relationType, string operation)
+        {
+            try
+            {
+                using var transaction = this.Database.CreateTransaction();
+                TestSecurity.DenyPermission(transaction, relationType, Enum.Parse<Operations>(operation, true));
+                return this.Ok();
+            }
+            catch (Exception e)
+            {
+                this.LogActionFailed(e, nameof(this.DenyPermission));
+                return this.BadRequest(e.Message);
+            }
+        }
+
         [HttpGet]
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult TimeShift(int days, int hours = 0, int minutes = 0, int seconds = 0)
