@@ -241,6 +241,25 @@ Changes accumulate under **[Unreleased]** until a version is released.
   These rules were part of `AddAllorsIdentity`. One difference for an application with the
   Identity plug-in: outside the Allors API the cookie now follows ASP.NET Core's own rule, which
   answers 401 for an endpoint marked as an API, where the plug-in redirected every request.
+- The local workspace adapter is an in-process transport. `Allors.Workspace.Adapters.Local.
+  DatabaseConnection` is a `Remote.DatabaseConnection` that sends the same requests and receives
+  the same responses as the HTTP connections, served by the server's `Api` on a transaction of
+  its `IDatabase`, as the user whose id it holds, without a wire; it takes a
+  `Remote.Configuration` and creates the Remote workspace and session. Its own session,
+  strategy, records and pull, push and invoke executors are gone, with the project
+  `Allors.Workspace.Protocol.Direct` that only they used. Records arrive in the server's order,
+  sorted by id, as over HTTP. A named pull, `CallAsync(args, name)`, throws
+  `NotSupportedException` with the reason instead of `NotImplementedException`: the name is a
+  route of the server.
+- `Api`, the entry point of the JSON protocol that the controllers call, moved from the Core
+  server into `Allors.Database.Workspace.Json` together with its tracing events, so that the
+  controllers of every host and the in-process connection call one class. It keeps the namespace
+  `Allors.Database.Protocol.Json`. It builds new objects through `IObjectBuilderService`, derives
+  through `IDerivationService` and types its meta population as `IMetaPopulation`, so it depends
+  on System only.
+- The System.Text.Json `UnitConvert` accepts the `DateTime`, `bool`, `double` and `int` values
+  that its own `ToJson` passes through unchanged, so that both sides of the protocol can share
+  one process.
 
 ### Removed
 
@@ -284,6 +303,9 @@ Changes accumulate under **[Unreleased]** until a version is released.
   2.1.277.
 - Dependabot version updates for the GitHub Actions used in the workflows. Action versions are
   updated by hand.
+- `DatabaseConnection.UserId` of `Allors.Workspace.Adapters.Remote` and of its two HTTP
+  connections, which was always null. The in-process connection has a `UserId` of its own: the
+  id of the user it serves.
 
 ### Fixed
 
@@ -386,3 +408,8 @@ Changes accumulate under **[Unreleased]** until a version is released.
 - The server logs the errors of an invalid model. `AddAllorsServer` passed the title of the
   problem details as the message template and the errors as an argument without a placeholder,
   so the log said only "One or more validation errors occurred.".
+- The local workspace adapter honours revocations. It passed the ids of the revocations where
+  its record expected the ids of the denied permissions, so a permission that a revocation
+  denied stayed permitted: `CanWrite` was true on the `Denied` object whose write permission the
+  test population revokes. The in-process connection shares the server's evaluation.
+  `SecurityTests.WithRevocation` pins it on the three adapters.

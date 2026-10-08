@@ -47,6 +47,16 @@ namespace Allors.Protocol.Json.SystemTextJson
                         UnitTags.Unique => XmlConvert.ToGuid(@string),
                         _ => throw new Exception($"{@string} not supported for tag {tag}")
                     };
+                // ToJson passes these four through unchanged, so without a wire in between, over
+                // the in-process connection, they arrive as they were sent.
+                case DateTime dateTime:
+                    return dateTime;
+                case bool @bool:
+                    return @bool;
+                case double @double:
+                    return @double;
+                case int @int:
+                    return @int;
                 default:
                 {
                     var element = (JsonElement)value;

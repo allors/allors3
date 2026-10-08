@@ -54,8 +54,6 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal IRanges<long> Ranges { get; }
 
-        public abstract string UserId { get; }
-
         public override IWorkspace CreateWorkspace() => new Workspace(this, this.servicesBuilder(), this.Ranges);
 
         internal SyncRequest OnPullResponse(PullResponse response) =>

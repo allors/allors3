@@ -20,7 +20,7 @@ namespace Tests.Workspace.Local
     using Allors.Workspace.Domain;
     using Allors.Workspace.Meta;
     using Allors.Workspace.Meta.Lazy;
-    using Configuration = Allors.Workspace.Adapters.Local.Configuration;
+    using Configuration = Allors.Workspace.Adapters.Remote.Configuration;
     using DatabaseConnection = Allors.Workspace.Adapters.Local.DatabaseConnection;
     using IWorkspaceServices = Allors.Workspace.IWorkspaceServices;
     using Person = Allors.Workspace.Domain.Person;
@@ -28,8 +28,9 @@ namespace Tests.Workspace.Local
 
     public class Profile : IProfile
     {
-        private readonly Func<IRanges<long>> rangesFactory;
         private readonly Func<IWorkspaceServices> servicesBuilder;
+        private readonly IdGenerator idGenerator;
+        private readonly DefaultStructRanges<long> ranges;
         private readonly Configuration configuration;
 
         private User user;
@@ -46,8 +47,9 @@ namespace Tests.Workspace.Local
 
         public Profile(Fixture fixture)
         {
-            this.rangesFactory = () => new DefaultStructRanges<long>();
             this.servicesBuilder = () => new WorkspaceServices();
+            this.idGenerator = new IdGenerator();
+            this.ranges = new DefaultStructRanges<long>();
 
             var metaPopulation = new MetaBuilder().Build();
             var objectFactory = new ReflectionObjectFactory(metaPopulation, typeof(Person));
@@ -83,9 +85,10 @@ namespace Tests.Workspace.Local
 
         public IWorkspace CreateExclusiveWorkspace()
         {
-            var database = new DatabaseConnection(this.configuration, this.Database, this.servicesBuilder, this.rangesFactory) { UserId = this.user.Id };
+            var database = new DatabaseConnection(this.configuration, this.servicesBuilder, this.Database, this.user.Id, this.idGenerator, this.ranges);
             return database.CreateWorkspace();
         }
+
         public IWorkspace CreateWorkspace() => this.DatabaseConnection.CreateWorkspace();
 
         public Task Login(string userName)
@@ -93,9 +96,8 @@ namespace Tests.Workspace.Local
             using var transaction = this.Database.CreateTransaction();
             var uniqueId = Users.TestUserId(userName);
             this.user = new Users(transaction).Extent().ToArray().First(v => v.UniqueId == uniqueId);
-            transaction.Services.Get<IUserService>().User = this.user;
 
-            this.DatabaseConnection = new DatabaseConnection(this.configuration, this.Database, this.servicesBuilder, this.rangesFactory) { UserId = this.user.Id };
+            this.DatabaseConnection = new DatabaseConnection(this.configuration, this.servicesBuilder, this.Database, this.user.Id, this.idGenerator, this.ranges);
 
             this.Workspace = this.DatabaseConnection.CreateWorkspace();
 
