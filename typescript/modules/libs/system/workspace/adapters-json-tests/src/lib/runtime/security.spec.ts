@@ -1,5 +1,5 @@
 import { C1, Denied, TrimFrom } from '@allors/default/workspace/domain';
-import { Pull } from '@allors/system/workspace/domain';
+import { Operations, Pull } from '@allors/system/workspace/domain';
 import { Origin } from '@allors/system/workspace/meta';
 import { Fixture } from '../fixture';
 import '../matchers';
@@ -91,6 +91,29 @@ test('withoutPermissions', async () => {
         expect(c1.strategy.canWrite(roleType)).toBeTruthy();
       }
     }
+  }
+});
+
+test('withGrantChangedOnTheServer', async () => {
+  const { workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const pull: Pull = { extent: { kind: 'Filter', objectType: m.C1 } };
+  const result = await session.pull(pull);
+
+  const c1s = result.collection<C1>(m.C1);
+  expect(c1s.length).toBeGreaterThan(0);
+  for (const c1 of c1s) {
+    expect(c1.strategy.canWrite(m.C1.C1AllorsString)).toBeTruthy();
+  }
+
+  await fixture.removeAdministratorPermission(m.C1.C1AllorsString, Operations.Write);
+
+  await session.pull(pull);
+
+  for (const c1 of c1s) {
+    expect(c1.strategy.canWrite(m.C1.C1AllorsString)).toBeFalsy();
+    expect(c1.strategy.canRead(m.C1.C1AllorsString)).toBeTruthy();
   }
 });
 

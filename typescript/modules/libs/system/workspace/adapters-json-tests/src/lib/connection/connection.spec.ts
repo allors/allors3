@@ -434,3 +434,57 @@ test('theServerRefusesAConnectionForAnotherWorkspaceName', async () => {
 
   expect(connection.databaseId).toBeNull();
 });
+
+test('aGrantWhoseVersionChangedIsRequestedAgain', async () => {
+  const { m } = fixture;
+  const connection = fixture.createConnection('administrator');
+
+  const pull: Pull = { extent: { kind: 'Filter', objectType: m.C1 } };
+  const result = await connection.pull([pull]);
+  const write = connection.getPermission(m.C1, m.C1.C1AllorsString, Operations.Write);
+  const read = connection.getPermission(m.C1, m.C1.C1AllorsString, Operations.Read);
+  expect(result.pool.length).toBeGreaterThan(0);
+  for (const id of result.pool) {
+    expect(connection.getRecord(id).isPermitted(write)).toBe(true);
+  }
+
+  await fixture.removeAdministratorPermission(m.C1.C1AllorsString, Operations.Write);
+
+  await connection.pull([pull]);
+
+  for (const id of result.pool) {
+    expect(connection.getRecord(id).isPermitted(write)).toBe(false);
+    expect(connection.getRecord(id).isPermitted(read)).toBe(true);
+  }
+});
+
+test('aRevocationWhoseVersionChangedIsRequestedAgain', async () => {
+  const { m } = fixture;
+  const connection = fixture.createConnection('administrator');
+
+  const pull: Pull = { extent: { kind: 'Filter', objectType: m.Denied } };
+  const result = await connection.pull([pull]);
+  const read = connection.getPermission(
+    m.Denied,
+    m.Denied.DefaultWorkspaceProperty,
+    Operations.Read
+  );
+  const write = connection.getPermission(
+    m.Denied,
+    m.Denied.DefaultWorkspaceProperty,
+    Operations.Write
+  );
+  expect(result.pool.length).toBeGreaterThan(0);
+  for (const id of result.pool) {
+    expect(connection.getRecord(id).isPermitted(read)).toBe(true);
+    expect(connection.getRecord(id).isPermitted(write)).toBe(false);
+  }
+
+  await fixture.denyPermission(m.Denied.DefaultWorkspaceProperty, Operations.Read);
+
+  await connection.pull([pull]);
+
+  for (const id of result.pool) {
+    expect(connection.getRecord(id).isPermitted(read)).toBe(false);
+  }
+});

@@ -16,8 +16,10 @@ import {
   IRule,
   ISession,
   IWorkspace,
+  Operations,
   Pull,
 } from '@allors/system/workspace/domain';
+import { RoleType } from '@allors/system/workspace/meta';
 import { C1, C2 } from '@allors/default/workspace/domain';
 
 const BASE_URL = 'http://localhost:5000/allors/';
@@ -129,6 +131,33 @@ export class Fixture {
 
     const result = await session.pull([pull]);
     return result.collection<C2>(m.C2)[0];
+  }
+
+  /**
+   * Takes the permission for the operation on the role type away from the Administrator
+   * role, in the database, so that the grant of the administrators changes version.
+   */
+  async removeAdministratorPermission(
+    roleType: RoleType,
+    operation: Operations
+  ): Promise<void> {
+    await this.transport.get(
+      `Test/RemoveAdministratorPermission?relationType=${encodeURIComponent(
+        roleType.relationType.tag
+      )}&operation=${Operations[operation]}`
+    );
+  }
+
+  /**
+   * Adds the permission for the operation on the role type to the revocation that the
+   * Denied objects carry, in the database, so that the revocation changes version.
+   */
+  async denyPermission(roleType: RoleType, operation: Operations): Promise<void> {
+    await this.transport.get(
+      `Test/DenyPermission?relationType=${encodeURIComponent(
+        roleType.relationType.tag
+      )}&operation=${Operations[operation]}`
+    );
   }
 
   /**

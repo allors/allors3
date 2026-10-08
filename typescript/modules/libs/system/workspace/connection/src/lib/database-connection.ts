@@ -188,8 +188,8 @@ export interface IDatabaseConnection {
 /**
  * The connection over a transport. After a pull it brings the records of the pulled objects
  * up to date: it syncs the objects whose version, grants or revocations differ from what it
- * holds, requests the grants and revocations it lacks, and then the permissions those name.
- * Every request names the workspace and the meta fingerprint the connection is built for;
+ * holds, requests the grants and revocations it lacks or holds at another version than the
+ * pull advertises, and then the permissions those name. Every request names the workspace and the meta fingerprint the connection is built for;
  * every response is checked against them before anything is stored, and the first response
  * tells which database and user the connection is to, which no later response may change.
  */
@@ -453,7 +453,10 @@ export class DatabaseConnection implements IDatabaseConnection {
     }
 
     // The grants and revocations to bring up to date: the ones the new records name that
-    // the cache lacks.
+    // the cache lacks, and the ones the pull advertises at another version than the cache
+    // holds, or does not hold at all.
+    this.collectStaleAccess(response, ctx);
+
     if (ctx.missingGrantIds.size > 0 || ctx.missingRevocationIds.size > 0) {
       const accessResponse = await this.transport.access(
         this.address<AccessRequest>({
@@ -509,6 +512,22 @@ export class DatabaseConnection implements IDatabaseConnection {
         return false;
       })
       .map((v) => v.i);
+  }
+
+  private collectStaleAccess(response: PullResponse, ctx: ResponseContext) {
+    for (const [id, version] of response.g ?? []) {
+      const grant = this.cache.getGrant(id);
+      if (grant == null || grant.version !== version) {
+        ctx.missingGrantIds.add(id);
+      }
+    }
+
+    for (const [id, version] of response.r ?? []) {
+      const revocation = this.cache.getRevocation(id);
+      if (revocation == null || revocation.version !== version) {
+        ctx.missingRevocationIds.add(id);
+      }
+    }
   }
 
   private storeRecords(

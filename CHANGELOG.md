@@ -458,7 +458,9 @@ Changes accumulate under **[Unreleased]** until a version is released.
   on the fake transport; `ConnectionTests` and `SecurityTests.WithGrantChangedOnTheServer` pin
   it on the three transports, with two test routes on the Core test server,
   `Test/RemoveAdministratorPermission` and `Test/DenyPermission`, that change a grant and a
-  revocation between two pulls.
+  revocation between two pulls. The TypeScript connection had the same defect and has the
+  same fix, pinned over the fake server in the unit-test project and, through the two test
+  routes, in the server-backed contract and security specs.
 - The Entra guide links to the shared user-factory contract and clarifies that existing users
   need no factory. Factory calls are not limited to an identity's first sign-in.
 - Entra resolves user names from raw or mapped `unique_name` and then `email` when neither
