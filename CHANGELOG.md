@@ -33,6 +33,19 @@ Changes accumulate under **[Unreleased]** until a version is released.
   envelope; a refusal of one of them throws at the connection, as they have no error channel
   of their own. `EnvelopeTests` pins the server side on the `Api`, the client side on the
   fake transport and, in `ConnectionTests`, on the three transports.
+- A persistence provider behind the workspace connection's cache: `IPersistenceProvider` with
+  `LoadAsync`, `StoreAsync`, `RemoveAsync` and `ClearAsync`, keyed by the `CacheKey` of the
+  user, holding the entries in the shape the wire delivered them, sync response objects and
+  the access and permission entries, so that restoring them replays the connection's own sync
+  code path. A connection given a provider loads, per pull, the objects the pull advertises
+  that its cache lacks or holds at another version, and accepts each only at the version,
+  grant ids and revocation ids the pull advertises; the grants and revocations it then needs
+  likewise at their advertised version, and the permissions those name; the server is asked
+  for the rest, and what it sends is stored before the pull returns. `ClearAsync` on the
+  connection, for signing out, and a fault clear the provider's entries for the key as well.
+  The platform's providers, on a file or SQLite for .NET and on IndexedDB for TypeScript, come
+  in a wave of their own; `PersistenceTests` on the fake transport and `ConnectionTests` on
+  the three transports use the in-memory `MemoryPersistenceProvider` of the test projects.
 - The workspace connection's cache can be shared by the connections of one user, and the
   default is one such cache per connection. `MemoryCache` keeps records, grants, revocations
   and permissions in concurrent dictionaries; a set keeps the newest version of an object, a

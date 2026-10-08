@@ -425,6 +425,98 @@ namespace Tests.Workspace
             Assert.All(result.Pool, id => Assert.False(connection.GetRecord(id).IsPermitted(read)));
         }
 
+        [Fact]
+        public async void APullIsPersistedAndANewConnectionRestoresItWithoutAskingTheServer()
+        {
+            await this.Login("administrator");
+            var provider = new MemoryPersistenceProvider();
+
+            var (first, firstTransport) = this.CreatePersistedConnection(provider);
+            var pull = new Pull { Extent = new Filter(this.M.C1) };
+            var result = await first.PullAsync(new[] { pull });
+            var write = first.GetPermission(this.M.C1, this.M.C1.C1AllorsString, Operations.Write);
+
+            Assert.NotEmpty(result.Pool);
+            Assert.Equal(1, firstTransport.SyncCount);
+            Assert.Equal(result.Pool.OrderBy(v => v), provider.Objects(first.Cache.Key).Keys.OrderBy(v => v));
+
+            var (second, secondTransport) = this.CreatePersistedConnection(provider);
+            var restored = await second.PullAsync(new[] { pull });
+
+            Assert.Equal(result.Pool.OrderBy(v => v), restored.Pool.OrderBy(v => v));
+            Assert.Equal(0, secondTransport.SyncCount);
+            Assert.Equal(0, secondTransport.AccessCount);
+            Assert.Equal(0, secondTransport.PermissionCount);
+            Assert.Equal(write, second.GetPermission(this.M.C1, this.M.C1.C1AllorsString, Operations.Write));
+
+            foreach (var id in result.Pool)
+            {
+                var original = first.GetRecord(id);
+                var record = second.GetRecord(id);
+                Assert.NotNull(record);
+                Assert.Same(original.Class, record.Class);
+                Assert.Equal(original.Version, record.Version);
+                Assert.Equal(original.GetRole(this.M.C1.C1AllorsString), record.GetRole(this.M.C1.C1AllorsString));
+                Assert.Equal(original.GetRole(this.M.C1.C1C1Many2Manies), record.GetRole(this.M.C1.C1C1Many2Manies));
+                Assert.Equal(original.GrantIds, record.GrantIds);
+                Assert.True(record.IsPermitted(write));
+            }
+        }
+
+        [Fact]
+        public async void AChangedObjectIsSyncedAndTheRestRestored()
+        {
+            await this.Login("administrator");
+            var provider = new MemoryPersistenceProvider();
+
+            var (first, _) = this.CreatePersistedConnection(provider);
+            var pull = new Pull { Extent = new Filter(this.M.C1) };
+            var result = await first.PullAsync(new[] { pull });
+            var id = result.Collections[this.M.C1.PluralName].First(v => (string)first.GetRecord(v).GetRole(this.M.C1.Name) == Names.c1A);
+
+            var pushed = await first.PushAsync(null, new[] { new PushChangedObject(id, first.GetRecord(id).Version, new[] { new RoleChange(this.M.C1.C1AllorsString, "persisted") }) });
+            Assert.False(pushed.HasErrors);
+
+            var (second, secondTransport) = this.CreatePersistedConnection(provider);
+            await second.PullAsync(new[] { pull });
+
+            Assert.Equal(1, secondTransport.SyncCount);
+            Assert.Equal(new[] { id }, secondTransport.LastSyncRequest.o);
+            Assert.Equal("persisted", second.GetRecord(id).GetRole(this.M.C1.C1AllorsString));
+            Assert.Equal(second.GetRecord(id).Version, provider.Objects(second.Cache.Key)[id].v);
+        }
+
+        [Fact]
+        public async void ClearAsyncForgetsThePersistedView()
+        {
+            await this.Login("administrator");
+            var provider = new MemoryPersistenceProvider();
+
+            var (first, _) = this.CreatePersistedConnection(provider);
+            var pull = new Pull { Extent = new Filter(this.M.C1) };
+            var result = await first.PullAsync(new[] { pull });
+            var key = first.Cache.Key;
+            Assert.NotEmpty(provider.Objects(key));
+
+            await first.ClearAsync();
+
+            Assert.Empty(provider.Objects(key));
+            Assert.All(result.Pool, id => Assert.Null(first.GetRecord(id)));
+
+            var (second, secondTransport) = this.CreatePersistedConnection(provider);
+            await second.PullAsync(new[] { pull });
+            Assert.Equal(1, secondTransport.SyncCount);
+            Assert.Equal(result.Pool.OrderBy(v => v), secondTransport.LastSyncRequest.o.OrderBy(v => v));
+        }
+
+        private (DatabaseConnection Connection, CountingTransport Transport) CreatePersistedConnection(IPersistenceProvider provider)
+        {
+            var template = this.DatabaseConnection;
+            var transport = new CountingTransport(this.Profile.CreateTransport("administrator"));
+            var cache = new MemoryCache(template.WorkspaceName, template.MetaPopulation);
+            return (new DatabaseConnection(template.WorkspaceName, template.MetaPopulation, transport, template.Ranges, cache, provider), transport);
+        }
+
         private DatabaseConnection CreateConnection(string userName, ICache cache)
         {
             var template = this.DatabaseConnection;

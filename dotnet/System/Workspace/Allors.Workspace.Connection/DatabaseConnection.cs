@@ -25,21 +25,24 @@ namespace Allors.Workspace.Connection
     /// <summary>
     /// The connection over a transport. After a pull it brings the records of the pulled objects
     /// up to date: it syncs the objects whose version, grants or revocations differ from what it
-    /// holds, requests the grants and revocations it lacks and then the permissions those name.
-    /// Every request names the workspace and the meta fingerprint the connection is built for;
-    /// every response is checked against them before anything is stored, and the first response
-    /// tells which database and user the connection is to, which no later response may change.
-    /// Use it from one thread at a time.
+    /// holds, requests the grants and revocations it lacks or holds at another version, and then
+    /// the permissions those name; with a persistence provider it restores from there first what
+    /// the provider holds at the versions the pull advertises, and stores what the server sent
+    /// before the pull returns. Every request names the workspace and the meta fingerprint the
+    /// connection is built for; every response is checked against them before anything is
+    /// stored, and the first response tells which database and user the connection is to, which
+    /// no later response may change. Use it from one thread at a time.
     /// </summary>
     public sealed class DatabaseConnection : IDatabaseConnection
     {
         private readonly ITransport transport;
         private readonly ICache cache;
+        private readonly IPersistenceProvider persistence;
         private readonly PushEncoder pushEncoder;
 
         private string faultReason;
 
-        public DatabaseConnection(string workspaceName, IMetaPopulation metaPopulation, ITransport transport, IRanges<long> ranges, ICache cache = null)
+        public DatabaseConnection(string workspaceName, IMetaPopulation metaPopulation, ITransport transport, IRanges<long> ranges, ICache cache = null, IPersistenceProvider persistence = null)
         {
             this.WorkspaceName = workspaceName ?? throw new ArgumentNullException(nameof(workspaceName));
             this.MetaPopulation = metaPopulation ?? throw new ArgumentNullException(nameof(metaPopulation));
@@ -61,6 +64,7 @@ namespace Allors.Workspace.Connection
 
             this.MetaFingerprint = metaPopulation.Fingerprint();
             this.cache = cache ?? new MemoryCache(workspaceName, metaPopulation);
+            this.persistence = persistence;
             this.pushEncoder = new PushEncoder(this.cache, transport.UnitConvert, ranges);
         }
 
@@ -106,7 +110,7 @@ namespace Allors.Workspace.Connection
             });
 
             var pullResponse = await this.transport.PullAsync(pullRequest);
-            this.OnResponse(pullResponse);
+            await this.OnResponseAsync(pullResponse);
             return await this.OnPullAsync(pullResponse);
         }
 
@@ -117,7 +121,7 @@ namespace Allors.Workspace.Connection
             // The arguments are the route's own; they carry no envelope, which the server
             // tolerates.
             var pullResponse = await this.transport.PullAsync(name, args);
-            this.OnResponse(pullResponse);
+            await this.OnResponseAsync(pullResponse);
             return await this.OnPullAsync(pullResponse);
         }
 
@@ -132,7 +136,7 @@ namespace Allors.Workspace.Connection
             });
 
             var pushResponse = await this.transport.PushAsync(pushRequest);
-            this.OnResponse(pushResponse);
+            await this.OnResponseAsync(pushResponse);
             return new PushResult(this.MetaPopulation, pushResponse);
         }
 
@@ -158,14 +162,19 @@ namespace Allors.Workspace.Connection
             });
 
             var invokeResponse = await this.transport.InvokeAsync(invokeRequest);
-            this.OnResponse(invokeResponse);
+            await this.OnResponseAsync(invokeResponse);
             return new InvokeResult(this.MetaPopulation, invokeResponse);
         }
 
-        public Task ClearAsync()
+        public async Task ClearAsync()
         {
+            var key = this.cache.Key;
             this.cache.Clear();
-            return Task.CompletedTask;
+
+            if (this.persistence != null && key != null)
+            {
+                await this.persistence.ClearAsync(key);
+            }
         }
 
         private void ThrowIfFaulted()
@@ -189,7 +198,7 @@ namespace Allors.Workspace.Connection
         /// identify itself, serve this connection's workspace and meta, and stay the database
         /// and the user of the first response.
         /// </summary>
-        private void OnResponse(Response response)
+        private async Task OnResponseAsync(Response response)
         {
             if (response == null)
             {
@@ -213,26 +222,22 @@ namespace Allors.Workspace.Connection
 
             if (this.DatabaseId == null)
             {
-                this.cache.Bind(new CacheKey(response._db, response._u.Value, this.WorkspaceName, this.MetaFingerprint));
                 this.DatabaseId = response._db;
                 this.UserId = response._u;
-                return;
+            }
+            else if (!string.Equals(response._db, this.DatabaseId, StringComparison.Ordinal) || response._u != this.UserId)
+            {
+                this.faultReason = $"The connection was to user {this.UserId} of database '{this.DatabaseId}' and the server now answers as user {response._u} of database '{response._db}': the sign-in changed under the connection. Its cache is cleared; sign in again with a new connection.";
+                await this.ClearAsync();
+                throw new InvalidOperationException(this.faultReason);
             }
 
-            if (!string.Equals(response._db, this.DatabaseId, StringComparison.Ordinal) || response._u != this.UserId)
-            {
-                this.Fault($"The connection was to user {this.UserId} of database '{this.DatabaseId}' and the server now answers as user {response._u} of database '{response._db}': the sign-in changed under the connection. Its cache is cleared; sign in again with a new connection.");
-            }
+            // Binds a cache that is not bound yet, new or cleared, and checks a bound one: a
+            // shared cache refuses the connection of another user here.
+            this.cache.Bind(new CacheKey(response._db, response._u.Value, this.WorkspaceName, this.MetaFingerprint));
         }
 
         private string ServerSaid(Response response) => string.IsNullOrWhiteSpace(response._e) ? string.Empty : $" The server said: {response._e}";
-
-        private void Fault(string reason)
-        {
-            this.faultReason = reason;
-            this.cache.Clear();
-            throw new InvalidOperationException(reason);
-        }
 
         private async Task<PullResult> OnPullAsync(PullResponse pullResponse)
         {
@@ -246,42 +251,120 @@ namespace Allors.Workspace.Connection
 
         private async Task SyncAsync(PullResponse pullResponse)
         {
+            var key = this.cache.Key;
             var ctx = new ResponseContext(this.cache);
             var replaced = new List<IRecord>();
+            var received = this.persistence != null ? new CacheEntries() : null;
 
-            var syncRequest = this.OnPullResponse(pullResponse);
-            if (syncRequest.o.Length > 0)
+            // The objects to bring up to date: absent from the cache, or held at another
+            // version or with other grants or revocations than the pull advertises. The
+            // provider's copy is taken when it is the one the pull advertises; the server is
+            // asked for the rest.
+            var staleObjectIds = this.StaleObjectIds(pullResponse);
+            if (staleObjectIds.Length > 0 && this.persistence != null)
             {
-                var syncResponse = await this.transport.SyncAsync(this.Address(syncRequest));
-                this.OnResponse(syncResponse);
-                this.ThrowIfRefused(syncResponse, "sync");
-                this.OnSyncResponse(syncResponse, ctx, replaced);
+                var loaded = await this.persistence.LoadAsync(key, new CacheEntryIds { Objects = staleObjectIds });
+                if (loaded?.Objects != null)
+                {
+                    var advertisedById = pullResponse.p.ToDictionary(v => v.i);
+                    var accepted = loaded.Objects.Where(v =>
+                        advertisedById.TryGetValue(v.i, out var advertised) &&
+                        v.v == advertised.v &&
+                        this.Ranges.Load(v.g).Equals(this.Ranges.Load(advertised.g)) &&
+                        this.Ranges.Load(v.r).Equals(this.Ranges.Load(advertised.r)));
+                    this.StoreRecords(accepted, ctx, replaced);
+                }
+
+                staleObjectIds = this.StaleObjectIds(pullResponse);
             }
 
-            // The grants and revocations to request: the ones the new records name that the
-            // cache lacks, and the ones the pull advertises at another version than the cache
-            // holds, or does not hold at all.
+            if (staleObjectIds.Length > 0)
+            {
+                var syncResponse = await this.transport.SyncAsync(this.Address(new SyncRequest { o = staleObjectIds }));
+                await this.OnResponseAsync(syncResponse);
+                this.ThrowIfRefused(syncResponse, "sync");
+                this.StoreRecords(syncResponse.o, ctx, replaced);
+
+                if (received != null)
+                {
+                    received.Objects = syncResponse.o;
+                }
+            }
+
+            // The grants and revocations to bring up to date: the ones the new records name
+            // that the cache lacks, and the ones the pull advertises at another version than
+            // the cache holds, or does not hold at all.
             this.CollectStaleAccess(pullResponse, ctx);
 
             if (ctx.MissingGrantIds.Count > 0 || ctx.MissingRevocationIds.Count > 0)
             {
-                var accessRequest = new AccessRequest
-                {
-                    g = ctx.MissingGrantIds.ToArray(),
-                    r = ctx.MissingRevocationIds.ToArray(),
-                };
+                HashSet<long> missingPermissionIds = null;
 
-                var accessResponse = await this.transport.AccessAsync(this.Address(accessRequest));
-                this.OnResponse(accessResponse);
-                this.ThrowIfRefused(accessResponse, "access");
-                var permissionRequest = this.OnAccessResponse(accessResponse);
-                if (permissionRequest != null)
+                if (this.persistence != null)
                 {
-                    var permissionResponse = await this.transport.PermissionAsync(this.Address(permissionRequest));
-                    this.OnResponse(permissionResponse);
-                    this.ThrowIfRefused(permissionResponse, "permission");
-                    this.OnPermissionResponse(permissionResponse);
+                    var loaded = await this.persistence.LoadAsync(key, new CacheEntryIds { Grants = ctx.MissingGrantIds.ToArray(), Revocations = ctx.MissingRevocationIds.ToArray() });
+
+                    var versionByGrant = ToVersionById(pullResponse.g);
+                    var versionByRevocation = ToVersionById(pullResponse.r);
+                    var acceptedGrants = (loaded?.Grants ?? Array.Empty<AccessResponseGrant>()).Where(v => versionByGrant.TryGetValue(v.i, out var version) && version == v.v).ToArray();
+                    var acceptedRevocations = (loaded?.Revocations ?? Array.Empty<AccessResponseRevocation>()).Where(v => versionByRevocation.TryGetValue(v.i, out var version) && version == v.v).ToArray();
+
+                    this.StoreAccess(acceptedGrants, acceptedRevocations, ref missingPermissionIds);
+                    ctx.MissingGrantIds.ExceptWith(acceptedGrants.Select(v => v.i));
+                    ctx.MissingRevocationIds.ExceptWith(acceptedRevocations.Select(v => v.i));
                 }
+
+                if (ctx.MissingGrantIds.Count > 0 || ctx.MissingRevocationIds.Count > 0)
+                {
+                    var accessRequest = new AccessRequest
+                    {
+                        g = ctx.MissingGrantIds.ToArray(),
+                        r = ctx.MissingRevocationIds.ToArray(),
+                    };
+
+                    var accessResponse = await this.transport.AccessAsync(this.Address(accessRequest));
+                    await this.OnResponseAsync(accessResponse);
+                    this.ThrowIfRefused(accessResponse, "access");
+                    this.StoreAccess(accessResponse.g, accessResponse.r, ref missingPermissionIds);
+
+                    if (received != null)
+                    {
+                        received.Grants = accessResponse.g;
+                        received.Revocations = accessResponse.r;
+                    }
+                }
+
+                if (missingPermissionIds != null)
+                {
+                    if (this.persistence != null)
+                    {
+                        var loaded = await this.persistence.LoadAsync(key, new CacheEntryIds { Permissions = missingPermissionIds.ToArray() });
+                        if (loaded?.Permissions != null)
+                        {
+                            this.StorePermissions(loaded.Permissions);
+                            missingPermissionIds.ExceptWith(loaded.Permissions.Select(v => v.i));
+                        }
+                    }
+
+                    if (missingPermissionIds.Count > 0)
+                    {
+                        var permissionResponse = await this.transport.PermissionAsync(this.Address(new PermissionRequest { p = missingPermissionIds.ToArray() }));
+                        await this.OnResponseAsync(permissionResponse);
+                        this.ThrowIfRefused(permissionResponse, "permission");
+                        this.StorePermissions(permissionResponse.p);
+
+                        if (received != null)
+                        {
+                            received.Permissions = permissionResponse.p;
+                        }
+                    }
+                }
+            }
+
+            // What the server sent is kept before the pull returns.
+            if (received != null && !received.IsEmpty)
+            {
+                await this.persistence.StoreAsync(key, received);
             }
 
             foreach (var record in replaced)
@@ -289,6 +372,59 @@ namespace Allors.Workspace.Connection
                 this.RecordChanged?.Invoke(this, new RecordChangedEventArgs(record));
             }
         }
+
+        // A sync, access or permission response has no error channel of its own: an error
+        // message on one is the server refusing the request.
+        private void ThrowIfRefused(Response response, string call)
+        {
+            if (response.HasErrors)
+            {
+                throw new InvalidOperationException($"The server refused the {call} request: {response._e}");
+            }
+        }
+
+        private static Dictionary<long, long> ToVersionById(long[][] pairs)
+        {
+            var versionById = new Dictionary<long, long>();
+            if (pairs != null)
+            {
+                foreach (var pair in pairs)
+                {
+                    versionById[pair[0]] = pair[1];
+                }
+            }
+
+            return versionById;
+        }
+
+        private long[] StaleObjectIds(PullResponse response) =>
+            (response.p ?? Array.Empty<PullResponseObject>())
+                .Where(v =>
+                {
+                    var record = this.cache.GetRecord(v.i);
+                    if (record == null)
+                    {
+                        return true;
+                    }
+
+                    if (!record.Version.Equals(v.v))
+                    {
+                        return true;
+                    }
+
+                    if (!record.GrantIds.Equals(this.Ranges.Load(v.g)))
+                    {
+                        return true;
+                    }
+
+                    if (!record.RevocationIds.Equals(this.Ranges.Load(v.r)))
+                    {
+                        return true;
+                    }
+
+                    return false;
+                })
+                .Select(v => v.i).ToArray();
 
         private void CollectStaleAccess(PullResponse pullResponse, ResponseContext ctx)
         {
@@ -317,51 +453,14 @@ namespace Allors.Workspace.Connection
             }
         }
 
-        // A sync, access or permission response has no error channel of its own: an error
-        // message on one is the server refusing the request.
-        private void ThrowIfRefused(Response response, string call)
+        private void StoreRecords(IEnumerable<SyncResponseObject> syncResponseObjects, ResponseContext ctx, List<IRecord> replaced)
         {
-            if (response.HasErrors)
+            if (syncResponseObjects == null)
             {
-                throw new InvalidOperationException($"The server refused the {call} request: {response._e}");
+                return;
             }
-        }
 
-        private SyncRequest OnPullResponse(PullResponse response) =>
-            new SyncRequest
-            {
-                o = (response.p ?? Array.Empty<PullResponseObject>())
-                    .Where(v =>
-                    {
-                        var record = this.cache.GetRecord(v.i);
-                        if (record == null)
-                        {
-                            return true;
-                        }
-
-                        if (!record.Version.Equals(v.v))
-                        {
-                            return true;
-                        }
-
-                        if (!record.GrantIds.Equals(this.Ranges.Load(v.g)))
-                        {
-                            return true;
-                        }
-
-                        if (!record.RevocationIds.Equals(this.Ranges.Load(v.r)))
-                        {
-                            return true;
-                        }
-
-                        return false;
-                    })
-                    .Select(v => v.i).ToArray(),
-            };
-
-        private void OnSyncResponse(SyncResponse syncResponse, ResponseContext ctx, List<IRecord> replaced)
-        {
-            foreach (var syncResponseObject in syncResponse.o)
+            foreach (var syncResponseObject in syncResponseObjects)
             {
                 var record = new Record(this.cache, this.MetaPopulation, this.transport.UnitConvert, this.Ranges, ctx, syncResponseObject);
                 var previous = this.cache.GetRecord(record.Id);
@@ -373,13 +472,11 @@ namespace Allors.Workspace.Connection
             }
         }
 
-        private PermissionRequest OnAccessResponse(AccessResponse accessResponse)
+        private void StoreAccess(IEnumerable<AccessResponseGrant> grants, IEnumerable<AccessResponseRevocation> revocations, ref HashSet<long> missingPermissionIds)
         {
-            HashSet<long> missingPermissionIds = null;
-
-            if (accessResponse.g != null)
+            if (grants != null)
             {
-                foreach (var accessResponseGrant in accessResponse.g)
+                foreach (var accessResponseGrant in grants)
                 {
                     var permissionIds = this.Ranges.Load(accessResponseGrant.p);
                     this.cache.SetGrant(new Grant(accessResponseGrant.i, accessResponseGrant.v, permissionIds));
@@ -387,17 +484,15 @@ namespace Allors.Workspace.Connection
                 }
             }
 
-            if (accessResponse.r != null)
+            if (revocations != null)
             {
-                foreach (var accessResponseRevocation in accessResponse.r)
+                foreach (var accessResponseRevocation in revocations)
                 {
                     var permissionIds = this.Ranges.Load(accessResponseRevocation.p);
                     this.cache.SetRevocation(new Revocation(accessResponseRevocation.i, accessResponseRevocation.v, permissionIds));
                     this.CollectMissingPermissions(permissionIds, ref missingPermissionIds);
                 }
             }
-
-            return missingPermissionIds != null ? new PermissionRequest { p = missingPermissionIds.ToArray() } : null;
         }
 
         private void CollectMissingPermissions(IRange<long> permissionIds, ref HashSet<long> missingPermissionIds)
@@ -414,14 +509,14 @@ namespace Allors.Workspace.Connection
             }
         }
 
-        private void OnPermissionResponse(PermissionResponse permissionResponse)
+        private void StorePermissions(IEnumerable<PermissionResponsePermission> permissions)
         {
-            if (permissionResponse.p == null)
+            if (permissions == null)
             {
                 return;
             }
 
-            foreach (var permissionResponsePermission in permissionResponse.p)
+            foreach (var permissionResponsePermission in permissions)
             {
                 var @class = (IClass)this.MetaPopulation.FindByTag(permissionResponsePermission.c);
                 var metaObject = this.MetaPopulation.FindByTag(permissionResponsePermission.t);

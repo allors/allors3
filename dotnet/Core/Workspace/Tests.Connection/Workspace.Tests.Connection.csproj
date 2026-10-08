@@ -15,6 +15,11 @@
   <!-- The connection on a transport that answers in memory, without a server: the cache, the
        persistence provider, the envelope and the access versions, each checked at the wire. The
        workspace meta of the Core test domain supplies the classes and role types. -->
+  <!-- The fakes the shared workspace tests use on the three transports serve here too. -->
+  <ItemGroup>
+    <Compile Include="..\Tests\Fakes\*.cs" Link="Fakes\Shared\%(Filename)%(Extension)" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\..\System\Protocol\Allors.Protocol.Json.SystemText\Allors.Protocol.Json.SystemText.csproj" />
     <ProjectReference Include="..\..\..\System\Workspace\Allors.Workspace.Connection\Allors.Workspace.Connection.csproj" />
