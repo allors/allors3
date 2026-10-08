@@ -1,4 +1,4 @@
-// <copyright file="PullExtent.cs" company="Allors bv">
+// <copyright file="Api.cs" company="Allors bv">
 // Copyright (c) Allors bv. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -47,12 +47,12 @@ namespace Allors.Database.Protocol.Json
             this.AccessControl = transactionServices.Get<IWorkspaceAclsService>().Create(this.WorkspaceName);
             this.AllowedClasses = metaCache.GetWorkspaceClasses(this.WorkspaceName);
             this.RoleTypesByClass = metaCache.GetWorkspaceRoleTypesByClass(this.WorkspaceName);
-            this.M = databaseServices.Get<MetaPopulation>();
+            this.M = transaction.Database.MetaPopulation;
             this.MetaPopulation = this.M;
             this.PreparedSelects = databaseServices.Get<IPreparedSelects>();
             this.PreparedExtents = databaseServices.Get<IPreparedExtents>();
-            this.Build = @class => DefaultObjectBuilder.Build(transaction, @class);
-            this.Derive = () => this.Transaction.Derive(false);
+            this.Build = @class => transactionServices.Get<IObjectBuilderService>().Build(@class);
+            this.Derive = () => databaseServices.Get<IDerivationService>().CreateDerivation(transaction).Derive();
             this.Security = databaseServices.Get<ISecurity>();
 
             this.UnitConvert = new UnitConvert();
@@ -81,9 +81,9 @@ namespace Allors.Database.Protocol.Json
 
         public IDictionary<IClass, ISet<IRoleType>> RoleTypesByClass { get; }
 
-        public MetaPopulation M { get; }
+        public IMetaPopulation M { get; }
 
-        public MetaPopulation MetaPopulation { get; }
+        public IMetaPopulation MetaPopulation { get; }
 
         public IPreparedSelects PreparedSelects { get; }
 
