@@ -1,0 +1,238 @@
+// <copyright file="ConnectionTests.cs" company="Allors bv">
+// Copyright (c) Allors bv. All rights reserved.
+// Licensed under the LGPL license. See LICENSE file in the project root for full license information.
+// </copyright>
+
+namespace Tests.Workspace
+{
+    using System.Collections.Generic;
+    using System.Linq;
+    using Allors;
+    using Allors.Ranges;
+    using Allors.Workspace.Connection;
+    using Allors.Workspace.Data;
+    using Xunit;
+
+    /// <summary>
+    /// The contract of the connection, exercised without a session: a pull by the query model
+    /// answers ids and leaves records behind, a record answers its roles as values and its
+    /// permissions against the grants and revocations of the user, and a push and an invoke take
+    /// ids and versions.
+    /// </summary>
+    public abstract class ConnectionTests : Test
+    {
+        protected ConnectionTests(Fixture fixture) : base(fixture)
+        {
+        }
+
+        [Fact]
+        public async void PullByExtentAnswersIdsAndLeavesRecords()
+        {
+            await this.Login("administrator");
+            var connection = this.DatabaseConnection;
+
+            var result = await connection.PullAsync(new[] { new Pull { Extent = new Filter(this.M.C1) } });
+
+            Assert.False(result.HasErrors);
+            Assert.Empty(result.Objects);
+            Assert.Empty(result.Values);
+
+            var ids = result.Collections[this.M.C1.PluralName];
+            Assert.Equal(4, ids.Length);
+            Assert.Equal(ids.OrderBy(v => v), result.Pool.OrderBy(v => v));
+
+            foreach (var id in ids)
+            {
+                Assert.True(id > 0);
+
+                var record = connection.GetRecord(id);
+                Assert.NotNull(record);
+                Assert.Equal(id, record.Id);
+                Assert.Same(this.M.C1, record.Class);
+                Assert.True(record.Version >= Version.DatabaseInitial.Value);
+            }
+        }
+
+        [Fact]
+        public async void RecordAnswersRolesAsValues()
+        {
+            await this.Login("administrator");
+            var connection = this.DatabaseConnection;
+
+            var result = await connection.PullAsync(new[] { new Pull { Extent = new Filter(this.M.C1) } });
+            var idByName = result.Collections[this.M.C1.PluralName].ToDictionary(id => (string)connection.GetRecord(id).GetRole(this.M.C1.Name));
+
+            var c1A = connection.GetRecord(idByName[Names.c1A]);
+            Assert.Null(c1A.GetRole(this.M.C1.C1AllorsString));
+            Assert.Equal(idByName[Names.c1B], Assert.IsType<long>(c1A.GetRole(this.M.C1.C1C1One2One)));
+
+            var c1B = connection.GetRecord(idByName[Names.c1B]);
+            Assert.Equal("ᴀbra", c1B.GetRole(this.M.C1.C1AllorsString));
+            Assert.Equal(true, c1B.GetRole(this.M.C1.C1AllorsBoolean));
+
+            var c1C = connection.GetRecord(idByName[Names.c1C]);
+            var many2Many = Assert.IsAssignableFrom<IRange<long>>(c1C.GetRole(this.M.C1.C1C1Many2Manies));
+            Assert.Equal(new[] { idByName[Names.c1B], idByName[Names.c1C] }.OrderBy(v => v), many2Many);
+        }
+
+        [Fact]
+        public async void PermissionsAreAnsweredPerRecord()
+        {
+            await this.Login("administrator");
+            var connection = this.DatabaseConnection;
+
+            var result = await connection.PullAsync(new[] { new Pull { Extent = new Filter(this.M.C1) } });
+
+            var read = connection.GetPermission(this.M.C1, this.M.C1.C1AllorsString, Operations.Read);
+            var write = connection.GetPermission(this.M.C1, this.M.C1.C1AllorsString, Operations.Write);
+            Assert.NotEqual(0, read);
+            Assert.NotEqual(0, write);
+
+            foreach (var id in result.Collections[this.M.C1.PluralName])
+            {
+                var record = connection.GetRecord(id);
+                Assert.True(record.IsPermitted(read));
+                Assert.True(record.IsPermitted(write));
+            }
+        }
+
+        [Fact]
+        public async void WithoutAccessControlNothingIsPermitted()
+        {
+            await this.Login("noacl");
+            var connection = this.DatabaseConnection;
+
+            var result = await connection.PullAsync(new[] { new Pull { Extent = new Filter(this.M.C1) } });
+
+            var read = connection.GetPermission(this.M.C1, this.M.C1.C1AllorsString, Operations.Read);
+            Assert.Equal(0, read);
+
+            foreach (var id in result.Collections[this.M.C1.PluralName])
+            {
+                Assert.False(connection.GetRecord(id).IsPermitted(read));
+            }
+        }
+
+        [Fact]
+        public async void RevocationDeniesTheWrite()
+        {
+            await this.Login("administrator");
+            var connection = this.DatabaseConnection;
+
+            var result = await connection.PullAsync(new[] { new Pull { Extent = new Filter(this.M.Denied) } });
+
+            var read = connection.GetPermission(this.M.Denied, this.M.Denied.DefaultWorkspaceProperty, Operations.Read);
+            var write = connection.GetPermission(this.M.Denied, this.M.Denied.DefaultWorkspaceProperty, Operations.Write);
+            Assert.NotEqual(0, read);
+            Assert.NotEqual(0, write);
+
+            var ids = result.Collections[this.M.Denied.PluralName];
+            Assert.NotEmpty(ids);
+
+            foreach (var id in ids)
+            {
+                var record = connection.GetRecord(id);
+                Assert.True(record.IsPermitted(read));
+                Assert.False(record.IsPermitted(write));
+            }
+        }
+
+        [Fact]
+        public async void PushNewObjectAnswersItsDatabaseId()
+        {
+            await this.Login("administrator");
+            var connection = this.DatabaseConnection;
+
+            var workspaceId = new IdGenerator().Next();
+            var newObject = new PushNewObject(workspaceId, this.M.C1, new[] { new RoleChange(this.M.C1.C1AllorsString, "pushed") });
+
+            var pushed = await connection.PushAsync(new[] { newObject }, null);
+
+            Assert.False(pushed.HasErrors);
+            var id = pushed.DatabaseIdByWorkspaceId[workspaceId];
+            Assert.True(id > 0);
+
+            var result = await connection.PullAsync(new[] { new Pull { ObjectId = id } });
+
+            Assert.False(result.HasErrors);
+            Assert.Contains(id, result.Pool);
+
+            var record = connection.GetRecord(id);
+            Assert.Same(this.M.C1, record.Class);
+            Assert.Equal("pushed", record.GetRole(this.M.C1.C1AllorsString));
+        }
+
+        [Fact]
+        public async void PushChangedObjectTakesTheVersionItWasChangedFrom()
+        {
+            await this.Login("administrator");
+            var connection = this.DatabaseConnection;
+
+            var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = Names.c1A } } };
+            var id = (await connection.PullAsync(new[] { pull })).Collections[this.M.C1.PluralName].Single();
+            var before = connection.GetRecord(id);
+
+            var pushed = await connection.PushAsync(null, new[] { new PushChangedObject(id, before.Version, new[] { new RoleChange(this.M.C1.C1AllorsString, "X") }) });
+
+            Assert.False(pushed.HasErrors);
+
+            await connection.PullAsync(new[] { pull });
+            var after = connection.GetRecord(id);
+            Assert.NotSame(before, after);
+            Assert.True(after.Version > before.Version);
+            Assert.Equal("X", after.GetRole(this.M.C1.C1AllorsString));
+
+            var stale = await connection.PushAsync(null, new[] { new PushChangedObject(id, before.Version, new[] { new RoleChange(this.M.C1.C1AllorsString, "Y") }) });
+
+            Assert.True(stale.HasErrors);
+            Assert.Contains(id, stale.VersionErrors);
+        }
+
+        [Fact]
+        public async void InvokeRunsTheMethod()
+        {
+            await this.Login("administrator");
+            var connection = this.DatabaseConnection;
+
+            var pull = new Pull { Extent = new Filter(this.M.Organisation) };
+            var id = (await connection.PullAsync(new[] { pull })).Collections[this.M.Organisation.PluralName].First();
+            var before = connection.GetRecord(id);
+            Assert.NotEqual(true, before.GetRole(this.M.Organisation.JustDidIt));
+
+            var invoked = await connection.InvokeAsync(new[] { new Invocation(id, before.Version, this.M.Organisation.JustDoIt) });
+
+            Assert.False(invoked.HasErrors);
+
+            await connection.PullAsync(new[] { pull });
+            Assert.Equal(true, connection.GetRecord(id).GetRole(this.M.Organisation.JustDidIt));
+        }
+
+        [Fact]
+        public async void RecordChangedIsRaisedWhenAPullReplacesARecord()
+        {
+            await this.Login("administrator");
+            var connection = this.DatabaseConnection;
+
+            var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = Names.c1A } } };
+            var id = (await connection.PullAsync(new[] { pull })).Collections[this.M.C1.PluralName].Single();
+            var version = connection.GetRecord(id).Version;
+
+            var changed = new List<RecordChangedEventArgs>();
+            connection.RecordChanged += (sender, e) => changed.Add(e);
+
+            await connection.PullAsync(new[] { pull });
+            Assert.Empty(changed);
+
+            var pushed = await connection.PushAsync(null, new[] { new PushChangedObject(id, version, new[] { new RoleChange(this.M.C1.C1AllorsString, "changed") }) });
+            Assert.False(pushed.HasErrors);
+            Assert.Empty(changed);
+
+            await connection.PullAsync(new[] { pull });
+
+            var e = Assert.Single(changed);
+            Assert.Equal(id, e.Id);
+            Assert.Same(connection.GetRecord(id), e.Record);
+            Assert.True(e.Record.Version > version);
+        }
+    }
+}

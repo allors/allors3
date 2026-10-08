@@ -277,6 +277,11 @@ Changes accumulate under **[Unreleased]** until a version is released.
     population are the connection's, the object factory and the rules the workspace's;
     `IWorkspace.Configuration` shows all four as before. The `IdGenerator` belongs to the
     workspace, not to the connection.
+  - `ConnectionTests` in the shared workspace test project pin the contract on the three
+    transports, without a session: a pull by extent answers ids and leaves records, a record
+    answers its roles as values and its permissions against the grants and revocations, a push
+    answers the database ids of new objects and refuses a stale version, an invoke runs the
+    method, and `RecordChanged` is raised when a pull replaces a record.
 - The local workspace adapter is an in-process transport. `Allors.Workspace.Connection.Local.
   LocalTransport` sends the same requests and receives the same responses as the HTTP
   transports, served by the server's `Api` on a transaction of its `IDatabase`, as the user
