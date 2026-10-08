@@ -7,6 +7,7 @@ import { IRecord } from '../record';
 import { RecordChangedEvent } from '../record-changed-event';
 import { Revocation } from '../revocation';
 import { Emitter, Subscribable } from '../subscribable';
+import { CacheKey } from './cache-key';
 import { ICache } from './icache';
 
 /**
@@ -31,6 +32,8 @@ export class MemoryCache implements ICache {
 
   private readonly recordChangedEmitter = new Emitter<RecordChangedEvent>();
 
+  private _key: CacheKey | null = null;
+
   constructor(
     public readonly workspaceName: string,
     public readonly metaPopulation: MetaPopulation
@@ -46,6 +49,27 @@ export class MemoryCache implements ICache {
 
   get recordChanged(): Subscribable<RecordChangedEvent> {
     return this.recordChangedEmitter;
+  }
+
+  get key(): CacheKey | null {
+    return this._key;
+  }
+
+  bind(key: CacheKey): void {
+    if (key == null) {
+      throw new Error('A cache binds to a key, not to null.');
+    }
+
+    if (this._key == null) {
+      this._key = key;
+      return;
+    }
+
+    if (!this._key.equals(key)) {
+      throw new Error(
+        `The cache holds the view of user ${this._key.userId} of database '${this._key.databaseId}' and cannot serve user ${key.userId} of database '${key.databaseId}': a cache serves one user of one database. Give each user a cache of its own, or clear the cache when the user signs out.`
+      );
+    }
   }
 
   getRecord(id: number): IRecord | undefined {
@@ -81,6 +105,7 @@ export class MemoryCache implements ICache {
     this.revocationById.clear();
     this.permissionById.clear();
     this.permissionIdByOperandTypeByClassByOperation.clear();
+    this._key = null;
   }
 
   getGrant(id: number): Grant | undefined {

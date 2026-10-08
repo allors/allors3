@@ -93,6 +93,17 @@ export class LazyMetaPopulation implements InternalMetaPopulation {
 
   onNew(metaObject: MetaObject) {
     this.metaObjectByTag.set(metaObject.tag, metaObject);
+
+    // The population's own sets of relation types and method types, which the fingerprint
+    // of the workspace meta hashes together with the composites.
+    switch ((metaObject as RelationType | MethodType).kind) {
+      case 'RelationType':
+        this.relationTypes.add(metaObject as RelationType);
+        break;
+      case 'MethodType':
+        this.methodTypes.add(metaObject as MethodType);
+        break;
+    }
   }
 
   onNewObjectType(objectType: ObjectType) {

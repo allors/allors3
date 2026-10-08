@@ -6,13 +6,15 @@ import { IRecord } from '../record';
 import { RecordChangedEvent } from '../record-changed-event';
 import { Revocation } from '../revocation';
 import { Subscribable } from '../subscribable';
+import { CacheKey } from './cache-key';
 
 /**
  * What a connection keeps of the user's view of the database: records, grants, revocations
  * and permissions, by id. A connection that is given no cache creates a MemoryCache of its
  * own. A cache may be shared by the connections of one user to one workspace name and one
  * meta population: the cache carries the name and the meta population, which the connection
- * checks when it takes the cache.
+ * checks when it takes the cache, and the user is checked when the first response of a
+ * connection binds its key.
  */
 export interface ICache {
   /**
@@ -32,6 +34,18 @@ export interface ICache {
    */
   readonly metaPopulation: MetaPopulation;
 
+  /**
+   * The database, user, workspace name and meta fingerprint whose view the cache holds,
+   * bound by the first response of a connection; null until then and after clear.
+   */
+  readonly key: CacheKey | null;
+
+  /**
+   * Binds the cache to the key, or checks it against the key it is bound to: a cache serves
+   * one user of one database. Throws when the cache is bound to another key.
+   */
+  bind(key: CacheKey): void;
+
   getRecord(id: number): IRecord | undefined;
 
   /**
@@ -47,7 +61,7 @@ export interface ICache {
   removeRecord(id: number): void;
 
   /**
-   * Forgets everything.
+   * Forgets everything, the key included.
    */
   clear(): void;
 

@@ -1,4 +1,5 @@
 import {
+  CacheKey,
   Grant,
   MemoryCache,
   Operations,
@@ -93,6 +94,7 @@ describe('MemoryCache', () => {
     cache.setPermission(
       new Permission(100, m.C1, m.C1.C1AllorsString, Operations.Read)
     );
+    cache.bind(new CacheKey('db', 5, 'Default', 'fingerprint'));
 
     cache.clear();
 
@@ -103,6 +105,7 @@ describe('MemoryCache', () => {
     expect(
       cache.getPermission(m.C1, m.C1.C1AllorsString, Operations.Read)
     ).toBe(0);
+    expect(cache.key).toBeNull();
   });
 
   it('keeps the newest version of a grant and a revocation', () => {
@@ -160,5 +163,20 @@ describe('MemoryCache', () => {
 
     expect(cache.workspaceName).toBe('Default');
     expect(cache.metaPopulation).toBe(m);
+    expect(cache.key).toBeNull();
+  });
+
+  it('binds to one key and refuses another', () => {
+    const cache = new MemoryCache('Default', m);
+    const key = new CacheKey('db', 5, 'Default', 'fingerprint');
+
+    cache.bind(key);
+    cache.bind(new CacheKey('db', 5, 'Default', 'fingerprint'));
+    expect(cache.key.equals(key)).toBe(true);
+
+    expect(() =>
+      cache.bind(new CacheKey('db', 7, 'Default', 'fingerprint'))
+    ).toThrow(/5.*7|7.*5/);
+    expect(cache.key.equals(key)).toBe(true);
   });
 });

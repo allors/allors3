@@ -31,6 +31,7 @@ export * from './lib/api/sync/sync-response';
 export * from './lib/api/sync/sync-response-object';
 export * from './lib/api/sync/sync-response-role';
 
+export * from './lib/api/request';
 export * from './lib/api/response';
 export * from './lib/api/response-derivation-error';
 

@@ -1,5 +1,7 @@
 import {
+  CacheKey,
   createIdGenerator,
+  DatabaseConnection,
   MemoryCache,
   Operations,
   Pull,
@@ -363,4 +365,72 @@ test('aCacheOfAnotherMetaPopulationIsRefused', () => {
   expect(() => fixture.createConnection('administrator', { cache })).toThrow(
     /meta population/
   );
+});
+
+test('theConnectionLearnsTheDatabaseAndTheUserFromTheFirstResponse', async () => {
+  const { m } = fixture;
+  const connection = fixture.createConnection('administrator');
+
+  expect(connection.databaseId).toBeNull();
+  expect(connection.userId).toBeNull();
+  expect(connection.cache.key).toBeNull();
+  expect(connection.metaFingerprint).toMatch(/^[0-9a-f]{16}$/);
+
+  await connection.pull([{ extent: { kind: 'Filter', objectType: m.C1 } }]);
+
+  expect(connection.databaseId).toBeTruthy();
+  expect(connection.userId).toBeGreaterThan(0);
+  expect(
+    connection.cache.key.equals(
+      new CacheKey(
+        connection.databaseId,
+        connection.userId,
+        connection.workspaceName,
+        connection.metaFingerprint
+      )
+    )
+  ).toBe(true);
+
+  const other = fixture.createConnection('noacl');
+  await other.pull([{ extent: { kind: 'Filter', objectType: m.C1 } }]);
+
+  expect(other.databaseId).toBe(connection.databaseId);
+  expect(other.userId).not.toBe(connection.userId);
+});
+
+test('theCacheRefusesAConnectionOfAnotherUser', async () => {
+  const { m } = fixture;
+  const template = fixture.createConnection('administrator');
+
+  const cache = new MemoryCache(template.workspaceName, template.metaPopulation);
+  const administrator = fixture.createConnection('administrator', { cache });
+  const noacl = fixture.createConnection('noacl', { cache });
+
+  const pull: Pull = { extent: { kind: 'Filter', objectType: m.C1 } };
+  const result = await administrator.pull([pull]);
+
+  await expect(noacl.pull([pull])).rejects.toThrow(
+    new RegExp(`user ${administrator.userId}.*user \\d+`)
+  );
+
+  for (const id of result.pool) {
+    expect(administrator.getRecord(id)).toBeDefined();
+  }
+});
+
+test('theServerRefusesAConnectionForAnotherWorkspaceName', async () => {
+  const { m } = fixture;
+  const template = fixture.createConnection('administrator');
+
+  const connection = new DatabaseConnection(
+    'Other',
+    template.metaPopulation,
+    fixture.createTransport('administrator')
+  );
+
+  await expect(
+    connection.pull([{ extent: { kind: 'Filter', objectType: m.C1 } }])
+  ).rejects.toThrow(/'Other'.*'Default'|'Default'.*'Other'/);
+
+  expect(connection.databaseId).toBeNull();
 });

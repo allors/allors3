@@ -16,8 +16,8 @@ Changes accumulate under **[Unreleased]** until a version is released.
   (`_w`) and meta fingerprint (`_f`) the server used; `Api` fills them, on the response of a
   named pull too. A request names the client's workspace (`_w`) and fingerprint (`_f`); the
   server refuses a name or a fingerprint that is present and differs from its own, with the
-  reason in the error message, and serves a request that names neither, as the TypeScript
-  workspace does until it sends them. The meta fingerprint is `MetaFingerprint.Compute`, in
+  reason in the error message, and serves a request that names neither. The meta fingerprint
+  is `MetaFingerprint.Compute`, in
   `Allors.Shared`: FNV-1a over the sorted tags of the composites, relation types and method
   types of the workspace, which the server computes per workspace in `IMetaCache.
   GetWorkspaceFingerprint` and a client from its generated workspace meta
@@ -32,7 +32,15 @@ Changes accumulate under **[Unreleased]** until a version is released.
   responses now derive from the protocol's `Request` and `Response` so that they carry the
   envelope; a refusal of one of them throws at the connection, as they have no error channel
   of their own. `EnvelopeTests` pins the server side on the `Api`, the client side on the
-  fake transport and, in `ConnectionTests`, on the three transports.
+  fake transport and, in `ConnectionTests`, on the three transports. The TypeScript
+  connection does the same: `metaPopulationFingerprint` computes the fingerprint from the
+  generated workspace meta, in FNV-1a without BigInt so that it runs wherever the workspace
+  does, every request carries `_w` and `_f`, the first response sets `databaseId` and
+  `userId` and binds the cache's `CacheKey`, a changed database or user faults the
+  connection, a response for another workspace name or fingerprint or without the envelope
+  is refused, and `clear()` forgets the user's view; the test fixture no longer calls
+  `UserInfo` for the user id. `LazyMetaPopulation.relationTypes` and `methodTypes` are
+  filled now; they were empty sets before, so a client that iterated them saw nothing.
 - A persistence provider behind the workspace connection's cache: `IPersistenceProvider` with
   `LoadAsync`, `StoreAsync`, `RemoveAsync` and `ClearAsync`, keyed by the `CacheKey` of the
   user, holding the entries in the shape the wire delivered them, sync response objects and

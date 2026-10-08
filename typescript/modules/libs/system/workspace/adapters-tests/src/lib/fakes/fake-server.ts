@@ -9,11 +9,15 @@ import {
   PullResponse,
   PushRequest,
   PushResponse,
+  Response,
   SyncRequest,
   SyncResponse,
   SyncResponseRole,
 } from '@allors/system/common/protocol-json';
-import { Operations } from '@allors/system/workspace/connection';
+import {
+  metaPopulationFingerprint,
+  Operations,
+} from '@allors/system/workspace/connection';
 import { RelationType } from '@allors/system/workspace/meta';
 import {
   Class,
@@ -48,9 +52,9 @@ export class FakeServer {
   workspaceName = 'Default';
 
   /**
-   * The meta fingerprint the fake server says it has.
+   * The meta fingerprint the fake server says it has; that of its meta population by default.
    */
-  metaFingerprint: string | null = null;
+  metaFingerprint: string | null;
 
   readonly objects = new Map<number, FakeObject>();
 
@@ -72,7 +76,9 @@ export class FakeServer {
 
   readonly invokeRequests: InvokeRequest[] = [];
 
-  constructor(public readonly m: M) {}
+  constructor(public readonly m: M) {
+    this.metaFingerprint = metaPopulationFingerprint(m);
+  }
 
   addObject(id: number, cls: Class, ...grants: number[]): FakeObject {
     const object = new FakeObject(id, cls);
@@ -251,8 +257,8 @@ export class FakeServer {
     return this.envelope<InvokeResponse>({});
   }
 
-  private envelope<T>(response: Partial<T>): T {
-    const enveloped = response as T & Envelope;
+  private envelope<T extends Response>(response: Partial<T>): T {
+    const enveloped = response as T;
     enveloped._db = this.databaseId;
     enveloped._u = this.userId;
     enveloped._w = this.workspaceName;
@@ -335,12 +341,3 @@ export class FakePermission {
   ) {}
 }
 
-/**
- * The envelope every response of the fake server carries, as the server's Api fills it.
- */
-interface Envelope {
-  _db?: string | null;
-  _u?: number | null;
-  _w?: string | null;
-  _f?: string | null;
-}
