@@ -6,6 +6,7 @@
 namespace Allors.Database.Configuration
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
     using Meta;
@@ -13,26 +14,29 @@ namespace Allors.Database.Configuration
 
     public class MetaCache : IMetaCache
     {
+        private readonly MetaPopulation metaPopulation;
         private readonly IDictionary<IClass, Type> builderTypeByClass;
         private readonly IDictionary<string, ISet<IClass>> classesByWorkspaceName;
         private readonly IDictionary<string, IDictionary<IClass, ISet<IRoleType>>> roleTypesByClassByWorkspaceName;
+        private readonly ConcurrentDictionary<string, string> fingerprintByWorkspaceName;
 
         public MetaCache(IDatabase database)
         {
-            var metaPopulation = (MetaPopulation)database.MetaPopulation;
+            this.metaPopulation = (MetaPopulation)database.MetaPopulation;
             var assembly = database.ObjectFactory.Assembly;
 
-            this.builderTypeByClass = metaPopulation.DatabaseClasses.
+            this.builderTypeByClass = this.metaPopulation.DatabaseClasses.
                 ToDictionary(
                     v => (IClass)v,
                     v => assembly.GetType($"Allors.Database.Domain.{v.Name}Builder", false));
 
             this.classesByWorkspaceName = new Dictionary<string, ISet<IClass>>();
             this.roleTypesByClassByWorkspaceName = new Dictionary<string, IDictionary<IClass, ISet<IRoleType>>>();
+            this.fingerprintByWorkspaceName = new ConcurrentDictionary<string, string>(StringComparer.Ordinal);
 
-            foreach (var workspaceName in metaPopulation.WorkspaceNames)
+            foreach (var workspaceName in this.metaPopulation.WorkspaceNames)
             {
-                ISet<IClass> classes = new HashSet<IClass>(metaPopulation.Classes.Where(w => w.WorkspaceNames.Contains(workspaceName)));
+                ISet<IClass> classes = new HashSet<IClass>(this.metaPopulation.Classes.Where(w => w.WorkspaceNames.Contains(workspaceName)));
                 this.classesByWorkspaceName[workspaceName] = classes;
 
                 var roleTypesByClass = new Dictionary<IClass, ISet<IRoleType>>();
@@ -43,6 +47,7 @@ namespace Allors.Database.Configuration
                 }
 
                 this.roleTypesByClassByWorkspaceName[workspaceName] = roleTypesByClass;
+                this.fingerprintByWorkspaceName[workspaceName] = this.ComputeFingerprint(workspaceName);
             }
         }
 
@@ -59,5 +64,15 @@ namespace Allors.Database.Configuration
             this.roleTypesByClassByWorkspaceName.TryGetValue(workspaceName, out var rolesByClass);
             return rolesByClass;
         }
+
+        public string GetWorkspaceFingerprint(string workspaceName) =>
+            workspaceName == null ? null : this.fingerprintByWorkspaceName.GetOrAdd(workspaceName, this.ComputeFingerprint);
+
+        // The same members that the generator puts in the workspace meta of this workspace: the
+        // composites, relation types and method types whose workspace names include it.
+        private string ComputeFingerprint(string workspaceName) =>
+            MetaFingerprint.Compute(this.metaPopulation.Composites.Where(v => v.WorkspaceNames.Contains(workspaceName)).Select(v => v.Tag)
+                .Concat(this.metaPopulation.RelationTypes.Where(v => v.WorkspaceNames.Contains(workspaceName)).Select(v => v.Tag))
+                .Concat(this.metaPopulation.MethodTypes.Where(v => v.WorkspaceNames.Contains(workspaceName)).Select(v => v.Tag)));
     }
 }

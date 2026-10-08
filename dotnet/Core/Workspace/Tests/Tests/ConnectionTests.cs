@@ -322,6 +322,68 @@ namespace Tests.Workspace
             Assert.Contains("meta population", exception.Message);
         }
 
+        [Fact]
+        public async void TheConnectionLearnsTheDatabaseAndTheUserFromTheFirstResponse()
+        {
+            await this.Login("administrator");
+            var connection = this.DatabaseConnection;
+
+            Assert.Null(connection.DatabaseId);
+            Assert.Null(connection.UserId);
+            Assert.Null(connection.Cache.Key);
+            Assert.Matches("^[0-9a-f]{16}$", connection.MetaFingerprint);
+
+            await connection.PullAsync(new[] { new Pull { Extent = new Filter(this.M.C1) } });
+
+            Assert.False(string.IsNullOrWhiteSpace(connection.DatabaseId));
+            Assert.True(connection.UserId > 0);
+            Assert.Equal(new CacheKey(connection.DatabaseId, connection.UserId.Value, connection.WorkspaceName, connection.MetaFingerprint), connection.Cache.Key);
+
+            var other = this.CreateConnection("noacl", null);
+            await other.PullAsync(new[] { new Pull { Extent = new Filter(this.M.C1) } });
+
+            Assert.Equal(connection.DatabaseId, other.DatabaseId);
+            Assert.NotEqual(connection.UserId, other.UserId);
+        }
+
+        [Fact]
+        public async void TheCacheRefusesAConnectionOfAnotherUser()
+        {
+            await this.Login("administrator");
+            var template = this.DatabaseConnection;
+
+            var cache = new MemoryCache(template.WorkspaceName, template.MetaPopulation);
+            var administrator = this.CreateConnection("administrator", cache);
+            var noacl = this.CreateConnection("noacl", cache);
+
+            var pull = new Pull { Extent = new Filter(this.M.C1) };
+            var result = await administrator.PullAsync(new[] { pull });
+
+            var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => noacl.PullAsync(new[] { pull }));
+
+            Assert.Contains($"user {administrator.UserId}", exception.Message);
+            Assert.Contains($"user {noacl.UserId}", exception.Message);
+            foreach (var id in result.Pool)
+            {
+                Assert.NotNull(administrator.GetRecord(id));
+            }
+        }
+
+        [Fact]
+        public async void TheServerRefusesAConnectionForAnotherWorkspaceName()
+        {
+            await this.Login("administrator");
+            var template = this.DatabaseConnection;
+
+            var connection = new DatabaseConnection("Other", template.MetaPopulation, this.Profile.CreateTransport("administrator"), template.Ranges);
+
+            var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => connection.PullAsync(new[] { new Pull { Extent = new Filter(this.M.C1) } }));
+
+            Assert.Contains("'Other'", exception.Message);
+            Assert.Contains($"'{template.WorkspaceName}'", exception.Message);
+            Assert.Null(connection.DatabaseId);
+        }
+
         private DatabaseConnection CreateConnection(string userName, ICache cache)
         {
             var template = this.DatabaseConnection;

@@ -33,5 +33,25 @@ namespace Allors.Protocol.Json.Api
         /// DerivationErrors
         /// </summary>
         public ResponseDerivationError[] _d { get; set; }
+
+        /// <summary>
+        /// The id of the database the server serves.
+        /// </summary>
+        public string _db { get; set; }
+
+        /// <summary>
+        /// The id of the user the server served the request as.
+        /// </summary>
+        public long? _u { get; set; }
+
+        /// <summary>
+        /// The name of the workspace the server served.
+        /// </summary>
+        public string _w { get; set; }
+
+        /// <summary>
+        /// The fingerprint of the server's meta for that workspace.
+        /// </summary>
+        public string _f { get; set; }
     }
 }

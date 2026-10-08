@@ -5,7 +5,7 @@
 
 namespace Allors.Protocol.Json.Api.Security
 {
-    public class PermissionRequest
+    public class PermissionRequest : Request
     {
         /// <summary>
         /// Permission Ids

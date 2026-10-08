@@ -5,7 +5,7 @@
 
 namespace Allors.Protocol.Json.Api.Security
 {
-    public class AccessResponse
+    public class AccessResponse : Response
     {
         /// <summary>
         /// Grants

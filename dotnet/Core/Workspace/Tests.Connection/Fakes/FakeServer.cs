@@ -15,6 +15,7 @@ namespace Tests.Workspace.Connection
     using Allors.Protocol.Json.Api.Push;
     using Allors.Protocol.Json.Api.Security;
     using Allors.Protocol.Json.Api.Sync;
+    using Allors.Workspace.Connection;
     using Allors.Workspace.Meta;
 
     /// <summary>
@@ -29,11 +30,32 @@ namespace Tests.Workspace.Connection
         {
             this.M = m;
             this.UnitConvert = unitConvert;
+            this.MetaFingerprint = m.Fingerprint();
         }
 
         public M M { get; }
 
         public IUnitConvert UnitConvert { get; }
+
+        /// <summary>
+        /// The database the fake server says it is; null makes it say nothing.
+        /// </summary>
+        public string DatabaseId { get; set; } = "fake";
+
+        /// <summary>
+        /// The user the fake server says it serves the requests as.
+        /// </summary>
+        public long? UserId { get; set; } = 1;
+
+        /// <summary>
+        /// The workspace name the fake server says it serves.
+        /// </summary>
+        public string WorkspaceName { get; set; } = "Default";
+
+        /// <summary>
+        /// The meta fingerprint the fake server says it has; that of its meta population by default.
+        /// </summary>
+        public string MetaFingerprint { get; set; }
 
         public Dictionary<long, FakeObject> Objects { get; } = new Dictionary<long, FakeObject>();
 
@@ -104,7 +126,7 @@ namespace Tests.Workspace.Connection
                 }
             }
 
-            return new PullResponse
+            return this.Envelope(new PullResponse
             {
                 p = objects.Select(v => new PullResponseObject { i = v.Id, v = v.Version, g = v.Grants.OrderBy(w => w).ToArray(), r = v.Revocations.OrderBy(w => w).ToArray() }).ToArray(),
                 c = new Dictionary<string, long[]> { ["Pool"] = objects.Select(v => v.Id).ToArray() },
@@ -112,14 +134,14 @@ namespace Tests.Workspace.Connection
                 v = new Dictionary<string, object>(),
                 g = versionByGrant.Count > 0 ? versionByGrant.Select(v => new[] { v.Key, v.Value }).ToArray() : null,
                 r = versionByRevocation.Count > 0 ? versionByRevocation.Select(v => new[] { v.Key, v.Value }).ToArray() : null,
-            };
+            });
         }
 
         public SyncResponse Sync(SyncRequest request)
         {
             this.SyncRequests.Add(request);
 
-            return new SyncResponse
+            return this.Envelope(new SyncResponse
             {
                 o = request.o.Where(this.Objects.ContainsKey).Select(id => this.Objects[id]).Select(v => new SyncResponseObject
                 {
@@ -130,25 +152,25 @@ namespace Tests.Workspace.Connection
                     r = v.Revocations.OrderBy(w => w).ToArray(),
                     ro = v.Roles.Select(kvp => this.ToSyncResponseRole(kvp.Key, kvp.Value)).ToArray(),
                 }).ToArray(),
-            };
+            });
         }
 
         public AccessResponse Access(AccessRequest request)
         {
             this.AccessRequests.Add(request);
 
-            return new AccessResponse
+            return this.Envelope(new AccessResponse
             {
                 g = request.g?.Where(this.Grants.ContainsKey).Select(id => this.Grants[id]).Select(v => new AccessResponseGrant { i = v.Id, v = v.Version, p = v.Permissions.OrderBy(w => w).ToArray() }).ToArray(),
                 r = request.r?.Where(this.Revocations.ContainsKey).Select(id => this.Revocations[id]).Select(v => new AccessResponseRevocation { i = v.Id, v = v.Version, p = v.Permissions.OrderBy(w => w).ToArray() }).ToArray(),
-            };
+            });
         }
 
         public PermissionResponse Permission(PermissionRequest request)
         {
             this.PermissionRequests.Add(request);
 
-            return new PermissionResponse
+            return this.Envelope(new PermissionResponse
             {
                 p = request.p?.Where(this.Permissions.ContainsKey).Select(id => this.Permissions[id]).Select(v => new PermissionResponsePermission
                 {
@@ -157,14 +179,14 @@ namespace Tests.Workspace.Connection
                     t = v.OperandType is IRoleType roleType ? roleType.RelationType.Tag : ((IMethodType)v.OperandType).Tag,
                     o = (long)v.Operation,
                 }).ToArray(),
-            };
+            });
         }
 
         public PushResponse Push(PushRequest request)
         {
             this.PushRequests.Add(request);
 
-            var response = new PushResponse();
+            var response = this.Envelope(new PushResponse());
 
             if (request.o != null)
             {
@@ -206,7 +228,17 @@ namespace Tests.Workspace.Connection
         public InvokeResponse Invoke(InvokeRequest request)
         {
             this.InvokeRequests.Add(request);
-            return new InvokeResponse();
+            return this.Envelope(new InvokeResponse());
+        }
+
+        private T Envelope<T>(T response)
+            where T : Allors.Protocol.Json.Api.Response
+        {
+            response._db = this.DatabaseId;
+            response._u = this.UserId;
+            response._w = this.WorkspaceName;
+            response._f = this.MetaFingerprint;
+            return response;
         }
 
         private static bool Matches(PullRequest request, FakeObject @object)

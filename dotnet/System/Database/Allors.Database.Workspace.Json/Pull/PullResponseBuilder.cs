@@ -5,6 +5,7 @@
 
 namespace Allors.Database.Protocol.Json
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
@@ -23,6 +24,10 @@ namespace Allors.Database.Protocol.Json
         private readonly IUnitConvert unitConvert;
         private readonly IRanges<long> ranges;
         private readonly IDictionary<IClass, ISet<IPropertyType>> dependencies;
+
+        // Applied to every response this builder answers, whichever way Build returns: the Api
+        // uses it to put the envelope on the response of a named pull.
+        private readonly Action<PullResponse> complete;
 
         private readonly Dictionary<string, ISet<IObject>> collectionsByName = new Dictionary<string, ISet<IObject>>();
         private readonly Dictionary<string, IObject> objectByName = new Dictionary<string, IObject>();
@@ -45,11 +50,13 @@ namespace Allors.Database.Protocol.Json
             IRanges<long> ranges,
             IDictionary<IClass, ISet<IPropertyType>> dependencies,
             IPrefetchPolicyCache prefetchPolicyCache,
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken,
+            Action<PullResponse> complete = null)
         {
             this.unitConvert = unitConvert;
             this.ranges = ranges;
             this.dependencies = dependencies;
+            this.complete = complete;
             this.Transaction = transaction;
 
             this.AccessControl = accessControl;
@@ -180,6 +187,13 @@ namespace Allors.Database.Protocol.Json
         }
 
         public PullResponse Build(PullRequest pullRequest = null)
+        {
+            var pullResponse = this.BuildResponse(pullRequest);
+            this.complete?.Invoke(pullResponse);
+            return pullResponse;
+        }
+
+        private PullResponse BuildResponse(PullRequest pullRequest)
         {
             var pullResponse = new PullResponse();
 

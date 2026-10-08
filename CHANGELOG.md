@@ -11,6 +11,28 @@ Changes accumulate under **[Unreleased]** until a version is released.
 
 ### Added
 
+- Every response of the JSON protocol carries an envelope, and every request addresses one.
+  A response says which database (`_db`) and user (`_u`) it is from and which workspace name
+  (`_w`) and meta fingerprint (`_f`) the server used; `Api` fills them, on the response of a
+  named pull too. A request names the client's workspace (`_w`) and fingerprint (`_f`); the
+  server refuses a name or a fingerprint that is present and differs from its own, with the
+  reason in the error message, and serves a request that names neither, as the TypeScript
+  workspace does until it sends them. The meta fingerprint is `MetaFingerprint.Compute`, in
+  `Allors.Shared`: FNV-1a over the sorted tags of the composites, relation types and method
+  types of the workspace, which the server computes per workspace in `IMetaCache.
+  GetWorkspaceFingerprint` and a client from its generated workspace meta
+  (`IMetaPopulation.Fingerprint()`), so both sides agree without an identity on either meta
+  population. The .NET connection records the database and the user from its first response
+  and binds its cache to them; a later response from another database or as another user
+  faults the connection: the call throws with the reason, the cache is cleared, and the user
+  signs in again with a new connection. A response for another workspace name or another
+  fingerprint is refused before anything is stored, and so is a response without the
+  envelope. `IDatabaseConnection.DatabaseId` is a string, as `IDatabase.Id` is; `MetaFingerprint`
+  and `ClearAsync`, for signing out, are new. The sync, access and permission requests and
+  responses now derive from the protocol's `Request` and `Response` so that they carry the
+  envelope; a refusal of one of them throws at the connection, as they have no error channel
+  of their own. `EnvelopeTests` pins the server side on the `Api`, the client side on the
+  fake transport and, in `ConnectionTests`, on the three transports.
 - The workspace connection's cache can be shared by the connections of one user, and the
   default is one such cache per connection. `MemoryCache` keeps records, grants, revocations
   and permissions in concurrent dictionaries; a set keeps the newest version of an object, a

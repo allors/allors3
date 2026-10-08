@@ -9,6 +9,7 @@ namespace Allors.Workspace.Connection
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using Allors.Protocol.Json.Api;
     using Allors.Protocol.Json.Api.Pull;
     using Allors.Protocol.Json.Api.Push;
     using Allors.Protocol.Json.Api.Security;
@@ -25,6 +26,9 @@ namespace Allors.Workspace.Connection
     /// The connection over a transport. After a pull it brings the records of the pulled objects
     /// up to date: it syncs the objects whose version, grants or revocations differ from what it
     /// holds, requests the grants and revocations it lacks and then the permissions those name.
+    /// Every request names the workspace and the meta fingerprint the connection is built for;
+    /// every response is checked against them before anything is stored, and the first response
+    /// tells which database and user the connection is to, which no later response may change.
     /// Use it from one thread at a time.
     /// </summary>
     public sealed class DatabaseConnection : IDatabaseConnection
@@ -32,6 +36,8 @@ namespace Allors.Workspace.Connection
         private readonly ITransport transport;
         private readonly ICache cache;
         private readonly PushEncoder pushEncoder;
+
+        private string faultReason;
 
         public DatabaseConnection(string workspaceName, IMetaPopulation metaPopulation, ITransport transport, IRanges<long> ranges, ICache cache = null)
         {
@@ -53,6 +59,7 @@ namespace Allors.Workspace.Connection
                 }
             }
 
+            this.MetaFingerprint = metaPopulation.Fingerprint();
             this.cache = cache ?? new MemoryCache(workspaceName, metaPopulation);
             this.pushEncoder = new PushEncoder(this.cache, transport.UnitConvert, ranges);
         }
@@ -63,11 +70,13 @@ namespace Allors.Workspace.Connection
 
         public IMetaPopulation MetaPopulation { get; }
 
+        public string MetaFingerprint { get; }
+
         public IRanges<long> Ranges { get; }
 
         public ICache Cache => this.cache;
 
-        public long? DatabaseId { get; private set; }
+        public string DatabaseId { get; private set; }
 
         public long? UserId { get; private set; }
 
@@ -77,6 +86,8 @@ namespace Allors.Workspace.Connection
 
         public async Task<PullResult> PullAsync(Pull[] pulls, Procedure procedure = null)
         {
+            this.ThrowIfFaulted();
+
             pulls ??= Array.Empty<Pull>();
 
             foreach (var pull in pulls)
@@ -88,37 +99,48 @@ namespace Allors.Workspace.Connection
             }
 
             var unitConvert = this.transport.UnitConvert;
-            var pullRequest = new PullRequest
+            var pullRequest = this.Address(new PullRequest
             {
                 p = procedure?.ToJson(unitConvert),
                 l = pulls.Select(v => v.ToJson(unitConvert)).ToArray(),
-            };
+            });
 
             var pullResponse = await this.transport.PullAsync(pullRequest);
+            this.OnResponse(pullResponse);
             return await this.OnPullAsync(pullResponse);
         }
 
         public async Task<PullResult> PullAsync(string name, object args)
         {
+            this.ThrowIfFaulted();
+
+            // The arguments are the route's own; they carry no envelope, which the server
+            // tolerates.
             var pullResponse = await this.transport.PullAsync(name, args);
+            this.OnResponse(pullResponse);
             return await this.OnPullAsync(pullResponse);
         }
 
         public async Task<PushResult> PushAsync(PushNewObject[] newObjects, PushChangedObject[] changedObjects)
         {
-            var pushRequest = new PushRequest
+            this.ThrowIfFaulted();
+
+            var pushRequest = this.Address(new PushRequest
             {
                 n = newObjects?.Select(this.pushEncoder.ToJson).ToArray(),
                 o = changedObjects?.Select(this.pushEncoder.ToJson).ToArray(),
-            };
+            });
 
             var pushResponse = await this.transport.PushAsync(pushRequest);
+            this.OnResponse(pushResponse);
             return new PushResult(this.MetaPopulation, pushResponse);
         }
 
         public async Task<InvokeResult> InvokeAsync(Invocation[] invocations, InvokeOptions options = null)
         {
-            var invokeRequest = new JsonInvokeRequest
+            this.ThrowIfFaulted();
+
+            var invokeRequest = this.Address(new JsonInvokeRequest
             {
                 l = invocations.Select(v => new JsonInvocation
                 {
@@ -133,10 +155,83 @@ namespace Allors.Workspace.Connection
                         i = options.Isolated,
                     }
                     : null,
-            };
+            });
 
             var invokeResponse = await this.transport.InvokeAsync(invokeRequest);
+            this.OnResponse(invokeResponse);
             return new InvokeResult(this.MetaPopulation, invokeResponse);
+        }
+
+        public Task ClearAsync()
+        {
+            this.cache.Clear();
+            return Task.CompletedTask;
+        }
+
+        private void ThrowIfFaulted()
+        {
+            if (this.faultReason != null)
+            {
+                throw new InvalidOperationException(this.faultReason);
+            }
+        }
+
+        private T Address<T>(T request)
+            where T : Request
+        {
+            request._w = this.WorkspaceName;
+            request._f = this.MetaFingerprint;
+            return request;
+        }
+
+        /// <summary>
+        /// Checks the envelope of a response before anything of it is stored: the server must
+        /// identify itself, serve this connection's workspace and meta, and stay the database
+        /// and the user of the first response.
+        /// </summary>
+        private void OnResponse(Response response)
+        {
+            if (response == null)
+            {
+                throw new InvalidOperationException("The server sent no response.");
+            }
+
+            if (response._db == null || response._u == null || response._w == null || response._f == null)
+            {
+                throw new InvalidOperationException("The server did not identify itself: its response carries no database id, user id, workspace name or meta fingerprint. This connection needs a server that sends them with every response; upgrade the server.");
+            }
+
+            if (!string.Equals(response._w, this.WorkspaceName, StringComparison.Ordinal))
+            {
+                throw new InvalidOperationException($"The server serves workspace '{response._w}' where this connection is for workspace '{this.WorkspaceName}'. Connect to the host that serves '{this.WorkspaceName}', or build the connection for '{response._w}'.{this.ServerSaid(response)}");
+            }
+
+            if (!string.Equals(response._f, this.MetaFingerprint, StringComparison.Ordinal))
+            {
+                throw new InvalidOperationException($"The server's workspace '{response._w}' has meta fingerprint {response._f} where this connection's meta population has {this.MetaFingerprint}: the client's workspace meta was generated from another version of the domain. Regenerate the workspace meta from the server's repository and rebuild the client.{this.ServerSaid(response)}");
+            }
+
+            if (this.DatabaseId == null)
+            {
+                this.cache.Bind(new CacheKey(response._db, response._u.Value, this.WorkspaceName, this.MetaFingerprint));
+                this.DatabaseId = response._db;
+                this.UserId = response._u;
+                return;
+            }
+
+            if (!string.Equals(response._db, this.DatabaseId, StringComparison.Ordinal) || response._u != this.UserId)
+            {
+                this.Fault($"The connection was to user {this.UserId} of database '{this.DatabaseId}' and the server now answers as user {response._u} of database '{response._db}': the sign-in changed under the connection. Its cache is cleared; sign in again with a new connection.");
+            }
+        }
+
+        private string ServerSaid(Response response) => string.IsNullOrWhiteSpace(response._e) ? string.Empty : $" The server said: {response._e}";
+
+        private void Fault(string reason)
+        {
+            this.faultReason = reason;
+            this.cache.Clear();
+            throw new InvalidOperationException(reason);
         }
 
         private async Task<PullResult> OnPullAsync(PullResponse pullResponse)
@@ -157,16 +252,22 @@ namespace Allors.Workspace.Connection
                 return;
             }
 
-            var syncResponse = await this.transport.SyncAsync(syncRequest);
+            var syncResponse = await this.transport.SyncAsync(this.Address(syncRequest));
+            this.OnResponse(syncResponse);
+            this.ThrowIfRefused(syncResponse, "sync");
             var (accessRequest, replaced) = this.OnSyncResponse(syncResponse);
 
             if (accessRequest != null)
             {
-                var accessResponse = await this.transport.AccessAsync(accessRequest);
+                var accessResponse = await this.transport.AccessAsync(this.Address(accessRequest));
+                this.OnResponse(accessResponse);
+                this.ThrowIfRefused(accessResponse, "access");
                 var permissionRequest = this.OnAccessResponse(accessResponse);
                 if (permissionRequest != null)
                 {
-                    var permissionResponse = await this.transport.PermissionAsync(permissionRequest);
+                    var permissionResponse = await this.transport.PermissionAsync(this.Address(permissionRequest));
+                    this.OnResponse(permissionResponse);
+                    this.ThrowIfRefused(permissionResponse, "permission");
                     this.OnPermissionResponse(permissionResponse);
                 }
             }
@@ -174,6 +275,16 @@ namespace Allors.Workspace.Connection
             foreach (var record in replaced)
             {
                 this.RecordChanged?.Invoke(this, new RecordChangedEventArgs(record));
+            }
+        }
+
+        // A sync, access or permission response has no error channel of its own: an error
+        // message on one is the server refusing the request.
+        private void ThrowIfRefused(Response response, string call)
+        {
+            if (response.HasErrors)
+            {
+                throw new InvalidOperationException($"The server refused the {call} request: {response._e}");
             }
         }
 

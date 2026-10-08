@@ -24,11 +24,18 @@ namespace Allors.Workspace.Connection
     {
         /// <summary>
         /// The name of the workspace the server serves: it decides which classes and roles the
-        /// records carry.
+        /// records carry. Every request names it; a server that serves another workspace is
+        /// refused.
         /// </summary>
         string WorkspaceName { get; }
 
         IMetaPopulation MetaPopulation { get; }
+
+        /// <summary>
+        /// The fingerprint of <see cref="MetaPopulation"/>. Every request names it; a server
+        /// whose meta for the workspace has another fingerprint is refused.
+        /// </summary>
+        string MetaFingerprint { get; }
 
         IRanges<long> Ranges { get; }
 
@@ -39,14 +46,15 @@ namespace Allors.Workspace.Connection
         ICache Cache { get; }
 
         /// <summary>
-        /// The id of the database the server serves, once the server has said so in a response;
-        /// null until then.
+        /// The id of the database the server serves, from the server's first response; null
+        /// until then. A later response from another database faults the connection.
         /// </summary>
-        long? DatabaseId { get; }
+        string DatabaseId { get; }
 
         /// <summary>
-        /// The id of the user the server serves this connection as, once the server has said so
-        /// in a response; null until then.
+        /// The id of the user the server serves this connection as, from the server's first
+        /// response; null until then. A later response as another user faults the connection:
+        /// every call throws, the cache is cleared, and the user signs in with a new connection.
         /// </summary>
         long? UserId { get; }
 
@@ -86,5 +94,11 @@ namespace Allors.Workspace.Connection
         Task<PushResult> PushAsync(PushNewObject[] newObjects, PushChangedObject[] changedObjects);
 
         Task<InvokeResult> InvokeAsync(Invocation[] invocations, InvokeOptions options = null);
+
+        /// <summary>
+        /// Forgets the user's view: the cache, and what was persisted of it. For when the user
+        /// signs out.
+        /// </summary>
+        Task ClearAsync();
     }
 }

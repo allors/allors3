@@ -5,7 +5,7 @@
 
 namespace Allors.Protocol.Json.Api.Sync
 {
-    public class SyncResponse
+    public class SyncResponse : Response
     {
         /// <summary>
         /// Objects
