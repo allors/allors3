@@ -54,6 +54,10 @@ Changes accumulate under **[Unreleased]** until a version is released.
   The platform's providers, on a file or SQLite for .NET and on IndexedDB for TypeScript, come
   in a wave of their own; `PersistenceTests` on the fake transport and `ConnectionTests` on
   the three transports use the in-memory `MemoryPersistenceProvider` of the test projects.
+  The TypeScript connection has the same provider interface, `IPersistenceProvider` with
+  `load`, `store`, `remove` and `clear` over `CacheEntries` and `CacheEntryIds`, given through
+  the `persistence` option of `DatabaseConnection`, with the same restore-then-ask flow and
+  the same tests over the fake server and the Core test server.
 - The workspace connection's cache can be shared by the connections of one user, and the
   default is one such cache per connection. `MemoryCache` keeps records, grants, revocations
   and permissions in concurrent dictionaries; a set keeps the newest version of an object, a

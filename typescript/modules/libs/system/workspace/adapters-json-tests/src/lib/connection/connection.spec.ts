@@ -10,6 +10,10 @@ import {
 } from '@allors/system/workspace/connection';
 import { LazyMetaPopulation } from '@allors/system/workspace/meta-json';
 import { data } from '@allors/default/workspace/meta-json';
+import {
+  CountingTransport,
+  MemoryPersistenceProvider,
+} from '@allors/system/workspace/adapters-tests';
 import { Fixture, name_c1A, name_c1B, name_c1C } from '../fixture';
 
 // The contract of the connection, exercised without a session, as the .NET ConnectionTests
@@ -24,6 +28,21 @@ beforeEach(async () => {
 });
 
 const upper = (name: string) => name.toUpperCase();
+
+const createPersistedConnection = (provider: MemoryPersistenceProvider) => {
+  const template = fixture.createConnection('administrator');
+  const transport = new CountingTransport(fixture.createTransport('administrator'));
+  const connection = new DatabaseConnection(
+    template.workspaceName,
+    template.metaPopulation,
+    transport,
+    {
+      cache: new MemoryCache(template.workspaceName, template.metaPopulation),
+      persistence: provider,
+    }
+  );
+  return { connection, transport };
+};
 
 test('pullByExtentAnswersIdsAndLeavesRecords', async () => {
   const { m } = fixture;
@@ -487,4 +506,97 @@ test('aRevocationWhoseVersionChangedIsRequestedAgain', async () => {
   for (const id of result.pool) {
     expect(connection.getRecord(id).isPermitted(read)).toBe(false);
   }
+});
+
+test('aPullIsPersistedAndANewConnectionRestoresItWithoutAskingTheServer', async () => {
+  const { m } = fixture;
+  const provider = new MemoryPersistenceProvider();
+
+  const { connection: first, transport: firstTransport } = createPersistedConnection(provider);
+  const pull: Pull = { extent: { kind: 'Filter', objectType: m.C1 } };
+  const result = await first.pull([pull]);
+  const write = first.getPermission(m.C1, m.C1.C1AllorsString, Operations.Write);
+
+  expect(result.pool.length).toBeGreaterThan(0);
+  expect(firstTransport.syncCount).toBe(1);
+  expect([...provider.objects(first.cache.key).keys()].sort()).toEqual(
+    [...result.pool].sort()
+  );
+
+  const { connection: second, transport: secondTransport } = createPersistedConnection(provider);
+  const restored = await second.pull([pull]);
+
+  expect([...restored.pool].sort()).toEqual([...result.pool].sort());
+  expect(secondTransport.syncCount).toBe(0);
+  expect(secondTransport.accessCount).toBe(0);
+  expect(secondTransport.permissionCount).toBe(0);
+  expect(second.getPermission(m.C1, m.C1.C1AllorsString, Operations.Write)).toBe(write);
+
+  for (const id of result.pool) {
+    const original = first.getRecord(id);
+    const record = second.getRecord(id);
+    expect(record).toBeDefined();
+    expect(record.cls).toBe(original.cls);
+    expect(record.version).toBe(original.version);
+    expect(record.getRole(m.C1.C1AllorsString)).toEqual(
+      original.getRole(m.C1.C1AllorsString)
+    );
+    expect(record.getRole(m.C1.C1C1Many2Manies)).toEqual(
+      original.getRole(m.C1.C1C1Many2Manies)
+    );
+    expect(record.grantIds).toEqual(original.grantIds);
+    expect(record.isPermitted(write)).toBe(true);
+  }
+});
+
+test('aChangedObjectIsSyncedAndTheRestRestored', async () => {
+  const { m } = fixture;
+  const provider = new MemoryPersistenceProvider();
+
+  const { connection: first } = createPersistedConnection(provider);
+  const pull: Pull = { extent: { kind: 'Filter', objectType: m.C1 } };
+  const result = await first.pull([pull]);
+  const id = result.collections
+    .get(upper(m.C1.pluralName))
+    .find((v) => first.getRecord(v).getRole(m.C1.Name) === name_c1A);
+
+  const pushed = await first.push(null, [
+    {
+      id,
+      version: first.getRecord(id).version,
+      roles: [{ roleType: m.C1.C1AllorsString, value: 'persisted' }],
+    },
+  ]);
+  expect(pushed.hasErrors).toBeFalsy();
+
+  const { connection: second, transport: secondTransport } = createPersistedConnection(provider);
+  await second.pull([pull]);
+
+  expect(secondTransport.syncCount).toBe(1);
+  expect(secondTransport.lastSyncRequest.o).toEqual([id]);
+  expect(second.getRecord(id).getRole(m.C1.C1AllorsString)).toBe('persisted');
+  expect(provider.objects(second.cache.key).get(id).v).toBe(second.getRecord(id).version);
+});
+
+test('clearForgetsThePersistedView', async () => {
+  const { m } = fixture;
+  const provider = new MemoryPersistenceProvider();
+
+  const { connection: first } = createPersistedConnection(provider);
+  const pull: Pull = { extent: { kind: 'Filter', objectType: m.C1 } };
+  const result = await first.pull([pull]);
+  const key = first.cache.key;
+  expect(provider.objects(key).size).toBeGreaterThan(0);
+
+  await first.clear();
+
+  expect(provider.objects(key).size).toBe(0);
+  for (const id of result.pool) {
+    expect(first.getRecord(id)).toBeUndefined();
+  }
+
+  const { connection: second, transport: secondTransport } = createPersistedConnection(provider);
+  await second.pull([pull]);
+  expect(secondTransport.syncCount).toBe(1);
+  expect([...secondTransport.lastSyncRequest.o].sort()).toEqual([...result.pool].sort());
 });

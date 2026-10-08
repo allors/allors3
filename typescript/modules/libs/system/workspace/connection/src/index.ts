@@ -53,6 +53,11 @@ export * from './lib/invoke-options';
 export * from './lib/meta-fingerprint';
 export * from './lib/operations';
 export * from './lib/permission';
+export {
+  CacheEntries,
+  CacheEntryIds,
+  IPersistenceProvider,
+} from './lib/persistence/persistence-provider';
 export * from './lib/push/push-changed-object';
 export * from './lib/push/push-new-object';
 export * from './lib/push/role-change';

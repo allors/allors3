@@ -41,6 +41,11 @@ import {
 } from './json/to-json';
 import { Operations } from './operations';
 import { Permission } from './permission';
+import {
+  CacheEntries,
+  IPersistenceProvider,
+  isEmpty,
+} from './persistence/persistence-provider';
 import { PushChangedObject } from './push/push-changed-object';
 import { PushNewObject } from './push/push-new-object';
 import { IRecord, Record } from './record';
@@ -90,6 +95,12 @@ export interface DatabaseConnectionOptions {
    * absent.
    */
   ranges?: Ranges<number>;
+
+  /**
+   * Keeps the user's view beyond the cache, so that a later connection of the user restores
+   * what the server already sent instead of asking for it again; none when absent.
+   */
+  persistence?: IPersistenceProvider;
 }
 
 /**
@@ -189,7 +200,9 @@ export interface IDatabaseConnection {
  * The connection over a transport. After a pull it brings the records of the pulled objects
  * up to date: it syncs the objects whose version, grants or revocations differ from what it
  * holds, requests the grants and revocations it lacks or holds at another version than the
- * pull advertises, and then the permissions those name. Every request names the workspace and the meta fingerprint the connection is built for;
+ * pull advertises, and then the permissions those name; with a persistence provider it
+ * restores from there first what the provider holds at the versions the pull advertises, and
+ * stores what the server sent before the pull returns. Every request names the workspace and the meta fingerprint the connection is built for;
  * every response is checked against them before anything is stored, and the first response
  * tells which database and user the connection is to, which no later response may change.
  */
@@ -201,6 +214,8 @@ export class DatabaseConnection implements IDatabaseConnection {
   readonly cache: ICache;
 
   private readonly pushEncoder: PushEncoder;
+
+  private readonly persistence: IPersistenceProvider | null;
 
   private readonly recordChangedEmitter = new Emitter<RecordChangedEvent>();
 
@@ -246,6 +261,7 @@ export class DatabaseConnection implements IDatabaseConnection {
     this.metaFingerprint = metaPopulationFingerprint(metaPopulation);
     this.ranges = options?.ranges ?? new DefaultNumberRanges();
     this.cache = cache ?? new MemoryCache(workspaceName, metaPopulation);
+    this.persistence = options?.persistence ?? null;
     this.pushEncoder = new PushEncoder(this.cache, this.ranges);
   }
 
@@ -348,7 +364,12 @@ export class DatabaseConnection implements IDatabaseConnection {
   }
 
   async clear(): Promise<void> {
+    const key = this.cache.key;
     this.cache.clear();
+
+    if (this.persistence != null && key != null) {
+      await this.persistence.clear(key);
+    }
   }
 
   private throwIfFaulted(): void {
@@ -437,12 +458,34 @@ export class DatabaseConnection implements IDatabaseConnection {
   }
 
   private async sync(response: PullResponse, context: string | undefined) {
+    const key = this.cache.key;
     const ctx = new ResponseContext(this.cache);
     const replaced: IRecord[] = [];
+    const received: CacheEntries | null = this.persistence != null ? {} : null;
 
     // The objects to bring up to date: absent from the cache, or held at another version or
-    // with other grants or revocations than the pull advertises.
-    const staleObjectIds = this.staleObjectIds(response);
+    // with other grants or revocations than the pull advertises. The provider's copy is taken
+    // when it is the one the pull advertises; the server is asked for the rest.
+    let staleObjectIds = this.staleObjectIds(response);
+    if (staleObjectIds.length > 0 && this.persistence != null) {
+      const loaded = await this.persistence.load(key, { objects: staleObjectIds });
+      if (loaded?.objects != null) {
+        const advertisedById = new Map((response.p ?? []).map((v) => [v.i, v]));
+        const accepted = loaded.objects.filter((v) => {
+          const advertised = advertisedById.get(v.i);
+          return (
+            advertised != null &&
+            v.v === advertised.v &&
+            this.ranges.equals(loadRange(this.ranges, v.g), loadRange(this.ranges, advertised.g)) &&
+            this.ranges.equals(loadRange(this.ranges, v.r), loadRange(this.ranges, advertised.r))
+          );
+        });
+        this.storeRecords(accepted, ctx, replaced);
+      }
+
+      staleObjectIds = this.staleObjectIds(response);
+    }
+
     if (staleObjectIds.length > 0) {
       const syncResponse = await this.transport.sync(
         this.address<SyncRequest>({ x: context, o: staleObjectIds })
@@ -450,6 +493,10 @@ export class DatabaseConnection implements IDatabaseConnection {
       await this.onResponse(syncResponse);
       this.throwIfRefused(syncResponse, 'sync');
       this.storeRecords(syncResponse.o, ctx, replaced);
+
+      if (received != null) {
+        received.objects = syncResponse.o;
+      }
     }
 
     // The grants and revocations to bring up to date: the ones the new records name that
@@ -458,27 +505,81 @@ export class DatabaseConnection implements IDatabaseConnection {
     this.collectStaleAccess(response, ctx);
 
     if (ctx.missingGrantIds.size > 0 || ctx.missingRevocationIds.size > 0) {
-      const accessResponse = await this.transport.access(
-        this.address<AccessRequest>({
-          g: [...ctx.missingGrantIds],
-          r: [...ctx.missingRevocationIds],
-        })
-      );
-      await this.onResponse(accessResponse);
-      this.throwIfRefused(accessResponse, 'access');
-      const missingPermissionIds = this.storeAccess(
-        accessResponse.g,
-        accessResponse.r
-      );
+      const missingPermissionIds = new Set<number>();
 
-      if (missingPermissionIds != null) {
-        const permissionResponse = await this.transport.permission(
-          this.address<PermissionRequest>({ p: [...missingPermissionIds] })
+      if (this.persistence != null) {
+        const loaded = await this.persistence.load(key, {
+          grants: [...ctx.missingGrantIds],
+          revocations: [...ctx.missingRevocationIds],
+        });
+
+        const versionByGrant = toVersionById(response.g);
+        const versionByRevocation = toVersionById(response.r);
+        const acceptedGrants = (loaded?.grants ?? []).filter(
+          (v) => versionByGrant.get(v.i) === v.v
         );
-        await this.onResponse(permissionResponse);
-        this.throwIfRefused(permissionResponse, 'permission');
-        this.storePermissions(permissionResponse.p);
+        const acceptedRevocations = (loaded?.revocations ?? []).filter(
+          (v) => versionByRevocation.get(v.i) === v.v
+        );
+
+        this.storeAccess(acceptedGrants, acceptedRevocations, missingPermissionIds);
+        for (const grant of acceptedGrants) {
+          ctx.missingGrantIds.delete(grant.i);
+        }
+
+        for (const revocation of acceptedRevocations) {
+          ctx.missingRevocationIds.delete(revocation.i);
+        }
       }
+
+      if (ctx.missingGrantIds.size > 0 || ctx.missingRevocationIds.size > 0) {
+        const accessResponse = await this.transport.access(
+          this.address<AccessRequest>({
+            g: [...ctx.missingGrantIds],
+            r: [...ctx.missingRevocationIds],
+          })
+        );
+        await this.onResponse(accessResponse);
+        this.throwIfRefused(accessResponse, 'access');
+        this.storeAccess(accessResponse.g, accessResponse.r, missingPermissionIds);
+
+        if (received != null) {
+          received.grants = accessResponse.g;
+          received.revocations = accessResponse.r;
+        }
+      }
+
+      if (missingPermissionIds.size > 0) {
+        if (this.persistence != null) {
+          const loaded = await this.persistence.load(key, {
+            permissions: [...missingPermissionIds],
+          });
+          if (loaded?.permissions != null) {
+            this.storePermissions(loaded.permissions);
+            for (const permission of loaded.permissions) {
+              missingPermissionIds.delete(permission.i);
+            }
+          }
+        }
+
+        if (missingPermissionIds.size > 0) {
+          const permissionResponse = await this.transport.permission(
+            this.address<PermissionRequest>({ p: [...missingPermissionIds] })
+          );
+          await this.onResponse(permissionResponse);
+          this.throwIfRefused(permissionResponse, 'permission');
+          this.storePermissions(permissionResponse.p);
+
+          if (received != null) {
+            received.permissions = permissionResponse.p;
+          }
+        }
+      }
+    }
+
+    // What the server sent is kept before the pull returns.
+    if (received != null && !isEmpty(received)) {
+      await this.persistence.store(key, received);
     }
 
     for (const record of replaced) {
@@ -557,18 +658,14 @@ export class DatabaseConnection implements IDatabaseConnection {
 
   private storeAccess(
     grants: AccessResponseGrant[] | null | undefined,
-    revocations: AccessResponseRevocation[] | null | undefined
-  ): Set<number> | null {
-    let missingPermissionIds: Set<number> | null = null;
-
+    revocations: AccessResponseRevocation[] | null | undefined,
+    missingPermissionIds: Set<number>
+  ): void {
     const collectMissingPermissions = (permissionIds: number[] | undefined) => {
       for (const permissionId of permissionIds ?? []) {
-        if (this.cache.hasPermission(permissionId)) {
-          continue;
+        if (!this.cache.hasPermission(permissionId)) {
+          missingPermissionIds.add(permissionId);
         }
-
-        missingPermissionIds ??= new Set<number>();
-        missingPermissionIds.add(permissionId);
       }
     };
 
@@ -598,8 +695,6 @@ export class DatabaseConnection implements IDatabaseConnection {
         collectMissingPermissions(permissionIds);
       }
     }
-
-    return missingPermissionIds;
   }
 
   private storePermissions(
@@ -630,6 +725,10 @@ export class DatabaseConnection implements IDatabaseConnection {
       );
     }
   }
+}
+
+function toVersionById(pairs: number[][] | null | undefined): Map<number, number> {
+  return new Map((pairs ?? []).map(([id, version]) => [id, version]));
 }
 
 function serverSaid(response: Response): string {
