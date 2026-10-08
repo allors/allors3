@@ -5,7 +5,6 @@
 
 namespace Tests.Workspace.Local
 {
-    using System;
     using System.Linq;
     using System.Threading.Tasks;
     using Allors.Database;
@@ -15,29 +14,33 @@ namespace Tests.Workspace.Local
     using Allors.Database.Services;
     using Allors.Ranges;
     using Allors.Workspace;
-    using Allors.Workspace.Adapters;
+    using Allors.Workspace.Connection;
+    using Allors.Workspace.Connection.Local;
     using Allors.Workspace.Derivations;
     using Allors.Workspace.Domain;
     using Allors.Workspace.Meta;
     using Allors.Workspace.Meta.Lazy;
-    using Configuration = Allors.Workspace.Adapters.Remote.Configuration;
-    using DatabaseConnection = Allors.Workspace.Adapters.Local.DatabaseConnection;
+    using Allors.Workspace.Session;
+    using IObjectFactory = Allors.Workspace.IObjectFactory;
     using IWorkspaceServices = Allors.Workspace.IWorkspaceServices;
     using Person = Allors.Workspace.Domain.Person;
     using User = Allors.Database.Domain.User;
 
     public class Profile : IProfile
     {
-        private readonly Func<IWorkspaceServices> servicesBuilder;
+        private const string WorkspaceName = "Default";
+
         private readonly IdGenerator idGenerator;
         private readonly DefaultStructRanges<long> ranges;
-        private readonly Configuration configuration;
+        private readonly M metaPopulation;
+        private readonly IObjectFactory objectFactory;
+        private readonly IRule[] rules;
 
         private User user;
 
         public Database Database { get; }
 
-        public DatabaseConnection DatabaseConnection { get; private set; }
+        public IDatabaseConnection DatabaseConnection { get; private set; }
 
         IWorkspace IProfile.Workspace => this.Workspace;
 
@@ -47,14 +50,12 @@ namespace Tests.Workspace.Local
 
         public Profile(Fixture fixture)
         {
-            this.servicesBuilder = () => new WorkspaceServices();
             this.idGenerator = new IdGenerator();
             this.ranges = new DefaultStructRanges<long>();
 
-            var metaPopulation = new MetaBuilder().Build();
-            var objectFactory = new ReflectionObjectFactory(metaPopulation, typeof(Person));
-            var rules = new IRule[] { new PersonSessionFullNameRule(metaPopulation) };
-            this.configuration = new Configuration("Default", metaPopulation, objectFactory, rules);
+            this.metaPopulation = new MetaBuilder().Build();
+            this.objectFactory = new ReflectionObjectFactory(this.metaPopulation, typeof(Person));
+            this.rules = new IRule[] { new PersonSessionFullNameRule(this.metaPopulation) };
 
             this.Database = new Database(
                 new DefaultDatabaseServices(fixture.Engine),
@@ -83,13 +84,9 @@ namespace Tests.Workspace.Local
 
         public Task DisposeAsync() => Task.CompletedTask;
 
-        public IWorkspace CreateExclusiveWorkspace()
-        {
-            var database = new DatabaseConnection(this.configuration, this.servicesBuilder, this.Database, this.user.Id, this.idGenerator, this.ranges);
-            return database.CreateWorkspace();
-        }
+        public IWorkspace CreateExclusiveWorkspace() => this.CreateWorkspace(this.CreateConnection());
 
-        public IWorkspace CreateWorkspace() => this.DatabaseConnection.CreateWorkspace();
+        public IWorkspace CreateWorkspace() => this.CreateWorkspace(this.DatabaseConnection);
 
         public Task Login(string userName)
         {
@@ -97,11 +94,16 @@ namespace Tests.Workspace.Local
             var uniqueId = Users.TestUserId(userName);
             this.user = new Users(transaction).Extent().ToArray().First(v => v.UniqueId == uniqueId);
 
-            this.DatabaseConnection = new DatabaseConnection(this.configuration, this.servicesBuilder, this.Database, this.user.Id, this.idGenerator, this.ranges);
-
-            this.Workspace = this.DatabaseConnection.CreateWorkspace();
+            this.DatabaseConnection = this.CreateConnection();
+            this.Workspace = this.CreateWorkspace(this.DatabaseConnection);
 
             return Task.CompletedTask;
         }
+
+        private DatabaseConnection CreateConnection() =>
+            new DatabaseConnection(WorkspaceName, this.metaPopulation, new LocalTransport(this.Database, this.user.Id, WorkspaceName), this.ranges);
+
+        private Workspace CreateWorkspace(IDatabaseConnection connection) =>
+            new Workspace(connection, this.objectFactory, this.rules, new WorkspaceServices(), this.idGenerator);
     }
 }

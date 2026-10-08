@@ -241,16 +241,50 @@ Changes accumulate under **[Unreleased]** until a version is released.
   These rules were part of `AddAllorsIdentity`. One difference for an application with the
   Identity plug-in: outside the Allors API the cookie now follows ASP.NET Core's own rule, which
   answers 401 for an endpoint marked as an API, where the plug-in redirected every request.
-- The local workspace adapter is an in-process transport. `Allors.Workspace.Adapters.Local.
-  DatabaseConnection` is a `Remote.DatabaseConnection` that sends the same requests and receives
-  the same responses as the HTTP connections, served by the server's `Api` on a transaction of
-  its `IDatabase`, as the user whose id it holds, without a wire; it takes a
-  `Remote.Configuration` and creates the Remote workspace and session. Its own session,
-  strategy, records and pull, push and invoke executors are gone, with the project
-  `Allors.Workspace.Protocol.Direct` that only they used. Records arrive in the server's order,
-  sorted by id, as over HTTP. A named pull, `CallAsync(args, name)`, throws
-  `NotSupportedException` with the reason instead of `NotImplementedException`: the name is a
-  route of the server.
+- The .NET workspace is two libraries with one contract between them, breaking for every
+  bootstrap: `Allors.Workspace.Connection` below and `Allors.Workspace.Session` above, in place
+  of the five `Allors.Workspace.Adapters*` projects and `Allors.Workspace.Protocol.Json`.
+  - The connection is the full contract between the workspace and the database, reads and
+    writes alike, in ids, versions, meta types and role values, without objects.
+    `IDatabaseConnection` pulls by the query model, keeps what it receives as records, grants,
+    revocations and permissions, pushes new objects (workspace id, class, roles) and changed
+    objects (id, version, roles) and invokes methods (id, version, method type). After a pull it
+    runs the sync, access and permission flow itself, which the session ran before. It raises
+    `RecordChanged` for every record a pull replaced, once the records, grants and permissions
+    of the pull are in; nothing listens yet. It takes an `ICache` for what it keeps, with a
+    private plain-dictionary default, and shows `DatabaseId` and `UserId` for the facts the
+    server will send with every response, null until then. Use a connection from one thread at
+    a time.
+  - A transport carries the wire: `ITransport` with the six protocol calls, the unit converter
+    and a `ServerMessages` stream slot, null for HTTP. The transports are
+    `Connection.Remote.SystemText.HttpTransport`, `Connection.Remote.Newtonsoft.HttpTransport`
+    and `Connection.Local.LocalTransport`, the in-process one over the server's `Api`. Only the
+    connection and its transports see the protocol classes; the session and the domain
+    libraries compile without them.
+  - The query model moved from `Allors.Workspace.Domain` into the connection library, keeping
+    the namespace `Allors.Workspace.Data`. `Pull.Object`, `Equals.Object`, `Contains.Object`,
+    `ContainedIn.Objects` and the collections, objects and pool of a `Procedure` take
+    `IIdentifiable`, the new interface with only an `Id`, which `IObject` extends.
+    `Node.Resolve` and `IPropertyType.Get(IStrategy)` stay in the domain library as extension
+    methods. The translation to JSON, the push encoding included, lives in the connection
+    library.
+  - The session library holds `Workspace`, `Session`, `Strategy`, the origin states, the change
+    set, the trackers, the results and `ReflectionObjectFactory`; each abstract class and its
+    Remote subclass are one class now. A bootstrap creates the connection and the workspace
+    itself, `new DatabaseConnection(name, metaPopulation, transport, ranges)` and
+    `new Workspace(connection, objectFactory, rules, services, idGenerator)`;
+    `CreateWorkspace()` and the `Configuration` class are gone. The name and the meta
+    population are the connection's, the object factory and the rules the workspace's;
+    `IWorkspace.Configuration` shows all four as before. The `IdGenerator` belongs to the
+    workspace, not to the connection.
+- The local workspace adapter is an in-process transport. `Allors.Workspace.Connection.Local.
+  LocalTransport` sends the same requests and receives the same responses as the HTTP
+  transports, served by the server's `Api` on a transaction of its `IDatabase`, as the user
+  whose id it holds, without a wire. The local adapter's own session, strategy, records and
+  pull, push and invoke executors are gone, with the project `Allors.Workspace.Protocol.Direct`
+  that only they used. Records arrive in the server's order, sorted by id, as over HTTP. A named
+  pull, `CallAsync(args, name)`, throws `NotSupportedException` with the reason instead of
+  `NotImplementedException`: the name is a route of the server.
 - `Api`, the entry point of the JSON protocol that the controllers call, moved from the Core
   server into `Allors.Database.Workspace.Json` together with its tracing events, so that the
   controllers of every host and the in-process connection call one class. It keeps the namespace
@@ -303,9 +337,9 @@ Changes accumulate under **[Unreleased]** until a version is released.
   2.1.277.
 - Dependabot version updates for the GitHub Actions used in the workflows. Action versions are
   updated by hand.
-- `DatabaseConnection.UserId` of `Allors.Workspace.Adapters.Remote` and of its two HTTP
-  connections, which was always null. The in-process connection has a `UserId` of its own: the
-  id of the user it serves.
+- `UserId` of the remote workspace connection and of its two HTTP connections, which was always
+  null. The in-process transport, `LocalTransport`, has a `UserId` of its own: the id of the
+  user it serves.
 
 ### Fixed
 
@@ -411,5 +445,5 @@ Changes accumulate under **[Unreleased]** until a version is released.
 - The local workspace adapter honours revocations. It passed the ids of the revocations where
   its record expected the ids of the denied permissions, so a permission that a revocation
   denied stayed permitted: `CanWrite` was true on the `Denied` object whose write permission the
-  test population revokes. The in-process connection shares the server's evaluation.
-  `SecurityTests.WithRevocation` pins it on the three adapters.
+  test population revokes. The in-process transport shares the server's evaluation.
+  `SecurityTests.WithRevocation` pins it on the three transports.

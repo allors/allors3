@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Protocol\Allors.Protocol.Json.Newtonsoft\Allors.Protocol.Json.Newtonsoft.csproj" />
+    <ProjectReference Include="..\Allors.Workspace.Connection\Allors.Workspace.Connection.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Net.Http" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageReference Include="Polly" Version="8.6.6" />
+  </ItemGroup>
+
+</Project>

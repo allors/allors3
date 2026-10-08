@@ -5,19 +5,16 @@
 
 namespace Allors.Workspace
 {
-    public interface IObject
+    /// <summary>
+    /// An object of a session. Its id, from <see cref="IIdentifiable"/>, is negative for
+    /// <ul>
+    /// <li>a database object that is new and has never been pushed</li>
+    /// <li>a workspace or session object</li>
+    /// </ul>
+    /// and positive for a database object that has been pulled.
+    /// </summary>
+    public interface IObject : IIdentifiable
     {
-        /// <summary>
-        /// The id of the object.
-        /// The id is negative
-        /// <ul>
-        /// <li>a database object is new and has never been pushed</li>
-        /// <li>a workspace or session object</li>
-        /// </ul>
-        /// The id is positive for database objects that have been pulled
-        /// </summary>
-        long Id { get; }
-
         IStrategy Strategy { get; }
     }
 }

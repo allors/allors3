@@ -115,17 +115,14 @@
     <Project Path="System/Store/Allors.Store/Allors.Store.csproj" />
   </Folder>
   <Folder Name="/System/Workspace/">
+    <Project Path="System/Workspace/Allors.Workspace.Connection.Local/Allors.Workspace.Connection.Local.csproj" />
+    <Project Path="System/Workspace/Allors.Workspace.Connection.Remote.Newtonsoft/Allors.Workspace.Connection.Remote.Newtonsoft.csproj" />
+    <Project Path="System/Workspace/Allors.Workspace.Connection.Remote.SystemText/Allors.Workspace.Connection.Remote.SystemText.csproj" />
+    <Project Path="System/Workspace/Allors.Workspace.Connection/Allors.Workspace.Connection.csproj" />
     <Project Path="System/Workspace/Allors.Workspace.Domain/Allors.Workspace.Domain.csproj" />
     <Project Path="System/Workspace/Allors.Workspace.Meta.Lazy/Allors.Workspace.Meta.Lazy.csproj" />
     <Project Path="System/Workspace/Allors.Workspace.Meta/Allors.Workspace.Meta.csproj" />
-    <Project Path="System/Workspace/Allors.Workspace.Protocol.Json/Allors.Workspace.Protocol.Json.csproj" />
-  </Folder>
-  <Folder Name="/System/Workspace/Adapters/">
-    <Project Path="System/Workspace/Adapters/Allors.Workspace.Adapters.Local/Allors.Workspace.Adapters.Local.csproj" />
-    <Project Path="System/Workspace/Adapters/Allors.Workspace.Adapters.Remote.Newtonsoft/Allors.Workspace.Adapters.Remote.Newtonsoft.csproj" />
-    <Project Path="System/Workspace/Adapters/Allors.Workspace.Adapters.Remote.SystemText/Allors.Workspace.Adapters.Remote.SystemText.csproj" />
-    <Project Path="System/Workspace/Adapters/Allors.Workspace.Adapters.Remote/Allors.Workspace.Adapters.Remote.csproj" />
-    <Project Path="System/Workspace/Adapters/Allors.Workspace.Adapters/Allors.Workspace.Adapters.csproj" />
+    <Project Path="System/Workspace/Allors.Workspace.Session/Allors.Workspace.Session.csproj" />
   </Folder>
   <Project Path="../build/_build.csproj" />
 </Solution>

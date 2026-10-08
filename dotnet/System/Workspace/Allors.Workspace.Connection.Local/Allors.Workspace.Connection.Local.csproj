@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Database\Allors.Database.Workspace.Json\Allors.Database.Workspace.Json.csproj" />
+    <ProjectReference Include="..\..\Protocol\Allors.Protocol.Json.SystemText\Allors.Protocol.Json.SystemText.csproj" />
+    <ProjectReference Include="..\Allors.Workspace.Connection\Allors.Workspace.Connection.csproj" />
+  </ItemGroup>
+
+</Project>

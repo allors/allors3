@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <!-- The session reaches the database through the connection's contract only: the protocol
+         that the connection and its transports reference stays out of sight here. -->
+    <DisableTransitiveProjectReferences>true</DisableTransitiveProjectReferences>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Shared\Allors.Shared.csproj" />
+    <ProjectReference Include="..\Allors.Workspace.Connection\Allors.Workspace.Connection.csproj" />
+    <ProjectReference Include="..\Allors.Workspace.Domain\Allors.Workspace.Domain.csproj" />
+    <ProjectReference Include="..\Allors.Workspace.Meta\Allors.Workspace.Meta.csproj" />
+  </ItemGroup>
+
+</Project>

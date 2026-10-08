@@ -7,6 +7,7 @@ namespace Tests.Workspace
 {
     using System.Threading.Tasks;
     using Allors.Workspace;
+    using Allors.Workspace.Connection;
     using Allors.Workspace.Meta;
     using Xunit;
 
@@ -17,6 +18,8 @@ namespace Tests.Workspace
         }
 
         public IWorkspace Workspace => this.Profile.Workspace;
+
+        public IDatabaseConnection DatabaseConnection => this.Profile.DatabaseConnection;
 
         public M M => this.Workspace.Services.Get<M>();
 

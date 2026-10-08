@@ -7,6 +7,7 @@ namespace Tests.Workspace
 {
     using System.Threading.Tasks;
     using Allors.Workspace;
+    using Allors.Workspace.Connection;
     using Xunit;
 
     public interface IProfile : IAsyncLifetime
@@ -14,6 +15,11 @@ namespace Tests.Workspace
         IWorkspace CreateExclusiveWorkspace();
 
         IWorkspace CreateWorkspace();
+
+        /// <summary>
+        /// The connection of the signed-in user that <see cref="Workspace"/> is built on.
+        /// </summary>
+        IDatabaseConnection DatabaseConnection { get; }
 
         IWorkspace Workspace { get; }
 
