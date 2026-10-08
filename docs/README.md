@@ -18,6 +18,7 @@ The pages in this folder are written for users. Maintainers read them too.
 | [Authentication](authentication.md) | Explanation | Current | How Core, an authentication plug-in and the application's domain share a sign-in: the session and the scheme per request, the user resolver, and the user factory. |
 | [Sign in with Microsoft Entra ID](entra.md) | How-to guide | Current | The steps for an application that selects the Entra plug-in: the app registration, the configuration, `Startup`, the user factory, browsers, clients and programs, guests, and a check against a tenant. |
 | [Logging](logging.md) | Reference | Current | How Allors logs through `Microsoft.Extensions.Logging`, what the host does to receive the logs, and which messages Allors writes. |
+| [Workspace connection](connection.md) | Reference | Current | The lowest layer of the .NET and TypeScript workspaces: the libraries, the bootstrap, the contract in ids, the records and permissions, what a pull does afterwards, the transports, the envelope, the cache and its sharing rule, the persistence provider, and which test pins what. |
 
 ## For maintainers
 
@@ -27,6 +28,7 @@ An application must not rely on them: they can change with any version.
 | Page | Status | Content |
 | --- | --- | --- |
 | [Domain inheritance](internals/domain-inheritance.md) | Current | Which part owns what, from `[Extends]` to the order of the hooks: the attribute, the parser, the template, the meta sort, the method compiler and the hand-written dispatch; why the ids decide the order; and the platform test domains of the Diamond tree. |
+| [Workspace layers](internals/workspace-layers.md) | Planned | Which part owns what, from the protocol to the session API: the server's `Api`, the transports, the connection, the session and the domain library; why the cut is where it is; which parts exist; and the waves that follow: the wire schema, gRPC, the persistence providers and signals. |
 
 ## Kind
 

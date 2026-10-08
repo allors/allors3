@@ -114,6 +114,15 @@ The concrete signal implementations and generated API details will be establishe
 workspace work. Domain inheritance, role/association semantics, and controlled writes remain the
 constraints on that design.
 
+**Current implementation:** each workspace is two layers with one contract between them. The
+connection, `Allors.Workspace.Connection` and `@allors/system/workspace/connection`, brings
+records from the database into the workspace, in ids and role values, without objects; the
+session, `Allors.Workspace.Session` and `@allors/system/workspace/session`, builds objects and
+change tracking on it, and the signals layer will build on the same connection.
+[docs/connection.md](docs/connection.md) holds the contract;
+[docs/internals/workspace-layers.md](docs/internals/workspace-layers.md) maps the parts and says
+which exist.
+
 ## Test scaffolding is separate from inherited code
 
 The `Test/` folders hold internal scaffolding: concrete setup and population for automated tests,

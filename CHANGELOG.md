@@ -114,8 +114,13 @@ Changes accumulate under **[Unreleased]** until a version is released.
   Diamond tree pins what.
   A page on logging says how the host receives the logs of Allors. A page on authentication
   says how Core, an authentication plug-in and the application's domain share a sign-in, and a
-  how-to guide takes an application through signing in with Microsoft Entra ID. `AGENTS.md`
-  holds the rules for these pages.
+  how-to guide takes an application through signing in with Microsoft Entra ID. A reference
+  page on the workspace connection, `docs/connection.md`, says what an application can rely on
+  in the lowest layer of both workspaces: the libraries, the bootstrap, the contract in ids,
+  the records and permissions, the transports, the envelope, the cache, the persistence
+  provider and which test pins what; the internals page `docs/internals/workspace-layers.md`
+  maps the layers from the protocol to the session API, says why the cut is where it is, which
+  parts exist and which waves follow. `AGENTS.md` holds the rules for these pages.
 - The build target `DotnetSystemSharedTest` and the CI job `CiDotnetSystemSharedTest` for the
   `Ranges` tests in `dotnet/System/Shared.Tests`, which no target or job ran before.
 - A `Generate.Tests` project for the generator and its templates. `WorkspaceTemplateTests`
@@ -321,9 +326,9 @@ Changes accumulate under **[Unreleased]** until a version is released.
     runs the sync, access and permission flow itself, which the session ran before. It raises
     `RecordChanged` for every record a pull replaced, once the records, grants and permissions
     of the pull are in; nothing listens yet. It takes an `ICache` for what it keeps, with a
-    `MemoryCache` of its own by default (see Added), and shows `DatabaseId` and `UserId` for
-    the facts the server will send with every response, null until then. Use a connection from
-    one thread at a time.
+    `MemoryCache` of its own by default (see Added), and shows `DatabaseId` and `UserId`, which
+    the server sends with every response (see Added), null until the first response. Use a
+    connection from one thread at a time.
   - A transport carries the wire: `ITransport` with the six protocol calls, the unit converter
     and a `ServerMessages` stream slot, null for HTTP. The transports are
     `Connection.Remote.SystemText.HttpTransport`, `Connection.Remote.Newtonsoft.HttpTransport`

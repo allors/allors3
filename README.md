@@ -28,9 +28,10 @@ The agreed scope for v3.2 is:
 - Retain platform test domains, test servers, and small applications that exercise the integrations.
 
 **Implementation status:** Base and Apps have been removed, the Identity and Entra plug-ins have
-landed, a domain extends several domains, and the Diamond tree holds the platform test domains;
-the signals API is planned. This documents the target; the reactive workspace changes have not
-landed yet.
+landed, a domain extends several domains, the Diamond tree holds the platform test domains, and
+the .NET and TypeScript workspaces are each a connection and a session library, the step before
+signals; the signals API is planned. This documents the target; the reactive workspace changes
+have not landed yet.
 See [ARCHITECTURE.md](ARCHITECTURE.md) for the platform boundary and inheritance rules.
 
 ## Development and releases
