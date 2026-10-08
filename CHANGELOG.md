@@ -11,6 +11,24 @@ Changes accumulate under **[Unreleased]** until a version is released.
 
 ### Added
 
+- The workspace connection's cache can be shared by the connections of one user, and the
+  default is one such cache per connection. `MemoryCache` keeps records, grants, revocations
+  and permissions in concurrent dictionaries; a set keeps the newest version of an object, a
+  grant or a revocation, whichever connection delivers it first, and a record of the same
+  version replaces the one held, because the grants and revocations of an object change
+  without its version. It raises `RecordChanged` the moment a record is replaced, for every
+  connection on the cache, where the connection's own event waits until the grants and
+  permissions of its pull are in. `RemoveRecord` and `Clear` are the hooks an eviction policy
+  builds on; the cache holds everything until then. A record is immutable: its roles are
+  converted when it is built, and it shows `GrantIds` and `RevocationIds`. The connections
+  that share a cache are of one user, to one workspace name, on one meta population instance:
+  `ICache` carries the name and the meta population, which the connection checks when it takes
+  the cache, and a `CacheKey` of database id, user id, workspace name and meta fingerprint,
+  which the first response of a connection binds and a later connection of another user is
+  refused by. `ConnectionTests` pins the sharing on the three transports; the new project
+  `dotnet/Core/Workspace/Tests.Connection`, run by the target `DotnetCoreWorkspaceConnectionTest`
+  and the CI job `CiDotnetCoreWorkspaceConnectionTest` in the `memory` job, pins the cache and
+  the connection over a transport that answers in memory, without a server.
 - A domain extends several domains: `[Extends]` takes the names of all of them, and the graph
   may hold diamonds. The order of the domains, for the hooks of domains that do not extend each
   other, is defined: a domain before the domains it extends; branches in the id order of their
@@ -252,9 +270,9 @@ Changes accumulate under **[Unreleased]** until a version is released.
     runs the sync, access and permission flow itself, which the session ran before. It raises
     `RecordChanged` for every record a pull replaced, once the records, grants and permissions
     of the pull are in; nothing listens yet. It takes an `ICache` for what it keeps, with a
-    private plain-dictionary default, and shows `DatabaseId` and `UserId` for the facts the
-    server will send with every response, null until then. Use a connection from one thread at
-    a time.
+    `MemoryCache` of its own by default (see Added), and shows `DatabaseId` and `UserId` for
+    the facts the server will send with every response, null until then. Use a connection from
+    one thread at a time.
   - A transport carries the wire: `ITransport` with the six protocol calls, the unit converter
     and a `ServerMessages` stream slot, null for HTTP. The transports are
     `Connection.Remote.SystemText.HttpTransport`, `Connection.Remote.Newtonsoft.HttpTransport`

@@ -27,6 +27,7 @@
     <Project Path="Core/Workspace/Tests.Local/Workspace.Tests.Local.csproj" />
     <Project Path="Core/Workspace/Tests.Remote.Json.Newtonsoft/Workspace.Tests.Remote.Json.Newtonsoft.csproj" />
     <Project Path="Core/Workspace/Tests.Remote.Json.SystemText/Workspace.Tests.Remote.Json.SystemText.csproj" />
+    <Project Path="Core/Workspace/Tests.Connection/Workspace.Tests.Connection.csproj" />
     <Project Path="Core/Workspace/Tests/Workspace.Tests.csproj" />
   </Folder>
   <Folder Name="/Diamond/" />

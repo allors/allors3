@@ -22,6 +22,10 @@ partial class Build
         .DependsOn(Reset)
         .DependsOn(DotnetCoreDatabaseTest);
 
+    private Target CiDotnetCoreWorkspaceConnectionTest => _ => _
+        .DependsOn(Reset)
+        .DependsOn(DotnetCoreWorkspaceConnectionTest);
+
     private Target CiDotnetCoreWorkspaceLocalTest => _ => _
         .DependsOn(Reset)
         .DependsOn(DotnetCoreWorkspaceLocalTest);

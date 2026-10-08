@@ -39,7 +39,21 @@ namespace Allors.Workspace.Connection
             this.MetaPopulation = metaPopulation ?? throw new ArgumentNullException(nameof(metaPopulation));
             this.transport = transport ?? throw new ArgumentNullException(nameof(transport));
             this.Ranges = ranges ?? throw new ArgumentNullException(nameof(ranges));
-            this.cache = cache ?? new Cache();
+
+            if (cache != null)
+            {
+                if (!string.Equals(cache.WorkspaceName, workspaceName, StringComparison.Ordinal))
+                {
+                    throw new ArgumentException($"The cache holds the records of workspace '{cache.WorkspaceName}' and cannot serve a connection to workspace '{workspaceName}': the connections that share a cache are to one workspace name. Give this connection a cache of its own.", nameof(cache));
+                }
+
+                if (!ReferenceEquals(cache.MetaPopulation, metaPopulation))
+                {
+                    throw new ArgumentException("The cache types its records by another meta population than this connection: the connections that share a cache are built on one meta population instance. Give this connection a cache of its own, or build it on the cache's meta population.", nameof(cache));
+                }
+            }
+
+            this.cache = cache ?? new MemoryCache(workspaceName, metaPopulation);
             this.pushEncoder = new PushEncoder(this.cache, transport.UnitConvert, ranges);
         }
 
@@ -50,6 +64,8 @@ namespace Allors.Workspace.Connection
         public IMetaPopulation MetaPopulation { get; }
 
         public IRanges<long> Ranges { get; }
+
+        public ICache Cache => this.cache;
 
         public long? DatabaseId { get; private set; }
 
@@ -167,7 +183,8 @@ namespace Allors.Workspace.Connection
                 o = (response.p ?? Array.Empty<PullResponseObject>())
                     .Where(v =>
                     {
-                        if (!(this.cache.GetRecord(v.i) is Record record))
+                        var record = this.cache.GetRecord(v.i);
+                        if (record == null)
                         {
                             return true;
                         }
@@ -201,9 +218,8 @@ namespace Allors.Workspace.Connection
             {
                 var record = new Record(this.cache, this.MetaPopulation, this.transport.UnitConvert, this.Ranges, ctx, syncResponseObject);
                 var previous = this.cache.GetRecord(record.Id);
-                this.cache.SetRecord(record);
 
-                if (previous != null)
+                if (this.cache.SetRecord(record) && previous != null)
                 {
                     replaced.Add(record);
                 }

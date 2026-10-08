@@ -101,6 +101,15 @@ partial class Build
                 .SetResultsDirectory(Paths.ArtifactsTests));
         });
 
+    // The connection over a transport that answers in memory: no server, no database, only the
+    // generated workspace meta of the Core test domain.
+    private Target DotnetCoreWorkspaceConnectionTest => _ => _
+        .DependsOn(DotnetCoreGenerate)
+        .Executes(() => DotNetTest(s => s
+            .SetProjectFile(Paths.DotnetCoreWorkspaceTestsConnection)
+            .AddLoggers("trx;LogFileName=DotnetCoreWorkspaceTestsConnection.trx")
+            .SetResultsDirectory(Paths.ArtifactsTests)));
+
     private Target DotnetCoreWorkspaceLocalTest => _ => _
         .DependsOn(DotnetCorePublishServer)
         .DependsOn(DotnetCorePublishCommands)

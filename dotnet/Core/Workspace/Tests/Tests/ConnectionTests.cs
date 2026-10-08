@@ -5,12 +5,14 @@
 
 namespace Tests.Workspace
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Allors;
     using Allors.Ranges;
     using Allors.Workspace.Connection;
     using Allors.Workspace.Data;
+    using Allors.Workspace.Meta.Lazy;
     using Xunit;
 
     /// <summary>
@@ -49,7 +51,7 @@ namespace Tests.Workspace
                 Assert.NotNull(record);
                 Assert.Equal(id, record.Id);
                 Assert.Same(this.M.C1, record.Class);
-                Assert.True(record.Version >= Version.DatabaseInitial.Value);
+                Assert.True(record.Version >= Allors.Version.DatabaseInitial.Value);
             }
         }
 
@@ -233,6 +235,97 @@ namespace Tests.Workspace
             Assert.Equal(id, e.Id);
             Assert.Same(connection.GetRecord(id), e.Record);
             Assert.True(e.Record.Version > version);
+        }
+
+        [Fact]
+        public async void TheConnectionsOfOneUserShareACache()
+        {
+            await this.Login("administrator");
+            var template = this.DatabaseConnection;
+
+            var cache = new MemoryCache(template.WorkspaceName, template.MetaPopulation);
+            var first = this.CreateConnection("administrator", cache);
+            var second = this.CreateConnection("administrator", cache);
+
+            var pull = new Pull { Extent = new Filter(this.M.C1) };
+            var result = await first.PullAsync(new[] { pull });
+
+            Assert.Same(cache, first.Cache);
+            Assert.Same(cache, second.Cache);
+            Assert.NotEmpty(result.Pool);
+            foreach (var id in result.Pool)
+            {
+                Assert.NotNull(second.GetRecord(id));
+                Assert.Same(first.GetRecord(id), second.GetRecord(id));
+            }
+
+            var changed = new List<RecordChangedEventArgs>();
+            second.RecordChanged += (sender, e) => changed.Add(e);
+
+            await second.PullAsync(new[] { pull });
+
+            Assert.Empty(changed);
+        }
+
+        [Fact]
+        public async void TheCacheTellsEveryConnectionWhenAnotherConnectionReplacesARecord()
+        {
+            await this.Login("administrator");
+            var template = this.DatabaseConnection;
+
+            var cache = new MemoryCache(template.WorkspaceName, template.MetaPopulation);
+            var first = this.CreateConnection("administrator", cache);
+            var second = this.CreateConnection("administrator", cache);
+
+            var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = Names.c1A } } };
+            var id = (await first.PullAsync(new[] { pull })).Collections[this.M.C1.PluralName].Single();
+            var before = first.GetRecord(id);
+
+            var changed = new List<RecordChangedEventArgs>();
+            cache.RecordChanged += (sender, e) => changed.Add(e);
+
+            var pushed = await first.PushAsync(null, new[] { new PushChangedObject(id, before.Version, new[] { new RoleChange(this.M.C1.C1AllorsString, "shared") }) });
+            Assert.False(pushed.HasErrors);
+            Assert.Empty(changed);
+
+            await second.PullAsync(new[] { pull });
+
+            var e = Assert.Single(changed);
+            Assert.Equal(id, e.Id);
+            Assert.Same(first.GetRecord(id), e.Record);
+            Assert.True(e.Record.Version > before.Version);
+            Assert.Equal("shared", first.GetRecord(id).GetRole(this.M.C1.C1AllorsString));
+        }
+
+        [Fact]
+        public async void ACacheOfAnotherWorkspaceNameIsRefused()
+        {
+            await this.Login("administrator");
+            var template = this.DatabaseConnection;
+
+            var cache = new MemoryCache("Other", template.MetaPopulation);
+
+            var exception = Assert.Throws<ArgumentException>(() => this.CreateConnection("administrator", cache));
+            Assert.Contains("Other", exception.Message);
+            Assert.Contains(template.WorkspaceName, exception.Message);
+        }
+
+        [Fact]
+        public async void ACacheOfAnotherMetaPopulationIsRefused()
+        {
+            await this.Login("administrator");
+            var template = this.DatabaseConnection;
+
+            var cache = new MemoryCache(template.WorkspaceName, new MetaBuilder().Build());
+
+            var exception = Assert.Throws<ArgumentException>(() => this.CreateConnection("administrator", cache));
+            Assert.Contains("meta population", exception.Message);
+        }
+
+        private DatabaseConnection CreateConnection(string userName, ICache cache)
+        {
+            var template = this.DatabaseConnection;
+            return new DatabaseConnection(template.WorkspaceName, template.MetaPopulation, this.Profile.CreateTransport(userName), template.Ranges, cache);
         }
     }
 }

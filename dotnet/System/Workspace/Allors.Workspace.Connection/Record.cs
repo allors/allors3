@@ -13,32 +13,53 @@ namespace Allors.Workspace.Connection
     using Ranges;
 
     /// <summary>
-    /// A record as a sync response delivered it. The roles are converted from the wire on first
-    /// use; the permissions are answered against the grants and revocations of the cache.
+    /// A record as a sync response delivered it, converted from the wire when it is built and
+    /// immutable after that, so that a cache may hand it to any thread. The permissions are
+    /// answered against the grants and revocations the cache holds at the time of asking.
     /// </summary>
     internal sealed class Record : IRecord
     {
         private readonly ICache cache;
-        private readonly IMetaPopulation metaPopulation;
-        private readonly IUnitConvert unitConvert;
-        private readonly IRanges<long> ranges;
-
-        private Dictionary<IRelationType, object> roleByRelationType;
-        private SyncResponseRole[] syncResponseRoles;
+        private readonly IReadOnlyDictionary<IRelationType, object> roleByRelationType;
 
         internal Record(ICache cache, IMetaPopulation metaPopulation, IUnitConvert unitConvert, IRanges<long> ranges, ResponseContext ctx, SyncResponseObject syncResponseObject)
         {
             this.cache = cache;
-            this.metaPopulation = metaPopulation;
-            this.unitConvert = unitConvert;
-            this.ranges = ranges;
 
             this.Class = (IClass)metaPopulation.FindByTag(syncResponseObject.c);
             this.Id = syncResponseObject.i;
             this.Version = syncResponseObject.v;
-            this.syncResponseRoles = syncResponseObject.ro;
             this.GrantIds = ranges.Load(ctx.CheckForMissingGrants(syncResponseObject.g));
             this.RevocationIds = ranges.Load(ctx.CheckForMissingRevocations(syncResponseObject.r));
+
+            var roleByRelationType = new Dictionary<IRelationType, object>();
+            if (syncResponseObject.ro != null)
+            {
+                foreach (var syncResponseRole in syncResponseObject.ro)
+                {
+                    var relationType = (IRelationType)metaPopulation.FindByTag(syncResponseRole.t);
+                    var roleType = relationType.RoleType;
+                    var objectType = roleType.ObjectType;
+
+                    object role;
+                    if (objectType.IsUnit)
+                    {
+                        role = unitConvert.UnitFromJson(objectType.Tag, syncResponseRole.v);
+                    }
+                    else if (roleType.IsOne)
+                    {
+                        role = syncResponseRole.o;
+                    }
+                    else
+                    {
+                        role = ranges.Load(syncResponseRole.c);
+                    }
+
+                    roleByRelationType[relationType] = role;
+                }
+            }
+
+            this.roleByRelationType = roleByRelationType;
         }
 
         public IClass Class { get; }
@@ -47,58 +68,25 @@ namespace Allors.Workspace.Connection
 
         public long Version { get; }
 
-        internal IRange<long> GrantIds { get; }
+        public IRange<long> GrantIds { get; }
 
-        internal IRange<long> RevocationIds { get; }
-
-        private Dictionary<IRelationType, object> RoleByRelationType
-        {
-            get
-            {
-                if (this.syncResponseRoles != null)
-                {
-                    this.roleByRelationType = this.syncResponseRoles.ToDictionary(
-                        v => (IRelationType)this.metaPopulation.FindByTag(v.t),
-                        v =>
-                        {
-                            var roleType = ((IRelationType)this.metaPopulation.FindByTag(v.t)).RoleType;
-                            var objectType = roleType.ObjectType;
-
-                            if (objectType.IsUnit)
-                            {
-                                return this.unitConvert.UnitFromJson(objectType.Tag, v.v);
-                            }
-
-                            if (roleType.IsOne)
-                            {
-                                return v.o;
-                            }
-
-                            return this.ranges.Load(v.c);
-                        });
-
-                    this.syncResponseRoles = null;
-                }
-
-                return this.roleByRelationType;
-            }
-        }
+        public IRange<long> RevocationIds { get; }
 
         public object GetRole(IRoleType roleType)
         {
-            object @object = null;
-            this.RoleByRelationType?.TryGetValue(roleType.RelationType, out @object);
-            return @object;
+            this.roleByRelationType.TryGetValue(roleType.RelationType, out var role);
+            return role;
         }
 
         public bool IsPermitted(long permission)
         {
-            if (this.GrantIds == null)
+            // A grant or revocation the cache no longer holds grants nothing and denies nothing.
+            if (this.RevocationIds.Any(v => this.cache.GetRevocation(v)?.PermissionIds.Contains(permission) == true))
             {
                 return false;
             }
 
-            return !this.RevocationIds.Any(v => this.cache.GetRevocation(v).PermissionIds.Contains(permission)) && this.GrantIds.Any(v => this.cache.GetGrant(v).PermissionIds.Contains(permission));
+            return this.GrantIds.Any(v => this.cache.GetGrant(v)?.PermissionIds.Contains(permission) == true);
         }
     }
 }

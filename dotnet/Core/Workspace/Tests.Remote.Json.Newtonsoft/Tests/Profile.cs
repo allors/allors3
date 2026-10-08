@@ -35,7 +35,11 @@ namespace Tests.Workspace.Remote
         private readonly IObjectFactory objectFactory;
         private readonly IRule[] rules;
 
-        private HttpClient httpClient;
+        // One connection pool for every client of this profile; a client per user carries the
+        // user's header.
+        private readonly HttpMessageHandler httpMessageHandler;
+
+        private string userName;
 
         public Profile()
         {
@@ -45,6 +49,8 @@ namespace Tests.Workspace.Remote
             this.metaPopulation = new MetaBuilder().Build();
             this.objectFactory = new ReflectionObjectFactory(this.metaPopulation, typeof(Allors.Workspace.Domain.Person));
             this.rules = new IRule[] { new PersonSessionFullNameRule(this.metaPopulation) };
+
+            this.httpMessageHandler = new SocketsHttpHandler();
         }
 
         IWorkspace IProfile.Workspace => this.Workspace;
@@ -57,12 +63,8 @@ namespace Tests.Workspace.Remote
 
         public async Task InitializeAsync()
         {
-            this.httpClient = new HttpClient { BaseAddress = new Uri(Url), Timeout = TimeSpan.FromMinutes(30) };
-            var response = await this.httpClient.GetAsync(SetupUrl);
+            var response = await this.CreateHttpClient().GetAsync(SetupUrl);
             Assert.True(response.IsSuccessStatusCode);
-
-            this.DatabaseConnection = this.CreateConnection();
-            this.Workspace = this.CreateWorkspace(this.DatabaseConnection);
 
             await this.Login("administrator");
         }
@@ -73,17 +75,33 @@ namespace Tests.Workspace.Remote
 
         public IWorkspace CreateWorkspace() => this.CreateWorkspace(this.DatabaseConnection);
 
-        public Task Login(string user)
+        /// <summary>
+        /// Signs in as the user: a connection of its own, as a connection serves one user, and a
+        /// workspace on it.
+        /// </summary>
+        public Task Login(string userName)
         {
-            // Authenticate with the test-only X-Allors-TestUser header, which carries the UniqueId of a
-            // user of the test population; the harness server resolves it to the same Allors user.
-            this.httpClient.DefaultRequestHeaders.Remove("X-Allors-TestUser");
-            this.httpClient.DefaultRequestHeaders.Add("X-Allors-TestUser", Users.TestUserId(user).ToString());
+            this.userName = userName;
+
+            this.DatabaseConnection = this.CreateConnection();
+            this.Workspace = this.CreateWorkspace(this.DatabaseConnection);
+
             return Task.CompletedTask;
         }
 
+        public ITransport CreateTransport(string userName)
+        {
+            // Authenticate with the test-only X-Allors-TestUser header, which carries the UniqueId of a
+            // user of the test population; the harness server resolves it to the same Allors user.
+            var httpClient = this.CreateHttpClient();
+            httpClient.DefaultRequestHeaders.Add("X-Allors-TestUser", Users.TestUserId(userName).ToString());
+            return new HttpTransport(httpClient);
+        }
+
+        private HttpClient CreateHttpClient() => new HttpClient(this.httpMessageHandler, false) { BaseAddress = new Uri(Url), Timeout = TimeSpan.FromMinutes(30) };
+
         private DatabaseConnection CreateConnection() =>
-            new DatabaseConnection(WorkspaceName, this.metaPopulation, new HttpTransport(this.httpClient), this.ranges);
+            new DatabaseConnection(WorkspaceName, this.metaPopulation, this.CreateTransport(this.userName), this.ranges);
 
         private Workspace CreateWorkspace(IDatabaseConnection connection) =>
             new Workspace(connection, this.objectFactory, this.rules, new WorkspaceServices(), this.idGenerator);

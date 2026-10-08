@@ -1,4 +1,4 @@
-// <copyright file="Test.cs" company="Allors bv">
+// <copyright file="IProfile.cs" company="Allors bv">
 // Copyright (c) Allors bv. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -24,5 +24,11 @@ namespace Tests.Workspace
         IWorkspace Workspace { get; }
 
         Task Login(string userName);
+
+        /// <summary>
+        /// A transport of its own, authenticated as the user, for a connection the test builds
+        /// itself.
+        /// </summary>
+        ITransport CreateTransport(string userName);
     }
 }

@@ -90,14 +90,21 @@ namespace Tests.Workspace.Local
 
         public Task Login(string userName)
         {
-            using var transaction = this.Database.CreateTransaction();
-            var uniqueId = Users.TestUserId(userName);
-            this.user = new Users(transaction).Extent().ToArray().First(v => v.UniqueId == uniqueId);
+            this.user = this.FindUser(userName);
 
             this.DatabaseConnection = this.CreateConnection();
             this.Workspace = this.CreateWorkspace(this.DatabaseConnection);
 
             return Task.CompletedTask;
+        }
+
+        public ITransport CreateTransport(string userName) => new LocalTransport(this.Database, this.FindUser(userName).Id, WorkspaceName);
+
+        private User FindUser(string userName)
+        {
+            using var transaction = this.Database.CreateTransaction();
+            var uniqueId = Users.TestUserId(userName);
+            return new Users(transaction).Extent().ToArray().First(v => v.UniqueId == uniqueId);
         }
 
         private DatabaseConnection CreateConnection() =>

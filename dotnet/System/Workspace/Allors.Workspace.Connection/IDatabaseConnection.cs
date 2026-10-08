@@ -33,6 +33,12 @@ namespace Allors.Workspace.Connection
         IRanges<long> Ranges { get; }
 
         /// <summary>
+        /// What the connection keeps of the user's view of the database; shared with the other
+        /// connections of the user when the connection was given a cache.
+        /// </summary>
+        ICache Cache { get; }
+
+        /// <summary>
         /// The id of the database the server serves, once the server has said so in a response;
         /// null until then.
         /// </summary>
