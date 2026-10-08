@@ -19,8 +19,14 @@
       "@allors/default/workspace/domain": [
         "libs/core/workspace/domain/src/index.ts"
       ],
+      "@allors/system/workspace/connection": [
+        "libs/system/workspace/connection/src/index.ts"
+      ],
       "@allors/system/workspace/domain": [
         "libs/system/workspace/domain/src/index.ts"
+      ],
+      "@allors/system/common/protocol-json": [
+        "libs/system/common/protocol-json/src/index.ts"
       ],
       "@allors/default/workspace/meta": [
         "libs/core/workspace/meta/src/index.ts"

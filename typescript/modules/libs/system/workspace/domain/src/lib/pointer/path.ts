@@ -1,3 +1,4 @@
+import { Path } from '@allors/system/workspace/connection';
 import {
   AssociationType,
   Composite,
@@ -6,12 +7,6 @@ import {
 } from '@allors/system/workspace/meta';
 import { IObject } from '../iobject';
 import { IStrategy } from '../istrategy';
-
-export interface Path {
-  propertyType: PropertyType;
-  ofType?: Composite;
-  next?: Path;
-}
 
 function getComposite(
   strategy: IStrategy,
@@ -88,10 +83,6 @@ function resolveRecursive(
   }
 }
 
-export function isPath(path: unknown): path is Path {
-  return (path as Path).propertyType != null;
-}
-
 export function pathResolve(
   obj: IObject,
   path: Path,
@@ -100,30 +91,4 @@ export function pathResolve(
   const results: Set<IObject> = new Set();
   resolveRecursive(obj, path, results, skipMissing);
   return results;
-}
-
-export function pathLeaf(path: Path): Path {
-  let next = path;
-  while (next.next) {
-    next = next.next;
-  }
-
-  return next;
-}
-
-export function pathObjectType(path: Path): Composite {
-  const leaf = pathLeaf(path);
-  return leaf.ofType ?? (leaf.propertyType.objectType as Composite);
-}
-
-export function pathTag(path: Path): string {
-  let tag: string;
-
-  let next = path;
-  while (next.next) {
-    tag = `${tag ? `_${tag}` : tag}${next.propertyType.relationType.tag}`;
-    next = next.next;
-  }
-
-  return tag;
 }

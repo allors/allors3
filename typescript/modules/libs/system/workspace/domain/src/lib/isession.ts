@@ -5,10 +5,8 @@ import { IWorkspace } from './iworkspace';
 import { IChangeSet } from './ichange-set';
 import { IRule } from './derivation/irule';
 import { Method } from './method';
-import { InvokeOptions } from './api/pull/invoke-options';
+import { InvokeOptions, Procedure, Pull } from '@allors/system/workspace/connection';
 import { IInvokeResult } from './api/pull/iinvoke-result';
-import { Procedure } from './api/pull/procedure';
-import { Pull } from './api/pull/pull';
 import { IPullResult } from './api/pull/ipull-result';
 import { IPushResult } from './api/push/ipush-result';
 

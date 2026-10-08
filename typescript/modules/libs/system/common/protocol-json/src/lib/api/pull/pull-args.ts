@@ -1,5 +1,3 @@
-import { IUnit } from '@allors/system/workspace/domain';
-
 export interface PullArgs {
   /** Collections */
   c: { [name: string]: number[] };
@@ -8,7 +6,7 @@ export interface PullArgs {
   o: { [name: string]: number };
 
   /** Values */
-  v: { [name: string]: IUnit };
+  v: { [name: string]: unknown };
 
   /** Pool */
   p: number[][];

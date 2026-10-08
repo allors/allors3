@@ -1,4 +1,4 @@
-import { Select } from '@allors/system/workspace/domain';
+import { Select } from '@allors/system/workspace/connection';
 import { MetaPopulation } from '@allors/system/workspace/meta';
 import { LazyTreeBuilder } from './lazy-tree-builder';
 

@@ -1,4 +1,4 @@
-import { DefaultNumberRanges, IRange } from '@allors/system/workspace/adapters';
+import { DefaultNumberRanges, IRange } from '@allors/system/workspace/connection';
 
 describe('IRange', () => {
   describe('as undefined set', () => {

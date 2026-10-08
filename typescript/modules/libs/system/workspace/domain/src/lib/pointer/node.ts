@@ -1,3 +1,4 @@
+import { Node } from '@allors/system/workspace/connection';
 import {
   AssociationType,
   Composite,
@@ -6,12 +7,6 @@ import {
 } from '@allors/system/workspace/meta';
 import { IObject } from '../iobject';
 import { IStrategy } from '../istrategy';
-
-export interface Node {
-  propertyType: PropertyType;
-  ofType?: Composite;
-  nodes?: Node[];
-}
 
 function getComposite(
   strategy: IStrategy,
@@ -99,21 +94,5 @@ export function nodeResolve(
 ): Set<IObject> {
   const results: Set<IObject> = new Set();
   resolveRecursive(obj, node, results, skipMissing);
-  return results;
-}
-
-function resolveLeafs(node: Node, results: Set<Node>): void {
-  if (node.nodes.length > 0) {
-    for (const child of node.nodes) {
-      resolveLeafs(child, results);
-    }
-  } else {
-    results.add(node);
-  }
-}
-
-export function nodeLeafs(node: Node): Set<Node> {
-  const results: Set<Node> = new Set();
-  resolveLeafs(node, results);
   return results;
 }

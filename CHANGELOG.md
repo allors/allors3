@@ -335,6 +335,39 @@ Changes accumulate under **[Unreleased]** until a version is released.
     answers its roles as values and its permissions against the grants and revocations, a push
     answers the database ids of new objects and refuses a stale version, an invoke runs the
     method, and `RecordChanged` is raised when a pull replaces a record.
+- The TypeScript workspace is two libraries with one contract between them, breaking for every
+  bootstrap: `@allors/system/workspace/connection` below and `@allors/system/workspace/session`
+  above, in place of `@allors/system/workspace/adapters` and `adapters-json`.
+  - The connection mirrors the .NET one: `IDatabaseConnection` with `pull(pulls, options)`,
+    `push(newObjects, changedObjects)`, `invoke(invocations, options)`, `getRecord`,
+    `getPermission` and `recordChanged`; its results in ids, `PullResult` with `objects`,
+    `collections`, `values` and `pool`, `PushResult.databaseIdByWorkspaceId` and
+    `InvokeResult`; `IRecord`, `Grant`, `Revocation` and `Permission`; `ICache` with
+    `MemoryCache`; the `IdGenerator`; and the ranges and collections. The sync, access and
+    permission flow runs in the connection, where the session ran it before. The tracing
+    context, the procedure and the dependencies of a pull travel in `PullOptions`.
+  - A transport carries the wire: `ITransport` with the six protocol calls and a
+    `serverMessages` slot, null for HTTP, in place of `IDatabaseJsonClient`; an application
+    implements it with its own HTTP client, as the tests do with cross-fetch. Only the
+    connection and the transports use `@allors/system/common/protocol-json`, which no longer
+    imports from the domain library: its unit values are `unknown` and `SortDirection` is its
+    own.
+  - The query model, the pointers `Node` and `Path` with their leaf and conversion functions,
+    `Operations`, `InvokeOptions`, `IUnit` and `TypeForParameter` moved from
+    `@allors/system/workspace/domain` into the connection, typed by `IIdentifiable`, the new
+    interface with only an `id`, which `IObject` extends. The domain library re-exports them,
+    so `import { Pull } from '@allors/system/workspace/domain'` keeps compiling; `nodeResolve`
+    and `pathResolve` stay there. The generated workspace meta and the meta-json builders
+    import the query types from the connection.
+  - The session library holds `Workspace`, `Session`, `Strategy`, the origin states, the change
+    set, the trackers, the results and `PrototypeObjectFactory`; each abstract class and its
+    JSON subclass are one class now. A bootstrap creates the connection and the workspace
+    itself, `new DatabaseConnection(name, metaPopulation, transport, { cache, ranges })` and
+    `new Workspace(connection, objectFactory, rules, idGenerator)`; `createWorkspace()`, the
+    `Configuration` object a bootstrap passed and its `idGenerator` augmentation are gone.
+    `IWorkspace.configuration` shows the name, the meta population, the object factory and the
+    rules as before. The version, access and missing errors of a result are empty arrays where
+    they were null when the response carried none.
 - The local workspace adapter is an in-process transport. `Allors.Workspace.Connection.Local.
   LocalTransport` sends the same requests and receives the same responses as the HTTP
   transports, served by the server's `Api` on a transaction of its `IDatabase`, as the user

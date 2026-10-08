@@ -1,15 +1,69 @@
+// The query model, the pointers and the types they are written in live in the connection,
+// the layer below; the session API keeps them under its own name.
+export type {
+  And,
+  Between,
+  ContainedIn,
+  Contains,
+  Equals,
+  Except,
+  Exists,
+  Extent,
+  ExtentKind,
+  Filter,
+  FlatPull,
+  FlatResult,
+  GreaterThan,
+  IIdentifiable,
+  Instanceof,
+  Intersect,
+  InvokeOptions,
+  IUnit,
+  LessThan,
+  Like,
+  Node,
+  Not,
+  Operator,
+  OperatorBase,
+  OperatorKind,
+  Or,
+  ParameterizablePredicate,
+  ParameterizablePredicateBase,
+  ParameterizablePredicateKind,
+  Path,
+  Predicate,
+  PredicateBase,
+  PredicateKind,
+  Procedure,
+  Pull,
+  Result,
+  Select,
+  Sort,
+  TypeForParameter,
+  Union,
+} from '@allors/system/workspace/connection';
+export {
+  isPath,
+  nodeLeafs,
+  Operations,
+  parameterizablePredicateObjectType,
+  pathLeaf,
+  pathObjectType,
+  pathTag,
+  selectLeaf,
+  SortDirection,
+  toNode,
+  toPaths,
+  toSelect,
+} from '@allors/system/workspace/connection';
+
 // api
 export * from './lib/api/derivation/idatabase-derivation-error';
 export * from './lib/api/derivation/idatabase-derivation-exception';
 export * from './lib/api/derivation/idatabase-validation';
 
-export * from './lib/api/pull/flat-pull';
-export * from './lib/api/pull/flat-result';
-export * from './lib/api/pull/procedure';
-export * from './lib/api/pull/pull';
 export * from './lib/api/pull/ipull-result';
 export * from './lib/api/pull/iinvoke-result';
-export * from './lib/api/pull/invoke-options';
 
 export * from './lib/api/push/ipush-result';
 
@@ -17,35 +71,8 @@ export * from './lib/api/iresult';
 export * from './lib/api/result-error';
 
 // pointer
-export * from './lib/pointer/convert';
 export * from './lib/pointer/node';
 export * from './lib/pointer/path';
-
-// data
-export * from './lib/data/select';
-export * from './lib/data/extent';
-export * from './lib/data/sort';
-export * from './lib/data/sort-direction';
-export * from './lib/data/predicate';
-export * from './lib/data/parameterizable-predicate';
-export * from './lib/data/and';
-export * from './lib/data/between';
-export * from './lib/data/contained-in';
-export * from './lib/data/contains';
-export * from './lib/data/equals';
-export * from './lib/data/exists';
-export * from './lib/data/greater-than';
-export * from './lib/data/instance-of';
-export * from './lib/data/less-than';
-export * from './lib/data/like';
-export * from './lib/data/not';
-export * from './lib/data/or';
-export * from './lib/data/union';
-export * from './lib/data/intersect';
-export * from './lib/data/except';
-export * from './lib/data/filter';
-export * from './lib/data/result';
-export * from './lib/data/operator';
 
 // derivation
 export * from './lib/derivation/irule';
@@ -66,7 +93,6 @@ export * from './lib/istrategy';
 export * from './lib/iworkspace';
 export * from './lib/iworkspace-result';
 export * from './lib/method';
-export * from './lib/operations';
 export * from './lib/role';
 export * from './lib/types';
 

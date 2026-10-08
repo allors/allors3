@@ -1,13 +1,13 @@
-﻿import { MetaObject } from '@allors/system/workspace/meta';
 import { IObject } from './iobject';
 
-export type IUnit = string | Date | boolean | number;
+// The types the query model is written in live in the connection; the session API keeps
+// them under its own name.
+export { IIdentifiable, IUnit, TypeForParameter } from '@allors/system/workspace/connection';
+import { IUnit } from '@allors/system/workspace/connection';
 
 export type TypeForRole = IUnit | IObject | IObject[];
 
 export type TypeForAssociation = IObject | IObject[];
-
-export type TypeForParameter = IUnit | IObject | IObject[] | MetaObject;
 
 // todo: move to Database
 export function isSessionObject(obj: unknown): obj is IObject {

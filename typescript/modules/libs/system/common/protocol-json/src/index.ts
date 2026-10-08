@@ -46,6 +46,7 @@ export * from './lib/data/pull';
 export * from './lib/data/result';
 export * from './lib/data/select';
 export * from './lib/data/sort';
+export * from './lib/data/sort-direction';
 
 // meta
 export * from './lib/meta/meta-data';

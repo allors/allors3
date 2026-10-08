@@ -2,13 +2,18 @@ import { MetaPopulation } from '@allors/system/workspace/meta';
 import { LazyMetaPopulation } from '@allors/system/workspace/meta-json';
 import { data } from '@allors/default/workspace/meta-json';
 import { ruleBuilder } from '@allors/core/workspace/derivations-test';
-import { DatabaseConnection } from '@allors/system/workspace/adapters-json';
-import { PrototypeObjectFactory } from '@allors/system/workspace/adapters';
+import {
+  DatabaseConnection,
+  DatabaseConnectionOptions,
+} from '@allors/system/workspace/connection';
+import { PrototypeObjectFactory, Workspace } from '@allors/system/workspace/session';
 import { M } from '@allors/default/workspace/meta';
 
-import { FetchClient } from './fetch-client';
+import { FetchTransport } from './fetch-transport';
 import {
-  Configuration,
+  IObject,
+  IObjectFactory,
+  IRule,
   ISession,
   IWorkspace,
   Pull,
@@ -16,6 +21,8 @@ import {
 import { C1, C2 } from '@allors/default/workspace/domain';
 
 const BASE_URL = 'http://localhost:5000/allors/';
+
+const WORKSPACE_NAME = 'Default';
 
 export const name_c1A = 'c1A';
 export const name_c1B = 'c1B';
@@ -26,47 +33,64 @@ export const name_c2B = 'c2B';
 export const name_c2C = 'c2C';
 export const name_c2D = 'c2D';
 
+/**
+ * The harness of the tests against the Core test server: one meta population, object factory
+ * and rule set; a connection and a workspace for the signed-in user, replaced by login, as a
+ * connection serves one user; and a transport of its own for every connection a test builds.
+ */
 export class Fixture {
-  jsonClient: FetchClient;
   metaPopulation: MetaPopulation;
-  databaseConnection: DatabaseConnection;
   m: M;
+  objectFactory: IObjectFactory;
+  rules: IRule<IObject>[];
+  userName: string;
+  transport: FetchTransport;
+  connection: DatabaseConnection;
   workspace: IWorkspace;
 
-  createDatabaseConnection(): DatabaseConnection {
-    const metaPopulation = this.metaPopulation;
-    this.m = metaPopulation as unknown as M;
+  /**
+   * A transport of its own, authenticated as the user, for a connection the test builds itself.
+   */
+  createTransport(userName = this.userName): FetchTransport {
+    const transport = new FetchTransport(BASE_URL);
+    transport.login(userName);
+    return transport;
+  }
 
-    let nextId = -1;
+  createConnection(
+    userName = this.userName,
+    options?: DatabaseConnectionOptions
+  ): DatabaseConnection {
+    return new DatabaseConnection(
+      WORKSPACE_NAME,
+      this.metaPopulation,
+      this.createTransport(userName),
+      options
+    );
+  }
 
-    const configuration: Configuration = {
-      name: 'Default',
-      metaPopulation,
-      objectFactory: new PrototypeObjectFactory(metaPopulation),
-      idGenerator: () => nextId--,
-      rules: ruleBuilder(this.m),
-    };
-
-    return new DatabaseConnection(configuration, this.jsonClient);
+  createWorkspaceOn(connection: DatabaseConnection): IWorkspace {
+    return new Workspace(connection, this.objectFactory, this.rules);
   }
 
   createExclusiveWorkspace(): IWorkspace {
-    return this.databaseConnection.createWorkspace();
+    return this.createWorkspaceOn(this.connection);
   }
+
   createWorkspace(): IWorkspace {
-    return this.createDatabaseConnection().createWorkspace();
+    return this.createWorkspaceOn(this.createConnection());
   }
 
   async init(population?: string) {
-    this.jsonClient = new FetchClient(BASE_URL);
-
-    await this.jsonClient.setup(population);
-    await this.jsonClient.login('jane@example.com', '');
+    this.transport = new FetchTransport(BASE_URL);
+    await this.transport.setup(population);
 
     this.metaPopulation = new LazyMetaPopulation(data);
+    this.m = this.metaPopulation as unknown as M;
+    this.objectFactory = new PrototypeObjectFactory(this.metaPopulation);
+    this.rules = ruleBuilder(this.m);
 
-    this.databaseConnection = this.createDatabaseConnection();
-    this.workspace = this.databaseConnection.createWorkspace();
+    await this.login('jane@example.com', '');
   }
 
   async pullC1(session: ISession, name: string): Promise<C1> {
@@ -107,7 +131,19 @@ export class Fixture {
     return result.collection<C2>(m.C2)[0];
   }
 
+  /**
+   * Signs in as the user: a connection of its own, as a connection serves one user, and a
+   * workspace on it.
+   */
   async login(login: string, password?: string): Promise<boolean> {
-    return this.jsonClient.login(login, password);
+    this.userName = login;
+    this.transport = this.createTransport(login);
+    this.connection = new DatabaseConnection(
+      WORKSPACE_NAME,
+      this.metaPopulation,
+      this.transport
+    );
+    this.workspace = this.createWorkspaceOn(this.connection);
+    return true;
   }
 }

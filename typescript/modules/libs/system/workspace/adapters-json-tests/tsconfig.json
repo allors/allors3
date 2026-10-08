@@ -22,11 +22,11 @@
       "@allors/system/workspace/derivations": [
         "libs/system/workspace/derivations/src/index.ts"
       ],
-      "@allors/system/workspace/adapters-json": [
-        "libs/system/workspace/adapters-json/src/index.ts"
+      "@allors/system/workspace/connection": [
+        "libs/system/workspace/connection/src/index.ts"
       ],
-      "@allors/system/workspace/adapters": [
-        "libs/system/workspace/adapters/src/index.ts"
+      "@allors/system/workspace/session": [
+        "libs/system/workspace/session/src/index.ts"
       ],
       "@allors/system/workspace/adapters-tests": [
         "libs/system/workspace/adapters-tests/src/index.ts"

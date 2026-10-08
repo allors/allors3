@@ -1,5 +1,3 @@
-import { IUnit } from '@allors/system/workspace/domain';
-
 export interface Procedure {
   /** Name */
   n: string;
@@ -11,7 +9,7 @@ export interface Procedure {
   o: { [name: string]: number };
 
   /** Values */
-  v: { [name: string]: IUnit };
+  v: { [name: string]: unknown };
 
   /** Pool
    *  [][id,version]

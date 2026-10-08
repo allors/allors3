@@ -1,4 +1,4 @@
-import { PrototypeObjectFactory } from '@allors/system/workspace/adapters';
+import { PrototypeObjectFactory } from '@allors/system/workspace/session';
 
 // Regression for prototype-object-factory.ts: an object's `toJSON` must delegate to the strategy's
 // (lowercase) `toJSON()`, not the non-existent PascalCase `ToJSON()`. PrototypeObjectFactory only reads
