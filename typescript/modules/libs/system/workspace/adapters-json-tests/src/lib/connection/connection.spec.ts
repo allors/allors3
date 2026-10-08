@@ -1,10 +1,13 @@
 import {
   createIdGenerator,
+  MemoryCache,
   Operations,
   Pull,
   RecordChangedEvent,
   WorkspaceInitialVersion,
 } from '@allors/system/workspace/connection';
+import { LazyMetaPopulation } from '@allors/system/workspace/meta-json';
+import { data } from '@allors/default/workspace/meta-json';
 import { Fixture, name_c1A, name_c1B, name_c1C } from '../fixture';
 
 // The contract of the connection, exercised without a session, as the .NET ConnectionTests
@@ -273,4 +276,91 @@ test('recordChangedIsRaisedWhenAPullReplacesARecord', async () => {
   expect(changed[0].id).toBe(id);
   expect(changed[0].record).toBe(connection.getRecord(id));
   expect(changed[0].record.version).toBeGreaterThan(version);
+});
+
+test('theConnectionsOfOneUserShareACache', async () => {
+  const { m } = fixture;
+  const template = fixture.createConnection('administrator');
+
+  const cache = new MemoryCache(template.workspaceName, template.metaPopulation);
+  const first = fixture.createConnection('administrator', { cache });
+  const second = fixture.createConnection('administrator', { cache });
+
+  const pull: Pull = { extent: { kind: 'Filter', objectType: m.C1 } };
+  const result = await first.pull([pull]);
+
+  expect(first.cache).toBe(cache);
+  expect(second.cache).toBe(cache);
+  expect(result.pool.length).toBeGreaterThan(0);
+  for (const id of result.pool) {
+    expect(second.getRecord(id)).toBeDefined();
+    expect(second.getRecord(id)).toBe(first.getRecord(id));
+  }
+
+  const changed: RecordChangedEvent[] = [];
+  second.recordChanged.subscribe((e) => changed.push(e));
+
+  await second.pull([pull]);
+
+  expect(changed).toEqual([]);
+});
+
+test('theCacheTellsEveryConnectionWhenAnotherConnectionReplacesARecord', async () => {
+  const { m } = fixture;
+  const template = fixture.createConnection('administrator');
+
+  const cache = new MemoryCache(template.workspaceName, template.metaPopulation);
+  const first = fixture.createConnection('administrator', { cache });
+  const second = fixture.createConnection('administrator', { cache });
+
+  const pull: Pull = {
+    extent: {
+      kind: 'Filter',
+      objectType: m.C1,
+      predicate: { kind: 'Equals', propertyType: m.C1.Name, value: name_c1A },
+    },
+  };
+  const id = (await first.pull([pull])).collections.get(upper(m.C1.pluralName))[0];
+  const before = first.getRecord(id);
+
+  const changed: RecordChangedEvent[] = [];
+  cache.recordChanged.subscribe((e) => changed.push(e));
+
+  const pushed = await first.push(null, [
+    {
+      id,
+      version: before.version,
+      roles: [{ roleType: m.C1.C1AllorsString, value: 'shared' }],
+    },
+  ]);
+  expect(pushed.hasErrors).toBeFalsy();
+  expect(changed).toEqual([]);
+
+  await second.pull([pull]);
+
+  expect(changed.length).toBe(1);
+  expect(changed[0].id).toBe(id);
+  expect(changed[0].record).toBe(first.getRecord(id));
+  expect(changed[0].record.version).toBeGreaterThan(before.version);
+  expect(first.getRecord(id).getRole(m.C1.C1AllorsString)).toBe('shared');
+});
+
+test('aCacheOfAnotherWorkspaceNameIsRefused', () => {
+  const template = fixture.createConnection('administrator');
+
+  const cache = new MemoryCache('Other', template.metaPopulation);
+
+  expect(() => fixture.createConnection('administrator', { cache })).toThrow(
+    /Other.*Default|Default.*Other/
+  );
+});
+
+test('aCacheOfAnotherMetaPopulationIsRefused', () => {
+  const template = fixture.createConnection('administrator');
+
+  const cache = new MemoryCache(template.workspaceName, new LazyMetaPopulation(data));
+
+  expect(() => fixture.createConnection('administrator', { cache })).toThrow(
+    /meta population/
+  );
 });

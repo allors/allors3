@@ -10,8 +10,10 @@ import { Emitter, Subscribable } from '../subscribable';
 import { ICache } from './icache';
 
 /**
- * The cache in memory: maps of records, grants, revocations and permissions. It holds
- * everything until removeRecord or clear; an eviction policy builds on those two.
+ * The cache in memory: maps of records, grants, revocations and permissions, which the
+ * connections of one user may share. A set keeps the newest version of an object, a grant or
+ * a revocation, whichever connection delivers it first. It holds everything until
+ * removeRecord or clear; an eviction policy builds on those two.
  */
 export class MemoryCache implements ICache {
   private readonly recordById = new Map<number, IRecord>();
@@ -56,6 +58,10 @@ export class MemoryCache implements ICache {
     }
 
     const previous = this.recordById.get(record.id);
+    if (previous != null && record.version < previous.version) {
+      return false;
+    }
+
     this.recordById.set(record.id, record);
 
     if (previous != null) {
@@ -82,7 +88,10 @@ export class MemoryCache implements ICache {
   }
 
   setGrant(grant: Grant): void {
-    this.grantById.set(grant.id, grant);
+    const held = this.grantById.get(grant.id);
+    if (held == null || grant.version >= held.version) {
+      this.grantById.set(grant.id, grant);
+    }
   }
 
   getRevocation(id: number): Revocation | undefined {
@@ -90,7 +99,10 @@ export class MemoryCache implements ICache {
   }
 
   setRevocation(revocation: Revocation): void {
-    this.revocationById.set(revocation.id, revocation);
+    const held = this.revocationById.get(revocation.id);
+    if (held == null || revocation.version >= held.version) {
+      this.revocationById.set(revocation.id, revocation);
+    }
   }
 
   hasPermission(id: number): boolean {

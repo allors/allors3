@@ -10,7 +10,9 @@ import { Subscribable } from '../subscribable';
 /**
  * What a connection keeps of the user's view of the database: records, grants, revocations
  * and permissions, by id. A connection that is given no cache creates a MemoryCache of its
- * own.
+ * own. A cache may be shared by the connections of one user to one workspace name and one
+ * meta population: the cache carries the name and the meta population, which the connection
+ * checks when it takes the cache.
  */
 export interface ICache {
   /**
@@ -33,7 +35,9 @@ export interface ICache {
   getRecord(id: number): IRecord | undefined;
 
   /**
-   * Keeps the record, and answers whether it was kept.
+   * Keeps the record unless the cache holds a newer version of the object, and answers
+   * whether it was kept. A record of the same version replaces the one held: the grants
+   * and revocations of an object change without its version.
    */
   setRecord(record: IRecord): boolean;
 
@@ -49,10 +53,16 @@ export interface ICache {
 
   getGrant(id: number): Grant | undefined;
 
+  /**
+   * Keeps the grant unless the cache holds a newer version of it.
+   */
   setGrant(grant: Grant): void;
 
   getRevocation(id: number): Revocation | undefined;
 
+  /**
+   * Keeps the revocation unless the cache holds a newer version of it.
+   */
   setRevocation(revocation: Revocation): void;
 
   hasPermission(id: number): boolean;

@@ -63,7 +63,11 @@ Changes accumulate under **[Unreleased]** until a version is released.
   refused by. `ConnectionTests` pins the sharing on the three transports; the new project
   `dotnet/Core/Workspace/Tests.Connection`, run by the target `DotnetCoreWorkspaceConnectionTest`
   and the CI job `CiDotnetCoreWorkspaceConnectionTest` in the `memory` job, pins the cache and
-  the connection over a transport that answers in memory, without a server.
+  the connection over a transport that answers in memory, without a server. The TypeScript
+  connection has the same: `MemoryCache` with the version guard and `recordChanged`, shared
+  through the `cache` option of `DatabaseConnection`, which checks the workspace name and the
+  meta population; the unit-test project pins it over a fake server in memory, and the
+  server-backed suite on the Core test server.
 - A domain extends several domains: `[Extends]` takes the names of all of them, and the graph
   may hold diamonds. The order of the domains, for the hooks of domains that do not extend each
   other, is defined: a domain before the domains it extends; branches in the id order of their

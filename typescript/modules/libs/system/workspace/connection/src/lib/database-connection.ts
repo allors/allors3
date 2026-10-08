@@ -19,6 +19,7 @@ import {
 import { ICache } from './cache/icache';
 import { MemoryCache } from './cache/memory-cache';
 import { DefaultNumberRanges } from './collections/ranges/default-number-ranges';
+import { loadRange } from './collections/ranges/load-range';
 import { Ranges } from './collections/ranges/ranges';
 import { Procedure } from './data/procedure';
 import { Pull } from './data/pull';
@@ -71,7 +72,9 @@ export type InvokeCallOptions = InvokeOptions & CallOptions;
 
 export interface DatabaseConnectionOptions {
   /**
-   * The cache to keep the user's view in; a MemoryCache of the connection's own when absent.
+   * The cache to keep the user's view in, shared with the other connections of the user; a
+   * MemoryCache of the connection's own when absent. It must be of the connection's
+   * workspace name and meta population.
    */
   cache?: ICache;
 
@@ -101,7 +104,8 @@ export interface IDatabaseConnection {
   readonly ranges: Ranges<number>;
 
   /**
-   * What the connection keeps of the user's view of the database.
+   * What the connection keeps of the user's view of the database; shared with the other
+   * connections of the user when the connection was given a cache.
    */
   readonly cache: ICache;
 
@@ -180,8 +184,23 @@ export class DatabaseConnection implements IDatabaseConnection {
       throw new Error('A connection needs a transport to the server.');
     }
 
+    const cache = options?.cache;
+    if (cache != null) {
+      if (cache.workspaceName !== workspaceName) {
+        throw new Error(
+          `The cache holds the records of workspace '${cache.workspaceName}' and cannot serve a connection to workspace '${workspaceName}': the connections that share a cache are to one workspace name. Give this connection a cache of its own.`
+        );
+      }
+
+      if (cache.metaPopulation !== metaPopulation) {
+        throw new Error(
+          'The cache types its records by another meta population than this connection: the connections that share a cache are built on one meta population instance. Give this connection a cache of its own, or build it on the cache\'s meta population.'
+        );
+      }
+    }
+
     this.ranges = options?.ranges ?? new DefaultNumberRanges();
-    this.cache = options?.cache ?? new MemoryCache(workspaceName, metaPopulation);
+    this.cache = cache ?? new MemoryCache(workspaceName, metaPopulation);
     this.pushEncoder = new PushEncoder(this.cache, this.ranges);
   }
 
@@ -330,12 +349,12 @@ export class DatabaseConnection implements IDatabaseConnection {
           return true;
         }
 
-        if (!this.ranges.equals(record.grantIds, this.ranges.importFrom(v.g))) {
+        if (!this.ranges.equals(record.grantIds, loadRange(this.ranges, v.g))) {
           return true;
         }
 
         if (
-          !this.ranges.equals(record.revocationIds, this.ranges.importFrom(v.r))
+          !this.ranges.equals(record.revocationIds, loadRange(this.ranges, v.r))
         ) {
           return true;
         }
@@ -389,7 +408,7 @@ export class DatabaseConnection implements IDatabaseConnection {
 
     if (grants != null) {
       for (const accessResponseGrant of grants) {
-        const permissionIds = this.ranges.importFrom(accessResponseGrant.p);
+        const permissionIds = loadRange(this.ranges, accessResponseGrant.p);
         this.cache.setGrant(
           new Grant(accessResponseGrant.i, accessResponseGrant.v, permissionIds)
         );
@@ -399,7 +418,10 @@ export class DatabaseConnection implements IDatabaseConnection {
 
     if (revocations != null) {
       for (const accessResponseRevocation of revocations) {
-        const permissionIds = this.ranges.importFrom(accessResponseRevocation.p);
+        const permissionIds = loadRange(
+          this.ranges,
+          accessResponseRevocation.p
+        );
         this.cache.setRevocation(
           new Revocation(
             accessResponseRevocation.i,

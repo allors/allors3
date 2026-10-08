@@ -6,6 +6,7 @@ import {
 } from '@allors/system/workspace/meta';
 import { SyncResponseObject } from '@allors/system/common/protocol-json';
 import { ICache } from './cache/icache';
+import { loadRange } from './collections/ranges/load-range';
 import { IRange, Ranges } from './collections/ranges/ranges';
 import { unitFromJson } from './json/from-json';
 import { ResponseContext } from './response-context';
@@ -76,10 +77,12 @@ export class Record implements IRecord {
 
     this.id = syncResponseObject.i;
     this.version = syncResponseObject.v;
-    this.grantIds = ranges.importFrom(
+    this.grantIds = loadRange(
+      ranges,
       ctx.checkForMissingGrants(syncResponseObject.g)
     );
-    this.revocationIds = ranges.importFrom(
+    this.revocationIds = loadRange(
+      ranges,
       ctx.checkForMissingRevocations(syncResponseObject.r)
     );
 
@@ -143,3 +146,4 @@ export class Record implements IRecord {
     );
   }
 }
+
