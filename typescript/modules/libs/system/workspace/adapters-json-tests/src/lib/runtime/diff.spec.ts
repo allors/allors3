@@ -1,6 +1,6 @@
 import { C1 } from '@allors/default/workspace/domain';
 import { IUnitDiff, Pull } from '@allors/system/workspace/domain';
-import { Fixture } from '../fixture';
+import { Fixture, name_c1A } from '../fixture';
 import '../matchers';
 
 let fixture: Fixture;
@@ -21,7 +21,7 @@ test('databaseUnitDiff', async () => {
       predicate: {
         kind: 'Equals',
         propertyType: m.C1.Name,
-        value: 'C1A',
+        value: name_c1A,
       },
     },
   };
@@ -60,7 +60,7 @@ test('databaseUnitDiffAfterReset', async () => {
       predicate: {
         kind: 'Equals',
         propertyType: m.C1.Name,
-        value: 'C1A',
+        value: name_c1A,
       },
     },
   };
@@ -95,7 +95,7 @@ test('databaseUnitDiffAfterDoubleReset', async () => {
       predicate: {
         kind: 'Equals',
         propertyType: m.C1.Name,
-        value: 'C1A',
+        value: name_c1A,
       },
     },
   };
@@ -131,7 +131,7 @@ test('databaseMultipleUnitDiff', async () => {
       predicate: {
         kind: 'Equals',
         propertyType: m.C1.Name,
-        value: 'C1A',
+        value: name_c1A,
       },
     },
   };
