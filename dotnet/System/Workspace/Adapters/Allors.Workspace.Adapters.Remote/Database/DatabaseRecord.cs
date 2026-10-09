@@ -24,8 +24,8 @@ namespace Allors.Workspace.Adapters.Remote
             new DatabaseRecord(database, (IClass)database.Configuration.MetaPopulation.FindByTag(syncResponseObject.c), syncResponseObject.i, syncResponseObject.v)
             {
                 syncResponseRoles = syncResponseObject.ro,
-                GrantIds = database.Ranges.Load(ctx.CheckForMissingGrants(syncResponseObject.g)),
-                RevocationIds = database.Ranges.Load(ctx.CheckForMissingRevocations(syncResponseObject.r))
+                GrantIds = database.Ranges.Load(ctx.CollectGrants(syncResponseObject.g)),
+                RevocationIds = database.Ranges.Load(ctx.CollectRevocations(syncResponseObject.r))
             };
 
         internal IRange<long> GrantIds { get; private set; }

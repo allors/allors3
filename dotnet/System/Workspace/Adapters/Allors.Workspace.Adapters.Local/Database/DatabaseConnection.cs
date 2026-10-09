@@ -1,4 +1,4 @@
-// <copyright file="v.cs" company="Allors bv">
+// <copyright file="DatabaseConnection.cs" company="Allors bv">
 // Copyright (c) Allors bv. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -6,152 +6,68 @@
 namespace Allors.Workspace.Adapters.Local
 {
     using System;
-    using System.Collections.Concurrent;
-    using System.Collections.Generic;
-    using System.Linq;
-    using Database;
-    using Database.Security;
-    using Database.Services;
-    using Meta;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Allors.Database;
+    using Allors.Database.Protocol.Json;
+    using Allors.Database.Security;
+    using Allors.Database.Services;
+    using Allors.Protocol.Json;
+    using Allors.Protocol.Json.Api.Invoke;
+    using Allors.Protocol.Json.Api.Pull;
+    using Allors.Protocol.Json.Api.Push;
+    using Allors.Protocol.Json.Api.Security;
+    using Allors.Protocol.Json.Api.Sync;
+    using Allors.Protocol.Json.SystemTextJson;
     using Ranges;
-    using AccessControl = AccessControl;
-    using IRoleType = Database.Meta.IRoleType;
 
-    public class DatabaseConnection : Adapters.DatabaseConnection
+    /// <summary>
+    /// The in-process connection. It sends the same requests and receives the same responses as
+    /// the HTTP connections, served by the server's <see cref="Api"/> on a transaction of the
+    /// given database, as the given user, without a wire. A call runs on the calling thread and
+    /// has completed when its task is returned; use a connection from one thread at a time.
+    /// </summary>
+    public class DatabaseConnection : Remote.DatabaseConnection
     {
-        private readonly Dictionary<long, AccessControl> accessControlById;
-        private readonly ConcurrentDictionary<long, DatabaseRecord> recordsById;
-
-        private readonly Func<IWorkspaceServices> servicesBuilder;
-        private readonly IRanges<long> recordRanges;
-
-        public DatabaseConnection(Configuration configuration, IDatabase database, Func<IWorkspaceServices> servicesBuilder, Func<IRanges<long>> rangesFactory) : base(configuration, new IdGenerator())
+        public DatabaseConnection(Remote.Configuration configuration, Func<IWorkspaceServices> servicesBuilder, IDatabase database, long userId, IdGenerator idGenerator, IRanges<long> ranges)
+            : base(configuration, idGenerator, servicesBuilder, ranges)
         {
             this.Database = database;
-            this.servicesBuilder = servicesBuilder;
-            this.recordRanges = rangesFactory();
-
-            this.recordsById = new ConcurrentDictionary<long, DatabaseRecord>();
-            this.accessControlById = new Dictionary<long, AccessControl>();
+            this.UserId = userId;
+            this.UnitConvert = new UnitConvert();
         }
 
-        public long UserId { get; set; }
+        public IDatabase Database { get; }
 
-        private IDatabase Database { get; }
+        public long UserId { get; }
 
-        public IDatabaseServices DatabaseServices => this.Database.Services;
+        public override IUnitConvert UnitConvert { get; }
 
-        public Database.Meta.IMetaPopulation MetaPopulation => this.Database.MetaPopulation;
+        public override Task<PullResponse> Pull(object args, string name) =>
+            throw new NotSupportedException($"The in-process connection cannot pull '{name}': a named pull is a route of the server and has no in-process equivalent. Pull with Pull objects, or call a Procedure.");
 
-        public ITransaction CreateTransaction()
+        public override Task<PullResponse> Pull(PullRequest pullRequest) => this.Execute(api => api.Pull(pullRequest));
+
+        public override Task<SyncResponse> Sync(SyncRequest syncRequest) => this.Execute(api => api.Sync(syncRequest));
+
+        public override Task<PushResponse> Push(PushRequest pushRequest) => this.Execute(api => api.Push(pushRequest));
+
+        public override Task<InvokeResponse> Invoke(InvokeRequest invokeRequest) => this.Execute(api => api.Invoke(invokeRequest));
+
+        public override Task<AccessResponse> Access(AccessRequest accessRequest) => this.Execute(api => api.Access(accessRequest));
+
+        public override Task<PermissionResponse> Permission(PermissionRequest permissionRequest) => this.Execute(api => api.Permission(permissionRequest));
+
+        private Task<TResponse> Execute<TResponse>(Func<Api, TResponse> call)
         {
-            var transaction = this.Database.CreateTransaction();
+            // As the server controllers do: one transaction per request, the user set before the
+            // Api is created, and the transaction only disposed, because the builders commit and
+            // roll back themselves.
+            using var transaction = this.Database.CreateTransaction();
             var user = (IUser)transaction.Instantiate(this.UserId);
             transaction.Services.Get<IUserService>().User = user;
-            return transaction;
+            var api = new Api(transaction, this.Configuration.Name, CancellationToken.None);
+            return Task.FromResult(call(api));
         }
-
-        internal void Sync(IEnumerable<IObject> objects, IAccessControl accessControl)
-        {
-            using (var transaction = this.Database.CreateTransaction())
-            {
-                foreach (var @object in objects)
-                {
-                    var id = @object.Id;
-                    var databaseClass = @object.Strategy.Class;
-                    var roleTypes = databaseClass.DatabaseRoleTypes.Where(w => w.RelationType.WorkspaceNames.Contains(this.Configuration.Name));
-
-                    var workspaceClass = (IClass)this.Configuration.MetaPopulation.FindByTag(databaseClass.Tag);
-                    var roleByRoleType = roleTypes.ToDictionary(w => ((IRelationType)this.Configuration.MetaPopulation.FindByTag(w.RelationType.Tag)).RoleType, w => this.GetRole(@object, w));
-
-                    var acl = accessControl[@object];
-
-                    var accessControls = acl.Grants?.Select(v => (IGrant)transaction.Instantiate(v.Id)).Select(this.GetAccessControl).ToArray() ?? Array.Empty<AccessControl>();
-
-                    this.recordsById[id] = new DatabaseRecord(workspaceClass, id, @object.Strategy.ObjectVersion, roleByRoleType, this.recordRanges.Load(acl.Revocations.Select(v => v.Id)), accessControls);
-                }
-            }
-        }
-
-        public override IWorkspace CreateWorkspace() => new Workspace(this, this.servicesBuilder(), this.recordRanges);
-
-        public override Adapters.DatabaseRecord GetRecord(long id)
-        {
-            this.recordsById.TryGetValue(id, out var databaseObjects);
-            return databaseObjects;
-        }
-
-        public override long GetPermission(IClass workspaceClass, IOperandType operandType, Operations operation)
-        {
-            var @class = (Database.Meta.IClass)this.Database.MetaPopulation.FindByTag(workspaceClass.Tag);
-            var operandId = this.Database.MetaPopulation.FindByTag(operandType.OperandTag).Id;
-
-            long permission;
-            switch (operation)
-            {
-                case Operations.Read:
-                    @class.ReadPermissionIdByRelationTypeId.TryGetValue(operandId, out permission);
-                    break;
-                case Operations.Write:
-                    @class.WritePermissionIdByRelationTypeId.TryGetValue(operandId, out permission);
-                    break;
-                case Operations.Execute:
-                    @class.ExecutePermissionIdByMethodTypeId.TryGetValue(operandId, out permission);
-                    break;
-                case Operations.Create:
-                    throw new NotSupportedException("Create is not supported");
-                default:
-                    throw new ArgumentOutOfRangeException($"Unknown operation {operation}");
-            }
-
-            return permission;
-        }
-
-        internal IEnumerable<IObject> ObjectsToSync(Pull pull) =>
-            pull.DatabaseObjects.Where(v =>
-            {
-                if (this.recordsById.TryGetValue(v.Id, out var databaseRoles))
-                {
-                    return v.Strategy.ObjectVersion != databaseRoles.Version;
-                }
-
-                return true;
-            });
-
-        private AccessControl GetAccessControl(IGrant grant)
-        {
-            if (!this.accessControlById.TryGetValue(grant.Strategy.ObjectId, out var acessControl))
-            {
-                acessControl = new AccessControl();
-                this.accessControlById.Add(grant.Strategy.ObjectId, acessControl);
-            }
-
-            if (acessControl.Version == grant.Strategy.ObjectVersion)
-            {
-                return acessControl;
-            }
-
-            acessControl.Version = grant.Strategy.ObjectVersion;
-            acessControl.PermissionIds = this.recordRanges.Import(grant.Permissions.Select(v => v.Id));
-
-            return acessControl;
-        }
-
-        private object GetRole(IObject @object, IRoleType roleType)
-        {
-            if (roleType.ObjectType.IsUnit)
-            {
-                return @object.Strategy.GetUnitRole(roleType);
-            }
-
-            if (roleType.IsOne)
-            {
-                return @object.Strategy.GetCompositeRole(roleType)?.Id;
-            }
-
-            return this.recordRanges.Load(@object.Strategy.GetCompositesRole<IObject>(roleType).Select(v => v.Id));
-        }
-
-
     }
 }
