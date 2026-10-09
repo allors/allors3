@@ -122,6 +122,11 @@ Changes accumulate under **[Unreleased]** until a version is released.
 
 ### Changed
 
+- The JSON protocol's `Api` and tracing events move from the Core server into
+  `Allors.Database.Workspace.Json`, so hosts can use the same entry point from System.
+  Object creation, derivation and metadata use System interfaces; the namespace,
+  constructor and protocol messages stay the same. `Api.M` and `Api.MetaPopulation`
+  now expose `IMetaPopulation`; consumers of the moved types must rebuild.
 - Domain inheritance, breaking for code that reads the repository model or builds a meta
   population by hand: `ExtendsAttribute.Value` is `Values`, the repository `Domain.Base` is
   `DirectSuperdomains`, and `Repository.SortedDomains`, which no code used, is gone. The
