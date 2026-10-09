@@ -11,6 +11,12 @@ Changes accumulate under **[Unreleased]** until a version is released.
 
 ### Added
 
+- Workspace session baseline characterization tests across .NET Local, both .NET JSON HTTP
+  adapters, and TypeScript HTTP, with a maintainer map in
+  `docs/internals/workspace-session-state.md`. They cover remote refresh, disjoint and conflicting
+  edits, diff/version retention, Reset/Pull recovery, and DateTime/binary equality differences;
+  production behavior is unchanged.
+
 - A domain extends several domains: `[Extends]` takes the names of all of them, and the graph
   may hold diamonds. The order of the domains, for the hooks of domains that do not extend each
   other, is defined: a domain before the domains it extends; branches in the id order of their
