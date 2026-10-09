@@ -11,6 +11,11 @@ Changes accumulate under **[Unreleased]** until a version is released.
 
 ### Added
 
+- Workspace session baseline characterization tests across .NET Local, both .NET JSON HTTP
+  adapters, and TypeScript HTTP, with a maintainer map in
+  `docs/internals/workspace-session-state.md`. They cover remote refresh, disjoint and conflicting
+  edits, diff/version retention, Reset/Pull recovery, and DateTime/binary unit equality.
+
 - A domain extends several domains: `[Extends]` takes the names of all of them, and the graph
   may hold diamonds. The order of the domains, for the hooks of domains that do not extend each
   other, is defined: a domain before the domains it extends; branches in the id order of their
@@ -303,6 +308,12 @@ Changes accumulate under **[Unreleased]** until a version is released.
   updated by hand.
 
 ### Fixed
+
+- Workspace Pull merge checks compare .NET binary arrays by byte contents and TypeScript Date
+  values by timestamp. An unrelated remote change no longer causes a conflict solely because
+  an unchanged unit value was decoded into a new array or Date instance. Actual remote unit
+  changes, including transitions to or from null, still conflict with local edits. The existing
+  baseline, Reset and Push error-reporting rules remain unchanged.
 
 - The TypeScript JSON workspace client refreshes cached grant and revocation permissions
   referenced by synchronized objects, matching the .NET client's behavior. Refresh requests

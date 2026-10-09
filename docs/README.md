@@ -27,6 +27,7 @@ An application must not rely on them: they can change with any version.
 | Page | Status | Content |
 | --- | --- | --- |
 | [Domain inheritance](internals/domain-inheritance.md) | Current | Which part owns what, from `[Extends]` to the order of the hooks: the attribute, the parser, the template, the meta sort, the method compiler and the hand-written dispatch; why the ids decide the order; and the platform test domains of the Diamond tree. |
+| [Workspace session state](internals/workspace-session-state.md) | Current | Ownership of editing baselines, merge/diff/reset characterization across .NET and TypeScript, unit merge equality, and separate authorization-freshness decisions. |
 
 ## Kind
 

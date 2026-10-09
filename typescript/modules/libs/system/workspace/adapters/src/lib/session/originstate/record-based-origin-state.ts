@@ -400,7 +400,11 @@ export abstract class RecordBasedOriginState {
       const newOriginal = newRecord?.getRole(roleType);
 
       if (roleType.objectType.isUnit) {
-        if (original !== newOriginal) {
+        const equal =
+          original instanceof Date && newOriginal instanceof Date
+            ? original.getTime() === newOriginal.getTime()
+            : original === newOriginal;
+        if (!equal) {
           return false;
         }
       } else if (roleType.isOne) {
