@@ -12,20 +12,18 @@ export class ResponseContext {
   missingRevocationIds: Set<number>;
 
   checkForMissingGrants(value: IRange<number>): IRange<number> {
+    // Synchronization must refresh permissions even when the grant is cached.
     for (const id of this.database.ranges.enumerate(value)) {
-      if (!this.database.grantById.has(id)) {
-        this.missingGrantIds.add(id);
-      }
+      this.missingGrantIds.add(id);
     }
 
     return value;
   }
 
   checkForMissingRevocations(value: IRange<number>): IRange<number> {
+    // A cached revocation can gain or lose denied permissions without changing id.
     for (const id of this.database.ranges.enumerate(value)) {
-      if (!this.database.revocationById.has(id)) {
-        this.missingRevocationIds.add(id);
-      }
+      this.missingRevocationIds.add(id);
     }
 
     return value;
