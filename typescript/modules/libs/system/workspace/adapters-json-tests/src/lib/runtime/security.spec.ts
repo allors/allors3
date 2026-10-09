@@ -115,6 +115,68 @@ test('deniedPermissions', async () => {
   }
 });
 
+test('refreshes a cached grant when an object is synchronized', async () => {
+  await fixture.login('administrator');
+  const { workspace, m } = fixture;
+  const session = workspace.createSession();
+  const result = await session.pull({
+    extent: { kind: 'Filter', objectType: m.C1 },
+  });
+  expect(result.hasErrors).toBeFalsy();
+  const c1s = result.collection<C1>(m.C1);
+  expect(c1s.length).toBeGreaterThan(0);
+  const c1 = c1s[0];
+  expect(c1.strategy.canRead(m.C1.C1AllorsString)).toBeTruthy();
+
+  const mutation = await session.call({
+    name: 'TestPermissionRefresh',
+    objects: { target: c1 },
+    values: { action: 'removeGrantRead' },
+  });
+  expect(mutation.hasErrors).toBeFalsy();
+
+  const refreshed = await session.pull({ object: c1 });
+  expect(refreshed.hasErrors).toBeFalsy();
+  expect(refreshed.object<C1>(m.C1)).toBe(c1);
+  expect(c1.strategy.canRead(m.C1.C1AllorsString)).toBeFalsy();
+});
+
+test('refreshes a cached revocation when an object is synchronized', async () => {
+  await fixture.login('administrator');
+  const { workspace, m } = fixture;
+  const session = workspace.createSession();
+  const result = await session.pull({
+    extent: { kind: 'Filter', objectType: m.Denied },
+  });
+  expect(result.hasErrors).toBeFalsy();
+  const denieds = result.collection<Denied>(m.Denied);
+  expect(denieds).toHaveLength(1);
+  const denied = denieds[0];
+  expect(denied.strategy.canRead(m.Denied.DefaultWorkspaceProperty)).toBeTruthy();
+  expect(denied.strategy.canWrite(m.Denied.DefaultWorkspaceProperty)).toBeFalsy();
+
+  for (const denyRead of [true, false]) {
+    const mutation = await session.call({
+      name: 'TestPermissionRefresh',
+      objects: { target: denied },
+      values: {
+        action: denyRead ? 'addReadRevocation' : 'removeReadRevocation',
+      },
+    });
+    expect(mutation.hasErrors).toBeFalsy();
+
+    const refreshed = await session.pull({ object: denied });
+    expect(refreshed.hasErrors).toBeFalsy();
+    expect(refreshed.object<Denied>(m.Denied)).toBe(denied);
+    expect(denied.strategy.canRead(m.Denied.DefaultWorkspaceProperty)).toBe(
+      !denyRead
+    );
+    expect(
+      denied.strategy.canWrite(m.Denied.DefaultWorkspaceProperty)
+    ).toBeFalsy();
+  }
+});
+
 test('trim', async () => {
   const { workspace, m } = fixture;
   const session = workspace.createSession();

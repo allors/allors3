@@ -304,6 +304,12 @@ Changes accumulate under **[Unreleased]** until a version is released.
 
 ### Fixed
 
+- The TypeScript JSON workspace client refreshes cached grant and revocation permissions
+  referenced by synchronized objects, matching the .NET client's behavior. Refresh requests
+  deduplicate the referenced IDs; pulls that need no synchronization keep their existing
+  request count. Synchronizing objects can now require an additional access request when
+  all referenced access records were already cached. This does not add a general
+  authorization-freshness guarantee.
 - The .NET JSON workspace client refreshes the grant and revocation permissions referenced
   by synchronized objects, including access records already held by the connection. This
   preserves local permission refresh when routing the local adapter through JSON and also

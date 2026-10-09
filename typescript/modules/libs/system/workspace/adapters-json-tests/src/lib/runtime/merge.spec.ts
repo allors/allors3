@@ -1,6 +1,6 @@
 import { C1 } from '@allors/default/workspace/domain';
 import { Pull } from '@allors/system/workspace/domain';
-import { Fixture } from '../fixture';
+import { Fixture, name_c1A } from '../fixture';
 import '../matchers';
 
 let fixture: Fixture;
@@ -22,7 +22,7 @@ test('databaseMergeError', async () => {
       predicate: {
         kind: 'Equals',
         propertyType: m.C1.Name,
-        value: 'C1A',
+        value: name_c1A,
       },
     },
   };
