@@ -54,8 +54,6 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal IRanges<long> Ranges { get; }
 
-        public abstract string UserId { get; }
-
         public override IWorkspace CreateWorkspace() => new Workspace(this, this.servicesBuilder(), this.Ranges);
 
         internal SyncRequest OnPullResponse(PullResponse response) =>
@@ -91,7 +89,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal AccessRequest OnSyncResponse(SyncResponse syncResponse)
         {
-            var ctx = new ResponseContext(this);
+            var ctx = new ResponseContext();
 
             foreach (var syncResponseObject in syncResponse.o)
             {
@@ -99,12 +97,12 @@ namespace Allors.Workspace.Adapters.Remote
                 this.recordsById[databaseObjects.Id] = databaseObjects;
             }
 
-            if (ctx.MissingGrantIds.Count > 0 || ctx.MissingRevocationIds.Count > 0)
+            if (ctx.GrantIdsToRefresh.Count > 0 || ctx.RevocationIdsToRefresh.Count > 0)
             {
                 return new AccessRequest
                 {
-                    g = ctx.MissingGrantIds.Select(v => v).ToArray(),
-                    r = ctx.MissingRevocationIds.Select(v => v).ToArray(),
+                    g = ctx.GrantIdsToRefresh.ToArray(),
+                    r = ctx.RevocationIdsToRefresh.ToArray(),
                 };
             }
 
@@ -113,8 +111,6 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal PermissionRequest AccessResponse(AccessResponse accessResponse)
         {
-            var responseContext = new ResponseContext(this);
-
             HashSet<long> missingPermissionIds = null;
             if (accessResponse.g != null)
             {

@@ -268,7 +268,7 @@ namespace Allors.Database.Protocol.Json
                     }
                     else if (!ignore)
                     {
-                        if (newIdByObject.TryGetValue(obj, out var newId))
+                        if (newIdByObject != null && newIdByObject.TryGetValue(obj, out var newId))
                         {
                             pushResponse.AddAccessError(newId);
                         }

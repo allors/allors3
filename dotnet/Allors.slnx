@@ -118,7 +118,6 @@
     <Project Path="System/Workspace/Allors.Workspace.Domain/Allors.Workspace.Domain.csproj" />
     <Project Path="System/Workspace/Allors.Workspace.Meta.Lazy/Allors.Workspace.Meta.Lazy.csproj" />
     <Project Path="System/Workspace/Allors.Workspace.Meta/Allors.Workspace.Meta.csproj" />
-    <Project Path="System/Workspace/Allors.Workspace.Protocol.Direct/Allors.Workspace.Protocol.Direct.csproj" />
     <Project Path="System/Workspace/Allors.Workspace.Protocol.Json/Allors.Workspace.Protocol.Json.csproj" />
   </Folder>
   <Folder Name="/System/Workspace/Adapters/">

@@ -140,6 +140,22 @@ namespace Tests.Workspace
         }
 
         [Fact]
+        public async Task WithRevocation()
+        {
+            var session = this.Workspace.CreateSession();
+            var result = await session.PullAsync(new Pull { Extent = new Filter(this.M.Denied) });
+            Assert.False(result.HasErrors);
+            var denieds = result.GetCollection<Denied>();
+            Assert.NotEmpty(denieds);
+
+            foreach (var denied in denieds)
+            {
+                Assert.True(denied.Strategy.CanRead(this.M.Denied.DefaultWorkspaceProperty));
+                Assert.False(denied.Strategy.CanWrite(this.M.Denied.DefaultWorkspaceProperty));
+            }
+        }
+
+        [Fact]
         public async void DeniedPermissions()
         {
             var session = this.Workspace.CreateSession();

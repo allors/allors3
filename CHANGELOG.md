@@ -122,6 +122,18 @@ Changes accumulate under **[Unreleased]** until a version is released.
 
 ### Changed
 
+- The .NET local workspace adapter calls the extracted JSON `Api` in process and reuses
+  the JSON workspace/session implementation. Requests use one database transaction each,
+  with the user set before dispatch; the API builders own commits and rollbacks. Calls
+  remain synchronous on the calling thread and must be sequential per connection. Record
+  storage stays private to each connection; no HTTP or JSON text round trip is involved.
+  Local bootstrap now uses `Remote.Configuration` and constructs `Local.DatabaseConnection`
+  with the configuration, workspace-services builder, database, user id, `IdGenerator`,
+  and ranges. Its user id is immutable. The duplicate Local operation, workspace, session,
+  strategy and record types, `Local.Configuration`, and `Allors.Workspace.Protocol.Direct`
+  are removed, along with the unused, always-null `UserId` on the Remote connections.
+  Local pull results now follow the JSON API's ordering and case-insensitive result-name
+  lookup. Named HTTP-route pulls remain unsupported locally and give an actionable error.
 - The JSON protocol's `Api` and tracing events move from the Core server into
   `Allors.Database.Workspace.Json`, so hosts can use the same entry point from System.
   Object creation, derivation and metadata use System interfaces; the namespace,
@@ -292,6 +304,21 @@ Changes accumulate under **[Unreleased]** until a version is released.
 
 ### Fixed
 
+- The .NET JSON workspace client refreshes the grant and revocation permissions referenced
+  by synchronized objects, including access records already held by the connection. This
+  preserves local permission refresh when routing the local adapter through JSON and also
+  applies to both HTTP adapters (`RefreshesKnownGrantWhenAnObjectIsSynchronized` and
+  `RefreshesKnownRevocationWhenAnObjectIsSynchronized`). Pulls that need no synchronization
+  keep their existing behavior; this does not add a general authorization-freshness guarantee.
+  A rejected push of existing objects now returns access errors when no new objects are in
+  the request, instead of throwing on the absent new-object map
+  (`RejectedExistingObjectPushReturnsAccessErrorAndRollsBack`).
+- Local workspace permissions now honor revocations through the JSON API's access and
+  permission responses (`SecurityTests.WithRevocation`). System.Text.Json unit conversion
+  accepts CLR date/time, Boolean, floating-point and integer values passed directly by
+  the in-process adapter, as well as deserialized JSON values (`UnitConversionWithoutSerialization`
+  and `UnitConversionWithSerialization`). `JsonApiPullDisposesItsTransaction` checks API
+  dispatch, the request user, and transaction rollback on success and failure.
 - The Entra guide links to the shared user-factory contract and clarifies that existing users
   need no factory. Factory calls are not limited to an identity's first sign-in.
 - Entra resolves user names from raw or mapped `unique_name` and then `email` when neither

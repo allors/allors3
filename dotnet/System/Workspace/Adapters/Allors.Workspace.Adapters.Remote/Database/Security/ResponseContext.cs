@@ -6,49 +6,36 @@
 namespace Allors.Workspace.Adapters.Remote
 {
     using System.Collections.Generic;
-    using System.Linq;
 
     internal class ResponseContext
     {
-        private readonly DatabaseConnection database;
-
-        internal ResponseContext(DatabaseConnection database)
+        internal ResponseContext()
         {
-            this.database = database;
-
-            this.MissingGrantIds = new HashSet<long>();
-            this.MissingRevocationIds = new HashSet<long>();
+            this.GrantIdsToRefresh = new HashSet<long>();
+            this.RevocationIdsToRefresh = new HashSet<long>();
         }
 
-        internal HashSet<long> MissingGrantIds { get; }
+        internal HashSet<long> GrantIdsToRefresh { get; }
 
-        internal HashSet<long> MissingRevocationIds { get; }
+        internal HashSet<long> RevocationIdsToRefresh { get; }
 
-        internal long[] CheckForMissingGrants(long[] value)
+        internal long[] CollectGrants(long[] value)
         {
-            if (value == null)
+            if (value != null)
             {
-                return null;
-            }
-
-            foreach (var accessControlId in value.Where(v => !this.database.AccessControlById.ContainsKey(v)))
-            {
-                this.MissingGrantIds.Add(accessControlId);
+                // Sync carries access-record ids without their versions. Refresh known ids too,
+                // because their permissions may have changed since the previous synchronization.
+                this.GrantIdsToRefresh.UnionWith(value);
             }
 
             return value;
         }
 
-        internal long[] CheckForMissingRevocations(long[] value)
+        internal long[] CollectRevocations(long[] value)
         {
-            if (value == null)
+            if (value != null)
             {
-                return null;
-            }
-
-            foreach (var revocationId in value.Where(v => !this.database.RevocationById.ContainsKey(v)))
-            {
-                this.MissingRevocationIds.Add(revocationId);
+                this.RevocationIdsToRefresh.UnionWith(value);
             }
 
             return value;

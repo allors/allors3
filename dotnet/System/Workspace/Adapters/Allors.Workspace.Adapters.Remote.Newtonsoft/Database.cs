@@ -35,8 +35,6 @@ namespace Allors.Workspace.Adapters.Remote.Newtonsoft
 
         public override IUnitConvert UnitConvert { get; }
 
-        public override string UserId => null;
-
         public IAsyncPolicy Policy { get; set; } = Polly.Policy
             .Handle<HttpRequestException>()
             .WaitAndRetryAsync(5, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
