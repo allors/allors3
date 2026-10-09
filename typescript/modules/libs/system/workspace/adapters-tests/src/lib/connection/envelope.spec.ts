@@ -1,8 +1,5 @@
 import {
-  CacheKey,
   DatabaseConnection,
-  ICache,
-  MemoryCache,
   metaFingerprint,
   metaPopulationFingerprint,
   Operations,
@@ -24,8 +21,8 @@ describe('DatabaseConnection and the envelope', () => {
   let transport: FakeTransport;
   let pull: Pull[];
 
-  const createConnection = (cache?: ICache) =>
-    new DatabaseConnection(workspaceName, m, transport, { cache });
+  const createConnection = () =>
+    new DatabaseConnection(workspaceName, m, transport);
 
   beforeEach(() => {
     m = new LazyMetaPopulation(data) as unknown as M;
@@ -84,36 +81,39 @@ describe('DatabaseConnection and the envelope', () => {
 
     expect(connection.databaseId).toBeNull();
     expect(connection.userId).toBeNull();
-    expect(connection.cache.key).toBeNull();
 
     await connection.pull(pull);
 
     expect(connection.databaseId).toBe('fake');
     expect(connection.userId).toBe(1);
-    expect(
-      connection.cache.key.equals(
-        new CacheKey('fake', 1, workspaceName, connection.metaFingerprint)
-      )
-    ).toBe(true);
   });
 
   it('faults when the user changes', async () => {
     const connection = createConnection();
     await connection.pull(pull);
-    expect(connection.getRecord(1)).toBeDefined();
+    const record = connection.getRecord(1);
+    expect(record).toBeDefined();
+    expect(record.isPermitted(100)).toBe(true);
 
     transport.server.userId = 2;
 
     await expect(connection.pull(pull)).rejects.toThrow(/user 1.*user 2/);
 
     expect(connection.getRecord(1)).toBeUndefined();
-    expect(connection.cache.key).toBeNull();
+    expect(
+      connection.getPermission(m.C1, m.C1.C1AllorsString, Operations.Read)
+    ).toBe(0);
+    expect(record.isPermitted(100)).toBe(false);
+    expect(connection.userId).toBe(1);
 
     // The connection stays faulted, whatever the server answers next.
     transport.server.userId = 1;
     await expect(connection.pull(pull)).rejects.toThrow(/user 2/);
     await expect(connection.push(null, null)).rejects.toThrow();
+    await expect(connection.invoke([])).rejects.toThrow();
     expect(transport.server.pullRequests.length).toBe(2);
+    expect(transport.server.pushRequests).toEqual([]);
+    expect(transport.server.invokeRequests).toEqual([]);
   });
 
   it('faults when the database changes', async () => {
@@ -122,7 +122,9 @@ describe('DatabaseConnection and the envelope', () => {
 
     transport.server.databaseId = 'other';
 
-    await expect(connection.pull(pull)).rejects.toThrow(/'fake'.*'other'|'other'.*'fake'/);
+    await expect(connection.pull(pull)).rejects.toThrow(
+      /'fake'.*'other'|'other'.*'fake'/
+    );
     expect(connection.getRecord(1)).toBeUndefined();
   });
 
@@ -130,11 +132,12 @@ describe('DatabaseConnection and the envelope', () => {
     transport.server.workspaceName = 'Other';
     const connection = createConnection();
 
-    await expect(connection.pull(pull)).rejects.toThrow(/'Other'.*'Default'|'Default'.*'Other'/);
+    await expect(connection.pull(pull)).rejects.toThrow(
+      /'Other'.*'Default'|'Default'.*'Other'/
+    );
 
     expect(connection.getRecord(1)).toBeUndefined();
     expect(connection.databaseId).toBeNull();
-    expect(connection.cache.key).toBeNull();
     expect(transport.server.syncRequests).toEqual([]);
 
     // Not a fault: the same connection serves once the server serves its workspace.
@@ -148,7 +151,9 @@ describe('DatabaseConnection and the envelope', () => {
     const connection = createConnection();
 
     await expect(connection.pull(pull)).rejects.toThrow(
-      new RegExp(`0000000000000000.*${connection.metaFingerprint}|${connection.metaFingerprint}.*0000000000000000`)
+      new RegExp(
+        `0000000000000000.*${connection.metaFingerprint}|${connection.metaFingerprint}.*0000000000000000`
+      )
     );
 
     expect(connection.getRecord(1)).toBeUndefined();
@@ -163,20 +168,22 @@ describe('DatabaseConnection and the envelope', () => {
     expect(connection.getRecord(1)).toBeUndefined();
   });
 
-  it('refuses the connection of another user on a shared cache', async () => {
-    const cache = new MemoryCache(workspaceName, m);
-    const first = createConnection(cache);
+  it('keeps the views of separate users in separate connections', async () => {
+    const first = createConnection();
     await first.pull(pull);
 
     transport.server.userId = 2;
-    const second = createConnection(cache);
+    transport.server.objects.get(1).withRole(m.C1.C1AllorsString, 'user two');
+    transport.server.grants.get(10).permissions = [];
+    const second = createConnection();
+    await second.pull(pull);
 
-    await expect(second.pull(pull)).rejects.toThrow(/user 1.*user 2/);
-
-    expect(
-      cache.key.equals(new CacheKey('fake', 1, workspaceName, first.metaFingerprint))
-    ).toBe(true);
-    expect(first.getRecord(1)).toBeDefined();
-    expect(transport.server.syncRequests.length).toBe(1);
+    expect(first.userId).toBe(1);
+    expect(second.userId).toBe(2);
+    expect(first.getRecord(1).getRole(m.C1.C1AllorsString)).toBe('one');
+    expect(second.getRecord(1).getRole(m.C1.C1AllorsString)).toBe('user two');
+    expect(first.getRecord(1).isPermitted(100)).toBe(true);
+    expect(second.getRecord(1).isPermitted(100)).toBe(false);
+    expect(transport.server.syncRequests.length).toBe(2);
   });
 });

@@ -5,11 +5,12 @@ import {
   RoleType,
 } from '@allors/system/workspace/meta';
 import { SyncResponseObject } from '@allors/system/common/protocol-json';
-import { ICache } from './cache/icache';
+import { Grant } from './grant';
 import { loadRange } from './collections/ranges/load-range';
 import { IRange, Ranges } from './collections/ranges/ranges';
 import { unitFromJson } from './json/from-json';
 import { ResponseContext } from './response-context';
+import { Revocation } from './revocation';
 
 /**
  * A database object as the connection received it: one user's view of the object at the
@@ -38,7 +39,7 @@ export interface IRecord {
 
   /**
    * Whether the user holds the permission on this object: granted by one of the object's
-   * grants and denied by none of its revocations, as the cache holds them now.
+   * grants and denied by none of its revocations, as the connection holds them now.
    */
   isPermitted(permission: number): boolean;
 }
@@ -46,7 +47,7 @@ export interface IRecord {
 /**
  * A record as a sync response delivered it, converted from the wire when it is built and
  * immutable after that. The permissions are answered against the grants and revocations the
- * cache holds at the time of asking.
+ * connection holds at the time of asking.
  */
 export class Record implements IRecord {
   readonly cls: Class;
@@ -62,13 +63,16 @@ export class Record implements IRecord {
   private readonly roleByRelationType: Map<RelationType, unknown>;
 
   constructor(
-    private readonly cache: ICache,
+    private readonly grantById: ReadonlyMap<number, Grant>,
+    private readonly revocationById: ReadonlyMap<number, Revocation>,
     metaPopulation: MetaPopulation,
     private readonly ranges: Ranges<number>,
     ctx: ResponseContext,
     syncResponseObject: SyncResponseObject
   ) {
-    this.cls = metaPopulation.metaObjectByTag.get(syncResponseObject.c) as Class;
+    this.cls = metaPopulation.metaObjectByTag.get(
+      syncResponseObject.c
+    ) as Class;
     if (this.cls == null) {
       throw new Error(
         `Class with tag ${syncResponseObject.c} is not present. Please regenerate your workspace.`
@@ -123,11 +127,11 @@ export class Record implements IRecord {
       return false;
     }
 
-    // A grant or revocation the cache no longer holds grants nothing and denies nothing.
+    // A grant or revocation the connection no longer holds grants nothing and denies nothing.
     if (
       this.revocationIds != null &&
       this.revocationIds.some((v) => {
-        const revocation = this.cache.getRevocation(v);
+        const revocation = this.revocationById.get(v);
         return (
           revocation != null &&
           this.ranges.has(revocation.permissionIds, permission)
@@ -140,10 +144,11 @@ export class Record implements IRecord {
     return (
       this.grantIds != null &&
       this.grantIds.some((v) => {
-        const grant = this.cache.getGrant(v);
-        return grant != null && this.ranges.has(grant.permissionIds, permission);
+        const grant = this.grantById.get(v);
+        return (
+          grant != null && this.ranges.has(grant.permissionIds, permission)
+        );
       })
     );
   }
 }
-

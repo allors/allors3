@@ -1,23 +1,29 @@
-import { ICache } from './cache/icache';
+import { Grant } from './grant';
+import { Revocation } from './revocation';
 
 /**
  * Collects, while a sync response is stored, the grants and revocations the records name
- * that the cache does not hold yet.
+ * that the connection does not hold yet.
  */
 export class ResponseContext {
   readonly missingGrantIds = new Set<number>();
 
   readonly missingRevocationIds = new Set<number>();
 
-  constructor(private readonly cache: ICache) {}
+  constructor(
+    private readonly grantById: ReadonlyMap<number, Grant>,
+    private readonly revocationById: ReadonlyMap<number, Revocation>
+  ) {}
 
-  checkForMissingGrants(value: number[] | null | undefined): number[] | undefined {
+  checkForMissingGrants(
+    value: number[] | null | undefined
+  ): number[] | undefined {
     if (value == null) {
       return undefined;
     }
 
     for (const id of value) {
-      if (this.cache.getGrant(id) == null) {
+      if (!this.grantById.has(id)) {
         this.missingGrantIds.add(id);
       }
     }
@@ -33,7 +39,7 @@ export class ResponseContext {
     }
 
     for (const id of value) {
-      if (this.cache.getRevocation(id) == null) {
+      if (!this.revocationById.has(id)) {
         this.missingRevocationIds.add(id);
       }
     }

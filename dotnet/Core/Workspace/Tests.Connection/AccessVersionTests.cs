@@ -77,9 +77,11 @@ namespace Tests.Workspace.Connection
             Assert.Single(this.transport.Server.SyncRequests);
             Assert.Equal(2, this.transport.Server.AccessRequests.Count);
             Assert.Equal(new long[] { 10 }, this.transport.Server.AccessRequests[1].g);
-            Assert.Equal(2, connection.Cache.GetGrant(10).Version);
             Assert.True(connection.GetRecord(1).IsPermitted(100));
             Assert.False(connection.GetRecord(1).IsPermitted(101));
+
+            await connection.PullAsync(this.pull);
+            Assert.Equal(2, this.transport.Server.AccessRequests.Count);
         }
 
         [Fact]
@@ -138,6 +140,44 @@ namespace Tests.Workspace.Connection
             Assert.True(request.r == null || request.r.Length == 0);
         }
 
-        private DatabaseConnection CreateConnection(ICache cache = null) => new DatabaseConnection(WorkspaceName, this.m, this.transport, this.ranges, cache);
+        [Fact]
+        public async Task AnOlderGrantResponseDoesNotRestoreARemovedPermission()
+        {
+            var grant = this.transport.Server.Grants[10];
+            grant.Version = 2;
+            grant.Permissions = new long[] { 100 };
+            var connection = this.CreateConnection();
+            await connection.PullAsync(this.pull);
+            Assert.False(connection.GetRecord(1).IsPermitted(101));
+
+            grant.Version = 1;
+            grant.Permissions = new long[] { 100, 101 };
+            await connection.PullAsync(this.pull);
+
+            Assert.Equal(2, this.transport.Server.AccessRequests.Count);
+            Assert.True(connection.GetRecord(1).IsPermitted(100));
+            Assert.False(connection.GetRecord(1).IsPermitted(101));
+        }
+
+        [Fact]
+        public async Task AnOlderRevocationResponseDoesNotRestoreADeniedPermission()
+        {
+            var revocation = this.transport.Server.Revocations[20];
+            revocation.Version = 2;
+            revocation.Permissions = new long[] { 100, 101 };
+            var connection = this.CreateConnection();
+            await connection.PullAsync(this.pull);
+            Assert.False(connection.GetRecord(2).IsPermitted(100));
+
+            revocation.Version = 1;
+            revocation.Permissions = new long[] { 101 };
+            await connection.PullAsync(this.pull);
+
+            Assert.Equal(2, this.transport.Server.AccessRequests.Count);
+            Assert.False(connection.GetRecord(2).IsPermitted(100));
+            Assert.False(connection.GetRecord(2).IsPermitted(101));
+        }
+
+        private DatabaseConnection CreateConnection() => new DatabaseConnection(WorkspaceName, this.m, this.transport, this.ranges);
     }
 }

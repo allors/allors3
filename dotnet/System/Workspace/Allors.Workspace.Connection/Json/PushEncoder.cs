@@ -13,19 +13,19 @@ namespace Allors.Workspace.Connection.Json
 
     /// <summary>
     /// Encodes the objects of a push for the wire. A composites role is sent as the ids to add
-    /// and the ids to remove against the record the cache holds; without a record, as for a new
-    /// object, every id is an addition. The server compares the version sent with its own, so a
+    /// and the ids to remove against the record the connection holds; without a record, as for
+    /// a new object, every id is an addition. The server compares the version sent with its own, so a
     /// record newer than the version sent fails the push before the roles are applied.
     /// </summary>
     internal sealed class PushEncoder
     {
-        private readonly ICache cache;
+        private readonly DatabaseConnection connection;
         private readonly IUnitConvert unitConvert;
         private readonly IRanges<long> ranges;
 
-        internal PushEncoder(ICache cache, IUnitConvert unitConvert, IRanges<long> ranges)
+        internal PushEncoder(DatabaseConnection connection, IUnitConvert unitConvert, IRanges<long> ranges)
         {
-            this.cache = cache;
+            this.connection = connection;
             this.unitConvert = unitConvert;
             this.ranges = ranges;
         }
@@ -41,7 +41,7 @@ namespace Allors.Workspace.Connection.Json
         {
             d = changedObject.Id,
             v = changedObject.Version,
-            r = this.Roles(changedObject.Roles, this.cache.GetRecord(changedObject.Id)),
+            r = this.Roles(changedObject.Roles, this.connection.GetRecord(changedObject.Id)),
         };
 
         private PushRequestRole[] Roles(RoleChange[] roleChanges, IRecord record)

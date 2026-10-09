@@ -12,7 +12,6 @@ namespace Tests.Workspace
     using Allors.Ranges;
     using Allors.Workspace.Connection;
     using Allors.Workspace.Data;
-    using Allors.Workspace.Meta.Lazy;
     using Xunit;
 
     /// <summary>
@@ -238,88 +237,78 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void TheConnectionsOfOneUserShareACache()
+        public async void ConnectionsOfOneUserKeepIndependentRecordsAndPermissions()
         {
             await this.Login("administrator");
-            var template = this.DatabaseConnection;
-
-            var cache = new MemoryCache(template.WorkspaceName, template.MetaPopulation);
-            var first = this.CreateConnection("administrator", cache);
-            var second = this.CreateConnection("administrator", cache);
-
+            var first = this.CreateConnection("administrator");
+            var second = this.CreateConnection("administrator");
             var pull = new Pull { Extent = new Filter(this.M.C1) };
             var result = await first.PullAsync(new[] { pull });
+            var write = first.GetPermission(this.M.C1, this.M.C1.C1AllorsString, Operations.Write);
 
-            Assert.Same(cache, first.Cache);
-            Assert.Same(cache, second.Cache);
             Assert.NotEmpty(result.Pool);
+            Assert.NotEqual(0, write);
+            Assert.Equal(0, second.GetPermission(this.M.C1, this.M.C1.C1AllorsString, Operations.Write));
+            Assert.All(result.Pool, id => Assert.Null(second.GetRecord(id)));
+
+            await second.PullAsync(new[] { pull });
+
             foreach (var id in result.Pool)
             {
-                Assert.NotNull(second.GetRecord(id));
-                Assert.Same(first.GetRecord(id), second.GetRecord(id));
+                Assert.NotSame(first.GetRecord(id), second.GetRecord(id));
+                Assert.True(first.GetRecord(id).IsPermitted(write));
+                Assert.True(second.GetRecord(id).IsPermitted(write));
             }
 
-            var changed = new List<RecordChangedEventArgs>();
-            second.RecordChanged += (sender, e) => changed.Add(e);
-
+            await this.Profile.RemoveAdministratorPermission(this.M.C1.C1AllorsString, Operations.Write);
             await second.PullAsync(new[] { pull });
 
-            Assert.Empty(changed);
+            Assert.All(result.Pool, id => Assert.True(first.GetRecord(id).IsPermitted(write)));
+            Assert.All(result.Pool, id => Assert.False(second.GetRecord(id).IsPermitted(write)));
+
+            await first.PullAsync(new[] { pull });
+
+            Assert.All(result.Pool, id => Assert.False(first.GetRecord(id).IsPermitted(write)));
         }
 
         [Fact]
-        public async void TheCacheTellsEveryConnectionWhenAnotherConnectionReplacesARecord()
+        public async void APullReplacesRecordsAndRaisesEventsOnlyOnItsConnection()
         {
             await this.Login("administrator");
-            var template = this.DatabaseConnection;
-
-            var cache = new MemoryCache(template.WorkspaceName, template.MetaPopulation);
-            var first = this.CreateConnection("administrator", cache);
-            var second = this.CreateConnection("administrator", cache);
-
+            var first = this.CreateConnection("administrator");
+            var second = this.CreateConnection("administrator");
             var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = Names.c1A } } };
             var id = (await first.PullAsync(new[] { pull })).Collections[this.M.C1.PluralName].Single();
+            await second.PullAsync(new[] { pull });
             var before = first.GetRecord(id);
+            var firstChanged = new List<RecordChangedEventArgs>();
+            var secondChanged = new List<RecordChangedEventArgs>();
+            first.RecordChanged += (sender, e) => firstChanged.Add(e);
+            second.RecordChanged += (sender, e) => secondChanged.Add(e);
 
-            var changed = new List<RecordChangedEventArgs>();
-            cache.RecordChanged += (sender, e) => changed.Add(e);
-
-            var pushed = await first.PushAsync(null, new[] { new PushChangedObject(id, before.Version, new[] { new RoleChange(this.M.C1.C1AllorsString, "shared") }) });
+            var pushed = await first.PushAsync(null, new[] { new PushChangedObject(id, before.Version, new[] { new RoleChange(this.M.C1.C1AllorsString, "changed") }) });
             Assert.False(pushed.HasErrors);
-            Assert.Empty(changed);
+            Assert.Empty(firstChanged);
+            Assert.Empty(secondChanged);
 
             await second.PullAsync(new[] { pull });
 
-            var e = Assert.Single(changed);
-            Assert.Equal(id, e.Id);
-            Assert.Same(first.GetRecord(id), e.Record);
-            Assert.True(e.Record.Version > before.Version);
-            Assert.Equal("shared", first.GetRecord(id).GetRole(this.M.C1.C1AllorsString));
-        }
+            Assert.Empty(firstChanged);
+            Assert.Same(before, first.GetRecord(id));
+            var secondEvent = Assert.Single(secondChanged);
+            Assert.Equal(id, secondEvent.Id);
+            Assert.Same(second.GetRecord(id), secondEvent.Record);
+            Assert.True(secondEvent.Record.Version > before.Version);
+            Assert.Equal("changed", secondEvent.Record.GetRole(this.M.C1.C1AllorsString));
 
-        [Fact]
-        public async void ACacheOfAnotherWorkspaceNameIsRefused()
-        {
-            await this.Login("administrator");
-            var template = this.DatabaseConnection;
+            await first.PullAsync(new[] { pull });
 
-            var cache = new MemoryCache("Other", template.MetaPopulation);
-
-            var exception = Assert.Throws<ArgumentException>(() => this.CreateConnection("administrator", cache));
-            Assert.Contains("Other", exception.Message);
-            Assert.Contains(template.WorkspaceName, exception.Message);
-        }
-
-        [Fact]
-        public async void ACacheOfAnotherMetaPopulationIsRefused()
-        {
-            await this.Login("administrator");
-            var template = this.DatabaseConnection;
-
-            var cache = new MemoryCache(template.WorkspaceName, new MetaBuilder().Build());
-
-            var exception = Assert.Throws<ArgumentException>(() => this.CreateConnection("administrator", cache));
-            Assert.Contains("meta population", exception.Message);
+            var firstEvent = Assert.Single(firstChanged);
+            Assert.Equal(id, firstEvent.Id);
+            Assert.Same(first.GetRecord(id), firstEvent.Record);
+            Assert.Equal(secondEvent.Record.Version, firstEvent.Record.Version);
+            Assert.NotSame(secondEvent.Record, firstEvent.Record);
+            Assert.Single(secondChanged);
         }
 
         [Fact]
@@ -330,16 +319,14 @@ namespace Tests.Workspace
 
             Assert.Null(connection.DatabaseId);
             Assert.Null(connection.UserId);
-            Assert.Null(connection.Cache.Key);
             Assert.Matches("^[0-9a-f]{16}$", connection.MetaFingerprint);
 
             await connection.PullAsync(new[] { new Pull { Extent = new Filter(this.M.C1) } });
 
             Assert.False(string.IsNullOrWhiteSpace(connection.DatabaseId));
             Assert.True(connection.UserId > 0);
-            Assert.Equal(new CacheKey(connection.DatabaseId, connection.UserId.Value, connection.WorkspaceName, connection.MetaFingerprint), connection.Cache.Key);
 
-            var other = this.CreateConnection("noacl", null);
+            var other = this.CreateConnection("noacl");
             await other.PullAsync(new[] { new Pull { Extent = new Filter(this.M.C1) } });
 
             Assert.Equal(connection.DatabaseId, other.DatabaseId);
@@ -347,25 +334,33 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void TheCacheRefusesAConnectionOfAnotherUser()
+        public async void ConnectionsOfDifferentUsersKeepTheirOwnView()
         {
             await this.Login("administrator");
-            var template = this.DatabaseConnection;
-
-            var cache = new MemoryCache(template.WorkspaceName, template.MetaPopulation);
-            var administrator = this.CreateConnection("administrator", cache);
-            var noacl = this.CreateConnection("noacl", cache);
-
+            var administrator = this.CreateConnection("administrator");
+            var noacl = this.CreateConnection("noacl");
             var pull = new Pull { Extent = new Filter(this.M.C1) };
             var result = await administrator.PullAsync(new[] { pull });
+            var read = administrator.GetPermission(this.M.C1, this.M.C1.C1AllorsString, Operations.Read);
+            var originals = result.Pool.ToDictionary(id => id, administrator.GetRecord);
 
-            var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => noacl.PullAsync(new[] { pull }));
+            var otherResult = await noacl.PullAsync(new[] { pull });
 
-            Assert.Contains($"user {administrator.UserId}", exception.Message);
-            Assert.Contains($"user {noacl.UserId}", exception.Message);
+            Assert.False(otherResult.HasErrors);
+            Assert.NotEmpty(result.Pool);
+            Assert.Equal(result.Pool.OrderBy(id => id), otherResult.Pool.OrderBy(id => id));
+            Assert.NotEqual(administrator.UserId, noacl.UserId);
+            Assert.NotEqual(0, read);
+            Assert.Equal(0, noacl.GetPermission(this.M.C1, this.M.C1.C1AllorsString, Operations.Read));
             foreach (var id in result.Pool)
             {
-                Assert.NotNull(administrator.GetRecord(id));
+                var record = noacl.GetRecord(id);
+                Assert.NotNull(record);
+                Assert.NotSame(originals[id], record);
+                Assert.Null(record.GetRole(this.M.C1.C1AllorsString));
+                Assert.False(record.IsPermitted(read));
+                Assert.Same(originals[id], administrator.GetRecord(id));
+                Assert.True(originals[id].IsPermitted(read));
             }
         }
 
@@ -425,102 +420,10 @@ namespace Tests.Workspace
             Assert.All(result.Pool, id => Assert.False(connection.GetRecord(id).IsPermitted(read)));
         }
 
-        [Fact]
-        public async void APullIsPersistedAndANewConnectionRestoresItWithoutAskingTheServer()
-        {
-            await this.Login("administrator");
-            var provider = new MemoryPersistenceProvider();
-
-            var (first, firstTransport) = this.CreatePersistedConnection(provider);
-            var pull = new Pull { Extent = new Filter(this.M.C1) };
-            var result = await first.PullAsync(new[] { pull });
-            var write = first.GetPermission(this.M.C1, this.M.C1.C1AllorsString, Operations.Write);
-
-            Assert.NotEmpty(result.Pool);
-            Assert.Equal(1, firstTransport.SyncCount);
-            Assert.Equal(result.Pool.OrderBy(v => v), provider.Objects(first.Cache.Key).Keys.OrderBy(v => v));
-
-            var (second, secondTransport) = this.CreatePersistedConnection(provider);
-            var restored = await second.PullAsync(new[] { pull });
-
-            Assert.Equal(result.Pool.OrderBy(v => v), restored.Pool.OrderBy(v => v));
-            Assert.Equal(0, secondTransport.SyncCount);
-            Assert.Equal(0, secondTransport.AccessCount);
-            Assert.Equal(0, secondTransport.PermissionCount);
-            Assert.Equal(write, second.GetPermission(this.M.C1, this.M.C1.C1AllorsString, Operations.Write));
-
-            foreach (var id in result.Pool)
-            {
-                var original = first.GetRecord(id);
-                var record = second.GetRecord(id);
-                Assert.NotNull(record);
-                Assert.Same(original.Class, record.Class);
-                Assert.Equal(original.Version, record.Version);
-                Assert.Equal(original.GetRole(this.M.C1.C1AllorsString), record.GetRole(this.M.C1.C1AllorsString));
-                Assert.Equal(original.GetRole(this.M.C1.C1C1Many2Manies), record.GetRole(this.M.C1.C1C1Many2Manies));
-                Assert.Equal(original.GrantIds, record.GrantIds);
-                Assert.True(record.IsPermitted(write));
-            }
-        }
-
-        [Fact]
-        public async void AChangedObjectIsSyncedAndTheRestRestored()
-        {
-            await this.Login("administrator");
-            var provider = new MemoryPersistenceProvider();
-
-            var (first, _) = this.CreatePersistedConnection(provider);
-            var pull = new Pull { Extent = new Filter(this.M.C1) };
-            var result = await first.PullAsync(new[] { pull });
-            var id = result.Collections[this.M.C1.PluralName].First(v => (string)first.GetRecord(v).GetRole(this.M.C1.Name) == Names.c1A);
-
-            var pushed = await first.PushAsync(null, new[] { new PushChangedObject(id, first.GetRecord(id).Version, new[] { new RoleChange(this.M.C1.C1AllorsString, "persisted") }) });
-            Assert.False(pushed.HasErrors);
-
-            var (second, secondTransport) = this.CreatePersistedConnection(provider);
-            await second.PullAsync(new[] { pull });
-
-            Assert.Equal(1, secondTransport.SyncCount);
-            Assert.Equal(new[] { id }, secondTransport.LastSyncRequest.o);
-            Assert.Equal("persisted", second.GetRecord(id).GetRole(this.M.C1.C1AllorsString));
-            Assert.Equal(second.GetRecord(id).Version, provider.Objects(second.Cache.Key)[id].v);
-        }
-
-        [Fact]
-        public async void ClearAsyncForgetsThePersistedView()
-        {
-            await this.Login("administrator");
-            var provider = new MemoryPersistenceProvider();
-
-            var (first, _) = this.CreatePersistedConnection(provider);
-            var pull = new Pull { Extent = new Filter(this.M.C1) };
-            var result = await first.PullAsync(new[] { pull });
-            var key = first.Cache.Key;
-            Assert.NotEmpty(provider.Objects(key));
-
-            await first.ClearAsync();
-
-            Assert.Empty(provider.Objects(key));
-            Assert.All(result.Pool, id => Assert.Null(first.GetRecord(id)));
-
-            var (second, secondTransport) = this.CreatePersistedConnection(provider);
-            await second.PullAsync(new[] { pull });
-            Assert.Equal(1, secondTransport.SyncCount);
-            Assert.Equal(result.Pool.OrderBy(v => v), secondTransport.LastSyncRequest.o.OrderBy(v => v));
-        }
-
-        private (DatabaseConnection Connection, CountingTransport Transport) CreatePersistedConnection(IPersistenceProvider provider)
+        private DatabaseConnection CreateConnection(string userName)
         {
             var template = this.DatabaseConnection;
-            var transport = new CountingTransport(this.Profile.CreateTransport("administrator"));
-            var cache = new MemoryCache(template.WorkspaceName, template.MetaPopulation);
-            return (new DatabaseConnection(template.WorkspaceName, template.MetaPopulation, transport, template.Ranges, cache, provider), transport);
-        }
-
-        private DatabaseConnection CreateConnection(string userName, ICache cache)
-        {
-            var template = this.DatabaseConnection;
-            return new DatabaseConnection(template.WorkspaceName, template.MetaPopulation, this.Profile.CreateTransport(userName), template.Ranges, cache);
+            return new DatabaseConnection(template.WorkspaceName, template.MetaPopulation, this.Profile.CreateTransport(userName), template.Ranges);
         }
     }
 }

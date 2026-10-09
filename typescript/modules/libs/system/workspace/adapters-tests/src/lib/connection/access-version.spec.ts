@@ -32,7 +32,9 @@ describe('DatabaseConnection and the versions of grants and revocations', () => 
     server.addGrant(10, 100, 101);
     server.addRevocation(20, 101);
     server.addObject(1, m.C1, 10).withRole(m.C1.C1AllorsString, 'one');
-    server.addObject(2, m.C1, 10).withRole(m.C1.C1AllorsString, 'two').revocations = [20];
+    server
+      .addObject(2, m.C1, 10)
+      .withRole(m.C1.C1AllorsString, 'two').revocations = [20];
 
     pull = [{ extent: { kind: 'Filter', objectType: m.C1 } }];
   });
@@ -62,9 +64,11 @@ describe('DatabaseConnection and the versions of grants and revocations', () => 
     expect(transport.server.syncRequests.length).toBe(1);
     expect(transport.server.accessRequests.length).toBe(2);
     expect(transport.server.accessRequests[1].g).toEqual([10]);
-    expect(connection.cache.getGrant(10).version).toBe(2);
     expect(connection.getRecord(1).isPermitted(100)).toBe(true);
     expect(connection.getRecord(1).isPermitted(101)).toBe(false);
+
+    await connection.pull(pull);
+    expect(transport.server.accessRequests.length).toBe(2);
   });
 
   it('requests a revocation whose version changed again', async () => {
@@ -84,6 +88,9 @@ describe('DatabaseConnection and the versions of grants and revocations', () => 
     expect(transport.server.accessRequests[1].r).toEqual([20]);
     expect(connection.getRecord(2).isPermitted(100)).toBe(false);
     expect(connection.getRecord(1).isPermitted(100)).toBe(true);
+
+    await connection.pull(pull);
+    expect(transport.server.accessRequests.length).toBe(2);
   });
 
   it('requests the permissions a changed grant names for the first time', async () => {
@@ -117,8 +124,32 @@ describe('DatabaseConnection and the versions of grants and revocations', () => 
     await connection.pull(pull);
 
     const request =
-      transport.server.accessRequests[transport.server.accessRequests.length - 1];
+      transport.server.accessRequests[
+        transport.server.accessRequests.length - 1
+      ];
     expect(request.g).toEqual([10]);
     expect(request.r == null || request.r.length === 0).toBe(true);
+  });
+
+  it('keeps newer grant and revocation permissions when older access arrives', async () => {
+    const grant = transport.server.grants.get(10);
+    const revocation = transport.server.revocations.get(20);
+    grant.version = 2;
+    grant.permissions = [100];
+    revocation.version = 2;
+    revocation.permissions = [100];
+    const connection = createConnection();
+    await connection.pull(pull);
+
+    grant.version = 1;
+    grant.permissions = [101];
+    revocation.version = 1;
+    revocation.permissions = [101];
+    await connection.pull(pull);
+
+    expect(transport.server.accessRequests.length).toBe(2);
+    expect(connection.getRecord(1).isPermitted(100)).toBe(true);
+    expect(connection.getRecord(1).isPermitted(101)).toBe(false);
+    expect(connection.getRecord(2).isPermitted(100)).toBe(false);
   });
 });

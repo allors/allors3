@@ -42,9 +42,6 @@ export * from './lib/pointer/node';
 export * from './lib/pointer/path';
 
 // the connection
-export * from './lib/cache/cache-key';
-export * from './lib/cache/icache';
-export * from './lib/cache/memory-cache';
 export * from './lib/database-connection';
 export * from './lib/grant';
 export * from './lib/id-generator';
@@ -53,11 +50,6 @@ export * from './lib/invoke-options';
 export * from './lib/meta-fingerprint';
 export * from './lib/operations';
 export * from './lib/permission';
-export {
-  CacheEntries,
-  CacheEntryIds,
-  IPersistenceProvider,
-} from './lib/persistence/persistence-provider';
 export * from './lib/push/push-changed-object';
 export * from './lib/push/push-new-object';
 export * from './lib/push/role-change';

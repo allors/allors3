@@ -10,15 +10,15 @@ namespace Allors.Workspace.Connection
 
     /// <summary>
     /// Collects, while a sync response is stored, the grants and revocations the records name
-    /// that the cache does not hold yet.
+    /// that the connection does not hold yet.
     /// </summary>
     internal sealed class ResponseContext
     {
-        private readonly ICache cache;
+        private readonly DatabaseConnection connection;
 
-        internal ResponseContext(ICache cache)
+        internal ResponseContext(DatabaseConnection connection)
         {
-            this.cache = cache;
+            this.connection = connection;
 
             this.MissingGrantIds = new HashSet<long>();
             this.MissingRevocationIds = new HashSet<long>();
@@ -35,7 +35,7 @@ namespace Allors.Workspace.Connection
                 return null;
             }
 
-            foreach (var grantId in value.Where(v => this.cache.GetGrant(v) == null))
+            foreach (var grantId in value.Where(v => this.connection.GetGrant(v) == null))
             {
                 this.MissingGrantIds.Add(grantId);
             }
@@ -50,7 +50,7 @@ namespace Allors.Workspace.Connection
                 return null;
             }
 
-            foreach (var revocationId in value.Where(v => this.cache.GetRevocation(v) == null))
+            foreach (var revocationId in value.Where(v => this.connection.GetRevocation(v) == null))
             {
                 this.MissingRevocationIds.Add(revocationId);
             }

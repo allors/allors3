@@ -21,9 +21,7 @@ import {
   OperandType,
   RelationType,
 } from '@allors/system/workspace/meta';
-import { CacheKey } from './cache/cache-key';
-import { ICache } from './cache/icache';
-import { MemoryCache } from './cache/memory-cache';
+import { MapMap } from './collections/map-map';
 import { DefaultNumberRanges } from './collections/ranges/default-number-ranges';
 import { loadRange } from './collections/ranges/load-range';
 import { Ranges } from './collections/ranges/ranges';
@@ -41,11 +39,6 @@ import {
 } from './json/to-json';
 import { Operations } from './operations';
 import { Permission } from './permission';
-import {
-  CacheEntries,
-  IPersistenceProvider,
-  isEmpty,
-} from './persistence/persistence-provider';
 import { PushChangedObject } from './push/push-changed-object';
 import { PushNewObject } from './push/push-new-object';
 import { IRecord, Record } from './record';
@@ -84,23 +77,10 @@ export type InvokeCallOptions = InvokeOptions & CallOptions;
 
 export interface DatabaseConnectionOptions {
   /**
-   * The cache to keep the user's view in, shared with the other connections of the user; a
-   * MemoryCache of the connection's own when absent. It must be of the connection's
-   * workspace name and meta population.
-   */
-  cache?: ICache;
-
-  /**
    * The ranges that order the ids of composites roles; the default number ranges when
    * absent.
    */
   ranges?: Ranges<number>;
-
-  /**
-   * Keeps the user's view beyond the cache, so that a later connection of the user restores
-   * what the server already sent instead of asking for it again; none when absent.
-   */
-  persistence?: IPersistenceProvider;
 }
 
 /**
@@ -109,6 +89,7 @@ export interface DatabaseConnectionOptions {
  * pulls by the query model and keeps what it receives as records, grants, revocations and
  * permissions; it pushes new and changed objects and invokes methods. The layers above build
  * objects and change tracking on it; the transport underneath carries the wire.
+ * Make one call at a time: start the next call after the previous call's promise completes.
  */
 export interface IDatabaseConnection {
   /**
@@ -129,12 +110,6 @@ export interface IDatabaseConnection {
   readonly ranges: Ranges<number>;
 
   /**
-   * What the connection keeps of the user's view of the database; shared with the other
-   * connections of the user when the connection was given a cache.
-   */
-  readonly cache: ICache;
-
-  /**
    * The id of the database the server serves, from the server's first response; null until
    * then. A later response from another database faults the connection.
    */
@@ -143,7 +118,7 @@ export interface IDatabaseConnection {
   /**
    * The id of the user the server serves this connection as, from the server's first
    * response; null until then. A later response as another user faults the connection:
-   * every call throws, the cache is cleared, and the user signs in with a new connection.
+   * every call throws, the stored view is cleared, and the user signs in with a new connection.
    */
   readonly userId: number | null;
 
@@ -188,34 +163,37 @@ export interface IDatabaseConnection {
     invocations: Invocation[],
     options?: InvokeCallOptions
   ): Promise<InvokeResult>;
-
-  /**
-   * Forgets the user's view: the cache, and what was persisted of it. For when the user
-   * signs out.
-   */
-  clear(): Promise<void>;
 }
 
 /**
  * The connection over a transport. After a pull it brings the records of the pulled objects
  * up to date: it syncs the objects whose version, grants or revocations differ from what it
  * holds, requests the grants and revocations it lacks or holds at another version than the
- * pull advertises, and then the permissions those name; with a persistence provider it
- * restores from there first what the provider holds at the versions the pull advertises, and
- * stores what the server sent before the pull returns. Every request names the workspace and the meta fingerprint the connection is built for;
- * every response is checked against them before anything is stored, and the first response
- * tells which database and user the connection is to, which no later response may change.
+ * pull advertises, and then the permissions those name. It keeps that view privately for this
+ * connection. Every request names the workspace and the meta fingerprint the connection is
+ * built for; every response is checked against them before anything is stored, and the first
+ * response tells which database and user the connection is to, which no later response may change.
+ * Start the next call after the previous call's promise completes.
  */
 export class DatabaseConnection implements IDatabaseConnection {
   readonly metaFingerprint: string;
 
   readonly ranges: Ranges<number>;
 
-  readonly cache: ICache;
+  private readonly recordById = new Map<number, IRecord>();
+
+  private readonly grantById = new Map<number, Grant>();
+
+  private readonly revocationById = new Map<number, Revocation>();
+
+  private readonly permissionById = new Map<number, Permission>();
+
+  private readonly permissionIdByOperandTypeByClassByOperation = new Map<
+    Operations,
+    MapMap<Class, OperandType, number>
+  >();
 
   private readonly pushEncoder: PushEncoder;
-
-  private readonly persistence: IPersistenceProvider | null;
 
   private readonly recordChangedEmitter = new Emitter<RecordChangedEvent>();
 
@@ -232,37 +210,24 @@ export class DatabaseConnection implements IDatabaseConnection {
     options?: DatabaseConnectionOptions
   ) {
     if (workspaceName == null) {
-      throw new Error('A connection needs the name of the workspace the server serves.');
+      throw new Error(
+        'A connection needs the name of the workspace the server serves.'
+      );
     }
 
     if (metaPopulation == null) {
-      throw new Error('A connection needs the meta population of its workspace.');
+      throw new Error(
+        'A connection needs the meta population of its workspace.'
+      );
     }
 
     if (transport == null) {
       throw new Error('A connection needs a transport to the server.');
     }
 
-    const cache = options?.cache;
-    if (cache != null) {
-      if (cache.workspaceName !== workspaceName) {
-        throw new Error(
-          `The cache holds the records of workspace '${cache.workspaceName}' and cannot serve a connection to workspace '${workspaceName}': the connections that share a cache are to one workspace name. Give this connection a cache of its own.`
-        );
-      }
-
-      if (cache.metaPopulation !== metaPopulation) {
-        throw new Error(
-          'The cache types its records by another meta population than this connection: the connections that share a cache are built on one meta population instance. Give this connection a cache of its own, or build it on the cache\'s meta population.'
-        );
-      }
-    }
-
     this.metaFingerprint = metaPopulationFingerprint(metaPopulation);
     this.ranges = options?.ranges ?? new DefaultNumberRanges();
-    this.cache = cache ?? new MemoryCache(workspaceName, metaPopulation);
-    this.persistence = options?.persistence ?? null;
-    this.pushEncoder = new PushEncoder(this.cache, this.ranges);
+    this.pushEncoder = new PushEncoder((id) => this.getRecord(id), this.ranges);
   }
 
   get recordChanged(): Subscribable<RecordChangedEvent> {
@@ -278,7 +243,7 @@ export class DatabaseConnection implements IDatabaseConnection {
   }
 
   getRecord(id: number): IRecord | undefined {
-    return this.cache.getRecord(id);
+    return this.recordById.get(id);
   }
 
   getPermission(
@@ -286,7 +251,11 @@ export class DatabaseConnection implements IDatabaseConnection {
     operandType: OperandType,
     operation: Operations
   ): number {
-    return this.cache.getPermission(cls, operandType, operation);
+    return (
+      this.permissionIdByOperandTypeByClassByOperation
+        .get(operation)
+        ?.get(cls, operandType) ?? 0
+    );
   }
 
   async pull(pulls: Pull[], options?: PullOptions): Promise<PullResult> {
@@ -308,7 +277,7 @@ export class DatabaseConnection implements IDatabaseConnection {
     });
 
     const response = await this.transport.pull(request);
-    await this.onResponse(response);
+    this.onResponse(response);
     return await this.onPull(response, options?.context);
   }
 
@@ -332,7 +301,7 @@ export class DatabaseConnection implements IDatabaseConnection {
     }
 
     const response = await this.transport.push(request);
-    await this.onResponse(response);
+    this.onResponse(response);
     return new PushResult(this.metaPopulation, response);
   }
 
@@ -359,17 +328,16 @@ export class DatabaseConnection implements IDatabaseConnection {
     });
 
     const response = await this.transport.invoke(request);
-    await this.onResponse(response);
+    this.onResponse(response);
     return new InvokeResult(this.metaPopulation, response);
   }
 
-  async clear(): Promise<void> {
-    const key = this.cache.key;
-    this.cache.clear();
-
-    if (this.persistence != null && key != null) {
-      await this.persistence.clear(key);
-    }
+  private clearRecords(): void {
+    this.recordById.clear();
+    this.grantById.clear();
+    this.revocationById.clear();
+    this.permissionById.clear();
+    this.permissionIdByOperandTypeByClassByOperation.clear();
   }
 
   private throwIfFaulted(): void {
@@ -389,7 +357,7 @@ export class DatabaseConnection implements IDatabaseConnection {
    * identify itself, serve this connection's workspace and meta, and stay the database and
    * the user of the first response.
    */
-  private async onResponse(response: Response): Promise<void> {
+  private onResponse(response: Response): void {
     if (response == null) {
       throw new Error('The server sent no response.');
     }
@@ -407,35 +375,41 @@ export class DatabaseConnection implements IDatabaseConnection {
 
     if (response._w !== this.workspaceName) {
       throw new Error(
-        `The server serves workspace '${response._w}' where this connection is for workspace '${this.workspaceName}'. Connect to the host that serves '${this.workspaceName}', or build the connection for '${response._w}'.${serverSaid(response)}`
+        `The server serves workspace '${
+          response._w
+        }' where this connection is for workspace '${
+          this.workspaceName
+        }'. Connect to the host that serves '${
+          this.workspaceName
+        }', or build the connection for '${response._w}'.${serverSaid(
+          response
+        )}`
       );
     }
 
     if (response._f !== this.metaFingerprint) {
       throw new Error(
-        `The server's workspace '${response._w}' has meta fingerprint ${response._f} where this connection's meta population has ${this.metaFingerprint}: the client's workspace meta was generated from another version of the domain. Regenerate the workspace meta from the server's repository and rebuild the client.${serverSaid(response)}`
+        `The server's workspace '${response._w}' has meta fingerprint ${
+          response._f
+        } where this connection's meta population has ${
+          this.metaFingerprint
+        }: the client's workspace meta was generated from another version of the domain. Regenerate the workspace meta from the server's repository and rebuild the client.${serverSaid(
+          response
+        )}`
       );
     }
 
     if (this._databaseId == null) {
       this._databaseId = response._db;
       this._userId = response._u;
-    } else if (response._db !== this._databaseId || response._u !== this._userId) {
-      this.faultReason = `The connection was to user ${this._userId} of database '${this._databaseId}' and the server now answers as user ${response._u} of database '${response._db}': the sign-in changed under the connection. Its cache is cleared; sign in again with a new connection.`;
-      await this.clear();
+    } else if (
+      response._db !== this._databaseId ||
+      response._u !== this._userId
+    ) {
+      this.faultReason = `The connection was to user ${this._userId} of database '${this._databaseId}' and the server now answers as user ${response._u} of database '${response._db}': the sign-in changed under the connection. Its stored view is cleared; sign in again with a new connection.`;
+      this.clearRecords();
       throw new Error(this.faultReason);
     }
-
-    // Binds a cache that is not bound yet, new or cleared, and checks a bound one: a shared
-    // cache refuses the connection of another user here.
-    this.cache.bind(
-      new CacheKey(
-        response._db,
-        response._u,
-        this.workspaceName,
-        this.metaFingerprint
-      )
-    );
   }
 
   // A sync, access or permission response has no error channel of its own: an error message
@@ -458,128 +432,50 @@ export class DatabaseConnection implements IDatabaseConnection {
   }
 
   private async sync(response: PullResponse, context: string | undefined) {
-    const key = this.cache.key;
-    const ctx = new ResponseContext(this.cache);
+    const ctx = new ResponseContext(this.grantById, this.revocationById);
     const replaced: IRecord[] = [];
-    const received: CacheEntries | null = this.persistence != null ? {} : null;
 
-    // The objects to bring up to date: absent from the cache, or held at another version or
-    // with other grants or revocations than the pull advertises. The provider's copy is taken
-    // when it is the one the pull advertises; the server is asked for the rest.
-    let staleObjectIds = this.staleObjectIds(response);
-    if (staleObjectIds.length > 0 && this.persistence != null) {
-      const loaded = await this.persistence.load(key, { objects: staleObjectIds });
-      if (loaded?.objects != null) {
-        const advertisedById = new Map((response.p ?? []).map((v) => [v.i, v]));
-        const accepted = loaded.objects.filter((v) => {
-          const advertised = advertisedById.get(v.i);
-          return (
-            advertised != null &&
-            v.v === advertised.v &&
-            this.ranges.equals(loadRange(this.ranges, v.g), loadRange(this.ranges, advertised.g)) &&
-            this.ranges.equals(loadRange(this.ranges, v.r), loadRange(this.ranges, advertised.r))
-          );
-        });
-        this.storeRecords(accepted, ctx, replaced);
-      }
-
-      staleObjectIds = this.staleObjectIds(response);
-    }
-
+    // The objects to bring up to date: absent, or held at another version or with other
+    // grants or revocations than the pull advertises.
+    const staleObjectIds = this.staleObjectIds(response);
     if (staleObjectIds.length > 0) {
       const syncResponse = await this.transport.sync(
         this.address<SyncRequest>({ x: context, o: staleObjectIds })
       );
-      await this.onResponse(syncResponse);
+      this.onResponse(syncResponse);
       this.throwIfRefused(syncResponse, 'sync');
       this.storeRecords(syncResponse.o, ctx, replaced);
-
-      if (received != null) {
-        received.objects = syncResponse.o;
-      }
     }
 
     // The grants and revocations to bring up to date: the ones the new records name that
-    // the cache lacks, and the ones the pull advertises at another version than the cache
-    // holds, or does not hold at all.
+    // the connection lacks, and the ones the pull advertises at another version than the
+    // connection holds, or does not hold at all.
     this.collectStaleAccess(response, ctx);
 
     if (ctx.missingGrantIds.size > 0 || ctx.missingRevocationIds.size > 0) {
       const missingPermissionIds = new Set<number>();
-
-      if (this.persistence != null) {
-        const loaded = await this.persistence.load(key, {
-          grants: [...ctx.missingGrantIds],
-          revocations: [...ctx.missingRevocationIds],
-        });
-
-        const versionByGrant = toVersionById(response.g);
-        const versionByRevocation = toVersionById(response.r);
-        const acceptedGrants = (loaded?.grants ?? []).filter(
-          (v) => versionByGrant.get(v.i) === v.v
-        );
-        const acceptedRevocations = (loaded?.revocations ?? []).filter(
-          (v) => versionByRevocation.get(v.i) === v.v
-        );
-
-        this.storeAccess(acceptedGrants, acceptedRevocations, missingPermissionIds);
-        for (const grant of acceptedGrants) {
-          ctx.missingGrantIds.delete(grant.i);
-        }
-
-        for (const revocation of acceptedRevocations) {
-          ctx.missingRevocationIds.delete(revocation.i);
-        }
-      }
-
-      if (ctx.missingGrantIds.size > 0 || ctx.missingRevocationIds.size > 0) {
-        const accessResponse = await this.transport.access(
-          this.address<AccessRequest>({
-            g: [...ctx.missingGrantIds],
-            r: [...ctx.missingRevocationIds],
-          })
-        );
-        await this.onResponse(accessResponse);
-        this.throwIfRefused(accessResponse, 'access');
-        this.storeAccess(accessResponse.g, accessResponse.r, missingPermissionIds);
-
-        if (received != null) {
-          received.grants = accessResponse.g;
-          received.revocations = accessResponse.r;
-        }
-      }
+      const accessResponse = await this.transport.access(
+        this.address<AccessRequest>({
+          g: [...ctx.missingGrantIds],
+          r: [...ctx.missingRevocationIds],
+        })
+      );
+      this.onResponse(accessResponse);
+      this.throwIfRefused(accessResponse, 'access');
+      this.storeAccess(
+        accessResponse.g,
+        accessResponse.r,
+        missingPermissionIds
+      );
 
       if (missingPermissionIds.size > 0) {
-        if (this.persistence != null) {
-          const loaded = await this.persistence.load(key, {
-            permissions: [...missingPermissionIds],
-          });
-          if (loaded?.permissions != null) {
-            this.storePermissions(loaded.permissions);
-            for (const permission of loaded.permissions) {
-              missingPermissionIds.delete(permission.i);
-            }
-          }
-        }
-
-        if (missingPermissionIds.size > 0) {
-          const permissionResponse = await this.transport.permission(
-            this.address<PermissionRequest>({ p: [...missingPermissionIds] })
-          );
-          await this.onResponse(permissionResponse);
-          this.throwIfRefused(permissionResponse, 'permission');
-          this.storePermissions(permissionResponse.p);
-
-          if (received != null) {
-            received.permissions = permissionResponse.p;
-          }
-        }
+        const permissionResponse = await this.transport.permission(
+          this.address<PermissionRequest>({ p: [...missingPermissionIds] })
+        );
+        this.onResponse(permissionResponse);
+        this.throwIfRefused(permissionResponse, 'permission');
+        this.storePermissions(permissionResponse.p);
       }
-    }
-
-    // What the server sent is kept before the pull returns.
-    if (received != null && !isEmpty(received)) {
-      await this.persistence.store(key, received);
     }
 
     for (const record of replaced) {
@@ -590,7 +486,7 @@ export class DatabaseConnection implements IDatabaseConnection {
   private staleObjectIds(response: PullResponse): number[] {
     return (response.p ?? [])
       .filter((v) => {
-        const record = this.cache.getRecord(v.i);
+        const record = this.recordById.get(v.i);
 
         if (record == null) {
           return true;
@@ -617,14 +513,14 @@ export class DatabaseConnection implements IDatabaseConnection {
 
   private collectStaleAccess(response: PullResponse, ctx: ResponseContext) {
     for (const [id, version] of response.g ?? []) {
-      const grant = this.cache.getGrant(id);
+      const grant = this.grantById.get(id);
       if (grant == null || grant.version !== version) {
         ctx.missingGrantIds.add(id);
       }
     }
 
     for (const [id, version] of response.r ?? []) {
-      const revocation = this.cache.getRevocation(id);
+      const revocation = this.revocationById.get(id);
       if (revocation == null || revocation.version !== version) {
         ctx.missingRevocationIds.add(id);
       }
@@ -642,16 +538,19 @@ export class DatabaseConnection implements IDatabaseConnection {
 
     for (const syncResponseObject of syncResponseObjects) {
       const record = new Record(
-        this.cache,
+        this.grantById,
+        this.revocationById,
         this.metaPopulation,
         this.ranges,
         ctx,
         syncResponseObject
       );
-      const previous = this.cache.getRecord(record.id);
-
-      if (this.cache.setRecord(record) && previous != null) {
-        replaced.push(record);
+      const previous = this.recordById.get(record.id);
+      if (previous == null || record.version >= previous.version) {
+        this.recordById.set(record.id, record);
+        if (previous != null) {
+          replaced.push(record);
+        }
       }
     }
   }
@@ -663,7 +562,7 @@ export class DatabaseConnection implements IDatabaseConnection {
   ): void {
     const collectMissingPermissions = (permissionIds: number[] | undefined) => {
       for (const permissionId of permissionIds ?? []) {
-        if (!this.cache.hasPermission(permissionId)) {
+        if (!this.permissionById.has(permissionId)) {
           missingPermissionIds.add(permissionId);
         }
       }
@@ -672,9 +571,15 @@ export class DatabaseConnection implements IDatabaseConnection {
     if (grants != null) {
       for (const accessResponseGrant of grants) {
         const permissionIds = loadRange(this.ranges, accessResponseGrant.p);
-        this.cache.setGrant(
-          new Grant(accessResponseGrant.i, accessResponseGrant.v, permissionIds)
+        const grant = new Grant(
+          accessResponseGrant.i,
+          accessResponseGrant.v,
+          permissionIds
         );
+        const held = this.grantById.get(grant.id);
+        if (held == null || grant.version >= held.version) {
+          this.grantById.set(grant.id, grant);
+        }
         collectMissingPermissions(permissionIds);
       }
     }
@@ -685,13 +590,15 @@ export class DatabaseConnection implements IDatabaseConnection {
           this.ranges,
           accessResponseRevocation.p
         );
-        this.cache.setRevocation(
-          new Revocation(
-            accessResponseRevocation.i,
-            accessResponseRevocation.v,
-            permissionIds
-          )
+        const revocation = new Revocation(
+          accessResponseRevocation.i,
+          accessResponseRevocation.v,
+          permissionIds
         );
+        const held = this.revocationById.get(revocation.id);
+        if (held == null || revocation.version >= held.version) {
+          this.revocationById.set(revocation.id, revocation);
+        }
         collectMissingPermissions(permissionIds);
       }
     }
@@ -715,20 +622,27 @@ export class DatabaseConnection implements IDatabaseConnection {
         (metaObject as RelationType)?.roleType ?? (metaObject as MethodType);
       const operation = permissionResponsePermission.o as Operations;
 
-      this.cache.setPermission(
-        new Permission(
-          permissionResponsePermission.i,
-          cls,
-          operandType,
-          operation
-        )
+      const permission = new Permission(
+        permissionResponsePermission.i,
+        cls,
+        operandType,
+        operation
       );
+      this.permissionById.set(permission.id, permission);
+
+      let byOperandTypeByClass =
+        this.permissionIdByOperandTypeByClassByOperation.get(operation);
+      if (byOperandTypeByClass == null) {
+        byOperandTypeByClass = new MapMap();
+        this.permissionIdByOperandTypeByClassByOperation.set(
+          operation,
+          byOperandTypeByClass
+        );
+      }
+
+      byOperandTypeByClass.set(cls, operandType, permission.id);
     }
   }
-}
-
-function toVersionById(pairs: number[][] | null | undefined): Map<number, number> {
-  return new Map((pairs ?? []).map(([id, version]) => [id, version]));
 }
 
 function serverSaid(response: Response): string {

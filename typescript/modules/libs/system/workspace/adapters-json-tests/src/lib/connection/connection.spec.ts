@@ -1,19 +1,11 @@
 import {
-  CacheKey,
   createIdGenerator,
   DatabaseConnection,
-  MemoryCache,
   Operations,
   Pull,
   RecordChangedEvent,
   WorkspaceInitialVersion,
 } from '@allors/system/workspace/connection';
-import { LazyMetaPopulation } from '@allors/system/workspace/meta-json';
-import { data } from '@allors/default/workspace/meta-json';
-import {
-  CountingTransport,
-  MemoryPersistenceProvider,
-} from '@allors/system/workspace/adapters-tests';
 import { Fixture, name_c1A, name_c1B, name_c1C } from '../fixture';
 
 // The contract of the connection, exercised without a session, as the .NET ConnectionTests
@@ -28,21 +20,6 @@ beforeEach(async () => {
 });
 
 const upper = (name: string) => name.toUpperCase();
-
-const createPersistedConnection = (provider: MemoryPersistenceProvider) => {
-  const template = fixture.createConnection('administrator');
-  const transport = new CountingTransport(fixture.createTransport('administrator'));
-  const connection = new DatabaseConnection(
-    template.workspaceName,
-    template.metaPopulation,
-    transport,
-    {
-      cache: new MemoryCache(template.workspaceName, template.metaPopulation),
-      persistence: provider,
-    }
-  );
-  return { connection, transport };
-};
 
 test('pullByExtentAnswersIdsAndLeavesRecords', async () => {
   const { m } = fixture;
@@ -299,40 +276,58 @@ test('recordChangedIsRaisedWhenAPullReplacesARecord', async () => {
   expect(changed[0].record.version).toBeGreaterThan(version);
 });
 
-test('theConnectionsOfOneUserShareACache', async () => {
+test('theConnectionsOfOneUserKeepTheirOwnRecordsAndPermissions', async () => {
   const { m } = fixture;
-  const template = fixture.createConnection('administrator');
-
-  const cache = new MemoryCache(template.workspaceName, template.metaPopulation);
-  const first = fixture.createConnection('administrator', { cache });
-  const second = fixture.createConnection('administrator', { cache });
+  const first = fixture.createConnection('administrator');
+  const second = fixture.createConnection('administrator');
 
   const pull: Pull = { extent: { kind: 'Filter', objectType: m.C1 } };
   const result = await first.pull([pull]);
+  const write = first.getPermission(m.C1, m.C1.C1AllorsString, Operations.Write);
 
-  expect(first.cache).toBe(cache);
-  expect(second.cache).toBe(cache);
   expect(result.pool.length).toBeGreaterThan(0);
+  expect(write).not.toBe(0);
+  expect(second.getPermission(m.C1, m.C1.C1AllorsString, Operations.Write)).toBe(0);
   for (const id of result.pool) {
-    expect(second.getRecord(id)).toBeDefined();
-    expect(second.getRecord(id)).toBe(first.getRecord(id));
+    expect(second.getRecord(id)).toBeUndefined();
   }
 
   const changed: RecordChangedEvent[] = [];
   second.recordChanged.subscribe((e) => changed.push(e));
 
+  const secondResult = await second.pull([pull]);
+
+  expect([...secondResult.pool].sort()).toEqual([...result.pool].sort());
+  expect(changed).toEqual([]);
+  for (const id of result.pool) {
+    const original = first.getRecord(id);
+    const separate = second.getRecord(id);
+    expect(separate).not.toBe(original);
+    expect(separate.version).toBe(original.version);
+    expect(separate.getRole(m.C1.Name)).toBe(original.getRole(m.C1.Name));
+    expect(original.isPermitted(write)).toBe(true);
+    expect(separate.isPermitted(write)).toBe(true);
+  }
+
+  await fixture.removeAdministratorPermission(m.C1.C1AllorsString, Operations.Write);
+  await first.pull([pull]);
+
+  for (const id of result.pool) {
+    expect(first.getRecord(id).isPermitted(write)).toBe(false);
+    expect(second.getRecord(id).isPermitted(write)).toBe(true);
+  }
+
   await second.pull([pull]);
 
-  expect(changed).toEqual([]);
+  for (const id of result.pool) {
+    expect(second.getRecord(id).isPermitted(write)).toBe(false);
+  }
 });
 
-test('theCacheTellsEveryConnectionWhenAnotherConnectionReplacesARecord', async () => {
+test('aPullReplacesRecordsAndRaisesEventsOnlyOnItsConnection', async () => {
   const { m } = fixture;
-  const template = fixture.createConnection('administrator');
-
-  const cache = new MemoryCache(template.workspaceName, template.metaPopulation);
-  const first = fixture.createConnection('administrator', { cache });
-  const second = fixture.createConnection('administrator', { cache });
+  const first = fixture.createConnection('administrator');
+  const second = fixture.createConnection('administrator');
 
   const pull: Pull = {
     extent: {
@@ -342,48 +337,45 @@ test('theCacheTellsEveryConnectionWhenAnotherConnectionReplacesARecord', async (
     },
   };
   const id = (await first.pull([pull])).collections.get(upper(m.C1.pluralName))[0];
+  await second.pull([pull]);
   const before = first.getRecord(id);
+  const secondBefore = second.getRecord(id);
 
-  const changed: RecordChangedEvent[] = [];
-  cache.recordChanged.subscribe((e) => changed.push(e));
+  const firstChanged: RecordChangedEvent[] = [];
+  const secondChanged: RecordChangedEvent[] = [];
+  first.recordChanged.subscribe((e) => firstChanged.push(e));
+  second.recordChanged.subscribe((e) => secondChanged.push(e));
 
   const pushed = await first.push(null, [
     {
       id,
       version: before.version,
-      roles: [{ roleType: m.C1.C1AllorsString, value: 'shared' }],
+      roles: [{ roleType: m.C1.C1AllorsString, value: 'changed' }],
     },
   ]);
   expect(pushed.hasErrors).toBeFalsy();
-  expect(changed).toEqual([]);
+  expect(firstChanged).toEqual([]);
+  expect(secondChanged).toEqual([]);
 
   await second.pull([pull]);
 
-  expect(changed.length).toBe(1);
-  expect(changed[0].id).toBe(id);
-  expect(changed[0].record).toBe(first.getRecord(id));
-  expect(changed[0].record.version).toBeGreaterThan(before.version);
-  expect(first.getRecord(id).getRole(m.C1.C1AllorsString)).toBe('shared');
-});
+  expect(firstChanged).toEqual([]);
+  expect(first.getRecord(id)).toBe(before);
+  expect(first.getRecord(id).getRole(m.C1.C1AllorsString)).toBeFalsy();
+  expect(secondChanged.length).toBe(1);
+  expect(secondChanged[0].id).toBe(id);
+  expect(secondChanged[0].record).toBe(second.getRecord(id));
+  expect(second.getRecord(id)).not.toBe(secondBefore);
+  expect(secondChanged[0].record.version).toBeGreaterThan(before.version);
+  expect(second.getRecord(id).getRole(m.C1.C1AllorsString)).toBe('changed');
 
-test('aCacheOfAnotherWorkspaceNameIsRefused', () => {
-  const template = fixture.createConnection('administrator');
+  await first.pull([pull]);
 
-  const cache = new MemoryCache('Other', template.metaPopulation);
-
-  expect(() => fixture.createConnection('administrator', { cache })).toThrow(
-    /Other.*Default|Default.*Other/
-  );
-});
-
-test('aCacheOfAnotherMetaPopulationIsRefused', () => {
-  const template = fixture.createConnection('administrator');
-
-  const cache = new MemoryCache(template.workspaceName, new LazyMetaPopulation(data));
-
-  expect(() => fixture.createConnection('administrator', { cache })).toThrow(
-    /meta population/
-  );
+  expect(firstChanged.length).toBe(1);
+  expect(firstChanged[0].id).toBe(id);
+  expect(firstChanged[0].record).toBe(first.getRecord(id));
+  expect(first.getRecord(id).getRole(m.C1.C1AllorsString)).toBe('changed');
+  expect(secondChanged.length).toBe(1);
 });
 
 test('theConnectionLearnsTheDatabaseAndTheUserFromTheFirstResponse', async () => {
@@ -392,24 +384,12 @@ test('theConnectionLearnsTheDatabaseAndTheUserFromTheFirstResponse', async () =>
 
   expect(connection.databaseId).toBeNull();
   expect(connection.userId).toBeNull();
-  expect(connection.cache.key).toBeNull();
   expect(connection.metaFingerprint).toMatch(/^[0-9a-f]{16}$/);
 
   await connection.pull([{ extent: { kind: 'Filter', objectType: m.C1 } }]);
 
   expect(connection.databaseId).toBeTruthy();
   expect(connection.userId).toBeGreaterThan(0);
-  expect(
-    connection.cache.key.equals(
-      new CacheKey(
-        connection.databaseId,
-        connection.userId,
-        connection.workspaceName,
-        connection.metaFingerprint
-      )
-    )
-  ).toBe(true);
-
   const other = fixture.createConnection('noacl');
   await other.pull([{ extent: { kind: 'Filter', objectType: m.C1 } }]);
 
@@ -417,24 +397,36 @@ test('theConnectionLearnsTheDatabaseAndTheUserFromTheFirstResponse', async () =>
   expect(other.userId).not.toBe(connection.userId);
 });
 
-test('theCacheRefusesAConnectionOfAnotherUser', async () => {
+test('theConnectionsOfDifferentUsersKeepTheirViewsSeparate', async () => {
   const { m } = fixture;
-  const template = fixture.createConnection('administrator');
-
-  const cache = new MemoryCache(template.workspaceName, template.metaPopulation);
-  const administrator = fixture.createConnection('administrator', { cache });
-  const noacl = fixture.createConnection('noacl', { cache });
+  const administrator = fixture.createConnection('administrator');
+  const noacl = fixture.createConnection('noacl');
 
   const pull: Pull = { extent: { kind: 'Filter', objectType: m.C1 } };
   const result = await administrator.pull([pull]);
-
-  await expect(noacl.pull([pull])).rejects.toThrow(
-    new RegExp(`user ${administrator.userId}.*user \\d+`)
+  const read = administrator.getPermission(m.C1, m.C1.C1AllorsString, Operations.Read);
+  const id = result.pool.find(
+    (value) => administrator.getRecord(value).getRole(m.C1.Name) === name_c1B
   );
+  const original = administrator.getRecord(id);
+  expect(original.getRole(m.C1.C1AllorsString)).toBe('ᴀbra');
+  expect(original.isPermitted(read)).toBe(true);
+  expect(noacl.getRecord(id)).toBeUndefined();
 
-  for (const id of result.pool) {
-    expect(administrator.getRecord(id)).toBeDefined();
-  }
+  const noaclResult = await noacl.pull([pull]);
+
+  expect(noaclResult.hasErrors).toBeFalsy();
+  expect(noaclResult.pool).toContain(id);
+  expect(noacl.databaseId).toBe(administrator.databaseId);
+  expect(noacl.userId).not.toBe(administrator.userId);
+  expect(noacl.getPermission(m.C1, m.C1.C1AllorsString, Operations.Read)).toBe(0);
+  const restricted = noacl.getRecord(id);
+  expect(restricted).not.toBe(original);
+  expect(restricted.getRole(m.C1.C1AllorsString)).toBeUndefined();
+  expect(restricted.isPermitted(read)).toBe(false);
+  expect(administrator.getRecord(id)).toBe(original);
+  expect(original.getRole(m.C1.C1AllorsString)).toBe('ᴀbra');
+  expect(original.isPermitted(read)).toBe(true);
 });
 
 test('theServerRefusesAConnectionForAnotherWorkspaceName', async () => {
@@ -506,97 +498,4 @@ test('aRevocationWhoseVersionChangedIsRequestedAgain', async () => {
   for (const id of result.pool) {
     expect(connection.getRecord(id).isPermitted(read)).toBe(false);
   }
-});
-
-test('aPullIsPersistedAndANewConnectionRestoresItWithoutAskingTheServer', async () => {
-  const { m } = fixture;
-  const provider = new MemoryPersistenceProvider();
-
-  const { connection: first, transport: firstTransport } = createPersistedConnection(provider);
-  const pull: Pull = { extent: { kind: 'Filter', objectType: m.C1 } };
-  const result = await first.pull([pull]);
-  const write = first.getPermission(m.C1, m.C1.C1AllorsString, Operations.Write);
-
-  expect(result.pool.length).toBeGreaterThan(0);
-  expect(firstTransport.syncCount).toBe(1);
-  expect([...provider.objects(first.cache.key).keys()].sort()).toEqual(
-    [...result.pool].sort()
-  );
-
-  const { connection: second, transport: secondTransport } = createPersistedConnection(provider);
-  const restored = await second.pull([pull]);
-
-  expect([...restored.pool].sort()).toEqual([...result.pool].sort());
-  expect(secondTransport.syncCount).toBe(0);
-  expect(secondTransport.accessCount).toBe(0);
-  expect(secondTransport.permissionCount).toBe(0);
-  expect(second.getPermission(m.C1, m.C1.C1AllorsString, Operations.Write)).toBe(write);
-
-  for (const id of result.pool) {
-    const original = first.getRecord(id);
-    const record = second.getRecord(id);
-    expect(record).toBeDefined();
-    expect(record.cls).toBe(original.cls);
-    expect(record.version).toBe(original.version);
-    expect(record.getRole(m.C1.C1AllorsString)).toEqual(
-      original.getRole(m.C1.C1AllorsString)
-    );
-    expect(record.getRole(m.C1.C1C1Many2Manies)).toEqual(
-      original.getRole(m.C1.C1C1Many2Manies)
-    );
-    expect(record.grantIds).toEqual(original.grantIds);
-    expect(record.isPermitted(write)).toBe(true);
-  }
-});
-
-test('aChangedObjectIsSyncedAndTheRestRestored', async () => {
-  const { m } = fixture;
-  const provider = new MemoryPersistenceProvider();
-
-  const { connection: first } = createPersistedConnection(provider);
-  const pull: Pull = { extent: { kind: 'Filter', objectType: m.C1 } };
-  const result = await first.pull([pull]);
-  const id = result.collections
-    .get(upper(m.C1.pluralName))
-    .find((v) => first.getRecord(v).getRole(m.C1.Name) === name_c1A);
-
-  const pushed = await first.push(null, [
-    {
-      id,
-      version: first.getRecord(id).version,
-      roles: [{ roleType: m.C1.C1AllorsString, value: 'persisted' }],
-    },
-  ]);
-  expect(pushed.hasErrors).toBeFalsy();
-
-  const { connection: second, transport: secondTransport } = createPersistedConnection(provider);
-  await second.pull([pull]);
-
-  expect(secondTransport.syncCount).toBe(1);
-  expect(secondTransport.lastSyncRequest.o).toEqual([id]);
-  expect(second.getRecord(id).getRole(m.C1.C1AllorsString)).toBe('persisted');
-  expect(provider.objects(second.cache.key).get(id).v).toBe(second.getRecord(id).version);
-});
-
-test('clearForgetsThePersistedView', async () => {
-  const { m } = fixture;
-  const provider = new MemoryPersistenceProvider();
-
-  const { connection: first } = createPersistedConnection(provider);
-  const pull: Pull = { extent: { kind: 'Filter', objectType: m.C1 } };
-  const result = await first.pull([pull]);
-  const key = first.cache.key;
-  expect(provider.objects(key).size).toBeGreaterThan(0);
-
-  await first.clear();
-
-  expect(provider.objects(key).size).toBe(0);
-  for (const id of result.pool) {
-    expect(first.getRecord(id)).toBeUndefined();
-  }
-
-  const { connection: second, transport: secondTransport } = createPersistedConnection(provider);
-  await second.pull([pull]);
-  expect(secondTransport.syncCount).toBe(1);
-  expect([...secondTransport.lastSyncRequest.o].sort()).toEqual([...result.pool].sort());
 });

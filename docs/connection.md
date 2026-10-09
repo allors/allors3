@@ -13,7 +13,7 @@ and says what is still planned.
 
 | Layer | .NET | TypeScript | Holds |
 | --- | --- | --- | --- |
-| Connection | `Allors.Workspace.Connection` | `@allors/system/workspace/connection` | `IDatabaseConnection` and `DatabaseConnection`, `ITransport`, the query model, the records, grants, revocations and permissions, `ICache` with `MemoryCache`, `IPersistenceProvider`, the results in ids, the `IdGenerator` and the ranges. |
+| Connection | `Allors.Workspace.Connection` | `@allors/system/workspace/connection` | `IDatabaseConnection` and `DatabaseConnection`, `ITransport`, the query model, the records, grants, revocations and permissions, the results in ids, the `IdGenerator` and the ranges. |
 | Transports | `Allors.Workspace.Connection.Remote.SystemText`, `Allors.Workspace.Connection.Remote.Newtonsoft`, `Allors.Workspace.Connection.Local` | the application's own `ITransport` | How the requests travel: over HTTP with System.Text.Json or with Newtonsoft.Json, or in-process on an `IDatabase`. |
 | Session | `Allors.Workspace.Session` | `@allors/system/workspace/session` | `Workspace`, `Session`, `Strategy` and the object factory: objects and change tracking on a connection. |
 | Domain | `Allors.Workspace.Domain` | `@allors/system/workspace/domain` | The session API an application programs against: `IWorkspace`, `ISession`, `IObject` and `IStrategy`. The TypeScript library re-exports the query model of the connection. |
@@ -23,8 +23,9 @@ Only the connection and its transports see the protocol classes, `Allors.Protoco
 
 ## Bootstrap
 
-A connection serves one user: the user its transport signs the requests as. Signing in as
-another user means a new transport, a new connection and a new workspace.
+A connection serves one user: the user its transport signs the requests as. On sign-out,
+discard the connection and its workspace. Signing in as another user means a new transport,
+a new connection and a new workspace.
 
 ```csharp
 var transport = new HttpTransport(httpClient); // or new LocalTransport(database, userId, "Default")
@@ -37,10 +38,10 @@ const connection = new DatabaseConnection('Default', metaPopulation, transport);
 const workspace = new Workspace(connection, objectFactory, rules);
 ```
 
-The .NET constructor takes an `ICache` and an `IPersistenceProvider` after the ranges, both
-optional; the TypeScript one takes `{ cache, ranges, persistence }` as its fourth argument. The
-workspace name and the meta population are the connection's, the object factory and the rules the
-workspace's, as is its id generator; `IWorkspace.Configuration` shows the first four.
+The .NET constructor requires the ranges; the TypeScript one takes an optional `{ ranges }`
+as its fourth argument and uses `DefaultNumberRanges` when it is absent. The workspace name
+and the meta population are the connection's, the object factory and the rules the workspace's,
+as is its id generator; `IWorkspace.Configuration` shows the first four.
 
 ## The contract
 
@@ -50,16 +51,14 @@ workspace's, as is its id generator; `IWorkspace.Configuration` shows the first 
 | `MetaPopulation` | `metaPopulation` | The generated workspace meta the records are typed by. |
 | `MetaFingerprint` | `metaFingerprint` | The fingerprint of the meta population, see [The envelope](#the-envelope). Every request names it. |
 | `Ranges` | `ranges` | The ranges that order the ids of a composites role. |
-| `Cache` | `cache` | What the connection keeps, see [The cache](#the-cache). |
 | `DatabaseId`, `UserId` | `databaseId`, `userId` | The database the server serves and the user it serves the connection as, from the first response; null until then. |
-| `RecordChanged` | `recordChanged` | Raised after a pull for every record the pull replaced by a newer one, once the records, grants and permissions of the pull are in. The TypeScript event is a `Subscribable`: `subscribe(listener)` answers a `Subscription` with `unsubscribe()`. |
+| `RecordChanged` | `recordChanged` | Raised after a pull for every record the pull replaced, once the records, grants and permissions of the pull are in. The TypeScript event is a `Subscribable`: `subscribe(listener)` answers a `Subscription` with `unsubscribe()`. |
 | `GetRecord(id)` | `getRecord(id)` | The record of the object, or null when the connection has not received it. |
 | `GetPermission(class, operandType, operation)` | `getPermission(cls, operandType, operation)` | The id of the permission, or 0 when the connection has not received it. |
 | `PullAsync(pulls, procedure)` | `pull(pulls, { procedure, dependencies, context })` | Pulls by the query model, with a procedure the server runs before the pulls, and brings the records of every object in the answer up to date, see [After a pull](#after-a-pull). The TypeScript `dependencies` name the derived roles whose dependencies the server includes, and `context` is a tracing string the server appends to its events. |
 | `PullAsync(name, args)` | | A named pull: a route of the server, `{name}/pull`, with the arguments it takes. The in-process transport throws `NotSupportedException`, since the name is a route. |
 | `PushAsync(newObjects, changedObjects)` | `push(newObjects, changedObjects, { context })` | Pushes `PushNewObject(workspaceId, class, roles)` and `PushChangedObject(id, version, roles)`, null for none; a `RoleChange(roleType, value)` carries a unit, the id of a composite role or the ids of a composites role. The server refuses a changed object whose version is not the server's. |
 | `InvokeAsync(invocations, options)` | `invoke(invocations, { isolated, continueOnError, context })` | Invokes `Invocation(id, version, methodType)`, every method in one transaction unless isolated, stopping at the first error unless told to continue. |
-| `ClearAsync()` | `clear()` | Forgets the user's view: the cache, and what was persisted of it. For when the user signs out. |
 
 Deleting is no call of the contract: a session drops a new object itself, and an existing object
 is deleted by a method of the domain, through invoke.
@@ -72,7 +71,8 @@ object the answer names. A `PushResult` holds `DatabaseIdByWorkspaceId` for the 
 `InvokeResult` holds the errors only.
 
 Make the calls of a connection one after the other: start a call after the task or promise of
-the previous one has completed. A cache may be shared by connections on different threads.
+the previous one has completed. Each connection keeps its own records, grants, revocations
+and permissions in memory. Another connection's pulls do not change that state.
 
 ## Records and permissions
 
@@ -85,7 +85,7 @@ the ids of the grants and revocations that apply to the user on the object.
 | `Class`, `Id`, `Version` | `cls`, `id`, `version` | The object. |
 | `GrantIds`, `RevocationIds` | `grantIds`, `revocationIds` | The grants and revocations that apply to the user on this object. |
 | `GetRole(roleType)` | `getRole(roleType)` | A unit, the id of a composite role, or the sorted ids of a composites role as an `IRange`; null for a role the user may not read. |
-| `IsPermitted(permission)` | `isPermitted(permission)` | Whether one of the record's grants holds the permission and none of its revocations denies it, as the cache holds them now. |
+| `IsPermitted(permission)` | `isPermitted(permission)` | Whether one of the record's grants holds the permission and none of its revocations denies it, as the connection holds them now. |
 
 A `Grant` and a `Revocation` carry an id, a version and the ids of their permissions; a
 `Permission` carries an id, a class, an operand type and an operation. A session answers
@@ -97,12 +97,10 @@ The answer of a pull names every object of the result with its version, grant id
 ids, and every grant and revocation with its version. The connection then:
 
 1. Syncs the objects it lacks, or holds at another version, other grant ids or other revocation
-   ids. With a persistence provider it restores from there first, see
-   [Persistence](#persistence), and syncs the rest with the server.
+   ids, with the server.
 2. Requests the grants and revocations the records name that it lacks, or holds at another
    version than the answer advertises, and the permissions those name for the first time.
-3. Stores what the server sent in the persistence provider, raises `RecordChanged` for every
-   record the pull replaced, and returns.
+3. Raises `RecordChanged` for every record the pull replaced, and returns.
 
 A pull whose answer carries errors skips all of this.
 
@@ -133,10 +131,10 @@ response carries the server's database id, user id, workspace name and meta fing
   regenerate the client's workspace meta from the server's repository.
 - The connection throws on such a response, on a response for another workspace name or
   fingerprint, and on a response without the envelope, before anything is stored.
-- The first response sets `DatabaseId` and `UserId` and binds the cache to them. A later
-  response from another database or as another user faults the connection: the call throws
-  with the reason, every later call throws, and the cache and the persisted entries of the key
-  are cleared. The user signs in again with a new connection.
+- The first response sets `DatabaseId` and `UserId`. A later response from another database
+  or as another user faults the connection: the call throws with the reason, every later call
+  throws, and the connection clears its records, grants, revocations and permissions. The
+  user signs in again with a new connection.
 
 The fingerprint is FNV-1a, 64 bits, over the sorted tags of the composites, relation types and
 method types of the workspace, as 16 lowercase hexadecimal digits: `MetaFingerprint.Compute` in
@@ -145,52 +143,13 @@ server per workspace in `IMetaCache.GetWorkspaceFingerprint`, and a client from 
 workspace meta in `IMetaPopulation.Fingerprint()` and `metaPopulationFingerprint`. Both sides
 agree without an identity on either meta population.
 
-## The cache
-
-`ICache` is what a connection keeps of the user's view of the database: records, grants,
-revocations and permissions, by id. A connection without a cache creates a `MemoryCache` of its
-own; the connections of one user may share one.
-
-- The connections that share a cache are of one user, to one workspace name, on one meta
-  population instance. The cache carries the name and the meta population, which the connection
-  checks when it takes the cache, and a `CacheKey` of database id, user id, workspace name and
-  meta fingerprint, which the first response of a connection binds; a connection of another user
-  is refused.
-- A set keeps the newest version of an object, a grant or a revocation, whichever connection
-  delivers it first. A record of the same version replaces the one held, because the grants and
-  revocations of an object change without its version.
-- The cache raises `RecordChanged` the moment a record is replaced, for every connection on the
-  cache; the connection's own event waits until the grants and permissions of its pull are in.
-- `RemoveRecord` and `Clear` are the hooks an eviction policy builds on; the cache holds
-  everything until then. `MemoryCache` is thread-safe.
-
-## Persistence
-
-`IPersistenceProvider` keeps the user's view beyond the memory cache, under the `CacheKey` of
-the user, with `LoadAsync`, `StoreAsync`, `RemoveAsync` and `ClearAsync` in .NET and `load`,
-`store`, `remove` and `clear` in TypeScript. The entries are in the shape the wire delivered
-them, sync response objects and the access and permission entries, so that restoring them replays
-the connection's own sync code path.
-
-- Per pull, the connection loads the objects the answer advertises that its cache lacks or holds
-  at another version, and accepts each only at the version, grant ids and revocation ids the
-  answer advertises; the grants and revocations likewise at their advertised version; it asks
-  the server for the rest.
-- What the server sends is stored before the pull returns.
-- `ClearAsync` on the connection and a fault clear the provider's entries for the key.
-
-The platform ships no provider yet; the test projects use an in-memory one,
-`MemoryPersistenceProvider` in `dotnet/Core/Workspace/Tests/Fakes` and in
-`adapters-tests/src/lib/fakes`.
-
 ## What the tests pin
 
 | Rule | .NET | TypeScript |
 | --- | --- | --- |
 | The contract on the real transports: a pull by extent answers ids and leaves records, roles as values, permissions per record, a push answers database ids and refuses a stale version, an invoke runs the method, `RecordChanged` | `ConnectionTests` in `dotnet/Core/Workspace/Tests`, run by the three test projects | `connection.spec.ts` in `adapters-json-tests`, on the Core test server |
+| Private records and access state: independent connections, version guards, permission lookup and events after access information is available | `ConnectionRecordTests` in `Tests.Connection`, and `ConnectionTests` on the three transports | `connection-records.spec.ts` in `adapters-tests`, and `connection.spec.ts` on the Core test server |
 | A revocation denies the write, over every transport | `SecurityTests.WithRevocation` | `security.spec.ts` |
-| The cache: version guard, binding, sharing, the event | `MemoryCacheTests` and `ConnectionCacheTests` in `Tests.Connection`, and `ConnectionTests` | `memory-cache.spec.ts` and `connection-cache.spec.ts` in `adapters-tests`, and `connection.spec.ts` |
 | The envelope: refusals, the first response, a fault | `EnvelopeTests` in `Tests.Connection` for the client, in `Server.Local.Tests` for the server, and `ConnectionTests` | `envelope.spec.ts`, and `connection.spec.ts` |
 | The fingerprint, with reference values | `MetaFingerprintTests` in `Shared.Tests` | `meta-fingerprint.spec.ts` |
 | A grant or a revocation at another version is requested again | `AccessVersionTests`, `ConnectionTests` and `SecurityTests.WithGrantChangedOnTheServer` | `access-version.spec.ts`, `connection.spec.ts` and `security.spec.ts` |
-| Persistence: restore without asking the server, sync the changed object, clear | `PersistenceTests` and `ConnectionTests` | `persistence.spec.ts` and `connection.spec.ts` |

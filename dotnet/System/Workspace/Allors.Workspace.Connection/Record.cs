@@ -14,17 +14,17 @@ namespace Allors.Workspace.Connection
 
     /// <summary>
     /// A record as a sync response delivered it, converted from the wire when it is built and
-    /// immutable after that, so that a cache may hand it to any thread. The permissions are
-    /// answered against the grants and revocations the cache holds at the time of asking.
+    /// immutable after that. The permissions are answered against the grants and revocations
+    /// the connection holds at the time of asking.
     /// </summary>
     internal sealed class Record : IRecord
     {
-        private readonly ICache cache;
+        private readonly DatabaseConnection connection;
         private readonly IReadOnlyDictionary<IRelationType, object> roleByRelationType;
 
-        internal Record(ICache cache, IMetaPopulation metaPopulation, IUnitConvert unitConvert, IRanges<long> ranges, ResponseContext ctx, SyncResponseObject syncResponseObject)
+        internal Record(DatabaseConnection connection, IMetaPopulation metaPopulation, IUnitConvert unitConvert, IRanges<long> ranges, ResponseContext ctx, SyncResponseObject syncResponseObject)
         {
-            this.cache = cache;
+            this.connection = connection;
 
             this.Class = (IClass)metaPopulation.FindByTag(syncResponseObject.c);
             this.Id = syncResponseObject.i;
@@ -80,13 +80,13 @@ namespace Allors.Workspace.Connection
 
         public bool IsPermitted(long permission)
         {
-            // A grant or revocation the cache no longer holds grants nothing and denies nothing.
-            if (this.RevocationIds.Any(v => this.cache.GetRevocation(v)?.PermissionIds.Contains(permission) == true))
+            // A grant or revocation the connection no longer holds grants nothing and denies nothing.
+            if (this.RevocationIds.Any(v => this.connection.GetRevocation(v)?.PermissionIds.Contains(permission) == true))
             {
                 return false;
             }
 
-            return this.GrantIds.Any(v => this.cache.GetGrant(v)?.PermissionIds.Contains(permission) == true);
+            return this.GrantIds.Any(v => this.connection.GetGrant(v)?.PermissionIds.Contains(permission) == true);
         }
     }
 }

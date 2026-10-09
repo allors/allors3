@@ -36,7 +36,7 @@ namespace Allors.Workspace.Connection
 
         /// <summary>
         /// Whether the user holds the permission on this object: granted by one of the object's
-        /// grants and denied by none of its revocations, as the cache holds them now.
+        /// grants and denied by none of its revocations, as the connection holds them now.
         /// </summary>
         bool IsPermitted(long permission);
     }

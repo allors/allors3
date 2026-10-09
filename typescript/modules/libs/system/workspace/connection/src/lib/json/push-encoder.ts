@@ -3,7 +3,6 @@ import {
   PushRequestObject,
   PushRequestRole,
 } from '@allors/system/common/protocol-json';
-import { ICache } from '../cache/icache';
 import { IRange, Ranges } from '../collections/ranges/ranges';
 import { PushChangedObject } from '../push/push-changed-object';
 import { PushNewObject } from '../push/push-new-object';
@@ -13,13 +12,13 @@ import { unitToJson } from './to-json';
 
 /**
  * Encodes the objects of a push for the wire. A composites role is sent as the ids to add
- * and the ids to remove against the record the cache holds; without a record, as for a new
+ * and the ids to remove against the record the connection holds; without a record, as for a new
  * object, every id is an addition. The server compares the version sent with its own, so a
  * record newer than the version sent fails the push before the roles are applied.
  */
 export class PushEncoder {
   constructor(
-    private readonly cache: ICache,
+    private readonly getRecord: (id: number) => IRecord | undefined,
     private readonly ranges: Ranges<number>
   ) {}
 
@@ -35,10 +34,7 @@ export class PushEncoder {
     return {
       d: changedObject.id,
       v: changedObject.version,
-      r: this.roles(
-        changedObject.roles,
-        this.cache.getRecord(changedObject.id)
-      ),
+      r: this.roles(changedObject.roles, this.getRecord(changedObject.id)),
     };
   }
 

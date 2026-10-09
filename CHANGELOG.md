@@ -17,69 +17,33 @@ Changes accumulate under **[Unreleased]** until a version is released.
   named pull too. A request names the client's workspace (`_w`) and fingerprint (`_f`); the
   server refuses a name or a fingerprint that is present and differs from its own, with the
   reason in the error message, and serves a request that names neither. The meta fingerprint
-  is `MetaFingerprint.Compute`, in
-  `Allors.Shared`: FNV-1a over the sorted tags of the composites, relation types and method
-  types of the workspace, which the server computes per workspace in `IMetaCache.
-  GetWorkspaceFingerprint` and a client from its generated workspace meta
-  (`IMetaPopulation.Fingerprint()`), so both sides agree without an identity on either meta
-  population. The .NET connection records the database and the user from its first response
-  and binds its cache to them; a later response from another database or as another user
-  faults the connection: the call throws with the reason, the cache is cleared, and the user
-  signs in again with a new connection. A response for another workspace name or another
-  fingerprint is refused before anything is stored, and so is a response without the
-  envelope. `IDatabaseConnection.DatabaseId` is a string, as `IDatabase.Id` is; `MetaFingerprint`
-  and `ClearAsync`, for signing out, are new. The sync, access and permission requests and
-  responses now derive from the protocol's `Request` and `Response` so that they carry the
-  envelope; a refusal of one of them throws at the connection, as they have no error channel
-  of their own. `EnvelopeTests` pins the server side on the `Api`, the client side on the
-  fake transport and, in `ConnectionTests`, on the three transports. The TypeScript
-  connection does the same: `metaPopulationFingerprint` computes the fingerprint from the
-  generated workspace meta, in FNV-1a without BigInt so that it runs wherever the workspace
-  does, every request carries `_w` and `_f`, the first response sets `databaseId` and
-  `userId` and binds the cache's `CacheKey`, a changed database or user faults the
-  connection, a response for another workspace name or fingerprint or without the envelope
-  is refused, and `clear()` forgets the user's view; the test fixture no longer calls
-  `UserInfo` for the user id. `LazyMetaPopulation.relationTypes` and `methodTypes` are
-  filled now; they were empty sets before, so a client that iterated them saw nothing.
-- A persistence provider behind the workspace connection's cache: `IPersistenceProvider` with
-  `LoadAsync`, `StoreAsync`, `RemoveAsync` and `ClearAsync`, keyed by the `CacheKey` of the
-  user, holding the entries in the shape the wire delivered them, sync response objects and
-  the access and permission entries, so that restoring them replays the connection's own sync
-  code path. A connection given a provider loads, per pull, the objects the pull advertises
-  that its cache lacks or holds at another version, and accepts each only at the version,
-  grant ids and revocation ids the pull advertises; the grants and revocations it then needs
-  likewise at their advertised version, and the permissions those name; the server is asked
-  for the rest, and what it sends is stored before the pull returns. `ClearAsync` on the
-  connection, for signing out, and a fault clear the provider's entries for the key as well.
-  The platform's providers, on a file or SQLite for .NET and on IndexedDB for TypeScript, come
-  in a wave of their own; `PersistenceTests` on the fake transport and `ConnectionTests` on
-  the three transports use the in-memory `MemoryPersistenceProvider` of the test projects.
-  The TypeScript connection has the same provider interface, `IPersistenceProvider` with
-  `load`, `store`, `remove` and `clear` over `CacheEntries` and `CacheEntryIds`, given through
-  the `persistence` option of `DatabaseConnection`, with the same restore-then-ask flow and
-  the same tests over the fake server and the Core test server.
-- The workspace connection's cache can be shared by the connections of one user, and the
-  default is one such cache per connection. `MemoryCache` keeps records, grants, revocations
-  and permissions in concurrent dictionaries; a set keeps the newest version of an object, a
-  grant or a revocation, whichever connection delivers it first, and a record of the same
-  version replaces the one held, because the grants and revocations of an object change
-  without its version. It raises `RecordChanged` the moment a record is replaced, for every
-  connection on the cache, where the connection's own event waits until the grants and
-  permissions of its pull are in. `RemoveRecord` and `Clear` are the hooks an eviction policy
-  builds on; the cache holds everything until then. A record is immutable: its roles are
-  converted when it is built, and it shows `GrantIds` and `RevocationIds`. The connections
-  that share a cache are of one user, to one workspace name, on one meta population instance:
-  `ICache` carries the name and the meta population, which the connection checks when it takes
-  the cache, and a `CacheKey` of database id, user id, workspace name and meta fingerprint,
-  which the first response of a connection binds and a later connection of another user is
-  refused by. `ConnectionTests` pins the sharing on the three transports; the new project
+  is `MetaFingerprint.Compute`, in `Allors.Shared`: FNV-1a over the sorted tags of the
+  composites, relation types and method types of the workspace, which the server computes per
+  workspace in `IMetaCache.GetWorkspaceFingerprint` and a client from its generated workspace
+  meta (`IMetaPopulation.Fingerprint()`), so both sides agree without an identity on either
+  meta population. The .NET connection records the database and the user from its first
+  response. A later response from another database or as another user faults the connection:
+  the call and every later call throw with the reason, its private record and access state is
+  cleared, and the user signs in again with a new connection. A response for another workspace
+  name or another fingerprint is refused before anything is stored, and so is a response
+  without the envelope. `IDatabaseConnection.DatabaseId` is a string, as `IDatabase.Id` is;
+  `MetaFingerprint` is new. The sync, access and permission requests and responses now derive
+  from the protocol's `Request` and `Response` so that they carry the envelope; a refusal of
+  one of them throws at the connection, as they have no error channel of their own.
+  `EnvelopeTests` pins the server side on the `Api`, the client side on the fake transport
+  and, in `ConnectionTests`, on the three transports. The TypeScript connection does the same:
+  `metaPopulationFingerprint` computes the fingerprint from the generated workspace meta, in
+  FNV-1a without BigInt so that it runs wherever the workspace does, every request carries
+  `_w` and `_f`, and the first response sets `databaseId` and `userId`. A changed database or
+  user faults the connection; a response for another workspace name or fingerprint or without
+  the envelope is refused. The test fixture no longer calls `UserInfo` for the user id.
+  `LazyMetaPopulation.relationTypes` and `methodTypes` are filled now; they were empty sets
+  before, so a client that iterated them saw nothing.
+- Connection contract tests over a fake transport, without a server, in the new project
   `dotnet/Core/Workspace/Tests.Connection`, run by the target `DotnetCoreWorkspaceConnectionTest`
-  and the CI job `CiDotnetCoreWorkspaceConnectionTest` in the `memory` job, pins the cache and
-  the connection over a transport that answers in memory, without a server. The TypeScript
-  connection has the same: `MemoryCache` with the version guard and `recordChanged`, shared
-  through the `cache` option of `DatabaseConnection`, which checks the workspace name and the
-  meta population; the unit-test project pins it over a fake server in memory, and the
-  server-backed suite on the Core test server.
+  and the CI job `CiDotnetCoreWorkspaceConnectionTest` in the `memory` job. The TypeScript
+  `adapters-tests` project covers the same connection behavior over its fake server; the
+  transport contract suites also run on the Core test server.
 - A domain extends several domains: `[Extends]` takes the names of all of them, and the graph
   may hold diamonds. The order of the domains, for the hooks of domains that do not extend each
   other, is defined: a domain before the domains it extends; branches in the id order of their
@@ -117,10 +81,10 @@ Changes accumulate under **[Unreleased]** until a version is released.
   how-to guide takes an application through signing in with Microsoft Entra ID. A reference
   page on the workspace connection, `docs/connection.md`, says what an application can rely on
   in the lowest layer of both workspaces: the libraries, the bootstrap, the contract in ids,
-  the records and permissions, the transports, the envelope, the cache, the persistence
-  provider and which test pins what; the internals page `docs/internals/workspace-layers.md`
-  maps the layers from the protocol to the session API, says why the cut is where it is, which
-  parts exist and which waves follow. `AGENTS.md` holds the rules for these pages.
+  the records and permissions, the transports, the envelope and which test pins what; the
+  internals page `docs/internals/workspace-layers.md` maps the layers from the protocol to the
+  session API, says why the cut is where it is, which parts exist and which waves follow.
+  `AGENTS.md` holds the rules for these pages.
 - The build target `DotnetSystemSharedTest` and the CI job `CiDotnetSystemSharedTest` for the
   `Ranges` tests in `dotnet/System/Shared.Tests`, which no target or job ran before.
 - A `Generate.Tests` project for the generator and its templates. `WorkspaceTemplateTests`
@@ -325,10 +289,12 @@ Changes accumulate under **[Unreleased]** until a version is released.
     objects (id, version, roles) and invokes methods (id, version, method type). After a pull it
     runs the sync, access and permission flow itself, which the session ran before. It raises
     `RecordChanged` for every record a pull replaced, once the records, grants and permissions
-    of the pull are in; nothing listens yet. It takes an `ICache` for what it keeps, with a
-    `MemoryCache` of its own by default (see Added), and shows `DatabaseId` and `UserId`, which
-    the server sends with every response (see Added), null until the first response. Use a
-    connection from one thread at a time.
+    of the pull are in; nothing listens yet. Each connection owns its record, grant,
+    revocation and permission dictionaries and shows `DatabaseId` and `UserId`, which the
+    server sends with every response (see Added), null until the first response. A record is
+    immutable: its roles are converted when it is built, and it shows `GrantIds` and
+    `RevocationIds`. Make one call at a time per connection; discard it and its workspace
+    on sign-out.
   - A transport carries the wire: `ITransport` with the six protocol calls, the unit converter
     and a `ServerMessages` stream slot, null for HTTP. The transports are
     `Connection.Remote.SystemText.HttpTransport`, `Connection.Remote.Newtonsoft.HttpTransport`
@@ -363,9 +329,9 @@ Changes accumulate under **[Unreleased]** until a version is released.
     `push(newObjects, changedObjects)`, `invoke(invocations, options)`, `getRecord`,
     `getPermission` and `recordChanged`; its results in ids, `PullResult` with `objects`,
     `collections`, `values` and `pool`, `PushResult.databaseIdByWorkspaceId` and
-    `InvokeResult`; `IRecord`, `Grant`, `Revocation` and `Permission`; `ICache` with
-    `MemoryCache`; the `IdGenerator`; and the ranges and collections. The sync, access and
-    permission flow runs in the connection, where the session ran it before. The tracing
+    `InvokeResult`; `IRecord`, `Grant`, `Revocation` and `Permission`; the `IdGenerator`; and
+    the ranges and collections. Each connection owns its record and access state. The sync,
+    access and permission flow runs in the connection, where the session ran it before. The tracing
     context, the procedure and the dependencies of a pull travel in `PullOptions`.
   - A transport carries the wire: `ITransport` with the six protocol calls and a
     `serverMessages` slot, null for HTTP, in place of `IDatabaseJsonClient`; an application
@@ -383,7 +349,7 @@ Changes accumulate under **[Unreleased]** until a version is released.
   - The session library holds `Workspace`, `Session`, `Strategy`, the origin states, the change
     set, the trackers, the results and `PrototypeObjectFactory`; each abstract class and its
     JSON subclass are one class now. A bootstrap creates the connection and the workspace
-    itself, `new DatabaseConnection(name, metaPopulation, transport, { cache, ranges })` and
+    itself, `new DatabaseConnection(name, metaPopulation, transport, { ranges })` and
     `new Workspace(connection, objectFactory, rules, idGenerator)`; `createWorkspace()`, the
     `Configuration` object a bootstrap passed and its `idGenerator` augmentation are gone.
     `IWorkspace.configuration` shows the name, the meta population, the object factory and the

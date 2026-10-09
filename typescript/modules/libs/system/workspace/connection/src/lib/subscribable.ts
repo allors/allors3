@@ -11,8 +11,8 @@ export interface Subscription {
 }
 
 /**
- * The event source of the connection and the cache: listeners in a set, called in the order
- * they subscribed, each on a copy of the set so that a listener may unsubscribe from within.
+ * The event source of the connection: listeners in a set, called in the order they
+ * subscribed, each on a copy of the set so that a listener may unsubscribe from within.
  */
 export class Emitter<T> implements Subscribable<T> {
   private readonly listeners = new Set<(value: T) => void>();

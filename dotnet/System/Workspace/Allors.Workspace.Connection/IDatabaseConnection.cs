@@ -17,8 +17,7 @@ namespace Allors.Workspace.Connection
     /// It pulls by the query model and keeps what it receives as records, grants, revocations and
     /// permissions; it pushes new and changed objects and invokes methods. The layers above build
     /// objects and change tracking on it; the transport underneath carries the wire.
-    /// Use a connection from one thread at a time: a call has completed when its task completes,
-    /// and the next call starts after that.
+    /// Make one call at a time: start the next call after the previous call's task completes.
     /// </summary>
     public interface IDatabaseConnection
     {
@@ -40,12 +39,6 @@ namespace Allors.Workspace.Connection
         IRanges<long> Ranges { get; }
 
         /// <summary>
-        /// What the connection keeps of the user's view of the database; shared with the other
-        /// connections of the user when the connection was given a cache.
-        /// </summary>
-        ICache Cache { get; }
-
-        /// <summary>
         /// The id of the database the server serves, from the server's first response; null
         /// until then. A later response from another database faults the connection.
         /// </summary>
@@ -54,7 +47,7 @@ namespace Allors.Workspace.Connection
         /// <summary>
         /// The id of the user the server serves this connection as, from the server's first
         /// response; null until then. A later response as another user faults the connection:
-        /// every call throws, the cache is cleared, and the user signs in with a new connection.
+        /// every call throws, its records are cleared, and the user signs in with a new connection.
         /// </summary>
         long? UserId { get; }
 
@@ -94,11 +87,5 @@ namespace Allors.Workspace.Connection
         Task<PushResult> PushAsync(PushNewObject[] newObjects, PushChangedObject[] changedObjects);
 
         Task<InvokeResult> InvokeAsync(Invocation[] invocations, InvokeOptions options = null);
-
-        /// <summary>
-        /// Forgets the user's view: the cache, and what was persisted of it. For when the user
-        /// signs out.
-        /// </summary>
-        Task ClearAsync();
     }
 }

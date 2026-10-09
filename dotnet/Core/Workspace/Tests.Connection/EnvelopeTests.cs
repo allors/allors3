@@ -94,13 +94,11 @@ namespace Tests.Workspace.Connection
 
             Assert.Null(connection.DatabaseId);
             Assert.Null(connection.UserId);
-            Assert.Null(connection.Cache.Key);
 
             await connection.PullAsync(this.pull);
 
             Assert.Equal("fake", connection.DatabaseId);
             Assert.Equal(1, connection.UserId);
-            Assert.Equal(new CacheKey("fake", 1, WorkspaceName, connection.MetaFingerprint), connection.Cache.Key);
         }
 
         [Fact]
@@ -108,7 +106,9 @@ namespace Tests.Workspace.Connection
         {
             var connection = this.CreateConnection();
             await connection.PullAsync(this.pull);
-            Assert.NotNull(connection.GetRecord(1));
+            var record = connection.GetRecord(1);
+            Assert.NotNull(record);
+            Assert.True(record.IsPermitted(100));
 
             this.transport.Server.UserId = 2;
 
@@ -117,14 +117,18 @@ namespace Tests.Workspace.Connection
             Assert.Contains("user 2", exception.Message);
 
             Assert.Null(connection.GetRecord(1));
-            Assert.Null(connection.Cache.Key);
+            Assert.Equal(0, connection.GetPermission(this.m.C1, this.m.C1.C1AllorsString, Operations.Read));
+            Assert.False(record.IsPermitted(100));
 
             // The connection stays faulted, whatever the server answers next.
             this.transport.Server.UserId = 1;
             var again = await Assert.ThrowsAsync<InvalidOperationException>(() => connection.PullAsync(this.pull));
             Assert.Contains("user 2", again.Message);
             await Assert.ThrowsAsync<InvalidOperationException>(() => connection.PushAsync(null, null));
+            await Assert.ThrowsAsync<InvalidOperationException>(() => connection.InvokeAsync(Array.Empty<Invocation>()));
             Assert.Equal(2, this.transport.Server.PullRequests.Count);
+            Assert.Empty(this.transport.Server.PushRequests);
+            Assert.Empty(this.transport.Server.InvokeRequests);
         }
 
         [Fact]
@@ -153,7 +157,7 @@ namespace Tests.Workspace.Connection
             Assert.Contains("'Default'", exception.Message);
             Assert.Null(connection.GetRecord(1));
             Assert.Null(connection.DatabaseId);
-            Assert.Null(connection.Cache.Key);
+            Assert.Null(connection.UserId);
             Assert.Empty(this.transport.Server.SyncRequests);
 
             // Not a fault: the same connection serves once the server serves its workspace.
@@ -189,24 +193,36 @@ namespace Tests.Workspace.Connection
         }
 
         [Fact]
-        public async Task TheCacheRefusesAConnectionOfAnotherUser()
+        public async Task AFaultedConnectionDoesNotClearAnotherUsersConnection()
         {
-            var cache = new MemoryCache(WorkspaceName, this.m);
-            var first = this.CreateConnection(cache);
+            var first = this.CreateConnection();
             await first.PullAsync(this.pull);
 
             this.transport.Server.UserId = 2;
-            var second = this.CreateConnection(cache);
+            this.transport.Server.Objects[1].WithRole(this.m.C1.C1AllorsString, "second user's view");
+            var second = this.CreateConnection();
+            await second.PullAsync(this.pull);
+            var secondRecord = second.GetRecord(1);
 
-            var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => second.PullAsync(this.pull));
+            Assert.Equal(1, first.UserId);
+            Assert.Equal(2, second.UserId);
+            Assert.Equal("one", first.GetRecord(1).GetRole(this.m.C1.C1AllorsString));
+            Assert.Equal("second user's view", secondRecord.GetRole(this.m.C1.C1AllorsString));
+
+            var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => first.PullAsync(this.pull));
 
             Assert.Contains("user 1", exception.Message);
             Assert.Contains("user 2", exception.Message);
-            Assert.Equal(new CacheKey("fake", 1, WorkspaceName, first.MetaFingerprint), cache.Key);
-            Assert.NotNull(first.GetRecord(1));
-            Assert.Single(this.transport.Server.SyncRequests);
+            Assert.Null(first.GetRecord(1));
+            Assert.Same(secondRecord, second.GetRecord(1));
+            Assert.True(secondRecord.IsPermitted(100));
+            Assert.Equal(100, second.GetPermission(this.m.C1, this.m.C1.C1AllorsString, Operations.Read));
+
+            await second.PullAsync(this.pull);
+            Assert.Same(secondRecord, second.GetRecord(1));
+            Assert.Equal(2, this.transport.Server.SyncRequests.Count);
         }
 
-        private DatabaseConnection CreateConnection(ICache cache = null) => new DatabaseConnection(WorkspaceName, this.m, this.transport, this.ranges, cache);
+        private DatabaseConnection CreateConnection() => new DatabaseConnection(WorkspaceName, this.m, this.transport, this.ranges);
     }
 }
