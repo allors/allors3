@@ -196,16 +196,11 @@ test.each(['dateTime', 'binary'])(
     expect(source.strategy.getUnitRole(roleType)).toEqual(baseline);
 
     const result = await editing.pull({ object: edited });
-    // Dates use reference equality in canMerge; binary is a base64 string.
-    expect(result.hasErrors).toBe(!binary);
-    expect(result.mergeErrors ?? []).toHaveLength(binary ? 0 : 1);
-    if (!binary) {
-      expect(result.mergeErrors[0].strategy).toBe(edited.strategy);
-    }
-    expect(edited.strategy.version).toBe(
-      binary ? source.strategy.version : version
-    );
-    expect(edited.C1AllorsInteger).toBe(binary ? 2 : 1);
+    expect(source.strategy.version).not.toBe(version);
+    expect(result.hasErrors).toBe(false);
+    expect(result.mergeErrors ?? []).toHaveLength(0);
+    expect(edited.strategy.version).toBe(source.strategy.version);
+    expect(edited.C1AllorsInteger).toBe(2);
     expect(edited.strategy.getUnitRole(roleType)).toEqual(local);
     const diffs = edited.strategy.diff();
     expect(diffs).toHaveLength(1);
@@ -222,3 +217,95 @@ test.each(['dateTime', 'binary'])(
     expect(edited.strategy.getUnitRole(roleType)).toEqual(baseline);
   }
 );
+
+test.each([
+  ['dateTime', 'unchanged-null'],
+  ['binary', 'unchanged-null'],
+  ['dateTime', 'null-to-value'],
+  ['binary', 'null-to-value'],
+  ['dateTime', 'value-to-null'],
+  ['binary', 'value-to-null'],
+  ['dateTime', 'different-value'],
+  ['binary', 'different-value'],
+  ['dateTime', 'local-removal'],
+  ['binary', 'local-removal'],
+  ['binary', 'different-length'],
+])('databaseUnitValueEqualityDuringPull: %s, %s', async (kind, remoteEdit) => {
+  const { workspace, m } = fixture;
+  const remote = workspace.createSession();
+  const editing = workspace.createSession();
+  const source = await fixture.pullC1(remote, name_c1A);
+  const binary = kind === 'binary';
+  const roleType = binary ? m.C1.C1AllorsBinary : m.C1.C1AllorsDateTime;
+  const initialValue = binary ? 'AQI=' : new Date('2020-01-02T03:04:05Z');
+  const baseline =
+    remoteEdit === 'unchanged-null' || remoteEdit === 'null-to-value'
+      ? null
+      : initialValue;
+  const local =
+    remoteEdit === 'local-removal'
+      ? null
+      : binary
+      ? 'AwQ='
+      : new Date('2021-01-02T03:04:05Z');
+  const remoteValue =
+    remoteEdit === 'different-value'
+      ? binary
+        ? 'AQM='
+        : new Date('2022-01-02T03:04:05Z')
+      : remoteEdit === 'different-length'
+      ? 'AQID'
+      : remoteEdit === 'value-to-null'
+      ? null
+      : remoteEdit === 'null-to-value'
+      ? initialValue
+      : baseline;
+  const conflict =
+    remoteEdit !== 'unchanged-null' && remoteEdit !== 'local-removal';
+
+  source.strategy.setUnitRole(roleType, baseline);
+  source.C1AllorsInteger = 1;
+  expect((await remote.push()).hasErrors).toBe(false);
+  expect((await remote.pull({ object: source })).hasErrors).toBe(false);
+  const edited = await fixture.pullC1(editing, name_c1A);
+  const version = edited.strategy.version;
+  expect(edited.strategy.getUnitRole(roleType)).toEqual(baseline);
+  edited.strategy.setUnitRole(roleType, local);
+
+  source.strategy.setUnitRole(roleType, remoteValue);
+  source.C1AllorsInteger = 2;
+  expect((await remote.push()).hasErrors).toBe(false);
+  expect((await remote.pull({ object: source })).hasErrors).toBe(false);
+  expect(source.strategy.version).not.toBe(version);
+  expect(source.strategy.getUnitRole(roleType)).toEqual(remoteValue);
+
+  const result = await editing.pull({ object: edited });
+  expect(result.hasErrors).toBe(conflict);
+  expect(result.mergeErrors ?? []).toHaveLength(conflict ? 1 : 0);
+  if (conflict) {
+    expect(result.mergeErrors[0].strategy).toBe(edited.strategy);
+  }
+  expect(edited.strategy.version).toBe(
+    conflict ? version : source.strategy.version
+  );
+  expect(edited.C1AllorsInteger).toBe(conflict ? 1 : 2);
+  expect(edited.strategy.getUnitRole(roleType)).toEqual(local);
+  const diffs = edited.strategy.diff();
+  expect(diffs).toHaveLength(1);
+  const diff = diffs[0] as IUnitDiff;
+  expect(diff.relationType).toBe(roleType.relationType);
+  expect(diff.originalRole ?? null).toEqual(baseline);
+  expect(diff.changedRole).toEqual(local);
+
+  edited.strategy.reset();
+  expect(edited.strategy.version).toBe(
+    conflict ? version : source.strategy.version
+  );
+  expect(edited.strategy.getUnitRole(roleType)).toEqual(baseline);
+  expect(edited.strategy.diff()).toHaveLength(0);
+  expect((await editing.pull({ object: edited })).hasErrors).toBe(false);
+  expect(edited.strategy.version).toBe(source.strategy.version);
+  expect(edited.C1AllorsInteger).toBe(2);
+  expect(edited.strategy.getUnitRole(roleType)).toEqual(remoteValue);
+  expect(edited.strategy.diff()).toHaveLength(0);
+});

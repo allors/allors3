@@ -163,7 +163,6 @@ namespace Tests.Workspace
             Assert.False((await remote.PushAsync()).HasErrors);
             Assert.False((await remote.PullAsync(pull)).HasErrors);
             var edited = (await editing.PullAsync(pull)).GetCollection<C1>()[0];
-            var version = edited.Strategy.Version;
             edited.Strategy.SetUnitRole(roleType, local);
             source.C1AllorsInteger = 2;
             Assert.False((await remote.PushAsync()).HasErrors);
@@ -171,19 +170,10 @@ namespace Tests.Workspace
             Assert.Equal(baseline, source.Strategy.GetUnitRole(roleType));
 
             var result = await editing.PullAsync(pull);
-            // DateTime has value equality; byte arrays use reference equality in CanMerge.
-            Assert.Equal(binary, result.HasErrors);
-            if (binary)
-            {
-                Assert.Same(edited.Strategy, Assert.Single(result.MergeErrors).Strategy);
-            }
-            else
-            {
-                Assert.Empty(result.MergeErrors);
-            }
-
-            Assert.Equal(binary ? version : source.Strategy.Version, edited.Strategy.Version);
-            Assert.Equal(binary ? 1 : 2, edited.C1AllorsInteger);
+            Assert.False(result.HasErrors);
+            Assert.Empty(result.MergeErrors);
+            Assert.Equal(source.Strategy.Version, edited.Strategy.Version);
+            Assert.Equal(2, edited.C1AllorsInteger);
             Assert.Equal(local, edited.Strategy.GetUnitRole(roleType));
             var diff = Assert.IsAssignableFrom<IUnitDiff>(Assert.Single(edited.Strategy.Diff()));
             Assert.Equal(roleType.RelationType, diff.RelationType);
@@ -196,6 +186,95 @@ namespace Tests.Workspace
             Assert.Equal(source.Strategy.Version, edited.Strategy.Version);
             Assert.Equal(2, edited.C1AllorsInteger);
             Assert.Equal(baseline, edited.Strategy.GetUnitRole(roleType));
+        }
+
+        [Theory]
+        [InlineData(false, "unchanged-null")]
+        [InlineData(true, "unchanged-null")]
+        [InlineData(false, "null-to-value")]
+        [InlineData(true, "null-to-value")]
+        [InlineData(false, "value-to-null")]
+        [InlineData(true, "value-to-null")]
+        [InlineData(false, "different-value")]
+        [InlineData(true, "different-value")]
+        [InlineData(false, "local-removal")]
+        [InlineData(true, "local-removal")]
+        [InlineData(true, "different-length")]
+        public async Task DatabaseUnitValueEqualityDuringPull(bool binary, string remoteEdit)
+        {
+            await this.Login("administrator");
+            var remote = this.Workspace.CreateSession();
+            var editing = this.Workspace.CreateSession();
+            var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
+            var source = (await remote.PullAsync(pull)).GetCollection<C1>()[0];
+            IRoleType roleType = binary ? this.M.C1.C1AllorsBinary : this.M.C1.C1AllorsDateTime;
+            object baseline = binary ? new byte[] { 1, 2 } : new System.DateTime(2020, 1, 2, 3, 4, 5, System.DateTimeKind.Utc);
+            if (remoteEdit == "unchanged-null" || remoteEdit == "null-to-value")
+            {
+                baseline = null;
+            }
+
+            object local = binary ? new byte[] { 3, 4 } : new System.DateTime(2021, 1, 2, 3, 4, 5, System.DateTimeKind.Utc);
+            if (remoteEdit == "local-removal")
+            {
+                local = null;
+            }
+
+            object incoming = remoteEdit switch
+            {
+                "null-to-value" or "different-value" => binary ? new byte[] { 1, 3 } : new System.DateTime(2022, 1, 2, 3, 4, 5, System.DateTimeKind.Utc),
+                "value-to-null" => null,
+                "different-length" => new byte[] { 1, 2, 3 },
+                _ => baseline,
+            };
+            source.Strategy.SetUnitRole(roleType, baseline);
+            source.C1AllorsInteger = 1;
+            Assert.False((await remote.PushAsync()).HasErrors);
+            Assert.False((await remote.PullAsync(pull)).HasErrors);
+            var edited = (await editing.PullAsync(pull)).GetCollection<C1>()[0];
+            var version = edited.Strategy.Version;
+            edited.Strategy.SetUnitRole(roleType, local);
+
+            source.Strategy.SetUnitRole(roleType, incoming);
+            source.C1AllorsInteger = 2;
+            Assert.False((await remote.PushAsync()).HasErrors);
+            Assert.False((await remote.PullAsync(pull)).HasErrors);
+            Assert.NotEqual(version, source.Strategy.Version);
+            Assert.Equal(incoming, source.Strategy.GetUnitRole(roleType));
+
+            var result = await editing.PullAsync(pull);
+            var conflict = remoteEdit != "unchanged-null" && remoteEdit != "local-removal";
+            Assert.Equal(conflict, result.HasErrors);
+            if (conflict)
+            {
+                Assert.Same(edited.Strategy, Assert.Single(result.MergeErrors).Strategy);
+            }
+            else
+            {
+                Assert.Empty(result.MergeErrors);
+            }
+
+            Assert.Equal(conflict ? version : source.Strategy.Version, edited.Strategy.Version);
+            Assert.Equal(conflict ? 1 : 2, edited.C1AllorsInteger);
+            Assert.Equal(local, edited.Strategy.GetUnitRole(roleType));
+            Assert.True(edited.Strategy.HasChanges);
+            var diff = Assert.IsAssignableFrom<IUnitDiff>(Assert.Single(edited.Strategy.Diff()));
+            Assert.Equal(roleType.RelationType, diff.RelationType);
+            Assert.Equal(baseline, diff.OriginalRole);
+            Assert.Equal(local, diff.ChangedRole);
+
+            edited.Strategy.Reset();
+            Assert.Equal(conflict ? version : source.Strategy.Version, edited.Strategy.Version);
+            Assert.Equal(conflict ? 1 : 2, edited.C1AllorsInteger);
+            Assert.Equal(baseline, edited.Strategy.GetUnitRole(roleType));
+            Assert.Empty(edited.Strategy.Diff());
+            Assert.False(edited.Strategy.HasChanges);
+            Assert.False((await editing.PullAsync(pull)).HasErrors);
+            Assert.Equal(source.Strategy.Version, edited.Strategy.Version);
+            Assert.Equal(2, edited.C1AllorsInteger);
+            Assert.Equal(incoming, edited.Strategy.GetUnitRole(roleType));
+            Assert.Empty(edited.Strategy.Diff());
+            Assert.False(edited.Strategy.HasChanges);
         }
 
         private void AssertEditingDiff(C1 edited, C1 baselineTarget, C1 localTarget)

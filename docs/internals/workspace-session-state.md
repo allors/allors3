@@ -3,7 +3,7 @@
 > **Status: Current.**
 
 This page maps the current editing baseline in the .NET and TypeScript workspaces. It records
-observed behavior before the connection/session split; applications must not rely on this
+baseline and merge behavior ahead of the connection/session split; applications must not rely on this
 internals page. The tests below are authoritative. The platform boundary is in
 [ARCHITECTURE.md](../../ARCHITECTURE.md); domain terminology is in [Domains](../domains.md).
 
@@ -43,19 +43,29 @@ and [diff specs](../../typescript/modules/libs/system/workspace/adapters-json-te
 The .NET cases run through Local, System.Text.Json HTTP, and Newtonsoft.Json HTTP; TypeScript
 uses HTTP.
 
-## Unit equality differs
+## Unit merge equality
 
-`DatabaseUnitEqualityDuringDisjointPull` / `databaseUnitEqualityDuringDisjointPull` start with a
-non-null unit value, edit it locally, and change only an integer remotely. The refreshed unit
-still represents the original value, but its runtime representation can be a new object.
+Merge compares the retained baseline with the refreshed remote value for each locally edited
+role. It compares DateTime and binary values by content in both runtimes; the local value does
+not decide whether the remote baseline changed.
 
 | Locally edited role | .NET (all three adapters) | TypeScript HTTP |
 | --- | --- | --- |
-| DateTime | Accepts the disjoint change: `Equals` compares DateTime values. | Reports a merge error: `!==` compares distinct Date instances. |
-| Binary | Reports a merge error: `Equals` compares byte-array references. | Accepts the disjoint change: binary is a base64 string, compared by value. |
+| DateTime | `Equals` compares DateTime values. | Date timestamps are compared with `getTime()`. |
+| Binary | `SequenceEqual` compares byte-array contents, including length. | Binary is a base64 string, compared by value. |
 
-In either error case, the local edit and old record survive; Reset followed by Pull recovers.
-These tests characterize existing behavior, not a decision to retain the differences.
+`DatabaseUnitEqualityDuringDisjointPull` / `databaseUnitEqualityDuringDisjointPull` start with a
+non-null unit value, edit it locally, and change only an integer remotely. Pull accepts the new
+record/version while preserving the local edit and its diff original. A newly decoded array or
+Date instance representing the same value does not cause a conflict.
+
+`DatabaseUnitValueEqualityDuringPull` / `databaseUnitValueEqualityDuringPull` cover both units
+with an unchanged null baseline, null-to-value and value-to-null transitions, different remote
+values, and local removal with an unchanged remote value. Binary also covers a length change
+with the same starting bytes. Equal baselines accept the refreshed record; actual changes report
+a conflict and retain the old record/local edit until Reset followed by Pull. Null remains
+distinct from a non-null value. Other unit types and relation comparisons keep their existing
+rules. Binary comparison can scan the byte contents; DateTime comparison is constant-time.
 
 ## Push and permissions are separate
 
@@ -79,9 +89,6 @@ on the server. Data-baseline retention and authorization freshness require separ
 - Decide whether failed Push should keep returning an error result in .NET and throwing
   `ResultError` in TypeScript. The baseline tests now pin both surfaces; aligning them would be
   an API behavior change for callers and needs separate approval.
-- Decide whether unit merge equality should compare values in both runtimes. That would change
-  the DateTime and binary outcomes above; normalizing equality needs its own approved change
-  and regression tests, including nulls and genuinely different remote values.
 - Decide whether to preserve the current baseline transitions in the connection/session split,
   including Reset after Push and whole-role conflict detection. The matrix is evidence for that
   decision, not approval to change semantics or to combine to-many membership edits.
@@ -89,5 +96,5 @@ on the server. Data-baseline retention and authorization freshness require separ
   membership and Pulls without Sync. Retaining records alone cannot provide an authorization
   snapshot or a general freshness guarantee.
 
-Production/API changes, protocol envelopes, shared or persistent caching, and signals are
-outside this characterization.
+The connection/session split, Push error-contract changes, protocol envelopes, shared or
+persistent caching, and signals remain separate work.
