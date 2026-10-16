@@ -16,7 +16,6 @@ namespace Allors.Database.Domain
     /// </summary>
     public class DatabaseAccessControlList : IAccessControlList
     {
-        private readonly DatabaseAccessControl accessControl;
         private readonly IVersionedGrant[] grants;
         private readonly IVersionedRevocation[] revocations;
 
@@ -24,9 +23,8 @@ namespace Allors.Database.Domain
         private readonly IReadOnlyDictionary<Guid, long> writePermissionIdByRelationTypeId;
         private readonly IReadOnlyDictionary<Guid, long> executePermissionIdByMethodTypeId;
 
-        internal DatabaseAccessControlList(DatabaseAccessControl accessControl, IObject @object, IVersionedGrant[] grants, IVersionedRevocation[] revocations)
+        internal DatabaseAccessControlList(IObject @object, IVersionedGrant[] grants, IVersionedRevocation[] revocations)
         {
-            this.accessControl = accessControl;
             this.grants = grants;
             this.revocations = revocations;
             this.Object = @object;
@@ -51,8 +49,6 @@ namespace Allors.Database.Domain
         public bool CanWrite(IRoleType roleType) => !roleType.RelationType.IsDerived && this.writePermissionIdByRelationTypeId?.TryGetValue(roleType.RelationType.Id, out var permissionId) == true && this.IsPermitted(permissionId);
 
         public bool CanExecute(IMethodType methodType) => this.executePermissionIdByMethodTypeId?.TryGetValue(methodType.Id, out var permissionId) == true && this.IsPermitted(permissionId);
-
-        public bool IsMasked() => this.accessControl.IsMasked(this.Object);
 
         private bool IsPermitted(long permissionId)
         {

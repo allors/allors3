@@ -69,7 +69,7 @@ namespace Allors.Database.Adapters.Sql
                 }
             }
 
-            this.command = this.Transaction.Connection.CreateCommand();
+            this.command = this.Transaction.CommandConnection.CreateCommand();
             this.command.CommandText = this.sql.ToString();
 
             foreach (var paramNameByParamValuePair in this.paramNameByParamValue)

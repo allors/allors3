@@ -9,6 +9,7 @@
     <ProjectReference Include="..\..\Protocol\Allors.Protocol.Json.SystemText\Allors.Protocol.Json.SystemText.csproj" />
     <ProjectReference Include="..\..\Protocol\Allors.Protocol.Json\Allors.Protocol.Json.csproj" />
     <ProjectReference Include="..\Allors.Database.Workspace\Allors.Database.Workspace.csproj" />
+    <ProjectReference Include="..\Adapters\Allors.Database.Adapters.Sql\Allors.Database.Adapters.Sql.csproj" />
   </ItemGroup>
  
 </Project>

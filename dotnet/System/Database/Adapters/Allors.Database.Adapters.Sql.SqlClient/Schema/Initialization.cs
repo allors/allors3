@@ -63,7 +63,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             }
         }
 
-        private void AllowSnapshotIsolation()
+        internal void AllowSnapshotIsolation()
         {
             using var connection = new SqlConnection(this.ConnectionString);
             connection.Open();

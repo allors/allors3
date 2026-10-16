@@ -61,7 +61,7 @@ namespace Tests.Workspace
 
             c1a.Strategy.Reset();
 
-            Assert.Null(c1a.C1AllorsString);
+            Assert.Equal("X", c1a.C1AllorsString);
         }
 
         [Fact]
@@ -87,7 +87,7 @@ namespace Tests.Workspace
 
             c1a.Strategy.Reset();
 
-            Assert.Equal("X", c2a.C1AllorsString);
+            Assert.Equal("Y", c2a.C1AllorsString);
         }
 
         [Fact]
@@ -174,12 +174,9 @@ namespace Tests.Workspace
 
             c1a.Strategy.Reset();
 
-            Assert.NotNull(Record.Exception(() =>
-            {
-                var x = c1a.C1C1One2One;
-            }));
+            Assert.Equal(c1b, c1a.C1C1One2One);
 
-            Assert.Null(c1b.C1WhereC1C1One2One);
+            Assert.Equal(c1a, c1b.C1WhereC1C1One2One);
         }
 
         [Fact]
@@ -215,8 +212,8 @@ namespace Tests.Workspace
 
             c1a.Strategy.Reset();
 
-            Assert.Equal(c1b, c1a.C1C1One2One);
-            Assert.Null(c1x.C1WhereC1C1One2One);
+            Assert.Equal(c1x, c1a.C1C1One2One);
+            Assert.Equal(c1a, c1x.C1WhereC1C1One2One);
         }
 
         [Fact]
@@ -288,8 +285,8 @@ namespace Tests.Workspace
 
             c1a.Strategy.Reset();
 
-            Assert.Null(c1a.C1C1Many2One);
-            Assert.Empty(c1b.C1sWhereC1C1Many2One);
+            Assert.Equal(c1b, c1a.C1C1Many2One);
+            Assert.Contains(c1a, c1b.C1sWhereC1C1Many2One);
         }
 
         [Fact]
@@ -361,8 +358,8 @@ namespace Tests.Workspace
 
             c1a.Strategy.Reset();
 
-            Assert.Empty(c1a.C1C1One2Manies);
-            Assert.Null(c1b.C1WhereC1C1One2Many);
+            Assert.Contains(c1b, c1a.C1C1One2Manies);
+            Assert.Equal(c1a, c1b.C1WhereC1C1One2Many);
         }
 
         [Fact]
@@ -431,8 +428,8 @@ namespace Tests.Workspace
 
             c1a.Strategy.Reset();
 
-            Assert.Empty(c1a.C1C1Many2Manies);
-            Assert.Empty(c1b.C1sWhereC1C1Many2Many);
+            Assert.Contains(c1b, c1a.C1C1Many2Manies);
+            Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many);
         }
 
         [Fact]

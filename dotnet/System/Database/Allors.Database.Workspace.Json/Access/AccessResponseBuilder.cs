@@ -5,6 +5,7 @@
 
 namespace Allors.Database.Protocol.Json
 {
+    using System;
     using System.Linq;
     using Allors.Protocol.Json.Api.Security;
     using Domain;
@@ -19,6 +20,11 @@ namespace Allors.Database.Protocol.Json
 
         public AccessResponseBuilder(ITransaction transaction, ISecurity security, IUser user, string workspaceName)
         {
+            if (transaction.Database is not Adapters.Sql.Database)
+            {
+                throw new NotSupportedException("Workspace operations require PostgreSQL or SQL Server. Memory remains available for database and domain tests.");
+            }
+
             this.transaction = transaction;
             this.security = security;
             this.user = user;

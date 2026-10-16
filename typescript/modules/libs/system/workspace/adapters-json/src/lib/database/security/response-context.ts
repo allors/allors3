@@ -1,8 +1,8 @@
 import { IRange } from '@allors/system/workspace/adapters';
-import { DatabaseConnection } from '../database-connection';
+import { Ranges } from '@allors/system/workspace/adapters';
 
 export class ResponseContext {
-  constructor(private readonly database: DatabaseConnection) {
+  constructor(private readonly database: { readonly ranges: Ranges<number> }) {
     this.missingGrantIds = new Set();
     this.missingRevocationIds = new Set();
   }

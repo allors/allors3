@@ -5,20 +5,20 @@
 
 namespace Allors.Database.Protocol.Json
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
     using Allors.Protocol.Json;
     using Allors.Protocol.Json.Api.Pull;
     using Data;
-    using Derivations;
     using Domain;
     using Meta;
     using Ranges;
     using Security;
     using Services;
 
-    public class PullResponseBuilder : IProcedureContext, IProcedureOutput
+    public class PullResponseBuilder
     {
         private readonly IUnitConvert unitConvert;
         private readonly IRanges<long> ranges;
@@ -26,27 +26,26 @@ namespace Allors.Database.Protocol.Json
 
         private readonly Dictionary<string, ISet<IObject>> collectionsByName = new Dictionary<string, ISet<IObject>>();
         private readonly Dictionary<string, IObject> objectByName = new Dictionary<string, IObject>();
-        private readonly Dictionary<string, object> valueByName = new Dictionary<string, object>();
 
-        private readonly HashSet<IObject> maskedObjects;
-        private readonly HashSet<IObject> unmaskedObjects;
+        private readonly HashSet<IObject> includedObjects;
 
         private readonly IPrefetchPolicyCache prefetchPolicyCache;
-
-        private List<IValidation> errors;
 
         public PullResponseBuilder(
             ITransaction transaction,
             IAccessControl accessControl,
             ISet<IClass> allowedClasses,
-            IPreparedSelects preparedSelects,
-            IPreparedExtents preparedExtents,
             IUnitConvert unitConvert,
             IRanges<long> ranges,
             IDictionary<IClass, ISet<IPropertyType>> dependencies,
             IPrefetchPolicyCache prefetchPolicyCache,
             CancellationToken cancellationToken)
         {
+            if (transaction.Database is not Adapters.Sql.Database)
+            {
+                throw new NotSupportedException("Workspace operations require PostgreSQL or SQL Server. Memory remains available for database and domain tests.");
+            }
+
             this.unitConvert = unitConvert;
             this.ranges = ranges;
             this.dependencies = dependencies;
@@ -54,14 +53,11 @@ namespace Allors.Database.Protocol.Json
 
             this.AccessControl = accessControl;
             this.AllowedClasses = allowedClasses;
-            this.PreparedSelects = preparedSelects;
-            this.PreparedExtents = preparedExtents;
             this.CancellationToken = cancellationToken;
 
             this.prefetchPolicyCache = prefetchPolicyCache;
 
-            this.maskedObjects = new HashSet<IObject>();
-            this.unmaskedObjects = new HashSet<IObject>();
+            this.includedObjects = new HashSet<IObject>();
         }
 
         public ITransaction Transaction { get; }
@@ -70,16 +66,7 @@ namespace Allors.Database.Protocol.Json
 
         public ISet<IClass> AllowedClasses { get; }
 
-        public IPreparedSelects PreparedSelects { get; }
-
-        public IPreparedExtents PreparedExtents { get; }
         public CancellationToken CancellationToken { get; }
-
-        public void AddError(IValidation validation)
-        {
-            this.errors ??= new List<IValidation>();
-            this.errors.Add(validation);
-        }
 
         public void AddCollection(string name, IComposite objectType, in IEnumerable<IObject> collection) => this.AddCollectionInternal(name, objectType, collection, null);
 
@@ -102,17 +89,9 @@ namespace Allors.Database.Protocol.Json
 
         public void AddObject(string name, IObject @object, Node[] tree) => this.AddObjectInternal(name, @object, tree);
 
-        public void AddValue(string name, object value)
-        {
-            if (value != null)
-            {
-                this.valueByName.Add(name, value);
-            }
-        }
-
         private void AddObjectInternal(string name, IObject @object, Node[] tree = null)
         {
-            if (@object == null || this.maskedObjects.Contains(@object))
+            if (@object == null)
             {
                 return;
             }
@@ -121,11 +100,10 @@ namespace Allors.Database.Protocol.Json
 
             if (!this.Include(@object))
             {
-                this.maskedObjects.Add(@object);
                 return;
             }
 
-            this.unmaskedObjects.Add(@object);
+            this.includedObjects.Add(@object);
             this.objectByName[name] = @object;
             tree?.Resolve(@object, this.AccessControl, this.Add, this.prefetchPolicyCache, this.Transaction);
         }
@@ -140,7 +118,7 @@ namespace Allors.Database.Protocol.Json
             }
 
             this.Transaction.Prefetch(this.prefetchPolicyCache.Security, collection);
-            var trimmed = collection.Where(this.Include);
+            var includedCollection = collection.Where(this.Include);
 
             this.collectionsByName.TryGetValue(name, out var existingCollection);
 
@@ -150,17 +128,17 @@ namespace Allors.Database.Protocol.Json
 
                 if (existingCollection != null)
                 {
-                    newCollection = trimmed.ToArray();
+                    newCollection = includedCollection.ToArray();
                     existingCollection.UnionWith(newCollection);
                 }
                 else
                 {
-                    var newSet = new HashSet<IObject>(trimmed);
+                    var newSet = new HashSet<IObject>(includedCollection);
                     newCollection = newSet;
                     this.collectionsByName.Add(name, newSet);
                 }
 
-                this.unmaskedObjects.UnionWith(newCollection);
+                this.includedObjects.UnionWith(newCollection);
 
                 tree.Resolve(newCollection, this.AccessControl, this.Add, this.prefetchPolicyCache, this.Transaction);
             }
@@ -168,68 +146,19 @@ namespace Allors.Database.Protocol.Json
             {
                 if (existingCollection != null)
                 {
-                    existingCollection.UnionWith(trimmed);
+                    existingCollection.UnionWith(includedCollection);
                 }
                 else
                 {
-                    var newWorkspaceCollection = new HashSet<IObject>(trimmed);
+                    var newWorkspaceCollection = new HashSet<IObject>(includedCollection);
                     this.collectionsByName.Add(name, newWorkspaceCollection);
-                    this.unmaskedObjects.UnionWith(newWorkspaceCollection);
+                    this.includedObjects.UnionWith(newWorkspaceCollection);
                 }
             }
         }
 
         public PullResponse Build(PullRequest pullRequest = null)
         {
-            var pullResponse = new PullResponse();
-
-            var procedure = pullRequest?.p?.FromJson(this.Transaction, this.unitConvert);
-
-            if (procedure != null)
-            {
-                if (procedure.Pool != null)
-                {
-                    foreach (var kvp in procedure.Pool)
-                    {
-                        var @object = kvp.Key;
-                        var version = kvp.Value;
-
-                        if (!@object.Strategy.ObjectVersion.Equals(version))
-                        {
-                            pullResponse.AddVersionError(@object);
-                        }
-                    }
-
-                    if (pullResponse.HasErrors)
-                    {
-                        return pullResponse;
-                    }
-                }
-
-                var procedures = this.Transaction.Database.Services.Get<IProcedures>();
-                var proc = procedures.Get(procedure.Name);
-                if (proc == null)
-                {
-                    pullResponse._e = $"Missing procedure {procedure.Name}";
-                    return pullResponse;
-                }
-
-                var input = new ProcedureInput(this.Transaction.Database.ObjectFactory, procedure);
-
-                this.ThrowIfCancellationRequested();
-                proc.Execute(this, input, this);
-
-                if (this.errors?.Count > 0)
-                {
-                    foreach (var error in this.errors)
-                    {
-                        pullResponse.AddDerivationErrors(error);
-                    }
-
-                    return pullResponse;
-                }
-            }
-
             if (pullRequest?.l != null)
             {
                 var pulls = pullRequest.l.FromJson(this.Transaction, this.unitConvert);
@@ -240,12 +169,12 @@ namespace Allors.Database.Protocol.Json
 
                     if (pull.Object != null)
                     {
-                        var pullInstantiate = new PullInstantiate(this.Transaction, pull, this.AccessControl, this.PreparedSelects);
+                        var pullInstantiate = new PullInstantiate(this.Transaction, pull, this.AccessControl);
                         pullInstantiate.Execute(this);
                     }
                     else
                     {
-                        var pullExtent = new PullExtent(this.Transaction, pull, this.AccessControl, this.PreparedSelects, this.PreparedExtents, this.prefetchPolicyCache);
+                        var pullExtent = new PullExtent(this.Transaction, pull, this.AccessControl, this.prefetchPolicyCache);
                         pullExtent.Execute(this);
                     }
                 }
@@ -260,9 +189,9 @@ namespace Allors.Database.Protocol.Json
 
             this.ThrowIfCancellationRequested();
 
-            pullResponse = new PullResponse
+            var pullResponse = new PullResponse
             {
-                p = this.unmaskedObjects.Select(v =>
+                p = this.includedObjects.Select(v =>
                 {
                     var accessControlList = this.AccessControl[v];
                     var grants = accessControlList.Grants;
@@ -289,7 +218,6 @@ namespace Allors.Database.Protocol.Json
                 }).ToArray(),
                 o = this.objectByName.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Id),
                 c = this.collectionsByName.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Select(obj => obj.Id).ToArray()),
-                v = this.valueByName,
             };
 
             pullResponse.g = versionByGrant.Count > 0 ? versionByGrant.Select(v => new[] { v.Key, v.Value }).ToArray() : null;
@@ -298,22 +226,7 @@ namespace Allors.Database.Protocol.Json
             return pullResponse;
         }
 
-        public bool Include(IObject @object)
-        {
-            if (@object == null || this.AllowedClasses?.Contains(@object.Strategy.Class) != true ||
-                this.maskedObjects.Contains(@object))
-            {
-                return false;
-            }
-
-            if (this.AccessControl[@object].IsMasked())
-            {
-                this.maskedObjects.Add(@object);
-                return false;
-            }
-
-            return true;
-        }
+        public bool Include(IObject @object) => @object != null && this.AllowedClasses?.Contains(@object.Strategy.Class) == true;
 
         private void AddDependencies()
         {
@@ -324,7 +237,7 @@ namespace Allors.Database.Protocol.Json
 
             this.ThrowIfCancellationRequested();
 
-            var current = this.unmaskedObjects.ToArray();
+            var current = this.includedObjects.ToArray();
 
             while (current.Length > 0)
             {
@@ -386,8 +299,8 @@ namespace Allors.Database.Protocol.Json
                     }
                 }
 
-                current = newObjects.Except(this.unmaskedObjects).ToArray();
-                this.unmaskedObjects.UnionWith(newObjects);
+                current = newObjects.Except(this.includedObjects).ToArray();
+                this.includedObjects.UnionWith(newObjects);
             }
         }
 
@@ -395,7 +308,7 @@ namespace Allors.Database.Protocol.Json
         {
             if (this.Include(@object))
             {
-                this.unmaskedObjects.Add(@object);
+                this.includedObjects.Add(@object);
             }
         }
 

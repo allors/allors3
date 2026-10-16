@@ -1,0 +1,38 @@
+{
+  "changed_repository_paths": [
+    "docs/internals/workspace-caller-migration-inventory.md"
+  ],
+  "unexpected_paths": [],
+  "unchanged_other_path_states": 2373,
+  "dirty_paths": 320,
+  "dirty_statuses_unchanged": true,
+  "git_identities_unchanged": true,
+  "index_unchanged": true,
+  "generated_count": 339,
+  "generated_changed": [],
+  "generated_added": [],
+  "generated_missing": [],
+  "implementation_manifest": {
+    "paths": 18,
+    "edits": 14,
+    "additions": 2,
+    "deletions": 2
+  },
+  "documentation": {
+    "new_links": [
+      "#test-consolidation-map--2026-10-16"
+    ],
+    "broken_new_links": [],
+    "new_section_trailing_whitespace": [],
+    "manifest_matches": true
+  },
+  "partition_source_checks": {
+    "local_pure_methods": 124,
+    "local_pure_rows": 710,
+    "typescript_pure_files": 2,
+    "typescript_integration_files": 20,
+    "typescript_pure_cases": 631,
+    "typescript_integration_cases": 231
+  },
+  "new_runtime_builds_or_tests": 0
+}

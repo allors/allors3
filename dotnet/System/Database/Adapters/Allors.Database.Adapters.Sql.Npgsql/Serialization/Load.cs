@@ -24,6 +24,8 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 
         private readonly Dictionary<long, IClass> classByObjectId;
 
+        private bool failed;
+
         public Load(Database database, NpgsqlConnection connection, ObjectNotLoadedEventHandler objectNotLoaded, RelationNotLoadedEventHandler relationNotLoaded)
         {
             this.database = database;
@@ -36,10 +38,14 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 
         public void Execute(XmlReader reader)
         {
+            using var operation = this.database.PopulationLifecycle.BeginOperation();
+            this.failed = false;
+            var foundPopulation = false;
             while (reader.Read())
             {
                 if (reader.NodeType.Equals(XmlNodeType.Element) && reader.Name.Equals(Serialization.Population))
                 {
+                    foundPopulation = true;
                     var version = reader.GetAttribute(Serialization.Version);
                     if (string.IsNullOrEmpty(version))
                     {
@@ -55,6 +61,22 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 
                     break;
                 }
+            }
+
+            if (!foundPopulation)
+            {
+                throw new ArgumentException("The XML document contains no population. Supply a valid saved population before completing maintenance.", nameof(reader));
+            }
+
+            // An empty population leaves the reader before its enclosing document's end.
+            // Validate that remainder before reporting successful import completion.
+            while (reader.Read())
+            {
+            }
+
+            if (!this.failed)
+            {
+                operation.Complete();
             }
         }
 
@@ -329,6 +351,7 @@ where c = '{@class.Id}'";
             }
             catch
             {
+                this.failed = true;
                 con.Rollback();
             }
         }
@@ -360,6 +383,7 @@ where c = '{@class.Id}'";
             }
             catch
             {
+                this.failed = true;
                 con.Rollback();
             }
         }

@@ -5,7 +5,7 @@
 
 namespace Allors.Workspace
 {
-    public interface IInvokeResult : IResult
+    public interface IInvokeResult : IResult, IMutationResult
     {
     }
 }

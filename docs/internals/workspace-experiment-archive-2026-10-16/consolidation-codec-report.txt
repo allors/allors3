@@ -1,0 +1,172 @@
+Remote codec PullTests consolidation — proposed exact scope, 2026-10-16
+
+Read-only source/evidence analysis. No repository edits, Git mutations, tests, builds, hosts or
+services were run. This is a proposal requiring explicit approval of these existing-test moves.
+Current sources match the SHA256 values in the cache-ownership final source statistics.
+
+Recommendation
+Use the existing shared test source directory dotnet/Core/Workspace/Tests/Remote for one copy of
+the HTTP PullTests and one small standalone pure ReadTransportTests. Both existing remote test
+projects compile these linked files; the existing Tests project excludes exactly these two files
+from its compile. No new test project and no production source/API/friend-assembly change.
+
+Each remote csproj supplies two namespace aliases through SDK Using items:
+- RemoteAdapter -> Allors.Workspace.Adapters.Remote.SystemText or .Newtonsoft.
+- RemoteCodec -> Allors.Protocol.Json.SystemTextJson or .Newtonsoft.
+Qualify the existing concrete DatabaseConnection/ReadTransport/PushReadTransport/InvokeReadTransport
+references with RemoteAdapter and existing ReadJson/PushReadJson/InvokeReadJson/UnitConvert
+references with RemoteCodec. Avoid chained aliases and runtime bool/reflection dispatch. The aliases
+remain compile-time names for the actual concrete implementations, not a replacement transport.
+The shared test files remain in namespace Tests.Workspace.Remote. No namespace-alias collision was
+found in the current remote project sources. Using items generate ordinary SDK global usings during
+a build; no generated file is edited by hand. Compiler validation remains future work.
+
+Costs and alternative
+The proposal trades one duplicated 1,475-line source file for two explicit linked Compile entries
+and two aliases in each codec project, and two Compile exclusions in the existing shared project.
+This neutral shared location is clearer than making Newtonsoft own a linked SystemText test file.
+An abstract class compiled in Workspace.Tests would require moving/changing codec-specific Profile
+and HttpTestResources or introducing a larger factory abstraction, both outside the small duplication
+problem. Conditional imports are feasible, but need a codec build symbol and error handling for
+missing/wrong symbols in both files; two explicit namespace aliases keep the dependency choice
+visible in the consuming project without extra test control flow.
+
+Current exact counts
+Each source has 28 declared methods / 43 rows and inherits 68 one-row Facts from
+Tests/Tests/PullTests.cs. Total 111 PullTests rows per codec. The two sources differ at exactly five
+binding lines and are byte-identical after normalizing the two codec namespace prefixes. Each is
+1,475 physical lines: 1,470 identical lines. They are NOT the older 1,455-line review snapshots.
+No test row is retired. Four methods / seven rows move into ReadTransportTests. All remaining
+24 methods / 36 declared rows stay in PullTests, as do all 68 inherited rows: 104 integration rows
+per codec. Executing once per codec for pure plus both providers for integration gives 430 selected
+PullTests-family executions (14 pure + 416 integration), instead of repeating all 111 rows in four
+codec/provider combinations (444). This removes 14 repeated pure executions, not 14 test cases.
+No timing savings are claimed; setup cost was not separately measured.
+
+Pure move, same method names/argument rows/assertions
+1. ReadTransportRejectsInvalidRequestBeforeSending: two exact request strings (duplicate v;
+   extra procedure:null). Keep zero attempts and FormatException.
+2. ReadTransportStrictlyDecodesTheOriginalResponse: two exact response strings (duplicate i;
+   wrong correlation i). Keep one attempt and FormatException from original raw response.
+3. ReadTransportNeverRetriesHttpFailure: one Fact. Keep one injected HttpRequestException and
+   exactly one attempt.
+4. ReadTransportCancellationSuppressesSuccess: false,true. Keep pre-cancel vs during-send paths,
+   observed cancellation token and attempts 0 vs 1.
+Exact C# argument literals are in exact-map.json and exact-map.md. Add method-level
+[Trait("Category", "Pure")] only to these methods and compile each in both concrete codec projects.
+Run seven rows per codec once without an HTTP host or SQL. The class must have no Workspace.PullTests
+base class, IClassFixture, Profile construction, IAsyncLifetime, setup or metadata/database fixture.
+The HTTP client uses only the existing injected ReadHandler. Do not bypass real transport decoding.
+
+Why fixture removal is necessary
+Current PullTests : Workspace.PullTests inherits Test : IAsyncLifetime. Its constructor creates
+new Profile(); Test.InitializeAsync calls Profile.InitializeAsync(), which GETs
+Test/Setup?population=full and then Login("administrator") (real connection bootstrap). Thus all
+seven otherwise pure rows currently perform real host/database setup. A trait/filter alone does
+not remove that initialization. Fixture itself only builds database metadata/rules, but the base
+lifecycle and Profile are the live dependency. A standalone class removes both costs and dependency.
+
+Explicit helper map
+- PullTests constructor(Fixture) and overridden Profile property stay in shared integration class.
+- ReadWire constant and the complete ReadHandler nested class move into ReadTransportTests only.
+  Their only callers are the four pure methods. No duplicate helper copy is necessary.
+- ScopedOwnerQuery(Profile) stays in shared integration PullTests unchanged.
+- Seven nested integration helper types stay in that same shared source, preserving bodies except
+  concrete type qualifications: ProfileReplacementHandler, ScopedOwnerHttpHandler,
+  PushReadHttpFixture, PushReadHttpHandler, ScopedSessionHandler, ReadTestConnection,
+  CoordinatorTransport.
+- Both existing Profile.cs and HttpTestResources.cs copies stay unchanged. This proposal does not
+  consolidate their separate source or change ownership/factory/bootstrap behavior.
+- Tests/Tests/PullTests.cs, Tests/Test.cs, Tests/Tests/Fixture.cs and Local PullTests are unchanged
+  by this codec slice (the separate pure-execution slice may touch Local explicitly).
+
+Preserve real boundaries
+ReadTransportSendsOneCompleteRequest remains live (one row per codec/provider).
+Every other retained method uses an actual Profile/connection/HTTP path. In particular
+ScopedOwnerHttpFailedBootstrapDisposesTransportWithoutMutationOrRetry is NOT pure: its delegating
+handler forwards discovery to a real HttpClientHandler and its recovery path uses the server.
+The Profile replacement failure rows also forward real traffic. ReadTestConnection still uses
+concrete codec transports + UnitConvert, production protected InitializeAsync and original internal
+store/ScopedOwner checks. Do not replace these with a fake common codec/factory. Existing live read,
+Push, Invoke, identity, authority, close/drain, cache-reuse and inherited query coverage stays on each
+codec and both SQL providers.
+
+Exact codec source/project manifest (7 identities)
+DELETE dotnet/Core/Workspace/Tests.Remote.Json.SystemText/Tests/PullTests.cs
+DELETE dotnet/Core/Workspace/Tests.Remote.Json.Newtonsoft/Tests/PullTests.cs
+ADD    dotnet/Core/Workspace/Tests/Remote/PullTests.cs
+ADD    dotnet/Core/Workspace/Tests/Remote/ReadTransportTests.cs
+EDIT   dotnet/Core/Workspace/Tests/Workspace.Tests.csproj
+       Compile Remove for Remote/PullTests.cs and Remote/ReadTransportTests.cs only.
+EDIT   dotnet/Core/Workspace/Tests.Remote.Json.SystemText/Workspace.Tests.Remote.Json.SystemText.csproj
+       Link the two shared files under Tests/; bind the two SystemText namespace aliases.
+EDIT   dotnet/Core/Workspace/Tests.Remote.Json.Newtonsoft/Workspace.Tests.Remote.Json.Newtonsoft.csproj
+       Link the same files under Tests/; bind the two Newtonsoft namespace aliases.
+Root's combined proposal also owns build/CI selection and documentation changes. Existing links
+in docs/internals/workspace-session-state.md:261-262 and workspace-read-coordinator.md:103-104 must
+point to the new shared source. The inventory and CHANGELOG need the overall completion record.
+
+Risks / checks
+1. Compile exclusion is essential: compiling Remote/PullTests.cs in Workspace.Tests would duplicate
+   test types, lack the codec project aliases, and lose current friend access. Linked compilation
+   inside both existing remote assemblies preserves their current InternalsVisibleTo permissions.
+   Allors.Workspace.Adapters.Remote currently friends Workspace.Tests.Local, both remote assemblies,
+   and Server.Local.Tests; it does NOT friend Workspace.Tests. Do not add another friend assembly.
+2. Alias targets must bind to the matching assembly in each project. Verify all adapter types and
+   UnitConvert/strict codecs, not merely DatabaseConnection. Shared source itself must not import
+   SystemText or Newtonsoft directly. Keep member names such as profile.DatabaseConnection intact;
+   qualify only type references and static codec calls.
+3. Preserve each 68-row inherited set exactly. Do not add a class-level Pure trait to PullTests and
+   do not move its fixture inheritance onto ReadTransportTests.
+4. Keep declared InlineData literals and assertion bodies, except the strictly mechanical concrete
+   type qualifications; audit source before/after with an explicit identity mapping for only the
+   four class moves. Nothing is renamed or retired. All 24 remaining method identities stay stable.
+5. Tests.Remote.Json.SystemText currently disables test parallelization through AssemblyInfo.cs;
+   preserve it. No new mutable static state enters the standalone pure class. Do not change global
+   parallelism as part of this move.
+
+Existing validation evidence, not a new execution claim
+The four final cache-ownership HTTP TRX files each report 123/123 passing. Within each, 23 declared
+PullTests methods / 35 rows ran. They did NOT run ReadTransportSendsOneCompleteRequest, the four pure
+methods / seven rows, or the 68 inherited PullTests facts. Thus the current green selected matrix
+is not evidence that all 111 rows per codec passed on final source. The hashes confirm the current
+source matches that final cache validation snapshot. Historical full matrix expectation failures
+remain separate; consolidation must not silently fix/remove those tests.
+
+Proposed validation after explicit implementation approval
+- Freeze all current 320 dirty path states, index/refs, generated files and exact method/argument map.
+- Before editing, establish seven old pure method rows per codec under current fixture conditions
+  only if a fresh full matrix is authorized; existing evidence alone must not be called a fresh run.
+- Build the complete .NET solution after links/aliases are introduced. Check there are no duplicate
+  test types or lost friend/internal access and both concrete codec projects compile.
+- Discover rows in each remote assembly and prove bijection: former 111 PullTests rows map to
+  104 unchanged PullTests identities + seven ReadTransportTests identities, exact argument values.
+  Verify Workspace.Tests has no accidental executable copy. Check source/body equivalence under
+  only the allowed alias substitutions, class move, trait additions and helper relocation.
+- With no host or SQL service dependency, run --filter Category=Pure once for each remote project:
+  expect seven actual passing rows per project. Capture TRX to unique new evidence paths and reject
+  zero-match success. Integration filters must be complementary Category!=Pure.
+- On fresh isolated PostgreSQL and SQL Server hosts/databases, run the integration family for each
+  remote codec: FullyQualifiedName~Tests.Workspace.Remote.PullTests with Category!=Pure. Expect 104
+  actual rows per codec/provider, exactly 24 declared methods/36 rows plus 68 inherited facts.
+  The build/CI slice may instead run each full remote integration assembly, but must independently
+  account for this exact 104-row subset and four removed pure method identities.
+- Preserve full-suite failure history. If an unrelated expectation failure recurs, record it and
+  stop at the approval boundary; no unapproved test rewrite. Clean up only newly created hosts and
+  task databases, verify preservation, and report selected vs full validation honestly.
+
+Additional historical census and ordered validation detail
+historical-full-census.json reads all four historical full remote TRX files: 249 rows each, including
+111 PullTests. Comparing 100 current source/config paths in the shared Tests and two remote project
+directories to matrix-1-source-freeze finds only the two PullTests sources changed. Their current
+28 methods/43 declared rows are preserved. Therefore 242 integration + seven pure rows is the
+expected full remote assembly split; it is not fresh discovery or a passing current full-suite claim.
+The previously failing two NormalProfileLoginDrainsBeforeReplacingCapturedIdentity argument rows
+were corrected and pass in the latest selected evidence. The inherited
+AssociationMany2ManyContainedIn and RoleMany2ManyContainedIn expectation failures remain pending.
+An implementation validation run should first require all pure rows green, then the exact 24 retained
+live methods / 36 rows per codec/provider (declared-live.filter.txt), before broader 242-row integration
+assembly runs and explicit comparison of known failures. Seven old pure identities are separately
+listed in pure-original-methods.filter.txt for before/after identity reconciliation. Do not accept the
+older 35-row focused filter as complete evidence for the new shared integration source; it missed
+ReadTransportSendsOneCompleteRequest, which remains included in declared-live.filter.txt.

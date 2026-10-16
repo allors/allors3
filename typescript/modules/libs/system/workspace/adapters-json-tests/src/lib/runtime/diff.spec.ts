@@ -4,7 +4,6 @@ import {
   ICompositesDiff,
   IUnitDiff,
   Pull,
-  ResultError,
 } from '@allors/system/workspace/domain';
 import { Fixture, name_c1A, name_c1B, name_c1C, name_c1D } from '../fixture';
 import '../matchers';
@@ -235,10 +234,8 @@ test('databaseDiffRetainsBaselineWhenAnotherSessionRefreshes', async () => {
     [baselineTarget.id, localTarget.id].sort()
   );
 
-  // TypeScript rejects the promise; .NET returns the failed push result.
-  const pushed = await editing.push().catch((error: unknown) => error);
-  expect(pushed).toBeInstanceOf(ResultError);
-  const rejected = (pushed as ResultError).result;
+  const rejected = await editing.push();
+  expect(rejected.outcome).toBe('rejected');
   expect(rejected.hasErrors).toBe(true);
   expect(rejected.versionErrors).toEqual([edited]);
   expect(edited.strategy.version).toBe(version);
@@ -262,4 +259,8 @@ test('databaseDiffRetainsBaselineWhenAnotherSessionRefreshes', async () => {
     source.C1C1Many2Manies.map((v) => v.id).sort()
   );
   expect(edited.strategy.diff()).toHaveLength(0);
+});
+
+afterEach(async () => {
+  await fixture?.close();
 });

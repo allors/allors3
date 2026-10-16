@@ -63,7 +63,7 @@ namespace Allors.Database.Adapters.Sql
                                 var referencesWithoutCachedRole = new HashSet<Reference>();
                                 foreach (var reference in classedReferences)
                                 {
-                                    var roles = this.prefetcher.Transaction.State.GetOrCreateRoles(reference);
+                                    var roles = this.prefetcher.Transaction.AdapterState.GetOrCreateRoles(reference);
                                     if (!roles.PrefetchTryGetUnitRole(roleType))
                                     {
                                         referencesWithoutCachedRole.Add(reference);

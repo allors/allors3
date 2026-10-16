@@ -89,3 +89,7 @@ test('organisationDisplayName', async () => {
 
   expect(acme.DisplayName).toBe('Acme owned by Jane');
 });
+
+afterEach(async () => {
+  await fixture?.close();
+});

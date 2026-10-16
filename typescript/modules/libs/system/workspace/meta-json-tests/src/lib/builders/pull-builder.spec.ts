@@ -10,6 +10,41 @@ describe('Pulls', () => {
   const { pullBuilder: p } = m;
 
   describe('with metadata', () => {
+    it('should build named inline results with includes and arguments', () => {
+      const pull = p.Organisation({
+        arguments: { name: 'Acme' },
+        results: [
+          {
+            name: 'owners',
+            select: {
+              Owner: { include: { OrganisationsWhereOwner: {} } },
+            },
+            skip: 2,
+            take: 3,
+          },
+          { name: 'organisations', include: { Owner: {} } },
+        ],
+      });
+
+      expect((pull.extent as Filter).objectType).toBe(m.Organisation);
+      expect(pull.arguments).toEqual({ name: 'Acme' });
+      expect(Object.keys(pull)).not.toContain('extentRef');
+      expect(pull.results).toHaveLength(2);
+      const [owners, organisations] = pull.results;
+      expect(owners.name).toBe('owners');
+      expect(owners.skip).toBe(2);
+      expect(owners.take).toBe(3);
+      expect(owners.select.propertyType).toBe(m.Organisation.Owner);
+      expect(owners.select.include[0].propertyType).toBe(
+        m.Person.OrganisationsWhereOwner
+      );
+      expect(organisations.name).toBe('organisations');
+      expect(organisations.include[0].propertyType).toBe(m.Organisation.Owner);
+      for (const result of pull.results) {
+        expect(Object.keys(result)).not.toContain('selectRef');
+      }
+    });
+
     it('should return pulls', () => {
       const pull = p.Organisation({
         select: {
@@ -38,7 +73,6 @@ describe('Pulls', () => {
 
       expect(result.name).toBeUndefined();
       expect(result.select).toBeDefined();
-      expect(result.selectRef).toBeUndefined();
       expect(result.skip).toBe(20);
       expect(result.take).toBe(10);
 

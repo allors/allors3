@@ -12,6 +12,8 @@ import { DatabaseRecord } from './database-record';
 export type IdGenerator = () => number;
 
 export abstract class DatabaseConnection {
+  abstract close(): Promise<void>;
+
   ranges: Ranges<number>;
 
   constructor(public configuration: Configuration) {

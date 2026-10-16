@@ -19,6 +19,11 @@ namespace Allors.Database.Protocol.Json
 
         public PermissionResponseBuilder(ITransaction transaction, ISet<IClass> allowedClasses)
         {
+            if (transaction.Database is not Adapters.Sql.Database)
+            {
+                throw new NotSupportedException("Workspace operations require PostgreSQL or SQL Server. Memory remains available for database and domain tests.");
+            }
+
             this.transaction = transaction;
             this.allowedClasses = allowedClasses;
         }

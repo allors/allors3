@@ -39,8 +39,6 @@ namespace Allors.Database.Domain
             }
         }
 
-        public bool IsMasked(IObject @object) => false;
-
         private DatabaseAccessControlList GetAccessControlList(Object @object)
         {
             var strategy = @object.Strategy;
@@ -88,9 +86,9 @@ namespace Allors.Database.Domain
                 versionedRevocations = this.security.GetVersionedRevocations(transaction, this.user, revocations?.ToArray() ?? Array.Empty<IRevocation>());
             }
 
-            return new DatabaseAccessControlList(this, @object, versionedGrants, versionedRevocations);
+            return new DatabaseAccessControlList(@object, versionedGrants, versionedRevocations);
         }
 
-        private DatabaseAccessControlList Create(IObject @object, IVersionedGrant[] grants, IVersionedRevocation[] revocations) => new DatabaseAccessControlList(this, @object, grants, revocations);
+        private DatabaseAccessControlList Create(IObject @object, IVersionedGrant[] grants, IVersionedRevocation[] revocations) => new DatabaseAccessControlList(@object, grants, revocations);
     }
 }

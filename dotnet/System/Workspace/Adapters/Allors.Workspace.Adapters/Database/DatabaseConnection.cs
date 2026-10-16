@@ -21,6 +21,8 @@ namespace Allors.Workspace.Adapters
 
         public abstract IWorkspace CreateWorkspace();
 
+        public abstract System.Threading.Tasks.Task DisposeAsync();
+
         public abstract DatabaseRecord GetRecord(long id);
 
         public abstract long GetPermission(IClass @class, IOperandType operandType, Operations operation);

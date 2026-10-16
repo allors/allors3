@@ -8,9 +8,6 @@ export interface PullResponse extends Response {
   /** Objects */
   o: { [name: string]: number };
 
-  /** Values */
-  v: { [name: string]: string };
-
   /** Pool */
   p: PullResponseObject[];
 

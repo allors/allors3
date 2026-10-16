@@ -109,10 +109,11 @@ jobs:
       fail-fast: false
       matrix:
         target:
-          # Postgres in CI currently covers only the Npgsql adapter. The database/server/workspace/e2e
+          # This job currently covers only the Npgsql adapter. The database/server/workspace/e2e
           # suites run on SqlClient (the sqlclient job below); running the full suite on Npgsql is a
           # tracked follow-up (it surfaces pre-existing npgsql-specific issues: result ordering, long
           # index-name truncation, an Equals empty-pull).
+          # Entra also exercises its focused read-admission cases on PostgreSQL in the SqlClient job.
           - CiDotnetSystemAdaptersTestNpgsql
     steps:
       - name: Checkout
@@ -173,8 +174,22 @@ jobs:
           --health-timeout 5s
           --health-retries 20
           --health-start-period 30s
+      # Entra's read-admission theory exercises both providers; other targets need only SQL Server.
+      postgres:
+        image: ${{ matrix.target == 'CiDotnetEntraDatabaseTest' && 'postgres:16' || '' }}
+        env:
+          POSTGRES_USER: allors
+          POSTGRES_PASSWORD: allors
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U allors"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
     env:
       ALLORS_SQLCLIENT: 'Server=localhost,1433;User Id=sa;Password=Allors123!;TrustServerCertificate=true'
+      ALLORS_NPGSQL: ${{ matrix.target == 'CiDotnetEntraDatabaseTest' && 'Server=localhost;Port=5432;User Id=allors;Password=allors' || '' }}
     strategy:
       fail-fast: false
       matrix:

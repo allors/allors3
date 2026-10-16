@@ -19,7 +19,7 @@ namespace Allors.Workspace.Adapters
 
         public long Version => this.DatabaseRecord?.Version ?? Allors.Version.WorkspaceInitial;
 
-        private bool IsVersionInitial => this.Version == Allors.Version.WorkspaceInitial.Value;
+        protected bool IsVersionInitial => this.Version == Allors.Version.WorkspaceInitial.Value;
 
         protected override IEnumerable<IRoleType> RoleTypes => this.Class.DatabaseOriginRoleTypes;
 
@@ -29,9 +29,9 @@ namespace Allors.Workspace.Adapters
 
         protected DatabaseRecord DatabaseRecord { get; private set; }
 
-        private bool IsPushed { get; set; }
+        protected bool IsPushed { get; set; }
 
-        public bool CanRead(IRoleType roleType)
+        public virtual bool CanRead(IRoleType roleType)
         {
             if (!this.ExistRecord)
             {
@@ -48,7 +48,7 @@ namespace Allors.Workspace.Adapters
             return this.DatabaseRecord.IsPermitted(permission);
         }
 
-        public bool CanWrite(IRoleType roleType)
+        public virtual bool CanWrite(IRoleType roleType)
         {
             if (this.IsVersionInitial)
             {
@@ -69,7 +69,7 @@ namespace Allors.Workspace.Adapters
             return this.DatabaseRecord.IsPermitted(permission);
         }
 
-        public bool CanExecute(IMethodType methodType)
+        public virtual bool CanExecute(IMethodType methodType)
         {
             if (!this.ExistRecord)
             {
@@ -92,21 +92,26 @@ namespace Allors.Workspace.Adapters
         {
             var newRecord = this.Session.Workspace.DatabaseConnection.GetRecord(this.Id);
 
-            if (!this.IsPushed)
+            if (!this.CanAcceptPulledRecord(newRecord))
             {
-                if (!this.CanMerge(newRecord))
-                {
-                    pull.AddMergeError(this.Strategy.Object);
-                    return;
-                }
+                pull.AddMergeError(this.Strategy.Object);
+                return;
             }
-            else
+
+            this.AcceptPulledRecord(newRecord);
+        }
+
+        protected bool CanAcceptPulledRecord(DatabaseRecord record) => this.IsPushed || this.CanMerge(record);
+
+        protected void AcceptPulledRecord(DatabaseRecord record)
+        {
+            if (this.IsPushed)
             {
-                this.Reset();
+                this.ClearChanges();
                 this.IsPushed = false;
             }
 
-            this.DatabaseRecord = newRecord;
+            this.DatabaseRecord = record;
         }
 
         protected override void OnChange()

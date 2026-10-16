@@ -11,6 +11,59 @@ Changes accumulate under **[Unreleased]** until a version is released.
 
 ### Added
 
+- Protected atomic Invoke on normal .NET Local, both .NET HTTP serializers and
+  TypeScript connections. Ordered methods commit once or reject as one batch; affected refresh
+  defaults to true and preserves unsaved edits, creations and checkpoints. Shared results keep
+  commitment separate from refresh/application failures and expose raw diagnostics without replay.
+  Host admission and exact method eligibility use the protected SQL write boundary.
+
+- Ready asynchronous connection factories in .NET Local, both HTTP serializers and TypeScript.
+  Initialization uses the connection's read assembler without application callbacks; all normal
+  workspaces use complete reads and protected Push/Invoke. Connection cleanup stops admission,
+  drains dispatched work, closes every Session and leaves borrowed transports/databases host-owned.
+  Common Session cleanup preserves held values and diffs.
+- Connection ownership of fresh .NET workspace/Session services, with registration before exactly
+  one initialization callback and disposal after drain. Profiles and the TypeScript Fixture capture
+  transport identity, drain before login replacement and await cleanup across independent connections.
+- A maintainer inventory of workspace capability removals, normal lifecycle/caller migration,
+  exact test migrations and the separate server-endpoint removal boundary.
+- Scoped PushRead integration tests for .NET Local, both .NET HTTP serializers and TypeScript
+  HTTP against SQL providers. They cover immediate refresh, request counts, exact body reuse,
+  concurrent membership and permissions, deletion, retirement and response loss after commit.
+  Core server Local tests accept `ALLORS_TEST_DATABASE_PREFIX` for isolated test databases;
+  the HTTP fixtures accept `ALLORS_TEST_URL` for separate test servers.
+- Ordinary Push in .NET and TypeScript with affected refresh enabled by default, explicit
+  refresh skip and optional discovery/query completion. Shared results distinguish committed,
+  rejected and unknown outcomes from refresh and local application; raw diagnostics and complete
+  mappings remain inspectable. Unknown commitment or unsafe acknowledgement requires reconciliation.
+  Saving pauses edits, preserves checkpoints and makes one protected request without replay.
+- Server `PushRead` for PostgreSQL and SQL Server, through authenticated HTTP and Local execution.
+  It validates scope before writing, fences population maintenance through commit, and returns
+  optional full affected-object refresh and query discovery from one fresh protected snapshot.
+  Mutation and read outcomes stay separate; derivations, deletions, inverse relation ends and
+  submitted no-ops are tracked across checkpoints. Strict shared messages cover both runtimes and
+  .NET serializers.
+- Complete workspace reads for PostgreSQL and SQL Server. One protected snapshot supplies
+  selected records, named outputs, explicit unavailable outcomes, and all required security and
+  permission data. Local and HTTP transports use strict matching .NET/TypeScript messages and
+  make one attempt. Inline declarations are captured and validated under a representation revision.
+- Connection-owned internal read caches in .NET and TypeScript. One operation owner covers
+  discovery, completion, Session application and notifications. Immutable references replace public
+  store/coordinator, pin and completed-result release APIs. Exact historical bodies remain available
+  while the connection is live; close clears lookup after drain without invalidating held values.
+- Sessions with their own immutable editing baselines and checkpoints and current permissions.
+  A connection orders reads through adaptation and one-attempt
+  Push/Invoke through response handling. Argument/result names and structured diagnostics are
+  preserved. Default save refresh accepts a new editing baseline; explicit skip retains the previous
+  baseline and write restriction until an accepted read.
+- SQL population identity and maintenance state, with offline enrollment and renewal commands.
+  Init/import cannot publish readiness until all phases finish. Protected reads check readiness,
+  trusted identity and scope, and reject writes or transaction restarts even after caught errors.
+  Legacy endpoints do not enforce readiness; native restores require explicit renewal.
+- Shared protocol fixtures and read tests across runtimes, SQL providers and transports. The
+  [read reference](docs/workspace-reads.md) covers supported behavior; maintainer pages map code
+  and tests. Server-endpoint removal, signals and other consumers remain separate work.
+
 - Workspace session baseline characterization tests across .NET Local, both .NET JSON HTTP
   adapters, and TypeScript HTTP, with a maintainer map in
   `docs/internals/workspace-session-state.md`. They cover remote refresh, disjoint and conflicting
@@ -127,6 +180,35 @@ Changes accumulate under **[Unreleased]** until a version is released.
 
 ### Changed
 
+- .NET and TypeScript coordinated workspace reads always discover, then repeat the original query
+  with held cache inventory. The final response handles changed records, permissions and membership
+  without a read restart. Remove the optional discovery switch.
+- Prefer diagrams with succinct supporting text in documentation. The
+  [workspace read reference](docs/workspace-reads.md) describes save, affected-object refresh,
+  the Session editing pause and explicit query completion.
+- Simplify workspace read capture, storage validation and server bookkeeping, and shorten the
+  read documentation. Record correctness, robustness and
+  measured performance as the development priorities, with reviewability required throughout.
+
+- SQL Server always uses Snapshot isolation, including XML loading. Its adapter accepts an
+  unset `IsolationLevel` or explicit `Snapshot` and rejects other values with an actionable error.
+  Breaking for callers that selected another isolation level: remove that setting or use
+  `Snapshot`. The Core, Identity, and Entra console programs no longer accept the `-i` isolation
+  override. PostgreSQL retains programmatic isolation overrides. XML loading keeps its existing
+  bulk-copy batches, import phases, and failure cleanup.
+
+- Remove workspace object masking. Within the workspace's configured classes, Pull and Sync
+  retain object identities and readable relations retain their targets even when a target's
+  roles are unreadable. Role permissions continue to control which values Sync returns.
+  This breaks custom security configuration: `IWorkspaceMask` and the `IsMasked` APIs are
+  removed. Remove mask service registrations and the masking arguments from calls to the
+  `WorkspaceAclsService` and `WorkspaceAccessControl` constructors.
+
+- Move the conditional Sync, Access, and Permission sequence for workspace Pulls into the
+  database connection in .NET and TypeScript. Sessions retain response handling and merge
+  refreshed records only after synchronization completes; request conditions, editing baselines,
+  and permission-refresh behavior stay the same.
+
 - The .NET local workspace adapter calls the extracted JSON `Api` in process and reuses
   the JSON workspace/session implementation. Requests use one database transaction each,
   with the user set before dispatch; the API builders own commits and rollbacks. Calls
@@ -138,7 +220,7 @@ Changes accumulate under **[Unreleased]** until a version is released.
   strategy and record types, `Local.Configuration`, and `Allors.Workspace.Protocol.Direct`
   are removed, along with the unused, always-null `UserId` on the Remote connections.
   Local pull results now follow the JSON API's ordering and case-insensitive result-name
-  lookup. Named HTTP-route pulls remain unsupported locally and give an actionable error.
+  lookup.
 - The JSON protocol's `Api` and tracing events move from the Core server into
   `Allors.Database.Workspace.Json`, so hosts can use the same entry point from System.
   Object creation, derivation and metadata use System interfaces; the namespace,
@@ -266,6 +348,37 @@ Changes accumulate under **[Unreleased]** until a version is released.
 
 ### Removed
 
+- Public cold/legacy connection constructors, scoped mode selection and raw legacy operations on
+  normal clients. Await the normal factory; all three protected transport capabilities are required.
+  Direct legacy server endpoints and shared wire DTOs remain for their separate removal.
+- Invoke isolation and continue-on-error options. Invoke executes one protected atomic batch;
+  expected rejections return shared results in .NET and TypeScript.
+- Separate public Session `PushReadAsync` / `pushRead` operations and their option/result aliases.
+  Ordinary Push uses the protected transport with refresh enabled by default.
+
+- Memory-backed workspace support. Local connections, the JSON API and its six public operation
+  builders require PostgreSQL or SQL Server at construction. Local integration tests use lazy SQL
+  setup; protocol and controlled-transport cases remain service-free. The Memory database adapter,
+  database/domain tests and authentication scaffolding are retained.
+
+- Named workspace query routes, the .NET named Session/connection APIs and manual response factory,
+  and nine Core/Identity test query controllers. Authentication and antiforgery coverage now uses
+  complete reads; ordinary declarative Pull, object Invoke and named outputs remain supported.
+
+- Standalone query result values from .NET and TypeScript workspace APIs, completed reads,
+  response messages and generated declarations. Named object/collection outputs, ordinary unit
+  roles and scalar inputs remain supported. Complete responses reject the removed root `v`,
+  including empty/null maps; clients and hosts must update together.
+
+- Allors procedures across database APIs, workspace APIs in .NET and TypeScript, service
+  registration, protocol payloads and server execution. Unit-role persistence and permission
+  refresh coverage use ordinary object operations and isolated test setup.
+
+- Prepared declaration registries and `ReadCatalog`, including extent/select reference APIs and
+  wire fields in .NET and TypeScript. Queries use inline declarations with arguments, selects,
+  includes and named outputs. Strict reads and PushRead discovery reject obsolete reference fields,
+  including null values; representation revisions and inline query coverage remain.
+
 - `AllorsAntiforgeryOptions` and its `AuthenticationTypes` collection. Custom authentication
   integrations must set `AllorsAuthenticationOptions.SessionScheme` to their browser cookie's
   registered scheme name instead. The Identity and Entra plug-ins configure this automatically.
@@ -308,6 +421,20 @@ Changes accumulate under **[Unreleased]** until a version is released.
   updated by hand.
 
 ### Fixed
+
+- Legacy workspace Push validates complete new-ID mappings before any local remap and reports
+  malformed acknowledgements as uncertain without replay. Protected derivation diagnostics accept
+  nullable or empty messages while requiring relation arrays; both serializers and TypeScript share
+  the same validation cases.
+
+- Provision PostgreSQL alongside SQL Server for the Entra CI job so its read-admission tests
+  execute on both providers. Other SQL Server jobs retain a single database service.
+
+- Core security recomputes database and workspace token, grant, and revocation entries from
+  the supplied transaction instead of retaining six shared derived caches. Rolled-back permissions,
+  effective users, and token membership no longer leak into another transaction, and replacing a
+  grant's role with an equivalent role reports its current version even when the token version is
+  unchanged. Workspace permission metadata, prefetch policies, and per-API ACL memoization remain.
 
 - Workspace Pull merge checks compare .NET binary arrays by byte contents and TypeScript Date
   values by timestamp. An unrelated remote change no longer causes a conflict solely because

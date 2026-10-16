@@ -32,3 +32,7 @@ test('sandbox', async () => {
   expect(c1y_1.C1sWhereC1C1Many2Many.length).toBe(1);
   expect(c1y_1.C1sWhereC1C1Many2Many).toContain(c1x);
 });
+
+afterEach(async () => {
+  await fixture?.close();
+});

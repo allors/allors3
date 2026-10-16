@@ -28,13 +28,29 @@ namespace Allors.Database.Adapters.Sql
             this.changedAssociationTypes = new HashSet<Strategy>();
         }
 
-        internal void OnCreated(Strategy strategy) => this.created.Add(strategy);
+        internal void OnCreated(Strategy strategy)
+        {
+            strategy.Transaction.CaptureAffected(strategy, AffectedObjectKind.Created);
+            this.created.Add(strategy);
+        }
 
-        internal void OnDeleted(Strategy strategy) => this.deleted.Add(strategy);
+        internal void OnDeleted(Strategy strategy)
+        {
+            strategy.Transaction.CaptureAffected(strategy, AffectedObjectKind.Deleted);
+            this.deleted.Add(strategy);
+        }
 
-        internal void OnChangedRoles(Strategy strategy) => this.changedRoleTypes.Add(strategy);
+        internal void OnChangedRoles(Strategy strategy)
+        {
+            strategy.Transaction.CaptureAffected(strategy, AffectedObjectKind.Role);
+            this.changedRoleTypes.Add(strategy);
+        }
 
-        internal void OnChangedAssociations(Strategy strategy) => this.changedAssociationTypes.Add(strategy);
+        internal void OnChangedAssociations(Strategy strategy)
+        {
+            strategy.Transaction.CaptureAffected(strategy, AffectedObjectKind.Association);
+            this.changedAssociationTypes.Add(strategy);
+        }
 
         internal void Reset()
         {

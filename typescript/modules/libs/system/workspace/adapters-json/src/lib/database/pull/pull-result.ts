@@ -3,7 +3,6 @@ import {
   IPullResult,
   ISession,
   IWorkspace,
-  IUnit,
 } from '@allors/system/workspace/domain';
 import { PullResponse } from '@allors/system/common/protocol-json';
 import { Result } from '../result';
@@ -21,8 +20,6 @@ export class PullResult extends Result implements IPullResult {
   _collections: Map<string, IObject[]>;
 
   _objects: Map<string, IObject>;
-
-  _values: Map<string, IUnit>;
 
   workspace: IWorkspace;
 
@@ -58,17 +55,6 @@ export class PullResult extends Result implements IPullResult {
       : (frozenEmptyMap as Map<string, IObject>));
   }
 
-  get values(): Map<string, IUnit> {
-    return this._values ?? this.pullResponse.v
-      ? new Map(
-          Object.keys(this.pullResponse.v).map((v) => [
-            v.toUpperCase(),
-            this.pullResponse.v[v],
-          ])
-        )
-      : (frozenEmptyMap as Map<string, IUnit>);
-  }
-
   collection<T extends IObject>(
     nameOrType: string | Class | Interface | AssociationType | RoleType
   ): T[] {
@@ -101,10 +87,6 @@ export class PullResult extends Result implements IPullResult {
     const name =
       typeof nameOrType === 'string' ? nameOrType : nameOrType.singularName;
     return this.objects.get(name.toUpperCase()) as T;
-  }
-
-  value(name: string): IUnit | IUnit[] {
-    return this.values.get(name.toUpperCase());
   }
 
   addMergeError(object: IObject) {

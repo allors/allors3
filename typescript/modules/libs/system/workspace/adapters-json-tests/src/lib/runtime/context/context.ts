@@ -4,8 +4,10 @@ import { Fixture } from '../../fixture';
 import { DatabaseMode } from './modes/database-mode';
 
 export abstract class Context {
-  constructor(public fixture: Fixture, public name: string) {
-    this.sharedDatabaseWorkspace = this.fixture.createWorkspace();
+  constructor(public fixture: Fixture, public name: string) {}
+
+  async init(): Promise<void> {
+    this.sharedDatabaseWorkspace = await this.fixture.createWorkspace();
     this.sharedDatabaseSession = this.sharedDatabaseWorkspace.createSession();
     this.exclusiveDatabaseWorkspace = this.fixture.createExclusiveWorkspace();
     this.exclusiveDatabaseSession =

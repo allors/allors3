@@ -2,9 +2,6 @@ import { Select } from './select';
 import { Node } from './node';
 
 export interface Result {
-  /** SelectRef */
-  r?: string;
-
   /** Select */
   s?: Select;
 

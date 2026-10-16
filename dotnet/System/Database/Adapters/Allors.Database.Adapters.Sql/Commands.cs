@@ -76,6 +76,7 @@ namespace Allors.Database.Adapters.Sql
 
         internal virtual void DeleteObject(Strategy strategy)
         {
+            this.Transaction.AssertWritable("SQL object or role mutation");
             this.deleteObjectByClass ??= new Dictionary<IClass, ICommand>();
 
             var @class = strategy.Class;
@@ -180,6 +181,7 @@ namespace Allors.Database.Adapters.Sql
 
         internal virtual void SetUnitRole(List<UnitRelation> relations, IClass exclusiveRootClass, IRoleType roleType)
         {
+            this.Transaction.AssertWritable("SQL object or role mutation");
             this.setUnitRoleByRoleTypeByClass ??= new Dictionary<IClass, Dictionary<IRoleType, ICommand>>();
 
             if (!this.setUnitRoleByRoleTypeByClass.TryGetValue(exclusiveRootClass, out var commandByRoleType))
@@ -203,6 +205,7 @@ namespace Allors.Database.Adapters.Sql
 
         internal virtual void SetUnitRoles(Strategy strategy, List<IRoleType> sortedRoleTypes)
         {
+            this.Transaction.AssertWritable("SQL object or role mutation");
             this.setUnitRolesByRoleTypeByClass ??= new Dictionary<IClass, Dictionary<IList<IRoleType>, ICommand>>();
 
             var exclusiveRootClass = strategy.Reference.Class.ExclusiveDatabaseClass;
@@ -283,7 +286,7 @@ namespace Allors.Database.Adapters.Sql
             }
             else
             {
-                var objectId = this.Transaction.State.GetObjectIdForExistingObject(result.ToString());
+                var objectId = this.Transaction.AdapterState.GetObjectIdForExistingObject(result.ToString());
                 // TODO: Should add to objectsToLoad
                 strategy.CachedObject.SetValue(roleType, objectId);
             }
@@ -291,6 +294,7 @@ namespace Allors.Database.Adapters.Sql
 
         internal virtual void SetCompositeRole(List<CompositeRelation> relations, IRoleType roleType)
         {
+            this.Transaction.AssertWritable("SQL object or role mutation");
             this.setCompositeRoleByRoleType ??= new Dictionary<IRoleType, ICommand>();
 
             if (!this.setCompositeRoleByRoleType.TryGetValue(roleType, out var command))
@@ -341,7 +345,7 @@ namespace Allors.Database.Adapters.Sql
             {
                 while (reader.Read())
                 {
-                    var id = this.Transaction.State.GetObjectIdForExistingObject(reader[0].ToString());
+                    var id = this.Transaction.AdapterState.GetObjectIdForExistingObject(reader[0].ToString());
                     objectIds.Add(id);
                 }
             }
@@ -351,6 +355,7 @@ namespace Allors.Database.Adapters.Sql
 
         internal virtual void AddCompositeRole(List<CompositeRelation> relations, IRoleType roleType)
         {
+            this.Transaction.AssertWritable("SQL object or role mutation");
             this.addCompositeRoleByRoleType ??= new Dictionary<IRoleType, ICommand>();
 
             if (!this.addCompositeRoleByRoleType.TryGetValue(roleType, out var command))
@@ -369,6 +374,7 @@ namespace Allors.Database.Adapters.Sql
 
         internal virtual void RemoveCompositeRole(List<CompositeRelation> relations, IRoleType roleType)
         {
+            this.Transaction.AssertWritable("SQL object or role mutation");
             this.removeCompositeRoleByRoleType ??= new Dictionary<IRoleType, ICommand>();
 
             if (!this.removeCompositeRoleByRoleType.TryGetValue(roleType, out var command))
@@ -387,6 +393,7 @@ namespace Allors.Database.Adapters.Sql
 
         internal virtual void ClearCompositeAndCompositesRole(IList<long> associations, IRoleType roleType)
         {
+            this.Transaction.AssertWritable("SQL object or role mutation");
             this.clearCompositeAndCompositesRoleByRoleType ??= new Dictionary<IRoleType, ICommand>();
 
             var sql = this.Database.Mapping.ProcedureNameForClearRoleByRelationType[roleType.RelationType];
@@ -426,11 +433,11 @@ namespace Allors.Database.Adapters.Sql
 
             if (result != null && result != DBNull.Value)
             {
-                var id = this.Transaction.State.GetObjectIdForExistingObject(result.ToString());
+                var id = this.Transaction.AdapterState.GetObjectIdForExistingObject(result.ToString());
 
                 associationObject = associationType.ObjectType.ExistExclusiveDatabaseClass ?
-                                        this.Transaction.State.GetOrCreateReferenceForExistingObject(associationType.ObjectType.ExclusiveDatabaseClass, id, this.Transaction) :
-                                        this.Transaction.State.GetOrCreateReferenceForExistingObject(id, this.Transaction);
+                                        this.Transaction.AdapterState.GetOrCreateReferenceForExistingObject(associationType.ObjectType.ExclusiveDatabaseClass, id, this.Transaction) :
+                                        this.Transaction.AdapterState.GetOrCreateReferenceForExistingObject(id, this.Transaction);
             }
 
             return associationObject;
@@ -457,7 +464,7 @@ namespace Allors.Database.Adapters.Sql
             {
                 while (reader.Read())
                 {
-                    var id = this.Transaction.State.GetObjectIdForExistingObject(reader[0].ToString());
+                    var id = this.Transaction.AdapterState.GetObjectIdForExistingObject(reader[0].ToString());
                     objectIds.Add(id);
                 }
             }
@@ -467,6 +474,7 @@ namespace Allors.Database.Adapters.Sql
 
         internal virtual Reference CreateObject(IClass @class)
         {
+            this.Transaction.AssertWritable("SQL object or role mutation");
             this.createObjectByClass ??= new Dictionary<IClass, ICommand>();
 
             if (!this.createObjectByClass.TryGetValue(@class, out var command))
@@ -482,11 +490,12 @@ namespace Allors.Database.Adapters.Sql
 
             var result = command.ExecuteScalar();
             var objectId = long.Parse(result.ToString());
-            return this.Transaction.State.CreateReferenceForNewObject(@class, objectId, this.Transaction);
+            return this.Transaction.AdapterState.CreateReferenceForNewObject(@class, objectId, this.Transaction);
         }
 
         internal virtual IList<Reference> CreateObjects(IClass @class, int count)
         {
+            this.Transaction.AssertWritable("SQL object or role mutation");
             this.createObjectsByClass ??= new Dictionary<IClass, ICommand>();
 
             if (!this.createObjectsByClass.TryGetValue(@class, out var command))
@@ -517,7 +526,7 @@ namespace Allors.Database.Adapters.Sql
             foreach (var id in objectIds)
             {
                 var objectId = long.Parse(id.ToString());
-                var strategySql = this.Transaction.State.CreateReferenceForNewObject(@class, objectId, this.Transaction);
+                var strategySql = this.Transaction.AdapterState.CreateReferenceForNewObject(@class, objectId, this.Transaction);
                 strategies.Add(strategySql);
             }
 
@@ -550,7 +559,7 @@ WHERE {Mapping.ColumnNameForObject}={this.Database.Mapping.ParamInvocationNameFo
                     var version = reader.GetInt64(1);
 
                     var type = (IClass)this.Database.MetaPopulation.FindById(classId);
-                    return this.Transaction.State.GetOrCreateReferenceForExistingObject(type, objectId, version, this.Transaction);
+                    return this.Transaction.AdapterState.GetOrCreateReferenceForExistingObject(type, objectId, version, this.Transaction);
                 }
 
                 return null;
@@ -582,7 +591,7 @@ WHERE {Mapping.ColumnNameForObject}={this.Database.Mapping.ParamInvocationNameFo
                     var objectId = long.Parse(objectIdString);
                     var type = (IClass)this.Database.ObjectFactory.GetObjectType(classId);
 
-                    yield return this.Transaction.State.GetOrCreateReferenceForExistingObject(type, objectId, version, this.Transaction);
+                    yield return this.Transaction.AdapterState.GetOrCreateReferenceForExistingObject(type, objectId, version, this.Transaction);
                 }
             }
         }
@@ -620,6 +629,7 @@ WHERE {Mapping.ColumnNameForObject}={this.Database.Mapping.ParamInvocationNameFo
 
         internal virtual void UpdateVersion(IEnumerable<long> changed)
         {
+            this.Transaction.AssertWritable("SQL object or role mutation");
             var command = this.updateVersions;
             if (command == null)
             {

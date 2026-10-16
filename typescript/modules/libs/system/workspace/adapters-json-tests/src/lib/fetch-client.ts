@@ -15,6 +15,17 @@ import {
   PermissionResponse,
 } from '@allors/system/common/protocol-json';
 import { IDatabaseJsonClient } from '@allors/system/workspace/adapters-json';
+import {
+  ReadFetch,
+  ReadHttpTransport,
+  PushReadHttpTransport,
+  InvokeReadHttpTransport,
+} from '@allors/system/workspace/adapters-json';
+import { DatabaseConnectionTransport } from '@allors/system/workspace/adapters-json';
+
+export interface OwnedTransport extends DatabaseConnectionTransport {
+  dispose(): void;
+}
 
 // Test-only credential recognised by the Core test-harness server (see TestUserAuthenticationHandler):
 // a request carrying this header is authenticated, without a password, as the user with that UniqueId.
@@ -53,6 +64,42 @@ export class FetchClient implements IDatabaseJsonClient {
   testUserId: string;
 
   constructor(public baseUrl: string) {}
+
+  createTransport(fetcher: ReadFetch = fetch): OwnedTransport {
+    const baseUrl = this.baseUrl;
+    const credential = this.testUserId;
+    const agent = new Agent({ keepAlive: false });
+    let disposed = false;
+    const send: ReadFetch = (url, init) => {
+      if (disposed)
+        throw new Error(
+          'Scoped test transport disposed. Create a new owner before sending requests.'
+        );
+      return fetcher(url, {
+        ...init,
+        agent,
+        headers: {
+          ...(init.headers as Record<string, string>),
+          [TEST_USER_HEADER]: credential,
+        },
+      } as RequestInit);
+    };
+    const read = new ReadHttpTransport(`${baseUrl}read`, send);
+    const pushRead = new PushReadHttpTransport(`${baseUrl}push-read`, send);
+    const invokeRead = new InvokeReadHttpTransport(
+      `${baseUrl}invoke-read`,
+      send
+    );
+    return {
+      read: read.read.bind(read),
+      pushRead: pushRead.pushRead.bind(pushRead),
+      invokeRead: invokeRead.invokeRead.bind(invokeRead),
+      dispose: () => {
+        disposed = true;
+        agent.destroy();
+      },
+    };
+  }
 
   async setup(population = 'full') {
     const url = `${this.baseUrl}Test/Setup?population=${population}`;
@@ -117,6 +164,43 @@ export class FetchClient implements IDatabaseJsonClient {
     permissionRequest: PermissionRequest
   ): Promise<PermissionResponse> {
     return await this.post('permission', permissionRequest);
+  }
+
+  async removeC1StringReadGrant(targetId: number): Promise<void> {
+    await this.postPermissionSetup('remove-c1-string-read-grant', targetId);
+  }
+
+  async addDeniedPropertyReadRevocation(targetId: number): Promise<void> {
+    await this.postPermissionSetup(
+      'add-denied-property-read-revocation',
+      targetId
+    );
+  }
+
+  async removeDeniedPropertyReadRevocation(targetId: number): Promise<void> {
+    await this.postPermissionSetup(
+      'remove-denied-property-read-revocation',
+      targetId
+    );
+  }
+
+  private async postPermissionSetup(
+    action: string,
+    targetId: number
+  ): Promise<void> {
+    const url = `${this.baseUrl}test/permissions/${action}?targetId=${targetId}`;
+    const response = await fetch(
+      url,
+      withAgent({
+        method: 'POST',
+        headers: { [TEST_USER_HEADER]: this.testUserId },
+      })
+    );
+    if (response.status !== 204) {
+      throw new Error(
+        `Permission setup POST ${url} returned ${response.status}; expected 204.`
+      );
+    }
   }
 
   async post<T>(relativeUrl: string, data: any): Promise<T> {

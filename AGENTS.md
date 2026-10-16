@@ -69,6 +69,14 @@
 ## Code Style
 
 - Error messages should be actionable
+- Prioritize correctness, then robustness, then performance. These are priorities, not mandatory
+  separate implementation passes.
+- Keep code easy for humans and agents to read and review. Start with straightforward,
+  idiomatic code and existing framework features.
+- Add safeguards for identified failure cases. Each abstraction, cache, limit, or special case
+  should have a concrete requirement and a reason the simpler implementation is insufficient.
+- Optimize demonstrated performance problems with measurements. Do not add speculative
+  optimizations or general-purpose machinery for possible future needs.
 
 ## Workflow
 
@@ -84,6 +92,12 @@
 
 ## Documentation
 
+- Prefer diagrams over text for structure, ownership and behavior. Use UML sequence diagrams
+  for request flows. Keep supporting prose short and plain; use it for rules the diagram cannot
+  express clearly instead of repeating the diagram. Keep diagram sources editable and show
+  rendered diagrams when presenting them in chat.
+- Use plain language and keep documentation succinct. Explain supported behavior, required
+  configuration, and relevant limitations; leave implementation detail in code and tests.
 - Documentation lives in `docs/`, for two audiences. Pages for users, who build applications on
   Allors3, sit at the top of `docs/`. Pages for maintainers, who change the platform, sit under
   `docs/internals/`. [docs/README.md](docs/README.md) lists every page and defines the kinds and

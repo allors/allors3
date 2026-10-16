@@ -7,6 +7,8 @@ namespace Tests.Workspace.Remote
 {
     using System;
     using System.Net.Http;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using Allors.Ranges;
     using Allors.Workspace;
@@ -32,10 +34,13 @@ namespace Tests.Workspace.Remote
         private readonly DefaultRanges<long> defaultRanges;
         private readonly Configuration configuration;
 
-        private HttpClient httpClient;
+        private readonly Func<HttpMessageHandler> handlerFactory;
+        private readonly List<(DatabaseConnection Connection, HttpClient Client)> connections = new List<(DatabaseConnection, HttpClient)>();
+        private string credential;
 
-        public Profile()
+        public Profile(Func<HttpMessageHandler> handlerFactory = null)
         {
+            this.handlerFactory = handlerFactory;
             this.servicesBuilder = () => new WorkspaceServices();
             this.idGenerator = new IdGenerator();
             this.defaultRanges = new DefaultStructRanges<long>();
@@ -56,33 +61,72 @@ namespace Tests.Workspace.Remote
 
         public async Task InitializeAsync()
         {
-            this.httpClient = new HttpClient { BaseAddress = new Uri(Url), Timeout = TimeSpan.FromMinutes(30) };
-            var response = await this.httpClient.GetAsync(SetupUrl);
+            using var setup = new HttpClient { BaseAddress = new Uri(Environment.GetEnvironmentVariable("ALLORS_TEST_URL") ?? Url), Timeout = TimeSpan.FromMinutes(30) };
+            using var response = await setup.GetAsync(SetupUrl);
             Assert.True(response.IsSuccessStatusCode);
-
-            this.DatabaseConnection = new DatabaseConnection(this.configuration, this.servicesBuilder, this.httpClient, this.idGenerator, this.defaultRanges);
-            this.Workspace = this.DatabaseConnection.CreateWorkspace();
-
             await this.Login("administrator");
         }
 
-        public Task DisposeAsync() => Task.CompletedTask;
-
-        public IWorkspace CreateExclusiveWorkspace()
+        public async Task DisposeAsync()
         {
-            var database = new DatabaseConnection(this.configuration, this.servicesBuilder, this.httpClient, this.idGenerator, this.defaultRanges);
-            return database.CreateWorkspace();
+            var owned = this.connections.ToArray();
+            this.connections.Clear();
+            this.DatabaseConnection = null;
+            this.Workspace = null;
+            var errors = new List<Exception>();
+            var draining = owned.Select(pair => pair.Connection.DisposeAsync()).ToArray();
+            for (var i = 0; i < owned.Length; ++i)
+            {
+                try { await draining[i]; }
+                catch (Exception exception) { errors.Add(exception); }
+                try { owned[i].Client.Dispose(); }
+                catch (Exception exception) { errors.Add(exception); }
+            }
+            if (errors.Count != 0) throw new AggregateException(errors);
         }
 
-        public IWorkspace CreateWorkspace() => this.DatabaseConnection.CreateWorkspace();
-
-        public Task Login(string user)
+        public async Task<IWorkspace> CreateExclusiveWorkspaceAsync()
         {
-            // Authenticate with the test-only X-Allors-TestUser header, which carries the UniqueId of a
-            // user of the test population; the harness server resolves it to the same Allors user.
-            this.httpClient.DefaultRequestHeaders.Remove("X-Allors-TestUser");
-            this.httpClient.DefaultRequestHeaders.Add("X-Allors-TestUser", Users.TestUserId(user).ToString());
-            return Task.CompletedTask;
+            if (this.DatabaseConnection == null) throw new InvalidOperationException("Log in before creating a workspace.");
+            var connection = await this.CreateConnectionAsync();
+            return connection.CreateWorkspace();
+        }
+
+        public IWorkspace CreateWorkspace() => (this.DatabaseConnection ?? throw new InvalidOperationException("Log in before creating a workspace.")).CreateWorkspace();
+
+        internal Task<HttpTestResources> CreateHttpTestResourcesAsync(string revision, string context, HttpMessageHandler handler = null,
+            Action applicationServicesCreated = null) =>
+            HttpTestResources.CreateAsync(this.configuration, this.servicesBuilder,
+                new Uri(Environment.GetEnvironmentVariable("ALLORS_TEST_URL") ?? Url), this.credential, revision, context, handler, applicationServicesCreated);
+
+        public async Task Login(string user)
+        {
+            await this.DisposeAsync();
+            // The harness resolves this fixed test credential to its committed Allors user.
+            this.credential = Users.TestUserId(user).ToString();
+            var connection = await this.CreateConnectionAsync();
+            this.DatabaseConnection = connection;
+            this.Workspace = connection.CreateWorkspace();
+        }
+
+        private async Task<DatabaseConnection> CreateConnectionAsync()
+        {
+            var client = this.handlerFactory == null ? new HttpClient() : new HttpClient(this.handlerFactory());
+            try
+            {
+                client.BaseAddress = new Uri(Environment.GetEnvironmentVariable("ALLORS_TEST_URL") ?? Url);
+                client.Timeout = TimeSpan.FromMinutes(30);
+                client.DefaultRequestHeaders.Add("X-Allors-TestUser", this.credential);
+                var connection = await DatabaseConnection.CreateAsync(this.configuration, this.servicesBuilder, client,
+                    this.idGenerator, this.defaultRanges, "core-read-v1");
+                this.connections.Add((connection, client));
+                return connection;
+            }
+            catch
+            {
+                client.Dispose();
+                throw;
+            }
         }
     }
 }

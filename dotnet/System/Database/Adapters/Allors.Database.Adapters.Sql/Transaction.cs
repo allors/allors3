@@ -10,6 +10,7 @@ namespace Allors.Database.Adapters.Sql
     using System.Collections.Generic;
     using System.Linq;
 
+    using Caching;
     using Meta;
 
     public sealed class Transaction : ITransaction
@@ -18,34 +19,82 @@ namespace Allors.Database.Adapters.Sql
 
         private Dictionary<string, object> properties;
 
-        internal Transaction(Database database, IConnection connection, ITransactionServices scope)
+        private readonly ReadGuard readGuard;
+
+        private readonly WriteScope writeScope;
+
+        private readonly State state;
+
+        internal Transaction(Database database, IConnection connection, ITransactionServices scope, ReadGuard readGuard = null, WriteScope writeScope = null)
         {
             this.Database = database;
-            this.Connection = connection;
-            this.Services = scope;
+            this.readGuard = readGuard;
+            this.writeScope = writeScope;
+            // A writer may hold mutable values from its shared cache. A protected
+            // attempt only caches data loaded from its own physical snapshot.
+            this.Cache = readGuard == null ? database.Cache : new DefaultCache(null);
+            this.Connection = readGuard != null ? new ReadConnection(readGuard) : writeScope != null ? new WriteConnection(writeScope) : connection;
+            this.CommandConnection = readGuard == null ? connection : new ReadCommandConnection(connection, readGuard);
+            this.Services = readGuard == null ? scope : new ReadServices(scope, readGuard);
 
-            this.State = new State(this);
+            this.state = new State(this, true);
 
 
             if (this.Database.Sink != null)
             {
                 this.Prefetcher = new TraceablePrefetcher(this);
-                this.Commands = new TraceableCommands(this, connection);
+                this.Commands = new TraceableCommands(this, this.CommandConnection);
             }
             else
             {
                 this.Prefetcher = new UntraceablePrefetcher(this);
-                this.Commands = new UntraceableCommands(this, connection);
+                this.Commands = new UntraceableCommands(this, this.CommandConnection);
             }
 
-            this.Services.OnInit(this);
+            scope.OnInit(this);
         }
 
         public IConnection Connection { get; }
 
         public Commands Commands { get; }
 
-        public State State { get; }
+        public State State
+        {
+            get
+            {
+                this.AssertWritable("Direct transaction-state access");
+                return this.state;
+            }
+        }
+
+        internal State AdapterState
+        {
+            get
+            {
+                this.EnsureReadable();
+                return this.state;
+            }
+        }
+
+        internal IConnection CommandConnection { get; }
+
+        internal ICache Cache { get; }
+
+        internal bool IsProtectedRead => this.readGuard != null;
+
+        internal void EnsureReadable()
+        {
+            this.readGuard?.EnsureValid();
+            this.writeScope?.EnsureReadable();
+        }
+
+        internal void AssertWritable(string operation)
+        {
+            this.readGuard?.Reject(operation);
+            this.writeScope?.AssertWritable(operation);
+        }
+
+        internal void CaptureAffected(Strategy strategy, AffectedObjectKind kind) => this.writeScope?.Capture(strategy, kind);
 
         IDatabase ITransaction.Database => this.Database;
 
@@ -59,6 +108,7 @@ namespace Allors.Database.Adapters.Sql
         {
             get
             {
+                this.EnsureReadable();
                 if (this.properties == null)
                 {
                     return null;
@@ -70,6 +120,7 @@ namespace Allors.Database.Adapters.Sql
 
             set
             {
+                this.EnsureReadable();
                 if (this.properties == null)
                 {
                     this.properties = new Dictionary<string, object>();
@@ -88,23 +139,25 @@ namespace Allors.Database.Adapters.Sql
 
         public IObject Create(IClass objectType)
         {
+            this.AssertWritable("Object creation");
             if (!objectType.IsClass)
             {
                 throw new ArgumentException("Can not create non concrete composite type " + objectType);
             }
 
             var reference = this.Commands.CreateObject(objectType);
-            this.State.ReferenceByObjectId[reference.ObjectId] = reference;
+            this.AdapterState.ReferenceByObjectId[reference.ObjectId] = reference;
 
-            this.Database.Cache.SetObjectType(reference.ObjectId, objectType);
+            this.Cache.SetObjectType(reference.ObjectId, objectType);
 
-            this.State.ChangeLog.OnCreated(reference.Strategy);
+            this.AdapterState.ChangeLog.OnCreated(reference.Strategy);
 
             return reference.Strategy.GetObject();
         }
 
         public IObject[] Create(IClass objectType, int count)
         {
+            this.AssertWritable("Object creation");
             if (!objectType.IsClass)
             {
                 throw new ArgumentException("Can not create non concrete composite type " + objectType);
@@ -118,11 +171,11 @@ namespace Allors.Database.Adapters.Sql
             for (var i = 0; i < references.Count; i++)
             {
                 var reference = references[i];
-                this.State.ReferenceByObjectId[reference.ObjectId] = reference;
+                this.AdapterState.ReferenceByObjectId[reference.ObjectId] = reference;
 
                 domainObjects[i] = reference.Strategy.GetObject();
 
-                this.State.ChangeLog.OnCreated(reference.Strategy);
+                this.AdapterState.ChangeLog.OnCreated(reference.Strategy);
             }
 
             return domainObjects;
@@ -140,12 +193,13 @@ namespace Allors.Database.Adapters.Sql
 
         public IStrategy InstantiateStrategy(long objectId)
         {
-            if (!this.State.ReferenceByObjectId.TryGetValue(objectId, out var reference))
+            this.EnsureReadable();
+            if (!this.AdapterState.ReferenceByObjectId.TryGetValue(objectId, out var reference))
             {
                 reference = this.Commands.InstantiateObject(objectId);
                 if (reference != null)
                 {
-                    this.State.ReferenceByObjectId[objectId] = reference;
+                    this.AdapterState.ReferenceByObjectId[objectId] = reference;
                 }
             }
 
@@ -163,6 +217,7 @@ namespace Allors.Database.Adapters.Sql
 
         public IObject[] Instantiate(IEnumerable<long> objectIds)
         {
+            this.EnsureReadable();
             IObject[] emptyObjects = Array.Empty<IObject>();
             if (objectIds == null)
             {
@@ -181,7 +236,7 @@ namespace Allors.Database.Adapters.Sql
             List<long> nonCachedObjectIds = null;
             foreach (var objectId in objectIdArray)
             {
-                if (!this.State.ReferenceByObjectId.TryGetValue(objectId, out var reference))
+                if (!this.AdapterState.ReferenceByObjectId.TryGetValue(objectId, out var reference))
                 {
                     if (nonCachedObjectIds == null)
                     {
@@ -236,11 +291,12 @@ namespace Allors.Database.Adapters.Sql
 
         public void Prefetch(PrefetchPolicy prefetchPolicy, IEnumerable<long> objectIds)
         {
+            this.EnsureReadable();
             var references = this.Prefetcher.GetReferencesForPrefetching(objectIds);
 
             if (references.Count != 0)
             {
-                this.State.Flush();
+                this.AdapterState.Flush();
 
                 var prefetcher = new Prefetch(this.Prefetcher, prefetchPolicy, references);
                 prefetcher.Execute();
@@ -249,68 +305,83 @@ namespace Allors.Database.Adapters.Sql
 
         public IChangeSet Checkpoint()
         {
+            this.EnsureReadable();
+            this.writeScope?.AssertWritable("Transaction checkpoint");
             try
             {
-                return this.State.ChangeLog.Checkpoint();
+                return this.AdapterState.ChangeLog.Checkpoint();
             }
             finally
             {
-                this.State.ChangeLog.Reset();
+                this.AdapterState.ChangeLog.Reset();
             }
         }
 
         public Extent<T> Extent<T>() where T : IObject => this.Extent((IComposite)this.Database.ObjectFactory.GetObjectType(typeof(T)));
 
-        public Allors.Database.Extent Extent(IComposite type) => new ExtentFiltered(this, type);
+        public Allors.Database.Extent Extent(IComposite type)
+        {
+            this.EnsureReadable();
+            return new ExtentFiltered(this, type);
+        }
 
-        public Allors.Database.Extent Union(Allors.Database.Extent firstOperand, Allors.Database.Extent secondOperand) => new ExtentOperation(((Extent)firstOperand).ContainedInExtent, ((Extent)secondOperand).ContainedInExtent, ExtentOperations.Union);
+        public Allors.Database.Extent Union(Allors.Database.Extent firstOperand, Allors.Database.Extent secondOperand) => this.CreateExtentOperation(firstOperand, secondOperand, ExtentOperations.Union);
 
-        public Allors.Database.Extent Intersect(Allors.Database.Extent firstOperand, Allors.Database.Extent secondOperand) => new ExtentOperation(((Extent)firstOperand).ContainedInExtent, ((Extent)secondOperand).ContainedInExtent, ExtentOperations.Intersect);
+        public Allors.Database.Extent Intersect(Allors.Database.Extent firstOperand, Allors.Database.Extent secondOperand) => this.CreateExtentOperation(firstOperand, secondOperand, ExtentOperations.Intersect);
 
-        public Allors.Database.Extent Except(Allors.Database.Extent firstOperand, Allors.Database.Extent secondOperand) => new ExtentOperation(((Extent)firstOperand).ContainedInExtent, ((Extent)secondOperand).ContainedInExtent, ExtentOperations.Except);
+        public Allors.Database.Extent Except(Allors.Database.Extent firstOperand, Allors.Database.Extent secondOperand) => this.CreateExtentOperation(firstOperand, secondOperand, ExtentOperations.Except);
 
         public void Commit()
         {
+            this.AssertWritable("Transaction commit");
+            this.writeScope?.AssertTransactionCommit();
             if (!this.busyCommittingOrRollingBack)
             {
                 try
                 {
                     this.busyCommittingOrRollingBack = true;
 
-                    var accessed = new List<long>(this.State.ReferenceByObjectId.Keys);
-                    this.State.Flush();
+                    var accessed = new List<long>(this.AdapterState.ReferenceByObjectId.Keys);
+                    this.AdapterState.Flush();
 
-                    var changed = this.State.ModifiedRolesByReference?.Select(dictionaryEntry => dictionaryEntry.Key.ObjectId).ToArray() ?? Array.Empty<long>();
+                    var changed = this.AdapterState.ModifiedRolesByReference?.Select(dictionaryEntry => dictionaryEntry.Key.ObjectId).ToArray() ?? Array.Empty<long>();
                     if (changed.Length > 0)
                     {
                         this.Commands.UpdateVersion(changed);
                     }
 
-                    this.Connection.Commit();
+                    if (this.writeScope == null)
+                    {
+                        this.Connection.Commit();
+                    }
+                    else
+                    {
+                        this.writeScope.CommitConnection();
+                    }
 
-                    this.State.ModifiedRolesByReference = null;
+                    this.AdapterState.ModifiedRolesByReference = null;
 
                     var referencesWithStrategy = new HashSet<Reference>();
-                    foreach (var reference in this.State.ReferenceByObjectId.Values)
+                    foreach (var reference in this.AdapterState.ReferenceByObjectId.Values)
                     {
                         reference.Commit(referencesWithStrategy);
                     }
 
-                    this.State.ExistingObjectIdsWithoutReference = new HashSet<long>();
-                    this.State.ReferencesWithoutVersions = referencesWithStrategy;
+                    this.AdapterState.ExistingObjectIdsWithoutReference = new HashSet<long>();
+                    this.AdapterState.ReferencesWithoutVersions = referencesWithStrategy;
 
-                    this.State.ReferenceByObjectId = new Dictionary<long, Reference>();
+                    this.AdapterState.ReferenceByObjectId = new Dictionary<long, Reference>();
                     foreach (var reference in referencesWithStrategy)
                     {
-                        this.State.ReferenceByObjectId[reference.ObjectId] = reference;
+                        this.AdapterState.ReferenceByObjectId[reference.ObjectId] = reference;
                     }
 
-                    this.State.AssociationByRoleByAssociationType = new Dictionary<IAssociationType, Dictionary<Reference, Reference>>();
-                    this.State.AssociationsByRoleByAssociationType = new Dictionary<IAssociationType, Dictionary<Reference, long[]>>();
+                    this.AdapterState.AssociationByRoleByAssociationType = new Dictionary<IAssociationType, Dictionary<Reference, Reference>>();
+                    this.AdapterState.AssociationsByRoleByAssociationType = new Dictionary<IAssociationType, Dictionary<Reference, long[]>>();
 
-                    this.State.ChangeLog.Reset();
+                    this.AdapterState.ChangeLog.Reset();
 
-                    this.Database.Cache.OnCommit(accessed, changed);
+                    this.Cache.OnCommit(accessed, changed);
 
                     this.Prefetcher.ResetCommands();
                     this.Commands.ResetCommands();
@@ -324,41 +395,43 @@ namespace Allors.Database.Adapters.Sql
 
         public void Rollback()
         {
+            this.readGuard?.Reject("Transaction rollback or restart");
+            this.writeScope?.AssertTransactionRollback();
             if (!this.busyCommittingOrRollingBack)
             {
                 try
                 {
                     this.busyCommittingOrRollingBack = true;
 
-                    var accessed = new List<long>(this.State.ReferenceByObjectId.Keys);
+                    var accessed = new List<long>(this.AdapterState.ReferenceByObjectId.Keys);
 
-                    this.Connection.Rollback();
+                    this.CommandConnection.Rollback();
 
                     var referencesWithStrategy = new HashSet<Reference>();
-                    foreach (var reference in this.State.ReferenceByObjectId.Values)
+                    foreach (var reference in this.AdapterState.ReferenceByObjectId.Values)
                     {
                         reference.Rollback(referencesWithStrategy);
                     }
 
-                    this.State.ExistingObjectIdsWithoutReference = new HashSet<long>();
-                    this.State.ReferencesWithoutVersions = referencesWithStrategy;
+                    this.AdapterState.ExistingObjectIdsWithoutReference = new HashSet<long>();
+                    this.AdapterState.ReferencesWithoutVersions = referencesWithStrategy;
 
-                    this.State.ReferenceByObjectId = new Dictionary<long, Reference>();
+                    this.AdapterState.ReferenceByObjectId = new Dictionary<long, Reference>();
                     foreach (var reference in referencesWithStrategy)
                     {
-                        this.State.ReferenceByObjectId[reference.ObjectId] = reference;
+                        this.AdapterState.ReferenceByObjectId[reference.ObjectId] = reference;
                     }
 
-                    this.State.UnflushedRolesByReference = null;
-                    this.State.ModifiedRolesByReference = null;
-                    this.State.TriggersFlushRolesByAssociationType = null;
+                    this.AdapterState.UnflushedRolesByReference = null;
+                    this.AdapterState.ModifiedRolesByReference = null;
+                    this.AdapterState.TriggersFlushRolesByAssociationType = null;
 
-                    this.State.AssociationByRoleByAssociationType = new Dictionary<IAssociationType, Dictionary<Reference, Reference>>();
-                    this.State.AssociationsByRoleByAssociationType = new Dictionary<IAssociationType, Dictionary<Reference, long[]>>();
+                    this.AdapterState.AssociationByRoleByAssociationType = new Dictionary<IAssociationType, Dictionary<Reference, Reference>>();
+                    this.AdapterState.AssociationsByRoleByAssociationType = new Dictionary<IAssociationType, Dictionary<Reference, long[]>>();
 
-                    this.State.ChangeLog.Reset();
+                    this.AdapterState.ChangeLog.Reset();
 
-                    this.Database.Cache.OnRollback(accessed);
+                    this.Cache.OnRollback(accessed);
 
                     this.Prefetcher.ResetCommands();
                     this.Commands.ResetCommands();
@@ -394,15 +467,28 @@ namespace Allors.Database.Adapters.Sql
 
         public override string ToString() => "Transaction[id=" + this.GetHashCode() + "] " + this.Database;
 
-        internal Reference[] GetOrCreateReferencesForExistingObjects(IEnumerable<long> objectIds) => this.State.GetOrCreateReferencesForExistingObjects(objectIds, this);
+        private Allors.Database.Extent CreateExtentOperation(Allors.Database.Extent firstOperand, Allors.Database.Extent secondOperand, ExtentOperations operation)
+        {
+            this.EnsureReadable();
+            if (this.IsProtectedRead &&
+                (firstOperand is not Extent first || secondOperand is not Extent second ||
+                 !ReferenceEquals(first.ContainedInExtent.Transaction, this) || !ReferenceEquals(second.ContainedInExtent.Transaction, this)))
+            {
+                this.AssertWritable("Combining extents from another transaction");
+            }
+
+            return new ExtentOperation(((Extent)firstOperand).ContainedInExtent, ((Extent)secondOperand).ContainedInExtent, operation);
+        }
+
+        internal Reference[] GetOrCreateReferencesForExistingObjects(IEnumerable<long> objectIds) => this.AdapterState.GetOrCreateReferencesForExistingObjects(objectIds, this);
 
         internal long[] GetAssociations(Strategy roleStrategy, IAssociationType associationType)
         {
-            var associationsByRole = this.State.GetAssociationsByRole(associationType);
+            var associationsByRole = this.AdapterState.GetAssociationsByRole(associationType);
 
             if (!associationsByRole.TryGetValue(roleStrategy.Reference, out var associations))
             {
-                this.State.FlushConditionally(roleStrategy.ObjectId, associationType);
+                this.AdapterState.FlushConditionally(roleStrategy.ObjectId, associationType);
                 associations = this.Commands.GetCompositesAssociation(roleStrategy, associationType);
                 associationsByRole[roleStrategy.Reference] = associations;
             }
@@ -412,7 +498,7 @@ namespace Allors.Database.Adapters.Sql
 
         internal void RemoveAssociation(Reference association, Reference role, IAssociationType associationType)
         {
-            var associationsByRole = this.State.GetAssociationsByRole(associationType);
+            var associationsByRole = this.AdapterState.GetAssociationsByRole(associationType);
 
             if (associationsByRole.TryGetValue(role, out var associations))
             {
@@ -420,14 +506,14 @@ namespace Allors.Database.Adapters.Sql
             }
         }
 
-        internal void AddReferenceWithoutVersionOrExistsKnown(Reference reference) => this.State.ReferencesWithoutVersions.Add(reference);
+        internal void AddReferenceWithoutVersionOrExistsKnown(Reference reference) => this.AdapterState.ReferencesWithoutVersions.Add(reference);
 
         internal void GetVersionAndExists()
         {
-            if (this.State.ReferencesWithoutVersions.Count > 0)
+            if (this.AdapterState.ReferencesWithoutVersions.Count > 0)
             {
-                var versionByObjectId = this.Commands.GetVersions(this.State.ReferencesWithoutVersions);
-                foreach (var association in this.State.ReferencesWithoutVersions)
+                var versionByObjectId = this.Commands.GetVersions(this.AdapterState.ReferencesWithoutVersions);
+                foreach (var association in this.AdapterState.ReferencesWithoutVersions)
                 {
                     if (versionByObjectId.TryGetValue(association.ObjectId, out var version))
                     {
@@ -440,7 +526,7 @@ namespace Allors.Database.Adapters.Sql
                     }
                 }
 
-                this.State.ReferencesWithoutVersions = new HashSet<Reference>();
+                this.AdapterState.ReferencesWithoutVersions = new HashSet<Reference>();
             }
         }
 

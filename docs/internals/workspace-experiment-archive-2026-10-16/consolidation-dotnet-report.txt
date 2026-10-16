@@ -1,0 +1,93 @@
+.NET pure execution map — 2026-10-16 — proposal only
+
+Authorization and evidence
+Read-only inspection and writing this /private/tmp evidence only. No repository edits, build/test runs, service actions, generated edits or Git mutations were performed. Current Local PullTests SHA256 10dfc3f0974208efafc3b4d0673dedf9c3e376ae290d52b1dc16c7829919b158 matches runtime-test-freeze.json from the completed cache-ownership work. Its final service-free-3.trx contains 710 passes. These are the current pure baseline; older 711 and TypeScript 634 counts are superseded.
+
+Scope
+Separate execution scheduling from semantic coverage. Keep every Local argument row and method body; add method-level [Trait("Category", "Pure")] to precisely the 124 methods in local-methods.json. Keep all remaining inherited/direct integration cases selected for each SQL provider. Coordinate the separate codec source consolidation map: its four genuinely isolated ReadTransport methods (seven argument rows per codec) move to one standalone shared ReadTransportTests source, compiled into each existing codec assembly. Preserve both codec executions. This makes 724 .NET pure executions once: 710 Local + 7 SystemText + 7 Newtonsoft. No new test projects, runtime changes, skipped tests or provider reduction.
+
+Local exact boundary
+There are 126 declared Local PullTests methods / 713 rows. Exactly 124 methods / 710 rows are service-free. The two methods left unmarked are NormalLocalProfileLoginDrainsAllOwnedConnections (one row) and JsonApiPullDisposesItsTransaction(false/true) (two rows). The latter is still the paused existing-test migration; do not change its assertions, name or arguments as part of consolidation.
+The class derives from Workspace.PullTests and therefore inherits 68 SQL integration facts. They must not inherit a class-level Pure trait. All 68 names are in inherited-pull-integration-methods.json. In particular, AssociationMany2ManyContainedIn and RoleMany2ManyContainedIn retain their paused expectations.
+The earlier full Local matrix contains 212 integration identities: 68 inherited Pull facts + three direct Pull rows + 141 other Local rows. That yields an expected current total 922 = 710 + 212. The 710 are verified by a current-source final TRX. The 212 identities come from earlier full execution. integration-source-audit.json compares all 69 Local/shared C# path states with that full run source freeze: only Local PullTests changed, its pre-cache source matches the freeze, and both direct integration bodies are unchanged. Thus the integration identity expectation has source support; discovery/execution must reverify it after implementation. This report does not claim a fresh full green run.
+
+Why Local Pure needs no fixture rewrite
+PullTests constructor creates Profile. Profile constructor builds metadata/configuration only; Profile.InitializeAsync returns Task.CompletedTask. SQL database creation is lazy at Profile.Database, reached by Login in integration tests. Shared Fixture only builds metadata and a derivation Engine. Thus current 710 tests already passed without provider setup. Preserve this fixture behavior and method bodies. 'Pure' here denotes no external services, including synthetic HttpMessageHandler transports and Memory-rejection contracts; it does not mean no mutable objects or no IO abstractions.
+
+Why the seven mock codec rows must move out of PullTests
+Although those four test bodies use only ReadHandler, their current PullTests base has IAsyncLifetime and remote Profile.InitializeAsync performs real Test/Setup HTTP plus login/bootstrap. A trait alone would still require the host. The codec agent's standalone ReadTransportTests must have no Workspace.PullTests base, IClassFixture<Fixture>, Profile or IAsyncLifetime. Its four methods alone receive the same Pure trait. Keep the other 24 declared remote methods / 36 live HTTP rows and 68 inherited Pull facts integration-only in each codec assembly. Live coordinator/failure tests using forwarding handlers are integration, even when they inject one response. See ../codec/ evidence for exact methods, source links and helper ownership.
+
+Reliable selection
+Use positive method trait Category=Pure for standalone selections and its exact complement Category!=Pure for each provider assembly. Do not use FullyQualifiedName~PullTests or a class trait: that would include 68 inherited database facts. Do not guess Pure from method prefixes or from presence of a mock type. The existing exact FullyQualifiedName filter was useful evidence; it is a 124-name manual runtime selector and should not become the maintained build mechanism. Newly unclassified tests conservatively stay in integration until deliberately marked.
+Example only (not applied):
+    [Fact]
+    [Trait("Category", "Pure")]
+    public void NormalConnectionPublicContractHasOnlyReadyFactories() { /* unchanged */ }
+
+Small target design
+Add exactly two Nuke targets: DotnetCoreWorkspacePureTest in build/Dotnet/Core/Build.cs and CiDotnetCoreWorkspacePureTest in build/Build.ci.cs. Keep existing three project targets and existing CI wrappers. Their DotNetTest calls gain .SetFilter("Category!=Pure"). Add .DependsOn(DotnetCoreWorkspacePureTest) to the existing DotnetCoreWorkspaceTest aggregate. Do not add Pure as a dependency of each provider target: that would rerun Pure in three distinct CI jobs. No SkipPure parameter or per-provider wrapper proliferation.
+
+Illustrative concrete implementation:
+    private Target DotnetCoreWorkspacePureTest => _ => _
+        .DependsOn(DotnetCoreGenerate)
+        .Executes(() =>
+        {
+            foreach (var suite in new[]
+            {
+                (Project: Paths.DotnetCoreWorkspaceTestsLocal, Name: "DotnetCoreWorkspaceLocalPure"),
+                (Project: Paths.DotnetCoreWorkspaceTestsRemoteJsonSystemText, Name: "DotnetCoreWorkspaceSystemTextPure"),
+                (Project: Paths.DotnetCoreWorkspaceTestsRemoteNewtonsoftSharp, Name: "DotnetCoreWorkspaceNewtonsoftPure"),
+            })
+            {
+                DotNetTest(s => s.SetProjectFile(suite.Project)
+                    .SetFilter("Category=Pure")
+                    .AddLoggers($"trx;LogFileName={suite.Name}.trx")
+                    .SetResultsDirectory(Paths.ArtifactsTests));
+            }
+        });
+
+    private Target CiDotnetCoreWorkspacePureTest => _ => _
+        .DependsOn(DotnetCoreWorkspacePureTest);
+
+All three existing provider-specific DotNetTest calls add .SetFilter("Category!=Pure"). Existing publish/reset/populate and HTTP host ownership stay as they are. Existing Core aggregate adds the Pure dependency once; Nuke deduplicates that target within one invocation.
+
+Current dependency/invocation graph
+- Main selects Default. Default depends Install (TypeScript install) and Generate (all domains). Bare ./build.sh currently runs no tests; preserve that behavior.
+- DotnetCoreWorkspaceTest depends Local + SystemText + Newtonsoft.
+- Each of those targets depends Core PublishServer + PublishCommands + ResetDatabase. Publish targets depend CoreGenerate; CoreGenerate depends CoreMerge. ResetDatabase depends PublishCommands and runs Commands Init with the fixed Core database name. Each test target calls Commands Populate; HTTP targets start/await/dispose Server.
+- DotnetCoreTest depends DatabaseTest and WorkspaceTest; DotnetCore also depends Clean.
+- Existing Ci* wrappers depend Reset and the corresponding target. Reset broadly taskkills Windows node/chrome/chromedriver processes; leave existing Reset/wrappers unchanged but do not inherit this dependency into the new pure wrapper or execute existing CI wrappers during local validation.
+- Current .github/workflows/ci.yml runs Core Local/SystemText/Newtonsoft only in its sqlclient matrix. The npgsql job currently runs only the Npgsql adapter; comments explicitly defer full Npgsql Core coverage. This map must not silently enlarge that CI scope.
+
+Proposed invocation behavior
+- ./build.sh DotnetCoreWorkspacePureTest: all 724 pure rows once, no publish/reset/populate/server dependency.
+- ./build.sh DotnetCoreWorkspaceTest --provider sqlclient (or npgsql): 724 pure rows once plus the Local and both codec integration suites for that provider.
+- Existing direct DotnetCoreWorkspaceLocalTest, DotnetCoreWorkspaceRemoteJsonSystemTextTest and DotnetCoreWorkspaceRemoteJsonNewtonsoftTest become explicitly integration-only. This is an intentional command behavior change; explain it next to these targets in maintained documentation. Their existing Ci* wrappers become integration-only for the same reason.
+- Unfiltered dotnet test against any of the existing three test projects still executes all that project's discovered tests. No existing suite disappears from the project.
+- Running WorkspaceTest separately for two providers would repeat Pure, once per invocation. For the two-provider validation matrix, invoke Pure once, then run each of the three integration selections for each provider. Do not claim process-wide or cross-invocation deduplication.
+- Add CiDotnetCoreWorkspacePureTest to the existing database-free ('memory') CI matrix. Its current .NET setup is sufficient; .NET Core generation uses the existing toolchain. Keep SQLClient matrix entries. Do not add Core workspace to PostgreSQL CI in this bounded scope. A TypeScript pure job addition needs Node/setup separately, coordinated by parent.
+
+Safety of later validation commands
+Existing Nuke provider targets reset a fixed Core database, even when the caller supplies an outer connection string: SetDatabaseEnvironment("Core") derives and overrides it. Do not run those targets against this user's existing provider data as a shortcut. Do not run existing Reset/KillProcesses cleanup locally: its process-wide taskkill is outside this task resource boundary. Reuse the authorized isolated-database/temporary-host validation approach in a fresh evidence directory and fresh resource manifest, applying the exact same Category filters to direct test project invocations. No old scripts/evidence result names may be overwritten. Inspect the Nuke target graph and verify selector settings separately; run provider targets only in disposable CI environments or an equivalently isolated configuration with their fixed-name behavior accounted for.
+
+Minimal file allowlist for this execution part
+1. dotnet/Core/Workspace/Tests.Local/Tests/PullTests.cs — only add 124 method traits, preserve every body/data row and the two integration methods.
+2. build/Dotnet/Core/Build.cs — new pure target, three complementary filters, aggregate dependency. No changes to reset/populate/server policy.
+3. build/Build.ci.cs — one matching pure wrapper.
+4. .github/workflows/ci.yml — add the pure wrapper to existing database-free matrix, adjust explanatory comment only as needed; current provider matrix scope unchanged.
+5. docs/internals/workspace-caller-migration-inventory.md — exact execution map/command behavior boundary and validation result update.
+6. CHANGELOG.md — note consolidation and separate pure execution under Unreleased.
+Codec source extraction/link changes are separately enumerated by codec_map; they are necessary for the extra fourteen service-free rows and part of the combined scope, not hidden runtime edits. No need to edit Local Profile, Fixture, Test, shared integration PullTests, build paths or test csproj for Local traits.
+
+Validation gates for a later approved implementation
+A. Preserve incoming tree/index/ref/generated snapshot and exact source method body/data hashes. After attribute insertion assert all 126 Local method bodies/signatures/InlineData/MemberData definitions unchanged; only 124 traits added. Shared inherited 68 method sources unchanged. Retain all paused test body expectations.
+B. Build the solution and Nuke project. Inspect Nuke dependency plans in a nonexecuting dry run: Pure includes CoreMerge/Generate but no PublishServer/PublishCommands/ResetDatabase/Populate/Server. Core Workspace aggregate includes Pure once; each direct/CI provider target excludes Pure. Bare Default still excludes tests.
+C. Inspect adapter discovery for each assembly with Category=Pure and Category!=Pure. Require nonempty pure selections (710,7,7) and no inherited integration method under Pure. Verify each of the 124 Local method names plus all four pure codec methods appears with the expected trait and arguments. Verify the two direct Local integration methods and all 68 inherited methods remain unmarked. MemberData must retain expanded rows; inspect actual execution TRX too because discovery summaries can group theory rows.
+D. Compare multiset row identities, not only totals: key by assembly/codec + fully-qualified method + argument values, allowing only the explicit remote class rename PullTests -> ReadTransportTests for the four moved methods. For each assembly, pure and integration intersection is empty and their multiset union is the complete approved before-map. Neither two codecs nor two SQL providers collapse into one key. Keep the Local 710 old/new row map byte-for-byte in names/arguments. Preserve codec 7 rows each; link extraction reduces source duplication, not meaningful codec executions.
+E. Execute pure with SQL endpoints and host unavailable (without stopping pre-existing services; use absent test endpoints/credentials and no host startup). Expected 724 passes proves no accidental remote Profile setup. Record three distinct TRXs and compare bodies/binaries to final freeze. Never accept successful zero-match commands as validation.
+F. Execute the full complementary integration selections for both SQL providers and both codecs using isolated resources. Expect Local 212 rows per provider and codec agent's mapped complementary totals; verify identities identical between providers after normalizing the provider dimension. Preserve failure identities and exact source hashes. Existing paused migrations can still fail; report them rather than changing their assertions or claiming full green. Gate completion criteria on the approved scope and explicitly distinguish mapping/selection success from unresolved earlier suite failures.
+G. Run relevant source/style/project/build checks, verify generated outputs and unrelated files/index/refs unchanged, and clean only manifested task resources. Update result maps with actual discovered/executed counts before making completion claims.
+
+Tradeoff and recommendation
+Recommend the two-new-target design and method-level traits. It removes a 124-name runtime filter and avoids repeating 724 pure rows across two-provider validation while keeping codec and provider boundaries explicit. Relative to naively rerunning all three assemblies per provider, the two-provider plan saves exactly 724 redundant pure executions, not meaningful codec/provider coverage. It also removes all 28 unnecessary live Profile setups for those mock rows across two providers (seven rows × two codecs × two providers); fourteen actual codec/method rows still run once.
+The cost is 124 annotations and a documented meaning change for three direct Nuke target names. The aggregate and unfiltered dotnet test remain complete. An alternative that preserved every direct target as an all-tests umbrella would need separate integration-only wrappers or a skip parameter; it adds scheduling indirection solely to retain those names' old meaning. A class trait or prefix filter is smaller syntactically but incorrectly classifies inherited integration tests. A separate test project would remove fixture concerns structurally but adds package/project/build ownership without a need in this bounded work.

@@ -32,6 +32,8 @@ beforeEach(async () => {
     fixture,
     'Multiple shared'
   );
+  await singleSessionContext.init();
+  await multipleSessionContext.init();
 });
 
 test('databaseOneToManySetRole', async () => {
@@ -243,4 +245,8 @@ test('databaseOneToManyRemoveNullRole', async () => {
       }
     }
   }
+});
+
+afterEach(async () => {
+  await fixture?.close();
 });

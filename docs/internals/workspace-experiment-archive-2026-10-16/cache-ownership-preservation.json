@@ -1,0 +1,44 @@
+{
+  "incoming_paths": 2367,
+  "incoming_dirty_paths": 303,
+  "changed_incoming_paths": 39,
+  "unapproved_changed_paths": [],
+  "added_paths": [
+    "dotnet/System/Workspace/Adapters/Allors.Workspace.Adapters.Remote/Read/ReadSecurityKey.cs",
+    "dotnet/System/Workspace/Adapters/Allors.Workspace.Adapters.Remote/Read/ReadStore.cs",
+    "dotnet/System/Workspace/Adapters/Allors.Workspace.Adapters.Remote/Read/ReadStoreScope.cs",
+    "dotnet/System/Workspace/Adapters/Allors.Workspace.Adapters.Remote/Read/ReadStoreValues.cs",
+    "dotnet/System/Workspace/Adapters/Allors.Workspace.Adapters.Remote/Read/ReadStoredPermission.cs",
+    "dotnet/System/Workspace/Adapters/Allors.Workspace.Adapters.Remote/Read/ReadStoredRecord.cs",
+    "dotnet/System/Workspace/Adapters/Allors.Workspace.Adapters.Remote/Read/ReadStoredSecurity.cs"
+  ],
+  "unexpected_new_paths": [],
+  "generated_count": 339,
+  "generated_changed": [],
+  "refs": [
+    "dd34ff56f261d1060ef4bc87eaa37abc4598a867",
+    "a8265eb08059f66ddb9dfa0289d93d29b429c0b4",
+    "d034e53d70f0045e862bd388a283f7029db4b59c"
+  ],
+  "refs_unchanged": true,
+  "index_unchanged": true,
+  "branch_unchanged": true,
+  "frozen_source_changes": [],
+  "line_counts_moves_counted_once": {
+    "production_edits": {
+      "before": 5531,
+      "after": 4968,
+      "net": -563
+    },
+    "test_edits": {
+      "before": 20645,
+      "after": 20861,
+      "net": 216
+    },
+    "documentation_edits": {
+      "before": 8050,
+      "after": 8052,
+      "net": 2
+    }
+  }
+}

@@ -6,7 +6,7 @@ import { DatabaseConnection } from '@allors/system/workspace/adapters-json';
 import { PrototypeObjectFactory } from '@allors/system/workspace/adapters';
 import { M } from '@allors/default/workspace/meta';
 
-import { FetchClient } from './fetch-client';
+import { FetchClient, OwnedTransport } from './fetch-client';
 import {
   Configuration,
   ISession,
@@ -14,6 +14,7 @@ import {
   Pull,
 } from '@allors/system/workspace/domain';
 import { C1, C2 } from '@allors/default/workspace/domain';
+import { DatabaseConnectionOptions } from '@allors/system/workspace/adapters-json';
 
 const BASE_URL = 'http://localhost:5000/allors/';
 
@@ -33,40 +34,88 @@ export class Fixture {
   m: M;
   workspace: IWorkspace;
 
-  createDatabaseConnection(): DatabaseConnection {
+  private resources = new Map<
+    DatabaseConnection,
+    { transport: OwnedTransport; managed: boolean; closing?: Promise<void> }
+  >();
+
+  createConfiguration(name = 'Default'): Configuration {
     const metaPopulation = this.metaPopulation;
     this.m = metaPopulation as unknown as M;
-
     let nextId = -1;
-
-    const configuration: Configuration = {
-      name: 'Default',
+    return {
+      name,
       metaPopulation,
       objectFactory: new PrototypeObjectFactory(metaPopulation),
       idGenerator: () => nextId--,
       rules: ruleBuilder(this.m),
     };
+  }
 
-    return new DatabaseConnection(configuration, this.jsonClient);
+  async createConnection(
+    options: DatabaseConnectionOptions = { revision: 'core-read-v1' },
+    transport: OwnedTransport = this.jsonClient.createTransport(),
+    managed = false
+  ): Promise<DatabaseConnection> {
+    try {
+      const connection = await DatabaseConnection.create(
+        this.createConfiguration(),
+        transport,
+        options
+      );
+      this.resources.set(connection, { transport, managed });
+      return connection;
+    } catch (error) {
+      transport.dispose();
+      throw error;
+    }
+  }
+
+  closeConnection(connection: DatabaseConnection): Promise<void> {
+    const resource = this.resources.get(connection);
+    if (!resource) return connection.close();
+    if (!resource.closing)
+      resource.closing = connection.close().finally(() => {
+        try {
+          resource.transport.dispose();
+        } finally {
+          this.resources.delete(connection);
+        }
+      });
+    return resource.closing;
+  }
+
+  private async closeResources(managedOnly = false): Promise<void> {
+    const outcomes = await Promise.allSettled(
+      [...this.resources]
+        .filter(([, resource]) => !managedOnly || resource.managed)
+        .map(([connection]) => this.closeConnection(connection))
+    );
+    const failure = outcomes.find(
+      (outcome) => outcome.status === 'rejected'
+    ) as PromiseRejectedResult | undefined;
+    if (failure) throw failure.reason;
+  }
+
+  close(): Promise<void> {
+    return this.closeResources();
   }
 
   createExclusiveWorkspace(): IWorkspace {
     return this.databaseConnection.createWorkspace();
   }
-  createWorkspace(): IWorkspace {
-    return this.createDatabaseConnection().createWorkspace();
+
+  async createWorkspace(): Promise<IWorkspace> {
+    return (
+      await this.createConnection(undefined, undefined, true)
+    ).createWorkspace();
   }
 
   async init(population?: string) {
-    this.jsonClient = new FetchClient(BASE_URL);
-
-    await this.jsonClient.setup(population);
-    await this.jsonClient.login('jane@example.com', '');
-
+    this.jsonClient = new FetchClient(process.env.ALLORS_TEST_URL ?? BASE_URL);
     this.metaPopulation = new LazyMetaPopulation(data);
-
-    this.databaseConnection = this.createDatabaseConnection();
-    this.workspace = this.databaseConnection.createWorkspace();
+    await this.jsonClient.setup(population);
+    await this.login('jane@example.com', '');
   }
 
   async pullC1(session: ISession, name: string): Promise<C1> {
@@ -108,6 +157,17 @@ export class Fixture {
   }
 
   async login(login: string, password?: string): Promise<boolean> {
-    return this.jsonClient.login(login, password);
+    await this.closeResources(true);
+    this.databaseConnection = undefined;
+    this.workspace = undefined;
+    const authenticated = await this.jsonClient.login(login, password);
+    if (!authenticated) return false;
+    this.databaseConnection = await this.createConnection(
+      undefined,
+      undefined,
+      true
+    );
+    this.workspace = this.databaseConnection.createWorkspace();
+    return true;
   }
 }

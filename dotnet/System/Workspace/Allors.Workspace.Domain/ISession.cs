@@ -8,11 +8,12 @@ namespace Allors.Workspace
     using Meta;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using System.Threading;
     using Data;
     using Derivations;
     using System;
 
-    public interface ISession
+    public interface ISession : System.IDisposable
     {
         IWorkspace Workspace { get; }
 
@@ -58,14 +59,18 @@ namespace Allors.Workspace
 
         Task<IInvokeResult> InvokeAsync(Method method, InvokeOptions options = null);
 
+        Task<IInvokeResult> InvokeAsync(Method method, InvokeOptions options, CancellationToken cancellationToken);
+
         Task<IInvokeResult> InvokeAsync(Method[] methods, InvokeOptions options = null);
 
-        Task<IPullResult> CallAsync(Procedure procedure, params Pull[] pull);
-
-        Task<IPullResult> CallAsync(object args, string name);
+        Task<IInvokeResult> InvokeAsync(Method[] methods, InvokeOptions options, CancellationToken cancellationToken);
 
         Task<IPullResult> PullAsync(params Pull[] pull);
 
+        bool ReconciliationRequired { get; }
+
         Task<IPushResult> PushAsync();
+
+        Task<IPushResult> PushAsync(PushOptions options, CancellationToken cancellationToken = default);
     }
 }

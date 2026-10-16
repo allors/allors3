@@ -17,7 +17,7 @@ import { IRange } from '../../collections/ranges/ranges';
 export abstract class DatabaseOriginState extends RecordBasedOriginState {
   protected cachedRoleByRelationType: Map<RelationType, IRange<IObject>>;
 
-  private isPushed: boolean;
+  protected isPushed: boolean;
 
   protected constructor(public databaseRecord: DatabaseRecord) {
     super();
@@ -106,8 +106,23 @@ export abstract class DatabaseOriginState extends RecordBasedOriginState {
     this.isPushed = true;
   }
 
-  onPulled(pull: IPullResult) {
-    const newRecord = this.session.workspace.database.getRecord(this.id);
+  canAcceptRecord(record: DatabaseRecord): boolean {
+    return this.isPushed || this.canMerge(record);
+  }
+
+  /** Apply only after the owner has staged merge checks and admitted the generation. */
+  acceptRecord(record: DatabaseRecord): void {
+    if (this.isPushed) {
+      this.changedRoleByRelationType = null;
+      this.isPushed = false;
+    }
+    this.databaseRecord = record;
+    this.cachedRoleByRelationType = null;
+  }
+
+  onPulled(pull: IPullResult, exactRecord?: DatabaseRecord) {
+    const newRecord =
+      exactRecord ?? this.session.workspace.database.getRecord(this.id);
     if (!this.isPushed) {
       if (!this.canMerge(newRecord)) {
         pull.addMergeError(this.object);

@@ -1,0 +1,1324 @@
+{
+  "scope": "Read-only source map; no builds/tests/repository edits",
+  "hashes": [
+    {
+      "path": "dotnet/Core/Workspace/Tests.Remote.Json.SystemText/Tests/PullTests.cs",
+      "sha256": "986cb539b9e0583fc8ee93ec439ecf4f5c0760466ba5f59609a6b324482a5a24",
+      "bytes": 89004,
+      "lines": 1475,
+      "matches_final_cache_validation_source": true
+    },
+    {
+      "path": "dotnet/Core/Workspace/Tests.Remote.Json.Newtonsoft/Tests/PullTests.cs",
+      "sha256": "881364c6ada5369fbe78eeb637f463170ddb77f56ef91c60fed8fdfa9c1da355",
+      "bytes": 88988,
+      "lines": 1475,
+      "matches_final_cache_validation_source": true
+    }
+  ],
+  "declared_methods": [
+    {
+      "name": "ReadTransportSendsOneCompleteRequest",
+      "first_attribute_line": 32,
+      "parameters": "",
+      "argument_rows_csharp": [
+        "()"
+      ],
+      "row_count": 1,
+      "destination": "Tests.Workspace.Remote.PullTests",
+      "execution": "each-codec-each-provider"
+    },
+    {
+      "name": "ReadTransportRejectsInvalidRequestBeforeSending",
+      "first_attribute_line": 44,
+      "parameters": "string json",
+      "argument_rows_csharp": [
+        "\"{\\\"v\\\":1,\\\"v\\\":1}\"",
+        "\"{\\\"v\\\":1,\\\"i\\\":\\\"read\\\",\\\"k\\\":\\\"read\\\",\\\"p\\\":{\\\"l\\\":[],\\\"d\\\":[]},\\\"procedure\\\":null}\""
+      ],
+      "row_count": 2,
+      "destination": "Tests.Workspace.Remote.ReadTransportTests",
+      "execution": "once-per-codec-with-no-services"
+    },
+    {
+      "name": "ReadTransportStrictlyDecodesTheOriginalResponse",
+      "first_attribute_line": 55,
+      "parameters": "string response",
+      "argument_rows_csharp": [
+        "\"{\\\"i\\\":\\\"read\\\",\\\"i\\\":\\\"read\\\",\\\"k\\\":\\\"error\\\",\\\"e\\\":[{\\\"c\\\":\\\"failed\\\",\\\"m\\\":\\\"Try again.\\\"}]}\"",
+        "\"{\\\"i\\\":\\\"wrong\\\",\\\"k\\\":\\\"error\\\",\\\"e\\\":[{\\\"c\\\":\\\"failed\\\",\\\"m\\\":\\\"Try again.\\\"}]}\""
+      ],
+      "row_count": 2,
+      "destination": "Tests.Workspace.Remote.ReadTransportTests",
+      "execution": "once-per-codec-with-no-services"
+    },
+    {
+      "name": "ReadTransportNeverRetriesHttpFailure",
+      "first_attribute_line": 69,
+      "parameters": "",
+      "argument_rows_csharp": [
+        "()"
+      ],
+      "row_count": 1,
+      "destination": "Tests.Workspace.Remote.ReadTransportTests",
+      "execution": "once-per-codec-with-no-services"
+    },
+    {
+      "name": "ReadTransportCancellationSuppressesSuccess",
+      "first_attribute_line": 78,
+      "parameters": "bool duringSend",
+      "argument_rows_csharp": [
+        "false",
+        "true"
+      ],
+      "row_count": 2,
+      "destination": "Tests.Workspace.Remote.ReadTransportTests",
+      "execution": "once-per-codec-with-no-services"
+    },
+    {
+      "name": "ReadCoordinatorHttpReadsRetainEquivalentCompleteClosures",
+      "first_attribute_line": 103,
+      "parameters": "",
+      "argument_rows_csharp": [
+        "()"
+      ],
+      "row_count": 1,
+      "destination": "Tests.Workspace.Remote.PullTests",
+      "execution": "each-codec-each-provider"
+    },
+    {
+      "name": "ScopedSessionHttpUsesTwoStepReadAndPreservesPushState",
+      "first_attribute_line": 159,
+      "parameters": "",
+      "argument_rows_csharp": [
+        "()"
+      ],
+      "row_count": 1,
+      "destination": "Tests.Workspace.Remote.PullTests",
+      "execution": "each-codec-each-provider"
+    },
+    {
+      "name": "ScopedSessionHttpNeverRetriesMutations",
+      "first_attribute_line": 211,
+      "parameters": "bool invoke",
+      "argument_rows_csharp": [
+        "false",
+        "true"
+      ],
+      "row_count": 2,
+      "destination": "Tests.Workspace.Remote.PullTests",
+      "execution": "each-codec-each-provider"
+    },
+    {
+      "name": "ScopedPushReadHttpChangedOnlyUsesOneRequestAndPreservesNewObjectIdentity",
+      "first_attribute_line": 261,
+      "parameters": "",
+      "argument_rows_csharp": [
+        "()"
+      ],
+      "row_count": 1,
+      "destination": "Tests.Workspace.Remote.PullTests",
+      "execution": "each-codec-each-provider"
+    },
+    {
+      "name": "ScopedPushReadHttpDeferredQueryUsesTwoRequestsAndReusesRefreshedBody",
+      "first_attribute_line": 302,
+      "parameters": "",
+      "argument_rows_csharp": [
+        "()"
+      ],
+      "row_count": 1,
+      "destination": "Tests.Workspace.Remote.PullTests",
+      "execution": "each-codec-each-provider"
+    },
+    {
+      "name": "ScopedPushReadHttpDeferredQueryObservesConcurrentDataAndMembership",
+      "first_attribute_line": 342,
+      "parameters": "",
+      "argument_rows_csharp": [
+        "()"
+      ],
+      "row_count": 1,
+      "destination": "Tests.Workspace.Remote.PullTests",
+      "execution": "each-codec-each-provider"
+    },
+    {
+      "name": "ScopedPushReadHttpDeferredQueryRefreshesConcurrentPermissionChanges",
+      "first_attribute_line": 384,
+      "parameters": "",
+      "argument_rows_csharp": [
+        "()"
+      ],
+      "row_count": 1,
+      "destination": "Tests.Workspace.Remote.PullTests",
+      "execution": "each-codec-each-provider"
+    },
+    {
+      "name": "ScopedPushReadHttpDeferredQueryMarksDeletedObjectsUnavailable",
+      "first_attribute_line": 408,
+      "parameters": "",
+      "argument_rows_csharp": [
+        "()"
+      ],
+      "row_count": 1,
+      "destination": "Tests.Workspace.Remote.PullTests",
+      "execution": "each-codec-each-provider"
+    },
+    {
+      "name": "ScopedPushReadHttpKeepsCommitWhenOneReadPartFails",
+      "first_attribute_line": 437,
+      "parameters": "string part",
+      "argument_rows_csharp": [
+        "\"changed\"",
+        "\"discovery\""
+      ],
+      "row_count": 2,
+      "destination": "Tests.Workspace.Remote.PullTests",
+      "execution": "each-codec-each-provider"
+    },
+    {
+      "name": "ScopedPushReadHttpLostCommittedResponseRequiresReconciliationWithoutReplay",
+      "first_attribute_line": 476,
+      "parameters": "",
+      "argument_rows_csharp": [
+        "()"
+      ],
+      "row_count": 1,
+      "destination": "Tests.Workspace.Remote.PullTests",
+      "execution": "each-codec-each-provider"
+    },
+    {
+      "name": "ScopedPushReadHttpPendingCompletionRejectsRetiredConnection",
+      "first_attribute_line": 506,
+      "parameters": "bool duringSave",
+      "argument_rows_csharp": [
+        "false",
+        "true"
+      ],
+      "row_count": 2,
+      "destination": "Tests.Workspace.Remote.PullTests",
+      "execution": "each-codec-each-provider"
+    },
+    {
+      "name": "ScopedOwnerHttpBootstrapsBeforeImmediatePushAndClosesEveryWorkspaceSession",
+      "first_attribute_line": 544,
+      "parameters": "",
+      "argument_rows_csharp": [
+        "()"
+      ],
+      "row_count": 1,
+      "destination": "Tests.Workspace.Remote.PullTests",
+      "execution": "each-codec-each-provider"
+    },
+    {
+      "name": "NormalHttpConnectionKeepsIdentityAcrossProfileLoginReplacement",
+      "first_attribute_line": 599,
+      "parameters": "",
+      "argument_rows_csharp": [
+        "()"
+      ],
+      "row_count": 1,
+      "destination": "Tests.Workspace.Remote.PullTests",
+      "execution": "each-codec-each-provider"
+    },
+    {
+      "name": "ScopedOwnerHttpFailedBootstrapDisposesTransportWithoutMutationOrRetry",
+      "first_attribute_line": 637,
+      "parameters": "string failure",
+      "argument_rows_csharp": [
+        "\"error\"",
+        "\"transport\""
+      ],
+      "row_count": 2,
+      "destination": "Tests.Workspace.Remote.PullTests",
+      "execution": "each-codec-each-provider"
+    },
+    {
+      "name": "ScopedOwnerHttpDisposalDrainsCommittedMutationRejectsQueueAndRetainsInspection",
+      "first_attribute_line": 657,
+      "parameters": "bool loseResponse",
+      "argument_rows_csharp": [
+        "false",
+        "true"
+      ],
+      "row_count": 2,
+      "destination": "Tests.Workspace.Remote.PullTests",
+      "execution": "each-codec-each-provider"
+    },
+    {
+      "name": "ProtectedPushRefreshAndSkipUseOneRequest",
+      "first_attribute_line": 703,
+      "parameters": "bool skip",
+      "argument_rows_csharp": [
+        "false",
+        "true"
+      ],
+      "row_count": 2,
+      "destination": "Tests.Workspace.Remote.PullTests",
+      "execution": "each-codec-each-provider"
+    },
+    {
+      "name": "ProtectedInvokeHttpRefreshAndSkipUseOneRequest",
+      "first_attribute_line": 745,
+      "parameters": "bool skip",
+      "argument_rows_csharp": [
+        "false",
+        "true"
+      ],
+      "row_count": 2,
+      "destination": "Tests.Workspace.Remote.PullTests",
+      "execution": "each-codec-each-provider"
+    },
+    {
+      "name": "ProtectedInvokeHttpPreservesUnsavedEditsAndReportsConflicts",
+      "first_attribute_line": 794,
+      "parameters": "bool conflict",
+      "argument_rows_csharp": [
+        "false",
+        "true"
+      ],
+      "row_count": 2,
+      "destination": "Tests.Workspace.Remote.PullTests",
+      "execution": "each-codec-each-provider"
+    },
+    {
+      "name": "ProtectedInvokeHttpCommittedReceiptSurvivesRefreshDamageOrLoss",
+      "first_attribute_line": 862,
+      "parameters": "string failure",
+      "argument_rows_csharp": [
+        "\"damaged-refresh\"",
+        "\"lost-response\""
+      ],
+      "row_count": 2,
+      "destination": "Tests.Workspace.Remote.PullTests",
+      "execution": "each-codec-each-provider"
+    },
+    {
+      "name": "ProtectedInvokeHttpOwnerDisposalDrainsAndKeepsOutcome",
+      "first_attribute_line": 909,
+      "parameters": "bool loseResponse",
+      "argument_rows_csharp": [
+        "false",
+        "true"
+      ],
+      "row_count": 2,
+      "destination": "Tests.Workspace.Remote.PullTests",
+      "execution": "each-codec-each-provider"
+    },
+    {
+      "name": "NormalProfileLoginDrainsBeforeReplacingCapturedIdentity",
+      "first_attribute_line": 968,
+      "parameters": "string operation",
+      "argument_rows_csharp": [
+        "\"push\"",
+        "\"invoke\""
+      ],
+      "row_count": 2,
+      "destination": "Tests.Workspace.Remote.PullTests",
+      "execution": "each-codec-each-provider"
+    },
+    {
+      "name": "NormalProfileExclusiveWorkspaceHasIndependentOwnedConnection",
+      "first_attribute_line": 1046,
+      "parameters": "",
+      "argument_rows_csharp": [
+        "()"
+      ],
+      "row_count": 1,
+      "destination": "Tests.Workspace.Remote.PullTests",
+      "execution": "each-codec-each-provider"
+    },
+    {
+      "name": "NormalProfileFailedReplacementPublishesNoWorkspace",
+      "first_attribute_line": 1093,
+      "parameters": "string stage",
+      "argument_rows_csharp": [
+        "\"discover\"",
+        "\"read\""
+      ],
+      "row_count": 2,
+      "destination": "Tests.Workspace.Remote.PullTests",
+      "execution": "each-codec-each-provider"
+    }
+  ],
+  "inherited_methods": [
+    {
+      "name": "AndGreaterThanLessThan",
+      "row_count": 1,
+      "declaration_line": 28
+    },
+    {
+      "name": "AssociationMany2ManyContainedIn",
+      "row_count": 1,
+      "declaration_line": 83
+    },
+    {
+      "name": "AssociationMany2ManyContainedInObjects",
+      "row_count": 1,
+      "declaration_line": 153
+    },
+    {
+      "name": "AssociationMany2ManyContains",
+      "row_count": 1,
+      "declaration_line": 188
+    },
+    {
+      "name": "AssociationMany2ManyExist",
+      "row_count": 1,
+      "declaration_line": 218
+    },
+    {
+      "name": "AssociationMany2OneContainedIn",
+      "row_count": 1,
+      "declaration_line": 243
+    },
+    {
+      "name": "AssociationMany2OneContains",
+      "row_count": 1,
+      "declaration_line": 273
+    },
+    {
+      "name": "AssociationOne2ManyContainedIn",
+      "row_count": 1,
+      "declaration_line": 303
+    },
+    {
+      "name": "AssociationOne2ManyEquals",
+      "row_count": 1,
+      "declaration_line": 333
+    },
+    {
+      "name": "AssociationOne2ManyExists",
+      "row_count": 1,
+      "declaration_line": 381
+    },
+    {
+      "name": "AssociationOne2ManyInstanceOf",
+      "row_count": 1,
+      "declaration_line": 422
+    },
+    {
+      "name": "AssociationOne2OneContainedIn",
+      "row_count": 1,
+      "declaration_line": 446
+    },
+    {
+      "name": "AssociationOne2OneEquals",
+      "row_count": 1,
+      "declaration_line": 476
+    },
+    {
+      "name": "AssociationOne2OneExists",
+      "row_count": 1,
+      "declaration_line": 524
+    },
+    {
+      "name": "AssociationOne2OneInstanceOf",
+      "row_count": 1,
+      "declaration_line": 564
+    },
+    {
+      "name": "ObjectEquals",
+      "row_count": 1,
+      "declaration_line": 603
+    },
+    {
+      "name": "ExtentInterface",
+      "row_count": 1,
+      "declaration_line": 629
+    },
+    {
+      "name": "InstanceOf",
+      "row_count": 1,
+      "declaration_line": 650
+    },
+    {
+      "name": "NotEquals",
+      "row_count": 1,
+      "declaration_line": 677
+    },
+    {
+      "name": "OrEquals",
+      "row_count": 1,
+      "declaration_line": 706
+    },
+    {
+      "name": "OperatorExcept",
+      "row_count": 1,
+      "declaration_line": 740
+    },
+    {
+      "name": "OperatorIntersect",
+      "row_count": 1,
+      "declaration_line": 771
+    },
+    {
+      "name": "OperatorUnion",
+      "row_count": 1,
+      "declaration_line": 802
+    },
+    {
+      "name": "RoleDateTimeBetweenPath",
+      "row_count": 1,
+      "declaration_line": 830
+    },
+    {
+      "name": "RoleDateTimeBetweenValue",
+      "row_count": 1,
+      "declaration_line": 857
+    },
+    {
+      "name": "RoleDateTimeGreaterThanPath",
+      "row_count": 1,
+      "declaration_line": 888
+    },
+    {
+      "name": "RoleDateTimeGreaterThanValue",
+      "row_count": 1,
+      "declaration_line": 915
+    },
+    {
+      "name": "RoleDateTimeLessThanPath",
+      "row_count": 1,
+      "declaration_line": 942
+    },
+    {
+      "name": "RoleDateTimeLessThanValue",
+      "row_count": 1,
+      "declaration_line": 969
+    },
+    {
+      "name": "RoleDateTimeEquals",
+      "row_count": 1,
+      "declaration_line": 996
+    },
+    {
+      "name": "RoleDecimalBetweenPath",
+      "row_count": 1,
+      "declaration_line": 1023
+    },
+    {
+      "name": "RoleDecimalBetweenValue",
+      "row_count": 1,
+      "declaration_line": 1050
+    },
+    {
+      "name": "RoleDecimalGreaterThanPath",
+      "row_count": 1,
+      "declaration_line": 1077
+    },
+    {
+      "name": "RoleDecimalGreaterThanValue",
+      "row_count": 1,
+      "declaration_line": 1104
+    },
+    {
+      "name": "RoleDecimalLessThanPath",
+      "row_count": 1,
+      "declaration_line": 1131
+    },
+    {
+      "name": "RoleDecimalLessThanValue",
+      "row_count": 1,
+      "declaration_line": 1158
+    },
+    {
+      "name": "RoleDecimalEquals",
+      "row_count": 1,
+      "declaration_line": 1185
+    },
+    {
+      "name": "RoleDoubleBetweenPath",
+      "row_count": 1,
+      "declaration_line": 1212
+    },
+    {
+      "name": "RoleDoubleBetweenValue",
+      "row_count": 1,
+      "declaration_line": 1239
+    },
+    {
+      "name": "RoleDoubleGreaterThanPath",
+      "row_count": 1,
+      "declaration_line": 1266
+    },
+    {
+      "name": "RoleDoubleGreaterThanValue",
+      "row_count": 1,
+      "declaration_line": 1293
+    },
+    {
+      "name": "RoleDoubleLessThanPath",
+      "row_count": 1,
+      "declaration_line": 1320
+    },
+    {
+      "name": "RoleDoubleLessThanValue",
+      "row_count": 1,
+      "declaration_line": 1347
+    },
+    {
+      "name": "RoleDoubleEquals",
+      "row_count": 1,
+      "declaration_line": 1374
+    },
+    {
+      "name": "RoleIntegerBetweenPath",
+      "row_count": 1,
+      "declaration_line": 1401
+    },
+    {
+      "name": "RoleIntegerBetweenValue",
+      "row_count": 1,
+      "declaration_line": 1428
+    },
+    {
+      "name": "RoleIntegerGreaterThanPath",
+      "row_count": 1,
+      "declaration_line": 1455
+    },
+    {
+      "name": "RoleIntegerGreaterThanValue",
+      "row_count": 1,
+      "declaration_line": 1482
+    },
+    {
+      "name": "RoleIntegerLessThanPath",
+      "row_count": 1,
+      "declaration_line": 1509
+    },
+    {
+      "name": "RoleIntegerLessThanValue",
+      "row_count": 1,
+      "declaration_line": 1536
+    },
+    {
+      "name": "RoleIntegerEquals",
+      "row_count": 1,
+      "declaration_line": 1563
+    },
+    {
+      "name": "RoleIntegerExist",
+      "row_count": 1,
+      "declaration_line": 1590
+    },
+    {
+      "name": "RoleStringEqualsPath",
+      "row_count": 1,
+      "declaration_line": 1614
+    },
+    {
+      "name": "RoleStringEqualsValue",
+      "row_count": 1,
+      "declaration_line": 1641
+    },
+    {
+      "name": "RoleStringLike",
+      "row_count": 1,
+      "declaration_line": 1668
+    },
+    {
+      "name": "RoleUniqueEquals",
+      "row_count": 1,
+      "declaration_line": 1695
+    },
+    {
+      "name": "RoleMany2ManyContainedIn",
+      "row_count": 1,
+      "declaration_line": 1722
+    },
+    {
+      "name": "RoleMany2ManyContains",
+      "row_count": 1,
+      "declaration_line": 1792
+    },
+    {
+      "name": "RoleOne2ManyContainedIn",
+      "row_count": 1,
+      "declaration_line": 1821
+    },
+    {
+      "name": "RoleOne2ManyContains",
+      "row_count": 1,
+      "declaration_line": 1851
+    },
+    {
+      "name": "RoleMany2OneContainedIn",
+      "row_count": 1,
+      "declaration_line": 1880
+    },
+    {
+      "name": "RoleOne2OneContainedIn",
+      "row_count": 1,
+      "declaration_line": 1910
+    },
+    {
+      "name": "WithResultName",
+      "row_count": 1,
+      "declaration_line": 1940
+    },
+    {
+      "name": "PullWithObjectId",
+      "row_count": 1,
+      "declaration_line": 1973
+    },
+    {
+      "name": "PullWithInclude",
+      "row_count": 1,
+      "declaration_line": 1994
+    },
+    {
+      "name": "SortDirectionDefault",
+      "row_count": 1,
+      "declaration_line": 2029
+    },
+    {
+      "name": "SortDirectionAscending",
+      "row_count": 1,
+      "declaration_line": 2054
+    },
+    {
+      "name": "SortDirectionDescending",
+      "row_count": 1,
+      "declaration_line": 2080
+    }
+  ],
+  "counts": {
+    "declared_methods_per_codec": 28,
+    "declared_rows_per_codec": 43,
+    "inherited_rows_per_codec": 68,
+    "pure_methods_per_codec": 4,
+    "pure_rows_per_codec": 7,
+    "integration_declared_methods_per_codec": 24,
+    "integration_declared_rows_per_codec": 36,
+    "integration_rows_with_inheritance_per_codec": 104,
+    "both_codecs_two_providers_current_rows": 444,
+    "after_pure_once_each_codec_and_integration_each_provider_rows": 430
+  },
+  "latest_validation": [
+    {
+      "file": "/private/tmp/allors-cache-simplification-implementation/http-newtonsoft-npgsql.trx",
+      "total_run_rows": 123,
+      "pull_rows": 35,
+      "pull_methods": 23,
+      "all_pass": true,
+      "pull_rows_exact": [
+        {
+          "name": "Tests.Workspace.Remote.PullTests.NormalProfileLoginDrainsBeforeReplacingCapturedIdentity(operation: \"push\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.NormalProfileFailedReplacementPublishesNoWorkspace(stage: \"read\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ProtectedInvokeHttpPreservesUnsavedEditsAndReportsConflicts(conflict: False)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedPushReadHttpDeferredQueryRefreshesConcurrentPermissionChanges",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedOwnerHttpFailedBootstrapDisposesTransportWithoutMutationOrRetry(failure: \"transport\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedOwnerHttpDisposalDrainsCommittedMutationRejectsQueueAndRetainsInspection(loseResponse: False)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedPushReadHttpDeferredQueryUsesTwoRequestsAndReusesRefreshedBody",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedPushReadHttpPendingCompletionRejectsRetiredConnection(duringSave: False)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ProtectedInvokeHttpOwnerDisposalDrainsAndKeepsOutcome(loseResponse: False)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedPushReadHttpKeepsCommitWhenOneReadPartFails(part: \"changed\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedSessionHttpUsesTwoStepReadAndPreservesPushState",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ProtectedInvokeHttpCommittedReceiptSurvivesRefreshDamageOrLoss(failure: \"damaged-refresh\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ReadCoordinatorHttpReadsRetainEquivalentCompleteClosures",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.NormalHttpConnectionKeepsIdentityAcrossProfileLoginReplacement",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedPushReadHttpChangedOnlyUsesOneRequestAndPreservesNewObjectIdentity",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ProtectedPushRefreshAndSkipUseOneRequest(skip: False)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.NormalProfileLoginDrainsBeforeReplacingCapturedIdentity(operation: \"invoke\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.NormalProfileFailedReplacementPublishesNoWorkspace(stage: \"discover\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedPushReadHttpKeepsCommitWhenOneReadPartFails(part: \"discovery\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedPushReadHttpDeferredQueryObservesConcurrentDataAndMembership",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ProtectedInvokeHttpCommittedReceiptSurvivesRefreshDamageOrLoss(failure: \"lost-response\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ProtectedInvokeHttpRefreshAndSkipUseOneRequest(skip: True)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.NormalProfileExclusiveWorkspaceHasIndependentOwnedConnection",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ProtectedInvokeHttpRefreshAndSkipUseOneRequest(skip: False)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedSessionHttpNeverRetriesMutations(invoke: False)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ProtectedInvokeHttpOwnerDisposalDrainsAndKeepsOutcome(loseResponse: True)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ProtectedPushRefreshAndSkipUseOneRequest(skip: True)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedPushReadHttpPendingCompletionRejectsRetiredConnection(duringSave: True)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedOwnerHttpBootstrapsBeforeImmediatePushAndClosesEveryWorkspaceSession",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedPushReadHttpLostCommittedResponseRequiresReconciliationWithoutReplay",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ProtectedInvokeHttpPreservesUnsavedEditsAndReportsConflicts(conflict: True)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedOwnerHttpFailedBootstrapDisposesTransportWithoutMutationOrRetry(failure: \"error\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedOwnerHttpDisposalDrainsCommittedMutationRejectsQueueAndRetainsInspection(loseResponse: True)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedSessionHttpNeverRetriesMutations(invoke: True)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedPushReadHttpDeferredQueryMarksDeletedObjectsUnavailable",
+          "outcome": "Passed"
+        }
+      ],
+      "declared_methods_not_selected": [
+        "ReadTransportSendsOneCompleteRequest",
+        "ReadTransportRejectsInvalidRequestBeforeSending",
+        "ReadTransportStrictlyDecodesTheOriginalResponse",
+        "ReadTransportNeverRetriesHttpFailure",
+        "ReadTransportCancellationSuppressesSuccess"
+      ]
+    },
+    {
+      "file": "/private/tmp/allors-cache-simplification-implementation/http-newtonsoft-sqlclient.trx",
+      "total_run_rows": 123,
+      "pull_rows": 35,
+      "pull_methods": 23,
+      "all_pass": true,
+      "pull_rows_exact": [
+        {
+          "name": "Tests.Workspace.Remote.PullTests.NormalProfileExclusiveWorkspaceHasIndependentOwnedConnection",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedPushReadHttpDeferredQueryObservesConcurrentDataAndMembership",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ReadCoordinatorHttpReadsRetainEquivalentCompleteClosures",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedPushReadHttpKeepsCommitWhenOneReadPartFails(part: \"discovery\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.NormalProfileFailedReplacementPublishesNoWorkspace(stage: \"read\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.NormalProfileLoginDrainsBeforeReplacingCapturedIdentity(operation: \"invoke\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedOwnerHttpFailedBootstrapDisposesTransportWithoutMutationOrRetry(failure: \"transport\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedPushReadHttpPendingCompletionRejectsRetiredConnection(duringSave: True)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ProtectedInvokeHttpOwnerDisposalDrainsAndKeepsOutcome(loseResponse: True)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ProtectedInvokeHttpPreservesUnsavedEditsAndReportsConflicts(conflict: False)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ProtectedInvokeHttpPreservesUnsavedEditsAndReportsConflicts(conflict: True)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedOwnerHttpDisposalDrainsCommittedMutationRejectsQueueAndRetainsInspection(loseResponse: True)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ProtectedInvokeHttpRefreshAndSkipUseOneRequest(skip: True)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ProtectedPushRefreshAndSkipUseOneRequest(skip: True)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedPushReadHttpDeferredQueryUsesTwoRequestsAndReusesRefreshedBody",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedPushReadHttpPendingCompletionRejectsRetiredConnection(duringSave: False)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedPushReadHttpDeferredQueryMarksDeletedObjectsUnavailable",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedPushReadHttpKeepsCommitWhenOneReadPartFails(part: \"changed\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedPushReadHttpDeferredQueryRefreshesConcurrentPermissionChanges",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedOwnerHttpDisposalDrainsCommittedMutationRejectsQueueAndRetainsInspection(loseResponse: False)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedSessionHttpNeverRetriesMutations(invoke: False)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.NormalHttpConnectionKeepsIdentityAcrossProfileLoginReplacement",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedPushReadHttpChangedOnlyUsesOneRequestAndPreservesNewObjectIdentity",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ProtectedInvokeHttpOwnerDisposalDrainsAndKeepsOutcome(loseResponse: False)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ProtectedInvokeHttpCommittedReceiptSurvivesRefreshDamageOrLoss(failure: \"damaged-refresh\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedPushReadHttpLostCommittedResponseRequiresReconciliationWithoutReplay",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ProtectedInvokeHttpCommittedReceiptSurvivesRefreshDamageOrLoss(failure: \"lost-response\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedOwnerHttpBootstrapsBeforeImmediatePushAndClosesEveryWorkspaceSession",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedSessionHttpNeverRetriesMutations(invoke: True)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.NormalProfileFailedReplacementPublishesNoWorkspace(stage: \"discover\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.NormalProfileLoginDrainsBeforeReplacingCapturedIdentity(operation: \"push\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ProtectedPushRefreshAndSkipUseOneRequest(skip: False)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedOwnerHttpFailedBootstrapDisposesTransportWithoutMutationOrRetry(failure: \"error\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ProtectedInvokeHttpRefreshAndSkipUseOneRequest(skip: False)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedSessionHttpUsesTwoStepReadAndPreservesPushState",
+          "outcome": "Passed"
+        }
+      ],
+      "declared_methods_not_selected": [
+        "ReadTransportSendsOneCompleteRequest",
+        "ReadTransportRejectsInvalidRequestBeforeSending",
+        "ReadTransportStrictlyDecodesTheOriginalResponse",
+        "ReadTransportNeverRetriesHttpFailure",
+        "ReadTransportCancellationSuppressesSuccess"
+      ]
+    },
+    {
+      "file": "/private/tmp/allors-cache-simplification-implementation/http-systemtext-npgsql.trx",
+      "total_run_rows": 123,
+      "pull_rows": 35,
+      "pull_methods": 23,
+      "all_pass": true,
+      "pull_rows_exact": [
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedOwnerHttpDisposalDrainsCommittedMutationRejectsQueueAndRetainsInspection(loseResponse: True)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedPushReadHttpChangedOnlyUsesOneRequestAndPreservesNewObjectIdentity",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedOwnerHttpFailedBootstrapDisposesTransportWithoutMutationOrRetry(failure: \"transport\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedPushReadHttpLostCommittedResponseRequiresReconciliationWithoutReplay",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ReadCoordinatorHttpReadsRetainEquivalentCompleteClosures",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ProtectedInvokeHttpOwnerDisposalDrainsAndKeepsOutcome(loseResponse: True)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.NormalHttpConnectionKeepsIdentityAcrossProfileLoginReplacement",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedPushReadHttpDeferredQueryMarksDeletedObjectsUnavailable",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedPushReadHttpPendingCompletionRejectsRetiredConnection(duringSave: False)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.NormalProfileFailedReplacementPublishesNoWorkspace(stage: \"read\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedOwnerHttpFailedBootstrapDisposesTransportWithoutMutationOrRetry(failure: \"error\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.NormalProfileLoginDrainsBeforeReplacingCapturedIdentity(operation: \"invoke\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ProtectedInvokeHttpPreservesUnsavedEditsAndReportsConflicts(conflict: False)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ProtectedPushRefreshAndSkipUseOneRequest(skip: True)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedPushReadHttpKeepsCommitWhenOneReadPartFails(part: \"discovery\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedOwnerHttpBootstrapsBeforeImmediatePushAndClosesEveryWorkspaceSession",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedSessionHttpNeverRetriesMutations(invoke: False)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedPushReadHttpDeferredQueryObservesConcurrentDataAndMembership",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedPushReadHttpKeepsCommitWhenOneReadPartFails(part: \"changed\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.NormalProfileExclusiveWorkspaceHasIndependentOwnedConnection",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ProtectedPushRefreshAndSkipUseOneRequest(skip: False)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ProtectedInvokeHttpOwnerDisposalDrainsAndKeepsOutcome(loseResponse: False)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ProtectedInvokeHttpCommittedReceiptSurvivesRefreshDamageOrLoss(failure: \"damaged-refresh\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedPushReadHttpDeferredQueryRefreshesConcurrentPermissionChanges",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedOwnerHttpDisposalDrainsCommittedMutationRejectsQueueAndRetainsInspection(loseResponse: False)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ProtectedInvokeHttpPreservesUnsavedEditsAndReportsConflicts(conflict: True)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ProtectedInvokeHttpCommittedReceiptSurvivesRefreshDamageOrLoss(failure: \"lost-response\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.NormalProfileFailedReplacementPublishesNoWorkspace(stage: \"discover\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedSessionHttpUsesTwoStepReadAndPreservesPushState",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedPushReadHttpPendingCompletionRejectsRetiredConnection(duringSave: True)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.NormalProfileLoginDrainsBeforeReplacingCapturedIdentity(operation: \"push\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedPushReadHttpDeferredQueryUsesTwoRequestsAndReusesRefreshedBody",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ProtectedInvokeHttpRefreshAndSkipUseOneRequest(skip: True)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ProtectedInvokeHttpRefreshAndSkipUseOneRequest(skip: False)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedSessionHttpNeverRetriesMutations(invoke: True)",
+          "outcome": "Passed"
+        }
+      ],
+      "declared_methods_not_selected": [
+        "ReadTransportSendsOneCompleteRequest",
+        "ReadTransportRejectsInvalidRequestBeforeSending",
+        "ReadTransportStrictlyDecodesTheOriginalResponse",
+        "ReadTransportNeverRetriesHttpFailure",
+        "ReadTransportCancellationSuppressesSuccess"
+      ]
+    },
+    {
+      "file": "/private/tmp/allors-cache-simplification-implementation/http-systemtext-sqlclient.trx",
+      "total_run_rows": 123,
+      "pull_rows": 35,
+      "pull_methods": 23,
+      "all_pass": true,
+      "pull_rows_exact": [
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedOwnerHttpFailedBootstrapDisposesTransportWithoutMutationOrRetry(failure: \"error\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedOwnerHttpBootstrapsBeforeImmediatePushAndClosesEveryWorkspaceSession",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ReadCoordinatorHttpReadsRetainEquivalentCompleteClosures",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedPushReadHttpPendingCompletionRejectsRetiredConnection(duringSave: True)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.NormalProfileFailedReplacementPublishesNoWorkspace(stage: \"read\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.NormalProfileExclusiveWorkspaceHasIndependentOwnedConnection",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedSessionHttpNeverRetriesMutations(invoke: True)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedPushReadHttpKeepsCommitWhenOneReadPartFails(part: \"discovery\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ProtectedInvokeHttpRefreshAndSkipUseOneRequest(skip: False)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedPushReadHttpDeferredQueryUsesTwoRequestsAndReusesRefreshedBody",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ProtectedInvokeHttpPreservesUnsavedEditsAndReportsConflicts(conflict: False)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedOwnerHttpFailedBootstrapDisposesTransportWithoutMutationOrRetry(failure: \"transport\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedSessionHttpNeverRetriesMutations(invoke: False)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ProtectedPushRefreshAndSkipUseOneRequest(skip: False)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedPushReadHttpLostCommittedResponseRequiresReconciliationWithoutReplay",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ProtectedInvokeHttpCommittedReceiptSurvivesRefreshDamageOrLoss(failure: \"lost-response\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.NormalProfileFailedReplacementPublishesNoWorkspace(stage: \"discover\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedPushReadHttpDeferredQueryObservesConcurrentDataAndMembership",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ProtectedInvokeHttpRefreshAndSkipUseOneRequest(skip: True)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ProtectedInvokeHttpOwnerDisposalDrainsAndKeepsOutcome(loseResponse: True)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ProtectedInvokeHttpCommittedReceiptSurvivesRefreshDamageOrLoss(failure: \"damaged-refresh\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedOwnerHttpDisposalDrainsCommittedMutationRejectsQueueAndRetainsInspection(loseResponse: False)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.NormalHttpConnectionKeepsIdentityAcrossProfileLoginReplacement",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedPushReadHttpDeferredQueryRefreshesConcurrentPermissionChanges",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedSessionHttpUsesTwoStepReadAndPreservesPushState",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedOwnerHttpDisposalDrainsCommittedMutationRejectsQueueAndRetainsInspection(loseResponse: True)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedPushReadHttpKeepsCommitWhenOneReadPartFails(part: \"changed\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ProtectedInvokeHttpOwnerDisposalDrainsAndKeepsOutcome(loseResponse: False)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedPushReadHttpPendingCompletionRejectsRetiredConnection(duringSave: False)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedPushReadHttpDeferredQueryMarksDeletedObjectsUnavailable",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ScopedPushReadHttpChangedOnlyUsesOneRequestAndPreservesNewObjectIdentity",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ProtectedInvokeHttpPreservesUnsavedEditsAndReportsConflicts(conflict: True)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.NormalProfileLoginDrainsBeforeReplacingCapturedIdentity(operation: \"push\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.NormalProfileLoginDrainsBeforeReplacingCapturedIdentity(operation: \"invoke\")",
+          "outcome": "Passed"
+        },
+        {
+          "name": "Tests.Workspace.Remote.PullTests.ProtectedPushRefreshAndSkipUseOneRequest(skip: True)",
+          "outcome": "Passed"
+        }
+      ],
+      "declared_methods_not_selected": [
+        "ReadTransportSendsOneCompleteRequest",
+        "ReadTransportRejectsInvalidRequestBeforeSending",
+        "ReadTransportStrictlyDecodesTheOriginalResponse",
+        "ReadTransportNeverRetriesHttpFailure",
+        "ReadTransportCancellationSuppressesSuccess"
+      ]
+    }
+  ]
+}

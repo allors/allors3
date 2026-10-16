@@ -10,12 +10,14 @@ namespace Allors.Workspace.Adapters
 
     public abstract class Configuration : IConfiguration
     {
+        private readonly IRule[] rules;
+
         protected Configuration(string name, IMetaPopulation metaPopulation, IObjectFactory objectFactory, IRule[] rules)
         {
             this.Name = name;
             this.MetaPopulation = metaPopulation;
             this.ObjectFactory = objectFactory;
-            this.Rules = rules;
+            this.rules = rules == null ? null : (IRule[])rules.Clone();
         }
 
         public string Name { get; }
@@ -24,6 +26,6 @@ namespace Allors.Workspace.Adapters
 
         public IObjectFactory ObjectFactory { get; }
 
-        public IRule[] Rules { get; }
+        public IRule[] Rules => this.rules == null ? null : (IRule[])this.rules.Clone();
     }
 }

@@ -1,4 +1,4 @@
-import { C1, Denied, TrimFrom } from '@allors/default/workspace/domain';
+import { C1, Denied, TrimFrom, TrimTo } from '@allors/default/workspace/domain';
 import { Pull } from '@allors/system/workspace/domain';
 import { Origin } from '@allors/system/workspace/meta';
 import { Fixture } from '../fixture';
@@ -128,12 +128,7 @@ test('refreshes a cached grant when an object is synchronized', async () => {
   const c1 = c1s[0];
   expect(c1.strategy.canRead(m.C1.C1AllorsString)).toBeTruthy();
 
-  const mutation = await session.call({
-    name: 'TestPermissionRefresh',
-    objects: { target: c1 },
-    values: { action: 'removeGrantRead' },
-  });
-  expect(mutation.hasErrors).toBeFalsy();
+  await fixture.jsonClient.removeC1StringReadGrant(c1.id);
 
   const refreshed = await session.pull({ object: c1 });
   expect(refreshed.hasErrors).toBeFalsy();
@@ -152,18 +147,19 @@ test('refreshes a cached revocation when an object is synchronized', async () =>
   const denieds = result.collection<Denied>(m.Denied);
   expect(denieds).toHaveLength(1);
   const denied = denieds[0];
-  expect(denied.strategy.canRead(m.Denied.DefaultWorkspaceProperty)).toBeTruthy();
-  expect(denied.strategy.canWrite(m.Denied.DefaultWorkspaceProperty)).toBeFalsy();
+  expect(
+    denied.strategy.canRead(m.Denied.DefaultWorkspaceProperty)
+  ).toBeTruthy();
+  expect(
+    denied.strategy.canWrite(m.Denied.DefaultWorkspaceProperty)
+  ).toBeFalsy();
 
   for (const denyRead of [true, false]) {
-    const mutation = await session.call({
-      name: 'TestPermissionRefresh',
-      objects: { target: denied },
-      values: {
-        action: denyRead ? 'addReadRevocation' : 'removeReadRevocation',
-      },
-    });
-    expect(mutation.hasErrors).toBeFalsy();
+    if (denyRead) {
+      await fixture.jsonClient.addDeniedPropertyReadRevocation(denied.id);
+    } else {
+      await fixture.jsonClient.removeDeniedPropertyReadRevocation(denied.id);
+    }
 
     const refreshed = await session.pull({ object: denied });
     expect(refreshed.hasErrors).toBeFalsy();
@@ -177,7 +173,7 @@ test('refreshes a cached revocation when an object is synchronized', async () =>
   }
 });
 
-test('trim', async () => {
+test('retains objects and readable relations when a role is unreadable', async () => {
   const { workspace, m } = fixture;
   const session = workspace.createSession();
 
@@ -200,17 +196,70 @@ test('trim', async () => {
     ],
   };
   const result = await session.pull(pull);
+  expect(result.hasErrors).toBeFalsy();
 
   const trimFrom = result.collection<TrimFrom>(m.TrimFrom);
+  expect(trimFrom).toHaveLength(4);
 
-  expect(trimFrom.length).toBe(2);
+  const protectedRoots = trimFrom.filter(
+    (v) => !v.strategy.canRead(m.TrimFrom.Name)
+  );
+  expect(protectedRoots).toHaveLength(2);
+  for (const root of protectedRoots) {
+    expect(root.Name).toBeNull();
+  }
+
+  for (const root of trimFrom) {
+    expect(root.strategy.canRead(m.TrimFrom.Many2One)).toBeTruthy();
+    expect(root.strategy.canRead(m.TrimFrom.Many2Manies)).toBeTruthy();
+    expect(root.Many2One).not.toBeNull();
+    expect(root.Many2Manies).toHaveLength(1);
+    expect(root.Many2Manies[0]).toBe(root.Many2One);
+  }
 
   const from1 = trimFrom.find((v) => v.Name === 'Untrimmed1');
   const from2 = trimFrom.find((v) => v.Name === 'Untrimmed2');
 
-  expect(from1.Many2One).toBeNull();
-  expect(from2.Many2One).toBeDefined();
+  expect(from1.Many2One.strategy.canRead(m.TrimTo.Name)).toBeFalsy();
+  expect(from1.Many2One.Name).toBeNull();
+  expect(from2.Many2One.strategy.canRead(m.TrimTo.Name)).toBeTruthy();
+  expect(from2.Many2One.Name).toBe('Untrimmed1');
 
-  expect(from1.Many2Manies.length).toBe(0);
-  expect(from2.Many2Manies.length).toBe(1);
+  const includedTargets = new Set(trimFrom.map((v) => v.Many2One));
+  expect(includedTargets.size).toBe(2);
+  expect(new Set(protectedRoots.map((v) => v.Many2One))).toEqual(
+    includedTargets
+  );
+});
+
+test('directly pulls an object with an unreadable role', async () => {
+  const { workspace, m } = fixture;
+  const session = workspace.createSession();
+  const result = await session.pull({
+    extent: { kind: 'Filter', objectType: m.TrimTo },
+  });
+  expect(result.hasErrors).toBeFalsy();
+
+  const targets = result.collection<TrimTo>(m.TrimTo);
+  expect(targets).toHaveLength(2);
+  const protectedTarget = targets.find(
+    (v) => !v.strategy.canRead(m.TrimTo.Name)
+  );
+  expect(protectedTarget).toBeDefined();
+  expect(protectedTarget.Name).toBeNull();
+
+  const freshSession = (await fixture.createWorkspace()).createSession();
+  const directResult = await freshSession.pull({
+    objectId: protectedTarget.id,
+  });
+  expect(directResult.hasErrors).toBeFalsy();
+  const directTarget = directResult.object<TrimTo>(m.TrimTo);
+  expect(directTarget).toBeDefined();
+  expect(directTarget.id).toBe(protectedTarget.id);
+  expect(directTarget.strategy.canRead(m.TrimTo.Name)).toBeFalsy();
+  expect(directTarget.Name).toBeNull();
+});
+
+afterEach(async () => {
+  await fixture?.close();
 });

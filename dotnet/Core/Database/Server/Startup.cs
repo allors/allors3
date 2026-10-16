@@ -43,6 +43,10 @@ namespace Allors.Server
                 UseControllersWithViews = true,
             });
 
+            services.AddAllorsRead(new Database.Protocol.Json.ReadConfiguration(new System.Collections.Generic.Dictionary<string, string>
+            {
+                ["Default"] = "core-read-v1",
+            }));
             services.AddAllorsDefaultDeny();
             services.AddAllorsDataProtection(this.Configuration, this.Environment);
             // No sign-in page to limit: the paths, if any, come from Security:AuthenticationRateLimit.

@@ -5,7 +5,12 @@
 
 namespace Allors.Workspace
 {
-    public interface IPushResult : IResult
+    using System.Collections.Generic;
+
+    public interface IPushResult : IResult, IMutationResult
     {
+        IReadOnlyList<CreationMapping> CreationMappings { get; }
+        PushDiscovery Discovery { get; }
+        IPendingPull PendingQuery { get; }
     }
 }

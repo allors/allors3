@@ -309,3 +309,7 @@ test.each([
   expect(edited.strategy.getUnitRole(roleType)).toEqual(remoteValue);
   expect(edited.strategy.diff()).toHaveLength(0);
 });
+
+afterEach(async () => {
+  await fixture?.close();
+});

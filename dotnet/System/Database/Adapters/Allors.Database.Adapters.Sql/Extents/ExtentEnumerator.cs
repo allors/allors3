@@ -12,12 +12,19 @@ namespace Allors.Database.Adapters.Sql
     {
         private readonly IEnumerator enumerator;
 
-        internal ExtentEnumerator(IEnumerable<Reference> references) => this.enumerator = references.GetEnumerator();
+        private readonly Transaction transaction;
+
+        internal ExtentEnumerator(Transaction transaction, IEnumerable<Reference> references)
+        {
+            this.transaction = transaction;
+            this.enumerator = references.GetEnumerator();
+        }
 
         public object Current
         {
             get
             {
+                this.transaction.EnsureReadable();
                 var reference = (Reference)this.enumerator.Current;
                 if (reference != null)
                 {
@@ -28,8 +35,16 @@ namespace Allors.Database.Adapters.Sql
             }
         }
 
-        public bool MoveNext() => this.enumerator.MoveNext();
+        public bool MoveNext()
+        {
+            this.transaction.EnsureReadable();
+            return this.enumerator.MoveNext();
+        }
 
-        public void Reset() => this.enumerator.Reset();
+        public void Reset()
+        {
+            this.transaction.EnsureReadable();
+            this.enumerator.Reset();
+        }
     }
 }

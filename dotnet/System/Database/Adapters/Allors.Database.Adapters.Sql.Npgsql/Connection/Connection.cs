@@ -5,6 +5,8 @@
 
 namespace Allors.Database.Adapters.Sql.Npgsql
 {
+    using System;
+    using System.Data;
     using global::Npgsql;
 
     public class Connection : IConnection
@@ -19,12 +21,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 
         public ICommand CreateCommand()
         {
-            if (this.NpgsqlConnection == null)
-            {
-                this.NpgsqlConnection = new NpgsqlConnection(this.Database.ConnectionString);
-                this.NpgsqlConnection.Open();
-                this.NpgsqlTransaction = this.NpgsqlConnection.BeginTransaction(this.Database.IsolationLevel ?? Database.DefaultIsolationLevel);
-            }
+            this.EnsureOpen();
 
             var sqlCommand = this.NpgsqlConnection.CreateCommand();
             sqlCommand.Transaction = this.NpgsqlTransaction;
@@ -36,13 +33,16 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             return this.CreateCommand((Mapping)this.Database.Mapping, sqlCommand);
         }
 
-        public void Commit()
+        public void Commit() => this.Commit(null);
+
+        internal void Commit(Action committed)
         {
             try
             {
                 if (this.NpgsqlTransaction != null)
                 {
                     this.NpgsqlTransaction.Commit();
+                    committed?.Invoke();
                 }
             }
             finally
@@ -77,6 +77,40 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                 }
 
                 this.NpgsqlConnection = null;
+            }
+        }
+
+        internal PopulationMetadata OpenWrite()
+        {
+            this.EnsureOpen();
+            return new PopulationMetadataStore(this.Database).Read(this.NpgsqlConnection, this.NpgsqlTransaction, fence: true);
+        }
+
+        internal PopulationMetadata OpenRead(out Action verifySnapshot)
+        {
+            this.EnsureOpen();
+            var connection = this.NpgsqlConnection;
+            var transaction = this.NpgsqlTransaction;
+            verifySnapshot = () =>
+            {
+                if (!ReferenceEquals(connection, this.NpgsqlConnection) || !ReferenceEquals(transaction, this.NpgsqlTransaction)
+                    || connection.State != ConnectionState.Open || !ReferenceEquals(transaction.Connection, connection)
+                    || (transaction.IsolationLevel != IsolationLevel.RepeatableRead && transaction.IsolationLevel != IsolationLevel.Snapshot))
+                {
+                    throw new InvalidOperationException("The protected SQL snapshot has ended, changed, or has unsupported isolation. Discard this read scope and open a new one.");
+                }
+            };
+            verifySnapshot();
+            return new PopulationMetadataStore(this.Database).Read(connection, transaction);
+        }
+
+        private void EnsureOpen()
+        {
+            if (this.NpgsqlConnection == null)
+            {
+                this.NpgsqlConnection = new NpgsqlConnection(this.Database.ConnectionString);
+                this.NpgsqlConnection.Open();
+                this.NpgsqlTransaction = this.NpgsqlConnection.BeginTransaction(this.Database.IsolationLevel ?? Database.DefaultIsolationLevel);
             }
         }
 

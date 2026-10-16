@@ -28,6 +28,19 @@ namespace Allors.Workspace.Adapters.Remote
                 RevocationIds = database.Ranges.Load(ctx.CollectRevocations(syncResponseObject.r))
             };
 
+        internal ReadStoredRecord ScopedRecord { get; private set; }
+
+        internal static DatabaseRecord FromScoped(DatabaseConnection database, ReadStoredRecord record, IClass type, IReadOnlyDictionary<string, IRelationType> relations)
+        {
+            var roles = record.Roles.ToDictionary(v => relations[v.Key], v =>
+            {
+                var role = relations[v.Key].RoleType;
+                if (role.ObjectType.IsUnit || role.IsOne) { return v.Value; }
+                return database.Ranges.Load(((System.Collections.IEnumerable)v.Value).Cast<object>().Select(System.Convert.ToInt64));
+            });
+            return new DatabaseRecord(database, type, record.Id, record.DataVersion) { ScopedRecord = record, roleByRelationType = roles };
+        }
+
         internal IRange<long> GrantIds { get; private set; }
 
         internal IRange<long> RevocationIds { get; private set; }
@@ -71,7 +84,7 @@ namespace Allors.Workspace.Adapters.Remote
         {
             object @object = null;
             this.RoleByRelationType?.TryGetValue(roleType.RelationType, out @object);
-            return @object;
+            return this.ScopedRecord != null && @object is byte[] binary ? binary.ToArray() : @object;
         }
 
         public override bool IsPermitted(long permission)

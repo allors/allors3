@@ -15,8 +15,6 @@ namespace Allors.Workspace
 
         IDictionary<string, IObject> Objects { get; }
 
-        IDictionary<string, object> Values { get; }
-
         public T[] GetCollection<T>() where T : class, IObject;
 
         public T[] GetCollection<T>(string key) where T : class, IObject;
@@ -24,9 +22,5 @@ namespace Allors.Workspace
         public T GetObject<T>() where T : class, IObject;
 
         public T GetObject<T>(string key) where T : class, IObject;
-
-        public object GetValue(string key);
-
-        public T GetValue<T>(string key);
     }
 }

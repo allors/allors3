@@ -25,6 +25,11 @@ namespace Allors.Database.Protocol.Json
 
         public PushResponseBuilder(ITransaction transaction, Func<IValidation> derive, IMetaPopulation metaPopulation, IAccessControl accessControl, ISet<IClass> allowedClasses, Func<IClass, IObject> build, IUnitConvert unitConvert)
         {
+            if (transaction.Database is not Adapters.Sql.Database)
+            {
+                throw new NotSupportedException("Workspace operations require PostgreSQL or SQL Server. Memory remains available for database and domain tests.");
+            }
+
             this.transaction = transaction;
             this.derive = derive;
             this.metaPopulation = metaPopulation;
@@ -37,6 +42,18 @@ namespace Allors.Database.Protocol.Json
         public IAccessControl AccessControl { get; }
 
         public PushResponse Build(PushRequest pushRequest)
+        {
+            var response = this.Apply(pushRequest);
+            if (!response.HasErrors)
+            {
+                this.transaction.Commit();
+            }
+
+            return response;
+        }
+
+        // PushRead owns commit admission and its outcome; legacy Build keeps its existing commit.
+        internal PushResponse Apply(PushRequest pushRequest)
         {
             var pushResponse = new PushResponse();
             Dictionary<long, IObject> objectByNewId = null;
@@ -165,7 +182,6 @@ namespace Allors.Database.Protocol.Json
                     w = kvp.Key,
                 }).ToArray();
 
-                this.transaction.Commit();
             }
 
             return pushResponse;

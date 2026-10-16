@@ -16,6 +16,12 @@
     <ProjectReference Include="..\..\..\System\Database\Adapters\Allors.Database.Adapters.Memory\Allors.Database.Adapters.Memory.csproj" />
     <ProjectReference Include="..\..\..\System\Database\Adapters\Allors.Database.Adapters.Tracing\Allors.Database.Adapters.Tracing.csproj" />
     <ProjectReference Include="..\Server\Server.csproj" />
+    <ProjectReference Include="..\..\..\System\Workspace\Adapters\Allors.Workspace.Adapters.Local\Allors.Workspace.Adapters.Local.csproj" />
+    <ProjectReference Include="..\..\..\System\Workspace\Adapters\Allors.Workspace.Adapters.Remote.SystemText\Allors.Workspace.Adapters.Remote.SystemText.csproj" />
+    <ProjectReference Include="..\..\..\System\Workspace\Adapters\Allors.Workspace.Adapters.Remote.Newtonsoft\Allors.Workspace.Adapters.Remote.Newtonsoft.csproj" />
+    <ProjectReference Include="..\Commands\Commands.csproj" />
+    <ProjectReference Include="..\..\Workspace\Meta.Lazy\Workspace.Meta.Lazy.csproj" />
+    <ProjectReference Include="..\..\Workspace\Configuration\Workspace.Configuration.csproj" />
   </ItemGroup>
 
 </Project>

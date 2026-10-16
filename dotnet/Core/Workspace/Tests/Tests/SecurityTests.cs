@@ -5,6 +5,7 @@
 
 namespace Tests.Workspace
 {
+    using System.Linq;
     using System.Threading.Tasks;
     using Allors;
     using Allors.Workspace.Data;
@@ -21,6 +22,41 @@ namespace Tests.Workspace
         {
             await base.InitializeAsync();
             await this.Login("administrator");
+        }
+
+        [Fact]
+        public async Task ObjectsWithUnreadableNamesRemainInResultsAndRelations()
+        {
+            var session = this.Workspace.CreateSession();
+            var pull = new Pull
+            {
+                Extent = new Filter(this.M.TrimFrom),
+                Results = new[]
+                {
+                    new Result
+                    {
+                        Include = new[] { new Node(this.M.TrimFrom.Many2One), new Node(this.M.TrimFrom.Many2Manies) },
+                    },
+                },
+            };
+
+            var result = await session.PullAsync(pull);
+
+            Assert.False(result.HasErrors);
+            var sources = result.GetCollection<TrimFrom>().ToArray();
+            Assert.Equal(4, sources.Length);
+            var unreadableSources = sources.Where(v => !v.Strategy.CanRead(this.M.TrimFrom.Name)).ToArray();
+            Assert.Equal(2, unreadableSources.Length);
+            Assert.All(unreadableSources, v => Assert.Null(v.Name));
+
+            var source = sources.Single(v => v.Name == "Untrimmed1");
+            var target = source.Many2One;
+            Assert.NotNull(target);
+            Assert.Same(target, Assert.Single(source.Many2Manies));
+            Assert.False(target.Strategy.CanRead(this.M.TrimTo.Name));
+            Assert.Null(target.Name);
+            Assert.True(source.Strategy.CanRead(this.M.TrimFrom.Many2One));
+            Assert.True(source.Strategy.CanRead(this.M.TrimFrom.Many2Manies));
         }
 
         [Fact]

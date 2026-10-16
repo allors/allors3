@@ -279,3 +279,7 @@ test('databaseManyToManySetRole', async () => {
   }
   //#endregion
 });
+
+afterEach(async () => {
+  await fixture?.close();
+});

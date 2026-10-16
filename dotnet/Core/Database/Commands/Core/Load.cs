@@ -31,8 +31,11 @@ namespace Commands
 
             using (var reader = XmlReader.Create(fileInfo.FullName))
             {
+                var database = this.Parent.Database;
+                using var maintenance = Population.For(database).BeginMaintenance();
                 this.LogLoading(fileInfo.FullName);
-                this.Parent.Database.Load(reader);
+                database.Load(reader);
+                maintenance.Complete();
             }
 
             this.LogEnd();

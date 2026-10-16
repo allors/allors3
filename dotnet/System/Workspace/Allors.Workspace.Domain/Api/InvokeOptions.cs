@@ -7,8 +7,6 @@ namespace Allors.Workspace
 {
     public class InvokeOptions
     {
-        public bool Isolated { get; set; } = false;
-
-        public bool ContinueOnError { get; set; } = false;
+        public bool Refresh { get; set; } = true;
     }
 }

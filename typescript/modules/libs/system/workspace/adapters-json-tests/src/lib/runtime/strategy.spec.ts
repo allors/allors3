@@ -156,3 +156,7 @@ test('addCompositesRoleSessionOne2ManyReassigns', async () => {
   expect(c1a.SessionC1One2Manies).toEqual([]);
   expect(c1d.SessionC1One2Manies).toEqual([c1b]);
 });
+
+afterEach(async () => {
+  await fixture?.close();
+});

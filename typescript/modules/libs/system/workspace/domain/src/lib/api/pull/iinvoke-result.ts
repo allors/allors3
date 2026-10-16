@@ -1,3 +1,4 @@
 import { IResult } from '../iresult';
+import { IMutationResult } from '../imutation-result';
 
-export type IInvokeResult = IResult;
+export interface IInvokeResult extends IResult, IMutationResult {}

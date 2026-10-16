@@ -12,9 +12,5 @@ namespace Allors.Protocol.Json.Api.Invoke
         /// </summary>
         public Invocation[] l { get; set; }
 
-        /// <summary>
-        /// Options
-        /// </summary>
-        public InvokeOptions o { get; set; }
     }
 }

@@ -13,6 +13,7 @@ namespace Tests
     using Allors.Database.Domain;
     using Allors.Database.Meta;
     using Allors.Security;
+    using Allors.Services;
     using Xunit;
     using MemoryConfiguration = Allors.Database.Adapters.Memory.Configuration;
     using MemoryDatabase = Allors.Database.Adapters.Memory.Database;
@@ -52,6 +53,40 @@ namespace Tests
             var user = new IdentityUserResolver().Resolve(Principal(new Claim(ClaimTypes.NameIdentifier, "not-an-object-id")), transaction);
 
             Assert.Null(user);
+        }
+
+        [Fact]
+        public void ReadIdentityResolvesTheCapturedNameIdentifierWithoutChangingData()
+        {
+            var database = NewDatabase();
+            var userId = NewUser(database);
+            var principal = Principal(new Claim(ClaimTypes.NameIdentifier, userId.ToString(CultureInfo.InvariantCulture)));
+            var captured = ReadUserIdentity.Capture(principal, new IdentityUserResolver());
+            var identity = (ClaimsIdentity)principal.Identity;
+            identity.RemoveClaim(identity.FindFirst(ClaimTypes.NameIdentifier));
+            identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, "0"));
+            using var transaction = database.CreateTransaction();
+
+            Assert.Equal(userId, captured.Resolve(transaction)?.Id);
+
+            var changes = transaction.Checkpoint();
+            Assert.Empty(changes.Created);
+            Assert.Empty(changes.Deleted);
+            Assert.Empty(changes.Roles);
+        }
+
+        [Fact]
+        public void ReadIdentityDoesNotResolveAnObjectThatIsNotAUser()
+        {
+            var database = NewDatabase();
+            using var transaction = database.CreateTransaction();
+            var group = new UserGroupBuilder(transaction).WithName("Not a user").Build();
+            transaction.Derive();
+            transaction.Commit();
+            var captured = ReadUserIdentity.Capture(Principal(new Claim(ClaimTypes.NameIdentifier, group.Id.ToString(CultureInfo.InvariantCulture))), new IdentityUserResolver());
+
+            Assert.Null(captured.Resolve(transaction));
+            Assert.Empty(transaction.Checkpoint().Created);
         }
 
         private static ClaimsPrincipal Principal(Claim claim) => new(new ClaimsIdentity(new[] { claim }, "Tests"));

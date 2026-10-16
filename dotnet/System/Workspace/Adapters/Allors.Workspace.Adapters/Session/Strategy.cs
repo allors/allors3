@@ -61,7 +61,7 @@ namespace Allors.Workspace.Adapters
 
         public bool HasChanges => this.DatabaseOriginState.HashChanges();
 
-        public void Reset() => this.DatabaseOriginState.Reset();
+        public void Reset() { this.Session.AssertEditable(); this.DatabaseOriginState.Reset(); }
 
         public bool ExistRole(IRoleType roleType)
         {
@@ -88,6 +88,7 @@ namespace Allors.Workspace.Adapters
 
         public void RestoreRole(IRoleType roleType)
         {
+            this.Session.AssertEditable();
             switch (roleType.Origin)
             {
                 case Origin.Session:
@@ -188,6 +189,7 @@ namespace Allors.Workspace.Adapters
 
         public void SetRole(IRoleType roleType, object value)
         {
+            this.Session.AssertEditable();
             if (roleType.ObjectType.IsUnit)
             {
                 this.SetUnitRole(roleType, value);
@@ -204,6 +206,7 @@ namespace Allors.Workspace.Adapters
 
         public void SetUnitRole(IRoleType roleType, object value)
         {
+            this.Session.AssertEditable();
             AssertUnit(roleType, value);
 
             switch (roleType.Origin)
@@ -226,6 +229,7 @@ namespace Allors.Workspace.Adapters
 
         public void SetCompositeRole<T>(IRoleType roleType, T value) where T : class, IObject
         {
+            this.Session.AssertEditable();
             this.AssertComposite(value);
 
             if (value != null)
@@ -259,6 +263,7 @@ namespace Allors.Workspace.Adapters
 
         public void SetCompositesRole<T>(IRoleType roleType, in IEnumerable<T> role) where T : class, IObject
         {
+            this.Session.AssertEditable();
             this.AssertComposites(role);
 
             var roleStrategies = this.Ranges.Import(role?.Select(v => (Strategy)v.Strategy));
@@ -283,6 +288,7 @@ namespace Allors.Workspace.Adapters
 
         public void AddCompositesRole<T>(IRoleType roleType, T value) where T : class, IObject
         {
+            this.Session.AssertEditable();
             if (value == null)
             {
                 return;
@@ -317,6 +323,7 @@ namespace Allors.Workspace.Adapters
 
         public void RemoveCompositesRole<T>(IRoleType roleType, T value) where T : class, IObject
         {
+            this.Session.AssertEditable();
             if (value == null)
             {
                 return;
@@ -380,9 +387,9 @@ namespace Allors.Workspace.Adapters
             return association?.Select(v => (T)v.Object) ?? Array.Empty<T>();
         }
 
-        public bool CanRead(IRoleType roleType) => roleType.RelationType.Origin != Origin.Database || this.DatabaseOriginState.CanRead(roleType);
+        public bool CanRead(IRoleType roleType) { this.Session.AssertActive(); return roleType.RelationType.Origin != Origin.Database || this.DatabaseOriginState.CanRead(roleType); }
 
-        public bool CanWrite(IRoleType roleType) => roleType.RelationType.Origin != Origin.Database || this.DatabaseOriginState.CanWrite(roleType);
+        public bool CanWrite(IRoleType roleType) { this.Session.AssertActive(); return roleType.RelationType.Origin != Origin.Database || this.DatabaseOriginState.CanWrite(roleType); }
 
         public bool CanExecute(IMethodType methodType) => this.DatabaseOriginState.CanExecute(methodType);
 

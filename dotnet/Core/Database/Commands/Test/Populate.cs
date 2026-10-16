@@ -23,6 +23,7 @@ namespace Commands
             this.LogBegin();
 
             var database = this.Parent.Database;
+            using var maintenance = Population.For(database).BeginMaintenance();
 
             database.Init();
 
@@ -37,6 +38,7 @@ namespace Commands
                 session.Commit();
             }
 
+            maintenance.Complete();
             this.LogEnd();
 
             return ExitCode.Success;

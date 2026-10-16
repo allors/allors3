@@ -7,9 +7,11 @@ namespace Tests.Workspace.Local
 {
     using System;
     using System.Linq;
+    using System.Collections.Generic;
+    using Allors.Database.Protocol.Json;
     using System.Threading.Tasks;
     using Allors.Database;
-    using Allors.Database.Adapters.Memory;
+    using Allors.Database.Adapters;
     using Allors.Database.Configuration;
     using Allors.Database.Domain;
     using Allors.Database.Services;
@@ -20,11 +22,11 @@ namespace Tests.Workspace.Local
     using Allors.Workspace.Domain;
     using Allors.Workspace.Meta;
     using Allors.Workspace.Meta.Lazy;
+    using Microsoft.Extensions.Configuration;
     using Configuration = Allors.Workspace.Adapters.Remote.Configuration;
     using DatabaseConnection = Allors.Workspace.Adapters.Local.DatabaseConnection;
     using IWorkspaceServices = Allors.Workspace.IWorkspaceServices;
     using Person = Allors.Workspace.Domain.Person;
-    using User = Allors.Database.Domain.User;
 
     public class Profile : IProfile
     {
@@ -32,10 +34,13 @@ namespace Tests.Workspace.Local
         private readonly IdGenerator idGenerator;
         private readonly DefaultStructRanges<long> ranges;
         private readonly Configuration configuration;
+        private readonly Fixture fixture;
 
-        private User user;
+        private IDatabase database;
+        private LocalReadIdentity identity;
+        private readonly List<DatabaseConnection> connections = new List<DatabaseConnection>();
 
-        public Database Database { get; }
+        public IDatabase Database => this.database ??= this.CreateDatabase();
 
         public DatabaseConnection DatabaseConnection { get; private set; }
 
@@ -47,6 +52,7 @@ namespace Tests.Workspace.Local
 
         public Profile(Fixture fixture)
         {
+            this.fixture = fixture;
             this.servicesBuilder = () => new WorkspaceServices();
             this.idGenerator = new IdGenerator();
             this.ranges = new DefaultStructRanges<long>();
@@ -55,53 +61,80 @@ namespace Tests.Workspace.Local
             var objectFactory = new ReflectionObjectFactory(metaPopulation, typeof(Person));
             var rules = new IRule[] { new PersonSessionFullNameRule(metaPopulation) };
             this.configuration = new Configuration("Default", metaPopulation, objectFactory, rules);
-
-            this.Database = new Database(
-                new DefaultDatabaseServices(fixture.Engine),
-                new Allors.Database.Adapters.Memory.Configuration
-                {
-                    ObjectFactory = new ObjectFactory(fixture.M, typeof(Allors.Database.Domain.Person)),
-                });
-
-            this.Database.Init();
-
-            var config = new Config();
-            new Setup(this.Database, config).Apply();
-
-            using var transaction = this.Database.CreateTransaction();
-
-            var administrator = new PersonBuilder(transaction).WithUserName("administrator").WithUniqueId(Users.AdministratorId).Build();
-            new UserGroups(transaction).Administrators.AddMember(administrator);
-            transaction.Services.Get<IUserService>().User = administrator;
-
-            new TestPopulation(transaction).Apply();
-            transaction.Derive();
-            transaction.Commit();
         }
 
         public Task InitializeAsync() => Task.CompletedTask;
 
-        public Task DisposeAsync() => Task.CompletedTask;
-
-        public IWorkspace CreateExclusiveWorkspace()
+        public async Task DisposeAsync()
         {
-            var database = new DatabaseConnection(this.configuration, this.servicesBuilder, this.Database, this.user.Id, this.idGenerator, this.ranges);
-            return database.CreateWorkspace();
+            var owned = this.connections.ToArray();
+            this.connections.Clear();
+            this.DatabaseConnection = null;
+            this.Workspace = null;
+            var errors = new List<Exception>();
+            var draining = owned.Select(connection => connection.DisposeAsync()).ToArray();
+            foreach (var closing in draining)
+            {
+                try { await closing; }
+                catch (Exception exception) { errors.Add(exception); }
+            }
+            if (errors.Count != 0) throw new AggregateException(errors);
         }
 
-        public IWorkspace CreateWorkspace() => this.DatabaseConnection.CreateWorkspace();
-
-        public Task Login(string userName)
+        public async Task<IWorkspace> CreateExclusiveWorkspaceAsync()
         {
-            using var transaction = this.Database.CreateTransaction();
-            var uniqueId = Users.TestUserId(userName);
-            this.user = new Users(transaction).Extent().ToArray().First(v => v.UniqueId == uniqueId);
+            if (this.DatabaseConnection == null) throw new InvalidOperationException("Log in before creating a workspace.");
+            var connection = await DatabaseConnection.CreateAsync(this.configuration, this.servicesBuilder, this.Database,
+                this.identity, this.idGenerator, this.ranges, "test-read-v1");
+            this.connections.Add(connection);
+            return connection.CreateWorkspace();
+        }
 
-            this.DatabaseConnection = new DatabaseConnection(this.configuration, this.servicesBuilder, this.Database, this.user.Id, this.idGenerator, this.ranges);
+        public IWorkspace CreateWorkspace() => (this.DatabaseConnection ?? throw new InvalidOperationException("Log in before creating a workspace.")).CreateWorkspace();
 
-            this.Workspace = this.DatabaseConnection.CreateWorkspace();
+        public async Task Login(string userName)
+        {
+            await this.DisposeAsync();
+            long userId;
+            using (var transaction = this.Database.CreateTransaction())
+            {
+                var uniqueId = Users.TestUserId(userName);
+                userId = new Users(transaction).Extent().ToArray().First(v => v.UniqueId == uniqueId).Id;
+            }
+            this.identity = new LocalReadIdentity(((Allors.Database.Adapters.Sql.Database)this.Database).PopulationLifecycle.RequireReady().Incarnation, userId);
+            var connection = await DatabaseConnection.CreateAsync(this.configuration, this.servicesBuilder, this.Database,
+                this.identity, this.idGenerator, this.ranges, "test-read-v1");
+            this.connections.Add(connection);
+            this.DatabaseConnection = connection;
+            this.Workspace = connection.CreateWorkspace();
+        }
 
-            return Task.CompletedTask;
+        private Allors.Database.Adapters.Sql.Database CreateDatabase()
+        {
+            var configurationBuilder = new ConfigurationBuilder();
+            configurationBuilder.AddAllorsConfiguration("core", "commands");
+            var database = (Allors.Database.Adapters.Sql.Database)new DatabaseBuilder(
+                new DefaultDatabaseServices(this.fixture.Engine),
+                configurationBuilder.Build(),
+                new ObjectFactory(this.fixture.M, typeof(Allors.Database.Domain.Person))).Build();
+
+            using var maintenance = database.PopulationLifecycle.BeginMaintenance();
+            database.Init();
+            new Setup(database, new Config()).Apply();
+
+            using (var transaction = database.CreateTransaction())
+            {
+                var administrator = new PersonBuilder(transaction).WithUserName("administrator").WithUniqueId(Users.AdministratorId).Build();
+                new UserGroups(transaction).Administrators.AddMember(administrator);
+                transaction.Services.Get<IUserService>().User = administrator;
+
+                new TestPopulation(transaction).Apply();
+                transaction.Derive();
+                transaction.Commit();
+            }
+
+            maintenance.Complete();
+            return database;
         }
     }
 }

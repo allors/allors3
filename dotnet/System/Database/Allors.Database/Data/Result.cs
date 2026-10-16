@@ -5,12 +5,8 @@
 
 namespace Allors.Database.Data
 {
-    using System;
-
     public class Result : IVisitable
     {
-        public Guid? SelectRef { get; set; }
-
         public Select Select { get; set; }
 
         public Node[] Include { get; set; }
@@ -23,11 +19,6 @@ namespace Allors.Database.Data
 
         public override string ToString()
         {
-            if (this.SelectRef != null)
-            {
-                return $"Result: [SelectRef: {this.SelectRef}]";
-            }
-
             if (this.Name != null)
             {
                 return $"Result: [Name: {this.Name}]";

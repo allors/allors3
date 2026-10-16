@@ -5,7 +5,6 @@ import {
   RoleType,
 } from '@allors/system/workspace/meta';
 import { IObject } from '../../iobject';
-import { IUnit } from '../../types';
 import { IResult } from '../iresult';
 
 export interface IPullResult extends IResult {
@@ -15,8 +14,6 @@ export interface IPullResult extends IResult {
 
   objects: Map<string, IObject>;
 
-  values: Map<string, IUnit>;
-
   collection<T extends IObject>(
     nameOrClass: string | Class | Interface | AssociationType | RoleType
   ): T[];
@@ -24,8 +21,6 @@ export interface IPullResult extends IResult {
   object<T extends IObject>(
     nameOrClass: string | Class | Interface | AssociationType | RoleType
   ): T;
-
-  value(name: string): IUnit | Array<IUnit>;
 
   addMergeError(object: IObject);
 }

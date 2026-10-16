@@ -1,0 +1,16 @@
+0118ea819e1a9d221c58138ed00d7cfac3512f91 refactor(workspace): move pull synchronization into connections
+3c6f263a4a8e8c89758f0e98d2d2403d317403aa refactor(workspace): remove object masking
+f203b025b1b87918d247f34f0799ade27e7ceb0c docs(workspace): plan connection read protocol
+5e520463f39af27210d2bb7e6ac94f59a19d02af test(database): characterize workspace read foundations
+e50a5f9ffed143a93bc2c47e01c2c8a21dbfbd36 docs(workspace): clarify memory adapter testing scope
+f90dc8b4929796faabad438e44de9a4689527c72 fix(security): recompute derived entries per transaction
+26e344dfa490a9a8a9736ede75b087de370c0773 fix(sqlclient): enforce snapshot isolation
+32a9c6328c032ad52bf2513c9d5f93d8db7b9664 feat(protocol): define workspace read messages
+b5dff0ffd014db7ba9254fe8dadde1a4ef4219df feat(protocol): validate workspace read messages
+d218d7a9b67324c3c334a869407a1ae6ca84d73f feat(database): track SQL population lifecycle
+82a3dd8cf469bd9742c1b1eb86ee15259e9666bf feat(database): enforce protected workspace read scopes
+1ce4e3f064cc8ee379fa58b0767c5b4a5fbf684c feat(workspace): execute complete protected reads
+0ec9b64701dbdc8811bc7671fca181d4a117c058 feat(workspace): retain immutable scoped read records
+3dcdab698569d1329946166c4542ef1390a88e8a feat(workspace): coordinate complete scoped reads
+a8265eb08059f66ddb9dfa0289d93d29b429c0b4 feat(workspace): integrate opt-in scoped sessions
+dd34ff56f261d1060ef4bc87eaa37abc4598a867 ci(entra): provision both SQL providers for admission tests

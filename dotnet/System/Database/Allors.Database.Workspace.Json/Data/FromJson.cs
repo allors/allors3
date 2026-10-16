@@ -37,8 +37,6 @@ namespace Allors.Database.Protocol.Json
 
         public void Resolve(Pull pull, long objectId) => this.resolvers.Add(new PullResolver(pull, objectId));
 
-        public void Resolve(Procedure procedure, IDictionary<string, long[]> collections, IDictionary<string, long> objects, long[][] pool) => this.resolvers.Add(new ProcedureResolver(procedure, collections, objects, pool));
-
         public void Resolve()
         {
             var objectIds = new HashSet<long>();

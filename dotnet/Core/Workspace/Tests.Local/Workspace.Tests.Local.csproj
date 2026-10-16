@@ -4,6 +4,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\System\Workspace\Adapters\Allors.Workspace.Adapters.Remote.SystemText\Allors.Workspace.Adapters.Remote.SystemText.csproj" />
+    <ProjectReference Include="..\..\..\System\Workspace\Adapters\Allors.Workspace.Adapters.Remote.Newtonsoft\Allors.Workspace.Adapters.Remote.Newtonsoft.csproj" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.5.1" />
     <PackageReference Include="xunit" Version="2.9.3" />
     <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
@@ -13,10 +15,21 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\System\Database\Adapters\Allors.Database.Builder\Allors.Database.Builder.csproj" />
     <ProjectReference Include="..\..\..\System\Database\Allors.Database.Workspace.Json\Allors.Database.Workspace.Json.csproj" />
     <ProjectReference Include="..\..\..\System\Workspace\Adapters\Allors.Workspace.Adapters.Local\Allors.Workspace.Adapters.Local.csproj" />
     <ProjectReference Include="..\..\..\System\Workspace\Adapters\Allors.Workspace.Adapters\Allors.Workspace.Adapters.csproj" />
     <ProjectReference Include="..\Tests\Workspace.Tests.csproj" />
+    <ProjectReference Include="..\..\..\System\Protocol\Allors.Protocol.Json.Newtonsoft\Allors.Protocol.Json.Newtonsoft.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="../../../../typescript/modules/libs/system/workspace/adapters-json-tests/src/lib/protocol/invoke-read-contract.json" LogicalName="Allors.InvokeReadContract.json" />
+    <EmbeddedResource Include="../../../../typescript/modules/libs/system/workspace/adapters-json-tests/src/lib/protocol/invoke-read-validation-cases.json" LogicalName="Allors.InvokeReadValidationCases.json" />
+    <EmbeddedResource Include="../../../../typescript/modules/libs/system/workspace/adapters-json-tests/src/lib/protocol/push-read-contract.json" LogicalName="Allors.PushReadContract.json" />
+    <EmbeddedResource Include="../../../../typescript/modules/libs/system/workspace/adapters-json-tests/src/lib/protocol/push-read-validation-cases.json" LogicalName="Allors.PushReadValidationCases.json" />
+    <EmbeddedResource Include="../../../../typescript/modules/libs/system/workspace/adapters-json-tests/src/lib/protocol/read-contract.json" LogicalName="Allors.ReadContract.json" />
+    <EmbeddedResource Include="../../../../typescript/modules/libs/system/workspace/adapters-json-tests/src/lib/protocol/read-validation-cases.json" LogicalName="Allors.ReadValidationCases.json" />
   </ItemGroup>
 
 </Project>

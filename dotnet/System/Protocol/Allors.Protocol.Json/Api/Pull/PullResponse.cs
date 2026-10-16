@@ -20,11 +20,6 @@ namespace Allors.Protocol.Json.Api.Pull
         public IDictionary<string, long> o { get; set; }
 
         /// <summary>
-        /// Values
-        /// </summary>
-        public IDictionary<string, object> v { get; set; }
-
-        /// <summary>
         /// Pool
         /// </summary>
         public PullResponseObject[] p { get; set; }

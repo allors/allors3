@@ -5,7 +5,6 @@ export * from './lib/api/access/access-response-grant';
 export * from './lib/api/access/access-response-revocation';
 
 export * from './lib/api/invoke/invocation';
-export * from './lib/api/invoke/invoke-options';
 export * from './lib/api/invoke/invoke-request';
 export * from './lib/api/invoke/invoke-response';
 
@@ -26,6 +25,29 @@ export * from './lib/api/push/push-request-role';
 export * from './lib/api/push/push-response';
 export * from './lib/api/push/push-response-new-object';
 
+export * from './lib/api/read/read-scope';
+export * from './lib/api/read/read-request';
+export * from './lib/api/read/read-pull';
+export * from './lib/api/read/read-cache';
+export * from './lib/api/read/read-security-header';
+export * from './lib/api/read/read-security-hint';
+export * from './lib/api/read/read-record-header';
+export * from './lib/api/read/discovery-success';
+export * from './lib/api/read/read-input';
+export * from './lib/api/read/read-value';
+export * from './lib/api/read/read-role';
+export * from './lib/api/read/read-record-payload';
+export * from './lib/api/read/read-record';
+export * from './lib/api/read/read-security-payload';
+export * from './lib/api/read/read-security';
+export * from './lib/api/read/read-permission-payload';
+export * from './lib/api/read/read-permission';
+export * from './lib/api/read/read-success';
+export * from './lib/api/read/read-error';
+export * from './lib/api/read/read-failure';
+export * from './lib/api/read/read-response';
+export * from './lib/api/read/read-validation';
+
 export * from './lib/api/sync/sync-request';
 export * from './lib/api/sync/sync-response';
 export * from './lib/api/sync/sync-response-object';
@@ -40,7 +62,6 @@ export * from './lib/data/extent-kind';
 export * from './lib/data/node';
 export * from './lib/data/predicate';
 export * from './lib/data/predicate-kind';
-export * from './lib/data/procedure';
 export * from './lib/data/property-kind';
 export * from './lib/data/pull';
 export * from './lib/data/result';
@@ -49,3 +70,7 @@ export * from './lib/data/sort';
 
 // meta
 export * from './lib/meta/meta-data';
+
+export * from './lib/api/push-read/push-read';
+
+export * from './lib/api/invoke-read/invoke-read';

@@ -5,15 +5,12 @@
 
 namespace Allors.Workspace.Data
 {
-    using System;
     using System.Collections.Generic;
     using Workspace;
     using Meta;
 
     public class Pull : IVisitable
     {
-        public Guid? ExtentRef { get; set; }
-
         public Extent Extent { get; set; }
 
         public IObjectType ObjectType { get; set; }

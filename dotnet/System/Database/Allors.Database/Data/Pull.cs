@@ -5,13 +5,10 @@
 
 namespace Allors.Database.Data
 {
-    using System;
     using Meta;
 
     public class Pull : IVisitable
     {
-        public Guid? ExtentRef { get; set; }
-
         public IExtent Extent { get; set; }
 
         public IObjectType ObjectType { get; set; }

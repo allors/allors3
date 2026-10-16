@@ -1,0 +1,2782 @@
+[
+  {
+    "name": "cold request",
+    "request": "coldRequest",
+    "changes": [],
+    "valid": true
+  },
+  {
+    "name": "cached request with historical security",
+    "request": "cachedRequest",
+    "changes": [],
+    "valid": true
+  },
+  {
+    "name": "complete with exact reuse and unloaded relation identities",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [],
+    "valid": true
+  },
+  {
+    "name": "scoped failure",
+    "request": "cachedRequest",
+    "response": "failure",
+    "changes": [],
+    "valid": true
+  },
+  {
+    "name": "unscoped failure",
+    "request": "coldRequest",
+    "response": "unscopedFailure",
+    "changes": [],
+    "valid": true
+  },
+  {
+    "name": "discovery",
+    "request": "cachedRequest",
+    "response": "discovery",
+    "changes": [],
+    "valid": true,
+    "requestChanges": [
+      {
+        "path": ["i"],
+        "value": "discover-1"
+      },
+      {
+        "path": ["k"],
+        "value": "discover"
+      }
+    ]
+  },
+  {
+    "name": "empty complete",
+    "request": "cachedRequest",
+    "response": "emptyComplete",
+    "changes": [],
+    "valid": true,
+    "requestChanges": [
+      {
+        "path": ["i"],
+        "value": "empty-1"
+      },
+      {
+        "path": ["p", "l"],
+        "value": []
+      }
+    ]
+  },
+  {
+    "name": "omitted optional cold fields",
+    "request": "coldRequest",
+    "changes": [
+      {
+        "path": ["sc"],
+        "remove": true
+      },
+      {
+        "path": ["h"],
+        "remove": true
+      },
+      {
+        "path": ["x"],
+        "remove": true
+      }
+    ],
+    "valid": true
+  },
+  {
+    "name": "empty hint tables need no expected scope",
+    "request": "cachedRequest",
+    "changes": [
+      {
+        "path": ["sc"],
+        "value": null
+      },
+      {
+        "path": ["h"],
+        "value": {
+          "s": [],
+          "r": [],
+          "p": []
+        }
+      }
+    ],
+    "valid": true
+  },
+  {
+    "name": "missing request v",
+    "request": "cachedRequest",
+    "changes": [
+      {
+        "path": ["v"],
+        "remove": true
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "missing request i",
+    "request": "cachedRequest",
+    "changes": [
+      {
+        "path": ["i"],
+        "remove": true
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "missing request k",
+    "request": "cachedRequest",
+    "changes": [
+      {
+        "path": ["k"],
+        "remove": true
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "missing request p",
+    "request": "cachedRequest",
+    "changes": [
+      {
+        "path": ["p"],
+        "remove": true
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "missing pull l",
+    "request": "cachedRequest",
+    "changes": [
+      {
+        "path": ["p", "l"],
+        "remove": true
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "missing pull d",
+    "request": "cachedRequest",
+    "changes": [
+      {
+        "path": ["p", "d"],
+        "remove": true
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "missing hint s",
+    "request": "cachedRequest",
+    "changes": [
+      {
+        "path": ["h", "s"],
+        "remove": true
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "missing hint r",
+    "request": "cachedRequest",
+    "changes": [
+      {
+        "path": ["h", "r"],
+        "remove": true
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "missing hint p",
+    "request": "cachedRequest",
+    "changes": [
+      {
+        "path": ["h", "p"],
+        "remove": true
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "missing scope p",
+    "request": "cachedRequest",
+    "changes": [
+      {
+        "path": ["sc", "p"],
+        "remove": true
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "missing scope u",
+    "request": "cachedRequest",
+    "changes": [
+      {
+        "path": ["sc", "u"],
+        "remove": true
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "missing scope w",
+    "request": "cachedRequest",
+    "changes": [
+      {
+        "path": ["sc", "w"],
+        "remove": true
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "missing scope r",
+    "request": "cachedRequest",
+    "changes": [
+      {
+        "path": ["sc", "r"],
+        "remove": true
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "unsupported revision",
+    "request": "cachedRequest",
+    "changes": [
+      {
+        "path": ["v"],
+        "value": 2
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "numeric string revision",
+    "request": "cachedRequest",
+    "changes": [
+      {
+        "path": ["v"],
+        "value": "1"
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "boolean revision",
+    "request": "cachedRequest",
+    "changes": [
+      {
+        "path": ["v"],
+        "value": true
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "unknown request kind",
+    "request": "cachedRequest",
+    "changes": [
+      {
+        "path": ["k"],
+        "value": "pull"
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "blank request ID",
+    "request": "cachedRequest",
+    "changes": [
+      {
+        "path": ["i"],
+        "value": " "
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "procedure slot before DTO decode",
+    "request": "cachedRequest",
+    "changes": [
+      {
+        "path": ["p", "p"],
+        "value": []
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "unknown root even null",
+    "request": "cachedRequest",
+    "changes": [
+      {
+        "path": ["procedure"],
+        "value": null
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "procedure within selection",
+    "request": "cachedRequest",
+    "changes": [
+      {
+        "path": ["p", "l", 0, "p"],
+        "value": []
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "hints without expected scope",
+    "request": "cachedRequest",
+    "changes": [
+      {
+        "path": ["sc"],
+        "value": null
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "scope context mismatch",
+    "request": "cachedRequest",
+    "changes": [
+      {
+        "path": ["sc", "x"],
+        "value": "tenant=red"
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "zero authenticated user",
+    "request": "cachedRequest",
+    "changes": [
+      {
+        "path": ["sc", "u"],
+        "value": 0
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "negative object ID",
+    "request": "cachedRequest",
+    "changes": [
+      {
+        "path": ["h", "r", 0, "i"],
+        "value": -1
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "zero object ID",
+    "request": "cachedRequest",
+    "changes": [
+      {
+        "path": ["h", "r", 0, "i"],
+        "value": 0
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "fractional object ID",
+    "request": "cachedRequest",
+    "changes": [
+      {
+        "path": ["h", "r", 0, "i"],
+        "value": 1.25
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "unsafe object ID",
+    "request": "cachedRequest",
+    "changes": [
+      {
+        "path": ["h", "r", 0, "i"],
+        "value": 9007199254740992
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "maximum exact ID",
+    "request": "cachedRequest",
+    "changes": [
+      {
+        "path": ["h", "r", 0, "i"],
+        "value": 9007199254740991
+      }
+    ],
+    "valid": true
+  },
+  {
+    "name": "zero data version",
+    "request": "cachedRequest",
+    "changes": [
+      {
+        "path": ["h", "r", 0, "v"],
+        "value": 0
+      }
+    ],
+    "valid": true
+  },
+  {
+    "name": "negative data version",
+    "request": "cachedRequest",
+    "changes": [
+      {
+        "path": ["h", "r", 0, "v"],
+        "value": -1
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "missing possession boolean",
+    "request": "cachedRequest",
+    "changes": [
+      {
+        "path": ["h", "s", 0, "h"],
+        "remove": true
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "nonboolean possession",
+    "request": "cachedRequest",
+    "changes": [
+      {
+        "path": ["h", "s", 0, "h"],
+        "value": 1
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "unknown security kind",
+    "request": "cachedRequest",
+    "changes": [
+      {
+        "path": ["h", "s", 0, "k"],
+        "value": "token"
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "duplicate exact security row",
+    "request": "cachedRequest",
+    "changes": [
+      {
+        "path": ["h", "s"],
+        "value": [
+          {
+            "k": "grant",
+            "i": 11,
+            "v": 4,
+            "h": true
+          },
+          {
+            "k": "grant",
+            "i": 11,
+            "v": 3,
+            "h": true
+          },
+          {
+            "k": "revocation",
+            "i": 21,
+            "v": 2,
+            "h": false
+          },
+          {
+            "k": "grant",
+            "i": 11,
+            "v": 4,
+            "h": true
+          }
+        ]
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "duplicate exact record candidate",
+    "request": "cachedRequest",
+    "changes": [
+      {
+        "path": ["h", "r"],
+        "value": [
+          {
+            "i": 102,
+            "c": "C1",
+            "v": 4294967298,
+            "g": [0],
+            "r": [2]
+          },
+          {
+            "i": 101,
+            "c": "C1",
+            "v": 7,
+            "g": [1],
+            "r": [2]
+          },
+          {
+            "i": 102,
+            "c": "C1",
+            "v": 4294967298,
+            "g": [0],
+            "r": [2]
+          }
+        ]
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "different historical record candidate same ID",
+    "request": "cachedRequest",
+    "changes": [
+      {
+        "path": ["h", "r"],
+        "value": [
+          {
+            "i": 102,
+            "c": "C1",
+            "v": 4294967298,
+            "g": [0],
+            "r": [2]
+          },
+          {
+            "i": 101,
+            "c": "C1",
+            "v": 7,
+            "g": [1],
+            "r": [2]
+          },
+          {
+            "i": 102,
+            "c": "C1",
+            "v": 4294967299,
+            "g": [0],
+            "r": [2]
+          }
+        ]
+      }
+    ],
+    "valid": true
+  },
+  {
+    "name": "duplicate permission inventory",
+    "request": "cachedRequest",
+    "changes": [
+      {
+        "path": ["h", "p"],
+        "value": [201, 201]
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "wrong grant reference kind",
+    "request": "cachedRequest",
+    "changes": [
+      {
+        "path": ["h", "r", 0, "g"],
+        "value": [2]
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "negative provenance reference",
+    "request": "cachedRequest",
+    "changes": [
+      {
+        "path": ["h", "r", 0, "g"],
+        "value": [-1]
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "out of bounds provenance reference",
+    "request": "cachedRequest",
+    "changes": [
+      {
+        "path": ["h", "r", 0, "g"],
+        "value": [3]
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "duplicate provenance reference",
+    "request": "cachedRequest",
+    "changes": [
+      {
+        "path": ["h", "r", 0, "g"],
+        "value": [0, 0]
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "missing selection target allowed",
+    "request": "cachedRequest",
+    "changes": [
+      {
+        "path": ["p", "l", 0, "o"],
+        "value": null
+      }
+    ],
+    "valid": true
+  },
+  {
+    "name": "negative selection target",
+    "request": "cachedRequest",
+    "changes": [
+      {
+        "path": ["p", "l", 0, "o"],
+        "value": -1
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "argument keys do not act as procedure fields",
+    "request": "cachedRequest",
+    "changes": [
+      {
+        "path": ["p", "l", 0, "a"],
+        "value": {
+          "p": {
+            "procedure": "ordinary data"
+          }
+        }
+      }
+    ],
+    "valid": true
+  },
+  {
+    "name": "invalid extent kind",
+    "request": "cachedRequest",
+    "changes": [
+      {
+        "path": ["p", "l", 2, "e", "k"],
+        "value": 999
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "missing extent kind",
+    "request": "cachedRequest",
+    "changes": [
+      {
+        "path": ["p", "l", 2, "e", "k"],
+        "remove": true
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "unknown extent field",
+    "request": "cachedRequest",
+    "changes": [
+      {
+        "path": ["p", "l", 2, "e", "procedure"],
+        "value": null
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "both dependency directions",
+    "request": "cachedRequest",
+    "changes": [
+      {
+        "path": ["p", "d", 0, "a"],
+        "value": "InverseRelated"
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "neither dependency direction",
+    "request": "cachedRequest",
+    "changes": [
+      {
+        "path": ["p", "d", 0, "r"],
+        "value": null
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "missing complete i",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["i"],
+        "remove": true
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "missing complete k",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["k"],
+        "remove": true
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "missing complete sc",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["sc"],
+        "remove": true
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "missing complete l",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["l"],
+        "remove": true
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "missing complete c",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["c"],
+        "remove": true
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "missing complete o",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["o"],
+        "remove": true
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "missing complete p",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["p"],
+        "remove": true
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "missing complete s",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["s"],
+        "remove": true
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "missing complete pm",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["pm"],
+        "remove": true
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "wrong request correlation",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["i"],
+        "value": "another-request"
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "discovery cannot complete read phase",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["k"],
+        "value": "discovery"
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "response scope mismatch",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["sc", "u"],
+        "value": 8
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "response context mismatch",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["sc", "x"],
+        "value": "tenant=red"
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "cold response still must match captured context",
+    "request": "coldRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["i"],
+        "value": "cold-1"
+      },
+      {
+        "path": ["sc", "x"],
+        "value": "tenant=red"
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "failure may report different actual scope",
+    "request": "cachedRequest",
+    "response": "failure",
+    "changes": [
+      {
+        "path": ["sc", "u"],
+        "value": 8
+      }
+    ],
+    "valid": true
+  },
+  {
+    "name": "failure may omit unavailable scope",
+    "request": "cachedRequest",
+    "response": "failure",
+    "changes": [
+      {
+        "path": ["sc"],
+        "remove": true
+      }
+    ],
+    "valid": true
+  },
+  {
+    "name": "empty failure errors",
+    "request": "cachedRequest",
+    "response": "failure",
+    "changes": [
+      {
+        "path": ["e"],
+        "value": []
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "failure with success payload even null",
+    "request": "cachedRequest",
+    "response": "failure",
+    "changes": [
+      {
+        "path": ["p"],
+        "value": null
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "failure invalid selection reference",
+    "request": "cachedRequest",
+    "response": "failure",
+    "changes": [
+      {
+        "path": ["e", 0, "i"],
+        "value": 3
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "failure duplicate object IDs",
+    "request": "cachedRequest",
+    "response": "failure",
+    "changes": [
+      {
+        "path": ["e", 0, "o"],
+        "value": [101, 101]
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "complete cannot contain error member",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["e"],
+        "value": null
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "missing input outcome",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["l"],
+        "value": [
+          {
+            "i": 0,
+            "o": 101,
+            "s": "resolved"
+          },
+          {
+            "i": 1,
+            "o": 999,
+            "s": "unavailable"
+          }
+        ]
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "duplicate input outcome",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["l", 2, "i"],
+        "value": 0
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "missing required zero input index",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["l", 0, "i"],
+        "remove": true
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "input target mismatch",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["l", 0, "o"],
+        "value": 102
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "query cannot be unavailable",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["l", 2, "s"],
+        "value": "unavailable"
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "unknown input outcome status",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["l", 0, "s"],
+        "value": "deleted"
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "resolved target outside pool remains valid",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["l", 1, "s"],
+        "value": "resolved"
+      }
+    ],
+    "valid": true
+  },
+  {
+    "name": "named object missing from pool",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["o", "first"],
+        "value": 999
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "named collection missing from pool",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["c", "found"],
+        "value": [101, 999]
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "duplicate collection member",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["c", "found"],
+        "value": [101, 101]
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "named collection null not empty",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["c", "empty"],
+        "value": null
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "unit role must use scalar encoding",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["p", 0, "p", "ro", 5, "v"],
+        "value": {
+          "value": 42
+        }
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "duplicate pool ID",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["p", 2, "i"],
+        "value": 101
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "missing record version",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["p", 0, "v"],
+        "remove": true
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "missing explicit empty grant set",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["p", 2, "g"],
+        "remove": true
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "wrong response security kind reference",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["p", 0, "g"],
+        "value": [1]
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "response provenance outside table",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["p", 0, "g"],
+        "value": [3]
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "duplicate response security",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["s"],
+        "value": [
+          {
+            "k": "grant",
+            "i": 11,
+            "v": 4,
+            "p": {
+              "p": null,
+              "r": 0
+            }
+          },
+          {
+            "k": "revocation",
+            "i": 21,
+            "v": 2,
+            "p": {
+              "p": [],
+              "r": null
+            }
+          },
+          {
+            "k": "grant",
+            "i": 12,
+            "v": 1,
+            "p": {
+              "p": [201, 202, 203, 204, 205],
+              "r": null
+            }
+          },
+          {
+            "k": "grant",
+            "i": 11,
+            "v": 4,
+            "p": {
+              "p": null,
+              "r": 0
+            }
+          }
+        ]
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "extraneous response security",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["s"],
+        "value": [
+          {
+            "k": "grant",
+            "i": 11,
+            "v": 4,
+            "p": {
+              "p": null,
+              "r": 0
+            }
+          },
+          {
+            "k": "revocation",
+            "i": 21,
+            "v": 2,
+            "p": {
+              "p": [],
+              "r": null
+            }
+          },
+          {
+            "k": "grant",
+            "i": 12,
+            "v": 1,
+            "p": {
+              "p": [201, 202, 203, 204, 205],
+              "r": null
+            }
+          },
+          {
+            "k": "grant",
+            "i": 13,
+            "v": 1,
+            "p": {
+              "p": []
+            }
+          }
+        ]
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "mixed record payload",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["p", 1, "p", "ro"],
+        "value": []
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "missing record payload alternative",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["p", 1, "p", "r"],
+        "value": null
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "optional inactive record alternative omitted",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["p", 1, "p", "ro"],
+        "remove": true
+      }
+    ],
+    "valid": true
+  },
+  {
+    "name": "record reuse out of bounds",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["p", 1, "p", "r"],
+        "value": 2
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "negative record reuse index",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["p", 1, "p", "r"],
+        "value": -1
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "record reuse changes class",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["p", 1, "c"],
+        "value": "C2"
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "record reuse changes version",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["p", 1, "v"],
+        "value": 4294967299
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "record reuse changes grant version",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["p", 1, "g"],
+        "value": [2]
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "record reuse changes security membership",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["p", 1, "g"],
+        "value": [0, 2]
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "record reuse changes revocation membership",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["p", 1, "r"],
+        "value": []
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "record reuse index within int range required",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["p", 1, "p", "r"],
+        "value": 2147483648
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "mixed security payload",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["s", 0, "p", "p"],
+        "value": []
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "empty security payload alternatives",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["s", 0, "p", "r"],
+        "value": null
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "security reuse out of bounds",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["s", 0, "p", "r"],
+        "value": 3
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "security reuse wrong historical version",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["s", 0, "p", "r"],
+        "value": 1
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "security reuse not advertised held",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["s", 1, "p"],
+        "value": {
+          "r": 2
+        }
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "security reuse wrong kind",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["s", 0, "p", "r"],
+        "value": 2
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "missing permission descriptor",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["s", 2, "p", "p"],
+        "value": [999]
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "duplicate permission body reference",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["s", 2, "p", "p"],
+        "value": [201, 201]
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "duplicate permission descriptor",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["pm"],
+        "value": [
+          {
+            "i": 201,
+            "p": {
+              "c": null,
+              "o": null,
+              "t": null,
+              "r": 0
+            }
+          },
+          {
+            "i": 202,
+            "p": {
+              "c": "C1",
+              "o": 1,
+              "t": null,
+              "r": null
+            }
+          },
+          {
+            "i": 203,
+            "p": {
+              "c": "C1",
+              "o": 2,
+              "t": "string",
+              "r": null
+            }
+          },
+          {
+            "i": 204,
+            "p": {
+              "c": "C1",
+              "o": 4,
+              "t": "string",
+              "r": null
+            }
+          },
+          {
+            "i": 205,
+            "p": {
+              "c": "C1",
+              "o": 8,
+              "t": "DoWork",
+              "r": null
+            }
+          },
+          {
+            "i": 201,
+            "p": {
+              "c": null,
+              "o": null,
+              "t": null,
+              "r": 0
+            }
+          }
+        ]
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "mixed permission payload",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["pm", 0, "p", "c"],
+        "value": "C1"
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "permission reuse mismatches ID",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["pm", 0, "i"],
+        "value": 999
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "permission reuse out of bounds",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["pm", 0, "p", "r"],
+        "value": 1
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "create has no operand",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["pm", 1, "p", "t"],
+        "value": "Name"
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "read needs operand",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["pm", 2, "p", "t"],
+        "value": null
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "write needs operand",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["pm", 3, "p", "t"],
+        "value": null
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "execute needs operand",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["pm", 4, "p", "t"],
+        "value": null
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "unknown permission operation",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["pm", 1, "p", "o"],
+        "value": 16
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "missing permission class",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["pm", 1, "p", "c"],
+        "value": null
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "duplicate role tag",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["p", 0, "p", "ro", 1, "t"],
+        "value": "binary"
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "role with conflicting value alternatives",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["p", 0, "p", "ro", 0, "o"],
+        "value": 101
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "role to-many duplicate ID",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["p", 0, "p", "ro", 10, "c"],
+        "value": [102, 102]
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "role to-many unordered IDs",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["p", 0, "p", "ro", 10, "c"],
+        "value": [4294967297, 102]
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "role to-one zero ID",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["p", 0, "p", "ro", 9, "o"],
+        "value": 0
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "null role with inactive fields omitted",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["p", 0, "p", "ro", 8],
+        "value": {
+          "t": "nothing"
+        }
+      }
+    ],
+    "valid": true
+  },
+  {
+    "name": "exact reuse resolves reordered request security table",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["s", 0, "p", "r"],
+        "value": 1
+      }
+    ],
+    "valid": true,
+    "requestChanges": [
+      {
+        "path": ["h", "s"],
+        "value": [
+          {
+            "k": "revocation",
+            "i": 21,
+            "v": 2,
+            "h": false
+          },
+          {
+            "k": "grant",
+            "i": 11,
+            "v": 4,
+            "h": true
+          },
+          {
+            "k": "grant",
+            "i": 11,
+            "v": 3,
+            "h": true
+          }
+        ]
+      },
+      {
+        "path": ["h", "r", 0, "g"],
+        "value": [1]
+      },
+      {
+        "path": ["h", "r", 0, "r"],
+        "value": [0]
+      },
+      {
+        "path": ["h", "r", 1, "g"],
+        "value": [2]
+      },
+      {
+        "path": ["h", "r", 1, "r"],
+        "value": [0]
+      }
+    ]
+  },
+  {
+    "name": "full security bodies resolve all permissions",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["s", 0, "p"],
+        "value": {
+          "p": [201]
+        }
+      }
+    ],
+    "valid": true
+  },
+  {
+    "name": "extraneous permission with fully known closure",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["s", 0, "p"],
+        "value": {
+          "p": [201]
+        }
+      },
+      {
+        "path": ["pm"],
+        "value": [
+          {
+            "i": 201,
+            "p": {
+              "c": null,
+              "o": null,
+              "t": null,
+              "r": 0
+            }
+          },
+          {
+            "i": 202,
+            "p": {
+              "c": "C1",
+              "o": 1,
+              "t": null,
+              "r": null
+            }
+          },
+          {
+            "i": 203,
+            "p": {
+              "c": "C1",
+              "o": 2,
+              "t": "string",
+              "r": null
+            }
+          },
+          {
+            "i": 204,
+            "p": {
+              "c": "C1",
+              "o": 4,
+              "t": "string",
+              "r": null
+            }
+          },
+          {
+            "i": 205,
+            "p": {
+              "c": "C1",
+              "o": 8,
+              "t": "DoWork",
+              "r": null
+            }
+          },
+          {
+            "i": 206,
+            "p": {
+              "c": "C1",
+              "o": 1
+            }
+          }
+        ]
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "unreferenced permission may belong to reused security",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["pm"],
+        "value": [
+          {
+            "i": 201,
+            "p": {
+              "c": null,
+              "o": null,
+              "t": null,
+              "r": 0
+            }
+          },
+          {
+            "i": 202,
+            "p": {
+              "c": "C1",
+              "o": 1,
+              "t": null,
+              "r": null
+            }
+          },
+          {
+            "i": 203,
+            "p": {
+              "c": "C1",
+              "o": 2,
+              "t": "string",
+              "r": null
+            }
+          },
+          {
+            "i": 204,
+            "p": {
+              "c": "C1",
+              "o": 4,
+              "t": "string",
+              "r": null
+            }
+          },
+          {
+            "i": 205,
+            "p": {
+              "c": "C1",
+              "o": 8,
+              "t": "DoWork",
+              "r": null
+            }
+          },
+          {
+            "i": 206,
+            "p": {
+              "c": "C1",
+              "o": 1
+            }
+          }
+        ]
+      }
+    ],
+    "valid": true
+  },
+  {
+    "name": "declarative result select and include shapes",
+    "request": "coldRequest",
+    "changes": [
+      {
+        "path": ["p", "l", 0, "r"],
+        "value": [
+          {
+            "s": {
+              "a": "Inverse",
+              "r": null,
+              "o": "C1",
+              "n": {
+                "r": "Related",
+                "i": [
+                  {
+                    "r": "Related",
+                    "n": []
+                  }
+                ]
+              },
+              "i": []
+            },
+            "i": [
+              {
+                "a": "Inverse",
+                "n": [
+                  {
+                    "r": "Related"
+                  }
+                ]
+              }
+            ],
+            "n": "found",
+            "k": 0,
+            "t": 5
+          }
+        ]
+      }
+    ],
+    "valid": true
+  },
+  {
+    "name": "bad result paging",
+    "request": "coldRequest",
+    "changes": [
+      {
+        "path": ["p", "l", 0, "r"],
+        "value": [
+          {
+            "s": {
+              "a": "Inverse",
+              "r": null,
+              "o": "C1",
+              "n": {
+                "r": "Related",
+                "i": [
+                  {
+                    "r": "Related",
+                    "n": []
+                  }
+                ]
+              },
+              "i": []
+            },
+            "i": [
+              {
+                "a": "Inverse",
+                "n": [
+                  {
+                    "r": "Related"
+                  }
+                ]
+              }
+            ],
+            "n": "found",
+            "k": -1,
+            "t": 5
+          }
+        ]
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "bad result include",
+    "request": "coldRequest",
+    "changes": [
+      {
+        "path": ["p", "l", 0, "r"],
+        "value": [
+          {
+            "s": {
+              "a": "Inverse",
+              "r": null,
+              "o": "C1",
+              "n": {
+                "r": "Related",
+                "i": [
+                  {
+                    "r": "Related",
+                    "n": []
+                  }
+                ]
+              },
+              "i": []
+            },
+            "i": {},
+            "n": "found",
+            "k": 0,
+            "t": 5
+          }
+        ]
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "unknown result field",
+    "request": "coldRequest",
+    "changes": [
+      {
+        "path": ["p", "l", 0, "r"],
+        "value": [
+          {
+            "s": {
+              "a": "Inverse",
+              "r": null,
+              "o": "C1",
+              "n": {
+                "r": "Related",
+                "i": [
+                  {
+                    "r": "Related",
+                    "n": []
+                  }
+                ]
+              },
+              "i": []
+            },
+            "i": [
+              {
+                "a": "Inverse",
+                "n": [
+                  {
+                    "r": "Related"
+                  }
+                ]
+              }
+            ],
+            "n": "found",
+            "k": 0,
+            "t": 5,
+            "procedure": null
+          }
+        ]
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "bad select next",
+    "request": "coldRequest",
+    "changes": [
+      {
+        "path": ["p", "l", 0, "r"],
+        "value": [
+          {
+            "s": {
+              "a": "Inverse",
+              "r": null,
+              "o": "C1",
+              "n": [],
+              "i": []
+            },
+            "i": [
+              {
+                "a": "Inverse",
+                "n": [
+                  {
+                    "r": "Related"
+                  }
+                ]
+              }
+            ],
+            "n": "found",
+            "k": 0,
+            "t": 5
+          }
+        ]
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "bad select include",
+    "request": "coldRequest",
+    "changes": [
+      {
+        "path": ["p", "l", 0, "r"],
+        "value": [
+          {
+            "s": {
+              "a": "Inverse",
+              "r": null,
+              "o": "C1",
+              "n": {
+                "r": "Related",
+                "i": [
+                  {
+                    "r": "Related",
+                    "n": []
+                  }
+                ]
+              },
+              "i": {}
+            },
+            "i": [
+              {
+                "a": "Inverse",
+                "n": [
+                  {
+                    "r": "Related"
+                  }
+                ]
+              }
+            ],
+            "n": "found",
+            "k": 0,
+            "t": 5
+          }
+        ]
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "unknown include field",
+    "request": "coldRequest",
+    "changes": [
+      {
+        "path": ["p", "l", 0, "r"],
+        "value": [
+          {
+            "s": {
+              "a": "Inverse",
+              "r": null,
+              "o": "C1",
+              "n": {
+                "r": "Related",
+                "i": [
+                  {
+                    "r": "Related",
+                    "n": []
+                  }
+                ]
+              },
+              "i": []
+            },
+            "i": [
+              {
+                "a": "Inverse",
+                "n": [
+                  {
+                    "r": "Related"
+                  }
+                ],
+                "procedure": null
+              }
+            ],
+            "n": "found",
+            "k": 0,
+            "t": 5
+          }
+        ]
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "nested declarative predicates",
+    "request": "coldRequest",
+    "changes": [
+      {
+        "path": ["p", "l", 2, "e", "p"],
+        "value": {
+          "k": 1,
+          "ops": [
+            {
+              "k": 6,
+              "r": "Name",
+              "v": "Alice"
+            },
+            {
+              "k": 3,
+              "op": {
+                "k": 8,
+                "obs": [101, 102],
+                "r": "Related"
+              }
+            }
+          ],
+          "p": "parameter",
+          "d": ["x"],
+          "pas": ["Related"],
+          "ob": 101,
+          "e": {
+            "k": 1,
+            "t": "C1"
+          },
+          "vs": ["one", null, 3]
+        }
+      }
+    ],
+    "valid": true
+  },
+  {
+    "name": "unknown predicate kind",
+    "request": "coldRequest",
+    "changes": [
+      {
+        "path": ["p", "l", 2, "e", "p"],
+        "value": {
+          "k": 13,
+          "ops": [
+            {
+              "k": 6,
+              "r": "Name",
+              "v": "Alice"
+            },
+            {
+              "k": 3,
+              "op": {
+                "k": 8,
+                "obs": [101, 102],
+                "r": "Related"
+              }
+            }
+          ],
+          "p": "parameter",
+          "d": ["x"],
+          "pas": ["Related"],
+          "ob": 101,
+          "e": {
+            "k": 1,
+            "t": "C1"
+          },
+          "vs": ["one", null, 3]
+        }
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "negative predicate object",
+    "request": "coldRequest",
+    "changes": [
+      {
+        "path": ["p", "l", 2, "e", "p"],
+        "value": {
+          "k": 1,
+          "ops": [
+            {
+              "k": 6,
+              "r": "Name",
+              "v": "Alice"
+            },
+            {
+              "k": 3,
+              "op": {
+                "k": 8,
+                "obs": [101, 102],
+                "r": "Related"
+              }
+            }
+          ],
+          "p": "parameter",
+          "d": ["x"],
+          "pas": ["Related"],
+          "ob": -1,
+          "e": {
+            "k": 1,
+            "t": "C1"
+          },
+          "vs": ["one", null, 3]
+        }
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "invalid predicate operands",
+    "request": "coldRequest",
+    "changes": [
+      {
+        "path": ["p", "l", 2, "e", "p"],
+        "value": {
+          "k": 1,
+          "ops": {},
+          "p": "parameter",
+          "d": ["x"],
+          "pas": ["Related"],
+          "ob": 101,
+          "e": {
+            "k": 1,
+            "t": "C1"
+          },
+          "vs": ["one", null, 3]
+        }
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "invalid predicate value",
+    "request": "coldRequest",
+    "changes": [
+      {
+        "path": ["p", "l", 2, "e", "p"],
+        "value": {
+          "k": 1,
+          "ops": [
+            {
+              "k": 6,
+              "r": "Name",
+              "v": "Alice"
+            },
+            {
+              "k": 3,
+              "op": {
+                "k": 8,
+                "obs": [101, 102],
+                "r": "Related"
+              }
+            }
+          ],
+          "p": "parameter",
+          "d": ["x"],
+          "pas": ["Related"],
+          "ob": 101,
+          "e": {
+            "k": 1,
+            "t": "C1"
+          },
+          "vs": ["one", null, 3],
+          "v": {}
+        }
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "unknown predicate field",
+    "request": "coldRequest",
+    "changes": [
+      {
+        "path": ["p", "l", 2, "e", "p"],
+        "value": {
+          "k": 1,
+          "ops": [
+            {
+              "k": 6,
+              "r": "Name",
+              "v": "Alice"
+            },
+            {
+              "k": 3,
+              "op": {
+                "k": 8,
+                "obs": [101, 102],
+                "r": "Related"
+              }
+            }
+          ],
+          "p": "parameter",
+          "d": ["x"],
+          "pas": ["Related"],
+          "ob": 101,
+          "e": {
+            "k": 1,
+            "t": "C1"
+          },
+          "vs": ["one", null, 3],
+          "procedure": null
+        }
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "invalid predicate dependencies",
+    "request": "coldRequest",
+    "changes": [
+      {
+        "path": ["p", "l", 2, "e", "p"],
+        "value": {
+          "k": 1,
+          "ops": [
+            {
+              "k": 6,
+              "r": "Name",
+              "v": "Alice"
+            },
+            {
+              "k": 3,
+              "op": {
+                "k": 8,
+                "obs": [101, 102],
+                "r": "Related"
+              }
+            }
+          ],
+          "p": "parameter",
+          "d": [null],
+          "pas": ["Related"],
+          "ob": 101,
+          "e": {
+            "k": 1,
+            "t": "C1"
+          },
+          "vs": ["one", null, 3]
+        }
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "declarative sort fields",
+    "request": "coldRequest",
+    "changes": [
+      {
+        "path": ["p", "l", 2, "e", "s"],
+        "value": [
+          {
+            "r": "Name",
+            "d": 1
+          }
+        ]
+      }
+    ],
+    "valid": true
+  },
+  {
+    "name": "invalid sort direction",
+    "request": "coldRequest",
+    "changes": [
+      {
+        "path": ["p", "l", 2, "e", "s"],
+        "value": [
+          {
+            "r": "Name",
+            "d": 0
+          }
+        ]
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "invalid extent operands",
+    "request": "coldRequest",
+    "changes": [
+      {
+        "path": ["p", "l", 2, "e", "o"],
+        "value": {}
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "sort nullable default direction",
+    "request": "coldRequest",
+    "changes": [
+      {
+        "path": ["p", "l", 2, "e", "s"],
+        "value": [
+          {
+            "r": "Name",
+            "d": null
+          }
+        ]
+      }
+    ],
+    "valid": true
+  },
+  {
+    "name": "sort omitted default direction",
+    "request": "coldRequest",
+    "changes": [
+      {
+        "path": ["p", "l", 2, "e", "s"],
+        "value": [
+          {
+            "r": "Name"
+          }
+        ]
+      }
+    ],
+    "valid": true
+  },
+  {
+    "name": "sort structure without metadata meaning",
+    "request": "coldRequest",
+    "changes": [
+      {
+        "path": ["p", "l", 2, "e", "s"],
+        "value": [{}]
+      }
+    ],
+    "valid": true
+  },
+  {
+    "name": "unicode next-line blank ID",
+    "request": "coldRequest",
+    "changes": [
+      {
+        "path": ["i"],
+        "value": "\u0085"
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "unicode BOM blank ID",
+    "request": "coldRequest",
+    "changes": [
+      {
+        "path": ["i"],
+        "value": "\ufeff"
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "removed extent reference rejected",
+    "request": "coldRequest",
+    "changes": [
+      {
+        "path": ["p", "l"],
+        "value": [
+          {
+            "e": {
+              "k": 1,
+              "t": "C1"
+            },
+            "r": [
+              {
+                "n": "found"
+              }
+            ],
+            "er": "01234567-89ab-cdef-0123-456789abcdef"
+          }
+        ]
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "null removed extent reference rejected",
+    "request": "coldRequest",
+    "changes": [
+      {
+        "path": ["p", "l"],
+        "value": [
+          {
+            "e": {
+              "k": 1,
+              "t": "C1"
+            },
+            "r": [
+              {
+                "n": "found"
+              }
+            ],
+            "er": null
+          }
+        ]
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "removed select reference rejected",
+    "request": "coldRequest",
+    "changes": [
+      {
+        "path": ["p", "l"],
+        "value": [
+          {
+            "e": {
+              "k": 1,
+              "t": "C1"
+            },
+            "r": [
+              {
+                "n": "found",
+                "r": "01234567-89ab-cdef-0123-456789abcdef"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "null removed select reference rejected",
+    "request": "coldRequest",
+    "changes": [
+      {
+        "path": ["p", "l"],
+        "value": [
+          {
+            "e": {
+              "k": 1,
+              "t": "C1"
+            },
+            "r": [
+              {
+                "n": "found",
+                "r": null
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "removed complete v empty map",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["v"],
+        "value": {}
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "removed complete v populated map",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["v"],
+        "value": {
+          "integer": 42
+        }
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "removed complete v null",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["v"],
+        "value": null
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "removed complete v scalar",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["v"],
+        "value": 42
+      }
+    ],
+    "valid": false
+  },
+  {
+    "name": "result-like names remain named object and collection labels",
+    "request": "cachedRequest",
+    "response": "complete",
+    "changes": [
+      {
+        "path": ["c"],
+        "value": {
+          "v": [],
+          "values": []
+        }
+      },
+      {
+        "path": ["o"],
+        "value": {
+          "value": null
+        }
+      }
+    ],
+    "valid": true
+  }
+]

@@ -8,4 +8,10 @@
     <ProjectReference Include="..\Allors.Workspace.Adapters\Allors.Workspace.Adapters.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="Workspace.Tests.Local" />
+    <InternalsVisibleTo Include="Workspace.Tests.Remote.Json.Newtonsoft" />
+    <InternalsVisibleTo Include="Workspace.Tests.Remote.Json.SystemText" />
+    <InternalsVisibleTo Include="Server.Local.Tests" />
+  </ItemGroup>
 </Project>

@@ -86,6 +86,8 @@ namespace Allors.Database.Adapters.Sql
 
         public string SchemaName { get; }
 
+        public PopulationLifecycle PopulationLifecycle { get; protected set; }
+
         public IObjectFactory ObjectFactory { get; }
 
         public IMetaPopulation MetaPopulation { get; }
@@ -111,6 +113,16 @@ namespace Allors.Database.Adapters.Sql
         }
 
         internal IRanges<long> Ranges = new DefaultStructRanges<long>();
+
+        public virtual WriteScope OpenWrite(Guid expectedIncarnation) => throw new NotSupportedException("This SQL provider does not support protected write scopes.");
+
+        protected WriteScope CreateWriteScope(IConnection connection, PopulationMetadata population, Guid expectedIncarnation, Action<Action> commit) =>
+            new WriteScope(this, connection, population, expectedIncarnation, commit);
+
+        public virtual ReadScope OpenRead() => throw new NotSupportedException("This SQL provider does not support protected read scopes.");
+
+        protected ReadScope CreateReadScope(IConnection connection, PopulationMetadata population, Action verifySnapshot) =>
+            new ReadScope(this, connection, population, verifySnapshot);
 
         public ITransaction CreateTransaction()
         {

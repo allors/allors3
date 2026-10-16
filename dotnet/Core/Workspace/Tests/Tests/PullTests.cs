@@ -52,7 +52,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C1>().Equal(c1B);
 
@@ -76,7 +75,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<I12>().Equal(c1B, c2B);
         }
@@ -108,7 +106,6 @@ namespace Tests.Workspace
 
             Assert.Empty(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             // Full
             pull = new Pull
@@ -126,7 +123,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C2>().Equal(c2B, c2C, c2D);
 
@@ -149,7 +145,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C2>().Equal(c2B);
         }
@@ -185,7 +180,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C2>().Equal(c2B);
         }
@@ -216,7 +210,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C2>().Equal(c2B, c2C);
         }
@@ -242,7 +235,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C2>().Equal(c2B, c2C, c2D);
         }
@@ -273,7 +265,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C2>().Equal(c2B);
         }
@@ -304,7 +295,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C2>().Equal(c2C);
         }
@@ -335,7 +325,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C2>().Equal(c2B);
         }
@@ -366,7 +355,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C2>().Equal(c2B);
 
@@ -385,7 +373,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C2>().Equal(c2C, c2D);
         }
@@ -411,7 +398,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C2>().Equal(c2B, c2C, c2D);
 
@@ -428,7 +414,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<I2>().Equal(c2B, c2C, c2D);
         }
@@ -453,7 +438,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C2>().Equal(c2B, c2C, c2D);
         }
@@ -484,7 +468,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C2>().Equal(c2B);
         }
@@ -515,7 +498,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C2>().Equal(c2B);
 
@@ -534,7 +516,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C2>().Equal(c2C);
         }
@@ -560,7 +541,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C1>().Equal(c1B, c1C, c1D);
 
@@ -576,7 +556,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C2>().Equal(c2B, c2C, c2D);
         }
@@ -601,7 +580,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<I12>().Equal(c1D, c2B, c2C);
 
@@ -617,7 +595,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<I12>().Equal(c1B, c1C, c2D);
         }
@@ -644,7 +621,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C1>().Equal(c1C);
         }
@@ -666,7 +642,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<I12>().Equal(c1A, c1B, c1C, c1D, c2A, c2B, c2C, c2D);
         }
@@ -694,7 +669,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<I12>().Equal(c1A, c1B, c1C, c1D);
         }
@@ -724,7 +698,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C1>().Equal(c1A, c1B, c1D);
         }
@@ -759,7 +732,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C1>().Equal(c1B, c1C);
         }
@@ -791,7 +763,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<I12>().Equal(c1A, c1B, c1C, c1D);
         }
@@ -823,7 +794,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<I12>().Equal(c2A, c2B, c2C, c2D);
         }
@@ -852,7 +822,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C1>().Equal(c1A, c1B);
         }
@@ -880,7 +849,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C1>().Equal(c1C, c1D);
         }
@@ -912,7 +880,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C1>().Equal(c1B, c1C, c1D);
         }
@@ -940,7 +907,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C1>().Equal(c1B);
         }
@@ -968,7 +934,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C1>().Equal(c1C, c1D);
         }
@@ -996,7 +961,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C1>().Equal(c1D);
         }
@@ -1024,7 +988,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C1>().Equal(c1B);
         }
@@ -1052,7 +1015,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C1>().Equal(c1B);
         }
@@ -1080,7 +1042,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C1>().Equal(c1D);
         }
@@ -1108,7 +1069,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C1>().Equal(c1C, c1D);
         }
@@ -1136,7 +1096,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C1>().Equal(c1B, c1C);
         }
@@ -1164,7 +1123,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C1>().Equal(c1C, c1D);
         }
@@ -1192,7 +1150,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C1>().Equal(c1D);
         }
@@ -1220,7 +1177,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C1>().Equal(c1B);
         }
@@ -1248,7 +1204,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C1>().Equal(c1C, c1D);
         }
@@ -1276,7 +1231,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C1>().Equal(c1D);
         }
@@ -1304,7 +1258,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C1>().Equal(c1C, c1D);
         }
@@ -1332,7 +1285,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C1>().Equal(c1B, c1C);
         }
@@ -1360,7 +1312,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C1>().Equal(c1C, c1D);
         }
@@ -1388,7 +1339,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C1>().Equal(c1D);
         }
@@ -1416,7 +1366,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C1>().Equal(c1B);
         }
@@ -1444,7 +1393,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C1>().Equal(c1C, c1D);
         }
@@ -1472,7 +1420,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C1>().Equal(c1C, c1D);
         }
@@ -1500,7 +1447,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C1>().Equal(c1B, c1C, c1D);
         }
@@ -1528,7 +1474,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C1>().Equal(c1B);
         }
@@ -1556,7 +1501,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C1>().Equal(c1C, c1D);
         }
@@ -1584,7 +1528,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C1>().Equal(c1D);
         }
@@ -1612,7 +1555,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C1>().Equal(c1B);
         }
@@ -1640,7 +1582,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C1>().Equal(c1C, c1D);
         }
@@ -1665,7 +1606,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C1>().Equal(c1B, c1C, c1D);
         }
@@ -1693,7 +1633,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C1>().Equal(c1C);
         }
@@ -1721,7 +1660,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C1>().Equal(c1B);
         }
@@ -1749,7 +1687,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C1>().Equal(c1B, c1C, c1D);
         }
@@ -1777,7 +1714,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C1>().Equal(c1B);
         }
@@ -1809,7 +1745,6 @@ namespace Tests.Workspace
 
             Assert.Empty(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             // Full
             pull = new Pull
@@ -1827,7 +1762,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C1>().Equal(c1B, c1C, c1D);
 
@@ -1850,7 +1784,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C1>().Equal(c1B, c1C, c1D);
         }
@@ -1880,7 +1813,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C1>().Equal(c1C, c1D);
         }
@@ -1911,7 +1843,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C1>().Equal(c1B);
         }
@@ -1941,7 +1872,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C1>().Equal(c1C);
         }
@@ -1972,7 +1902,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C1>().Equal(c1B);
         }
@@ -2003,7 +1932,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C1>().Equal(c1B, c1C);
         }
@@ -2037,7 +1965,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
 
             result.Assert().Collection<C1>("IetsAnders").Equal(c1C, c1D);
         }
@@ -2061,7 +1988,6 @@ namespace Tests.Workspace
 
             Assert.Single(result.Objects);
             Assert.Empty(result.Collections);
-            Assert.Empty(result.Values);
         }
 
         [Fact]

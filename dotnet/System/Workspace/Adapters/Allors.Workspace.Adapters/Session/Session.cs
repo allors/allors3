@@ -9,6 +9,7 @@ namespace Allors.Workspace.Adapters
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using System.Threading;
     using Collections;
     using Data;
     using Derivations;
@@ -29,13 +30,14 @@ namespace Allors.Workspace.Adapters
 
             this.StrategyByWorkspaceId = new Dictionary<long, Strategy>();
             this.strategiesByClass = new Dictionary<IClass, ISet<Strategy>>();
-            this.SessionOriginState = new SessionOriginState(workspace.StrategyRanges);
+            this.SessionOriginState = new SessionOriginState(workspace.StrategyRanges, this.AssertEditable);
 
             this.ChangeSetTracker = new ChangeSetTracker(this);
             this.PushToDatabaseTracker = new PushToDatabaseTracker();
 
-            this.Services.OnInit(this);
         }
+
+        public abstract void Dispose();
 
         // TODO: push to concrete classes and implement
         public ISet<IDependency> Dependencies => EmptySet<IDependency>.Instance;
@@ -66,6 +68,7 @@ namespace Allors.Workspace.Adapters
 
         public void Activate(IEnumerable<IRule> rules)
         {
+            this.AssertEditable();
             if (rules == null)
             {
                 return;
@@ -114,8 +117,13 @@ namespace Allors.Workspace.Adapters
             return null;
         }
 
+        protected internal virtual void AssertActive() { }
+
+        protected internal virtual void AssertEditable() => this.AssertActive();
+
         public void Reset()
         {
+            this.AssertEditable();
             var changeSet = this.Checkpoint();
 
             var strategies = new HashSet<IStrategy>(changeSet.Created);
@@ -142,6 +150,7 @@ namespace Allors.Workspace.Adapters
         public T Create<T>() where T : class, IObject => this.Create<T>((IClass)this.Workspace.DatabaseConnection.Configuration.ObjectFactory.GetObjectType<T>());
         public IChangeSet Checkpoint()
         {
+            this.AssertEditable();
             var changeSet = new ChangeSet(this, this.ChangeSetTracker.Created, this.ChangeSetTracker.Instantiated);
 
             if (this.ChangeSetTracker.DatabaseOriginStates != null)
@@ -287,11 +296,17 @@ namespace Allors.Workspace.Adapters
         }
 
         public abstract Task<IInvokeResult> InvokeAsync(Method method, InvokeOptions options = null);
+
+        public abstract Task<IInvokeResult> InvokeAsync(Method method, InvokeOptions options, CancellationToken cancellationToken);
         public abstract Task<IInvokeResult> InvokeAsync(Method[] methods, InvokeOptions options = null);
-        public abstract Task<IPullResult> CallAsync(Procedure procedure, params Pull[] pull);
-        public abstract Task<IPullResult> CallAsync(object args, string name);
+
+        public abstract Task<IInvokeResult> InvokeAsync(Method[] methods, InvokeOptions options, CancellationToken cancellationToken);
         public abstract Task<IPullResult> PullAsync(params Pull[] pull);
+        public virtual bool ReconciliationRequired => false;
+
         public abstract Task<IPushResult> PushAsync();
+
+        public abstract Task<IPushResult> PushAsync(PushOptions options, System.Threading.CancellationToken cancellationToken = default);
 
 
     }

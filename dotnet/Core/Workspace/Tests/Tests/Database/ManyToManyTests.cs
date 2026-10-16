@@ -129,16 +129,16 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation.DatabaseRole
 
                 var c1b = session.Create<C1>();
 
-                Assert.False(c1a.CanWriteC1C1Many2Manies);
+                Assert.True(c1a.CanWriteC1C1Many2Manies);
                 c1a.AddC1C1Many2Many(c1b);
 
-                Assert.Empty(c1a.C1C1Many2Manies);
-                Assert.Empty(c1b.C1sWhereC1C1Many2Many);
+                Assert.Single(c1a.C1C1Many2Manies);
+                Assert.Single(c1b.C1sWhereC1C1Many2Many);
 
                 await session.PushAsync();
 
-                Assert.Empty(c1a.C1C1Many2Manies);
-                Assert.Empty(c1b.C1sWhereC1C1Many2Many);
+                Assert.Single(c1a.C1C1Many2Manies);
+                Assert.Single(c1b.C1sWhereC1C1Many2Many);
             }
             #endregion
 
@@ -200,16 +200,16 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation.DatabaseRole
 
                 await session.PushAsync();
 
-                Assert.False(c1a.CanWriteC1C1Many2Manies);
+                Assert.True(c1a.CanWriteC1C1Many2Manies);
                 c1a.AddC1C1Many2Many(c1b);
 
-                Assert.Empty(c1a.C1C1Many2Manies);
-                Assert.Empty(c1b.C1sWhereC1C1Many2Many);
+                Assert.Single(c1a.C1C1Many2Manies);
+                Assert.Single(c1b.C1sWhereC1C1Many2Many);
 
                 await session.PushAsync();
 
-                Assert.Empty(c1a.C1C1Many2Manies);
-                Assert.Empty(c1b.C1sWhereC1C1Many2Many);
+                Assert.Single(c1a.C1C1Many2Manies);
+                Assert.Single(c1b.C1sWhereC1C1Many2Many);
             }
             #endregion
 
@@ -506,6 +506,32 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation.DatabaseRole
                     }
                 }
             }
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task SetRoleAfterPushWithoutRefreshKeepsWriteRestriction(bool pushBoth)
+        {
+            using var session = this.Workspace.CreateSession();
+            var first = session.Create<C1>();
+            var second = pushBoth ? session.Create<C1>() : null;
+            Assert.Equal(Allors.Workspace.MutationOutcome.Committed,
+                (await session.PushAsync(new Allors.Workspace.PushOptions { Refresh = false })).Outcome);
+            second ??= session.Create<C1>();
+            Assert.False(first.CanWriteC1C1Many2Manies);
+            first.AddC1C1Many2Many(second);
+            Assert.Empty(first.C1C1Many2Manies);
+            Assert.Empty(second.C1sWhereC1C1Many2Many);
+            Assert.Equal(Allors.Workspace.MutationOutcome.Committed,
+                (await session.PushAsync(new Allors.Workspace.PushOptions { Refresh = false })).Outcome);
+            Assert.Empty(first.C1C1Many2Manies);
+            Assert.Empty(second.C1sWhereC1C1Many2Many);
+            Assert.False((await session.PullAsync(new Pull { Object = first }, new Pull { Object = second })).HasErrors);
+            Assert.True(first.CanWriteC1C1Many2Manies);
+            first.AddC1C1Many2Many(second);
+            Assert.Contains(second, first.C1C1Many2Manies);
+            Assert.Contains(first, second.C1sWhereC1C1Many2Many);
         }
     }
 }

@@ -5,14 +5,22 @@
 
 namespace Allors.Workspace.Adapters.Remote
 {
+    using System;
     using Ranges;
 
     public class Workspace : Adapters.Workspace
     {
-        public Workspace(DatabaseConnection database, IWorkspaceServices services, IRanges<long> recordRanges) : base(database, services, recordRanges) => this.Services.OnInit(this);
-
+        private bool closed;
+        internal Workspace(DatabaseConnection database, IWorkspaceServices services, IRanges<long> recordRanges) : base(database, services, recordRanges) { }
         public new DatabaseConnection DatabaseConnection => (DatabaseConnection)base.DatabaseConnection;
-
-        public override ISession CreateSession() => new Session(this, this.Services.CreateSessionServices());
+        public override ISession CreateSession() => this.DatabaseConnection.CreateSession(this);
+        internal void Close()
+        {
+            lock (this.DatabaseConnection.State) this.closed = true;
+        }
+        internal void RequireUsable()
+        {
+            if (this.closed) throw new InvalidOperationException("This workspace is closed or its initialization failed. Create a new workspace on a ready connection.");
+        }
     }
 }

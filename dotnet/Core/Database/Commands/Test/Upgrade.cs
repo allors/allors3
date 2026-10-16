@@ -43,6 +43,7 @@ namespace Commands
             var fileInfo = new FileInfo(this.FileName);
 
             this.LogBegin();
+            using var maintenance = Population.For(this.Parent.Database).BeginMaintenance();
 
             var notLoadedObjectTypeIds = new HashSet<Guid>();
             var notLoadedRelationTypeIds = new HashSet<Guid>();
@@ -100,6 +101,7 @@ namespace Commands
                 transaction.Commit();
             }
 
+            maintenance.Complete();
             this.LogEnd();
             return ExitCode.Success;
         }

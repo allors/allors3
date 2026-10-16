@@ -14,7 +14,6 @@ namespace Allors.Database.Protocol.Json
     using Extent = Allors.Protocol.Json.Data.Extent;
     using IVisitor = Data.IVisitor;
     using Node = Allors.Protocol.Json.Data.Node;
-    using Procedure = Allors.Protocol.Json.Data.Procedure;
     using Pull = Allors.Protocol.Json.Data.Pull;
     using Result = Allors.Protocol.Json.Data.Result;
     using Select = Allors.Protocol.Json.Data.Select;
@@ -47,8 +46,6 @@ namespace Allors.Database.Protocol.Json
         public Extent Extent => this.extents?.Peek();
 
         public Select Select => this.selects?.Peek();
-
-        public Procedure Procedure { get; private set; }
 
         public void VisitAnd(And visited)
         {
@@ -395,7 +392,6 @@ namespace Allors.Database.Protocol.Json
         {
             var pull = new Pull
             {
-                er = visited.ExtentRef,
                 t = visited.ObjectType?.Tag,
                 o = visited.Object?.Id,
             };
@@ -426,7 +422,6 @@ namespace Allors.Database.Protocol.Json
         {
             var result = new Result
             {
-                r = visited.SelectRef,
                 n = visited.Name,
                 k = visited.Skip,
                 t = visited.Take,
@@ -497,15 +492,5 @@ namespace Allors.Database.Protocol.Json
                 }
             }
         }
-
-        public void VisitProcedure(Data.Procedure procedure) =>
-            this.Procedure = new Procedure
-            {
-                n = procedure.Name,
-                c = procedure.Collections.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Select(v => v.Id).ToArray()),
-                o = procedure.Objects.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Id),
-                v = procedure.Values,
-                p = procedure.Pool.Select(kvp => new[] { kvp.Key.Id, kvp.Value }).ToArray(),
-            };
     }
 }

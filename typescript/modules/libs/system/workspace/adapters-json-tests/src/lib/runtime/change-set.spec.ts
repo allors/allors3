@@ -928,3 +928,7 @@ test('changeSetAfterDoubleReset', async () => {
       .value
   ).toBe(c1a_2);
 });
+
+afterEach(async () => {
+  await fixture?.close();
+});

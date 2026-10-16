@@ -82,3 +82,7 @@ test('databaseGetOne2One', async () => {
   expect(c1WhereC1C2One2One).toBeDefined();
   expect(c1WhereC1C2One2One.Name).toBe(name_c1C);
 });
+
+afterEach(async () => {
+  await fixture?.close();
+});

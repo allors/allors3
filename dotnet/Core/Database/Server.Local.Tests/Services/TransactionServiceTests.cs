@@ -49,6 +49,102 @@ namespace Tests
             Assert.Null(transactionService.Transaction.Services.Get<IUserService>().User);
         }
 
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void ReadIdentityRejectsAnAnonymousOrMissingPrincipalBeforeResolving(bool missing)
+        {
+            var resolver = new RecordingUserResolver(0);
+            var principal = missing ? null : new ClaimsPrincipal(new ClaimsIdentity());
+
+            var exception = Assert.Throws<InvalidOperationException>(() => ReadUserIdentity.Capture(principal, resolver));
+
+            Assert.Contains("authenticated", exception.Message);
+            Assert.Null(resolver.Principal);
+        }
+
+        [Fact]
+        public void ReadIdentityOwnsClaimsAndIdentityMetadataCapturedBeforeResolution()
+        {
+            var database = NewDatabase();
+            var userId = NewUser(database, "captured");
+            var resolver = new RecordingUserResolver(userId);
+            var identity = new ClaimsIdentity(new[]
+            {
+                new Claim("name", "captured", ClaimValueTypes.String, "issuer", "original-issuer"),
+                new Claim("role", "reader"),
+            }, "Tests", "name", "role")
+            {
+                Label = "captured identity",
+                Actor = new ClaimsIdentity(new[] { new Claim("actor", "original") }, "Actor"),
+            };
+            identity.FindFirst("name").Properties["source"] = "original";
+            var principal = new ClaimsPrincipal(identity);
+            var captured = ReadUserIdentity.Capture(principal, resolver);
+
+            identity.FindFirst("name").Properties["source"] = "changed";
+            identity.RemoveClaim(identity.FindFirst("name"));
+            identity.AddClaim(new Claim("name", "changed"));
+            identity.Actor.RemoveClaim(identity.Actor.FindFirst("actor"));
+            identity.Label = "changed identity";
+            principal.AddIdentity(new ClaimsIdentity("later"));
+            using var transaction = database.CreateTransaction();
+
+            Assert.Equal(userId, captured.Resolve(transaction).Id);
+
+            var resolvedIdentity = Assert.Single(resolver.Principal.Identities);
+            Assert.NotSame(identity, resolvedIdentity);
+            Assert.Equal("captured", resolvedIdentity.Name);
+            Assert.Equal("Tests", resolvedIdentity.AuthenticationType);
+            Assert.Equal("captured identity", resolvedIdentity.Label);
+            Assert.True(resolver.Principal.IsInRole("reader"));
+            Assert.Equal("original", resolvedIdentity.Actor.FindFirst("actor").Value);
+            var claim = resolvedIdentity.FindFirst("name");
+            Assert.Equal("issuer", claim.Issuer);
+            Assert.Equal("original-issuer", claim.OriginalIssuer);
+            Assert.Equal("original", claim.Properties["source"]);
+        }
+
+        [Fact]
+        public void ReadIdentityGivesTheResolverAFreshPrincipalOnEveryResolution()
+        {
+            using var transaction = NewDatabase().CreateTransaction();
+            var resolver = new RecordingUserResolver(0);
+            var captured = ReadUserIdentity.Capture(new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, "captured") }, "Tests")), resolver);
+
+            Assert.Null(captured.Resolve(transaction));
+            var first = resolver.Principal;
+            ((ClaimsIdentity)first.Identity).RemoveClaim(first.FindFirst(ClaimTypes.Name));
+
+            Assert.Null(captured.Resolve(transaction));
+
+            Assert.NotSame(first, resolver.Principal);
+            Assert.Equal("captured", resolver.Principal.Identity.Name);
+        }
+
+        [Fact]
+        public void ReadIdentityUsesOnlyTheSuppliedTransactionAndDoesNotSetItsUserService()
+        {
+            var database = NewDatabase();
+            var userId = NewUser(database, "captured");
+            using var transaction = database.CreateTransaction();
+            var captured = ReadUserIdentity.Capture(new ClaimsPrincipal(new ClaimsIdentity("Tests")), new RecordingUserResolver(userId));
+
+            var user = captured.Resolve(transaction);
+
+            Assert.Same(transaction, user.Strategy.Transaction);
+            Assert.Null(transaction.Services.Get<IUserService>().User);
+            Assert.Empty(transaction.Checkpoint().Roles);
+        }
+
+        [Fact]
+        public void ReadIdentityRequiresAResolver()
+        {
+            var principal = new ClaimsPrincipal(new ClaimsIdentity("Tests"));
+
+            Assert.Throws<ArgumentNullException>(() => ReadUserIdentity.Capture(principal, null));
+        }
+
         private static long NewUser(IDatabase database, string userName)
         {
             using var transaction = database.CreateTransaction();

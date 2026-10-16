@@ -1,0 +1,127 @@
+TypeScript pure-once execution map — 2026-10-16 — read-only proposal
+
+Decision
+Use two explicit Nx targets, test-pure and test-integration, in the existing
+system-workspace-adapters-json-tests project. Keep its ordinary test target and npm
+system-workspace-adapters-json:test script unfiltered. Put pure checks into existing
+TypescriptWorkspaceTest and its existing CI wrapper; make the existing AdaptersJson
+Nuke provider targets integration-only. No test code, fixture, expectations, relation
+permutations or source locations change. No new test project.
+
+Exact current partition
+- database/security/response-context.spec.ts: 156 pure expanded cases.
+- protocol/read-contract.spec.ts: 475 pure expanded cases.
+- The 20 runtime/**/*.spec.ts files: 231 integration expanded cases.
+- Total existing adapters-json project: 22 files / 862 expanded case executions.
+The two pure files have no real service setup: Fixture is used only with generated
+metadata and controlled transports; read-contract's HTTP probes inject mocked fetch.
+Fixture.init is absent from both. Actual HTTP remains in runtime/pull and the other
+runtime specs and retains production Read, PushRead and InvokeRead boundaries.
+
+census.json records the complete 631 pure expanded identities, all 231 current
+integration identities with body hashes, all 22 source hashes and exact path lists.
+The 631 identities come from the final successful source-matching pure-final.json,
+not the older 634-case result. All eleven final TypeScript frozen-source hashes still
+match. Runtime test registrations and literal test.each arguments were parsed with
+the installed TypeScript AST, not executed. They equal the prior 231-row integration
+multiset after the one already-approved coordinator-to-connection title rename.
+The two cases with the same title remain distinct multiplicities. Existing source
+body loops are untouched: their internal relation permutations are not counted as
+separate Jest rows and are not removed.
+
+Selection and fail-closed behavior
+Both additional Nx targets use the existing @nrwl/jest:jest executor and Jest config.
+Their shared exact positive regex is:
+libs/system/workspace/adapters-json-tests/src/lib/(database/security/response-context|protocol/read-contract)\.spec\.ts$
+Pure sets testPathPattern to that regex; integration sets testPathIgnorePatterns to
+that same regex. Both set passWithNoTests:false and have distinct coverage outputs.
+A newly added unrelated spec defaults to integration; neither a directory allowlist
+nor title filter can silently omit it. Pure plus integration is disjoint and exhaustive.
+Default test has no filter. @nrwl/jest getJestProjects deduplicates configs by Set,
+so root Jest project discovery still includes this project once despite three targets.
+Named targets are deliberate: pinned Nx 14.8.9 silently discards unknown configuration
+names in create-task-graph.js:109–114. We therefore do not recommend Nx configurations
+or an environment toggle. Unknown target names fail target resolution; zero matching
+files fail the new targets. The exact generated selections still require validation
+because config spelling errors can otherwise broaden one partition.
+
+Minimal exact source manifest: 4 paths
+1. typescript/modules/libs/system/workspace/adapters-json-tests/project.json
+   Add test-pure and test-integration targets, as fully specified in proposed-manifest.json.
+2. typescript/modules/package.json
+   Add system-workspace-adapters-json:test:pure and :integration npm scripts:
+   npx nx run system-workspace-adapters-json-tests:test-pure --skipNxCache
+   npx nx run system-workspace-adapters-json-tests:test-integration --skipNxCache
+   Preserve existing :test and test:all unfiltered behavior.
+3. build/Typescript/Modules/Build.cs
+   New leaf TypescriptSystemWorkspaceAdaptersJsonPure follows the four existing pure
+   leaves: After(TypescriptInstall), DependsOn(DotnetCoreGenerate), EnsureDirectories,
+   npm run system-workspace-adapters-json:test:pure; use its own
+   SystemWorkspaceAdaptersJsonPureTests.trx. Add this leaf to TypescriptWorkspaceTest.
+   Existing TypescriptSystemWorkspaceAdaptersJson changes only its npm script to
+   :integration and receives an explicit integration-only description. Existing
+   TypescriptWorkspaceAdaptersJsonTest wrapper likewise describes integration-only.
+   Keep its generate, publish, reset, populate, HTTP Ready and disposal sequence.
+   Do not attach the new pure leaf to either provider-specific AdaptersJson target.
+4. .github/workflows/ci.yml
+   Move existing CiTypescriptWorkspaceTest from sqlclient matrix to memory matrix.
+   Add actions/setup-node@v6, node-version 24, conditional on that exact matrix target
+   in the memory job. Update the memory comment. Keep SQLClient AdaptersJson and
+   Npgsql adapter-only scope unchanged. Do not add a new CI job or provider matrix.
+No build/Build.ci.cs change is needed: its existing wrappers resolve the changed graph.
+Parent workstream owns docs/changelog for the combined consolidation; those are not
+silently excluded from the overall implementation scope by this four-path runtime map.
+
+Resulting entrypoints
+- ./build.sh with no target: Install + Generate only, unchanged; not a test entrypoint.
+- ./build.sh TypescriptWorkspaceTest: existing four pure projects + new 631 once.
+  Existing four projects retain their current generation requirements and cases.
+- ./build.sh TypescriptWorkspaceAdaptersJsonTest --provider <provider>:
+  231 integration rows; creates the same Core provider/server resources as today.
+- ./build.sh TypescriptSystemWorkspaceAdaptersJson: same integration leaf, 231 rows.
+- Existing CiTypescriptWorkspaceTest: Reset + Install + five pure leaves, no DB/HTTP.
+- Existing CiTypescriptWorkspaceAdaptersJsonTest: Reset + Install + integration leaf.
+- npm run system-workspace-adapters-json:test and nx test system-workspace-adapters-json-tests:
+  all 862 rows, still useful for local full discovery/execution with a running host.
+- npm run test:all: four pure projects plus unfiltered adapters-json once, unchanged.
+A deliberate two-provider local validation now executes 631 + 231*2 = 1,093 adapters-json
+rows instead of 862*2 = 1,724: 631 repeated pure rows avoided. This is a count reduction,
+not a measured speedup. Present CI runs this integration target only on SQLClient, so
+moving pure checks to the memory job changes resource ownership, not CI row count.
+
+Validation proposed for implementation (none run in this map)
+1. Save source/body/argument/fixture and generated hashes; require all unchanged after.
+2. Run default Jest/Nx --listTests (JSON) and both named target --listTests (JSON), with
+   caches bypassed. Compare normalized path sets: 22 default = 2 pure + 20 integration,
+   disjoint. Resolve emitted config to verify passWithNoTests:false. Deliberate unknown
+   target must fail before test execution. A zero-match override must fail, not pass.
+3. Run pure target without configured provider or running task HTTP host; require exactly
+   the 631 current identity/multiplicity rows from census.json, no skipped cases.
+4. Run complete integration selection separately for each already-agreed provider on
+   isolated owned resources and fresh result names; compare 231 identities per provider
+   and verify none of the 631 pure identities executed there. Provider coverage stays
+   in those 231; a pure fake-HTTP test is not a replacement for actual server coverage.
+5. Compare combined identity counters with unfiltered source discovery: 631 + 231 = 862.
+   Preserve all duplicate-title multiplicities and literal each-row values. A build graph
+   dry run must show pure once, no database/reset/server dependencies in pure selection,
+   and provider integration without a dependency on pure. Check CI matrix once-only entry.
+6. Run relevant JSON formatting, TypeScript spec typecheck and Nuke compilation/build,
+   plus the full implementation validation selected by the parent map. Confirm distinct
+   TRX paths and no cache reuse (scripts retain --skipNxCache). Clean only owned resources.
+
+Evidence limitations
+This mapping ran no builds, tests, discovery runners, or services. Pure passing evidence
+is the previous completed cache simplification run with matching current source hashes.
+The full 231-case integration partition has not passed on current source as a full suite;
+latest selected integration was 23 cache HTTP + 44 behavior HTTP per provider, not 231.
+Previously recorded unrelated expectation failures remain pending; splitting execution
+cannot authorize changing them or justify claiming a full green matrix. The older full
+provider run's statuses are not asserted true of current source. No serializer/provider
+coverage is retired here. No new performance or memory-bound claim is made.
+
+Preservation
+Read-only inspection ended at refactor/workspace-pull-refresh,
+HEAD dd34ff56f261d1060ef4bc87eaa37abc4598a867, parent
+a8265eb08059f66ddb9dfa0289d93d29b429c0b4; 320 dirty paths. All 22 spec source hashes
+match those captured during mapping. Evidence writes are confined to this /private/tmp
+folder. No repository edits, Git mutation, test/build execution or service action.

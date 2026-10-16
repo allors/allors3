@@ -18,6 +18,9 @@ namespace Allors.Services
         // not create users itself: for a principal it has no user for, it asks the application's
         // IUserFactory. A plug-in that has a user created or updates one does so in a transaction
         // of its own and commits it: the request's transaction is rolled back when the request ends.
+        // In the protected read path, that admission work must already be complete. Resolve only
+        // reads the supplied transaction; it must not provision, use another connection to write,
+        // or perform external side effects. The read-scope owner validates the returned user.
         User Resolve(ClaimsPrincipal principal, ITransaction transaction);
     }
 }

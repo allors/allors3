@@ -1,0 +1,92 @@
+[
+  {
+    "action": "delete",
+    "path": "dotnet/Core/Workspace/Tests.Remote.Json.Newtonsoft/Tests/PullTests.cs",
+    "purpose": "Replace duplicate source with linked shared source; preserve codec execution."
+  },
+  {
+    "action": "delete",
+    "path": "dotnet/Core/Workspace/Tests.Remote.Json.SystemText/Tests/PullTests.cs",
+    "purpose": "Replace duplicate source with linked shared source; preserve codec execution."
+  },
+  {
+    "action": "add",
+    "path": "dotnet/Core/Workspace/Tests/Remote/PullTests.cs",
+    "purpose": "Shared 24-method/36-row live contract plus inherited integration coverage."
+  },
+  {
+    "action": "add",
+    "path": "dotnet/Core/Workspace/Tests/Remote/ReadTransportTests.cs",
+    "purpose": "Shared fixture-free four-method/seven-row contract, Category=Pure."
+  },
+  {
+    "action": "edit",
+    "path": "dotnet/Core/Workspace/Tests/Workspace.Tests.csproj",
+    "purpose": "Exclude the two linked sources from this assembly compilation."
+  },
+  {
+    "action": "edit",
+    "path": "dotnet/Core/Workspace/Tests.Remote.Json.Newtonsoft/Workspace.Tests.Remote.Json.Newtonsoft.csproj",
+    "purpose": "Link the two shared sources; bind RemoteAdapter and RemoteCodec namespaces."
+  },
+  {
+    "action": "edit",
+    "path": "dotnet/Core/Workspace/Tests.Remote.Json.SystemText/Workspace.Tests.Remote.Json.SystemText.csproj",
+    "purpose": "Link the two shared sources; bind RemoteAdapter and RemoteCodec namespaces."
+  },
+  {
+    "action": "edit",
+    "path": "dotnet/Core/Workspace/Tests.Local/Tests/PullTests.cs",
+    "purpose": "Add Category=Pure to exact 124 declared pure methods only; preserve all bodies/data."
+  },
+  {
+    "action": "edit",
+    "path": "build/Dotnet/Core/Build.cs",
+    "purpose": "Pure target for three existing assemblies; complementary filters on provider leaves; aggregate includes pure."
+  },
+  {
+    "action": "edit",
+    "path": "build/Build.ci.cs",
+    "purpose": "Add CiDotnetCoreWorkspacePureTest without Reset dependency."
+  },
+  {
+    "action": "edit",
+    "path": "build/Typescript/Modules/Build.cs",
+    "purpose": "Service-free adapters-json pure leaf in TypescriptWorkspaceTest; existing HTTP leaf selects integration."
+  },
+  {
+    "action": "edit",
+    "path": ".github/workflows/ci.yml",
+    "purpose": "Schedule new .NET pure target and existing TS pure aggregate in service-free matrix; conditional Node; retain existing provider coverage."
+  },
+  {
+    "action": "edit",
+    "path": "typescript/modules/libs/system/workspace/adapters-json-tests/project.json",
+    "purpose": "Add explicit test-pure/test-integration targets; retain unfiltered test target."
+  },
+  {
+    "action": "edit",
+    "path": "typescript/modules/package.json",
+    "purpose": "Add pure/integration npm scripts; retain existing unfiltered script."
+  },
+  {
+    "action": "edit",
+    "path": "docs/internals/workspace-session-state.md",
+    "purpose": "Update links to shared live contract source."
+  },
+  {
+    "action": "edit",
+    "path": "docs/internals/workspace-read-coordinator.md",
+    "purpose": "Update links to shared live contract source."
+  },
+  {
+    "action": "edit",
+    "path": "docs/internals/workspace-caller-migration-inventory.md",
+    "purpose": "Record implemented partition, validation and any remaining boundary."
+  },
+  {
+    "action": "edit",
+    "path": "CHANGELOG.md",
+    "purpose": "Unreleased test consolidation entry."
+  }
+]

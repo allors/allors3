@@ -5194,6 +5194,594 @@ namespace Allors.Database.Adapters
             }
         }
 
+        protected static void AssertReadVisibilityAcrossCommit(IDatabase readerDatabase, IDatabase writerDatabase, bool retainsSnapshot)
+        {
+            writerDatabase.Init();
+
+            long sourceId;
+            long targetId;
+            using (var setup = writerDatabase.CreateTransaction())
+            {
+                var source = setup.Create<C1>();
+                source.C1AllorsString = "Before commit";
+                var target = setup.Create<C2>();
+                sourceId = source.Id;
+                targetId = target.Id;
+                setup.Commit();
+            }
+
+            using var reader = readerDatabase.CreateTransaction();
+            var initialMember = Assert.Single(reader.Extent<C1>().ToArray());
+            Assert.Equal(sourceId, initialMember.Id);
+            var initialVersion = initialMember.Strategy.ObjectVersion;
+            var targetInReader = (C2)reader.Instantiate(targetId);
+            var targetVersion = targetInReader.Strategy.ObjectVersion;
+
+            long addedId;
+            using (var writer = writerDatabase.CreateTransaction())
+            {
+                Assert.NotSame(reader, writer);
+                var source = (C1)writer.Instantiate(sourceId);
+                source.C1AllorsString = "After commit";
+                var target = (C2)writer.Instantiate(targetId);
+                var added = writer.Create<C1>();
+                added.C1C2many2one = target;
+                addedId = added.Id;
+                writer.Commit();
+
+                Assert.True(source.Strategy.ObjectVersion > initialVersion);
+                Assert.Equal(targetVersion, target.Strategy.ObjectVersion);
+            }
+
+            // Neither this unit role nor the inverse relation was read before the other
+            // transaction committed. Fresh extents also have to use the same read scope.
+            Assert.Equal(retainsSnapshot ? "Before commit" : "After commit", initialMember.C1AllorsString);
+            Assert.Equal(initialVersion, initialMember.Strategy.ObjectVersion);
+            Assert.Equal(
+                retainsSnapshot ? Array.Empty<long>() : new[] { addedId },
+                targetInReader.C1sWhereC1C2many2one.Select(v => v.Id).ToArray());
+            Assert.Equal(targetVersion, targetInReader.Strategy.ObjectVersion);
+            Assert.Equal(
+                retainsSnapshot ? new[] { sourceId } : new[] { sourceId, addedId },
+                reader.Extent<C1>().ToArray().Select(v => v.Id).OrderBy(v => v).ToArray());
+
+            using var verification = writerDatabase.CreateTransaction();
+            var currentSource = (C1)verification.Instantiate(sourceId);
+            Assert.Equal("After commit", currentSource.C1AllorsString);
+            Assert.True(currentSource.Strategy.ObjectVersion > initialVersion);
+            Assert.Equal(new[] { addedId }, ((C2)verification.Instantiate(targetId)).C1sWhereC1C2many2one.Select(v => v.Id).ToArray());
+            Assert.Equal(2, verification.Extent<C1>().ToArray().Length);
+        }
+
+        protected static void AssertProtectedReadRetainsSnapshot(Sql.Database writerDatabase, Sql.Database readerDatabase)
+        {
+            var baseline = PrepareProtectedReadPopulation(writerDatabase);
+            using var scope = readerDatabase.OpenRead();
+            Assert.Equal(writerDatabase.PopulationLifecycle.RequireReady().Incarnation, scope.Population.Incarnation);
+            Assert.Equal(Sql.PopulationState.Ready, scope.Population.State);
+
+            // No domain read has run yet: lifecycle lookup must already have fixed this snapshot.
+            long addedId;
+            using (var writer = writerDatabase.CreateTransaction())
+            {
+                var source = (C1)writer.Instantiate(baseline.SourceId);
+                source.C1AllorsString = "Committed after read admission";
+                var added = writer.Create<C1>();
+                added.C1C2many2one = (C2)writer.Instantiate(baseline.TargetId);
+                addedId = added.Id;
+                writer.Commit();
+            }
+
+            var transaction = scope.Transaction;
+            var sourceInRead = Assert.IsType<C1>(transaction.Instantiate(baseline.SourceId));
+            var targetInRead = Assert.IsType<C2>(transaction.Instantiate(baseline.TargetId));
+            Assert.Equal("Committed baseline", sourceInRead.C1AllorsString);
+            Assert.Equal(baseline.SourceVersion, sourceInRead.Strategy.ObjectVersion);
+            Assert.Equal(new[] { baseline.SourceId }, transaction.Extent<C1>().ToArray().Select(v => v.Id).ToArray());
+            Assert.Empty(targetInRead.C1sWhereC1C2many2one);
+            Assert.Null(transaction.Instantiate(addedId));
+            scope.EnsureValid();
+
+            using var current = writerDatabase.CreateTransaction();
+            Assert.Equal("Committed after read admission", ((C1)current.Instantiate(baseline.SourceId)).C1AllorsString);
+            Assert.Equal(2, current.Extent<C1>().Count);
+            Assert.Equal(new[] { addedId }, ((C2)current.Instantiate(baseline.TargetId)).C1sWhereC1C2many2one.Select(v => v.Id).ToArray());
+        }
+
+        protected static void AssertProtectedReadRejectsMutation(Sql.Database writerDatabase, Sql.Database readerDatabase, string operation)
+        {
+            var baseline = PrepareProtectedReadPopulation(writerDatabase);
+            using var scope = readerDatabase.OpenRead();
+            var transaction = scope.Transaction;
+            var source = Assert.IsType<C1>(transaction.Instantiate(baseline.SourceId));
+            var target = Assert.IsType<C2>(transaction.Instantiate(baseline.TargetId));
+            var m = writerDatabase.Context().M;
+            scope.EnsureValid();
+            Action forbidden = operation switch
+            {
+                "create" => () => transaction.Create<C1>(),
+                "create-many" => () => transaction.Create<C1>(2),
+                "set-unit" => () => source.C1AllorsString = "Forbidden",
+                "remove-unit" => () => source.Strategy.RemoveUnitRole(m.C1.C1AllorsString),
+                "set-composite" => () => source.C1C2many2one = target,
+                "remove-composite" => () => source.Strategy.RemoveCompositeRole(m.C1.C1C2many2one),
+                "add-composites" => () => source.Strategy.AddCompositesRole(m.C1.C1C2many2manies, target),
+                "remove-composites" => () => source.Strategy.RemoveCompositesRole(m.C1.C1C2many2manies, target),
+                "set-composites" => () => source.Strategy.SetCompositesRole(m.C1.C1C2many2manies, new IObject[] { target }),
+                "clear-composites" => () => source.Strategy.RemoveCompositesRole(m.C1.C1C2many2manies),
+                "delete" => () => source.Strategy.Delete(),
+                "commit" => () => transaction.Commit(),
+                "rollback" => () => transaction.Rollback(),
+                "dispose-transaction" => () => transaction.Dispose(),
+                "connection-command" => () => transaction.Connection.CreateCommand(),
+                "connection-commit" => () => transaction.Connection.Commit(),
+                "connection-rollback" => () => transaction.Connection.Rollback(),
+                "require-flush" => () => transaction.State.RequireFlush((Sql.Strategy)source.Strategy),
+                "new-state" => () => new Sql.State(transaction),
+                "services-init" => () => transaction.Services.OnInit(transaction),
+                "services-dispose" => () => transaction.Services.Dispose(),
+                _ => throw new ArgumentOutOfRangeException(nameof(operation)),
+            };
+
+            Assert.ThrowsAny<InvalidOperationException>(forbidden);
+            Assert.ThrowsAny<InvalidOperationException>(() => scope.EnsureValid());
+            _ = Record.Exception(() => transaction.Checkpoint());
+            Assert.ThrowsAny<InvalidOperationException>(() => scope.EnsureValid());
+            scope.Dispose();
+            Assert.ThrowsAny<InvalidOperationException>(() => transaction.Instantiate(baseline.SourceId));
+
+            using var verification = writerDatabase.CreateTransaction();
+            var unchanged = Assert.IsType<C1>(verification.Instantiate(baseline.SourceId));
+            Assert.Equal("Committed baseline", unchanged.C1AllorsString);
+            Assert.Equal(baseline.SourceVersion, unchanged.Strategy.ObjectVersion);
+            Assert.Null(unchanged.C1C2many2one);
+            Assert.Empty(unchanged.C1C2many2manies);
+            Assert.Single(verification.Extent<C1>().ToArray());
+            Assert.Single(verification.Extent<C2>().ToArray());
+        }
+
+        protected static void AssertProtectedReadRejectsAccessAfterDisposal(Sql.Database database)
+        {
+            var baseline = PrepareProtectedReadPopulation(database);
+            var scope = database.OpenRead();
+            var transaction = scope.Transaction;
+            var retained = Assert.IsType<C1>(transaction.Instantiate(baseline.SourceId));
+            Assert.Equal("Committed baseline", retained.C1AllorsString);
+            transaction.Checkpoint();
+            scope.EnsureValid();
+            scope.Dispose();
+            scope.Dispose();
+
+            Assert.ThrowsAny<InvalidOperationException>(() => scope.EnsureValid());
+            Assert.ThrowsAny<InvalidOperationException>(() => transaction.Instantiate(baseline.SourceId));
+            Assert.ThrowsAny<InvalidOperationException>(() => transaction.Extent<C1>().Count);
+            Assert.ThrowsAny<InvalidOperationException>(() => retained.C1AllorsString);
+            Assert.ThrowsAny<InvalidOperationException>(() => transaction.Connection.CreateCommand());
+            using var fresh = database.OpenRead();
+            Assert.Equal("Committed baseline", ((C1)fresh.Transaction.Instantiate(baseline.SourceId)).C1AllorsString);
+            fresh.EnsureValid();
+        }
+
+        protected static void AssertProtectedReadInitializesServicesAfterSnapshot(
+            Sql.Database writerDatabase,
+            Func<IDatabaseServices, Sql.Database> createReader)
+        {
+            var baseline = PrepareProtectedReadPopulation(writerDatabase);
+            var services = new ProtectedReadTestDatabaseServices(transaction =>
+            {
+                using var writer = writerDatabase.CreateTransaction();
+                ((C1)writer.Instantiate(baseline.SourceId)).C1AllorsString = "Changed during service initialization";
+                writer.Commit();
+                Assert.Equal("Committed baseline", ((C1)transaction.Instantiate(baseline.SourceId)).C1AllorsString);
+            });
+            var readerDatabase = createReader(services);
+            using (var scope = readerDatabase.OpenRead())
+            {
+                Assert.Equal(1, services.Initializations);
+                Assert.Same(services.Transaction, scope.Transaction);
+                Assert.Equal("Committed baseline", ((C1)scope.Transaction.Instantiate(baseline.SourceId)).C1AllorsString);
+                scope.EnsureValid();
+            }
+
+            Assert.Equal(1, services.Disposals);
+        }
+
+        protected static void AssertProtectedReadInitializationFailureCleansUp(
+            Sql.Database writerDatabase,
+            Func<IDatabaseServices, Sql.Database> createReader,
+            bool catchViolation)
+        {
+            var baseline = PrepareProtectedReadPopulation(writerDatabase);
+            var services = new ProtectedReadTestDatabaseServices(transaction =>
+            {
+                if (catchViolation)
+                {
+                    Assert.ThrowsAny<InvalidOperationException>(() => transaction.Create<C1>());
+                    _ = Record.Exception(() => transaction.Checkpoint());
+                }
+                else
+                {
+                    transaction.Create<C1>();
+                }
+            });
+            var readerDatabase = createReader(services);
+            Assert.ThrowsAny<InvalidOperationException>(() => readerDatabase.OpenRead());
+            Assert.Equal(1, services.Initializations);
+            Assert.Equal(1, services.Disposals);
+            Assert.NotNull(services.Transaction);
+            Assert.ThrowsAny<InvalidOperationException>(() => services.Transaction.Instantiate(baseline.SourceId));
+            Assert.ThrowsAny<InvalidOperationException>(() => services.Transaction.Commit());
+            using var current = writerDatabase.CreateTransaction();
+            Assert.Single(current.Extent<C1>().ToArray());
+            Assert.Equal("Committed baseline", ((C1)current.Instantiate(baseline.SourceId)).C1AllorsString);
+        }
+
+        protected static void AssertProtectedWriteCapturesChangesAcrossCheckpoints(Sql.Database database)
+        {
+            var baseline = PrepareProtectedReadPopulation(database);
+            var population = database.PopulationLifecycle.RequireReady();
+            using var write = database.OpenWrite(population.Incarnation);
+            write.AllowWrites();
+            var source = (C1)write.Transaction.Instantiate(baseline.SourceId);
+            var target = (C2)write.Transaction.Instantiate(baseline.TargetId);
+            write.IncludeSubmitted(source.Strategy);
+            var noOp = write.Transaction.Create<C1>();
+            noOp.C1AllorsString = "unchanged";
+            write.Transaction.Checkpoint();
+            source.C1C2one2one = target;
+            write.Transaction.Checkpoint();
+            var createdThenDeleted = write.Transaction.Create<C2>();
+            var deletedId = createdThenDeleted.Id;
+            createdThenDeleted.Strategy.Delete();
+            write.Transaction.Checkpoint();
+            source.C1C2one2one = null;
+            write.Commit();
+
+            Assert.Equal(Sql.WriteCommitState.Committed, write.CommitState);
+            Assert.Equal(4, write.AffectedObjects.Count);
+            var sourceEntry = Assert.Single(write.AffectedObjects.Where(v => v.Id == source.Id));
+            Assert.True(sourceEntry.Kind.HasFlag(Sql.AffectedObjectKind.Submitted));
+            Assert.True(sourceEntry.Kind.HasFlag(Sql.AffectedObjectKind.Role));
+            var inverseEntry = Assert.Single(write.AffectedObjects.Where(v => v.Id == target.Id));
+            Assert.True(inverseEntry.Kind.HasFlag(Sql.AffectedObjectKind.Association));
+            var deletedEntry = Assert.Single(write.AffectedObjects.Where(v => v.Id == deletedId));
+            Assert.Equal(database.Context().M.C2, deletedEntry.Class);
+            Assert.True(deletedEntry.Kind.HasFlag(Sql.AffectedObjectKind.Created));
+            Assert.True(deletedEntry.Kind.HasFlag(Sql.AffectedObjectKind.Deleted));
+            Assert.Throws<InvalidOperationException>(() => write.Transaction.Commit());
+        }
+
+        protected static void AssertProtectedWriteAdmissionAndDisposal(Sql.Database database)
+        {
+            var baseline = PrepareProtectedReadPopulation(database);
+            var population = database.PopulationLifecycle.RequireReady();
+            Assert.Throws<InvalidOperationException>(() => database.OpenWrite(Guid.NewGuid()));
+            using (var rejected = database.OpenWrite(population.Incarnation))
+            {
+                var source = (C1)rejected.Transaction.Instantiate(baseline.SourceId);
+                Assert.Throws<InvalidOperationException>(() => source.C1AllorsString = "Rejected");
+                Assert.Throws<InvalidOperationException>(() => rejected.AllowWrites());
+                Assert.Equal(Sql.WriteCommitState.NotCommitted, rejected.CommitState);
+            }
+
+            var write = database.OpenWrite(population.Incarnation);
+            write.AllowWrites();
+            var changed = (C1)write.Transaction.Instantiate(baseline.SourceId);
+            changed.C1AllorsString = "Rolled back";
+            write.Dispose();
+            Assert.Throws<ObjectDisposedException>(() => changed.C1AllorsString = "After disposal");
+            using var check = database.CreateTransaction();
+            Assert.Equal("Committed baseline", ((C1)check.Instantiate(baseline.SourceId)).C1AllorsString);
+        }
+
+        protected static void AssertProtectedWriteRejectsDirectLifecycleOperations(Sql.Database database, string operation)
+        {
+            PrepareProtectedReadPopulation(database);
+            using var write = database.OpenWrite(database.PopulationLifecycle.RequireReady().Incarnation);
+            write.AllowWrites();
+            write.Transaction.Create<C1>();
+            Action invalid = operation switch
+            {
+                "commit" => () => write.Transaction.Commit(),
+                "rollback" => () => write.Transaction.Rollback(),
+                "connection-commit" => () => write.Transaction.Connection.Commit(),
+                "connection-rollback" => () => write.Transaction.Connection.Rollback(),
+                "connection-command" => () => write.Transaction.Connection.CreateCommand(),
+                _ => throw new ArgumentOutOfRangeException(nameof(operation)),
+            };
+            Assert.Throws<InvalidOperationException>(invalid);
+            Assert.Throws<InvalidOperationException>(() => write.Commit());
+            Assert.Equal(Sql.WriteCommitState.NotCommitted, write.CommitState);
+        }
+
+        protected static void AssertProtectedWriteInitializationCannotMutate(
+            Sql.Database database, Func<IDatabaseServices, Sql.Database> createWriter, string operation)
+        {
+            PrepareProtectedReadPopulation(database);
+            var population = database.PopulationLifecycle.RequireReady();
+            var services = new ProtectedReadTestDatabaseServices(transaction =>
+            {
+                Action invalid = operation switch
+                {
+                    "create" => () => transaction.Create<C1>(),
+                    "commit" => () => transaction.Commit(),
+                    "checkpoint" => () => transaction.Checkpoint(),
+                    _ => throw new ArgumentOutOfRangeException(nameof(operation)),
+                };
+                Assert.Throws<InvalidOperationException>(invalid);
+            });
+            var writer = createWriter(services);
+            Assert.Throws<InvalidOperationException>(() => writer.OpenWrite(population.Incarnation));
+            using var check = database.CreateTransaction();
+            Assert.Single(check.Extent<C1>().ToArray());
+        }
+
+        protected static void AssertProtectedWriteCleanupFailureKeepsCommit(
+            Sql.Database database, Func<IDatabaseServices, Sql.Database> createWriter)
+        {
+            var baseline = PrepareProtectedReadPopulation(database);
+            var expected = new InvalidOperationException("Write cleanup failed.");
+            var services = new ProtectedReadTestDatabaseServices(_ => { }, () => throw expected);
+            var writer = createWriter(services);
+            var write = writer.OpenWrite(database.PopulationLifecycle.RequireReady().Incarnation);
+            write.AllowWrites();
+            ((C1)write.Transaction.Instantiate(baseline.SourceId)).C1AllorsString = "Committed before cleanup";
+            write.Commit();
+            Assert.Same(expected, Assert.Throws<InvalidOperationException>(() => write.Dispose()));
+            Assert.Equal(Sql.WriteCommitState.Committed, write.CommitState);
+            using var check = database.CreateTransaction();
+            Assert.Equal("Committed before cleanup", ((C1)check.Instantiate(baseline.SourceId)).C1AllorsString);
+        }
+
+        protected static (long SourceId, long TargetId, long SourceVersion) PrepareProtectedReadPopulation(Sql.Database database)
+        {
+            using var maintenance = database.PopulationLifecycle.BeginMaintenance();
+            database.Init();
+            long sourceId;
+            long targetId;
+            long sourceVersion;
+            using (var setup = database.CreateTransaction())
+            {
+                var source = setup.Create<C1>();
+                source.C1AllorsString = "Committed baseline";
+                var target = setup.Create<C2>();
+                setup.Commit();
+                sourceId = source.Id;
+                targetId = target.Id;
+                sourceVersion = source.Strategy.ObjectVersion;
+            }
+
+            maintenance.Complete();
+            return (sourceId, targetId, sourceVersion);
+        }
+
+        protected static void AssertProtectedReadCleanupFailureEndsScope(
+            Sql.Database writerDatabase,
+            Func<IDatabaseServices, Sql.Database> createReader,
+            Action assertNativeTransactionEnded)
+        {
+            var baseline = PrepareProtectedReadPopulation(writerDatabase);
+            var expected = new InvalidOperationException("Expected service cleanup failure.");
+            var services = new ProtectedReadTestDatabaseServices(_ => { }, () => throw expected);
+            var database = createReader(services);
+            var scope = database.OpenRead();
+            var transaction = scope.Transaction;
+            var retained = Assert.IsType<C1>(transaction.Instantiate(baseline.SourceId));
+            Assert.Equal("Committed baseline", retained.C1AllorsString);
+
+            Assert.Same(expected, Assert.Throws<InvalidOperationException>(() => scope.Dispose()));
+            Assert.Equal(1, services.Disposals);
+            assertNativeTransactionEnded();
+            Assert.ThrowsAny<InvalidOperationException>(() => scope.EnsureValid());
+            Assert.ThrowsAny<InvalidOperationException>(() => retained.C1AllorsString);
+            Assert.ThrowsAny<InvalidOperationException>(() => transaction.Instantiate(baseline.SourceId));
+            scope.Dispose();
+            Assert.Equal(1, services.Disposals);
+        }
+
+        protected static void AssertProtectedReadCaughtCleanupMutationEndsScope(
+            Sql.Database writerDatabase,
+            Func<IDatabaseServices, Sql.Database> createReader,
+            Action assertNativeTransactionEnded)
+        {
+            var baseline = PrepareProtectedReadPopulation(writerDatabase);
+            ITransaction retainedTransaction = null;
+            var attempted = false;
+            var services = new ProtectedReadTestDatabaseServices(
+                transaction => retainedTransaction = transaction,
+                () =>
+                {
+                    attempted = true;
+                    Assert.ThrowsAny<InvalidOperationException>(() => retainedTransaction.Commit());
+                });
+            var database = createReader(services);
+            var scope = database.OpenRead();
+            scope.EnsureValid();
+
+            Assert.ThrowsAny<InvalidOperationException>(() => scope.Dispose());
+            Assert.True(attempted);
+            Assert.Equal(1, services.Disposals);
+            assertNativeTransactionEnded();
+            Assert.ThrowsAny<InvalidOperationException>(() => scope.EnsureValid());
+            Assert.ThrowsAny<InvalidOperationException>(() => retainedTransaction.Instantiate(baseline.SourceId));
+            scope.Dispose();
+            Assert.Equal(1, services.Disposals);
+        }
+
+        protected static void AssertProtectedReadKeepsBinaryValuesIndependent(Sql.Database database)
+        {
+            var baseline = PrepareProtectedReadPopulation(database);
+            long version;
+            using (var setup = database.CreateTransaction())
+            {
+                var source = (C1)setup.Instantiate(baseline.SourceId);
+                source.C1AllorsBinary = new byte[] { 1, 2, 3 };
+                setup.Commit();
+                version = source.Strategy.ObjectVersion;
+            }
+
+            using var legacy = database.CreateTransaction();
+            var legacySource = (C1)legacy.Instantiate(baseline.SourceId);
+            var legacyBytes = legacySource.C1AllorsBinary;
+            legacyBytes[0] = 9;
+            Assert.Equal(new byte[] { 9, 2, 3 }, legacySource.C1AllorsBinary);
+            Assert.Equal(version, legacySource.Strategy.ObjectVersion);
+
+            using (var scope = database.OpenRead())
+            {
+                var source = (C1)scope.Transaction.Instantiate(baseline.SourceId);
+                var readBytes = source.C1AllorsBinary;
+                Assert.Equal(new byte[] { 1, 2, 3 }, readBytes);
+                readBytes[1] = 8;
+                Assert.Equal(new byte[] { 1, 2, 3 }, source.C1AllorsBinary);
+                Assert.Equal(baseline.SourceId, source.Id);
+                Assert.Equal(version, source.Strategy.ObjectVersion);
+                scope.EnsureValid();
+            }
+
+            Assert.Equal(new byte[] { 9, 2, 3 }, legacySource.C1AllorsBinary);
+            Assert.Equal(version, legacySource.Strategy.ObjectVersion);
+        }
+
+        protected static void AssertProtectedReadRejectsRetainedExtentAccess(Sql.Database database)
+        {
+            var baseline = PrepareProtectedReadPopulation(database);
+            var scope = database.OpenRead();
+            var transaction = scope.Transaction;
+            var retained = (C1)transaction.Instantiate(baseline.SourceId);
+            var extent = transaction.Extent<C1>();
+            Assert.Equal(1, extent.Count);
+            var enumerator = extent.GetEnumerator();
+            Assert.True(enumerator.MoveNext());
+            Assert.Same(retained, enumerator.Current);
+            scope.Dispose();
+
+            Assert.ThrowsAny<InvalidOperationException>(() => extent.Count);
+            Assert.ThrowsAny<InvalidOperationException>(() => extent.Contains(retained));
+            Assert.ThrowsAny<InvalidOperationException>(() => enumerator.Current);
+            Assert.ThrowsAny<InvalidOperationException>(() => enumerator.MoveNext());
+        }
+
+        protected static void AssertProtectedReadRejectsForeignStateReferences(Sql.Database database, bool newObject)
+        {
+            var baseline = PrepareProtectedReadPopulation(database);
+            using var ambient = (Sql.Transaction)database.CreateTransaction();
+            var ambientState = ambient.State;
+            using var scope = database.OpenRead();
+            var transaction = scope.Transaction;
+            var objectType = database.Context().M.C1;
+
+            Action forgeReference = newObject
+                ? () => ambientState.CreateReferenceForNewObject(objectType, baseline.SourceId, transaction)
+                : () => ambientState.GetOrCreateReferenceForExistingObject(objectType, baseline.SourceId, baseline.SourceVersion + 100, transaction);
+            Assert.ThrowsAny<InvalidOperationException>(forgeReference);
+            Assert.ThrowsAny<InvalidOperationException>(() => scope.EnsureValid());
+            scope.Dispose();
+
+            var source = (C1)ambient.Instantiate(baseline.SourceId);
+            Assert.Equal("Committed baseline", source.C1AllorsString);
+            Assert.Equal(baseline.SourceVersion, source.Strategy.ObjectVersion);
+        }
+
+        protected static void AssertProtectedReadRejectsForeignExtentOperands(Sql.Database database, string operation)
+        {
+            var baseline = PrepareProtectedReadPopulation(database);
+            using var ambient = (Sql.Transaction)database.CreateTransaction();
+            var source = (C1)ambient.Instantiate(baseline.SourceId);
+            source.C1AllorsString = "Uncommitted ambient value";
+            var created = ambient.Create<C1>();
+
+            foreach (var ambientFirst in TrueFalse)
+            {
+                using var scope = database.OpenRead();
+                var transaction = scope.Transaction;
+                Allors.Database.Extent ownExtent = transaction.Extent<C1>();
+                Allors.Database.Extent ambientExtent = ambient.Extent<C1>();
+                var first = ambientFirst ? ambientExtent : ownExtent;
+                var second = ambientFirst ? ownExtent : ambientExtent;
+                Action combine = operation switch
+                {
+                    "union" => () => transaction.Union(first, second),
+                    "intersect" => () => transaction.Intersect(first, second),
+                    "except" => () => transaction.Except(first, second),
+                    _ => throw new ArgumentOutOfRangeException(nameof(operation)),
+                };
+
+                Assert.ThrowsAny<InvalidOperationException>(combine);
+                Assert.ThrowsAny<InvalidOperationException>(() => scope.EnsureValid());
+                scope.Dispose();
+                Assert.Equal("Uncommitted ambient value", source.C1AllorsString);
+                Assert.True(created.Strategy.IsNewInTransaction);
+                Assert.Same(created, ambient.Instantiate(created.Id));
+            }
+
+            using var verification = database.OpenRead();
+            Assert.Equal("Committed baseline", ((C1)verification.Transaction.Instantiate(baseline.SourceId)).C1AllorsString);
+            Assert.Null(verification.Transaction.Instantiate(created.Id));
+            Allors.Database.Extent ownFirst = verification.Transaction.Extent<C1>();
+            Allors.Database.Extent ownSecond = verification.Transaction.Extent<C1>();
+            var ownCombination = operation switch
+            {
+                "union" => verification.Transaction.Union(ownFirst, ownSecond),
+                "intersect" => verification.Transaction.Intersect(ownFirst, ownSecond),
+                "except" => verification.Transaction.Except(ownFirst, ownSecond),
+                _ => throw new ArgumentOutOfRangeException(nameof(operation)),
+            };
+            Assert.Equal(operation == "except" ? 0 : 1, ownCombination.Count);
+            verification.EnsureValid();
+        }
+
+        protected sealed class ProtectedReadTestDatabaseServices : IDomainDatabaseServices
+        {
+            private readonly DefaultDomainDatabaseServices inner = new DefaultDomainDatabaseServices();
+            private readonly Action<ITransaction> initialize;
+            private readonly Action dispose;
+
+            internal ProtectedReadTestDatabaseServices(Action<ITransaction> initialize, Action dispose = null)
+            {
+                this.initialize = initialize;
+                this.dispose = dispose;
+            }
+
+            public MetaPopulation M => this.inner.M;
+
+            public ITransaction Transaction { get; private set; }
+
+            public int Initializations { get; private set; }
+
+            public int Disposals { get; private set; }
+
+            public void OnInit(IDatabase database) => this.inner.OnInit(database);
+
+            public ITransactionServices CreateTransactionServices() => new TransactionServices(this);
+
+            public T Get<T>() => this.inner.Get<T>();
+
+            public void Dispose() => this.inner.Dispose();
+
+            private sealed class TransactionServices : IDomainTransactionServices
+            {
+                private readonly ProtectedReadTestDatabaseServices databaseServices;
+
+                internal TransactionServices(ProtectedReadTestDatabaseServices databaseServices) => this.databaseServices = databaseServices;
+
+                public void OnInit(ITransaction transaction)
+                {
+                    this.databaseServices.Transaction = transaction;
+                    ++this.databaseServices.Initializations;
+                    this.databaseServices.initialize(transaction);
+                }
+
+                public T Get<T>() => default;
+
+                public void Dispose()
+                {
+                    ++this.databaseServices.Disposals;
+                    this.databaseServices.dispose?.Invoke();
+                }
+            }
+        }
+
         protected abstract void SwitchDatabase();
 
         protected abstract IDatabase CreatePopulation();

@@ -7,7 +7,15 @@ import {
   SyncResponseObject,
   SyncResponseRole,
 } from '@allors/system/common/protocol-json';
-import { DatabaseConnection } from './database-connection';
+import { Configuration } from '@allors/system/workspace/domain';
+import { Ranges, Grant, Revocation } from '@allors/system/workspace/adapters';
+
+interface DatabaseRecordCache {
+  readonly configuration: Configuration;
+  readonly ranges: Ranges<number>;
+  readonly grantById: Map<number, Grant>;
+  readonly revocationById: Map<number, Revocation>;
+}
 import { ResponseContext } from './security/response-context';
 import { unitFromJson } from '../json/from-json';
 
@@ -19,7 +27,7 @@ export class DatabaseRecord extends SystemDatabaseRecord {
   private syncResponseRoles?: SyncResponseRole[];
 
   constructor(
-    public readonly database: DatabaseConnection,
+    public readonly database: DatabaseRecordCache,
     cls: Class,
     id: number,
     public override version: number
@@ -28,7 +36,7 @@ export class DatabaseRecord extends SystemDatabaseRecord {
   }
 
   static fromResponse(
-    database: DatabaseConnection,
+    database: DatabaseRecordCache,
     ctx: ResponseContext,
     syncResponseObject: SyncResponseObject
   ): DatabaseRecord {

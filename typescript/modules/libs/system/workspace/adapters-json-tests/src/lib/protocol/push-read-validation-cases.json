@@ -1,0 +1,282 @@
+{
+  "validRequests": [
+    {
+      "name": "omitted refresh options",
+      "json": "{\"v\": 1, \"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"x\": \"tenant=blue\", \"push\": {\"n\": [{\"w\": -1, \"t\": \"C1\", \"r\": [{\"t\": \"number\", \"u\": -3}]}], \"o\": [{\"d\": 101, \"v\": 7, \"r\": []}]}}"
+    },
+    {
+      "name": "null optional fields",
+      "json": "{\"v\": 1, \"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"x\": \"tenant=blue\", \"push\": {\"n\": [{\"w\": -1, \"t\": \"C1\", \"r\": [{\"t\": \"number\", \"u\": -3}]}], \"o\": [{\"d\": 101, \"v\": 7, \"r\": []}]}, \"returnChanged\": null, \"discover\": null}"
+    },
+    {
+      "name": "negative predicate unit",
+      "json": "{\"v\": 1, \"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"x\": \"tenant=blue\", \"push\": {\"n\": [{\"w\": -1, \"t\": \"C1\", \"r\": [{\"t\": \"number\", \"u\": -3}]}], \"o\": [{\"d\": 101, \"v\": 7, \"r\": []}]}, \"returnChanged\": true, \"discover\": {\"l\": [{\"e\": {\"k\": 1, \"t\": \"C1\", \"p\": {\"k\": 1, \"r\": \"number\", \"v\": -1}}}], \"d\": []}}"
+    },
+    {
+      "name": "negative push relation to a declared new object",
+      "json": "{\"v\": 1, \"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"x\": \"tenant=blue\", \"push\": {\"n\": [{\"w\": -1, \"t\": \"C1\", \"r\": [{\"t\": \"number\", \"u\": -3}]}], \"o\": [{\"d\": 101, \"v\": 7, \"r\": [{\"t\": \"parent\", \"c\": -1}]}]}, \"returnChanged\": true, \"discover\": {\"l\": [{\"o\": 101}], \"d\": []}}"
+    }
+  ],
+  "invalidRequests": [
+    {
+      "name": "scope absent",
+      "json": "{\"v\": 1, \"i\": \"save-1\", \"x\": \"tenant=blue\", \"push\": {\"n\": [{\"w\": -1, \"t\": \"C1\", \"r\": [{\"t\": \"number\", \"u\": -3}]}], \"o\": [{\"d\": 101, \"v\": 7, \"r\": []}]}, \"returnChanged\": true, \"discover\": {\"l\": [{\"o\": 101}], \"d\": []}}"
+    },
+    {
+      "name": "wrong revision",
+      "json": "{\"v\": 2, \"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"x\": \"tenant=blue\", \"push\": {\"n\": [{\"w\": -1, \"t\": \"C1\", \"r\": [{\"t\": \"number\", \"u\": -3}]}], \"o\": [{\"d\": 101, \"v\": 7, \"r\": []}]}, \"returnChanged\": true, \"discover\": {\"l\": [{\"o\": 101}], \"d\": []}}"
+    },
+    {
+      "name": "context mismatch",
+      "json": "{\"v\": 1, \"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"x\": \"other\", \"push\": {\"n\": [{\"w\": -1, \"t\": \"C1\", \"r\": [{\"t\": \"number\", \"u\": -3}]}], \"o\": [{\"d\": 101, \"v\": 7, \"r\": []}]}, \"returnChanged\": true, \"discover\": {\"l\": [{\"o\": 101}], \"d\": []}}"
+    },
+    {
+      "name": "nested push context",
+      "json": "{\"v\": 1, \"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"x\": \"tenant=blue\", \"push\": {\"n\": [{\"w\": -1, \"t\": \"C1\", \"r\": [{\"t\": \"number\", \"u\": -3}]}], \"o\": [{\"d\": 101, \"v\": 7, \"r\": []}], \"x\": \"tenant=blue\"}, \"returnChanged\": true, \"discover\": {\"l\": [{\"o\": 101}], \"d\": []}}"
+    },
+    {
+      "name": "unsupported operation",
+      "json": "{\"v\": 1, \"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"x\": \"tenant=blue\", \"push\": {\"n\": [{\"w\": -1, \"t\": \"C1\", \"r\": [{\"t\": \"number\", \"u\": -3}]}], \"o\": [{\"d\": 101, \"v\": 7, \"r\": []}]}, \"returnChanged\": true, \"discover\": {\"l\": [{\"o\": 101}], \"d\": []}, \"invoke\": {}}"
+    },
+    {
+      "name": "negative query target",
+      "json": "{\"v\": 1, \"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"x\": \"tenant=blue\", \"push\": {\"n\": [{\"w\": -1, \"t\": \"C1\", \"r\": [{\"t\": \"number\", \"u\": -3}]}], \"o\": [{\"d\": 101, \"v\": 7, \"r\": []}]}, \"returnChanged\": true, \"discover\": {\"l\": [{\"o\": -1}], \"d\": []}}"
+    },
+    {
+      "name": "negative predicate reference",
+      "json": "{\"v\": 1, \"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"x\": \"tenant=blue\", \"push\": {\"n\": [{\"w\": -1, \"t\": \"C1\", \"r\": [{\"t\": \"number\", \"u\": -3}]}], \"o\": [{\"d\": 101, \"v\": 7, \"r\": []}]}, \"returnChanged\": true, \"discover\": {\"l\": [{\"e\": {\"k\": 1, \"p\": {\"k\": 1, \"ob\": -1}}}], \"d\": []}}"
+    },
+    {
+      "name": "duplicate workspace ID",
+      "json": "{\"v\": 1, \"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"x\": \"tenant=blue\", \"push\": {\"n\": [{\"w\": -1, \"t\": \"C1\", \"r\": [{\"t\": \"number\", \"u\": -3}]}, {\"w\": -1, \"t\": \"C1\", \"r\": [{\"t\": \"number\", \"u\": -3}]}], \"o\": [{\"d\": 101, \"v\": 7, \"r\": []}]}, \"returnChanged\": true, \"discover\": {\"l\": [{\"o\": 101}], \"d\": []}}"
+    },
+    {
+      "name": "positive workspace ID",
+      "json": "{\"v\": 1, \"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"x\": \"tenant=blue\", \"push\": {\"n\": [{\"w\": 1, \"t\": \"C1\", \"r\": [{\"t\": \"number\", \"u\": -3}]}], \"o\": [{\"d\": 101, \"v\": 7, \"r\": []}]}, \"returnChanged\": true, \"discover\": {\"l\": [{\"o\": 101}], \"d\": []}}"
+    },
+    {
+      "name": "negative existing ID",
+      "json": "{\"v\": 1, \"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"x\": \"tenant=blue\", \"push\": {\"n\": [{\"w\": -1, \"t\": \"C1\", \"r\": [{\"t\": \"number\", \"u\": -3}]}], \"o\": [{\"d\": -1, \"v\": 7, \"r\": []}]}, \"returnChanged\": true, \"discover\": {\"l\": [{\"o\": 101}], \"d\": []}}"
+    },
+    {
+      "name": "duplicate role",
+      "json": "{\"v\": 1, \"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"x\": \"tenant=blue\", \"push\": {\"n\": [{\"w\": -1, \"t\": \"C1\", \"r\": [{\"t\": \"number\", \"u\": -3}, {\"t\": \"number\", \"u\": 4}]}], \"o\": [{\"d\": 101, \"v\": 7, \"r\": []}]}, \"returnChanged\": true, \"discover\": {\"l\": [{\"o\": 101}], \"d\": []}}"
+    },
+    {
+      "name": "unknown new reference",
+      "json": "{\"v\": 1, \"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"x\": \"tenant=blue\", \"push\": {\"n\": [{\"w\": -1, \"t\": \"C1\", \"r\": [{\"t\": \"number\", \"u\": -3}]}], \"o\": [{\"d\": 101, \"v\": 7, \"r\": [{\"t\": \"parent\", \"c\": -2}]}]}, \"returnChanged\": true, \"discover\": {\"l\": [{\"o\": 101}], \"d\": []}}"
+    },
+    {
+      "name": "conflicting push role alternatives",
+      "json": "{\"v\": 1, \"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"x\": \"tenant=blue\", \"push\": {\"n\": [{\"w\": -1, \"t\": \"C1\", \"r\": [{\"t\": \"number\", \"u\": -3}]}], \"o\": [{\"d\": 101, \"v\": 7, \"r\": [{\"t\": \"parent\", \"c\": -1, \"u\": 3}]}]}, \"returnChanged\": true, \"discover\": {\"l\": [{\"o\": 101}], \"d\": []}}"
+    },
+    {
+      "name": "duplicate root property",
+      "json": "{\"v\": 1, \"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"x\": \"tenant=blue\", \"push\": {\"n\": [{\"w\": -1, \"t\": \"C1\", \"r\": [{\"t\": \"number\", \"u\": -3}]}], \"o\": [{\"d\": 101, \"v\": 7, \"r\": []}]}, \"returnChanged\": true, \"discover\": {\"l\": [{\"o\": 101}], \"d\": []},\"v\":1}"
+    },
+    {
+      "name": "removed discovery extent reference",
+      "json": "{\"v\": 1, \"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"x\": \"tenant=blue\", \"push\": {\"n\": [{\"w\": -1, \"t\": \"C1\", \"r\": [{\"t\": \"number\", \"u\": -3}]}], \"o\": [{\"d\": 101, \"v\": 7, \"r\": []}]}, \"returnChanged\": true, \"discover\": {\"l\": [{\"e\": {\"k\": 1, \"t\": \"C1\"}, \"r\": [{\"n\": \"found\"}], \"er\": \"01234567-89ab-cdef-0123-456789abcdef\"}], \"d\": []}}"
+    },
+    {
+      "name": "null removed discovery extent reference",
+      "json": "{\"v\": 1, \"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"x\": \"tenant=blue\", \"push\": {\"n\": [{\"w\": -1, \"t\": \"C1\", \"r\": [{\"t\": \"number\", \"u\": -3}]}], \"o\": [{\"d\": 101, \"v\": 7, \"r\": []}]}, \"returnChanged\": true, \"discover\": {\"l\": [{\"e\": {\"k\": 1, \"t\": \"C1\"}, \"r\": [{\"n\": \"found\"}], \"er\": null}], \"d\": []}}"
+    },
+    {
+      "name": "removed discovery select reference",
+      "json": "{\"v\": 1, \"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"x\": \"tenant=blue\", \"push\": {\"n\": [{\"w\": -1, \"t\": \"C1\", \"r\": [{\"t\": \"number\", \"u\": -3}]}], \"o\": [{\"d\": 101, \"v\": 7, \"r\": []}]}, \"returnChanged\": true, \"discover\": {\"l\": [{\"e\": {\"k\": 1, \"t\": \"C1\"}, \"r\": [{\"n\": \"found\", \"r\": \"01234567-89ab-cdef-0123-456789abcdef\"}]}], \"d\": []}}"
+    },
+    {
+      "name": "null removed discovery select reference",
+      "json": "{\"v\": 1, \"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"x\": \"tenant=blue\", \"push\": {\"n\": [{\"w\": -1, \"t\": \"C1\", \"r\": [{\"t\": \"number\", \"u\": -3}]}], \"o\": [{\"d\": 101, \"v\": 7, \"r\": []}]}, \"returnChanged\": true, \"discover\": {\"l\": [{\"e\": {\"k\": 1, \"t\": \"C1\"}, \"r\": [{\"n\": \"found\", \"r\": null}]}], \"d\": []}}"
+    }
+  ],
+  "validResponses": [
+    {
+      "name": "changed failure preserves discovery",
+      "json": "{\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"push\": {\"k\": \"committed\", \"n\": [{\"w\": -1, \"d\": 102}]}, \"changed\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"error\", \"e\": [{\"c\": \"read-failed\", \"m\": \"Refresh the committed objects.\"}]}, \"discovery\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"discovery\", \"p\": [], \"s\": []}}"
+    },
+    {
+      "name": "discovery failure preserves changed",
+      "json": "{\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"push\": {\"k\": \"committed\", \"n\": [{\"w\": -1, \"d\": 102}]}, \"changed\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"changed\", \"p\": [{\"i\": 101, \"c\": \"C1\", \"v\": 8, \"g\": [0], \"r\": [], \"p\": {\"ro\": [{\"t\": \"number\", \"v\": -3}]}}], \"s\": [{\"k\": \"grant\", \"i\": 11, \"v\": 4, \"p\": {\"p\": [201]}}], \"pm\": [{\"i\": 201, \"p\": {\"c\": \"C1\", \"o\": 2, \"t\": \"number\"}}], \"u\": [102]}, \"discovery\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"error\", \"e\": [{\"c\": \"read-failed\", \"m\": \"Refresh the committed objects.\"}]}}"
+    },
+    {
+      "name": "committed diagnostics remain committed",
+      "json": "{\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"push\": {\"k\": \"committed\", \"n\": [{\"w\": -1, \"d\": 102}], \"e\": [{\"c\": \"cleanup\", \"m\": \"The write committed; refresh now.\"}]}, \"changed\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"changed\", \"p\": [{\"i\": 101, \"c\": \"C1\", \"v\": 8, \"g\": [0], \"r\": [], \"p\": {\"ro\": [{\"t\": \"number\", \"v\": -3}]}}], \"s\": [{\"k\": \"grant\", \"i\": 11, \"v\": 4, \"p\": {\"p\": [201]}}], \"pm\": [{\"i\": 201, \"p\": {\"c\": \"C1\", \"o\": 2, \"t\": \"number\"}}], \"u\": [102]}, \"discovery\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"discovery\", \"p\": [], \"s\": []}}"
+    },
+    {
+      "name": "both reads failed",
+      "json": "{\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"push\": {\"k\": \"committed\", \"n\": [{\"w\": -1, \"d\": 102}]}, \"changed\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"error\", \"e\": [{\"c\": \"read-failed\", \"m\": \"Refresh the committed objects.\"}]}, \"discovery\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"error\", \"e\": [{\"c\": \"read-failed\", \"m\": \"Refresh the committed objects.\"}]}}"
+    },
+    {
+      "name": "rejected errors",
+      "json": "{\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"push\": {\"k\": \"rejected\", \"e\": [{\"c\": \"write-failed\", \"m\": \"Reconcile before another mutation.\"}]}}"
+    },
+    {
+      "name": "unknown errors",
+      "json": "{\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"push\": {\"k\": \"unknown\", \"e\": [{\"c\": \"write-failed\", \"m\": \"Reconcile before another mutation.\"}]}}"
+    },
+    {
+      "name": "legacy negative _a diagnostics",
+      "json": "{\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"push\": {\"k\": \"rejected\", \"_a\": [-1]}}"
+    },
+    {
+      "name": "legacy negative _m diagnostics",
+      "json": "{\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"push\": {\"k\": \"rejected\", \"_m\": [-1]}}"
+    },
+    {
+      "name": "new object mutation diagnostics",
+      "json": "{\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"push\": {\"k\": \"rejected\", \"e\": [{\"c\": \"access\", \"m\": \"New object is not accessible.\", \"o\": [-1]}]}}"
+    },
+    {
+      "name": "derivation diagnostic null message",
+      "json": "{\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"push\": {\"k\": \"rejected\", \"_d\": [{\"m\": null, \"r\": []}]}}"
+    },
+    {
+      "name": "derivation diagnostic omitted message",
+      "json": "{\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"push\": {\"k\": \"rejected\", \"_d\": [{\"r\": []}]}}"
+    },
+    {
+      "name": "derivation diagnostic empty message",
+      "json": "{\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"push\": {\"k\": \"rejected\", \"_d\": [{\"m\": \"\", \"r\": []}]}}"
+    },
+    {
+      "name": "derivation diagnostic whitespace message",
+      "json": "{\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"push\": {\"k\": \"rejected\", \"_d\": [{\"m\": \" \\t\", \"r\": []}]}}"
+    }
+  ],
+  "invalidResponses": [
+    {
+      "name": "rejected cannot contain reads",
+      "json": "{\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"push\": {\"k\": \"rejected\", \"e\": [{\"c\": \"write-failed\", \"m\": \"Reconcile before another mutation.\"}]}, \"changed\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"changed\", \"p\": [{\"i\": 101, \"c\": \"C1\", \"v\": 8, \"g\": [0], \"r\": [], \"p\": {\"ro\": [{\"t\": \"number\", \"v\": -3}]}}], \"s\": [{\"k\": \"grant\", \"i\": 11, \"v\": 4, \"p\": {\"p\": [201]}}], \"pm\": [{\"i\": 201, \"p\": {\"c\": \"C1\", \"o\": 2, \"t\": \"number\"}}], \"u\": [102]}, \"discovery\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"discovery\", \"p\": [], \"s\": []}}"
+    },
+    {
+      "name": "unknown cannot contain reads",
+      "json": "{\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"push\": {\"k\": \"unknown\", \"e\": [{\"c\": \"write-failed\", \"m\": \"Reconcile before another mutation.\"}]}, \"changed\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"changed\", \"p\": [{\"i\": 101, \"c\": \"C1\", \"v\": 8, \"g\": [0], \"r\": [], \"p\": {\"ro\": [{\"t\": \"number\", \"v\": -3}]}}], \"s\": [{\"k\": \"grant\", \"i\": 11, \"v\": 4, \"p\": {\"p\": [201]}}], \"pm\": [{\"i\": 201, \"p\": {\"c\": \"C1\", \"o\": 2, \"t\": \"number\"}}], \"u\": [102]}, \"discovery\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"discovery\", \"p\": [], \"s\": []}}"
+    },
+    {
+      "name": "changed absent",
+      "json": "{\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"push\": {\"k\": \"committed\", \"n\": [{\"w\": -1, \"d\": 102}]}, \"discovery\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"discovery\", \"p\": [], \"s\": []}}"
+    },
+    {
+      "name": "discovery absent",
+      "json": "{\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"push\": {\"k\": \"committed\", \"n\": [{\"w\": -1, \"d\": 102}]}, \"changed\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"changed\", \"p\": [{\"i\": 101, \"c\": \"C1\", \"v\": 8, \"g\": [0], \"r\": [], \"p\": {\"ro\": [{\"t\": \"number\", \"v\": -3}]}}], \"s\": [{\"k\": \"grant\", \"i\": 11, \"v\": 4, \"p\": {\"p\": [201]}}], \"pm\": [{\"i\": 201, \"p\": {\"c\": \"C1\", \"o\": 2, \"t\": \"number\"}}], \"u\": [102]}}"
+    },
+    {
+      "name": "changed body reuse",
+      "json": "{\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"push\": {\"k\": \"committed\", \"n\": [{\"w\": -1, \"d\": 102}]}, \"changed\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"changed\", \"p\": [{\"i\": 101, \"c\": \"C1\", \"v\": 8, \"g\": [0], \"r\": [], \"p\": {\"r\": 0}}], \"s\": [{\"k\": \"grant\", \"i\": 11, \"v\": 4, \"p\": {\"p\": [201]}}], \"pm\": [{\"i\": 201, \"p\": {\"c\": \"C1\", \"o\": 2, \"t\": \"number\"}}], \"u\": [102]}, \"discovery\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"discovery\", \"p\": [], \"s\": []}}"
+    },
+    {
+      "name": "security reuse",
+      "json": "{\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"push\": {\"k\": \"committed\", \"n\": [{\"w\": -1, \"d\": 102}]}, \"changed\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"changed\", \"p\": [{\"i\": 101, \"c\": \"C1\", \"v\": 8, \"g\": [0], \"r\": [], \"p\": {\"ro\": [{\"t\": \"number\", \"v\": -3}]}}], \"s\": [{\"k\": \"grant\", \"i\": 11, \"v\": 4, \"p\": {\"r\": 0}}], \"pm\": [{\"i\": 201, \"p\": {\"c\": \"C1\", \"o\": 2, \"t\": \"number\"}}], \"u\": [102]}, \"discovery\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"discovery\", \"p\": [], \"s\": []}}"
+    },
+    {
+      "name": "permission reuse",
+      "json": "{\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"push\": {\"k\": \"committed\", \"n\": [{\"w\": -1, \"d\": 102}]}, \"changed\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"changed\", \"p\": [{\"i\": 101, \"c\": \"C1\", \"v\": 8, \"g\": [0], \"r\": [], \"p\": {\"ro\": [{\"t\": \"number\", \"v\": -3}]}}], \"s\": [{\"k\": \"grant\", \"i\": 11, \"v\": 4, \"p\": {\"p\": [201]}}], \"pm\": [{\"i\": 201, \"p\": {\"r\": 0}}], \"u\": [102]}, \"discovery\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"discovery\", \"p\": [], \"s\": []}}"
+    },
+    {
+      "name": "unexpected named output",
+      "json": "{\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"push\": {\"k\": \"committed\", \"n\": [{\"w\": -1, \"d\": 102}]}, \"changed\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"changed\", \"p\": [{\"i\": 101, \"c\": \"C1\", \"v\": 8, \"g\": [0], \"r\": [], \"p\": {\"ro\": [{\"t\": \"number\", \"v\": -3}]}}], \"s\": [{\"k\": \"grant\", \"i\": 11, \"v\": 4, \"p\": {\"p\": [201]}}], \"pm\": [{\"i\": 201, \"p\": {\"c\": \"C1\", \"o\": 2, \"t\": \"number\"}}], \"u\": [102], \"c\": {}}, \"discovery\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"discovery\", \"p\": [], \"s\": []}}"
+    },
+    {
+      "name": "unavailable duplicates",
+      "json": "{\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"push\": {\"k\": \"committed\", \"n\": [{\"w\": -1, \"d\": 102}]}, \"changed\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"changed\", \"p\": [{\"i\": 101, \"c\": \"C1\", \"v\": 8, \"g\": [0], \"r\": [], \"p\": {\"ro\": [{\"t\": \"number\", \"v\": -3}]}}], \"s\": [{\"k\": \"grant\", \"i\": 11, \"v\": 4, \"p\": {\"p\": [201]}}], \"pm\": [{\"i\": 201, \"p\": {\"c\": \"C1\", \"o\": 2, \"t\": \"number\"}}], \"u\": [102, 102]}, \"discovery\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"discovery\", \"p\": [], \"s\": []}}"
+    },
+    {
+      "name": "unavailable overlaps body",
+      "json": "{\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"push\": {\"k\": \"committed\", \"n\": [{\"w\": -1, \"d\": 102}]}, \"changed\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"changed\", \"p\": [{\"i\": 101, \"c\": \"C1\", \"v\": 8, \"g\": [0], \"r\": [], \"p\": {\"ro\": [{\"t\": \"number\", \"v\": -3}]}}], \"s\": [{\"k\": \"grant\", \"i\": 11, \"v\": 4, \"p\": {\"p\": [201]}}], \"pm\": [{\"i\": 201, \"p\": {\"c\": \"C1\", \"o\": 2, \"t\": \"number\"}}], \"u\": [101]}, \"discovery\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"discovery\", \"p\": [], \"s\": []}}"
+    },
+    {
+      "name": "unavailable negative",
+      "json": "{\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"push\": {\"k\": \"committed\", \"n\": [{\"w\": -1, \"d\": 102}]}, \"changed\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"changed\", \"p\": [{\"i\": 101, \"c\": \"C1\", \"v\": 8, \"g\": [0], \"r\": [], \"p\": {\"ro\": [{\"t\": \"number\", \"v\": -3}]}}], \"s\": [{\"k\": \"grant\", \"i\": 11, \"v\": 4, \"p\": {\"p\": [201]}}], \"pm\": [{\"i\": 201, \"p\": {\"c\": \"C1\", \"o\": 2, \"t\": \"number\"}}], \"u\": [-1]}, \"discovery\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"discovery\", \"p\": [], \"s\": []}}"
+    },
+    {
+      "name": "changed wrong scope",
+      "json": "{\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"push\": {\"k\": \"committed\", \"n\": [{\"w\": -1, \"d\": 102}]}, \"changed\": {\"i\": \"save-1\", \"sc\": {\"p\": \"other\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"changed\", \"p\": [{\"i\": 101, \"c\": \"C1\", \"v\": 8, \"g\": [0], \"r\": [], \"p\": {\"ro\": [{\"t\": \"number\", \"v\": -3}]}}], \"s\": [{\"k\": \"grant\", \"i\": 11, \"v\": 4, \"p\": {\"p\": [201]}}], \"pm\": [{\"i\": 201, \"p\": {\"c\": \"C1\", \"o\": 2, \"t\": \"number\"}}], \"u\": [102]}, \"discovery\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"discovery\", \"p\": [], \"s\": []}}"
+    },
+    {
+      "name": "discovery wrong scope",
+      "json": "{\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"push\": {\"k\": \"committed\", \"n\": [{\"w\": -1, \"d\": 102}]}, \"changed\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"changed\", \"p\": [{\"i\": 101, \"c\": \"C1\", \"v\": 8, \"g\": [0], \"r\": [], \"p\": {\"ro\": [{\"t\": \"number\", \"v\": -3}]}}], \"s\": [{\"k\": \"grant\", \"i\": 11, \"v\": 4, \"p\": {\"p\": [201]}}], \"pm\": [{\"i\": 201, \"p\": {\"c\": \"C1\", \"o\": 2, \"t\": \"number\"}}], \"u\": [102]}, \"discovery\": {\"i\": \"save-1\", \"sc\": {\"p\": \"other\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"discovery\", \"p\": [], \"s\": []}}"
+    }
+  ],
+  "receiptOnlyResponses": [
+    {
+      "name": "bad read preserves receipt",
+      "json": "{\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"push\": {\"k\": \"committed\", \"n\": [{\"w\": -1, \"d\": 102}]}, \"changed\": {\"broken\": true}, \"discovery\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"discovery\", \"p\": [], \"s\": []}}"
+    },
+    {
+      "name": "missing reads preserve receipt",
+      "json": "{\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"push\": {\"k\": \"committed\", \"n\": [{\"w\": -1, \"d\": 102}]}}"
+    },
+    {
+      "name": "duplicate independent read field",
+      "json": "{\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"push\": {\"k\": \"committed\", \"n\": [{\"w\": -1, \"d\": 102}]}, \"changed\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\":\"changed\",\"k\":\"changed\", \"p\": [{\"i\": 101, \"c\": \"C1\", \"v\": 8, \"g\": [0], \"r\": [], \"p\": {\"ro\": [{\"t\": \"number\", \"v\": -3}]}}], \"s\": [{\"k\": \"grant\", \"i\": 11, \"v\": 4, \"p\": {\"p\": [201]}}], \"pm\": [{\"i\": 201, \"p\": {\"c\": \"C1\", \"o\": 2, \"t\": \"number\"}}], \"u\": [102]}, \"discovery\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"discovery\", \"p\": [], \"s\": []}}"
+    },
+    {
+      "name": "overflowed independent read number",
+      "json": "{\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"push\": {\"k\": \"committed\", \"n\": [{\"w\": -1, \"d\": 102}]}, \"changed\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"changed\", \"p\": [{\"i\": 101, \"c\": \"C1\", \"v\": 8, \"g\": [0], \"r\": [], \"p\": {\"ro\": [{\"t\": \"number\", \"v\": 1e400}]}}], \"s\": [{\"k\": \"grant\", \"i\": 11, \"v\": 4, \"p\": {\"p\": [201]}}], \"pm\": [{\"i\": 201, \"p\": {\"c\": \"C1\", \"o\": 2, \"t\": \"number\"}}], \"u\": [102]}, \"discovery\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"discovery\", \"p\": [], \"s\": []}}"
+    },
+    {
+      "name": "rounded independent read fraction",
+      "json": "{\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"push\": {\"k\": \"committed\", \"n\": [{\"w\": -1, \"d\": 102}]}, \"changed\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"changed\", \"p\": [{\"i\": 101, \"c\": \"C1\", \"v\": 8, \"g\": [0], \"r\": [], \"p\": {\"ro\": [{\"t\": \"number\", \"v\": 1.000000000000000000000001}]}}], \"s\": [{\"k\": \"grant\", \"i\": 11, \"v\": 4, \"p\": {\"p\": [201]}}], \"pm\": [{\"i\": 201, \"p\": {\"c\": \"C1\", \"o\": 2, \"t\": \"number\"}}], \"u\": [102]}, \"discovery\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"discovery\", \"p\": [], \"s\": []}}"
+    },
+    {
+      "name": "unpaired independent read unicode",
+      "json": "{\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"push\": {\"k\": \"committed\", \"n\": [{\"w\": -1, \"d\": 102}]}, \"changed\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"changed\", \"p\": [{\"i\": 101, \"c\": \"C1\", \"v\": 8, \"g\": [0], \"r\": [], \"p\": {\"ro\": [{\"t\": \"number\", \"v\": \"\\ud800\"}]}}], \"s\": [{\"k\": \"grant\", \"i\": 11, \"v\": 4, \"p\": {\"p\": [201]}}], \"pm\": [{\"i\": 201, \"p\": {\"c\": \"C1\", \"o\": 2, \"t\": \"number\"}}], \"u\": [102]}, \"discovery\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"discovery\", \"p\": [], \"s\": []}}"
+    }
+  ],
+  "invalidReceiptResponses": [
+    {
+      "name": "missing mappings",
+      "json": "{\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"push\": {\"k\": \"committed\"}, \"changed\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"changed\", \"p\": [{\"i\": 101, \"c\": \"C1\", \"v\": 8, \"g\": [0], \"r\": [], \"p\": {\"ro\": [{\"t\": \"number\", \"v\": -3}]}}], \"s\": [{\"k\": \"grant\", \"i\": 11, \"v\": 4, \"p\": {\"p\": [201]}}], \"pm\": [{\"i\": 201, \"p\": {\"c\": \"C1\", \"o\": 2, \"t\": \"number\"}}], \"u\": [102]}, \"discovery\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"discovery\", \"p\": [], \"s\": []}}"
+    },
+    {
+      "name": "incomplete mappings",
+      "json": "{\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"push\": {\"k\": \"committed\", \"n\": []}, \"changed\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"changed\", \"p\": [{\"i\": 101, \"c\": \"C1\", \"v\": 8, \"g\": [0], \"r\": [], \"p\": {\"ro\": [{\"t\": \"number\", \"v\": -3}]}}], \"s\": [{\"k\": \"grant\", \"i\": 11, \"v\": 4, \"p\": {\"p\": [201]}}], \"pm\": [{\"i\": 201, \"p\": {\"c\": \"C1\", \"o\": 2, \"t\": \"number\"}}], \"u\": [102]}, \"discovery\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"discovery\", \"p\": [], \"s\": []}}"
+    },
+    {
+      "name": "wrong workspace mapping",
+      "json": "{\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"push\": {\"k\": \"committed\", \"n\": [{\"w\": -2, \"d\": 102}]}, \"changed\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"changed\", \"p\": [{\"i\": 101, \"c\": \"C1\", \"v\": 8, \"g\": [0], \"r\": [], \"p\": {\"ro\": [{\"t\": \"number\", \"v\": -3}]}}], \"s\": [{\"k\": \"grant\", \"i\": 11, \"v\": 4, \"p\": {\"p\": [201]}}], \"pm\": [{\"i\": 201, \"p\": {\"c\": \"C1\", \"o\": 2, \"t\": \"number\"}}], \"u\": [102]}, \"discovery\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"discovery\", \"p\": [], \"s\": []}}"
+    },
+    {
+      "name": "nonpositive database mapping",
+      "json": "{\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"push\": {\"k\": \"committed\", \"n\": [{\"w\": -1, \"d\": 0}]}, \"changed\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"changed\", \"p\": [{\"i\": 101, \"c\": \"C1\", \"v\": 8, \"g\": [0], \"r\": [], \"p\": {\"ro\": [{\"t\": \"number\", \"v\": -3}]}}], \"s\": [{\"k\": \"grant\", \"i\": 11, \"v\": 4, \"p\": {\"p\": [201]}}], \"pm\": [{\"i\": 201, \"p\": {\"c\": \"C1\", \"o\": 2, \"t\": \"number\"}}], \"u\": [102]}, \"discovery\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"discovery\", \"p\": [], \"s\": []}}"
+    },
+    {
+      "name": "wrong receipt scope",
+      "json": "{\"i\": \"save-1\", \"sc\": {\"p\": \"other\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"push\": {\"k\": \"committed\", \"n\": [{\"w\": -1, \"d\": 102}]}, \"changed\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"changed\", \"p\": [{\"i\": 101, \"c\": \"C1\", \"v\": 8, \"g\": [0], \"r\": [], \"p\": {\"ro\": [{\"t\": \"number\", \"v\": -3}]}}], \"s\": [{\"k\": \"grant\", \"i\": 11, \"v\": 4, \"p\": {\"p\": [201]}}], \"pm\": [{\"i\": 201, \"p\": {\"c\": \"C1\", \"o\": 2, \"t\": \"number\"}}], \"u\": [102]}, \"discovery\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"discovery\", \"p\": [], \"s\": []}}"
+    },
+    {
+      "name": "unknown outcome",
+      "json": "{\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"push\": {\"k\": \"success\", \"n\": [{\"w\": -1, \"d\": 102}]}, \"changed\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"changed\", \"p\": [{\"i\": 101, \"c\": \"C1\", \"v\": 8, \"g\": [0], \"r\": [], \"p\": {\"ro\": [{\"t\": \"number\", \"v\": -3}]}}], \"s\": [{\"k\": \"grant\", \"i\": 11, \"v\": 4, \"p\": {\"p\": [201]}}], \"pm\": [{\"i\": 201, \"p\": {\"c\": \"C1\", \"o\": 2, \"t\": \"number\"}}], \"u\": [102]}, \"discovery\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"discovery\", \"p\": [], \"s\": []}}"
+    },
+    {
+      "name": "duplicate receipt field",
+      "json": "{\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"push\": {\"k\":\"committed\",\"k\":\"committed\", \"n\": [{\"w\": -1, \"d\": 102}]}, \"changed\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"changed\", \"p\": [{\"i\": 101, \"c\": \"C1\", \"v\": 8, \"g\": [0], \"r\": [], \"p\": {\"ro\": [{\"t\": \"number\", \"v\": -3}]}}], \"s\": [{\"k\": \"grant\", \"i\": 11, \"v\": 4, \"p\": {\"p\": [201]}}], \"pm\": [{\"i\": 201, \"p\": {\"c\": \"C1\", \"o\": 2, \"t\": \"number\"}}], \"u\": [102]}, \"discovery\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"discovery\", \"p\": [], \"s\": []}}"
+    },
+    {
+      "name": "unknown workspace _a diagnostics",
+      "json": "{\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"push\": {\"k\": \"rejected\", \"_a\": [-2]}}"
+    },
+    {
+      "name": "unknown workspace _m diagnostics",
+      "json": "{\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"push\": {\"k\": \"rejected\", \"_m\": [-2]}}"
+    },
+    {
+      "name": "committed outcome cannot contain legacy failures",
+      "json": "{\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"push\": {\"k\": \"committed\", \"n\": [{\"w\": -1, \"d\": 102}], \"_a\": [101]}, \"changed\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"changed\", \"p\": [{\"i\": 101, \"c\": \"C1\", \"v\": 8, \"g\": [0], \"r\": [], \"p\": {\"ro\": [{\"t\": \"number\", \"v\": -3}]}}], \"s\": [{\"k\": \"grant\", \"i\": 11, \"v\": 4, \"p\": {\"p\": [201]}}], \"pm\": [{\"i\": 201, \"p\": {\"c\": \"C1\", \"o\": 2, \"t\": \"number\"}}], \"u\": [102]}, \"discovery\": {\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"discovery\", \"p\": [], \"s\": []}}"
+    },
+    {
+      "name": "derivation diagnostic numeric message",
+      "json": "{\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"push\": {\"k\": \"rejected\", \"_d\": [{\"m\": 7, \"r\": []}]}}"
+    },
+    {
+      "name": "derivation diagnostic missing relations",
+      "json": "{\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"push\": {\"k\": \"rejected\", \"_d\": [{\"m\": \"Correct the derived value.\"}]}}"
+    },
+    {
+      "name": "derivation diagnostic null relations",
+      "json": "{\"i\": \"save-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"push\": {\"k\": \"rejected\", \"_d\": [{\"m\": \"Correct the derived value.\", \"r\": null}]}}"
+    }
+  ]
+}

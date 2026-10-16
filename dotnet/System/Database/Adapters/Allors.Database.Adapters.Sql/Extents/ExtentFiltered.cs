@@ -104,7 +104,7 @@ namespace Allors.Database.Adapters.Sql
                 return this.Strategy.GetCompositesRole(this.RoleType).ToList();
             }
 
-            this.transaction.State.Flush();
+            this.transaction.AdapterState.Flush();
 
             var statement = new ExtentStatementRoot(this);
             var objectIds = new List<long>();
@@ -120,7 +120,7 @@ namespace Allors.Database.Adapters.Sql
             using var reader = command.ExecuteReader();
             while (reader.Read())
             {
-                var objectId = this.transaction.State.GetObjectIdForExistingObject(reader.GetValue(0).ToString());
+                var objectId = this.transaction.AdapterState.GetObjectIdForExistingObject(reader.GetValue(0).ToString());
                 objectIds.Add(objectId);
             }
 

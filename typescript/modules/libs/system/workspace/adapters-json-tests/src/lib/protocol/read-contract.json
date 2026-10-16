@@ -1,0 +1,440 @@
+{
+  "coldRequest": {
+    "v": 1,
+    "i": "cold-1",
+    "sc": null,
+    "x": "tenant=blue",
+    "k": "read",
+    "p": {
+      "l": [
+        {
+          "e": null,
+          "t": "C1",
+          "o": 101,
+          "r": null,
+          "a": null
+        },
+        {
+          "e": null,
+          "t": "C1",
+          "o": 999,
+          "r": null,
+          "a": null
+        },
+        {
+          "e": {
+            "k": 1,
+            "o": null,
+            "t": "C1",
+            "p": null,
+            "s": null
+          },
+          "t": null,
+          "o": null,
+          "r": null,
+          "a": null
+        }
+      ],
+      "d": [
+        {
+          "o": "C1",
+          "a": null,
+          "r": "Related"
+        }
+      ]
+    },
+    "h": null
+  },
+  "cachedRequest": {
+    "v": 1,
+    "i": "read-1",
+    "sc": {
+      "p": "population-1",
+      "u": 7,
+      "w": "Default",
+      "r": "schema-1",
+      "x": "tenant=blue"
+    },
+    "x": "tenant=blue",
+    "k": "read",
+    "p": {
+      "l": [
+        {
+          "e": null,
+          "t": "C1",
+          "o": 101,
+          "r": null,
+          "a": null
+        },
+        {
+          "e": null,
+          "t": "C1",
+          "o": 999,
+          "r": null,
+          "a": null
+        },
+        {
+          "e": {
+            "k": 1,
+            "o": null,
+            "t": "C1",
+            "p": null,
+            "s": null
+          },
+          "t": null,
+          "o": null,
+          "r": null,
+          "a": null
+        }
+      ],
+      "d": [
+        {
+          "o": "C1",
+          "a": null,
+          "r": "Related"
+        }
+      ]
+    },
+    "h": {
+      "s": [
+        {
+          "k": "grant",
+          "i": 11,
+          "v": 4,
+          "h": true
+        },
+        {
+          "k": "grant",
+          "i": 11,
+          "v": 3,
+          "h": true
+        },
+        {
+          "k": "revocation",
+          "i": 21,
+          "v": 2,
+          "h": false
+        }
+      ],
+      "r": [
+        {
+          "i": 102,
+          "c": "C1",
+          "v": 4294967298,
+          "g": [0],
+          "r": [2]
+        },
+        {
+          "i": 101,
+          "c": "C1",
+          "v": 7,
+          "g": [1],
+          "r": [2]
+        }
+      ],
+      "p": [201]
+    }
+  },
+  "discovery": {
+    "i": "discover-1",
+    "sc": {
+      "p": "population-1",
+      "u": 7,
+      "w": "Default",
+      "r": "schema-1",
+      "x": "tenant=blue"
+    },
+    "k": "discovery",
+    "p": [
+      {
+        "i": 101,
+        "c": "C1",
+        "v": 7,
+        "g": [0],
+        "r": [1]
+      },
+      {
+        "i": 102,
+        "c": "C1",
+        "v": 4294967298,
+        "g": [0],
+        "r": [1]
+      }
+    ],
+    "s": [
+      {
+        "k": "grant",
+        "i": 11,
+        "v": 4
+      },
+      {
+        "k": "revocation",
+        "i": 21,
+        "v": 2
+      }
+    ]
+  },
+  "complete": {
+    "i": "read-1",
+    "sc": {
+      "p": "population-1",
+      "u": 7,
+      "w": "Default",
+      "r": "schema-1",
+      "x": "tenant=blue"
+    },
+    "k": "complete",
+    "l": [
+      {
+        "i": 0,
+        "o": 101,
+        "s": "resolved"
+      },
+      {
+        "i": 1,
+        "o": 999,
+        "s": "unavailable"
+      },
+      {
+        "i": 2,
+        "o": null,
+        "s": "resolved"
+      }
+    ],
+    "c": {
+      "found": [101, 102, 103],
+      "empty": []
+    },
+    "o": {
+      "first": 101,
+      "missing": null
+    },
+    "p": [
+      {
+        "i": 101,
+        "c": "C1",
+        "v": 7,
+        "g": [0, 2],
+        "r": [1],
+        "p": {
+          "ro": [
+            {
+              "t": "binary",
+              "c": null,
+              "o": null,
+              "v": "AAEC/w=="
+            },
+            {
+              "t": "boolean",
+              "c": null,
+              "o": null,
+              "v": false
+            },
+            {
+              "t": "dateTime",
+              "c": null,
+              "o": null,
+              "v": "2026-10-10T12:34:56Z"
+            },
+            {
+              "t": "decimal",
+              "c": null,
+              "o": null,
+              "v": "123.4500"
+            },
+            {
+              "t": "float",
+              "c": null,
+              "o": null,
+              "v": 1.5
+            },
+            {
+              "t": "integer",
+              "c": null,
+              "o": null,
+              "v": 42
+            },
+            {
+              "t": "string",
+              "c": null,
+              "o": null,
+              "v": "hello"
+            },
+            {
+              "t": "unique",
+              "c": null,
+              "o": null,
+              "v": "01234567-89ab-cdef-0123-456789abcdef"
+            },
+            {
+              "t": "nothing",
+              "c": null,
+              "o": null,
+              "v": null
+            },
+            {
+              "t": "one",
+              "c": null,
+              "o": 4294967297,
+              "v": null
+            },
+            {
+              "t": "many",
+              "c": [102, 4294967297],
+              "o": null,
+              "v": null
+            }
+          ],
+          "r": null
+        }
+      },
+      {
+        "i": 102,
+        "c": "C1",
+        "v": 4294967298,
+        "g": [0],
+        "r": [1],
+        "p": {
+          "ro": null,
+          "r": 0
+        }
+      },
+      {
+        "i": 103,
+        "c": "C1",
+        "v": 1,
+        "g": [],
+        "r": [],
+        "p": {
+          "ro": [],
+          "r": null
+        }
+      }
+    ],
+    "s": [
+      {
+        "k": "grant",
+        "i": 11,
+        "v": 4,
+        "p": {
+          "p": null,
+          "r": 0
+        }
+      },
+      {
+        "k": "revocation",
+        "i": 21,
+        "v": 2,
+        "p": {
+          "p": [],
+          "r": null
+        }
+      },
+      {
+        "k": "grant",
+        "i": 12,
+        "v": 1,
+        "p": {
+          "p": [201, 202, 203, 204, 205],
+          "r": null
+        }
+      }
+    ],
+    "pm": [
+      {
+        "i": 201,
+        "p": {
+          "c": null,
+          "o": null,
+          "t": null,
+          "r": 0
+        }
+      },
+      {
+        "i": 202,
+        "p": {
+          "c": "C1",
+          "o": 1,
+          "t": null,
+          "r": null
+        }
+      },
+      {
+        "i": 203,
+        "p": {
+          "c": "C1",
+          "o": 2,
+          "t": "string",
+          "r": null
+        }
+      },
+      {
+        "i": 204,
+        "p": {
+          "c": "C1",
+          "o": 4,
+          "t": "string",
+          "r": null
+        }
+      },
+      {
+        "i": 205,
+        "p": {
+          "c": "C1",
+          "o": 8,
+          "t": "DoWork",
+          "r": null
+        }
+      }
+    ]
+  },
+  "failure": {
+    "i": "read-1",
+    "sc": {
+      "p": "population-1",
+      "u": 7,
+      "w": "Default",
+      "r": "schema-1",
+      "x": "tenant=blue"
+    },
+    "k": "error",
+    "e": [
+      {
+        "c": "invalid-cache-reference",
+        "m": "Remove the invalid cache reference and retry the read.",
+        "o": [101],
+        "i": 0
+      }
+    ]
+  },
+  "unscopedFailure": {
+    "i": "cold-1",
+    "sc": null,
+    "k": "error",
+    "e": [
+      {
+        "c": "unsupported-protocol",
+        "m": "Use a supported read protocol revision.",
+        "o": null,
+        "i": null
+      }
+    ]
+  },
+  "emptyComplete": {
+    "i": "empty-1",
+    "sc": {
+      "p": "population-1",
+      "u": 7,
+      "w": "Default",
+      "r": "schema-1",
+      "x": "tenant=blue"
+    },
+    "k": "complete",
+    "l": [],
+    "c": {},
+    "o": {},
+    "p": [],
+    "s": [],
+    "pm": []
+  }
+}

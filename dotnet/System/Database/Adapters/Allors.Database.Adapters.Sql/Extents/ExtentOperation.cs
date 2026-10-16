@@ -67,7 +67,7 @@ namespace Allors.Database.Adapters.Sql
 
         protected override IList<long> GetObjectIds()
         {
-            this.Transaction.State.Flush();
+            this.Transaction.AdapterState.Flush();
 
             var statement = new ExtentStatementRoot(this);
             var alias = this.BuildSql(statement);
@@ -79,7 +79,7 @@ namespace Allors.Database.Adapters.Sql
                 {
                     while (reader.Read())
                     {
-                        var objectId = this.Transaction.State.GetObjectIdForExistingObject(reader.GetValue(0).ToString());
+                        var objectId = this.Transaction.AdapterState.GetObjectIdForExistingObject(reader.GetValue(0).ToString());
                         objectIds.Add(objectId);
                     }
                 }

@@ -16,8 +16,6 @@ namespace Tests.Workspace
             this.Name = name;
             this.SharedDatabaseWorkspace = this.Test.Profile.CreateWorkspace();
             this.SharedDatabaseSession = this.SharedDatabaseWorkspace.CreateSession();
-            this.ExclusiveDatabaseWorkspace = this.Test.Profile.CreateExclusiveWorkspace();
-            this.ExclusiveDatabaseSession = this.ExclusiveDatabaseWorkspace.CreateSession();
         }
 
         public Test Test { get; }
@@ -32,9 +30,9 @@ namespace Tests.Workspace
 
         public ISession SharedDatabaseSession { get; }
 
-        public IWorkspace ExclusiveDatabaseWorkspace { get; }
+        public IWorkspace ExclusiveDatabaseWorkspace { get; private set; }
 
-        public ISession ExclusiveDatabaseSession { get; }
+        public ISession ExclusiveDatabaseSession { get; private set; }
 
         public void Deconstruct(out ISession session1, out ISession session2)
         {
@@ -70,6 +68,11 @@ namespace Tests.Workspace
                     result = (T)sharedResult.Objects.Values.First();
                     break;
                 case DatabaseMode.ExclusiveDatabase:
+                    if (this.ExclusiveDatabaseWorkspace == null)
+                    {
+                        this.ExclusiveDatabaseWorkspace = await this.Test.Profile.CreateExclusiveWorkspaceAsync();
+                        this.ExclusiveDatabaseSession = this.ExclusiveDatabaseWorkspace.CreateSession();
+                    }
                     var exclusiveDatabaseObject = this.ExclusiveDatabaseSession.Create<T>();
                     await this.ExclusiveDatabaseSession.PushAsync();
                     var exclusiveResult = await session.PullAsync(new Pull { Object = exclusiveDatabaseObject });

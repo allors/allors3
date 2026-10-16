@@ -48,6 +48,17 @@ namespace Tests
         {
             if (this.connectionString == null)
             {
+                var prefix = Environment.GetEnvironmentVariable("ALLORS_TEST_DATABASE_PREFIX");
+                if (!string.IsNullOrEmpty(prefix))
+                {
+                    if (!System.Text.RegularExpressions.Regex.IsMatch(prefix, @"\A[a-z][a-z0-9_]*\z") || prefix.Length + database.Length > 63)
+                    {
+                        throw new ArgumentException("Set ALLORS_TEST_DATABASE_PREFIX to lowercase ASCII letters, digits and underscores, starting with a letter, with at most 63 characters including the test class name.");
+                    }
+
+                    database = prefix + database;
+                }
+
                 DatabaseProvisioning.DropCreate(this.Adapter, database);
                 this.connectionString = DatabaseProvisioning.ConnectionString(this.Adapter, database);
             }

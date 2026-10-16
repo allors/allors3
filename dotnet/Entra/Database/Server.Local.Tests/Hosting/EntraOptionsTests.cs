@@ -33,6 +33,7 @@ namespace Tests
     using Microsoft.AspNetCore.WebUtilities;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.DependencyInjection.Extensions;
     using Microsoft.Extensions.FileProviders;
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
@@ -1181,6 +1182,296 @@ namespace Tests
                 .Get("Other.Oidc").RemoteSignOutPath.Value);
         }
 
+        [Theory]
+        [InlineData("npgsql", false)]
+        [InlineData("npgsql", true)]
+        [InlineData("sqlclient", false)]
+        [InlineData("sqlclient", true)]
+        public async Task ReadRouteOpensItsProtectedSnapshotOnlyAfterCommittedBearerAdmission(string adapter, bool admitted)
+        {
+            var databaseName = "EntraReadRouteTests_" + Guid.NewGuid().ToString("N");
+            Allors.Database.Adapters.DatabaseProvisioning.DropCreate(adapter, databaseName);
+            var meta = new MetaBuilder().Build();
+            meta.Person.AssignedWorkspaceNames = new[] { "Default" };
+            var configuration = new Allors.Database.Adapters.Sql.Configuration
+            {
+                ObjectFactory = new Allors.Database.ObjectFactory(meta, typeof(User)),
+                ConnectionString = Allors.Database.Adapters.DatabaseProvisioning.ConnectionString(adapter, databaseName),
+                SchemaName = "allors",
+            };
+            var services = new DefaultDatabaseServices(new Engine(Rules.Create(meta)));
+            Allors.Database.Adapters.Sql.Database database = adapter == "npgsql"
+                ? new Allors.Database.Adapters.Sql.Npgsql.Database(services, configuration)
+                : new Allors.Database.Adapters.Sql.SqlClient.Database(services, configuration);
+            using (var maintenance = database.PopulationLifecycle.BeginMaintenance())
+            {
+                database.Init();
+                new Setup(database, new Config()).Apply();
+                using var transaction = database.CreateTransaction();
+                transaction.Derive();
+                transaction.Commit();
+                maintenance.Complete();
+            }
+
+            var builder = WebApplication.CreateBuilder(new WebApplicationOptions
+            {
+                EnvironmentName = "Development", ContentRootPath = System.IO.Path.GetTempPath(),
+            });
+            builder.Logging.ClearProviders();
+            var tenant = Guid.NewGuid();
+            builder.Configuration.AddInMemoryCollection(new Dictionary<string, string>
+            {
+                ["Entra:TenantId"] = tenant.ToString(), ["Entra:ClientId"] = ClientId, ["Entra:ClientSecret"] = "test-secret",
+            });
+            builder.Services.AddAllorsServer(builder.Configuration, builder.Environment, new AllorsServerOptions { ApplicationName = "Allors.SqlReadRouteTests" })
+                .AddApplicationPart(typeof(Allors.Database.Protocol.Json.ReadController).Assembly);
+            builder.Services.AddDataProtection().UseEphemeralDataProtectionProvider();
+            builder.Services.AddAllorsEntra(builder.Configuration, builder.Environment);
+            builder.Services.AddSingleton<IUserFactory, TestUserFactory>();
+            builder.Services.AddFakeEntra();
+            builder.Services.AddAllorsRead(new Allors.Database.Protocol.Json.ReadConfiguration(new Dictionary<string, string> { ["Default"] = "admission-read-v1" }));
+            var resolver = new ReadRouteResolver();
+            builder.Services.RemoveAll<IUserResolver>();
+            builder.Services.AddSingleton<IUserResolver>(resolver);
+            builder.Services.RemoveAll<IWorkspaceService>();
+            builder.Services.AddSingleton<IWorkspaceService, ReadRouteWorkspace>();
+            await using var app = builder.Build();
+            app.Services.GetRequiredService<IDatabaseService>().Database = database;
+            app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
+            app.UseAllorsServer(endpoints => endpoints.MapFakeEntra());
+            app.Urls.Add("http://127.0.0.1:0");
+            await app.StartAsync();
+            var fake = app.Services.GetRequiredService<FakeEntra>();
+            var account = admitted ? FakeEntraAccounts.Tester : FakeEntraAccounts.Refused;
+            var token = fake.AccessToken(tenant, account, ClientId, new[] { "access_as_user" });
+            using var client = new HttpClient { BaseAddress = new Uri(app.Urls.Single()) };
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            const string rawRequest = "{\"v\":1,\"i\":\"admitted\",\"k\":\"read\",\"p\":{\"l\":[],\"d\":[]}}";
+
+            using var response = await client.PostAsync("/allors/read", new StringContent(rawRequest, System.Text.Encoding.UTF8, "application/json"));
+
+            Assert.Equal(admitted ? HttpStatusCode.OK : HttpStatusCode.Unauthorized, response.StatusCode);
+            Assert.Equal(admitted ? 1 : 0, resolver.Reads);
+            using var committed = database.CreateTransaction();
+            var users = new Users(committed).Extent().ToArray();
+            Assert.Equal(admitted ? 1 : 0, users.Length);
+            if (admitted)
+            {
+                var request = Allors.Protocol.Json.SystemTextJson.ReadJson.DeserializeRequest(rawRequest);
+                var result = Assert.IsType<Allors.Protocol.Json.Api.Read.ReadSuccess>(Allors.Protocol.Json.SystemTextJson.ReadJson.DeserializeResponse(await response.Content.ReadAsStringAsync(), request));
+                Assert.Equal(users[0].Id, result.sc.u);
+                Assert.Equal(database.PopulationLifecycle.RequireReady().Incarnation.ToString("D"), result.sc.p);
+                Assert.Equal("admission-read-v1", result.sc.r);
+            }
+        }
+
+        [Theory]
+        [InlineData("npgsql", false)]
+        [InlineData("npgsql", true)]
+        [InlineData("sqlclient", false)]
+        [InlineData("sqlclient", true)]
+        public async Task InvokeRouteOpensProtectedWriteOnlyAfterCommittedBearerAdmission(string adapter, bool admitted)
+        {
+            var databaseName = "EntraInvokeRouteTests_" + Guid.NewGuid().ToString("N");
+            Allors.Database.Adapters.DatabaseProvisioning.DropCreate(adapter, databaseName);
+            var meta = new MetaBuilder().Build();
+            meta.Person.AssignedWorkspaceNames = new[] { "Default" };
+            var configuration = new Allors.Database.Adapters.Sql.Configuration
+            {
+                ObjectFactory = new Allors.Database.ObjectFactory(meta, typeof(User)),
+                ConnectionString = Allors.Database.Adapters.DatabaseProvisioning.ConnectionString(adapter, databaseName),
+                SchemaName = "allors",
+            };
+            var services = new DefaultDatabaseServices(new Engine(Rules.Create(meta)));
+            Allors.Database.Adapters.Sql.Database database = null;
+            long admittedUserId = 0;
+            var writes = 0;
+            Action beforeWrite = () =>
+            {
+                ++writes;
+                Assert.True(admittedUserId > 0);
+                using var verification = database.CreateTransaction();
+                Assert.NotNull(verification.Instantiate(admittedUserId));
+            };
+            database = adapter == "npgsql"
+                ? new InvokeAdmissionNpgsql(services, configuration, beforeWrite)
+                : new InvokeAdmissionSqlClient(services, configuration, beforeWrite);
+            using (var maintenance = database.PopulationLifecycle.BeginMaintenance())
+            {
+                database.Init();
+                new Setup(database, new Config()).Apply();
+                using var transaction = database.CreateTransaction();
+                transaction.Derive();
+                transaction.Commit();
+                maintenance.Complete();
+            }
+
+            var builder = WebApplication.CreateBuilder(new WebApplicationOptions
+            {
+                EnvironmentName = "Development", ContentRootPath = System.IO.Path.GetTempPath(),
+            });
+            builder.Logging.ClearProviders();
+            var tenant = Guid.NewGuid();
+            builder.Configuration.AddInMemoryCollection(new Dictionary<string, string>
+            {
+                ["Entra:TenantId"] = tenant.ToString(), ["Entra:ClientId"] = ClientId, ["Entra:ClientSecret"] = "test-secret",
+            });
+            builder.Services.AddAllorsServer(builder.Configuration, builder.Environment, new AllorsServerOptions { ApplicationName = "Allors.SqlInvokeRouteTests" })
+                .AddApplicationPart(typeof(Allors.Database.Protocol.Json.ReadController).Assembly);
+            builder.Services.AddDataProtection().UseEphemeralDataProtectionProvider();
+            builder.Services.AddAllorsEntra(builder.Configuration, builder.Environment);
+            builder.Services.AddSingleton<IUserFactory, TestUserFactory>();
+            builder.Services.AddFakeEntra();
+            builder.Services.AddAllorsRead(new Allors.Database.Protocol.Json.ReadConfiguration(new Dictionary<string, string> { ["Default"] = "admission-read-v1" }));
+            var resolver = new InvokeRouteResolver();
+            builder.Services.RemoveAll<IUserResolver>();
+            builder.Services.AddSingleton<IUserResolver>(resolver);
+            builder.Services.RemoveAll<IWorkspaceService>();
+            builder.Services.AddSingleton<IWorkspaceService, ReadRouteWorkspace>();
+            await using var app = builder.Build();
+            app.Services.GetRequiredService<IDatabaseService>().Database = database;
+            app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
+            app.UseAllorsServer(endpoints => endpoints.MapFakeEntra());
+            app.Urls.Add("http://127.0.0.1:0");
+            await app.StartAsync();
+            var fake = app.Services.GetRequiredService<FakeEntra>();
+            var account = admitted ? FakeEntraAccounts.Tester : FakeEntraAccounts.Refused;
+            var token = fake.AccessToken(tenant, account, ClientId, new[] { "access_as_user" });
+            using var client = new HttpClient { BaseAddress = new Uri(app.Urls.Single()) };
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            const string rawRequest = "{\"v\":1,\"i\":\"admitted\",\"k\":\"read\",\"p\":{\"l\":[],\"d\":[]}}";
+
+            using var bound = await client.PostAsync("/allors/read", new StringContent(rawRequest, System.Text.Encoding.UTF8, "application/json"));
+            Assert.Equal(admitted ? HttpStatusCode.OK : HttpStatusCode.Unauthorized, bound.StatusCode);
+            Assert.Equal(admitted ? 1 : 0, resolver.Resolutions);
+            Assert.Equal(0, writes);
+            var scope = new Allors.Protocol.Json.Api.Read.ReadScope
+            {
+                p = database.PopulationLifecycle.RequireReady().Incarnation.ToString("D"), u = 1,
+                w = "Default", r = "admission-read-v1", x = null,
+            };
+            if (admitted)
+            {
+                var read = Allors.Protocol.Json.SystemTextJson.ReadJson.DeserializeRequest(rawRequest);
+                scope = Assert.IsType<Allors.Protocol.Json.Api.Read.ReadSuccess>(Allors.Protocol.Json.SystemTextJson.ReadJson.DeserializeResponse(await bound.Content.ReadAsStringAsync(), read)).sc;
+                admittedUserId = scope.u;
+            }
+            var invocation = new Allors.Protocol.Json.Api.InvokeRead.InvokeReadRequest
+            {
+                v = 1, i = "admitted-invoke", sc = scope,
+                l = Array.Empty<Allors.Protocol.Json.Api.Invoke.Invocation>(), refresh = true,
+            };
+
+            using var response = await client.PostAsync("/allors/invoke-read", new StringContent(JsonSerializer.Serialize(invocation), System.Text.Encoding.UTF8, "application/json"));
+
+            Assert.Equal(admitted ? HttpStatusCode.OK : HttpStatusCode.Unauthorized, response.StatusCode);
+            Assert.Equal(admitted ? 1 : 0, writes);
+            Assert.Equal(admitted ? 3 : 0, resolver.Resolutions);
+            using var committed = database.CreateTransaction();
+            var users = new Users(committed).Extent().ToArray();
+            Assert.Equal(admitted ? 1 : 0, users.Length);
+            if (admitted)
+            {
+                var result = Allors.Protocol.Json.SystemTextJson.InvokeReadJson.DeserializeResponse(await response.Content.ReadAsStringAsync(), invocation);
+                Assert.Equal("committed", result.invoke.k);
+                Assert.Equal(users[0].Id, result.sc.u);
+                Assert.Equal(scope.p, result.sc.p);
+                Assert.Equal("admission-read-v1", result.sc.r);
+                var changed = Assert.IsType<Allors.Protocol.Json.Api.PushRead.PushReadChanged>(result.changed);
+                Assert.Empty(changed.p);
+                Assert.Empty(changed.u);
+                Assert.Empty(changed.s);
+                Assert.Empty(changed.pm);
+            }
+        }
+
+        private sealed class InvokeAdmissionNpgsql : Allors.Database.Adapters.Sql.Npgsql.Database
+        {
+            private readonly Action beforeWrite;
+            internal InvokeAdmissionNpgsql(IDatabaseServices services, Allors.Database.Adapters.Sql.Configuration configuration, Action beforeWrite)
+                : base(services, configuration) => this.beforeWrite = beforeWrite;
+            public override Allors.Database.Adapters.Sql.WriteScope OpenWrite(Guid expectedIncarnation)
+            {
+                this.beforeWrite();
+                return base.OpenWrite(expectedIncarnation);
+            }
+        }
+
+        private sealed class InvokeAdmissionSqlClient : Allors.Database.Adapters.Sql.SqlClient.Database
+        {
+            private readonly Action beforeWrite;
+            internal InvokeAdmissionSqlClient(IDatabaseServices services, Allors.Database.Adapters.Sql.Configuration configuration, Action beforeWrite)
+                : base(services, configuration) => this.beforeWrite = beforeWrite;
+            public override Allors.Database.Adapters.Sql.WriteScope OpenWrite(Guid expectedIncarnation)
+            {
+                this.beforeWrite();
+                return base.OpenWrite(expectedIncarnation);
+            }
+        }
+
+        private sealed class InvokeRouteResolver : IUserResolver
+        {
+            internal int Resolutions { get; private set; }
+            public User Resolve(ClaimsPrincipal principal, ITransaction transaction)
+            {
+                ++this.Resolutions;
+                var user = new EntraUserResolver().Resolve(principal, transaction);
+                Assert.NotNull(user);
+                Assert.Same(transaction, user.Strategy.Transaction);
+                using var verification = transaction.Database.CreateTransaction();
+                Assert.NotNull(verification.Instantiate(user.Id));
+                return user;
+            }
+        }
+
+        private sealed class ReadRouteWorkspace : IWorkspaceService
+        {
+            public string Name => "Default";
+        }
+
+        private sealed class ReadRouteResolver : IUserResolver
+        {
+            internal int Reads { get; private set; }
+            public User Resolve(ClaimsPrincipal principal, ITransaction transaction)
+            {
+                ++this.Reads;
+                return new EntraUserResolver().Resolve(principal, transaction);
+            }
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task ReadRouteRequiresSuccessfulBrowserAdmission(bool admitted)
+        {
+            var certificate = NewClientCertificate();
+            await using var host = await CertificateBrowser.CreateAsync(certificate, certificate);
+            var signIn = await host.SignInAsync(wrongNonce: !admitted);
+            Assert.Equal(admitted ? 1 : 0, host.Users().Length);
+
+            var status = await host.ReadAsync(signIn.SessionCookie);
+
+            Assert.Equal(admitted ? HttpStatusCode.ServiceUnavailable : HttpStatusCode.Unauthorized, status);
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task ReadRouteRequiresSuccessfulBearerAdmission(bool admitted)
+        {
+            var certificate = NewClientCertificate();
+            await using var host = await CertificateBrowser.CreateAsync(certificate, certificate);
+
+            var status = await host.ReadAsync(bearer: true, invalidAudience: !admitted);
+
+            Assert.Equal(admitted ? HttpStatusCode.ServiceUnavailable : HttpStatusCode.Unauthorized, status);
+            Assert.Equal(admitted ? 1 : 0, host.Users().Length);
+        }
+
         private static byte[] NewClientCertificate()
         {
             using var key = RSA.Create(2048);
@@ -1352,6 +1643,37 @@ namespace Tests
                 }
 
                 return (response.StatusCode, handler.CookieContainer.GetCookies(origin)["Allors.Auth"]?.Value, userName, body);
+            }
+
+            public async Task<HttpStatusCode> ReadAsync(string sessionCookie = null, bool bearer = false, bool invalidAudience = false)
+            {
+                var origin = new Uri(this.app.Urls.Single());
+                using var handler = new HttpClientHandler { AllowAutoRedirect = false, CookieContainer = new CookieContainer() };
+                if (sessionCookie != null)
+                {
+                    handler.CookieContainer.Add(origin, new Cookie("Allors.Auth", sessionCookie, "/"));
+                }
+
+                using var client = new HttpClient(handler) { BaseAddress = origin };
+                using var ready = await client.GetAsync("/allors/Test/Ready");
+                using var request = new HttpRequestMessage(HttpMethod.Post, "/allors/read") { Content = new StringContent("{}") };
+                var xsrf = handler.CookieContainer.GetCookies(origin)["XSRF-TOKEN"]?.Value;
+                if (xsrf != null)
+                {
+                    request.Headers.Add("X-XSRF-TOKEN", xsrf);
+                }
+
+                if (bearer)
+                {
+                    var fake = this.app.Services.GetRequiredService<FakeEntra>();
+                    var tenant = Guid.Parse(this.app.Configuration["Entra:TenantId"]);
+                    var token = fake.AccessToken(tenant, FakeEntraAccounts.Tester, ClientId, new[] { "access_as_user" },
+                        new FakeEntra.TokenKnobs { Audience = invalidAudience ? "wrong-audience" : ClientId });
+                    request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+                }
+
+                using var response = await client.SendAsync(request);
+                return response.StatusCode;
             }
 
             private async Task RedeemAsync(HttpContext context)

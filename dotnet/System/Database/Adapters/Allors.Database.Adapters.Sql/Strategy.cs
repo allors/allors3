@@ -32,7 +32,7 @@ namespace Allors.Database.Adapters.Sql
         {
             this.Reference = reference;
             this.ObjectId = reference.ObjectId;
-            this.State = this.Transaction.State;
+            this.State = this.Transaction.AdapterState;
         }
 
         ITransaction IStrategy.Transaction => this.Reference.Transaction;
@@ -71,7 +71,7 @@ namespace Allors.Database.Adapters.Sql
                     return this.cachedObject;
                 }
 
-                var cache = this.Transaction.Database.Cache;
+                var cache = this.Transaction.Cache;
                 this.cachedObject = cache.GetOrCreateCachedObject(this.Reference.Class, this.Reference.ObjectId, this.Reference.Version);
                 return this.cachedObject;
             }
@@ -87,10 +87,15 @@ namespace Allors.Database.Adapters.Sql
 
         private State State { get; }
 
-        public IObject GetObject() => this.allorsObject ??= this.Reference.Transaction.Database.ObjectFactory.Create(this);
+        public IObject GetObject()
+        {
+            this.Transaction.EnsureReadable();
+            return this.allorsObject ??= this.Reference.Transaction.Database.ObjectFactory.Create(this);
+        }
 
         public virtual void Delete()
         {
+            this.Transaction.AssertWritable("Object or role mutation");
             this.AssertExist();
 
             foreach (var roleType in this.Class.DatabaseRoleTypes)
@@ -109,7 +114,7 @@ namespace Allors.Database.Adapters.Sql
                 {
                     foreach (var association in this.Transaction.GetAssociations(this, associationType))
                     {
-                        var associationStrategy = this.Transaction.State.GetOrCreateReferenceForExistingObject(association, this.Transaction).Strategy;
+                        var associationStrategy = this.Transaction.AdapterState.GetOrCreateReferenceForExistingObject(association, this.Transaction).Strategy;
                         if (roleType.IsMany)
                         {
                             associationStrategy.RemoveCompositesRole(roleType, this.GetObject());
@@ -140,7 +145,7 @@ namespace Allors.Database.Adapters.Sql
             this.Transaction.Commands.DeleteObject(this);
             this.Reference.Exists = false;
 
-            this.Transaction.State.ChangeLog.OnDeleted(this);
+            this.Transaction.AdapterState.ChangeLog.OnDeleted(this);
         }
 
         public virtual bool ExistRole(IRoleType roleType)
@@ -169,6 +174,7 @@ namespace Allors.Database.Adapters.Sql
 
         public virtual void SetRole(IRoleType roleType, object value)
         {
+            this.Transaction.AssertWritable("Object or role mutation");
             if (roleType.ObjectType.IsUnit)
             {
                 this.SetUnitRole(roleType, value);
@@ -185,6 +191,7 @@ namespace Allors.Database.Adapters.Sql
 
         public virtual void RemoveRole(IRoleType roleType)
         {
+            this.Transaction.AssertWritable("Object or role mutation");
             if (roleType.ObjectType.IsUnit)
             {
                 this.RemoveUnitRole(roleType);
@@ -204,11 +211,13 @@ namespace Allors.Database.Adapters.Sql
         public virtual object GetUnitRole(IRoleType roleType)
         {
             this.AssertExist();
-            return this.GetUnitRoleInternal(roleType);
+            var value = this.GetUnitRoleInternal(roleType);
+            return this.Transaction.IsProtectedRead && value is byte[] bytes ? bytes.Clone() : value;
         }
 
         public virtual void SetUnitRole(IRoleType roleType, object role)
         {
+            this.Transaction.AssertWritable("Object or role mutation");
             this.AssertExist();
             roleType.UnitRoleChecks(this);
             role = roleType.Normalize(role);
@@ -224,11 +233,12 @@ namespace Allors.Database.Adapters.Sql
         {
             this.AssertExist();
             var role = this.GetCompositeRoleInternal(roleType);
-            return role == null ? null : this.Transaction.State.GetOrCreateReferenceForExistingObject(role.Value, this.Transaction).Strategy.GetObject();
+            return role == null ? null : this.Transaction.AdapterState.GetOrCreateReferenceForExistingObject(role.Value, this.Transaction).Strategy.GetObject();
         }
 
         public virtual void SetCompositeRole(IRoleType roleType, IObject newRoleObject)
         {
+            this.Transaction.AssertWritable("Object or role mutation");
             if (newRoleObject == null)
             {
                 this.RemoveCompositeRole(roleType);
@@ -253,6 +263,7 @@ namespace Allors.Database.Adapters.Sql
 
         public virtual void RemoveCompositeRole(IRoleType roleType)
         {
+            this.Transaction.AssertWritable("Object or role mutation");
             this.AssertExist();
             roleType.CompositeRoleChecks(this);
 
@@ -291,6 +302,7 @@ namespace Allors.Database.Adapters.Sql
 
         public virtual void AddCompositesRole(IRoleType roleType, IObject roleObject)
         {
+            this.Transaction.AssertWritable("Object or role mutation");
             this.AssertExist();
 
             if (roleObject == null)
@@ -313,6 +325,7 @@ namespace Allors.Database.Adapters.Sql
 
         public virtual void RemoveCompositesRole(IRoleType roleType, IObject roleObject)
         {
+            this.Transaction.AssertWritable("Object or role mutation");
             this.AssertExist();
 
             if (roleObject != null)
@@ -333,6 +346,7 @@ namespace Allors.Database.Adapters.Sql
 
         public virtual void SetCompositesRole(IRoleType roleType, IEnumerable<IObject> roleObjects)
         {
+            this.Transaction.AssertWritable("Object or role mutation");
             var roleCollection = roleObjects != null ? roleObjects as ICollection<IObject> ?? roleObjects.ToArray() : null;
 
             if (roleCollection == null || roleCollection.Count == 0)
@@ -374,7 +388,7 @@ namespace Allors.Database.Adapters.Sql
                 {
                     if (!newRoles.Contains(previousRole))
                     {
-                        var role = this.Transaction.State.GetOrCreateReferenceForExistingObject(previousRole, this.Transaction).Strategy;
+                        var role = this.Transaction.AdapterState.GetOrCreateReferenceForExistingObject(previousRole, this.Transaction).Strategy;
                         if (roleType.AssociationType.IsOne)
                         {
                             this.RemoveCompositeRoleOne2Many(roleType, role);
@@ -390,13 +404,14 @@ namespace Allors.Database.Adapters.Sql
 
         public virtual void RemoveCompositesRole(IRoleType roleType)
         {
+            this.Transaction.AssertWritable("Object or role mutation");
             this.AssertExist();
 
             roleType.CompositeRoleChecks(this);
 
             foreach (var previousRole in this.GetCompositesRole(roleType))
             {
-                var role = this.Transaction.State.GetOrCreateReferenceForExistingObject(previousRole, this.Transaction).Strategy;
+                var role = this.Transaction.AdapterState.GetOrCreateReferenceForExistingObject(previousRole, this.Transaction).Strategy;
                 if (roleType.AssociationType.IsOne)
                 {
                     this.RemoveCompositeRoleOne2Many(roleType, role);
@@ -467,7 +482,7 @@ namespace Allors.Database.Adapters.Sql
                 var i = 0;
                 foreach (var objectId in compositesRole.ObjectIds)
                 {
-                    array.SetValue(transaction.State.GetOrCreateReferenceForExistingObject(objectId, transaction).Strategy.GetObject(), index + i);
+                    array.SetValue(transaction.AdapterState.GetOrCreateReferenceForExistingObject(objectId, transaction).Strategy.GetObject(), index + i);
                     ++i;
                 }
 
@@ -478,7 +493,7 @@ namespace Allors.Database.Adapters.Sql
             for (var i = 0; i < nonModifiedCompositeRoles.Length; i++)
             {
                 var objectId = nonModifiedCompositeRoles[i];
-                array.SetValue(transaction.State.GetOrCreateReferenceForExistingObject(objectId, transaction).Strategy.GetObject(), index + i);
+                array.SetValue(transaction.AdapterState.GetOrCreateReferenceForExistingObject(objectId, transaction).Strategy.GetObject(), index + i);
             }
         }
 
@@ -505,7 +520,7 @@ namespace Allors.Database.Adapters.Sql
             {
                 if (i == index)
                 {
-                    return this.Transaction.State.GetOrCreateReferenceForExistingObject(oid, this.Transaction).Strategy.GetObject();
+                    return this.Transaction.AdapterState.GetOrCreateReferenceForExistingObject(oid, this.Transaction).Strategy.GetObject();
                 }
 
                 ++i;
@@ -897,11 +912,11 @@ namespace Allors.Database.Adapters.Sql
 
         private Reference GetCompositeAssociationInternal(IAssociationType associationType)
         {
-            var associationByRole = this.Transaction.State.GetAssociationByRole(associationType);
+            var associationByRole = this.Transaction.AdapterState.GetAssociationByRole(associationType);
 
             if (!associationByRole.TryGetValue(this.Reference, out var association))
             {
-                this.Transaction.State.FlushConditionally(this.ObjectId, associationType);
+                this.Transaction.AdapterState.FlushConditionally(this.ObjectId, associationType);
                 association = this.Transaction.Commands.GetCompositeAssociation(this.Reference, associationType);
                 associationByRole[this.Reference] = association;
             }

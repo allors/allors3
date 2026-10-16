@@ -41,6 +41,7 @@ namespace Allors.Server.Controllers
             try
             {
                 var database = this.Database;
+                using var maintenance = (database as Database.Adapters.Sql.Database)?.PopulationLifecycle.BeginMaintenance();
                 database.Init();
 
                 new Setup(database, new Config()).Apply();
@@ -57,6 +58,7 @@ namespace Allors.Server.Controllers
                     transaction.Commit();
                 }
 
+                maintenance?.Complete();
                 return this.Ok();
             }
             catch (Exception e)

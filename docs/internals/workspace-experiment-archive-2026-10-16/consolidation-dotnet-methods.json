@@ -1,0 +1,2079 @@
+[
+  {
+    "name": "NormalConnectionPublicContractHasOnlyReadyFactories",
+    "line": 64,
+    "signature": "void NormalConnectionPublicContractHasOnlyReadyFactories()",
+    "attributes": [
+      "[Fact]"
+    ],
+    "body_sha256": "168642e3868b5d9ee7731bcc289487d32b2d062dcd438a46db8306c8a61a8130",
+    "inline_rows": 0,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 1,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "NormalHttpFactoryBootstrapsOnceWithoutApplicationServices",
+    "line": 85,
+    "signature": "async Task NormalHttpFactoryBootstrapsOnceWithoutApplicationServices(bool newtonsoft)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(false)]",
+      "[InlineData(true)]"
+    ],
+    "body_sha256": "1a999fc2cf51f9c6ef70a0cff2a0055a154ae248f60ff81244d5226a8830fbe1",
+    "inline_rows": 2,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 2,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "NormalFactoryBootstrapFailureReturnsNoConnectionAndBorrowsTransport",
+    "line": 112,
+    "signature": "async Task NormalFactoryBootstrapFailureReturnsNoConnectionAndBorrowsTransport(bool newtonsoft, string stage, string failure)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(false, \"discover\", \"structured\")]",
+      "[InlineData(false, \"discover\", \"transport\")]",
+      "[InlineData(false, \"discover\", \"malformed\")]",
+      "[InlineData(false, \"discover\", \"cancel\")]",
+      "[InlineData(false, \"read\", \"structured\")]",
+      "[InlineData(false, \"read\", \"transport\")]",
+      "[InlineData(false, \"read\", \"malformed\")]",
+      "[InlineData(false, \"read\", \"cancel\")]",
+      "[InlineData(true, \"discover\", \"structured\")]",
+      "[InlineData(true, \"discover\", \"transport\")]",
+      "[InlineData(true, \"discover\", \"malformed\")]",
+      "[InlineData(true, \"discover\", \"cancel\")]",
+      "[InlineData(true, \"read\", \"structured\")]",
+      "[InlineData(true, \"read\", \"transport\")]",
+      "[InlineData(true, \"read\", \"malformed\")]",
+      "[InlineData(true, \"read\", \"cancel\")]"
+    ],
+    "body_sha256": "3af92632bf777076dd2cb62b454da5ba9e27f56450f7e07a400df3d510c25e5f",
+    "inline_rows": 16,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 16,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "NormalFactoryRejectsMissingCapabilitiesBeforeBootstrap",
+    "line": 161,
+    "signature": "async Task NormalFactoryRejectsMissingCapabilitiesBeforeBootstrap(string missing)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(\"read\")]",
+      "[InlineData(\"push\")]",
+      "[InlineData(\"invoke\")]"
+    ],
+    "body_sha256": "16418833a28b8906066939d4309b89a362d9c3d25ed5f1bd43455722586275bc",
+    "inline_rows": 3,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 3,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "NormalFactoryCapturesScopeAndRulesBeforeAwait",
+    "line": 181,
+    "signature": "async Task NormalFactoryCapturesScopeAndRulesBeforeAwait(bool newtonsoft)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(false)]",
+      "[InlineData(true)]"
+    ],
+    "body_sha256": "19b07af2e92d8f787786d10d1d1c1c4b43fca8e9c18b2da0e03e3fd53b3787b4",
+    "inline_rows": 2,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 2,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "NormalConnectionTracksAllWorkspaceSessionsAndIdempotentClosure",
+    "line": 215,
+    "signature": "async Task NormalConnectionTracksAllWorkspaceSessionsAndIdempotentClosure(bool newtonsoft)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(false)]",
+      "[InlineData(true)]"
+    ],
+    "body_sha256": "240e16808687863da61998f6d6059d86a825edef3f790ac00a0e2351f8276d75",
+    "inline_rows": 2,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 2,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "NormalConnectionDisposeDrainsKnownAndUnknownMutationOutcomes",
+    "line": 240,
+    "signature": "async Task NormalConnectionDisposeDrainsKnownAndUnknownMutationOutcomes(bool newtonsoft, string operation, bool lost)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(false, \"push\", false)]",
+      "[InlineData(false, \"push\", true)]",
+      "[InlineData(false, \"invoke\", false)]",
+      "[InlineData(false, \"invoke\", true)]",
+      "[InlineData(true, \"push\", false)]",
+      "[InlineData(true, \"push\", true)]",
+      "[InlineData(true, \"invoke\", false)]",
+      "[InlineData(true, \"invoke\", true)]"
+    ],
+    "body_sha256": "8f78fce84c763507dee2affc09e344fd9d66dd77b0fd1ad4b1ea83f0dda7fb46",
+    "inline_rows": 8,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 8,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "EarlySessionCloseRetainsOwnedServicesUntilConnectionDrain",
+    "line": 325,
+    "signature": "async Task EarlySessionCloseRetainsOwnedServicesUntilConnectionDrain(string operation)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(\"read\")]",
+      "[InlineData(\"push\")]",
+      "[InlineData(\"invoke\")]"
+    ],
+    "body_sha256": "99a8366b17d4977154bbafefef5ca8b34fc4e45f5b1d985788db901a2b841e2c",
+    "inline_rows": 3,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 3,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "NormalSessionInitializationRunsOnceAfterRegistration",
+    "line": 354,
+    "signature": "async Task NormalSessionInitializationRunsOnceAfterRegistration()",
+    "attributes": [
+      "[Fact]"
+    ],
+    "body_sha256": "e42bc20571ff528cfc6ee2732413d14f6db63762c5a754b242e64523c8e53817",
+    "inline_rows": 0,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 1,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "NormalConstructionCallbacksCannotPublishAfterShutdown",
+    "line": 372,
+    "signature": "async Task NormalConstructionCallbacksCannotPublishAfterShutdown(string stage, string action)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(\"servicesBuilder\", \"throw\")]",
+      "[InlineData(\"servicesBuilder\", \"close\")]",
+      "[InlineData(\"CreateSessionServices\", \"throw\")]",
+      "[InlineData(\"CreateSessionServices\", \"close\")]",
+      "[InlineData(\"Workspace.OnInit\", \"throw\")]",
+      "[InlineData(\"Workspace.OnInit\", \"close\")]",
+      "[InlineData(\"Session.OnInit\", \"throw\")]",
+      "[InlineData(\"Session.OnInit\", \"close\")]"
+    ],
+    "body_sha256": "5825f061fb3058ecad63a3fac2aa65d9ac879b86125a26483dc16ebb1941fb40",
+    "inline_rows": 8,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 8,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "NormalConnectionCleanupContinuesAfterServiceDisposalFailure",
+    "line": 459,
+    "signature": "async Task NormalConnectionCleanupContinuesAfterServiceDisposalFailure(string failing)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(\"workspace\")]",
+      "[InlineData(\"session\")]"
+    ],
+    "body_sha256": "84c26dc87c6f0c3e065703560eee8ae35039ad202b1f0ffe76fa89f6c625a417",
+    "inline_rows": 2,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 2,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "NormalConnectionCloseDistinguishesPendingQueryGapFromCompletion",
+    "line": 484,
+    "signature": "async Task NormalConnectionCloseDistinguishesPendingQueryGapFromCompletion(bool dispatched)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(false)]",
+      "[InlineData(true)]"
+    ],
+    "body_sha256": "b97a52ac6bc6853a722625265d7b7a6464d2ca4a9efac4a3ed55a42df55cbc85",
+    "inline_rows": 2,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 2,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "NormalQueuedOperationsCannotTouchResourcesAfterClose",
+    "line": 536,
+    "signature": "async Task NormalQueuedOperationsCannotTouchResourcesAfterClose(string operation)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(\"read\")]",
+      "[InlineData(\"push\")]",
+      "[InlineData(\"invoke\")]",
+      "[InlineData(\"pending-query\")]"
+    ],
+    "body_sha256": "129144722f97d183fe1956ad531e0e073584541f0e744d78311c28b118d2e7a2",
+    "inline_rows": 4,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 4,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "NormalLocalProfileLoginDrainsAllOwnedConnections",
+    "line": 606,
+    "signature": "async Task NormalLocalProfileLoginDrainsAllOwnedConnections()",
+    "attributes": [
+      "[Fact]"
+    ],
+    "body_sha256": "13bbd5b6fb6a395b5f30d48cb050d1b0369e403611771be57149892d657ed102",
+    "inline_rows": 0,
+    "member_data": [],
+    "classification": "integration",
+    "rows": 1,
+    "change": "No source change; retains provider selection"
+  },
+  {
+    "name": "ProtectedInvokePublicContractUsesSharedResultAndRefreshOnly",
+    "line": 756,
+    "signature": "void ProtectedInvokePublicContractUsesSharedResultAndRefreshOnly()",
+    "attributes": [
+      "[Fact]"
+    ],
+    "body_sha256": "2a6bb739e886756a3ecc5cb9bae17effc00ebbb7cde27ceceedf3c235b21ce58",
+    "inline_rows": 0,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 1,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ProtectedInvokeDefaultsToRefreshAndExplicitSkipPreservesEdits",
+    "line": 775,
+    "signature": "async Task ProtectedInvokeDefaultsToRefreshAndExplicitSkipPreservesEdits(bool newtonsoft, bool skip)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(false, false)]",
+      "[InlineData(false, true)]",
+      "[InlineData(true, false)]",
+      "[InlineData(true, true)]"
+    ],
+    "body_sha256": "3cb40da9f6d039a8795237676ab9a3828c969d8778363eacc182ac4aa4946367",
+    "inline_rows": 4,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 4,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ProtectedInvokeRefreshPreservesEditsAndCheckpointOrReportsConflict",
+    "line": 816,
+    "signature": "async Task ProtectedInvokeRefreshPreservesEditsAndCheckpointOrReportsConflict(bool newtonsoft, bool conflict)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(false, false)]",
+      "[InlineData(false, true)]",
+      "[InlineData(true, false)]",
+      "[InlineData(true, true)]"
+    ],
+    "body_sha256": "f533a6550d232d4114223b9eb15741cb277b1709e176d411a2a5cc2fc0722777",
+    "inline_rows": 4,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 4,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ProtectedInvokeOwnsMethodsOptionsAndRawDiagnostics",
+    "line": 858,
+    "signature": "async Task ProtectedInvokeOwnsMethodsOptionsAndRawDiagnostics(bool newtonsoft)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(false)]",
+      "[InlineData(true)]"
+    ],
+    "body_sha256": "82452be729b0d2b1475e784826a99a427972b12325d9cdd7fc80db61eaad6f2f",
+    "inline_rows": 2,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 2,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ProtectedInvokeRejectsInvalidTargetsBeforeDispatch",
+    "line": 918,
+    "signature": "async Task ProtectedInvokeRejectsInvalidTargetsBeforeDispatch(bool newtonsoft, string invalid)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(false, \"null-methods\")]",
+      "[InlineData(false, \"default-method\")]",
+      "[InlineData(false, \"null-method-type\")]",
+      "[InlineData(false, \"new-target\")]",
+      "[InlineData(false, \"foreign-method\")]",
+      "[InlineData(true, \"null-methods\")]",
+      "[InlineData(true, \"default-method\")]",
+      "[InlineData(true, \"null-method-type\")]",
+      "[InlineData(true, \"new-target\")]",
+      "[InlineData(true, \"foreign-method\")]"
+    ],
+    "body_sha256": "59a7087373d5defc534ee2f8471df89285022a9b4008d3a58f17a265b8cc2851",
+    "inline_rows": 10,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 10,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "NormalFactoryRequiresInvokeCapabilityAndReadiness",
+    "line": 947,
+    "signature": "async Task NormalFactoryRequiresInvokeCapabilityAndReadiness(bool newtonsoft, string invalid)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(false, \"missing-capability\")]",
+      "[InlineData(false, \"cold\")]",
+      "[InlineData(true, \"missing-capability\")]",
+      "[InlineData(true, \"cold\")]"
+    ],
+    "body_sha256": "760dff1d865598e3f8721453045102ee42c03ce1e6747022633c45a2f8fbd770",
+    "inline_rows": 4,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 4,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ProtectedInvokePausesEditingAndSameSessionOperations",
+    "line": 985,
+    "signature": "async Task ProtectedInvokePausesEditingAndSameSessionOperations(bool newtonsoft)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(false)]",
+      "[InlineData(true)]"
+    ],
+    "body_sha256": "142c10d5d6401f0e2e63ec6dc3b2c855353e455b9fa5431461e27ad1d7126f4f",
+    "inline_rows": 2,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 2,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ProtectedInvokeQueuedCancellationReleasesPauseWithoutDispatch",
+    "line": 1037,
+    "signature": "async Task ProtectedInvokeQueuedCancellationReleasesPauseWithoutDispatch(bool newtonsoft)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(false)]",
+      "[InlineData(true)]"
+    ],
+    "body_sha256": "54c1bfdb096147639864faed70e5df931d2fc21eef4333a9de2b2b1f69b29070",
+    "inline_rows": 2,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 2,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ProtectedInvokeClassifiesIndependentReceiptAndRefresh",
+    "line": 1063,
+    "signature": "async Task ProtectedInvokeClassifiesIndependentReceiptAndRefresh(bool newtonsoft, string invalid)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(false, \"malformed-refresh\")]",
+      "[InlineData(false, \"missing-refresh\")]",
+      "[InlineData(false, \"server-read-error\")]",
+      "[InlineData(false, \"wrong-refresh-scope\")]",
+      "[InlineData(true, \"malformed-refresh\")]",
+      "[InlineData(true, \"missing-refresh\")]",
+      "[InlineData(true, \"server-read-error\")]",
+      "[InlineData(true, \"wrong-refresh-scope\")]"
+    ],
+    "body_sha256": "d36681b75294ac7a35898540bcd467dfa31778949f74956cbd1f9e7a5daecc10",
+    "inline_rows": 8,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 8,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ProtectedInvokeUntrustedReceiptRequiresReconciliation",
+    "line": 1104,
+    "signature": "async Task ProtectedInvokeUntrustedReceiptRequiresReconciliation(bool newtonsoft, string invalid)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(false, \"wrong-correlation\")]",
+      "[InlineData(false, \"wrong-commit-scope\")]",
+      "[InlineData(true, \"wrong-correlation\")]",
+      "[InlineData(true, \"wrong-commit-scope\")]"
+    ],
+    "body_sha256": "92a9d3e36d8fb89166d8c0af4d0607d9adda70d1fd95299dccf36f6b5460b4d6",
+    "inline_rows": 4,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 4,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ProtectedInvokePostDispatchLifecycleKeepsKnownOutcome",
+    "line": 1130,
+    "signature": "async Task ProtectedInvokePostDispatchLifecycleKeepsKnownOutcome(bool newtonsoft, string lifecycle)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(false, \"cancellation\")]",
+      "[InlineData(false, \"session-close\")]",
+      "[InlineData(false, \"connection-retire\")]",
+      "[InlineData(true, \"cancellation\")]",
+      "[InlineData(true, \"session-close\")]",
+      "[InlineData(true, \"connection-retire\")]"
+    ],
+    "body_sha256": "c3c05f3ac3148d9a5e10411d5e77c36707c1981eaf9b85bd5b420f7023221525",
+    "inline_rows": 6,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 6,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ProtectedInvokeApplicationAndNotificationFailuresRemainDistinct",
+    "line": 1162,
+    "signature": "async Task ProtectedInvokeApplicationAndNotificationFailuresRemainDistinct(bool newtonsoft, bool throwFactory)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(false, false)]",
+      "[InlineData(false, true)]",
+      "[InlineData(true, false)]",
+      "[InlineData(true, true)]"
+    ],
+    "body_sha256": "a1e188069d8d910ff1fece18f6aaa6d5494eede9148b9decc1f6b435d78c598b",
+    "inline_rows": 4,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 4,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "NormalInvokeReadinessAndResultsUseOneProtectedPath",
+    "line": 1202,
+    "signature": "async Task NormalInvokeReadinessAndResultsUseOneProtectedPath(bool newtonsoft)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(false)]",
+      "[InlineData(true)]"
+    ],
+    "body_sha256": "7d674f6629d42ada1c498daf2bec6a5eedaf46243f7d501e6da1c37bb3699f37",
+    "inline_rows": 2,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 2,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "UnitConversionWithoutSerialization",
+    "line": 1238,
+    "signature": "void UnitConversionWithoutSerialization(string tag, object value)",
+    "attributes": [
+      "[Theory]",
+      "[MemberData(nameof(ProtocolUnits))]"
+    ],
+    "body_sha256": "388294a99193b3a8aa41de7b4a15016ca378c342e8ceff4a04a62945dfdd256a",
+    "inline_rows": 0,
+    "member_data": [
+      "ProtocolUnits"
+    ],
+    "classification": "pure",
+    "rows": 11,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "UnitConversionWithSerialization",
+    "line": 1246,
+    "signature": "void UnitConversionWithSerialization(string tag, object value)",
+    "attributes": [
+      "[Theory]",
+      "[MemberData(nameof(ProtocolUnits))]"
+    ],
+    "body_sha256": "7851eade013e32a142a410bfbdadb8d3fac7e3b9c76832222e9048396cd4a633",
+    "inline_rows": 0,
+    "member_data": [
+      "ProtocolUnits"
+    ],
+    "classification": "pure",
+    "rows": 11,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "PublicContractsDoNotExposeStandaloneResultValues",
+    "line": 1255,
+    "signature": "void PublicContractsDoNotExposeStandaloneResultValues()",
+    "attributes": [
+      "[Fact]"
+    ],
+    "body_sha256": "aca8f181f83901c1559ed8f264dde828b1892ee3561368ff9975aa94280cd61d",
+    "inline_rows": 0,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 1,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "LegacyPullResponsesIgnoreRemovedResultValues",
+    "line": 1275,
+    "signature": "void LegacyPullResponsesIgnoreRemovedResultValues(string serializer, string removedValues)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(\"SystemText\", \"{}\")]",
+      "[InlineData(\"SystemText\", \"{\\\"retired\\\":42}\")]",
+      "[InlineData(\"SystemText\", \"null\")]",
+      "[InlineData(\"Newtonsoft\", \"{}\")]",
+      "[InlineData(\"Newtonsoft\", \"{\\\"retired\\\":42}\")]",
+      "[InlineData(\"Newtonsoft\", \"null\")]"
+    ],
+    "body_sha256": "270c7e9b3bee5a3d386ee72759739a9a2c5fc09f85f4ac03b0037c54a65acf87",
+    "inline_rows": 6,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 6,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "PublicContractsDoNotExposeNamedWorkspaceRoutes",
+    "line": 1304,
+    "signature": "void PublicContractsDoNotExposeNamedWorkspaceRoutes()",
+    "attributes": [
+      "[Fact]"
+    ],
+    "body_sha256": "134a8f6f97be66e3224dce9897c48a707c3ed5cf9228ea3609c6581041bebb29",
+    "inline_rows": 0,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 1,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "PublicContractsDoNotExposeProcedures",
+    "line": 1335,
+    "signature": "void PublicContractsDoNotExposeProcedures()",
+    "attributes": [
+      "[Fact]"
+    ],
+    "body_sha256": "978a6461a499d6bac88edb20a83cf458e0f370747e3fe8e7c71c49476965be3c",
+    "inline_rows": 0,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 1,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ProtectedPushPublicContractHasOneSaveOperation",
+    "line": 1353,
+    "signature": "void ProtectedPushPublicContractHasOneSaveOperation()",
+    "attributes": [
+      "[Fact]"
+    ],
+    "body_sha256": "d60bfba4078b029f1689fc8b49c800cc16859f9e71936518f24764e923be5305",
+    "inline_rows": 0,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 1,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ProtectedPushDefaultRefreshesAndExplicitSkipPreservesBaseline",
+    "line": 1365,
+    "signature": "async Task ProtectedPushDefaultRefreshesAndExplicitSkipPreservesBaseline(bool newtonsoft)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(false)]",
+      "[InlineData(true)]"
+    ],
+    "body_sha256": "71b24e85dcaa048a94e79ac9ef714558fff9a11b28a13d0c6f7e1e9ce687ca1b",
+    "inline_rows": 2,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 2,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ProtectedPushMappingFailuresPreserveAllLocalIdentities",
+    "line": 1406,
+    "signature": "async Task ProtectedPushMappingFailuresPreserveAllLocalIdentities(bool newtonsoft, string invalid)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(false, \"missing\")]",
+      "[InlineData(true, \"missing\")]",
+      "[InlineData(false, \"duplicate\")]",
+      "[InlineData(true, \"duplicate\")]",
+      "[InlineData(false, \"collision\")]",
+      "[InlineData(true, \"collision\")]"
+    ],
+    "body_sha256": "b86de28ea1f9ec57fd4a69bf4cfe14f6c1079893dba44887ec4df27b83816ed9",
+    "inline_rows": 6,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 6,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ProtectedPushDiagnosticsRemainInspectableAfterClosure",
+    "line": 1454,
+    "signature": "async Task ProtectedPushDiagnosticsRemainInspectableAfterClosure(bool newtonsoft)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(false)]",
+      "[InlineData(true)]"
+    ],
+    "body_sha256": "4151d9600ac76a0a6c8da2f5f1c500dd0cc1a55a966bef09c110863a8eaf22b5",
+    "inline_rows": 2,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 2,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ProtectedPushSeparatesRefreshReceiptFromApplicationFailure",
+    "line": 1533,
+    "signature": "async Task ProtectedPushSeparatesRefreshReceiptFromApplicationFailure(bool newtonsoft, bool throwFactory)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(false, false)]",
+      "[InlineData(true, false)]",
+      "[InlineData(false, true)]",
+      "[InlineData(true, true)]"
+    ],
+    "body_sha256": "8275bbc363691607e6fe82d552dec672d8cdb9bc747d7e0ded0a365bd3e5d94d",
+    "inline_rows": 4,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 4,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ProtectedPushUntrustedHeaderReturnsUnknown",
+    "line": 1581,
+    "signature": "async Task ProtectedPushUntrustedHeaderReturnsUnknown(bool newtonsoft, string invalid)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(false, \"correlation\")]",
+      "[InlineData(true, \"correlation\")]",
+      "[InlineData(false, \"scope\")]",
+      "[InlineData(true, \"scope\")]"
+    ],
+    "body_sha256": "64745df28db398a2b2c00672838c4dfab1ed93d42ec585b5fea8bea5b55334fd",
+    "inline_rows": 4,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 4,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ProtectedPushRefreshFailureAllowsUnrelatedPermittedMutation",
+    "line": 1611,
+    "signature": "async Task ProtectedPushRefreshFailureAllowsUnrelatedPermittedMutation(bool newtonsoft)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(false)]",
+      "[InlineData(true)]"
+    ],
+    "body_sha256": "e2c44c5d620c3e939375de0e3e7fd595c504aa19b18d105b69445907df25c1ee",
+    "inline_rows": 2,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 2,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "NormalPushReadinessAndResultsUseOneProtectedPath",
+    "line": 1653,
+    "signature": "async Task NormalPushReadinessAndResultsUseOneProtectedPath(bool newtonsoft)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(false)]",
+      "[InlineData(true)]"
+    ],
+    "body_sha256": "567062c0d322a2c7928fef44ca2c06f1e2bcd675a04b07351cce3ac45a2fce67",
+    "inline_rows": 2,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 2,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ScopedPushReadAppliesChangedBeforeDeferredFinalQuery",
+    "line": 1696,
+    "signature": "async Task ScopedPushReadAppliesChangedBeforeDeferredFinalQuery(bool newtonsoft)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(false)]",
+      "[InlineData(true)]"
+    ],
+    "body_sha256": "47b5cdc8d4d9f4e7dad166dec7f9fc1913ca98206038b9065626d785bcb1c371",
+    "inline_rows": 2,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 2,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ScopedPushReadPausesEditingAndOverlappingOperationsButKeepsInspection",
+    "line": 1752,
+    "signature": "async Task ScopedPushReadPausesEditingAndOverlappingOperationsButKeepsInspection()",
+    "attributes": [
+      "[Fact]"
+    ],
+    "body_sha256": "1c5a89cfe7bbe98ab37afce8ec9be70c628a4eaeb2b7ff307ef843d81ef96958",
+    "inline_rows": 0,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 1,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ScopedPushReadKeepsCommittedReceiptAndIndependentValidRead",
+    "line": 1803,
+    "signature": "async Task ScopedPushReadKeepsCommittedReceiptAndIndependentValidRead(bool newtonsoft, string invalid)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(false, \"changed\")]",
+      "[InlineData(true, \"changed\")]",
+      "[InlineData(false, \"discovery\")]",
+      "[InlineData(true, \"discovery\")]",
+      "[InlineData(false, \"changed-duplicate\")]",
+      "[InlineData(true, \"changed-duplicate\")]",
+      "[InlineData(false, \"discovery-duplicate\")]",
+      "[InlineData(true, \"discovery-duplicate\")]"
+    ],
+    "body_sha256": "2dc9273280267ebc8f80def74eff1ae9148e2b0033a2deb616132628e9ce575d",
+    "inline_rows": 8,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 8,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ScopedPushReadSeparatesMutationCertaintyAndReconciliation",
+    "line": 1842,
+    "signature": "async Task ScopedPushReadSeparatesMutationCertaintyAndReconciliation(string outcome)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(\"rejected\")]",
+      "[InlineData(\"unknown\")]",
+      "[InlineData(\"lost\")]",
+      "[InlineData(\"mapping-collision\")]",
+      "[InlineData(\"mapping-omitted\")]"
+    ],
+    "body_sha256": "4998fd0b091ee735afe9276de8b97a6d6a66897c6b80605a024c4ee0684c0162",
+    "inline_rows": 5,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 5,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ScopedPushReadNewIdsPreserveObjectIdentityAndCheckpointOwnership",
+    "line": 1881,
+    "signature": "async Task ScopedPushReadNewIdsPreserveObjectIdentityAndCheckpointOwnership(bool newtonsoft)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(false)]",
+      "[InlineData(true)]"
+    ],
+    "body_sha256": "18f809f964b165eef271e4c5c3355f3ce13075f2526b477d2c7c53462b3a70ed",
+    "inline_rows": 2,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 2,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ScopedPushReadPendingCompletionMergesInterveningEditsAndOwnsCapturedQuery",
+    "line": 1913,
+    "signature": "async Task ScopedPushReadPendingCompletionMergesInterveningEditsAndOwnsCapturedQuery(bool conflict)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(false)]",
+      "[InlineData(true)]"
+    ],
+    "body_sha256": "96634a828bb25de58df4b69e2fcb3f945cc90fb59c219ee78a24e85db02f7778",
+    "inline_rows": 2,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 2,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ScopedPushReadKeepsCommitAcrossPostDispatchLifecycleChanges",
+    "line": 1943,
+    "signature": "async Task ScopedPushReadKeepsCommitAcrossPostDispatchLifecycleChanges(string action)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(\"close\")]",
+      "[InlineData(\"retire\")]",
+      "[InlineData(\"cancel\")]"
+    ],
+    "body_sha256": "833e617de13383ee3d1c7033e8f0eeb301e72c3794265b43bb2ed2dbfd0b967a",
+    "inline_rows": 3,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 3,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ScopedPushReadPendingReadRejectsInvalidLifetimeAndIsOneUse",
+    "line": 1967,
+    "signature": "async Task ScopedPushReadPendingReadRejectsInvalidLifetimeAndIsOneUse(string action)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(\"close\")]",
+      "[InlineData(\"retire\")]",
+      "[InlineData(\"cancel\")]"
+    ],
+    "body_sha256": "5b15b56e519181a626c16f1c9335895c0f3fb689eaa117eea0c936f17da8ed31",
+    "inline_rows": 3,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 3,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ScopedPushReadRejectsEarlierOperationAndRecoversAfterPredispatchFailure",
+    "line": 1985,
+    "signature": "async Task ScopedPushReadRejectsEarlierOperationAndRecoversAfterPredispatchFailure()",
+    "attributes": [
+      "[Fact]"
+    ],
+    "body_sha256": "6833f6f6e7744a37307b0b18e629385867b135f2b81d0ae3cc151a767a1b1aae",
+    "inline_rows": 0,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 1,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ScopedPushReadRejectsUnsavedObjectArgumentsBeforeDispatch",
+    "line": 2009,
+    "signature": "async Task ScopedPushReadRejectsUnsavedObjectArgumentsBeforeDispatch()",
+    "attributes": [
+      "[Fact]"
+    ],
+    "body_sha256": "5e0988434b17e919e5c138668d10118901d708fcdf9298f7011e10d5fed9d420",
+    "inline_rows": 0,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 1,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ScopedPushReadEditingPauseCoversStrategyAndBothDirectOriginStateSurfaces",
+    "line": 2021,
+    "signature": "async Task ScopedPushReadEditingPauseCoversStrategyAndBothDirectOriginStateSurfaces()",
+    "attributes": [
+      "[Fact]"
+    ],
+    "body_sha256": "9f57b4ddb7e0b3b033772ed0b44bd9d70e455eee75ac2fda44535339994e842a",
+    "inline_rows": 0,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 1,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ScopedPushReadReportsRequestedReadFailuresAndUnavailableObjects",
+    "line": 2078,
+    "signature": "async Task ScopedPushReadReportsRequestedReadFailuresAndUnavailableObjects(bool unavailable)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(false)]",
+      "[InlineData(true)]"
+    ],
+    "body_sha256": "06a7759ea0618d410b0aac9f4cea50e097ad27b6e85addaa5b65e8746cf67ac7",
+    "inline_rows": 2,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 2,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "NormalFactoryRequiresPushCapabilityBeforeBootstrap",
+    "line": 2105,
+    "signature": "async Task NormalFactoryRequiresPushCapabilityBeforeBootstrap()",
+    "attributes": [
+      "[Fact]"
+    ],
+    "body_sha256": "aa9cc4200149eabc369f72ab43fe6a266514706b9db8186bcedfe227be8f604b",
+    "inline_rows": 0,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 1,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ScopedPushReadAcknowledgesCompleteReceiptEvenAfterCancellation",
+    "line": 2121,
+    "signature": "async Task ScopedPushReadAcknowledgesCompleteReceiptEvenAfterCancellation()",
+    "attributes": [
+      "[Fact]"
+    ],
+    "body_sha256": "a2145c5a48b27a5ce150783285bedd4c0c6101c15b75f1981a24881c097fc615",
+    "inline_rows": 0,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 1,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ScopedPushReadPendingUiGapDoesNotHoldConnectionGate",
+    "line": 2204,
+    "signature": "async Task ScopedPushReadPendingUiGapDoesNotHoldConnectionGate()",
+    "attributes": [
+      "[Fact]"
+    ],
+    "body_sha256": "b5de78a66a2f8006c0c81a8afb200e1bf8df09f19cee951e052bf736c30c42ac",
+    "inline_rows": 0,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 1,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ScopedPushReadRejectsUnusableReadMetadataWithoutLosingReceipt",
+    "line": 2219,
+    "signature": "async Task ScopedPushReadRejectsUnusableReadMetadataWithoutLosingReceipt(string invalid)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(\"scope\")]",
+      "[InlineData(\"discovery-class\")]",
+      "[InlineData(\"changed-class\")]"
+    ],
+    "body_sha256": "ef9062923ea9ed8d2eedc844eba0db6c2c2982148ba7f9e3b0167881a018e552",
+    "inline_rows": 3,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 3,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ScopedPushReadCannotMapNewIdsOntoAnotherSessionsCachedObject",
+    "line": 2252,
+    "signature": "async Task ScopedPushReadCannotMapNewIdsOntoAnotherSessionsCachedObject()",
+    "attributes": [
+      "[Fact]"
+    ],
+    "body_sha256": "95c546c45bd15864cfd88fd815c0bc56d5b7a7d619016d9f574fb019aee4b955",
+    "inline_rows": 0,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 1,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ScopedPushReadTransportOwnsCapturedRequestAcrossHostMutation",
+    "line": 2274,
+    "signature": "async Task ScopedPushReadTransportOwnsCapturedRequestAcrossHostMutation(bool newtonsoft)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(false)]",
+      "[InlineData(true)]"
+    ],
+    "body_sha256": "3ef96681aab91754c5c6eab71a687743a6cabcbb5177f0588b23e13f5c4698de",
+    "inline_rows": 2,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 2,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ScopedSessionOwnsBaselinesAndRejectsCrossSessionInstantiation",
+    "line": 2455,
+    "signature": "async Task ScopedSessionOwnsBaselinesAndRejectsCrossSessionInstantiation()",
+    "attributes": [
+      "[Fact]"
+    ],
+    "body_sha256": "50c97d3e79f24ff7c9581a32bb212609a32a90fbd28d6866f8ade5084b4e5fe2",
+    "inline_rows": 0,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 1,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ScopedSessionReportsRawFailureAndRejectsUnsupportedCallsWithoutDispatch",
+    "line": 2506,
+    "signature": "async Task ScopedSessionReportsRawFailureAndRejectsUnsupportedCallsWithoutDispatch()",
+    "attributes": [
+      "[Fact]"
+    ],
+    "body_sha256": "98afc63659c6b3a80fc4827f8e0cc5c1446341b086d94161e0d22fb2e68158d3",
+    "inline_rows": 0,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 1,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ScopedSessionCheckpointsSecurityOnlyChangesAndKeepsUnavailableEdits",
+    "line": 2532,
+    "signature": "async Task ScopedSessionCheckpointsSecurityOnlyChangesAndKeepsUnavailableEdits()",
+    "attributes": [
+      "[Fact]"
+    ],
+    "body_sha256": "ceb2e2bd333b8ec1456173dce15336b2a2d455589aa6c871ed43adce5819ad32",
+    "inline_rows": 0,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 1,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ScopedSessionCapturesDeclarationsBeforeQueueingAndRejectsExistsParameters",
+    "line": 2586,
+    "signature": "async Task ScopedSessionCapturesDeclarationsBeforeQueueingAndRejectsExistsParameters()",
+    "attributes": [
+      "[Fact]"
+    ],
+    "body_sha256": "c396b4ab2b8364303c8a9049f0e08e38648e54cd271d32b598c597062f6a668c",
+    "inline_rows": 0,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 1,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ScopedSessionCloseRejectsLocalOperationsAndPermissions",
+    "line": 2627,
+    "signature": "async Task ScopedSessionCloseRejectsLocalOperationsAndPermissions()",
+    "attributes": [
+      "[Fact]"
+    ],
+    "body_sha256": "5f05fbeefd6cc8ffc7deeb38be66f05a9bfb4e8a899680729c6df70e04ef88d6",
+    "inline_rows": 0,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 1,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ScopedSessionRetirementOrCloseDuringFactoryPreventsApplication",
+    "line": 2646,
+    "signature": "async Task ScopedSessionRetirementOrCloseDuringFactoryPreventsApplication(bool close)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(false)]",
+      "[InlineData(true)]"
+    ],
+    "body_sha256": "8fafddc949a49ac11e0c92b3355160080f67789474547b16ef3d81ce357238f8",
+    "inline_rows": 2,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 2,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ScopedSessionKeepsAcceptedAndPreviousCheckpointRecordsIndependently",
+    "line": 2666,
+    "signature": "async Task ScopedSessionKeepsAcceptedAndPreviousCheckpointRecordsIndependently()",
+    "attributes": [
+      "[Fact]"
+    ],
+    "body_sha256": "16b983ae92d1926b27ab4e5dcf1019143df682b652b6f2a9c33d686957bf6dba",
+    "inline_rows": 0,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 1,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ScopedSessionCheckpointHandlesMixedRecordAndLocalRelations",
+    "line": 2703,
+    "signature": "async Task ScopedSessionCheckpointHandlesMixedRecordAndLocalRelations(bool checkpointLocal)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(false)]",
+      "[InlineData(true)]"
+    ],
+    "body_sha256": "e089da54abd04d683afa26e7fd4386d335086232e0fba963cfd4fc42d2d46942",
+    "inline_rows": 2,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 2,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "LocalConnectionRejectsMemoryBeforeCreatingWorkspace",
+    "line": 2752,
+    "signature": "async Task LocalConnectionRejectsMemoryBeforeCreatingWorkspace()",
+    "attributes": [
+      "[Fact]"
+    ],
+    "body_sha256": "dd15069e17d8716fa7e7fa48e6f10c0f0796ee3e02d6a81241b45c8c098bd5cd",
+    "inline_rows": 0,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 1,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ScopedSessionLocalFactoryRejectsMemory",
+    "line": 2772,
+    "signature": "async Task ScopedSessionLocalFactoryRejectsMemory()",
+    "attributes": [
+      "[Fact]"
+    ],
+    "body_sha256": "4b4ec6b73f96069d7cf507e18549004b5974f419dd014c9703f7b137e8d766d1",
+    "inline_rows": 0,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 1,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ScopedSessionGateOrdersMutationAndRetirementWithoutReplay",
+    "line": 2840,
+    "signature": "async Task ScopedSessionGateOrdersMutationAndRetirementWithoutReplay()",
+    "attributes": [
+      "[Fact]"
+    ],
+    "body_sha256": "2f2076675d8395e899a58b2c87a7b1fda8a2891a6b144218489174ee84e63a5a",
+    "inline_rows": 0,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 1,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ScopedSessionCancelledQueuedMutationDoesNotDispatchAndGateRecovers",
+    "line": 2900,
+    "signature": "async Task ScopedSessionCancelledQueuedMutationDoesNotDispatchAndGateRecovers()",
+    "attributes": [
+      "[Fact]"
+    ],
+    "body_sha256": "6b726ef5f89443dad6eab09349650d6f32d0cfc09cc6915e34cf502043995ceb",
+    "inline_rows": 0,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 1,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ScopedSessionRetiredFailureKeepsStructuredDiagnostic",
+    "line": 2937,
+    "signature": "async Task ScopedSessionRetiredFailureKeepsStructuredDiagnostic()",
+    "attributes": [
+      "[Fact]"
+    ],
+    "body_sha256": "a1a453ebe6eae9804bed4fb80646e1a5971a76ffdc49082bc3f659242406e60c",
+    "inline_rows": 0,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 1,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ScopedSessionRejectsMethodFromAnotherSessionBeforeDispatch",
+    "line": 2957,
+    "signature": "async Task ScopedSessionRejectsMethodFromAnotherSessionBeforeDispatch()",
+    "attributes": [
+      "[Fact]"
+    ],
+    "body_sha256": "9ff8eee26b119ff1d1e001ecaad75826699193a29d58ffda302bbdd3930e1fb4",
+    "inline_rows": 0,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 1,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ScopedSessionUsesCurrentMembershipAndSharedBodiesDuringConflictsAndQueryOmission",
+    "line": 2979,
+    "signature": "async Task ScopedSessionUsesCurrentMembershipAndSharedBodiesDuringConflictsAndQueryOmission()",
+    "attributes": [
+      "[Fact]"
+    ],
+    "body_sha256": "baa4b7b704f8ab45966d06be36bbc1291ec741f17379c2c1272313ef23d8f6a7",
+    "inline_rows": 0,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 1,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ScopedSessionPostPublicationCancellationOrFactoryFailurePreservesBaselines",
+    "line": 3036,
+    "signature": "async Task ScopedSessionPostPublicationCancellationOrFactoryFailurePreservesBaselines(bool fail)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(false)]",
+      "[InlineData(true)]"
+    ],
+    "body_sha256": "a67fe0c3bc6f985b32e5ac75d40e9b5055e6a56f33c9e3cfc8c0449e239b32a3",
+    "inline_rows": 2,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 2,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ScopedSessionUnloadedRelationRequiresItsOwnAcceptedTarget",
+    "line": 3069,
+    "signature": "async Task ScopedSessionUnloadedRelationRequiresItsOwnAcceptedTarget()",
+    "attributes": [
+      "[Fact]"
+    ],
+    "body_sha256": "947d076d7a72ed6a0240fbf08e085f961db3c2079da9343dd7cba34febff16d9",
+    "inline_rows": 0,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 1,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ScopedSessionClosedRejectsSessionOriginCollectionMutations",
+    "line": 3099,
+    "signature": "async Task ScopedSessionClosedRejectsSessionOriginCollectionMutations(bool remove)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(false)]",
+      "[InlineData(true)]"
+    ],
+    "body_sha256": "c5dafa2d5afb696562761499a888a44437be3a17b6ed4f7010db699d94505cfe",
+    "inline_rows": 2,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 2,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ScopedSessionMalformedPushCannotPartiallyRemapOrReplay",
+    "line": 3120,
+    "signature": "async Task ScopedSessionMalformedPushCannotPartiallyRemapOrReplay(string invalid)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(\"null\")]",
+      "[InlineData(\"missing\")]",
+      "[InlineData(\"null-row\")]",
+      "[InlineData(\"unknown-workspace\")]",
+      "[InlineData(\"duplicate-workspace\")]",
+      "[InlineData(\"zero-database\")]",
+      "[InlineData(\"duplicate-database\")]",
+      "[InlineData(\"existing-database\")]",
+      "[InlineData(\"null-derivation\")]"
+    ],
+    "body_sha256": "ee28a4cedd964cbbbe0392c6dfd26321acf0e5902252a187d47fd351a54c97eb",
+    "inline_rows": 9,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 9,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ScopedSessionNullInvokeReportsUncertainOutcomeBeforeReturningResult",
+    "line": 3178,
+    "signature": "async Task ScopedSessionNullInvokeReportsUncertainOutcomeBeforeReturningResult()",
+    "attributes": [
+      "[Fact]"
+    ],
+    "body_sha256": "06dae8bba3c38bbe00ee4c1b9440c3818abf5fc0550ea7d2dbc29fe145ba13a0",
+    "inline_rows": 0,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 1,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ScopedSessionPushPreservesNegativeAccessErrorsAndAppliesWithoutTrackerCallbacks",
+    "line": 3201,
+    "signature": "async Task ScopedSessionPushPreservesNegativeAccessErrorsAndAppliesWithoutTrackerCallbacks()",
+    "attributes": [
+      "[Fact]"
+    ],
+    "body_sha256": "0a3d04a15110f137e18ee8fc0c57e9733a63ebddd8b765ff63349679cce47fb1",
+    "inline_rows": 0,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 1,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ScopedSessionPullUsesStagedBuiltInTrackersDuringApplication",
+    "line": 3234,
+    "signature": "async Task ScopedSessionPullUsesStagedBuiltInTrackersDuringApplication()",
+    "attributes": [
+      "[Fact]"
+    ],
+    "body_sha256": "a0ff441a6e98c5efb15c5b09d51e6977377e6d7eef7882c18570cb0d673efce2",
+    "inline_rows": 0,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 1,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ScopedSessionMutationsCaptureConfiguredContext",
+    "line": 3252,
+    "signature": "async Task ScopedSessionMutationsCaptureConfiguredContext(string context)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(null)]",
+      "[InlineData(\"configured-context\")]",
+      "[InlineData(\"\")]"
+    ],
+    "body_sha256": "47cc07c16f0bdfd7f1ac1d1dcfd96fae2ae5e6125528e2ab4810a92eded2b873",
+    "inline_rows": 3,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 3,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ReadCoordinatorAssemblesExactReuseAndKeepsCompletedValuesAfterClose",
+    "line": 3314,
+    "signature": "async Task ReadCoordinatorAssemblesExactReuseAndKeepsCompletedValuesAfterClose(bool newtonsoft)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(false)]",
+      "[InlineData(true)]"
+    ],
+    "body_sha256": "cc2d212ff277fdf81c7307d46ed5687f33340fa572b15aa354b4aff3076ba701",
+    "inline_rows": 2,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 2,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ReadCoordinatorRejectsInvalidCompletionWithoutPublishing",
+    "line": 3358,
+    "signature": "async Task ReadCoordinatorRejectsInvalidCompletionWithoutPublishing(string invalid)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(\"class\")]",
+      "[InlineData(\"role\")]",
+      "[InlineData(\"unit\")]",
+      "[InlineData(\"permission\")]",
+      "[InlineData(\"closure\")]",
+      "[InlineData(\"conflict\")]",
+      "[InlineData(\"scope\")]"
+    ],
+    "body_sha256": "22db4e239852abf2b01029e61484b9374217e7e1fc9549032d7ab7087b4c7dbf",
+    "inline_rows": 7,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 7,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ReadCoordinatorCapturesQueuedInputsAndRejectsCancelledOrRetiredAttempts",
+    "line": 3402,
+    "signature": "async Task ReadCoordinatorCapturesQueuedInputsAndRejectsCancelledOrRetiredAttempts(bool retire, string phase)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(false, \"discover\")]",
+      "[InlineData(true, \"discover\")]",
+      "[InlineData(false, \"read\")]",
+      "[InlineData(true, \"read\")]"
+    ],
+    "body_sha256": "1013f10506f36181e9e346bc99f90323002de191c13170da3eb12ec54be9e3f2",
+    "inline_rows": 4,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 4,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ReadCoordinatorAlwaysDiscoversBeforeCompleting",
+    "line": 3476,
+    "signature": "async Task ReadCoordinatorAlwaysDiscoversBeforeCompleting(string mode, bool newtonsoft)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(\"cold\", false)]",
+      "[InlineData(\"empty\", false)]",
+      "[InlineData(\"cached\", false)]",
+      "[InlineData(\"cold\", true)]",
+      "[InlineData(\"empty\", true)]",
+      "[InlineData(\"cached\", true)]"
+    ],
+    "body_sha256": "94a460f5d55f67b8a4dad97bb06a495ba36b0747f2fc8888a895a9a426c6226b",
+    "inline_rows": 6,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 6,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ReadCoordinatorCompletesChangedDiscoveryWithoutRestarting",
+    "line": 3545,
+    "signature": "async Task ReadCoordinatorCompletesChangedDiscoveryWithoutRestarting(string change)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(\"membership\")]",
+      "[InlineData(\"version\")]",
+      "[InlineData(\"security\")]"
+    ],
+    "body_sha256": "e25101b1a538b3cef2b8e4907bccf3825cd6debf1b9d40bc2dbfa9b6687af207",
+    "inline_rows": 3,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 3,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ReadCoordinatorDiscoveryRepeatsTheOriginalSelectionAndBoundsHints",
+    "line": 3582,
+    "signature": "async Task ReadCoordinatorDiscoveryRepeatsTheOriginalSelectionAndBoundsHints()",
+    "attributes": [
+      "[Fact]"
+    ],
+    "body_sha256": "89df34996f0ea2342057318ce6d9f30e75d05e009ec2f6847a254f6607d787bb",
+    "inline_rows": 0,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 1,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ReadCoordinatorReusesHistoricalRecordsFromConnectionCache",
+    "line": 3618,
+    "signature": "async Task ReadCoordinatorReusesHistoricalRecordsFromConnectionCache()",
+    "attributes": [
+      "[Fact]"
+    ],
+    "body_sha256": "83daa1dab0b375f0d6ce00948646b676f838ada299bf7613256fef1330dce8a3",
+    "inline_rows": 0,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 1,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ReadCoordinatorSerializesSuccessfulReadsAndCapturesQueuedDeclarations",
+    "line": 3650,
+    "signature": "async Task ReadCoordinatorSerializesSuccessfulReadsAndCapturesQueuedDeclarations()",
+    "attributes": [
+      "[Fact]"
+    ],
+    "body_sha256": "82ee0592e5dd208d8541f4a13edfbe065225c9c9c8d9770d8a7095d3859dae2a",
+    "inline_rows": 0,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 1,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ReadCoordinatorDropsHintsAtByteBoundAndRejectsOversizedOriginal",
+    "line": 3688,
+    "signature": "async Task ReadCoordinatorDropsHintsAtByteBoundAndRejectsOversizedOriginal()",
+    "attributes": [
+      "[Fact]"
+    ],
+    "body_sha256": "f39a8784b153008191e4f5264c781b2a01833ab1f2d00a38a4060832aad786c5",
+    "inline_rows": 0,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 1,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ReadCoordinatorPreservesStructuredFailuresWithoutBindingColdScope",
+    "line": 3719,
+    "signature": "async Task ReadCoordinatorPreservesStructuredFailuresWithoutBindingColdScope(string phase)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(\"discover\")]",
+      "[InlineData(\"read\")]"
+    ],
+    "body_sha256": "b05c71c6be2cb88729f7c9d2fcbacf43f972442dc3d93cb246f5505d74030d09",
+    "inline_rows": 2,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 2,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ReadCoordinatorRejectsUnitEncodingsOutsideTheConfiguredRepresentation",
+    "line": 3763,
+    "signature": "async Task ReadCoordinatorRejectsUnitEncodingsOutsideTheConfiguredRepresentation(string unitTag, object encoded)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(UnitTags.Binary, \"AA ==\")]",
+      "[InlineData(UnitTags.DateTime, \"2026-10-12\")]",
+      "[InlineData(UnitTags.Decimal, 1)]",
+      "[InlineData(UnitTags.Decimal, \"0.12345678901234567890123456789\")]",
+      "[InlineData(UnitTags.Decimal, \"7922816251426433759354395033.6\")]"
+    ],
+    "body_sha256": "e0822dac8a8706d38c1288dc051026b16b773cb61e23d837a43ccfee4e26f9a5",
+    "inline_rows": 5,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 5,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ReadStoreCanonicalIdentityIncludesClassAndCompleteSecuritySets",
+    "line": 3878,
+    "signature": "void ReadStoreCanonicalIdentityIncludesClassAndCompleteSecuritySets()",
+    "attributes": [
+      "[Fact]"
+    ],
+    "body_sha256": "a798a89d4e53c538088be3119b720606a6063b5594de92b123aa4ac09891ae18",
+    "inline_rows": 0,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 1,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ReadStoreOwnsNestedRoleValuesOnInputAndEveryRead",
+    "line": 3904,
+    "signature": "void ReadStoreOwnsNestedRoleValuesOnInputAndEveryRead()",
+    "attributes": [
+      "[Fact]"
+    ],
+    "body_sha256": "cc17e2a84beb2e1d1493a815d957ac58b9ae04d9eb2614ecbe1e1e9c8ebce1d7",
+    "inline_rows": 0,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 1,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ReadStorePossessionIsIndependentOfRecordProvenance",
+    "line": 3938,
+    "signature": "void ReadStorePossessionIsIndependentOfRecordProvenance()",
+    "attributes": [
+      "[Fact]"
+    ],
+    "body_sha256": "6fcae86e38ffcf6119b386f151ec6634789ef26d7bd7d5cd0ef48b3b32d737d9",
+    "inline_rows": 0,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 1,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ReadStoreRetainsExactSecurityVersionsKindsAndPermissionDefinitions",
+    "line": 3960,
+    "signature": "void ReadStoreRetainsExactSecurityVersionsKindsAndPermissionDefinitions()",
+    "attributes": [
+      "[Fact]"
+    ],
+    "body_sha256": "e6a7e90368561134ec9e44e76c901c966793090882632dc09b50ce2748e67dc0",
+    "inline_rows": 0,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 1,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ReadStorePublicationAdvancesCurrentIndexesAndKeepsHistoricalSnapshots",
+    "line": 3991,
+    "signature": "void ReadStorePublicationAdvancesCurrentIndexesAndKeepsHistoricalSnapshots()",
+    "attributes": [
+      "[Fact]"
+    ],
+    "body_sha256": "e966aba4339caaadccb75f841c93f35f6996a5e2a1912e993e457d6cb1b981f4",
+    "inline_rows": 0,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 1,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ReadStorePublicationFailureChangesNoCurrentIndex",
+    "line": 4024,
+    "signature": "void ReadStorePublicationFailureChangesNoCurrentIndex()",
+    "attributes": [
+      "[Fact]"
+    ],
+    "body_sha256": "33f6fb9106e74247ecd694c8cefebcb94db6a6c74d1915d8fb8d69c678443ca8",
+    "inline_rows": 0,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 1,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ReadStoreClearingSeparatesScopesAndPreservesHeldContents",
+    "line": 4046,
+    "signature": "void ReadStoreClearingSeparatesScopesAndPreservesHeldContents()",
+    "attributes": [
+      "[Fact]"
+    ],
+    "body_sha256": "0c21b35fe501a75e3f2a8e4bfc5d96fe2c108c4ff7928b63fbdf0d38d322fa15",
+    "inline_rows": 0,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 1,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ReadStoreScopeIdentityIncludesEveryPartition",
+    "line": 4062,
+    "signature": "void ReadStoreScopeIdentityIncludesEveryPartition(string population, long userId, string workspace, string revision, string context)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(\"population-2\", 1, \"Default\", \"v1\", null)]",
+      "[InlineData(\"population-1\", 2, \"Default\", \"v1\", null)]",
+      "[InlineData(\"population-1\", 1, \"Other\", \"v1\", null)]",
+      "[InlineData(\"population-1\", 1, \"Default\", \"v2\", null)]",
+      "[InlineData(\"population-1\", 1, \"Default\", \"v1\", \"\")]"
+    ],
+    "body_sha256": "0eedc49dc9b6cc23f243f1e8e2a9ec369e6db9621f69cd95b0dfc2e84c9a4b46",
+    "inline_rows": 5,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 5,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ReadStoreRejectsInvalidInteroperableIdentities",
+    "line": 4074,
+    "signature": "void ReadStoreRejectsInvalidInteroperableIdentities(long id, long version)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(0, 0)]",
+      "[InlineData(-1, 0)]",
+      "[InlineData(9007199254740992, 0)]",
+      "[InlineData(1, -1)]",
+      "[InlineData(1, 9007199254740992)]"
+    ],
+    "body_sha256": "ad8d1ca4377905da61717f01b424e4a38b3a58f93f0ea6380b71c8bf961a40ad",
+    "inline_rows": 5,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 5,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ReadStoreImportsShareImmutableValuesAndKeepIndependentLookup",
+    "line": 4087,
+    "signature": "void ReadStoreImportsShareImmutableValuesAndKeepIndependentLookup()",
+    "attributes": [
+      "[Fact]"
+    ],
+    "body_sha256": "1306d9f5a624ffd636310e10f44054fe230fa362a4b326c781fdcc5b574798dc",
+    "inline_rows": 0,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 1,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ReadStorePublicationRejectsExtraClosureAndAmbiguousCurrentSecurity",
+    "line": 4108,
+    "signature": "void ReadStorePublicationRejectsExtraClosureAndAmbiguousCurrentSecurity()",
+    "attributes": [
+      "[Fact]"
+    ],
+    "body_sha256": "98422805a1c675ef6311c6ff36cbc0386d714321e425d53890315d0923462771",
+    "inline_rows": 0,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 1,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ReadStoreKeepsPermissionsUsedByOtherCurrentSecurity",
+    "line": 4134,
+    "signature": "void ReadStoreKeepsPermissionsUsedByOtherCurrentSecurity()",
+    "attributes": [
+      "[Fact]"
+    ],
+    "body_sha256": "4d5679bfe69a8617e4d346c36d41eaa539300ddb1a415c0f2748b185d029f36b",
+    "inline_rows": 0,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 1,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ReadStoreImportFailureRetainsNoCandidatesOrCurrentChanges",
+    "line": 4160,
+    "signature": "void ReadStoreImportFailureRetainsNoCandidatesOrCurrentChanges(string defect, Type exceptionType)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(\"record-scope\", typeof(InvalidOperationException))]",
+      "[InlineData(\"security-scope\", typeof(InvalidOperationException))]",
+      "[InlineData(\"permission-scope\", typeof(InvalidOperationException))]",
+      "[InlineData(\"missing-security\", typeof(InvalidOperationException))]",
+      "[InlineData(\"missing-permission\", typeof(InvalidOperationException))]",
+      "[InlineData(\"record-conflict\", typeof(InvalidOperationException))]",
+      "[InlineData(\"security-conflict\", typeof(InvalidOperationException))]",
+      "[InlineData(\"permission-conflict\", typeof(InvalidOperationException))]",
+      "[InlineData(\"duplicate-record\", typeof(ArgumentException))]",
+      "[InlineData(\"duplicate-security\", typeof(ArgumentException))]",
+      "[InlineData(\"duplicate-permission\", typeof(ArgumentException))]",
+      "[InlineData(\"duplicate-record-conflict\", typeof(InvalidOperationException))]",
+      "[InlineData(\"duplicate-security-conflict\", typeof(InvalidOperationException))]",
+      "[InlineData(\"duplicate-permission-conflict\", typeof(InvalidOperationException))]",
+      "[InlineData(\"available-and-unavailable\", typeof(ArgumentException))]"
+    ],
+    "body_sha256": "57f0c225e138125460c18e2a275ae0ed0d819f0a83bdb76e50566828cd103d1c",
+    "inline_rows": 15,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 15,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ReadStoreImportRechecksCancellationAfterInputCapture",
+    "line": 4234,
+    "signature": "void ReadStoreImportRechecksCancellationAfterInputCapture()",
+    "attributes": [
+      "[Fact]"
+    ],
+    "body_sha256": "4387f1c4b43df18b1b2c3f68c5b190ccf2fd2b0f446c63173aa15788dfcaa64d",
+    "inline_rows": 0,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 1,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "JsonApiPullDisposesItsTransaction",
+    "line": 4251,
+    "signature": "async Task JsonApiPullDisposesItsTransaction(bool throwAfterPull)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(false)]",
+      "[InlineData(true)]"
+    ],
+    "body_sha256": "448b27e4064cf332d08926c0ffa6c42acfa196f144a7cb5735923780de7ebcd0",
+    "inline_rows": 2,
+    "member_data": [],
+    "classification": "integration",
+    "rows": 2,
+    "change": "No source change; retains provider selection"
+  },
+  {
+    "name": "ReadProtocolMatchesSharedFixture",
+    "line": 4293,
+    "signature": "void ReadProtocolMatchesSharedFixture(string serializer)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(\"SystemText\")]",
+      "[InlineData(\"SystemTextWeb\")]",
+      "[InlineData(\"Newtonsoft\")]"
+    ],
+    "body_sha256": "b538e8dc714886f3c1fa7049ac3b639ec9fba7140bfabb8dc80af1cadfc352d1",
+    "inline_rows": 3,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 3,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ReadProtocolDecodesOmittedOptionalFields",
+    "line": 4429,
+    "signature": "void ReadProtocolDecodesOmittedOptionalFields(string serializer)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(\"SystemText\")]",
+      "[InlineData(\"SystemTextWeb\")]",
+      "[InlineData(\"Newtonsoft\")]"
+    ],
+    "body_sha256": "eed4a38dba0f691228759eb8130038f8f6f786a47ee17f42de9047f97a1f0908",
+    "inline_rows": 3,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 3,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ReadProtocolRootsExcludeLegacyResponseMembers",
+    "line": 4484,
+    "signature": "void ReadProtocolRootsExcludeLegacyResponseMembers()",
+    "attributes": [
+      "[Fact]"
+    ],
+    "body_sha256": "30d39f79fad5756db25c7e49af156a9e5c7386a1d77e0689fe1e5684ec2446d2",
+    "inline_rows": 0,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 1,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ReadValidationMatchesSharedCases",
+    "line": 4506,
+    "signature": "void ReadValidationMatchesSharedCases(string serializer, string name)",
+    "attributes": [
+      "[Theory]",
+      "[MemberData(nameof(ReadValidationCases))]"
+    ],
+    "body_sha256": "86c2523aa0856d6a71bd87af53870434194a360cf8773a24eb196b5c6e7406ae",
+    "inline_rows": 0,
+    "member_data": [
+      "ReadValidationCases"
+    ],
+    "classification": "pure",
+    "rows": 338,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ReadValidationAcceptsSharedMessages",
+    "line": 4585,
+    "signature": "void ReadValidationAcceptsSharedMessages(string serializer)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(\"SystemText\")]",
+      "[InlineData(\"Newtonsoft\")]"
+    ],
+    "body_sha256": "893d25a2d0ce2bb8f8f15ae8c8c6b1eafcf26820228222a07e81a463fd242cbd",
+    "inline_rows": 2,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 2,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ReadValidationRejectsMalformedJson",
+    "line": 4610,
+    "signature": "void ReadValidationRejectsMalformedJson(string json)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(\"{\\\"i\\\":\\\"read\\\",\\\"k\\\":\\\"read\\\",\\\"p\\\":{\\\"l\\\":[],\\\"d\\\":[]}}\")]",
+      "[InlineData(\"{\\\"v\\\":1,\\\"v\\\":1,\\\"i\\\":\\\"read\\\",\\\"k\\\":\\\"read\\\",\\\"p\\\":{\\\"l\\\":[],\\\"d\\\":[]}}\")]",
+      "[InlineData(\"{\\\"v\\\":1,\\\"i\\\":\\\"read\\\",\\\"k\\\":\\\"read\\\",\\\"p\\\":{\\\"l\\\":[],\\\"l\\\":[],\\\"d\\\":[]}}\")]",
+      "[InlineData(\"{\\\"v\\\":1,\\\"i\\\":\\\"read\\\",\\\"k\\\":\\\"read\\\",\\\"p\\\":{\\\"l\\\":[],\\\"d\\\":[],}}\")]",
+      "[InlineData(\"{\\\"v\\\":1,\\\"i\\\":\\\"read\\\",\\\"k\\\":\\\"read\\\",\\\"p\\\":{\\\"l\\\":[],\\\"d\\\":[]}}/*comment*/\")]",
+      "[InlineData(\"{\\\"v\\\":1,\\\"i\\\":\\\"read\\\",\\\"k\\\":\\\"read\\\",\\\"p\\\":{\\\"l\\\":[],\\\"d\\\":[]}} null\")]",
+      "[InlineData(\"{'v':1,'i':'read','k':'read','p':{'l':[],'d':[]}}\")]",
+      "[InlineData(\"{v:1,\\\"i\\\":\\\"read\\\",\\\"k\\\":\\\"read\\\",\\\"p\\\":{\\\"l\\\":[],\\\"d\\\":[]}}\")]",
+      "[InlineData(\"{\\\"v\\\":\\\"1\\\",\\\"i\\\":\\\"read\\\",\\\"k\\\":\\\"read\\\",\\\"p\\\":{\\\"l\\\":[],\\\"d\\\":[]}}\")]",
+      "[InlineData(\"{\\\"v\\\":01,\\\"i\\\":\\\"read\\\",\\\"k\\\":\\\"read\\\",\\\"p\\\":{\\\"l\\\":[],\\\"d\\\":[]}}\")]",
+      "[InlineData(\"{\\\"v\\\":+1,\\\"i\\\":\\\"read\\\",\\\"k\\\":\\\"read\\\",\\\"p\\\":{\\\"l\\\":[],\\\"d\\\":[]}}\")]",
+      "[InlineData(\"{\\\"v\\\":NaN,\\\"i\\\":\\\"read\\\",\\\"k\\\":\\\"read\\\",\\\"p\\\":{\\\"l\\\":[],\\\"d\\\":[]}}\")]",
+      "[InlineData(\"{\\\"v\\\":Infinity,\\\"i\\\":\\\"read\\\",\\\"k\\\":\\\"read\\\",\\\"p\\\":{\\\"l\\\":[],\\\"d\\\":[]}}\")]",
+      "[InlineData(\"{\\\"v\\\":1e999,\\\"i\\\":\\\"read\\\",\\\"k\\\":\\\"read\\\",\\\"p\\\":{\\\"l\\\":[],\\\"d\\\":[]}}\")]",
+      "[InlineData(\"{\\\"v\\\":1.0000000000000001,\\\"i\\\":\\\"read\\\",\\\"k\\\":\\\"read\\\",\\\"p\\\":{\\\"l\\\":[],\\\"d\\\":[]}}\")]",
+      "[InlineData(\"{\\\"v\\\":9007199254740990.5,\\\"i\\\":\\\"read\\\",\\\"k\\\":\\\"read\\\",\\\"p\\\":{\\\"l\\\":[],\\\"d\\\":[]}}\")]",
+      "[InlineData(\"{\\\"v\\\":1e-400,\\\"i\\\":\\\"read\\\",\\\"k\\\":\\\"read\\\",\\\"p\\\":{\\\"l\\\":[],\\\"d\\\":[]}}\")]",
+      "[InlineData(\"{\\\"v\\\":1,\\\"i\\\":\\\"read\\\",\\\"k\\\":\\\"read\\\",\\\"p\\\":{\\\"l\\\":[],\\\"d\\\":[]},\\\"h\\\":undefined}\")]",
+      "[InlineData(\"{\\\"v\\\":1,\\\"i\\\":\\\"read\\\",\\\"k\\\":\\\"read\\\",\\\"p\\\":{\\\"l\\\":[],\\\"d\\\":[]},\\\"procedure\\\":null}\")]",
+      "[InlineData(\"{\\\"v\\\":1,\\\"i\\\":\\\"read\\\",\\\"k\\\":\\\"read\\\",\\\"p\\\":{\\\"l\\\":[],\\\"d\\\":[]},\\\"\\\\u0076\\\":1}\")]",
+      "[InlineData(\"{\\\"v\\\":1,\\\"i\\\":\\\"read\\\",\\\"k\\\":\\\"read\\\",\\\"p\\\":{\\\"l\\\":[,],\\\"d\\\":[]}}\")]",
+      "[InlineData(\"{\\\"v\\\":1,\\\"i\\\":\\\"read\\\",\\\"k\\\":\\\"read\\\",\\\"p\\\":{\\\"l\\\":[],\\\"d\\\":[]}}\\v\")]",
+      "[InlineData(\"{\\\"v\\\":1,\\\"i\\\":\\\"read\\n\\\",\\\"k\\\":\\\"read\\\",\\\"p\\\":{\\\"l\\\":[],\\\"d\\\":[]}}\")]",
+      "[InlineData(\"null\")]",
+      "[InlineData(\"[]\")]"
+    ],
+    "body_sha256": "1926967573fd56ff1c855951531318ef7665be1acec01017f94e86b3ff20d0cc",
+    "inline_rows": 25,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 25,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ReadValidationRechecksOriginalRequest",
+    "line": 4645,
+    "signature": "void ReadValidationRechecksOriginalRequest(string serializer)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(\"SystemText\")]",
+      "[InlineData(\"Newtonsoft\")]"
+    ],
+    "body_sha256": "a2b830d41284c274b3fec9b9c060e2b2725d3731880771e0dab19ea782c3f25d",
+    "inline_rows": 2,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 2,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ReadValidationAcceptsIntegralNumberSpellings",
+    "line": 4657,
+    "signature": "void ReadValidationAcceptsIntegralNumberSpellings(string revision)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(\"1.0\")]",
+      "[InlineData(\"1e0\")]"
+    ],
+    "body_sha256": "fc24ae073193570862fc1ce9850ec48f091d6646b21b6dd8895ffd919faa822c",
+    "inline_rows": 2,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 2,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ReadValidationRejectsDuplicateOutputNames",
+    "line": 4669,
+    "signature": "void ReadValidationRejectsDuplicateOutputNames(string serializer)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(\"SystemText\")]",
+      "[InlineData(\"Newtonsoft\")]"
+    ],
+    "body_sha256": "c8e2210ef44b5efa0e6f6f7b1ad7909739fa86d978cd513ed44e1d6e1c762d12",
+    "inline_rows": 2,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 2,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ReadValidationRejectsNumbersRoundedToIntegers",
+    "line": 4681,
+    "signature": "void ReadValidationRejectsNumbersRoundedToIntegers(string number)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(\"1.0000000000000001\")]",
+      "[InlineData(\"9007199254740990.5\")]",
+      "[InlineData(\"1e-400\")]"
+    ],
+    "body_sha256": "fc85f03422ddbcdd1c6dab5ae89d30dad3ff378c8273a5d7e49efb09c24882e8",
+    "inline_rows": 3,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 3,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ReadValidationLimitsJsonNesting",
+    "line": 4694,
+    "signature": "void ReadValidationLimitsJsonNesting(int arrays, bool valid)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(58, true)]",
+      "[InlineData(59, true)]",
+      "[InlineData(60, false)]"
+    ],
+    "body_sha256": "8f6d3dce534d72356df51d0334aecd1c8602cb2941272d527c7652208f6512eb",
+    "inline_rows": 3,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 3,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ReadValidationChecksUnicodeEscapes",
+    "line": 4715,
+    "signature": "void ReadValidationChecksUnicodeEscapes(string value, bool valid)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(\"\\\\uD800\", false)]",
+      "[InlineData(\"\\\\uDC00\", false)]",
+      "[InlineData(\"\\\\uD800a\", false)]",
+      "[InlineData(\"\\\\uD83D\\\\uDE00\", true)]",
+      "[InlineData(\"\u00e9\", true)]"
+    ],
+    "body_sha256": "9682d03147ad4d5f8c2c05e7c1ec42c858e90398934fdcc53eaf4e1786f0748c",
+    "inline_rows": 5,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 5,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ReadValidationRejectsLiteralUnpairedSurrogates",
+    "line": 4737,
+    "signature": "void ReadValidationRejectsLiteralUnpairedSurrogates(string serializer)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(\"SystemText\")]",
+      "[InlineData(\"Newtonsoft\")]"
+    ],
+    "body_sha256": "0e0a436a2d3bdc68e22592db0e8a1ad06a011ce50b1dd088da65c22158083442",
+    "inline_rows": 2,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 2,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "ReadValidationRejectsUnserializableOriginalRequests",
+    "line": 4749,
+    "signature": "void ReadValidationRejectsUnserializableOriginalRequests(string serializer)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(\"SystemText\")]",
+      "[InlineData(\"Newtonsoft\")]"
+    ],
+    "body_sha256": "7dbdabfe3133ca2f9097df1708b1f0726fb42fd7a136a60c3d8df78b0fdefe38",
+    "inline_rows": 2,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 2,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "PushReadProtocolSerializesIndependentDtoShape",
+    "line": 4759,
+    "signature": "void PushReadProtocolSerializesIndependentDtoShape(string serializer)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(\"SystemText\")]",
+      "[InlineData(\"SystemTextWeb\")]",
+      "[InlineData(\"Newtonsoft\")]"
+    ],
+    "body_sha256": "7421921273db023b8b8df27f955df12802a11d70d8c9f792fea28886cddcbc91",
+    "inline_rows": 3,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 3,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "PushReadProtocolValidatesSharedFixturesAndIndependentReceipts",
+    "line": 4801,
+    "signature": "void PushReadProtocolValidatesSharedFixturesAndIndependentReceipts(string serializer)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(\"SystemText\")]",
+      "[InlineData(\"Newtonsoft\")]"
+    ],
+    "body_sha256": "6c3d650762f63055d5125f1d6eae37636ca64c3d91b542ff1e6d131d7d565f15",
+    "inline_rows": 2,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 2,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "InvokeReadProtocolSerializesIndependentDtoShape",
+    "line": 4835,
+    "signature": "void InvokeReadProtocolSerializesIndependentDtoShape(string serializer)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(\"SystemText\")]",
+      "[InlineData(\"SystemTextWeb\")]",
+      "[InlineData(\"Newtonsoft\")]"
+    ],
+    "body_sha256": "ad15858043e3c37c5c204cee133688787eb7cc2a27c902e61369f1e697c5ec2b",
+    "inline_rows": 3,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 3,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  },
+  {
+    "name": "InvokeReadProtocolValidatesSharedFixturesAndIndependentReceipts",
+    "line": 4868,
+    "signature": "void InvokeReadProtocolValidatesSharedFixturesAndIndependentReceipts(string serializer)",
+    "attributes": [
+      "[Theory]",
+      "[InlineData(\"SystemText\")]",
+      "[InlineData(\"Newtonsoft\")]"
+    ],
+    "body_sha256": "9b5cc9439783b27d65175ec0f9309154fe54bb91745e5ff33616b359b0c6a92a",
+    "inline_rows": 2,
+    "member_data": [],
+    "classification": "pure",
+    "rows": 2,
+    "change": "Add [Trait(\"Category\", \"Pure\")] only; preserve signature, data and body"
+  }
+]

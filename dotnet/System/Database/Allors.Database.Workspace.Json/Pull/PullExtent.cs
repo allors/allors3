@@ -19,28 +19,24 @@ namespace Allors.Database.Protocol.Json
         private readonly ITransaction transaction;
         private readonly Pull pull;
         private readonly IAccessControl acls;
-        private readonly IPreparedSelects preparedSelects;
-        private readonly IPreparedExtents preparedExtents;
         private readonly IPrefetchPolicyCache prefetchPolicyCache;
 
-        public PullExtent(ITransaction transaction, Pull pull, IAccessControl acls, IPreparedSelects preparedSelects, IPreparedExtents preparedExtents, IPrefetchPolicyCache prefetchPolicyCache)
+        public PullExtent(ITransaction transaction, Pull pull, IAccessControl acls, IPrefetchPolicyCache prefetchPolicyCache)
         {
             this.transaction = transaction;
             this.pull = pull;
             this.acls = acls;
-            this.preparedExtents = preparedExtents;
             this.prefetchPolicyCache = prefetchPolicyCache;
-            this.preparedSelects = preparedSelects;
         }
 
         public void Execute(PullResponseBuilder response)
         {
-            if (this.pull.Extent == null && !this.pull.ExtentRef.HasValue)
+            if (this.pull.Extent == null)
             {
-                throw new Exception("Either an Extent or an ExtentRef is required.");
+                throw new Exception("An inline Extent is required for a collection pull.");
             }
 
-            var extent = this.pull.Extent ?? this.preparedExtents.Get(this.pull.ExtentRef.Value);
+            var extent = this.pull.Extent;
 
             if (this.pull.Results == null || this.pull.Results.Length == 0)
             {
@@ -103,11 +99,6 @@ namespace Allors.Database.Protocol.Json
                 }
 
                 var select = result.Select;
-                if (select == null && result.SelectRef.HasValue)
-                {
-                    select = this.preparedSelects.Get(result.SelectRef.Value);
-                }
-
                 if (select != null)
                 {
                     var include = select.End.Include;

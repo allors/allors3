@@ -24,6 +24,8 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         private readonly Dictionary<long, IClass> classByObjectId;
 
+        private bool failed;
+
         public Load(Database database, SqlConnection connection, ObjectNotLoadedEventHandler objectNotLoaded, RelationNotLoadedEventHandler relationNotLoaded)
         {
             this.database = database;
@@ -36,10 +38,21 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         public void Execute(XmlReader reader)
         {
+            using var operation = this.database.PopulationLifecycle.BeginOperation();
+            this.failed = false;
+            var foundPopulation = false;
+            // Keep bulk-copy batch boundaries while using Snapshot for its autocommit transactions.
+            using (var command = this.connection.CreateCommand())
+            {
+                command.CommandText = "SET TRANSACTION ISOLATION LEVEL SNAPSHOT";
+                command.ExecuteNonQuery();
+            }
+
             while (reader.Read())
             {
                 if (reader.NodeType.Equals(XmlNodeType.Element) && reader.Name.Equals(Serialization.Population))
                 {
+                    foundPopulation = true;
                     var version = reader.GetAttribute(Serialization.Version);
                     if (string.IsNullOrEmpty(version))
                     {
@@ -55,6 +68,21 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
                     break;
                 }
+            }
+
+            if (!foundPopulation)
+            {
+                throw new ArgumentException("The import contains no population element. Supply a valid Allors population document.", nameof(reader));
+            }
+
+            // An empty population still needs a well-formed remainder before the import is complete.
+            while (reader.Read())
+            {
+            }
+
+            if (!this.failed)
+            {
+                operation.Complete();
             }
         }
 
@@ -126,7 +154,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
             // TODO: move this to a stored procedure
             // insert from _o table into class tables
-            using (var transaction = this.connection.BeginTransaction())
+            using (var transaction = this.connection.BeginTransaction(IsolationLevel.Snapshot))
             {
                 foreach (var @class in this.database.MetaPopulation.DatabaseClasses)
                 {
@@ -319,6 +347,7 @@ where c = '{@class.Id}'";
             }
             catch
             {
+                this.failed = true;
                 con.Rollback();
             }
         }
@@ -350,6 +379,7 @@ where c = '{@class.Id}'";
             }
             catch
             {
+                this.failed = true;
                 con.Rollback();
             }
         }

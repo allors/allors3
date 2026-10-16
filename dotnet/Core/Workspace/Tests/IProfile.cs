@@ -11,7 +11,7 @@ namespace Tests.Workspace
 
     public interface IProfile : IAsyncLifetime
     {
-        IWorkspace CreateExclusiveWorkspace();
+        Task<IWorkspace> CreateExclusiveWorkspaceAsync();
 
         IWorkspace CreateWorkspace();
 

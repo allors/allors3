@@ -5,13 +5,10 @@
 
 namespace Allors.Workspace.Data
 {
-    using System;
     using System.Collections.Generic;
 
     public class Result : IVisitable
     {
-        public Guid? SelectRef { get; set; }
-
         public Select Select { get; set; }
 
         public IEnumerable<Node> Include { get; set; }

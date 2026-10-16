@@ -1,0 +1,36 @@
+{
+  "pure": {
+    "dotnet": 710,
+    "typescript": 631
+  },
+  "integration_groups": {
+    "local-behavior": {
+      "per_provider": 95,
+      "identical_test_identities": true
+    },
+    "server-cache": {
+      "per_provider": 9,
+      "identical_test_identities": true
+    },
+    "http-systemtext": {
+      "per_provider": 123,
+      "identical_test_identities": true
+    },
+    "http-newtonsoft": {
+      "per_provider": 123,
+      "identical_test_identities": true
+    },
+    "typescript-cache-http": {
+      "per_provider": 23,
+      "identical_test_identities": true
+    },
+    "typescript-behavior-http": {
+      "per_provider": 44,
+      "identical_test_identities": true
+    }
+  },
+  "integration_passed": 834,
+  "total_passed": 2175,
+  "integration_binary_hashes_unchanged": true,
+  "cleanup_verified": true
+}

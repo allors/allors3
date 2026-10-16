@@ -25,7 +25,14 @@ namespace Allors.Database.Adapters.Sql
 
         internal ExtentSort Sorter { get; private set; }
 
-        private IList<long> ObjectIds => this.objectIds ??= this.GetObjectIds();
+        private IList<long> ObjectIds
+        {
+            get
+            {
+                this.Transaction.EnsureReadable();
+                return this.objectIds ??= this.GetObjectIds();
+            }
+        }
 
         internal new IObject this[int index] => this.GetItem(index);
 
@@ -62,7 +69,7 @@ namespace Allors.Database.Adapters.Sql
         public override IEnumerator GetEnumerator()
         {
             var references = this.Transaction.GetOrCreateReferencesForExistingObjects(this.ObjectIds);
-            return new ExtentEnumerator(references);
+            return new ExtentEnumerator(this.Transaction, references);
         }
 
         public override int IndexOf(object value)
@@ -102,7 +109,7 @@ namespace Allors.Database.Adapters.Sql
         protected override IObject GetItem(int index)
         {
             var objectId = this.ObjectIds[index];
-            return this.Transaction.State.GetOrCreateReferenceForExistingObject(objectId, this.Transaction).Strategy.GetObject();
+            return this.Transaction.AdapterState.GetOrCreateReferenceForExistingObject(objectId, this.Transaction).Strategy.GetObject();
         }
 
         protected abstract IList<long> GetObjectIds();

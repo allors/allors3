@@ -12,8 +12,17 @@ namespace Allors.Database.Adapters.Sql
 
     public sealed class State
     {
-        public State(Transaction transaction)
+        public State(Transaction transaction) : this(transaction, false)
         {
+        }
+
+        internal State(Transaction transaction, bool adapterOwned)
+        {
+            if (!adapterOwned)
+            {
+                transaction.AssertWritable("Direct transaction-state construction");
+            }
+
             this.Transaction = transaction;
             this.ReferenceByObjectId = new Dictionary<long, Reference>();
 
@@ -48,9 +57,10 @@ namespace Allors.Database.Adapters.Sql
 
         public Reference GetOrCreateReferenceForExistingObject(long objectId, Transaction transaction)
         {
+            this.AssertTransaction(transaction);
             if (!this.ReferenceByObjectId.TryGetValue(objectId, out var reference))
             {
-                var objectType = transaction.Database.Cache.GetObjectType(objectId);
+                var objectType = transaction.Cache.GetObjectType(objectId);
                 if (objectType == null)
                 {
                     this.ExistingObjectIdsWithoutReference.Add(objectId);
@@ -77,6 +87,7 @@ namespace Allors.Database.Adapters.Sql
 
         public Reference[] GetOrCreateReferencesForExistingObjects(IEnumerable<long> objectIds, Transaction transaction)
         {
+            this.AssertTransaction(transaction);
             var objectIdArray = objectIds.ToArray();
 
             var instantiate = false;
@@ -84,7 +95,7 @@ namespace Allors.Database.Adapters.Sql
             {
                 if (!this.ReferenceByObjectId.TryGetValue(objectId, out var reference))
                 {
-                    var objectType = transaction.Database.Cache.GetObjectType(objectId);
+                    var objectType = transaction.Cache.GetObjectType(objectId);
                     if (objectType == null)
                     {
                         instantiate = true;
@@ -104,7 +115,7 @@ namespace Allors.Database.Adapters.Sql
             {
                 if (!this.ReferenceByObjectId.TryGetValue(objectId, out var reference))
                 {
-                    var objectType = transaction.Database.Cache.GetObjectType(objectId);
+                    var objectType = transaction.Cache.GetObjectType(objectId);
                     if (objectType == null)
                     {
                         this.ExistingObjectIdsWithoutReference.Add(objectId);
@@ -129,6 +140,7 @@ namespace Allors.Database.Adapters.Sql
 
         public Reference GetOrCreateReferenceForExistingObject(IClass objectType, long objectId, Transaction transaction)
         {
+            this.AssertTransaction(transaction);
             if (!this.ReferenceByObjectId.TryGetValue(objectId, out var reference))
             {
                 reference = new Reference(transaction, objectType, objectId, false);
@@ -145,6 +157,7 @@ namespace Allors.Database.Adapters.Sql
 
         public Reference GetOrCreateReferenceForExistingObject(IClass objectType, long objectId, long version, Transaction transaction)
         {
+            this.AssertTransaction(transaction);
             if (!this.ReferenceByObjectId.TryGetValue(objectId, out var reference))
             {
                 reference = new Reference(transaction, objectType, objectId, version);
@@ -161,9 +174,22 @@ namespace Allors.Database.Adapters.Sql
 
         public Reference CreateReferenceForNewObject(IClass objectType, long objectId, Transaction transaction)
         {
+            this.AssertTransaction(transaction);
             var strategyReference = new Reference(transaction, objectType, objectId, true);
             this.ReferenceByObjectId[objectId] = strategyReference;
             return strategyReference;
+        }
+
+        private void AssertTransaction(Transaction transaction)
+        {
+            if (transaction.IsProtectedRead)
+            {
+                transaction.EnsureReadable();
+                if (!ReferenceEquals(this.Transaction, transaction))
+                {
+                    transaction.AssertWritable("Supplying a protected read to another transaction's mutable state");
+                }
+            }
         }
 
         public Strategy GetOrCreateRoles(Reference reference)

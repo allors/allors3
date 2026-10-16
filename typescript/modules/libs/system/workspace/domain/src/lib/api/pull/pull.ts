@@ -5,8 +5,6 @@ import { IObject } from '../../iobject';
 import { TypeForParameter } from '../../types';
 
 export interface Pull {
-  extentRef?: string;
-
   extent?: Extent;
 
   objectType?: Composite;

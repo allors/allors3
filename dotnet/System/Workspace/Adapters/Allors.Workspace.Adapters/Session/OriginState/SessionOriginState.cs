@@ -14,24 +14,27 @@ namespace Allors.Workspace.Adapters
     public class SessionOriginState
     {
         private readonly IRanges<Strategy> ranges;
+        private readonly Action assertActive;
         private readonly PropertyByObjectByPropertyType store;
 
-        public SessionOriginState(IRanges<Strategy> ranges)
+        public SessionOriginState(IRanges<Strategy> ranges, Action assertActive = null)
         {
             this.ranges = ranges;
+            this.assertActive = assertActive;
             this.store = new PropertyByObjectByPropertyType(ranges);
         }
 
-        public void Checkpoint(ChangeSet changeSet) => changeSet.AddSessionStateChanges(this.store.Checkpoint());
+        public void Checkpoint(ChangeSet changeSet) { this.assertActive?.Invoke(); changeSet.AddSessionStateChanges(this.store.Checkpoint()); }
 
         public object GetUnitRole(Strategy association, IPropertyType propertyType) => this.store.GetUnit(association, propertyType);
 
-        public void SetUnitRole(Strategy association, IRoleType roleType, object role) => this.store.SetUnit(association, roleType, role);
+        public void SetUnitRole(Strategy association, IRoleType roleType, object role) { this.assertActive?.Invoke(); association.Session.AssertEditable(); this.store.SetUnit(association, roleType, role); }
 
         public Strategy GetCompositeRole(Strategy association, IRoleType propertyType) => this.store.GetComposite(association, propertyType);
 
         public void SetCompositeRole(Strategy association, IRoleType roleType, Strategy newRole)
         {
+            this.assertActive?.Invoke(); association.Session.AssertEditable();
             if (newRole == null)
             {
                 var role = this.store.GetComposite(association, roleType);
@@ -64,6 +67,7 @@ namespace Allors.Workspace.Adapters
 
         public void AddCompositesRole(Strategy association, IRoleType roleType, Strategy item)
         {
+            this.assertActive?.Invoke(); association.Session.AssertEditable();
             if (roleType.AssociationType.IsOne)
             {
                 this.AddCompositesRoleOne2Many(association, roleType, item);
@@ -76,6 +80,7 @@ namespace Allors.Workspace.Adapters
 
         public void RemoveCompositesRole(Strategy association, IRoleType roleType, Strategy item)
         {
+            this.assertActive?.Invoke(); association.Session.AssertEditable();
             if (roleType.AssociationType.IsOne)
             {
                 this.RemoveCompositesRoleOne2Many(association, roleType, item);
@@ -88,6 +93,7 @@ namespace Allors.Workspace.Adapters
 
         public void SetCompositesRole(Strategy association, IRoleType roleType, IRange<Strategy> role)
         {
+            this.assertActive?.Invoke(); association.Session.AssertEditable();
             var previousRole = this.store.GetComposites(association, roleType);
 
             if (previousRole.Equals(role))

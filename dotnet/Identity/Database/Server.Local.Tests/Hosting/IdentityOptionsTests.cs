@@ -7,8 +7,15 @@ namespace Tests
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
+    using System.Net;
+    using System.Net.Http;
     using System.Threading.Tasks;
     using Allors.Server;
+    using Allors.Database.Domain;
+    using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.DataProtection;
+    using Microsoft.Extensions.Logging;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authentication.Cookies;
     using Microsoft.AspNetCore.Hosting;
@@ -116,6 +123,64 @@ namespace Tests
             using var provider = Provider();
 
             Assert.Equal(TimeSpan.FromHours(8), ApplicationCookie(provider).ExpireTimeSpan);
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task ReadRouteRequiresAnAuthenticatedIdentitySession(bool authenticated)
+        {
+            var builder = WebApplication.CreateBuilder(new WebApplicationOptions
+            {
+                EnvironmentName = "Development", ContentRootPath = System.IO.Path.GetTempPath(),
+            });
+            builder.Logging.ClearProviders();
+            builder.Services.AddAllorsServer(builder.Configuration, builder.Environment, new AllorsServerOptions { ApplicationName = "Allors.ReadRouteTests" })
+                .AddApplicationPart(typeof(Allors.Database.Protocol.Json.ReadController).Assembly);
+            builder.Services.AddDataProtection().UseEphemeralDataProtectionProvider();
+            builder.Services.AddAllorsIdentity(builder.Configuration, builder.Environment);
+            var meta = new Allors.Database.Meta.MetaBuilder().Build();
+            var database = new Allors.Database.Adapters.Memory.Database(
+                new Allors.Database.Configuration.DefaultDatabaseServices(new Allors.Database.Configuration.Derivations.Default.Engine(Allors.Database.Domain.Rules.Create(meta))),
+                new Allors.Database.Adapters.Memory.Configuration { ObjectFactory = new Allors.Database.ObjectFactory(meta, typeof(Allors.Database.Domain.User)) });
+            database.Init();
+            new Setup(database, new Config { SetupSecurity = false }).Apply();
+            using (var transaction = database.CreateTransaction())
+            {
+                new PersonBuilder(transaction).WithUserName("read-route-user").Build();
+                transaction.Derive();
+                transaction.Commit();
+            }
+
+            await using var app = builder.Build();
+            app.Services.GetRequiredService<Allors.Services.IDatabaseService>().Database = database;
+            app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
+            app.UseAllorsServer();
+            app.Urls.Add("http://127.0.0.1:0");
+            await app.StartAsync();
+            using var handler = new HttpClientHandler { AllowAutoRedirect = false, CookieContainer = new CookieContainer() };
+            var origin = new Uri(app.Urls.Single());
+            using var client = new HttpClient(handler) { BaseAddress = origin };
+            if (authenticated)
+            {
+                using var signIn = await client.PostAsync("/allors/TestAuthentication/SignIn",
+                    new StringContent("{\"l\":\"read-route-user\"}", System.Text.Encoding.UTF8, "application/json"));
+                Assert.Equal(HttpStatusCode.OK, signIn.StatusCode);
+                using var ready = await client.GetAsync("/allors/UserInfo");
+                Assert.Equal(HttpStatusCode.OK, ready.StatusCode);
+            }
+
+            using var request = new HttpRequestMessage(HttpMethod.Post, "/allors/read") { Content = new StringContent("{}") };
+            var xsrf = handler.CookieContainer.GetCookies(origin)["XSRF-TOKEN"]?.Value;
+            if (xsrf != null)
+            {
+                request.Headers.Add("X-XSRF-TOKEN", xsrf);
+            }
+
+            using var response = await client.SendAsync(request);
+            Assert.Equal(authenticated ? HttpStatusCode.ServiceUnavailable : HttpStatusCode.Unauthorized, response.StatusCode);
         }
 
         private static CookieAuthenticationOptions ApplicationCookie(IServiceProvider provider) =>

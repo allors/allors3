@@ -50,7 +50,11 @@ test('databasPullOtherSession', async () => {
 
   const c1a_1 = await fixture.pullC1(session1, name_c1A);
 
-  const c1a_2 = session2.instantiate(c1a_1);
+  expect(session2.instantiate(c1a_1)).toBeNull();
+  expect(session2.instantiate(c1a_1.id)).toBeNull();
+  await session2.pull({ objectId: c1a_1.id });
+  const c1a_2 = session2.instantiate(c1a_1.id);
+  expect(c1a_2).not.toBe(c1a_1);
 
   expect(c1a_2).not.toBeNull();
   expect(c1a_2.id).toBe(c1a_1.id);
@@ -91,7 +95,7 @@ test('databaseStrategyHasChanges', async () => {
 
     await session.push();
 
-    expect(c1.strategy.hasChanged(m.C1.C1AllorsString)).toBeTruthy();
+    expect(c1.strategy.hasChanged(m.C1.C1AllorsString)).toBeFalsy();
   }
 
   // New Object with Unit Role with push and pull
@@ -126,7 +130,7 @@ test('databaseStrategyHasChanges', async () => {
 
     await session.push();
 
-    expect(c1.strategy.hasChanged(m.C1.C1C2One2One)).toBeTruthy();
+    expect(c1.strategy.hasChanged(m.C1.C1C2One2One)).toBeFalsy();
   }
 
   // New Object with Composite Role to New Object with push and pull
@@ -162,7 +166,7 @@ test('databaseStrategyHasChanges', async () => {
 
     await session.push();
 
-    expect(c1.strategy.hasChanged(m.C1.C1C2One2One)).toBeTruthy();
+    expect(c1.strategy.hasChanged(m.C1.C1C2One2One)).toBeFalsy();
   }
 
   // Existing Object with Composite Role to New Object with push and pull
@@ -198,7 +202,7 @@ test('databaseStrategyHasChanges', async () => {
 
     await session.push();
 
-    expect(c1.strategy.hasChanged(m.C1.C1C2One2One)).toBeTruthy();
+    expect(c1.strategy.hasChanged(m.C1.C1C2One2One)).toBeFalsy();
   }
 
   // Existing Object with Composite Role to Existing Object with push and pull
@@ -214,3 +218,39 @@ test('databaseStrategyHasChanges', async () => {
     expect(c1.strategy.hasChanged(m.C1.C1C2One2One)).toBeFalsy();
   }
 });
+
+afterEach(async () => {
+  await fixture?.close();
+});
+
+test.each([
+  'new unit',
+  'new to new composite',
+  'existing to new composite',
+  'existing to existing composite',
+] as const)(
+  'skipped Push preserves changed-role tracking for %s until an accepted read',
+  async (kind) => {
+    const { workspace, m } = fixture;
+    const session = workspace.createSession();
+    const object = kind.startsWith('new')
+      ? session.create<C1>(m.C1)
+      : await fixture.pullC1(session, name_c1A);
+    const target =
+      kind === 'existing to existing composite'
+        ? await fixture.pullC2(session, name_c2A)
+        : session.create<C2>(m.C2);
+    const role = kind === 'new unit' ? m.C1.C1AllorsString : m.C1.C1C2One2One;
+    if (kind === 'new unit') object.C1AllorsString = 'changed';
+    else object.C1C2One2One = target;
+    expect(object.strategy.hasChanged(role)).toBe(true);
+    const result = await session.push({ refresh: false });
+    expect(result.outcome).toBe('committed');
+    expect(object.id).toBeGreaterThan(0);
+    expect(object.strategy.hasChanged(role)).toBe(true);
+    await session.pull([{ object }, { object: target }]);
+    expect(object.strategy.hasChanged(role)).toBe(false);
+    if (kind === 'new unit') expect(object.C1AllorsString).toBe('changed');
+    else expect(object.C1C2One2One).toBe(target);
+  }
+);

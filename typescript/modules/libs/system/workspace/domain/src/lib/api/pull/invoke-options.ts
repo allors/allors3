@@ -1,5 +1,3 @@
 export interface InvokeOptions {
-  isolated?: boolean;
-
-  continueOnError?: boolean;
+  readonly refresh?: boolean;
 }

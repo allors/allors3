@@ -1,0 +1,74 @@
+Cache-preserving ownership simplification — completed 2026-10-16
+
+Approved scope is complete. Cache and two-step discovery remain, including exact historical hits,
+request counts and current authorization separate from historical editing/checkpoint values.
+One connection owns admission, operation ordering and close/drain. Standalone cache/coordinator
+lifetime APIs, pins, manual eviction and completed-result release protocols are removed.
+Cache lookup clears after drain; ordinary immutable references remain inspectable. Live historical
+cache growth remains unbounded, as agreed. No compatibility implementation was introduced.
+
+Branch: refactor/workspace-pull-refresh
+HEAD: dd34ff56f261d1060ef4bc87eaa37abc4598a867
+Parent: a8265eb08059f66ddb9dfa0289d93d29b429c0b4
+origin/main: d034e53d70f0045e862bd388a283f7029db4b59c
+Index SHA256: d8962ea0879369effb4c3ddda02472407ecda55ba0e272aeb9c6f3726851b30e
+No staging, commits, pushes, PR edits, merges, resets, stashes or branch changes.
+
+Scope/preservation
+- Exactly 46 old/new paths: 39 existing files, seven move destinations. No outside-scope changes.
+- Incoming 2,367 path states / 303 dirty statuses preserved by before/ and incoming.json.
+- Current 320 dirty paths include the prior work; the original 270 are not discarded or reset.
+- All 339 generated outputs retain exact hashes; no new/missing generated outputs.
+- Runtime/test sources and integration binaries retain the hashes used for final validation.
+- Production: 5,531 to 4,968 physical lines, -563, counting moves once.
+- Tests: 20,645 to 20,861 physical lines, +216. This step simplifies production ownership; the wider
+  test inflation remedy remains pending. Connection fixtures and the dispatch regression add setup.
+
+Test scope audit
+- .NET: 219 existing methods remain; 180 bodies byte-identical, 39 mapped changes, 10 renames.
+  Only the obsolete independent-store retirement theory row retires. All other argument rows remain.
+- TypeScript: 305 original callbacks audited; 262 unchanged, 40 mapped changed, 3 approved retirements.
+  The 631 pure passing identities equal the old 634 minus precisely those 3 cases, including multiplicity.
+- Six obsolete raw method calls removed from the approved Server.Local method; no replacement stubs.
+- No new test files/projects, no broad test relocation, no unrelated nine-test patch.
+
+Validation
+- Full .NET solution build: 0 errors, 213 warnings; fresh Core server publish passed.
+- .NET pure: 710 passed, 0 failed, 0 skipped (service-free-3.trx).
+- TypeScript pure: 631 passed. Three typechecks, emitted declarations and strict external consumer,
+  formatting and lint pass; four unchanged lint warnings.
+- PostgreSQL 417 passed and SQL Server 417 passed: per provider Local 95, Server/cache 9,
+  SystemText HTTP 123, Newtonsoft HTTP 123, TypeScript focused HTTP 23 and behavior HTTP 44.
+- Total 2,175 selected executions passed. Integration test identities match exactly across providers.
+  The 70 Jest pending entries in each focused HTTP result were filtered out, not retired or disabled.
+- Cache-clear behavior failed before runtime edits in both languages, then passed.
+- Review exposed a .NET pre-dispatch capture callback race. Four existing theory rows reproduced
+  prohibited handoff after close/cancellation in three callback positions. A post-capture admission
+  check fixes it; all 710 final pure tests pass. Red/intermediate evidence remains separate.
+- Earlier fixture adaptation failures were corrected within the approved map; final totals above
+  exclude the red and intermediate runs. No fresh full-PR matrix is claimed. Previously recorded
+  unrelated expectation failures still require their own reconciliation/approval.
+
+Resources
+- Both owned HTTP hosts stopped; all six task-created databases removed.
+- First cleanup caught the Npgsql adapter's lowercase database normalization; corrected only that
+  task-manifest spelling, preserved first-attempt outputs, removed the remaining owned database,
+  then verified cleanup. No pre-existing databases were missing at any point.
+- Original PostgreSQL 37 / SQL Server 43 databases and provider process identities preserved;
+  authenticated checks pass. No task-prefixed databases or task hosts remain.
+
+Evidence
+final-validation.json; integration-summary.json; cleanup-verification.json; preservation-final.json;
+generated-census-final.json; runtime-test-freeze.json; integration-binary-hashes.json;
+dotnet/root-final-test-audit.json; dotnet/test-migration-map.json;
+typescript/final-preservation-audit.json; typescript/final-check-summary.json;
+docs-audit.json; integration-filter-audit.txt; typescript-independent-review.txt.
+
+Next proposed subtask (not approved)
+Prepare an exact consolidation map for the duplicate Newtonsoft/SystemText PullTests sources and
+pure-test execution in the existing test targets. Identify shared behavior, retirements, fixture
+ownership and the smallest codec/provider boundary matrix before edits. Use the original review
+plus this final source/test audit; preserve meaningful contract identities. No new test cleanup,
+server-endpoint removal, signals work or Git publication is authorized by this completion.
+A fresh session would help for that separate decision; this report and the project inventory hold
+its inputs. A restart is optional, not required to discuss the result.

@@ -2,9 +2,6 @@ import { Extent } from './extent';
 import { Result } from './result';
 
 export interface Pull {
-  /** ExtentRef */
-  er?: string;
-
   /** Extent */
   e?: Extent;
 

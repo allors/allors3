@@ -8,7 +8,6 @@ export class LazyResultBuilder {
     for (const composite of metaPopulation.composites) {
       this[composite.singularName] = (object) => {
         const result: Result = {
-          selectRef: object.selectRef,
           name: object.name,
           skip: object.skip,
           take: object.take,

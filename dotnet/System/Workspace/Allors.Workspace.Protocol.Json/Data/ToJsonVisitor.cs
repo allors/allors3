@@ -14,7 +14,6 @@ namespace Allors.Workspace.Protocol.Json
     using Extent = Allors.Protocol.Json.Data.Extent;
     using IVisitor = Data.IVisitor;
     using Node = Allors.Protocol.Json.Data.Node;
-    using Procedure = Allors.Protocol.Json.Data.Procedure;
     using Pull = Allors.Protocol.Json.Data.Pull;
     using Result = Allors.Protocol.Json.Data.Result;
     using Select = Allors.Protocol.Json.Data.Select;
@@ -48,7 +47,7 @@ namespace Allors.Workspace.Protocol.Json
 
         public Select Select => this.selects?.Peek();
 
-        public Procedure Procedure { get; private set; }
+        protected Predicate CurrentPredicate => this.predicates.Peek();
 
         public void VisitAnd(And visited)
         {
@@ -175,7 +174,7 @@ namespace Allors.Workspace.Protocol.Json
             }
         }
 
-        public void VisitExists(Exists visited)
+        public virtual void VisitExists(Exists visited)
         {
             var predicate = new Predicate
             {
@@ -257,7 +256,7 @@ namespace Allors.Workspace.Protocol.Json
             this.predicates.Push(predicate);
         }
 
-        public void VisitInstanceOf(Instanceof visited)
+        public virtual void VisitInstanceOf(Instanceof visited)
         {
             var predicate = new Predicate
             {
@@ -396,11 +395,10 @@ namespace Allors.Workspace.Protocol.Json
             }
         }
 
-        public void VisitPull(Data.Pull visited)
+        public virtual void VisitPull(Data.Pull visited)
         {
             var pull = new Pull
             {
-                er = visited.ExtentRef,
                 t = visited.ObjectType?.Tag,
                 o = visited.ObjectId ?? visited.Object?.Id,
             };
@@ -431,7 +429,6 @@ namespace Allors.Workspace.Protocol.Json
         {
             var result = new Result
             {
-                r = visited.SelectRef,
                 n = visited.Name,
                 k = visited.Skip,
                 t = visited.Take,
@@ -503,14 +500,5 @@ namespace Allors.Workspace.Protocol.Json
                 }
             }
         }
-
-        public void VisitProcedure(Data.Procedure procedure) => this.Procedure = new Procedure
-        {
-            n = procedure.Name,
-            c = procedure.Collections?.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Select(v => v.Id).ToArray()),
-            o = procedure.Objects?.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Id),
-            v = procedure.Values,
-            p = procedure.Pool?.Select(kvp => new long[] { kvp.Key.Id, kvp.Value }).ToArray(),
-        };
     }
 }

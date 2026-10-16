@@ -56,15 +56,6 @@ namespace Allors.Database.Protocol.Json
             return fromJsonVisitor.Select;
         }
 
-        public static Data.Procedure FromJson(this Allors.Protocol.Json.Data.Procedure procedure, ITransaction transaction, IUnitConvert unitConvert)
-        {
-            var fromJson = new FromJson(transaction, unitConvert);
-            var fromJsonVisitor = new FromJsonVisitor(fromJson);
-            procedure.Accept(fromJsonVisitor);
-            fromJson.Resolve();
-            return fromJsonVisitor.Procedure;
-        }
-
         public static Pull ToJson(this Data.Pull pull, IUnitConvert unitConvert)
         {
             var toJsonVisitor = new ToJsonVisitor(unitConvert);

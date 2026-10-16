@@ -1,0 +1,159 @@
+Hypothetical .NET Local workspace adapter removal — codec/server impact
+2026-10-16. Read-only inspection only; no removal approval inferred. No repository edits,
+builds, tests, services or Git actions. This is an impact analysis, not an exact approved patch.
+
+Main distinction
+Removing Allors.Workspace.Adapters.Local removes the supported in-process WORKSPACE connection
+and its three client transports. It does not remove PostgreSQL, SQL Server, server executors,
+HTTP controllers, normal database/domain APIs, or Server.Local.Tests. The latter name means
+in-process server/controller/executor tests, not a suite solely for the Local workspace adapter.
+Both real HTTP codec suites still reach both SQL providers and must retain that coverage.
+
+Small production deletion, broader test migration
+The production adapter is four C# files, 292 physical lines, plus its project:
+- Database/DatabaseConnection.cs: 56 lines.
+- ReadTransport.cs: 96 lines.
+- PushReadTransport.cs: 70 lines.
+- InvokeReadTransport.cs: 70 lines.
+Root: dotnet/System/Workspace/Adapters/Allors.Workspace.Adapters.Local/.
+Only two project files reference the adapter directly: Core/Workspace/Tests.Local and
+Core/Database/Server.Local.Tests; the solution also includes it. No other current repository
+production consumer was found. This does not establish that downstream consumers do not use it.
+
+The connection already derives from Remote.DatabaseConnection and reuses its Session/cache/gate
+implementation. It is a thin concrete transport assembly, not another Session implementation.
+Deleting it removes the workspace-to-database executor dependency edge. It does NOT make
+Allors.Database.Workspace.Json, its SQL dependency, SystemText protocol, or shared Remote adapter
+obsolete: the HTTP server and remaining clients need them. Shared test fixtures currently reference
+database configuration too; deleting Local is not proof all test database references can disappear.
+
+Actual supported behavior given up
+Local.CreateAsync accepts an IDatabase + LocalReadIdentity(population,user), validates a committed
+SQL identity in a separate read snapshot, and then performs the same discover/complete bootstrap.
+It borrows the database, exposes Database/UserId, and executes strict JSON through native executors
+without a web server, HttpClient or HTTP authentication pipeline. Existing Sessions, change tracking,
+cache/discovery and protected mutation behavior are shared with Remote. The loss is that in-process
+hosting option and its concrete construction/transport contract. Server/domain code still uses the
+database API directly; applications wanting Workspace semantics would need a remaining HTTP adapter
+and hosted endpoint. This is an unrelated public-support removal requiring explicit authorization,
+not just the previously mapped test consolidation.
+
+Hidden local entrypoints do not vanish with the assembly
+Allors.Database.Workspace.Json separately declares public LocalReadIdentity and overloads:
+ReadScopeFactory.Open(workspace, LocalReadIdentity,...), ReadExecutor.Execute(...identity...),
+PushReadExecutor.Execute(...identity...), InvokeReadExecutor.Execute(...identity...).
+They are documented directly in docs/workspace-reads.md, separately from the Local workspace
+factory. Thus adapter-only removal can leave a legitimate in-process SERVER execution API, or a
+broader removal could deliberately retire those overloads too. These are different scopes.
+
+The current server test bridge demonstrates this distinction. PullRetryTests.ScopedSessionHandler
+uses a real Remote.SystemText/Newtonsoft DatabaseConnection with a controlled HttpMessageHandler.
+Read requests run through ReadControllerHandler. Push and Invoke requests call their real SQL
+executors with LocalReadIdentity directly. These remaining codec rows are not live-network tests,
+and still use the population-bound server identity path after the workspace adapter is deleted.
+Do not describe retaining this bridge as removing every Local/in-process execution path. Conversely,
+do not delete it merely because the Local workspace support disappears: it carries real SQL
+mutation/Session integration assertions. HTTP controllers use the captured user resolver overload;
+if all LocalReadIdentity support were also retired, bridge and native test inputs would need another
+explicit migration using that host boundary.
+
+Server test surface requiring decisions
+PullRetryTests.cs currently has 37 methods / 86 rows. Ten methods declare exactly Local,
+SystemText, Newtonsoft argument rows:
+1 ReadEntrypointsReturnTheSameDetachedCompleteResult
+2 ReadCoordinatorPreservesCompleteResultsAcrossSqlTransports
+3 ReadCoordinatorReselectsDataAndSecurityAfterDiscovery
+4 ScopedSessionReadsAndMergesThroughEverySqlTransport
+5 ScopedSessionPreservesInlineArgumentsAndEmptyResults
+6 ScopedSessionPushPreservesBaselineAndUsesOneMutationAttempt
+7 ScopedSessionRemapsNewIdsAfterAnEmptyRead
+8 ScopedSessionUnavailablePreservesEditsAndCanRecover
+9 ScopedSessionLiveAuthorityChangesWhileAnEditingBaselineConflicts
+10 ScopedSessionInvokePreservesRefreshVersionErrorsAndOneAttempt
+Removing the supported adapter permits retiring only the ten Local argument rows here, retaining
+20 codec rows per provider. This saves 20 executions across two providers, subject to approval.
+It is not a one-line attribute edit: ReadEntrypoints... always uses Local.ReadTransport as its
+expected cold and cached result producer, including the two remote rows. The two coordinator tests
+also construct Local transport before selecting a branch. Retained rows must be explicitly rewritten
+to use a native executor/controller reference result or surviving transport without losing exact
+response/cache/security assertions. CreateSessionConnectionAsync must lose only its Local branch.
+
+The same file has 18 Local-backed-only methods / 29 rows:
+- ScopedLocalConstructionRejectsAnInvalidIdentity: 2.
+- ScopedPushReadLocalRefreshesMappedRelationsAndPreservesCheckpoint: 1.
+- ScopedPushReadLocalFinalQueryRefreshesConcurrentSecurityAndMembership: 1.
+- ScopedPushReadLocalFinalQueryRefreshesSecurityAtTheSameObjectVersion: 1.
+- ScopedPushReadLocalPendingQueryReportsConcurrentDeletion: 1.
+- ScopedPushReadLocalKeepsCommitWhenCompletionCannotRefresh: 2.
+- ScopedLocalOwnerBootstrapsBeforeImmediatePushAndBorrowsPopulation: 1.
+- ScopedLocalOwnerClosesSiblingWorkspacesAndKeepsIndependentOwnerUsable: 1.
+- ScopedLocalOwnerControlledBootstrapOccursOncePerConnection: 1.
+- ScopedLocalOwnerControlledFailedSetupRetiresWithoutMutationOrRetry: 4.
+- ScopedLocalOwnerControlledDisposalDrainsDispatchedPushAndRejectsQueuedPush: 2.
+- ProtectedPushRefreshAndSkipUseOneRequest: 2.
+- ProtectedInvokeRefreshAndSkipUseOneRequest: 2.
+- ProtectedInvokeUnsavedChangesAndCreationTrackingSurviveRealExecution: 2.
+- ProtectedInvokeRealAtomicBatchReturnsOneOutcome: 2.
+- NormalLocalFactoryBootstrapsWithoutApplicationServices: 1.
+- NormalLocalFactoryRejectsChangingPopulationDuringBootstrap: 2.
+- NormalLocalConnectionClosesSessionsAcrossAllWorkspaces: 1.
+
+Four other methods / six rows reference the Local transports directly:
+- PullExtentTests.ReadTransportRejectsCyclicInlineDeclarations: 1.
+- PullExtentTests.ReadTransportOwnsInlineExtentSelectIncludeAndArgumentDefinitions: 1.
+- PushExistingObjectTests.PushReadLocalTransportRunsOneCommittedRefresh: 2 (typed/raw).
+- InvokeTests.InvokeReadLocalTransportRunsOneProtectedAttempt: 2 (typed/raw).
+Therefore 22 additional methods / 35 rows across four Server.Local test sources need an explicit
+retirement-or-migration decision; they cannot all be counted as savings. These counts do not include
+the ten Local branches above or all other direct executor tests which use LocalReadIdentity.
+
+What can retire versus move
+- Adapter-specific construction and borrowed-population assertions can retire when that exact
+  supported factory is removed. Invalid Local construction itself no longer needs testing.
+  The server's trusted-user validation does: PullSecurityTests has separate retired/missing/deleted
+  Local identity and committed/foreign resolver checks that remain if those entrypoints remain.
+- The typed/raw Local wrapper invocation assertions can retire with the wrappers. Their real
+  commit/derivation assertions already also have native executor coverage, but record the exact
+  preserved method before removing each test; names alone are insufficient evidence of parity.
+- General Session behavior currently reached through Local must remain under a surviving boundary.
+  In particular the five ScopedPushReadLocal* methods / six rows check mapped relation identity,
+  checkpoint preservation, concurrent membership/security, same-version permission changes,
+  deletion, and an injected after-physical-commit failure. Real HTTP tests overlap these themes,
+  but no assertion-by-assertion retirement proof has been made in this analysis.
+- The four ProtectedPush/Invoke methods / eight rows similarly test shared supported behavior.
+  ProtectedInvokeRealAtomicBatchReturnsOneOutcome is especially unsafe to delete as redundant:
+  it combines a two-target real SQL batch, later-target deletion/rejection, actual workspace
+  receipt/refresh/acknowledgement and a fresh committed transaction check. InvokeTests separately
+  verifies native batch rollback, while current live remote PullTests lacks this exact Session+
+  native persistence combination. Move this contract through a surviving codec/controller bridge
+  or add explicit live HTTP coverage; do not retire atomicity because its harness is Local.
+- Shared lifecycle properties (no application services during bootstrap, close/drain, sibling versus
+  independent connections, no replay) are already represented in pure and live HTTP tests. Local-only
+  permutations may retire once their additional borrowed-database semantics are intentionally gone
+  and exact remaining assertions are checked. Population invalidation remains a SQL/server safety
+  property; adapter removal does not authorize removing it from native/executor tests.
+- Request capture ownership and cycle rejection should remain tested for surviving concrete codecs.
+  The Local wrapper tests can be re-owned as controlled HTTP transport cases rather than requiring
+  SQL just to capture a request. Do not introduce a full replacement Local adapter hidden in test
+  helpers merely to preserve old test names.
+
+Counts and limitations
+The prior consolidation map places 710 pure rows in the misleadingly named Workspace.Tests.Local
+assembly and 212 integration rows per provider. That project cannot simply disappear with all its
+coverage. The separate Local-project audit finds 708 pure rows survive after two solely Local
+Memory-construction facts retire; plus14 existing remote codec pure rows gives722 overall.
+Most of the212 Local integration rows duplicate inherited tests already exercised through both
+HTTP codecs, but three Local-only Security facts and other bespoke tests require their own move or
+retirement map. Removing the target removes424 scheduled Local integration executions across two
+providers GROSS; preserved/moved cases subtract from that saving. The ten server Local transport
+branches add20 potential retired executions; the35 Local-backed server rows are not automatic
+savings. Pure relocation preserves coverage; it is not a reduction of708 cases. No final exact
+post-removal grand total or timing saving is established here.
+
+Recommendation for discussion
+It is a coherent product simplification only if the project no longer needs an in-process Workspace
+API. It removes a small concrete assembly and one provider test dimension, not the shared workspace
+engine or SQL infrastructure. Keep both HTTP codecs/providers and move general pure/native-backed
+contracts before removing Local-specific assertions. Agree separately whether LocalReadIdentity
+server overloads remain; default adapter removal alone does not authorize retiring them. A revised
+exact scope is needed because this changes the approved direction more than structural test sharing.

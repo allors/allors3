@@ -77,3 +77,7 @@ test('associations', async () => {
   expect(c1b.C1C1One2Manies.length).toBe(0);
   expect(c1b.C1C1Many2Manies.length).toBe(0);
 });
+
+afterEach(async () => {
+  await fixture?.close();
+});

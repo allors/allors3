@@ -31,6 +31,11 @@ namespace Allors.Database.Protocol.Json
 
         public Api(ITransaction transaction, string workspaceName, CancellationToken cancellationToken, ILogger logger = null)
         {
+            if (transaction.Database is not Adapters.Sql.Database)
+            {
+                throw new NotSupportedException("Workspace operations require PostgreSQL or SQL Server. Memory remains available for database and domain tests.");
+            }
+
             this.logger = logger ?? NullLogger.Instance;
             this.Transaction = transaction;
             this.WorkspaceName = workspaceName;
@@ -49,8 +54,6 @@ namespace Allors.Database.Protocol.Json
             this.RoleTypesByClass = metaCache.GetWorkspaceRoleTypesByClass(this.WorkspaceName);
             this.M = transaction.Database.MetaPopulation;
             this.MetaPopulation = this.M;
-            this.PreparedSelects = databaseServices.Get<IPreparedSelects>();
-            this.PreparedExtents = databaseServices.Get<IPreparedExtents>();
             this.Build = @class => transactionServices.Get<IObjectBuilderService>().Build(@class);
             this.Derive = () => databaseServices.Get<IDerivationService>().CreateDerivation(transaction).Derive();
             this.Security = databaseServices.Get<ISecurity>();
@@ -85,10 +88,6 @@ namespace Allors.Database.Protocol.Json
 
         public IMetaPopulation MetaPopulation { get; }
 
-        public IPreparedSelects PreparedSelects { get; }
-
-        public IPreparedExtents PreparedExtents { get; }
-
         public Func<IClass, IObject> Build { get; }
 
         public Func<IValidation> Derive { get; }
@@ -101,7 +100,23 @@ namespace Allors.Database.Protocol.Json
             this.Sink?.OnBefore(@event);
 
             var invokeResponseBuilder = new InvokeResponseBuilder(this.Transaction, this.Derive, this.AccessControl, this.AllowedClasses);
-            var invokeResponse = invokeResponseBuilder.Build(invokeRequest);
+            InvokeResponse invokeResponse;
+            try
+            {
+                var prepared = invokeResponseBuilder.Prepare(invokeRequest, this.WorkspaceName, out invokeResponse);
+                if (!invokeResponse.HasErrors) invokeResponseBuilder.Apply(prepared, invokeResponse, this.CancellationToken.ThrowIfCancellationRequested);
+                if (invokeResponse.HasErrors) this.Transaction.Rollback();
+                else
+                {
+                    this.CancellationToken.ThrowIfCancellationRequested();
+                    this.Transaction.Commit();
+                }
+            }
+            catch
+            {
+                this.Transaction.Rollback();
+                throw;
+            }
 
             if (@event != null)
             {
@@ -118,7 +133,7 @@ namespace Allors.Database.Protocol.Json
             this.Sink?.OnBefore(@event);
 
             var dependencies = this.ToDependencies(pullRequest.d);
-            var pullResponseBuilder = new PullResponseBuilder(this.Transaction, this.AccessControl, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents, this.UnitConvert, this.Ranges, dependencies, this.PrefetchPolicyCache, this.CancellationToken);
+            var pullResponseBuilder = new PullResponseBuilder(this.Transaction, this.AccessControl, this.AllowedClasses, this.UnitConvert, this.Ranges, dependencies, this.PrefetchPolicyCache, this.CancellationToken);
             var pullResponse = pullResponseBuilder.Build(pullRequest);
 
             if (@event != null)
@@ -175,13 +190,6 @@ namespace Allors.Database.Protocol.Json
         {
             var responseBuilder = new PermissionResponseBuilder(this.Transaction, this.AllowedClasses);
             return responseBuilder.Build(permissionRequest);
-        }
-
-        // TODO: Delete
-        public PullResponseBuilder CreatePullResponseBuilder(string dependencyId = null)
-        {
-            // TODO: Dependencies
-            return new PullResponseBuilder(this.Transaction, this.AccessControl, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents, this.UnitConvert, this.Ranges, null, this.PrefetchPolicyCache, this.CancellationToken);
         }
 
         private IDictionary<IClass, ISet<IPropertyType>> ToDependencies(PullDependency[] pullDependencies)

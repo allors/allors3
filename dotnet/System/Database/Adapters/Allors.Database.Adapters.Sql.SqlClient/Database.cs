@@ -13,6 +13,8 @@ namespace Allors.Database.Adapters.Sql.SqlClient
     {
         private IConnectionFactory connectionFactory;
 
+        private bool hasCustomConnectionFactory;
+
         private IConnectionFactory managementConnectionFactory;
 
         private Mapping mapping;
@@ -25,8 +27,15 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         public Database(IDatabaseServices state, Configuration configuration) : base(state, configuration)
         {
+            if (configuration.IsolationLevel.HasValue && configuration.IsolationLevel.Value != System.Data.IsolationLevel.Snapshot)
+            {
+                throw new ArgumentException("SQL Server requires Snapshot isolation. Leave IsolationLevel unset or set it to Snapshot.", nameof(configuration));
+            }
+
             this.connectionFactory = configuration.ConnectionFactory;
+            this.hasCustomConnectionFactory = configuration.ConnectionFactory != null;
             this.managementConnectionFactory = configuration.ManagementConnectionFactory;
+            this.PopulationLifecycle = new PopulationLifecycle(new PopulationMetadataStore(this));
 
             var connectionStringBuilder = new SqlConnectionStringBuilder(this.ConnectionString);
             var applicationName = connectionStringBuilder.ApplicationName.Trim();
@@ -56,7 +65,11 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         {
             get => this.connectionFactory ??= new ConnectionFactory(this);
 
-            set => this.connectionFactory = value;
+            set
+            {
+                this.connectionFactory = value;
+                this.hasCustomConnectionFactory = value != null;
+            }
         }
 
         public override IConnectionFactory ManagementConnectionFactory
@@ -104,8 +117,64 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         public override string ValidationMessage => this.validationMessage;
 
+        public override WriteScope OpenWrite(Guid expectedIncarnation)
+        {
+            if (this.hasCustomConnectionFactory)
+            {
+                throw new InvalidOperationException("Protected writes require the built-in connection factory. Use a database configured without a custom ConnectionFactory.");
+            }
+
+            if (!this.IsValid)
+            {
+                throw new InvalidOperationException("Cannot open a protected write on an invalid schema. " + this.ValidationMessage);
+            }
+
+            var connection = new Connection(this);
+            PopulationMetadata population;
+            try
+            {
+                population = connection.OpenWrite();
+            }
+            catch
+            {
+                connection.Rollback();
+                throw;
+            }
+
+            return this.CreateWriteScope(connection, population, expectedIncarnation, connection.Commit);
+        }
+
+        public override ReadScope OpenRead()
+        {
+            if (this.hasCustomConnectionFactory)
+            {
+                throw new InvalidOperationException("Protected reads require the built-in connection factory. Use a database configured without a custom ConnectionFactory.");
+            }
+
+            if (!this.IsValid)
+            {
+                throw new InvalidOperationException("Cannot open a protected read on an invalid schema. " + this.ValidationMessage);
+            }
+
+            var connection = new Connection(this);
+            PopulationMetadata population;
+            Action verifySnapshot;
+            try
+            {
+                population = connection.OpenRead(out verifySnapshot);
+            }
+            catch
+            {
+                connection.Rollback();
+                throw;
+            }
+
+            return this.CreateReadScope(connection, population, verifySnapshot);
+        }
+
         public override void Init()
         {
+            using var operation = this.PopulationLifecycle.BeginOperation();
             try
             {
                 new Initialization(this).Execute();
@@ -116,10 +185,13 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 this.Cache.Invalidate();
                 this.Services.OnInit(this);
             }
+
+            operation.Complete();
         }
 
         public override void Load(XmlReader reader)
         {
+            using var operation = this.PopulationLifecycle.BeginOperation();
             lock (this)
             {
                 this.Init();
@@ -149,6 +221,8 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                     }
                 }
             }
+
+            operation.Complete();
         }
 
         public override void Save(XmlWriter writer)

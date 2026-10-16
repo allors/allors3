@@ -9,6 +9,8 @@
 namespace Tests.Workspace
 {
     using System.Linq;
+    using System.Threading.Tasks;
+    using Allors.Workspace;
     using Allors.Workspace.Data;
     using Allors.Workspace.Domain;
     using Xunit;
@@ -61,7 +63,7 @@ namespace Tests.Workspace
 
             c1a.Strategy.Reset();
 
-            Assert.Null(c1a.C1AllorsString);
+            Assert.Equal("X", c1a.C1AllorsString);
         }
 
         [Fact]
@@ -87,7 +89,7 @@ namespace Tests.Workspace
 
             c1a.Strategy.Reset();
 
-            Assert.Equal("X", c2a.C1AllorsString);
+            Assert.Equal("Y", c2a.C1AllorsString);
         }
 
         [Fact]
@@ -174,12 +176,9 @@ namespace Tests.Workspace
 
             c1a.Strategy.Reset();
 
-            Assert.NotNull(Record.Exception(() =>
-            {
-                var x = c1a.C1C1One2One;
-            }));
+            Assert.Equal(c1b, c1a.C1C1One2One);
 
-            Assert.Null(c1b.C1WhereC1C1One2One);
+            Assert.Equal(c1a, c1b.C1WhereC1C1One2One);
         }
 
         [Fact]
@@ -215,8 +214,8 @@ namespace Tests.Workspace
 
             c1a.Strategy.Reset();
 
-            Assert.Equal(c1b, c1a.C1C1One2One);
-            Assert.Null(c1x.C1WhereC1C1One2One);
+            Assert.Equal(c1x, c1a.C1C1One2One);
+            Assert.Equal(c1a, c1x.C1WhereC1C1One2One);
         }
 
         [Fact]
@@ -288,8 +287,8 @@ namespace Tests.Workspace
 
             c1a.Strategy.Reset();
 
-            Assert.Null(c1a.C1C1Many2One);
-            Assert.Empty(c1b.C1sWhereC1C1Many2One);
+            Assert.Equal(c1b, c1a.C1C1Many2One);
+            Assert.Contains(c1a, c1b.C1sWhereC1C1Many2One);
         }
 
         [Fact]
@@ -361,8 +360,8 @@ namespace Tests.Workspace
 
             c1a.Strategy.Reset();
 
-            Assert.Empty(c1a.C1C1One2Manies);
-            Assert.Null(c1b.C1WhereC1C1One2Many);
+            Assert.Contains(c1b, c1a.C1C1One2Manies);
+            Assert.Equal(c1a, c1b.C1WhereC1C1One2Many);
         }
 
         [Fact]
@@ -431,8 +430,8 @@ namespace Tests.Workspace
 
             c1a.Strategy.Reset();
 
-            Assert.Empty(c1a.C1C1Many2Manies);
-            Assert.Empty(c1b.C1sWhereC1C1Many2Many);
+            Assert.Contains(c1b, c1a.C1C1Many2Manies);
+            Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many);
         }
 
         [Fact]
@@ -469,6 +468,98 @@ namespace Tests.Workspace
 
             Assert.Contains(c1b, c1a.C1C1Many2Manies);
             Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many);
+        }
+
+        [Theory]
+        [InlineData("unit")]
+        [InlineData("double-unit")]
+        [InlineData("one-one")]
+        [InlineData("one-one-included")]
+        [InlineData("many-one")]
+        [InlineData("one-many")]
+        [InlineData("many-many")]
+        public async Task ResetAfterPushWithoutRefreshUsesPriorBaseline(string shape)
+        {
+            await this.Login("administrator");
+            using var session = this.Workspace.CreateSession();
+            var target = session.Create<C1>();
+            var related = session.Create<C1>();
+            var original = session.Create<C1>();
+            if (shape == "double-unit") target.C1AllorsString = "X";
+            if (shape == "one-one-included") target.C1C1One2One = original;
+            Assert.Equal(MutationOutcome.Committed, (await session.PushAsync()).Outcome);
+            session.Checkpoint();
+
+            switch (shape)
+            {
+                case "unit": target.C1AllorsString = "X"; break;
+                case "double-unit": target.C1AllorsString = "Y"; break;
+                case "one-one":
+                case "one-one-included": target.C1C1One2One = related; break;
+                case "many-one": target.C1C1Many2One = related; break;
+                case "one-many": target.AddC1C1One2Many(related); break;
+                case "many-many": target.AddC1C1Many2Many(related); break;
+            }
+            var saved = await session.PushAsync(new PushOptions { Refresh = false });
+            Assert.Equal(MutationOutcome.Committed, saved.Outcome);
+            Assert.Equal(MutationReadStatus.NotRequested, saved.Refresh.Status);
+            Assert.Equal(MutationAcknowledgementStatus.Applied, saved.Application.Acknowledgement);
+            var role = shape switch
+            {
+                "unit" or "double-unit" => this.M.C1.C1AllorsString,
+                "one-one" or "one-one-included" => (Allors.Workspace.Meta.IRoleType)this.M.C1.C1C1One2One,
+                "many-one" => this.M.C1.C1C1Many2One,
+                "one-many" => this.M.C1.C1C1One2Manies,
+                _ => this.M.C1.C1C1Many2Manies,
+            };
+            Assert.False(target.Strategy.CanWrite(role));
+            target.Strategy.Reset();
+            if (shape == "unit" || shape == "double-unit") Assert.Equal(shape == "unit" ? null : "X", target.C1AllorsString);
+            if (shape == "one-one" || shape == "one-one-included")
+            {
+                Assert.Equal(shape == "one-one" ? null : original, target.C1C1One2One);
+                Assert.Null(related.C1WhereC1C1One2One);
+                if (shape == "one-one-included") Assert.Same(target, original.C1WhereC1C1One2One);
+            }
+            if (shape == "many-one")
+            {
+                Assert.Null(target.C1C1Many2One);
+                Assert.Empty(related.C1sWhereC1C1Many2One);
+            }
+            if (shape == "one-many")
+            {
+                Assert.Empty(target.C1C1One2Manies);
+                Assert.Null(related.C1WhereC1C1One2Many);
+            }
+            if (shape == "many-many")
+            {
+                Assert.Empty(target.C1C1Many2Manies);
+                Assert.Empty(related.C1sWhereC1C1Many2Many);
+            }
+            Assert.False(target.Strategy.CanWrite(role));
+            Assert.False((await session.PullAsync(new Pull { Object = target }, new Pull { Object = related }, new Pull { Object = original })).HasErrors);
+            Assert.True(target.Strategy.CanWrite(role));
+            if (shape == "unit" || shape == "double-unit") Assert.Equal(shape == "unit" ? "X" : "Y", target.C1AllorsString);
+            if (shape == "one-one" || shape == "one-one-included")
+            {
+                Assert.Same(related, target.C1C1One2One);
+                Assert.Same(target, related.C1WhereC1C1One2One);
+            }
+            if (shape == "many-one")
+            {
+                Assert.Same(related, target.C1C1Many2One);
+                Assert.Contains(target, related.C1sWhereC1C1Many2One);
+            }
+            if (shape == "one-many")
+            {
+                Assert.Contains(related, target.C1C1One2Manies);
+                Assert.Same(target, related.C1WhereC1C1One2Many);
+            }
+            if (shape == "many-many")
+            {
+                Assert.Contains(related, target.C1C1Many2Manies);
+                Assert.Contains(target, related.C1sWhereC1C1Many2Many);
+            }
         }
     }
 }

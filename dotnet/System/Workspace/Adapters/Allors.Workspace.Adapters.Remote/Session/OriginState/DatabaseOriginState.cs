@@ -17,6 +17,43 @@ namespace Allors.Workspace.Adapters.Remote
         public override Adapters.Strategy Strategy => this.RemoteStrategy;
         private Strategy RemoteStrategy { get; }
 
+        internal bool CanAcceptScoped(DatabaseRecord record) => this.CanAcceptPulledRecord(record);
+
+        internal void AcceptScoped(DatabaseRecord record) => this.AcceptPulledRecord(record);
+
+        public override void Checkpoint(ChangeSet changeSet)
+        {
+            var owner = this.RemoteStrategy.Session.Workspace.DatabaseConnection.ScopedOwner;
+            lock (owner.State)
+            {
+                owner.RequireActive(this.RemoteStrategy.Session);
+                base.Checkpoint(changeSet);
+            }
+        }
+
+        protected override string UnloadedRelationMessage => "The related object is not loaded in this Session. Include it, add a dependency, or Pull it explicitly before navigating this relation.";
+
+        protected override bool ExactCheckpointRecords => true;
+
+        public override bool CanRead(Meta.IRoleType roleType)
+        {
+            var owner = this.RemoteStrategy.Session.Workspace.DatabaseConnection.ScopedOwner;
+            return owner.IsPermitted(this.RemoteStrategy.Session, this.Id, this.Class, roleType, Allors.Operations.Read, !this.ExistRecord);
+        }
+
+        public override bool CanWrite(Meta.IRoleType roleType)
+        {
+            var owner = this.RemoteStrategy.Session.Workspace.DatabaseConnection.ScopedOwner;
+            var permitted = owner.IsPermitted(this.RemoteStrategy.Session, this.Id, this.Class, roleType, Allors.Operations.Write, !this.IsPushed && (!this.ExistRecord));
+            return !this.IsPushed && permitted;
+        }
+
+        public override bool CanExecute(Meta.IMethodType methodType)
+        {
+            var owner = this.RemoteStrategy.Session.Workspace.DatabaseConnection.ScopedOwner;
+            return owner.IsPermitted(this.RemoteStrategy.Session, this.Id, this.Class, methodType, Allors.Operations.Execute, !this.ExistRecord);
+        }
+
         internal PushRequestNewObject PushNew() => new PushRequestNewObject
         {
             w = this.Id,

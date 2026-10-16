@@ -5,10 +5,10 @@ import {
   IObject,
   IPullResult,
   IPushResult,
+  PushOptions,
   IRule,
   ISession,
   Method,
-  Procedure,
   Pull,
 } from '@allors/system/workspace/domain';
 import {
@@ -35,6 +35,8 @@ export function isNewId(id: number): boolean {
 }
 
 export abstract class Session implements ISession {
+  abstract close(): void;
+
   context: string;
 
   changeSetTracker: ChangeSetTracker;
@@ -270,19 +272,23 @@ export abstract class Session implements ISession {
   }
 
   protected addObject(object: IObject) {
-    this.objectByWorkspaceId.set(object.id, object);
-    let objects = this.objectsByClass.get(object.strategy.cls);
+    this.addObjectWithIdentity(object, object.id, object.strategy.cls);
+  }
+
+  protected addObjectWithIdentity(object: IObject, id: number, cls: Class) {
+    this.objectByWorkspaceId.set(id, object);
+    let objects = this.objectsByClass.get(cls);
     if (objects == null) {
       objects = new Set();
-      this.objectsByClass.set(object.strategy.cls, objects);
+      this.objectsByClass.set(cls, objects);
     }
 
     objects.add(object);
 
-    let strategies = this.objectsByClass.get(object.strategy.cls);
+    let strategies = this.objectsByClass.get(cls);
     if (strategies == null) {
       strategies = new Set();
-      this.objectsByClass.set(object.strategy.cls, strategies);
+      this.objectsByClass.set(cls, strategies);
     }
 
     strategies.add(object);
@@ -306,14 +312,20 @@ export abstract class Session implements ISession {
 
   abstract invoke(
     methodOrMethods: Method | Method[],
-    options?: InvokeOptions
+    options?: InvokeOptions,
+    cancellation?: AbortSignal
   ): Promise<IInvokeResult>;
-
-  abstract call(procedure: Procedure, ...pulls: Pull[]): Promise<IPullResult>;
 
   abstract pull(pulls: Pull | Pull[]): Promise<IPullResult>;
 
-  abstract push(): Promise<IPushResult>;
+  get reconciliationRequired(): boolean {
+    return false;
+  }
+
+  abstract push(
+    options?: PushOptions,
+    cancellation?: AbortSignal
+  ): Promise<IPushResult>;
 
   abstract instantiateDatabaseStrategy(id: number): IObject;
 }

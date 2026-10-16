@@ -17,14 +17,12 @@ namespace Allors.Database.Protocol.Json
         private readonly ITransaction transaction;
         private readonly Pull pull;
         private readonly IAccessControl acls;
-        private readonly IPreparedSelects preparedSelects;
 
-        public PullInstantiate(ITransaction transaction, Pull pull, IAccessControl acls, IPreparedSelects preparedSelects)
+        public PullInstantiate(ITransaction transaction, Pull pull, IAccessControl acls)
         {
             this.transaction = transaction;
             this.pull = pull;
             this.acls = acls;
-            this.preparedSelects = preparedSelects;
         }
 
         public void Execute(PullResponseBuilder response)
@@ -47,11 +45,6 @@ namespace Allors.Database.Protocol.Json
                         var name = result.Name;
 
                         var @select = result.Select;
-                        if (@select == null && result.SelectRef.HasValue)
-                        {
-                            @select = this.preparedSelects.Get(result.SelectRef.Value);
-                        }
-
                         if (@select != null)
                         {
                             var include = @select.End.Include;

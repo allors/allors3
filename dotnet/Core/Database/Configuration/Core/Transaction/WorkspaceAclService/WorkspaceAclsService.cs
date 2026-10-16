@@ -13,21 +13,17 @@ namespace Allors.Database.Configuration
     {
         public ISecurity Security { get; }
 
-        public IWorkspaceMask WorkspaceMask { get; set; }
-
         public IUser User { get; }
 
-        public WorkspaceAclsService(ISecurity security, IWorkspaceMask workspaceMask, IUser user)
+        public WorkspaceAclsService(ISecurity security, IUser user)
         {
             this.Security = security;
-            this.WorkspaceMask = workspaceMask;
             this.User = user;
         }
 
         public IAccessControl Create(string workspaceName)
         {
-            var masks = this.WorkspaceMask.GetMasks(workspaceName);
-            return new WorkspaceAccessControl(this.Security, this.User, masks, workspaceName);
+            return new WorkspaceAccessControl(this.Security, this.User, workspaceName);
         }
     }
 }

@@ -5,6 +5,8 @@
 
 namespace Allors.Database.Adapters.Sql.SqlClient
 {
+    using System;
+    using System.Data;
     using Microsoft.Data.SqlClient;
 
     public class Connection : IConnection
@@ -19,12 +21,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         public ICommand CreateCommand()
         {
-            if (this.SqlConnection == null)
-            {
-                this.SqlConnection = new SqlConnection(this.Database.ConnectionString);
-                this.SqlConnection.Open();
-                this.SqlTransaction = this.SqlConnection.BeginTransaction(this.Database.IsolationLevel ?? Sql.Database.DefaultIsolationLevel);
-            }
+            this.EnsureOpen();
 
             var sqlCommand = this.SqlConnection.CreateCommand();
             sqlCommand.Transaction = this.SqlTransaction;
@@ -36,11 +33,17 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             return this.CreateCommand((Mapping)this.Database.Mapping, sqlCommand);
         }
 
-        public void Commit()
+        public void Commit() => this.Commit(null);
+
+        internal void Commit(Action committed)
         {
             try
             {
-                this.SqlTransaction?.Commit();
+                if (this.SqlTransaction != null)
+                {
+                    this.SqlTransaction.Commit();
+                    committed?.Invoke();
+                }
             }
             finally
             {
@@ -61,6 +64,40 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 this.SqlTransaction = null;
                 this.SqlConnection?.Close();
                 this.SqlConnection = null;
+            }
+        }
+
+        internal PopulationMetadata OpenWrite()
+        {
+            this.EnsureOpen();
+            return new PopulationMetadataStore(this.Database).Read(this.SqlConnection, this.SqlTransaction, fence: true);
+        }
+
+        internal PopulationMetadata OpenRead(out Action verifySnapshot)
+        {
+            this.EnsureOpen();
+            var connection = this.SqlConnection;
+            var transaction = this.SqlTransaction;
+            verifySnapshot = () =>
+            {
+                if (!ReferenceEquals(connection, this.SqlConnection) || !ReferenceEquals(transaction, this.SqlTransaction)
+                    || connection.State != ConnectionState.Open || !ReferenceEquals(transaction.Connection, connection)
+                    || (transaction.IsolationLevel != IsolationLevel.Snapshot))
+                {
+                    throw new InvalidOperationException("The protected SQL snapshot has ended, changed, or has unsupported isolation. Discard this read scope and open a new one.");
+                }
+            };
+            verifySnapshot();
+            return new PopulationMetadataStore(this.Database).Read(connection, transaction);
+        }
+
+        private void EnsureOpen()
+        {
+            if (this.SqlConnection == null)
+            {
+                this.SqlConnection = new SqlConnection(this.Database.ConnectionString);
+                this.SqlConnection.Open();
+                this.SqlTransaction = this.SqlConnection.BeginTransaction(IsolationLevel.Snapshot);
             }
         }
 

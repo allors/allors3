@@ -37,7 +37,7 @@ namespace Allors.Workspace.Adapters
             return this.Record?.GetRole(roleType);
         }
 
-        public void SetUnitRole(IRoleType roleType, object role) => this.SetChangedRole(roleType, role);
+        public void SetUnitRole(IRoleType roleType, object role) { this.Session.AssertEditable(); this.SetChangedRole(roleType, role); }
 
         public Strategy GetCompositeRole(IRoleType roleType)
         {
@@ -60,6 +60,7 @@ namespace Allors.Workspace.Adapters
 
         public void SetCompositeRole(IRoleType roleType, Strategy role)
         {
+            this.Session.AssertEditable();
             if (this.SameCompositeRole(roleType, role))
             {
                 return;
@@ -106,6 +107,7 @@ namespace Allors.Workspace.Adapters
 
         public void AddCompositesRole(IRoleType roleType, Strategy roleToAdd)
         {
+            this.Session.AssertEditable();
             var associationType = roleType.AssociationType;
             var previousAssociation = this.Session.GetCompositeAssociation(roleToAdd, associationType);
 
@@ -130,6 +132,7 @@ namespace Allors.Workspace.Adapters
 
         public void RemoveCompositesRole(IRoleType roleType, Strategy roleToRemove)
         {
+            this.Session.AssertEditable();
             var role = this.GetCompositesRole(roleType);
 
             if (!role.Contains(roleToRemove))
@@ -143,6 +146,7 @@ namespace Allors.Workspace.Adapters
 
         public void SetCompositesRole(IRoleType roleType, IRange<Strategy> role)
         {
+            this.Session.AssertEditable();
             if (this.SameCompositesRole(roleType, role))
             {
                 return;
@@ -166,8 +170,15 @@ namespace Allors.Workspace.Adapters
             }
         }
 
-        public void Checkpoint(ChangeSet changeSet)
+        public virtual void Checkpoint(ChangeSet changeSet)
         {
+            this.Session.AssertEditable();
+            if (this.ExactCheckpointRecords)
+            {
+                this.CheckpointExact(changeSet);
+                return;
+            }
+
             // Same record
             if (this.PreviousRecord == null || this.Record == null || this.Record.Version == this.PreviousRecord.Version)
             {
@@ -272,6 +283,53 @@ namespace Allors.Workspace.Adapters
             this.PreviousChangedRoleByRelationType = this.ChangedRoleByRelationType != null ? new Dictionary<IRelationType, object>(this.ChangedRoleByRelationType) : null;
         }
 
+        protected virtual bool ExactCheckpointRecords => false;
+
+        private void CheckpointExact(ChangeSet changeSet)
+        {
+            // Local relation changes hold Strategies; immutable baselines hold IDs. Normalize each side
+            // independently so accepting a security-only record also preserves checkpoint ownership.
+            foreach (var roleType in this.RoleTypes)
+            {
+                var relation = roleType.RelationType;
+                object current = null;
+                object previous = null;
+                if (this.ChangedRoleByRelationType?.TryGetValue(relation, out current) != true) { current = this.Record?.GetRole(roleType); }
+                if (this.PreviousChangedRoleByRelationType?.TryGetValue(relation, out previous) != true) { previous = this.PreviousRecord?.GetRole(roleType); }
+                if (roleType.ObjectType.IsUnit)
+                {
+                    if (!(current is byte[] currentBytes && previous is byte[] previousBytes && currentBytes.SequenceEqual(previousBytes)))
+                    { changeSet.DiffUnit(this.Strategy, relation, current, previous); }
+                }
+                else if (roleType.IsOne)
+                {
+                    changeSet.DiffComposite(this.Strategy, relation, current is Strategy currentStrategy ? currentStrategy.Id : (long?)current,
+                        previous is Strategy previousStrategy ? previousStrategy.Id : (long?)previous);
+                }
+                else
+                {
+                    var currentIds = current is IRange<Strategy> currentStrategies ? currentStrategies.Select(v => v.Id).ToArray()
+                        : ((IRange<long>)current)?.ToArray() ?? Array.Empty<long>();
+                    var previousIds = previous is IRange<Strategy> previousStrategies ? previousStrategies.Select(v => v.Id).ToArray()
+                        : ((IRange<long>)previous)?.ToArray() ?? Array.Empty<long>();
+                    var changedIds = currentIds.Except(previousIds).Concat(previousIds.Except(currentIds)).ToArray();
+                    if (changedIds.Length == 0) { continue; }
+                    if (!changeSet.AssociationsByRoleType.TryGetValue(roleType, out var associations))
+                    { changeSet.AssociationsByRoleType[roleType] = associations = new HashSet<IStrategy>(); }
+                    associations.Add(this.Strategy);
+                    if (!changeSet.RolesByAssociationType.TryGetValue(roleType.AssociationType, out var roles))
+                    { changeSet.RolesByAssociationType[roleType.AssociationType] = roles = new HashSet<IStrategy>(); }
+                    foreach (var id in changedIds)
+                    {
+                        var strategy = this.Session.GetStrategy(id);
+                        if (strategy != null) { roles.Add(strategy); }
+                    }
+                }
+            }
+            this.PreviousRecord = this.Record;
+            this.PreviousChangedRoleByRelationType = this.ChangedRoleByRelationType != null ? new Dictionary<IRelationType, object>(this.ChangedRoleByRelationType) : null;
+        }
+
         public void Diff(IList<IDiff> diffs)
         {
             if (this.ChangedRoleByRelationType == null)
@@ -361,7 +419,9 @@ namespace Allors.Workspace.Adapters
 
         public bool HashChanges() => this.ChangedRoleByRelationType != null;
 
-        public void Reset() => this.ChangedRoleByRelationType = null;
+        public void Reset() { this.Session.AssertEditable(); this.ClearChanges(); }
+
+        protected void ClearChanges() => this.ChangedRoleByRelationType = null;
 
         public bool IsAssociationForRole(IRoleType roleType, Strategy forRole)
         {
@@ -377,7 +437,7 @@ namespace Allors.Workspace.Adapters
 
         public bool HasChanged(IRoleType roleType) => this.ChangedRoleByRelationType?.ContainsKey(roleType.RelationType) ?? false;
 
-        public void RestoreRole(IRoleType roleType) => this.ChangedRoleByRelationType?.Remove(roleType.RelationType);
+        public void RestoreRole(IRoleType roleType) { this.Session.AssertEditable(); this.ChangedRoleByRelationType?.Remove(roleType.RelationType); }
 
         protected abstract void OnChange();
 
@@ -442,11 +502,13 @@ namespace Allors.Workspace.Adapters
             return role.IsEmpty ? roleIds.IsEmpty : role.Select(v => v.Id).SequenceEqual(roleIds);
         }
 
+        protected virtual string UnloadedRelationMessage => "Strategy is not in Session.";
+
         private void AssertStrategy(Strategy strategy)
         {
             if (strategy == null)
             {
-                throw new Exception("Strategy is not in Session.");
+                throw new Exception(this.UnloadedRelationMessage);
             }
         }
 

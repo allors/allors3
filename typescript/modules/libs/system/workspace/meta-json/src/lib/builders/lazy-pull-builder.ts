@@ -14,7 +14,6 @@ export class LazyPullBuilder {
     for (const composite of metaPopulation.composites) {
       this[composite.singularName] = (flat: FlatPull) => {
         const pull: Pull = {
-          extentRef: flat.extentRef,
           extent: flat.extent,
           results: flat.results,
           arguments: flat.arguments,
@@ -33,8 +32,8 @@ export class LazyPullBuilder {
         }
 
         if (flat.predicate) {
-          if (pull.object || pull.extent || pull.extentRef) {
-            throw new Error('predicate conflicts with object/extent/extentRef');
+          if (pull.object || pull.extent) {
+            throw new Error('predicate conflicts with object/extent');
           }
 
           const filter: Filter = {
@@ -47,7 +46,7 @@ export class LazyPullBuilder {
           pull.extent = filter;
         }
 
-        if (!pull.object && !pull.objectId && !pull.extent && !pull.extentRef) {
+        if (!pull.object && !pull.objectId && !pull.extent) {
           const filter: Filter = {
             kind: 'Filter',
             objectType: composite,
@@ -71,7 +70,6 @@ export class LazyPullBuilder {
         }
 
         if (
-          flat.selectRef ||
           flat.select ||
           flat.include ||
           flat.name ||
@@ -79,7 +77,6 @@ export class LazyPullBuilder {
           flat.take
         ) {
           const result: Result = {
-            selectRef: flat.selectRef,
             name: flat.name,
             skip: flat.skip,
             take: flat.take,

@@ -17,7 +17,6 @@ namespace Allors.Database.Protocol.Json
     using Result = Data.Result;
     using Select = Data.Select;
     using Sort = Data.Sort;
-    using Procedure = Data.Procedure;
 
     public class FromJsonVisitor : Allors.Protocol.Json.Data.IVisitor
     {
@@ -47,8 +46,6 @@ namespace Allors.Database.Protocol.Json
         public Data.IExtent Extent => this.extents?.Peek();
 
         public Select Select => this.selects?.Peek();
-
-        public Procedure Procedure { get; private set; }
 
         public void VisitExtent(Allors.Protocol.Json.Data.Extent visited)
         {
@@ -402,7 +399,6 @@ namespace Allors.Database.Protocol.Json
         {
             var pull = new Pull
             {
-                ExtentRef = visited.er,
                 ObjectType = !string.IsNullOrWhiteSpace(visited.t) ? (IObjectType)this.fromJson.MetaPopulation.FindByTag(visited.t) : null,
                 Arguments = visited.a != null ? new Arguments(visited.a, this.fromJson.UnitConvert) : null,
             };
@@ -438,7 +434,6 @@ namespace Allors.Database.Protocol.Json
         {
             var result = new Result
             {
-                SelectRef = visited.r,
                 Name = visited.n,
                 Skip = visited.k,
                 Take = visited.t,
@@ -471,16 +466,6 @@ namespace Allors.Database.Protocol.Json
             };
 
             this.sorts.Push(sort);
-        }
-
-        public void VisitProcedure(Allors.Protocol.Json.Data.Procedure procedure)
-        {
-            this.Procedure = new Procedure(procedure.n)
-            {
-                Values = procedure.v,
-            };
-
-            this.fromJson.Resolve(this.Procedure, procedure.c, procedure.o, procedure.p);
         }
     }
 }

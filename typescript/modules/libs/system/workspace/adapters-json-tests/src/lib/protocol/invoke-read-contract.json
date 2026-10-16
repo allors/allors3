@@ -1,0 +1,108 @@
+{
+  "request": {
+    "v": 1,
+    "i": "invoke-1",
+    "sc": {
+      "p": "population-1",
+      "u": 7,
+      "w": "Default",
+      "r": "schema-1",
+      "x": "tenant=blue"
+    },
+    "x": "tenant=blue",
+    "l": [
+      {
+        "i": 101,
+        "v": 7,
+        "m": "JustDoIt"
+      },
+      {
+        "i": 102,
+        "v": 8,
+        "m": "JustDoIt"
+      }
+    ],
+    "refresh": true
+  },
+  "response": {
+    "i": "invoke-1",
+    "sc": {
+      "p": "population-1",
+      "u": 7,
+      "w": "Default",
+      "r": "schema-1",
+      "x": "tenant=blue"
+    },
+    "invoke": {
+      "k": "committed"
+    },
+    "changed": {
+      "i": "invoke-1",
+      "sc": {
+        "p": "population-1",
+        "u": 7,
+        "w": "Default",
+        "r": "schema-1",
+        "x": "tenant=blue"
+      },
+      "k": "changed",
+      "p": [
+        {
+          "i": 101,
+          "c": "C1",
+          "v": 8,
+          "g": [0],
+          "r": [],
+          "p": {
+            "ro": [
+              {
+                "t": "name",
+                "v": "after"
+              }
+            ]
+          }
+        }
+      ],
+      "s": [
+        {
+          "k": "grant",
+          "i": 11,
+          "v": 1,
+          "p": {
+            "p": [31]
+          }
+        }
+      ],
+      "pm": [
+        {
+          "i": 31,
+          "p": {
+            "c": "C1",
+            "o": 2,
+            "t": "name"
+          }
+        }
+      ],
+      "u": [102]
+    }
+  },
+  "rejected": {
+    "i": "invoke-1",
+    "invoke": {
+      "k": "rejected",
+      "_v": [101]
+    }
+  },
+  "unknown": {
+    "i": "invoke-1",
+    "invoke": {
+      "k": "unknown",
+      "e": [
+        {
+          "c": "outcome-unknown",
+          "m": "Reconcile server state before another mutation."
+        }
+      ]
+    }
+  }
+}

@@ -5,16 +5,10 @@
 
 namespace Allors.Protocol.Json.Data
 {
-    using System;
     using System.Collections.Generic;
 
     public class Pull : IVisitable
     {
-        /// <summary>
-        /// ExtentRef
-        /// </summary>
-        public Guid? er { get; set; }
-
         /// <summary>
         /// Extent
         /// </summary>

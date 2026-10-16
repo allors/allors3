@@ -68,7 +68,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void CallMultipleIsolated()
+        public async void CallMultipleAtomic()
         {
             await this.Login("administrator");
 
@@ -81,7 +81,7 @@ namespace Tests.Workspace
 
             Assert.False(organisation1.JustDidIt);
 
-            var invokeResult = await session.InvokeAsync(new[] { organisation1.JustDoIt, organisation2.JustDoIt }, new InvokeOptions { Isolated = true });
+            var invokeResult = await session.InvokeAsync(new[] { organisation1.JustDoIt, organisation2.JustDoIt });
 
             Assert.False(invokeResult.HasErrors);
 

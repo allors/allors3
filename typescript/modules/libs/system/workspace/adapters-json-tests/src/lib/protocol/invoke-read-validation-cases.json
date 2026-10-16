@@ -1,0 +1,350 @@
+{
+  "validRequests": [
+    {
+      "name": "refresh enabled",
+      "json": "{\"v\":1,\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"x\":\"tenant=blue\",\"l\":[{\"i\":101,\"v\":7,\"m\":\"JustDoIt\"},{\"i\":102,\"v\":8,\"m\":\"JustDoIt\"}],\"refresh\":true}"
+    },
+    {
+      "name": "refresh skipped",
+      "json": "{\"v\":1,\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"x\":\"tenant=blue\",\"l\":[{\"i\":101,\"v\":7,\"m\":\"JustDoIt\"},{\"i\":102,\"v\":8,\"m\":\"JustDoIt\"}],\"refresh\":false}"
+    },
+    {
+      "name": "empty atomic batch",
+      "json": "{\"v\":1,\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"x\":\"tenant=blue\",\"l\":[],\"refresh\":true}"
+    },
+    {
+      "name": "repeated same method same target",
+      "json": "{\"v\":1,\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"x\":\"tenant=blue\",\"l\":[{\"i\":101,\"v\":7,\"m\":\"JustDoIt\"},{\"i\":101,\"v\":7,\"m\":\"JustDoIt\"}],\"refresh\":true}"
+    },
+    {
+      "name": "different methods same target same version",
+      "json": "{\"v\":1,\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"x\":\"tenant=blue\",\"l\":[{\"i\":101,\"v\":7,\"m\":\"JustDoIt\"},{\"i\":101,\"v\":7,\"m\":\"Delete\"}],\"refresh\":true}"
+    },
+    {
+      "name": "null exact context",
+      "json": "{\"v\":1,\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":null},\"x\":null,\"l\":[{\"i\":101,\"v\":7,\"m\":\"JustDoIt\"},{\"i\":102,\"v\":8,\"m\":\"JustDoIt\"}],\"refresh\":true}"
+    },
+    {
+      "name": "omitted exact context",
+      "json": "{\"v\":1,\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\"},\"l\":[{\"i\":101,\"v\":7,\"m\":\"JustDoIt\"},{\"i\":102,\"v\":8,\"m\":\"JustDoIt\"}],\"refresh\":true}"
+    }
+  ],
+  "invalidRequests": [
+    {
+      "name": "invocation list absent",
+      "json": "{\"v\":1,\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"x\":\"tenant=blue\",\"refresh\":true}"
+    },
+    {
+      "name": "invocation list null",
+      "json": "{\"v\":1,\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"x\":\"tenant=blue\",\"l\":null,\"refresh\":true}"
+    },
+    {
+      "name": "null invocation",
+      "json": "{\"v\":1,\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"x\":\"tenant=blue\",\"l\":[null],\"refresh\":true}"
+    },
+    {
+      "name": "method absent",
+      "json": "{\"v\":1,\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"x\":\"tenant=blue\",\"l\":[{\"i\":101,\"v\":7},{\"i\":102,\"v\":8,\"m\":\"JustDoIt\"}],\"refresh\":true}"
+    },
+    {
+      "name": "method blank",
+      "json": "{\"v\":1,\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"x\":\"tenant=blue\",\"l\":[{\"i\":101,\"v\":7,\"m\":\" \"},{\"i\":102,\"v\":8,\"m\":\"JustDoIt\"}],\"refresh\":true}"
+    },
+    {
+      "name": "zero target",
+      "json": "{\"v\":1,\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"x\":\"tenant=blue\",\"l\":[{\"i\":0,\"v\":7,\"m\":\"JustDoIt\"},{\"i\":102,\"v\":8,\"m\":\"JustDoIt\"}],\"refresh\":true}"
+    },
+    {
+      "name": "negative target",
+      "json": "{\"v\":1,\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"x\":\"tenant=blue\",\"l\":[{\"i\":-1,\"v\":7,\"m\":\"JustDoIt\"},{\"i\":102,\"v\":8,\"m\":\"JustDoIt\"}],\"refresh\":true}"
+    },
+    {
+      "name": "unsafe target",
+      "json": "{\"v\":1,\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"x\":\"tenant=blue\",\"l\":[{\"i\":9007199254740992,\"v\":7,\"m\":\"JustDoIt\"},{\"i\":102,\"v\":8,\"m\":\"JustDoIt\"}],\"refresh\":true}"
+    },
+    {
+      "name": "fractional target",
+      "json": "{\"v\":1,\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"x\":\"tenant=blue\",\"l\":[{\"i\":1.5,\"v\":7,\"m\":\"JustDoIt\"},{\"i\":102,\"v\":8,\"m\":\"JustDoIt\"}],\"refresh\":true}"
+    },
+    {
+      "name": "zero version",
+      "json": "{\"v\":1,\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"x\":\"tenant=blue\",\"l\":[{\"i\":101,\"v\":0,\"m\":\"JustDoIt\"},{\"i\":102,\"v\":8,\"m\":\"JustDoIt\"}],\"refresh\":true}"
+    },
+    {
+      "name": "negative version",
+      "json": "{\"v\":1,\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"x\":\"tenant=blue\",\"l\":[{\"i\":101,\"v\":-1,\"m\":\"JustDoIt\"},{\"i\":102,\"v\":8,\"m\":\"JustDoIt\"}],\"refresh\":true}"
+    },
+    {
+      "name": "unsafe version",
+      "json": "{\"v\":1,\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"x\":\"tenant=blue\",\"l\":[{\"i\":101,\"v\":9007199254740992,\"m\":\"JustDoIt\"},{\"i\":102,\"v\":8,\"m\":\"JustDoIt\"}],\"refresh\":true}"
+    },
+    {
+      "name": "fractional version",
+      "json": "{\"v\":1,\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"x\":\"tenant=blue\",\"l\":[{\"i\":101,\"v\":1.5,\"m\":\"JustDoIt\"},{\"i\":102,\"v\":8,\"m\":\"JustDoIt\"}],\"refresh\":true}"
+    },
+    {
+      "name": "inconsistent versions for repeated target",
+      "json": "{\"v\":1,\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"x\":\"tenant=blue\",\"l\":[{\"i\":101,\"v\":7,\"m\":\"JustDoIt\"},{\"i\":101,\"v\":8,\"m\":\"JustDoIt\"}],\"refresh\":true}"
+    },
+    {
+      "name": "refresh absent",
+      "json": "{\"v\":1,\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"x\":\"tenant=blue\",\"l\":[{\"i\":101,\"v\":7,\"m\":\"JustDoIt\"},{\"i\":102,\"v\":8,\"m\":\"JustDoIt\"}]}"
+    },
+    {
+      "name": "refresh null",
+      "json": "{\"v\":1,\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"x\":\"tenant=blue\",\"l\":[{\"i\":101,\"v\":7,\"m\":\"JustDoIt\"},{\"i\":102,\"v\":8,\"m\":\"JustDoIt\"}],\"refresh\":null}"
+    },
+    {
+      "name": "refresh nonboolean",
+      "json": "{\"v\":1,\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"x\":\"tenant=blue\",\"l\":[{\"i\":101,\"v\":7,\"m\":\"JustDoIt\"},{\"i\":102,\"v\":8,\"m\":\"JustDoIt\"}],\"refresh\":\"true\"}"
+    },
+    {
+      "name": "scope absent",
+      "json": "{\"v\":1,\"i\":\"invoke-1\",\"x\":\"tenant=blue\",\"l\":[{\"i\":101,\"v\":7,\"m\":\"JustDoIt\"},{\"i\":102,\"v\":8,\"m\":\"JustDoIt\"}],\"refresh\":true}"
+    },
+    {
+      "name": "scope null",
+      "json": "{\"v\":1,\"i\":\"invoke-1\",\"sc\":null,\"x\":\"tenant=blue\",\"l\":[{\"i\":101,\"v\":7,\"m\":\"JustDoIt\"},{\"i\":102,\"v\":8,\"m\":\"JustDoIt\"}],\"refresh\":true}"
+    },
+    {
+      "name": "context mismatch",
+      "json": "{\"v\":1,\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"x\":\"other\",\"l\":[{\"i\":101,\"v\":7,\"m\":\"JustDoIt\"},{\"i\":102,\"v\":8,\"m\":\"JustDoIt\"}],\"refresh\":true}"
+    },
+    {
+      "name": "unsupported protocol revision",
+      "json": "{\"v\":2,\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"x\":\"tenant=blue\",\"l\":[{\"i\":101,\"v\":7,\"m\":\"JustDoIt\"},{\"i\":102,\"v\":8,\"m\":\"JustDoIt\"}],\"refresh\":true}"
+    },
+    {
+      "name": "unknown request member",
+      "json": "{\"v\":1,\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"x\":\"tenant=blue\",\"l\":[{\"i\":101,\"v\":7,\"m\":\"JustDoIt\"},{\"i\":102,\"v\":8,\"m\":\"JustDoIt\"}],\"refresh\":true,\"extra\":true}"
+    },
+    {
+      "name": "removed options object",
+      "json": "{\"v\":1,\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"x\":\"tenant=blue\",\"l\":[{\"i\":101,\"v\":7,\"m\":\"JustDoIt\"},{\"i\":102,\"v\":8,\"m\":\"JustDoIt\"}],\"refresh\":true,\"o\":{}}"
+    },
+    {
+      "name": "removed options null",
+      "json": "{\"v\":1,\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"x\":\"tenant=blue\",\"l\":[{\"i\":101,\"v\":7,\"m\":\"JustDoIt\"},{\"i\":102,\"v\":8,\"m\":\"JustDoIt\"}],\"refresh\":true,\"o\":null}"
+    },
+    {
+      "name": "removed isolation member",
+      "json": "{\"v\":1,\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"x\":\"tenant=blue\",\"l\":[{\"i\":101,\"v\":7,\"m\":\"JustDoIt\"},{\"i\":102,\"v\":8,\"m\":\"JustDoIt\"}],\"refresh\":true,\"isolated\":true}"
+    },
+    {
+      "name": "discovery object",
+      "json": "{\"v\":1,\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"x\":\"tenant=blue\",\"l\":[{\"i\":101,\"v\":7,\"m\":\"JustDoIt\"},{\"i\":102,\"v\":8,\"m\":\"JustDoIt\"}],\"refresh\":true,\"discovery\":{}}"
+    },
+    {
+      "name": "discovery null",
+      "json": "{\"v\":1,\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"x\":\"tenant=blue\",\"l\":[{\"i\":101,\"v\":7,\"m\":\"JustDoIt\"},{\"i\":102,\"v\":8,\"m\":\"JustDoIt\"}],\"refresh\":true,\"discovery\":null}"
+    },
+    {
+      "name": "duplicate root property",
+      "json": "{\"v\": 1,\"v\":1, \"i\": \"invoke-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"x\": \"tenant=blue\", \"l\": [{\"i\": 101, \"v\": 7, \"m\": \"JustDoIt\"}, {\"i\": 102, \"v\": 8, \"m\": \"JustDoIt\"}], \"refresh\": true}"
+    },
+    {
+      "name": "duplicate invocation property",
+      "json": "{\"v\": 1, \"i\": \"invoke-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"x\": \"tenant=blue\", \"l\": [{\"i\": 101, \"v\": 7, \"m\": \"JustDoIt\",\"m\":\"Delete\"}, {\"i\": 102, \"v\": 8, \"m\": \"JustDoIt\"}], \"refresh\": true}"
+    },
+    {
+      "name": "invalid Unicode method",
+      "json": "{\"v\":1,\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"x\":\"tenant=blue\",\"l\":[{\"i\":101,\"v\":7,\"m\":\"\\ud800\"},{\"i\":102,\"v\":8,\"m\":\"JustDoIt\"}],\"refresh\":true}"
+    }
+  ],
+  "validResponses": [
+    {
+      "name": "committed with affected records",
+      "json": "{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"invoke\":{\"k\":\"committed\"},\"changed\":{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"k\":\"changed\",\"p\":[{\"i\":101,\"c\":\"C1\",\"v\":8,\"g\":[0],\"r\":[],\"p\":{\"ro\":[{\"t\":\"name\",\"v\":\"after\"}]}}],\"s\":[{\"k\":\"grant\",\"i\":11,\"v\":1,\"p\":{\"p\":[31]}}],\"pm\":[{\"i\":31,\"p\":{\"c\":\"C1\",\"o\":2,\"t\":\"name\"}}],\"u\":[102]}}"
+    },
+    {
+      "name": "committed with refresh failure",
+      "json": "{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"invoke\":{\"k\":\"committed\"},\"changed\":{\"i\":\"invoke-1\",\"k\":\"error\",\"e\":[{\"c\":\"refresh-failed\",\"m\":\"Refresh unavailable; pull again.\"}]}}"
+    },
+    {
+      "name": "committed refresh skipped",
+      "json": "{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"invoke\":{\"k\":\"committed\"}}",
+      "request": {
+        "v": 1,
+        "i": "invoke-1",
+        "sc": {
+          "p": "population-1",
+          "u": 7,
+          "w": "Default",
+          "r": "schema-1",
+          "x": "tenant=blue"
+        },
+        "x": "tenant=blue",
+        "l": [
+          {
+            "i": 101,
+            "v": 7,
+            "m": "JustDoIt"
+          },
+          {
+            "i": 102,
+            "v": 8,
+            "m": "JustDoIt"
+          }
+        ],
+        "refresh": false
+      }
+    },
+    {
+      "name": "rejected version diagnostics",
+      "json": "{\"i\":\"invoke-1\",\"invoke\":{\"k\":\"rejected\",\"_v\":[101]}}"
+    },
+    {
+      "name": "rejected access missing and signed derivation diagnostics",
+      "json": "{\"i\":\"invoke-1\",\"invoke\":{\"k\":\"rejected\",\"_a\":[101],\"_m\":[102],\"_d\":[{\"m\":null,\"r\":[{\"i\":-1,\"r\":\"name\"}]}]}}"
+    },
+    {
+      "name": "unknown with diagnostics",
+      "json": "{\"i\":\"invoke-1\",\"invoke\":{\"k\":\"unknown\",\"e\":[{\"c\":\"outcome-unknown\",\"m\":\"Reconcile server state before another mutation.\"}]}}"
+    },
+    {
+      "name": "committed with post-commit diagnostic",
+      "json": "{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"invoke\":{\"k\":\"committed\",\"e\":[{\"c\":\"notification-failed\",\"m\":\"The commit succeeded but the notification failed.\"}]},\"changed\":{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"k\":\"changed\",\"p\":[{\"i\":101,\"c\":\"C1\",\"v\":8,\"g\":[0],\"r\":[],\"p\":{\"ro\":[{\"t\":\"name\",\"v\":\"after\"}]}}],\"s\":[{\"k\":\"grant\",\"i\":11,\"v\":1,\"p\":{\"p\":[31]}}],\"pm\":[{\"i\":31,\"p\":{\"c\":\"C1\",\"o\":2,\"t\":\"name\"}}],\"u\":[102]}}"
+    }
+  ],
+  "invalidReceipts": [
+    {
+      "name": "wrong correlation",
+      "json": "{\"i\":\"wrong\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"invoke\":{\"k\":\"committed\"},\"changed\":{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"k\":\"changed\",\"p\":[{\"i\":101,\"c\":\"C1\",\"v\":8,\"g\":[0],\"r\":[],\"p\":{\"ro\":[{\"t\":\"name\",\"v\":\"after\"}]}}],\"s\":[{\"k\":\"grant\",\"i\":11,\"v\":1,\"p\":{\"p\":[31]}}],\"pm\":[{\"i\":31,\"p\":{\"c\":\"C1\",\"o\":2,\"t\":\"name\"}}],\"u\":[102]}}"
+    },
+    {
+      "name": "committed scope absent",
+      "json": "{\"i\":\"invoke-1\",\"invoke\":{\"k\":\"committed\"},\"changed\":{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"k\":\"changed\",\"p\":[{\"i\":101,\"c\":\"C1\",\"v\":8,\"g\":[0],\"r\":[],\"p\":{\"ro\":[{\"t\":\"name\",\"v\":\"after\"}]}}],\"s\":[{\"k\":\"grant\",\"i\":11,\"v\":1,\"p\":{\"p\":[31]}}],\"pm\":[{\"i\":31,\"p\":{\"c\":\"C1\",\"o\":2,\"t\":\"name\"}}],\"u\":[102]}}"
+    },
+    {
+      "name": "committed population mismatch",
+      "json": "{\"i\":\"invoke-1\",\"sc\":{\"p\":\"wrong\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"invoke\":{\"k\":\"committed\"},\"changed\":{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"k\":\"changed\",\"p\":[{\"i\":101,\"c\":\"C1\",\"v\":8,\"g\":[0],\"r\":[],\"p\":{\"ro\":[{\"t\":\"name\",\"v\":\"after\"}]}}],\"s\":[{\"k\":\"grant\",\"i\":11,\"v\":1,\"p\":{\"p\":[31]}}],\"pm\":[{\"i\":31,\"p\":{\"c\":\"C1\",\"o\":2,\"t\":\"name\"}}],\"u\":[102]}}"
+    },
+    {
+      "name": "committed user mismatch",
+      "json": "{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":8,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"invoke\":{\"k\":\"committed\"},\"changed\":{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"k\":\"changed\",\"p\":[{\"i\":101,\"c\":\"C1\",\"v\":8,\"g\":[0],\"r\":[],\"p\":{\"ro\":[{\"t\":\"name\",\"v\":\"after\"}]}}],\"s\":[{\"k\":\"grant\",\"i\":11,\"v\":1,\"p\":{\"p\":[31]}}],\"pm\":[{\"i\":31,\"p\":{\"c\":\"C1\",\"o\":2,\"t\":\"name\"}}],\"u\":[102]}}"
+    },
+    {
+      "name": "committed workspace mismatch",
+      "json": "{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"wrong\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"invoke\":{\"k\":\"committed\"},\"changed\":{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"k\":\"changed\",\"p\":[{\"i\":101,\"c\":\"C1\",\"v\":8,\"g\":[0],\"r\":[],\"p\":{\"ro\":[{\"t\":\"name\",\"v\":\"after\"}]}}],\"s\":[{\"k\":\"grant\",\"i\":11,\"v\":1,\"p\":{\"p\":[31]}}],\"pm\":[{\"i\":31,\"p\":{\"c\":\"C1\",\"o\":2,\"t\":\"name\"}}],\"u\":[102]}}"
+    },
+    {
+      "name": "committed revision mismatch",
+      "json": "{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"wrong\",\"x\":\"tenant=blue\"},\"invoke\":{\"k\":\"committed\"},\"changed\":{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"k\":\"changed\",\"p\":[{\"i\":101,\"c\":\"C1\",\"v\":8,\"g\":[0],\"r\":[],\"p\":{\"ro\":[{\"t\":\"name\",\"v\":\"after\"}]}}],\"s\":[{\"k\":\"grant\",\"i\":11,\"v\":1,\"p\":{\"p\":[31]}}],\"pm\":[{\"i\":31,\"p\":{\"c\":\"C1\",\"o\":2,\"t\":\"name\"}}],\"u\":[102]}}"
+    },
+    {
+      "name": "committed context mismatch",
+      "json": "{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"wrong\"},\"invoke\":{\"k\":\"committed\"},\"changed\":{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"k\":\"changed\",\"p\":[{\"i\":101,\"c\":\"C1\",\"v\":8,\"g\":[0],\"r\":[],\"p\":{\"ro\":[{\"t\":\"name\",\"v\":\"after\"}]}}],\"s\":[{\"k\":\"grant\",\"i\":11,\"v\":1,\"p\":{\"p\":[31]}}],\"pm\":[{\"i\":31,\"p\":{\"c\":\"C1\",\"o\":2,\"t\":\"name\"}}],\"u\":[102]}}"
+    },
+    {
+      "name": "unknown outcome kind",
+      "json": "{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"invoke\":{\"k\":\"maybe\"},\"changed\":{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"k\":\"changed\",\"p\":[{\"i\":101,\"c\":\"C1\",\"v\":8,\"g\":[0],\"r\":[],\"p\":{\"ro\":[{\"t\":\"name\",\"v\":\"after\"}]}}],\"s\":[{\"k\":\"grant\",\"i\":11,\"v\":1,\"p\":{\"p\":[31]}}],\"pm\":[{\"i\":31,\"p\":{\"c\":\"C1\",\"o\":2,\"t\":\"name\"}}],\"u\":[102]}}"
+    },
+    {
+      "name": "outcome absent",
+      "json": "{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"changed\":{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"k\":\"changed\",\"p\":[{\"i\":101,\"c\":\"C1\",\"v\":8,\"g\":[0],\"r\":[],\"p\":{\"ro\":[{\"t\":\"name\",\"v\":\"after\"}]}}],\"s\":[{\"k\":\"grant\",\"i\":11,\"v\":1,\"p\":{\"p\":[31]}}],\"pm\":[{\"i\":31,\"p\":{\"c\":\"C1\",\"o\":2,\"t\":\"name\"}}],\"u\":[102]}}"
+    },
+    {
+      "name": "forbidden new ID mappings",
+      "json": "{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"invoke\":{\"k\":\"committed\",\"n\":[]},\"changed\":{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"k\":\"changed\",\"p\":[{\"i\":101,\"c\":\"C1\",\"v\":8,\"g\":[0],\"r\":[],\"p\":{\"ro\":[{\"t\":\"name\",\"v\":\"after\"}]}}],\"s\":[{\"k\":\"grant\",\"i\":11,\"v\":1,\"p\":{\"p\":[31]}}],\"pm\":[{\"i\":31,\"p\":{\"c\":\"C1\",\"o\":2,\"t\":\"name\"}}],\"u\":[102]}}"
+    },
+    {
+      "name": "query index in mutation diagnostics",
+      "json": "{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"invoke\":{\"k\":\"committed\",\"e\":[{\"c\":\"post\",\"m\":\"Problem\",\"i\":0}]},\"changed\":{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"k\":\"changed\",\"p\":[{\"i\":101,\"c\":\"C1\",\"v\":8,\"g\":[0],\"r\":[],\"p\":{\"ro\":[{\"t\":\"name\",\"v\":\"after\"}]}}],\"s\":[{\"k\":\"grant\",\"i\":11,\"v\":1,\"p\":{\"p\":[31]}}],\"pm\":[{\"i\":31,\"p\":{\"c\":\"C1\",\"o\":2,\"t\":\"name\"}}],\"u\":[102]}}"
+    },
+    {
+      "name": "zero version diagnostic ID",
+      "json": "{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"invoke\":{\"k\":\"rejected\",\"_v\":[0]},\"changed\":{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"k\":\"changed\",\"p\":[{\"i\":101,\"c\":\"C1\",\"v\":8,\"g\":[0],\"r\":[],\"p\":{\"ro\":[{\"t\":\"name\",\"v\":\"after\"}]}}],\"s\":[{\"k\":\"grant\",\"i\":11,\"v\":1,\"p\":{\"p\":[31]}}],\"pm\":[{\"i\":31,\"p\":{\"c\":\"C1\",\"o\":2,\"t\":\"name\"}}],\"u\":[102]}}"
+    },
+    {
+      "name": "negative access diagnostic ID",
+      "json": "{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"invoke\":{\"k\":\"rejected\",\"_a\":[-1]},\"changed\":{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"k\":\"changed\",\"p\":[{\"i\":101,\"c\":\"C1\",\"v\":8,\"g\":[0],\"r\":[],\"p\":{\"ro\":[{\"t\":\"name\",\"v\":\"after\"}]}}],\"s\":[{\"k\":\"grant\",\"i\":11,\"v\":1,\"p\":{\"p\":[31]}}],\"pm\":[{\"i\":31,\"p\":{\"c\":\"C1\",\"o\":2,\"t\":\"name\"}}],\"u\":[102]}}"
+    },
+    {
+      "name": "zero derivation relation ID",
+      "json": "{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"invoke\":{\"k\":\"rejected\",\"_d\":[{\"m\":\"bad\",\"r\":[{\"i\":0,\"r\":\"name\"}]}]},\"changed\":{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"k\":\"changed\",\"p\":[{\"i\":101,\"c\":\"C1\",\"v\":8,\"g\":[0],\"r\":[],\"p\":{\"ro\":[{\"t\":\"name\",\"v\":\"after\"}]}}],\"s\":[{\"k\":\"grant\",\"i\":11,\"v\":1,\"p\":{\"p\":[31]}}],\"pm\":[{\"i\":31,\"p\":{\"c\":\"C1\",\"o\":2,\"t\":\"name\"}}],\"u\":[102]}}"
+    },
+    {
+      "name": "rejected without diagnostics",
+      "json": "{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"invoke\":{\"k\":\"rejected\"},\"changed\":{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"k\":\"changed\",\"p\":[{\"i\":101,\"c\":\"C1\",\"v\":8,\"g\":[0],\"r\":[],\"p\":{\"ro\":[{\"t\":\"name\",\"v\":\"after\"}]}}],\"s\":[{\"k\":\"grant\",\"i\":11,\"v\":1,\"p\":{\"p\":[31]}}],\"pm\":[{\"i\":31,\"p\":{\"c\":\"C1\",\"o\":2,\"t\":\"name\"}}],\"u\":[102]}}"
+    },
+    {
+      "name": "committed with legacy failure",
+      "json": "{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"invoke\":{\"k\":\"committed\",\"_e\":\"failed\"},\"changed\":{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"k\":\"changed\",\"p\":[{\"i\":101,\"c\":\"C1\",\"v\":8,\"g\":[0],\"r\":[],\"p\":{\"ro\":[{\"t\":\"name\",\"v\":\"after\"}]}}],\"s\":[{\"k\":\"grant\",\"i\":11,\"v\":1,\"p\":{\"p\":[31]}}],\"pm\":[{\"i\":31,\"p\":{\"c\":\"C1\",\"o\":2,\"t\":\"name\"}}],\"u\":[102]}}"
+    },
+    {
+      "name": "duplicate receipt outcome",
+      "json": "{\"i\": \"invoke-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"invoke\": {\"k\":\"committed\",\"k\":\"committed\"}, \"changed\": {\"i\": \"invoke-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\": \"changed\", \"p\": [{\"i\": 101, \"c\": \"C1\", \"v\": 8, \"g\": [0], \"r\": [], \"p\": {\"ro\": [{\"t\": \"name\", \"v\": \"after\"}]}}], \"s\": [{\"k\": \"grant\", \"i\": 11, \"v\": 1, \"p\": {\"p\": [31]}}], \"pm\": [{\"i\": 31, \"p\": {\"c\": \"C1\", \"o\": 2, \"t\": \"name\"}}], \"u\": [102]}}"
+    },
+    {
+      "name": "invalid Unicode receipt",
+      "json": "{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"invoke\":{\"k\":\"committed\",\"e\":[{\"c\":\"bad\",\"m\":\"\\ud800\"}]},\"changed\":{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"k\":\"changed\",\"p\":[{\"i\":101,\"c\":\"C1\",\"v\":8,\"g\":[0],\"r\":[],\"p\":{\"ro\":[{\"t\":\"name\",\"v\":\"after\"}]}}],\"s\":[{\"k\":\"grant\",\"i\":11,\"v\":1,\"p\":{\"p\":[31]}}],\"pm\":[{\"i\":31,\"p\":{\"c\":\"C1\",\"o\":2,\"t\":\"name\"}}],\"u\":[102]}}"
+    },
+    {
+      "name": "forbidden discovery response",
+      "json": "{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"invoke\":{\"k\":\"committed\"},\"changed\":{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"k\":\"changed\",\"p\":[{\"i\":101,\"c\":\"C1\",\"v\":8,\"g\":[0],\"r\":[],\"p\":{\"ro\":[{\"t\":\"name\",\"v\":\"after\"}]}}],\"s\":[{\"k\":\"grant\",\"i\":11,\"v\":1,\"p\":{\"p\":[31]}}],\"pm\":[{\"i\":31,\"p\":{\"c\":\"C1\",\"o\":2,\"t\":\"name\"}}],\"u\":[102]},\"discovery\":null}"
+    },
+    {
+      "name": "rejected supplied scope mismatch",
+      "json": "{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":8,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"invoke\":{\"k\":\"rejected\",\"_e\":\"not committed\"},\"changed\":{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"k\":\"changed\",\"p\":[{\"i\":101,\"c\":\"C1\",\"v\":8,\"g\":[0],\"r\":[],\"p\":{\"ro\":[{\"t\":\"name\",\"v\":\"after\"}]}}],\"s\":[{\"k\":\"grant\",\"i\":11,\"v\":1,\"p\":{\"p\":[31]}}],\"pm\":[{\"i\":31,\"p\":{\"c\":\"C1\",\"o\":2,\"t\":\"name\"}}],\"u\":[102]}}"
+    },
+    {
+      "name": "unknown supplied scope mismatch",
+      "json": "{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":8,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"invoke\":{\"k\":\"unknown\",\"_e\":\"not committed\"},\"changed\":{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"k\":\"changed\",\"p\":[{\"i\":101,\"c\":\"C1\",\"v\":8,\"g\":[0],\"r\":[],\"p\":{\"ro\":[{\"t\":\"name\",\"v\":\"after\"}]}}],\"s\":[{\"k\":\"grant\",\"i\":11,\"v\":1,\"p\":{\"p\":[31]}}],\"pm\":[{\"i\":31,\"p\":{\"c\":\"C1\",\"o\":2,\"t\":\"name\"}}],\"u\":[102]}}"
+    }
+  ],
+  "invalidResponsesWithValidReceipt": [
+    {
+      "name": "requested changed missing",
+      "json": "{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"invoke\":{\"k\":\"committed\"}}"
+    },
+    {
+      "name": "changed after refresh skipped",
+      "json": "{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"invoke\":{\"k\":\"committed\"},\"changed\":{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"k\":\"changed\",\"p\":[{\"i\":101,\"c\":\"C1\",\"v\":8,\"g\":[0],\"r\":[],\"p\":{\"ro\":[{\"t\":\"name\",\"v\":\"after\"}]}}],\"s\":[{\"k\":\"grant\",\"i\":11,\"v\":1,\"p\":{\"p\":[31]}}],\"pm\":[{\"i\":31,\"p\":{\"c\":\"C1\",\"o\":2,\"t\":\"name\"}}],\"u\":[102]}}",
+      "request": {
+        "v": 1,
+        "i": "invoke-1",
+        "sc": {
+          "p": "population-1",
+          "u": 7,
+          "w": "Default",
+          "r": "schema-1",
+          "x": "tenant=blue"
+        },
+        "x": "tenant=blue",
+        "l": [
+          {
+            "i": 101,
+            "v": 7,
+            "m": "JustDoIt"
+          },
+          {
+            "i": 102,
+            "v": 8,
+            "m": "JustDoIt"
+          }
+        ],
+        "refresh": false
+      }
+    },
+    {
+      "name": "changed after rejected outcome",
+      "json": "{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"invoke\":{\"k\":\"rejected\",\"_e\":\"rejected\"},\"changed\":{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"k\":\"changed\",\"p\":[{\"i\":101,\"c\":\"C1\",\"v\":8,\"g\":[0],\"r\":[],\"p\":{\"ro\":[{\"t\":\"name\",\"v\":\"after\"}]}}],\"s\":[{\"k\":\"grant\",\"i\":11,\"v\":1,\"p\":{\"p\":[31]}}],\"pm\":[{\"i\":31,\"p\":{\"c\":\"C1\",\"o\":2,\"t\":\"name\"}}],\"u\":[102]}}"
+    },
+    {
+      "name": "unknown changed field",
+      "json": "{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"invoke\":{\"k\":\"committed\"},\"changed\":{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"k\":\"changed\",\"p\":[{\"i\":101,\"c\":\"C1\",\"v\":8,\"g\":[0],\"r\":[],\"p\":{\"ro\":[{\"t\":\"name\",\"v\":\"after\"}]}}],\"s\":[{\"k\":\"grant\",\"i\":11,\"v\":1,\"p\":{\"p\":[31]}}],\"pm\":[{\"i\":31,\"p\":{\"c\":\"C1\",\"o\":2,\"t\":\"name\"}}],\"u\":[102],\"extra\":true}}"
+    },
+    {
+      "name": "record and unavailable overlap",
+      "json": "{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"invoke\":{\"k\":\"committed\"},\"changed\":{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"k\":\"changed\",\"p\":[{\"i\":101,\"c\":\"C1\",\"v\":8,\"g\":[0],\"r\":[],\"p\":{\"ro\":[{\"t\":\"name\",\"v\":\"after\"}]}}],\"s\":[{\"k\":\"grant\",\"i\":11,\"v\":1,\"p\":{\"p\":[31]}}],\"pm\":[{\"i\":31,\"p\":{\"c\":\"C1\",\"o\":2,\"t\":\"name\"}}],\"u\":[101]}}"
+    },
+    {
+      "name": "duplicate field inside changed payload",
+      "json": "{\"i\": \"invoke-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"invoke\": {\"k\": \"committed\"}, \"changed\": {\"i\": \"invoke-1\", \"sc\": {\"p\": \"population-1\", \"u\": 7, \"w\": \"Default\", \"r\": \"schema-1\", \"x\": \"tenant=blue\"}, \"k\":\"changed\",\"k\":\"changed\", \"p\": [{\"i\": 101, \"c\": \"C1\", \"v\": 8, \"g\": [0], \"r\": [], \"p\": {\"ro\": [{\"t\": \"name\", \"v\": \"after\"}]}}], \"s\": [{\"k\": \"grant\", \"i\": 11, \"v\": 1, \"p\": {\"p\": [31]}}], \"pm\": [{\"i\": 31, \"p\": {\"c\": \"C1\", \"o\": 2, \"t\": \"name\"}}], \"u\": [102]}}"
+    },
+    {
+      "name": "escaped lone surrogate inside changed payload",
+      "json": "{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"invoke\":{\"k\":\"committed\"},\"changed\":{\"i\":\"invoke-1\",\"sc\":{\"p\":\"population-1\",\"u\":7,\"w\":\"Default\",\"r\":\"schema-1\",\"x\":\"tenant=blue\"},\"k\":\"changed\",\"p\":[{\"i\":101,\"c\":\"C1\",\"v\":8,\"g\":[0],\"r\":[],\"p\":{\"ro\":[{\"t\":\"name\",\"v\":\"\\ud800\"}]}}],\"s\":[{\"k\":\"grant\",\"i\":11,\"v\":1,\"p\":{\"p\":[31]}}],\"pm\":[{\"i\":31,\"p\":{\"c\":\"C1\",\"o\":2,\"t\":\"name\"}}],\"u\":[102]}}"
+    }
+  ]
+}

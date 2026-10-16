@@ -53,12 +53,13 @@ namespace Allors.Database.Adapters.Sql
         {
             get
             {
+                this.Transaction.EnsureReadable();
                 // Always use the active Reference
-                if (!this.Transaction.State.ReferenceByObjectId.TryGetValue(this.ObjectId, out var activeReference))
+                if (!this.Transaction.AdapterState.ReferenceByObjectId.TryGetValue(this.ObjectId, out var activeReference))
                 {
                     // If there is no active Reference, then become the active reference
                     activeReference = this;
-                    this.Transaction.State.ReferenceByObjectId[this.ObjectId] = activeReference;
+                    this.Transaction.AdapterState.ReferenceByObjectId[this.ObjectId] = activeReference;
                 }
 
                 return activeReference.strategy ??= new Strategy(this);
@@ -75,6 +76,7 @@ namespace Allors.Database.Adapters.Sql
         {
             get
             {
+                this.Transaction.EnsureReadable();
                 if (!this.IsNew && this.version == (long)Allors.Version.Unknown)
                 {
                     this.Transaction.AddReferenceWithoutVersionOrExistsKnown(this);
@@ -87,7 +89,14 @@ namespace Allors.Database.Adapters.Sql
             set => this.version = value;
         }
 
-        internal bool IsNew => this.FlagIsNew;
+        internal bool IsNew
+        {
+            get
+            {
+                this.Transaction.EnsureReadable();
+                return this.FlagIsNew;
+            }
+        }
 
         internal bool IsUnknownVersion => this.version == (long)Allors.Version.Unknown;
 
@@ -95,6 +104,7 @@ namespace Allors.Database.Adapters.Sql
         {
             get
             {
+                this.Transaction.EnsureReadable();
                 var flagsExistsKnown = this.FlagExistsKnown;
                 if (!flagsExistsKnown)
                 {

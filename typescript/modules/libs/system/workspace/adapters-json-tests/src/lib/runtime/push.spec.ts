@@ -147,7 +147,7 @@ test('pushShouldUpdateId', async () => {
   expect(person.id).toBeGreaterThan(0);
 });
 
-test('pushShouldNotUpdateVersion', async () => {
+test('pushShouldUpdateVersionAfterDefaultRefresh', async () => {
   const { workspace, m } = fixture;
   const session = workspace.createSession();
 
@@ -161,7 +161,7 @@ test('pushShouldNotUpdateVersion', async () => {
 
   expect(pushResult.hasErrors).toBeFalsy();
 
-  expect(person.strategy.version).toBe(WorkspaceInitialVersion);
+  expect(person.strategy.version).not.toBe(WorkspaceInitialVersion);
 });
 
 test('pushShouldDerive', async () => {
@@ -196,4 +196,25 @@ test('pushTwice', async () => {
   pushResult = await session.push();
 
   expect(pushResult.hasErrors).toBeFalsy();
+});
+
+afterEach(async () => {
+  await fixture?.close();
+});
+
+test('pushPreservesInitialVersionWhenRefreshIsSkipped', async () => {
+  const { workspace, m } = fixture;
+  const session = workspace.createSession();
+  const person = session.create<Person>(m.Person);
+  person.FirstName = 'Johny';
+  person.LastName = 'Doey';
+  const result = await session.push({ refresh: false });
+  expect(result.outcome).toBe('committed');
+  expect(result.refresh.status).toBe('not-requested');
+  expect(person.id).toBeGreaterThan(0);
+  expect(person.strategy.version).toBe(WorkspaceInitialVersion);
+  expect(person.strategy.canWrite(m.Person.FirstName)).toBe(false);
+  await session.pull({ object: person });
+  expect(person.strategy.version).not.toBe(WorkspaceInitialVersion);
+  expect(person.FirstName).toBe('Johny');
 });

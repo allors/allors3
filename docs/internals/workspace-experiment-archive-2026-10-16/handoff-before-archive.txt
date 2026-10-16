@@ -1,0 +1,320 @@
+CURRENT BOUNDARY — TEST-CONSOLIDATION MAP COMPLETE — 2026-10-16
+The requested notes-only test-consolidation map is complete. Implementation is NOT approved.
+The map is the next section of docs/internals/workspace-caller-migration-inventory.md, titled
+"Test-consolidation map — 2026-10-16". Cache ownership simplification remains complete.
+Git staging, commits, publication, endpoint removal and signals remain unapproved.
+
+Read AGENTS.md, that inventory section and /private/tmp/allors-test-consolidation-map-20261016/.
+Repository: /Users/koen/repos/allors3
+Branch: refactor/workspace-pull-refresh
+HEAD: dd34ff56f261d1060ef4bc87eaa37abc4598a867
+Parent: a8265eb08059f66ddb9dfa0289d93d29b429c0b4
+origin/main: d034e53d70f0045e862bd388a283f7029db4b59c
+Index SHA256: d8962ea0879369effb4c3ddda02472407ecda55ba0e272aeb9c6f3726851b30e
+Preserve all 320 dirty paths. Only the already-dirty inventory changed in the repository during
+this map; all other 2,373 incoming path states, all 339 generated outputs, dirty statuses, refs,
+branch and index are unchanged. No runtime/test source edits, new builds/tests, services or Git
+staging/publication occurred. The external handoff and fresh mapping evidence were also updated.
+
+Exact proposed next implementation: 18 path identities (14 edits, two additions, two deletions),
+listed in implementation-manifest.json and the inventory. It shares the two 1,475-line codec
+PullTests copies through linked sources compiled in their original assemblies, with two explicit
+namespace aliases. Four methods/seven rows per codec move into fixture-free ReadTransportTests;
+24 methods/36 declared live rows and 68 inherited facts remain on each codec and SQL provider.
+No cases are retired. Local adds Pure method traits to 124/126 methods (710 rows), leaving the two
+direct SQL methods and inherited integration facts unmarked. All Local bodies/data stay exact.
+TypeScript test sources stay unchanged: two pure files/631 cases and 20 integration files/231 cases.
+Existing test projects stay; no new test project, runtime behavior change or broad helper cleanup.
+
+Scheduling: 724 .NET pure (710+7+7) and 631 TypeScript pure once; complementary selections for
+both providers. Expected integration sizes: Local 212, each codec 242, TypeScript 231 per provider.
+This removes 1,355 repeat executions in a deliberate two-provider workspace matrix. It is not a
+wall-time measurement. Source sharing itself does not reduce execution counts.
+New .NET pure target + CI wrapper, explicit Nx test-pure/test-integration targets, existing TS
+pure aggregate, and existing service-free CI matrix own pure execution. Direct provider Nuke
+targets become integration-only; unfiltered dotnet/Nx/npm discovery and complete aggregates remain.
+Current CI's Core workspace coverage is SQLClient-only; no hidden PostgreSQL CI expansion.
+
+Important findings for implementation
+- Codec traits alone cannot remove SQL setup: current inherited Profile lifecycle calls Test/Setup
+  and real login/bootstrap. The four pure methods need the fixture-free class.
+- Keep linked sources excluded from the shared Tests assembly; compile in original codec assemblies
+  to preserve internal access. Do not add friend assemblies or production abstractions.
+- Latest cache validation covered only 35 of the 36 declared live codec rows. Future focused runs
+  must include ReadTransportSendsOneCompleteRequest; exact filter is in codec/declared-live.filter.txt.
+- Pinned Nx silently falls back for unknown configurations. Use explicit named targets and verify
+  unknown-target/no-match failures, complementary file discovery and --skipNxCache.
+- Existing Nuke provider leaves reset a fixed Core database. Local validation must use direct test
+  commands with fresh owned databases/hosts; inspect target graphs without running those leaves
+  against the user's existing databases. Do not execute broad Reset/KillProcesses locally.
+
+Verification of this map
+Source/body/argument and historical identity audits, exact 18-path manifest, complementary TS
+regex partition, new documentation anchors/whitespace and final preservation checks passed.
+No fresh runtime build/test/benchmark was run or claimed. See preservation-final.json.
+The previous cache ownership evidence remains the latest successful selected runtime validation:
+.NET solution builds; 710 .NET pure, 631 TypeScript pure and 417 selected integration/provider
+pass (2,175 selected executions). Previously recorded unrelated expectation failures remain.
+The full current provider matrix is NOT claimed green. Do not apply the old nine-test packet;
+only its already-approved six obsolete raw calls were removed during cache ownership work.
+
+Next validation after explicit implementation approval
+Freeze inputs; apply only the 18-path map and exact existing-test moves/traits. Compile solution and
+Nuke; verify generated outputs, linked compile ownership, bodies/data and complete/disjoint discovery.
+Require 724 .NET +631 TS pure passes without SQL/host configuration; run the other TS pure projects.
+Run all 36 live declared codec rows on both codecs/providers, then full complementary integration
+selections on both providers with fresh evidence/resources. Compare known failure identities; do
+not change expectations/skip cases to make them green. If prior failures block green, stop at that
+separate approval boundary and record it. Finish source/ref/index/docs audits and owned cleanup.
+
+Evidence
+baseline.json; generated-baseline.json; inventory-before.md; handoff-before.txt;
+implementation-manifest.json; implementation-inputs/; proposal-section.md; preservation-final.json;
+codec/report.txt, exact-map.json, exact-map.md, normalized-equality.json, historical-full-census.json;
+dotnet/proposal.txt, summary.json, local-methods.json, local-pure-rows.json, integration-source-audit.json;
+typescript/report.txt, proposed-manifest.json, census.json and combined-proposal-review.txt.
+All are under /private/tmp/allors-test-consolidation-map-20261016/. Earlier evidence is unchanged.
+
+Pending decision: approve this exact 18-path implementation, including the existing-test extraction,
+124 method traits, mechanical codec type bindings and direct provider-target meaning change.
+Session assessment: scope can be decided in this chat; a restart is optional. The inputs and next
+step are recorded independently of the conversation; no implementation has begun.
+Optional restart prompt is in this evidence directory's restart-prompt.txt.
+
+Earlier notes follow as preserved history and do not override this boundary.
+
+CURRENT BOUNDARY — CACHE OWNERSHIP SIMPLIFICATION COMPLETE — 2026-10-16
+The user's YES approved the bounded refactor and mapped existing-test changes. That subtask is
+implemented and validated. No further work is currently approved; Git publication remains unapproved.
+
+Read AGENTS.md, docs/internals/workspace-caller-migration-inventory.md (cache ownership section),
+and /private/tmp/allors-cache-simplification-implementation/completion.txt and final-validation.json.
+Repository /Users/koen/repos/allors3; branch refactor/workspace-pull-refresh.
+HEAD dd34ff56f261d1060ef4bc87eaa37abc4598a867; parent a8265eb08059f66ddb9dfa0289d93d29b429c0b4.
+origin/main d034e53d70f0045e862bd388a283f7029db4b59c. Index unchanged. Preserve all 320 dirty paths,
+including the original 270 and intervening approved work. No generated edits or Git mutations.
+
+Completed: one connection owns cache/discovery ordering and lifetime; removed standalone public
+cache/coordinator lifetime APIs, pins, eviction and result release. Historical cache hits and two-step
+discovery are preserved. Clear lookup after close/drain; held immutable values remain inspectable.
+Current authorization stays separate from historical Session/checkpoint values. No memory bound added.
+Production -563 lines; test source +216; four obsolete cases retired. Broader test consolidation remains.
+
+Final validation: .NET full solution builds (0 errors, 213 warnings), Core publishes. .NET 710 pure and
+TypeScript 631 pure pass; TS types/declarations/consumer/format/lint pass (4 unchanged warnings).
+Both SQL providers pass the same 417 integration cases each. Total 2,175 selected executions pass.
+Read callback close/cancellation admission bug was reproduced then fixed inside the approved scope.
+All runtime/test sources and tested binaries match the final freeze. All 339 generated files and
+outside-scope files, refs and index unchanged. Final existing-test body/argument audits passed.
+
+Cleanup verified: both task HTTP hosts stopped; all task databases gone. Original 37 PostgreSQL and
+43 SQL Server databases and provider service identities preserved; authenticated checks pass.
+Npgsql lowercase database normalization was corrected only in the temporary cleanup manifest.
+Do not rerun old integration scripts against existing evidence/result names or stop provider services.
+
+NEXT: [approval to prepare the exact test-consolidation map and chosen scope]. Recommend the duplicate
+codec PullTests sources and pure-test execution in existing targets, keeping meaningful codec/provider
+boundary coverage. The prior review is /private/tmp/allors-pr283-review-20261016/review.txt; its proposal
+to remove cache negotiation is superseded by the completed cache-preserving design. The unrelated
+old nine-test packet remains paused except its six already-approved obsolete raw calls, now removed.
+Previously recorded unrelated migration expectation failures remain pending; no full green PR matrix
+is claimed. Server-endpoint removal, signals and publication remain unapproved. A fresh session is
+useful for the separate next decision; optional restart prompt is in /private/tmp/allors-cache-simplification-implementation/restart-prompt.txt.
+
+Earlier notes follow as superseded history.
+
+CURRENT DIRECTION — CACHE/DISCOVERY DECISION — 2026-10-16
+The user agreed to KEEP cache and two-step discovery, simplify ownership under the normal
+connection, and remove the general-purpose public pin/lifetime API. This supersedes the earlier
+review recommendation to remove cache negotiation. Backward compatibility is not required.
+
+Read /private/tmp/allors-cache-simplification-scope/proposal.txt and its dotnet.txt, typescript.txt
+and architecture.txt companions for the concrete implementation/test scope. This was read-only
+scope preparation: no runtime, test or repository documentation changes and no new validation runs.
+Preserve the existing historical cache maps while a connection lives; no eviction-policy change,
+no cold-read shortcut, and no request/protocol change. Keep current authority separate from old
+Session values. Clear lookup ownership after close/drain; held values remain inspectable.
+
+NEXT: explicit approval of the proposed existing-test migrations/retirements, then implement the
+single coherent cache-ownership refactor in both runtimes with its affected docs and validation.
+The user's agreement selected the architecture; AGENTS.md still requires explicit authorization
+for changing existing tests. The scope replaces obsolete pin/standalone-owner tests, preserving
+behavior coverage through the normal connection and internal pure helpers. Do not resume the old
+nine-test extension; only the separately named six obsolete raw-method assertions in the directly
+affected Server.Local test are included in this new proposal. Git publication remains unapproved.
+
+Branch refactor/workspace-pull-refresh, HEAD dd34ff56f261d1060ef4bc87eaa37abc4598a867,
+parent a8265eb08059f66ddb9dfa0289d93d29b429c0b4; origin/main d034e53d70f0045e862bd388a283f7029db4b59c.
+Incoming expanded status has 303 dirty paths; the earlier original 270 are retained.
+The prior implementation remains red: six compiler errors and previously observed test failures.
+No fresh green matrix is claimed. Keep unrelated corrections outside this refactor's approved scope.
+
+PRIOR REVIEW AND IMPLEMENTATION NOTES FOLLOW AS HISTORY
+
+CURRENT DIRECTION — 2026-10-16 (Europe/Brussels)
+Implementation is PAUSED at the user's request. The pending nine-test extension is NOT approved.
+The user authorized a thorough read-only review of PR #283 and current work against origin/main,
+including test inflation and production simplification. Backward compatibility with replaced
+implementations is not required. That review is now complete; no repository changes were made.
+
+Read /private/tmp/allors-pr283-review-20261016/review.txt and its dotnet/, typescript/ and architecture/
+companion reports. Measurements, immutable snapshots and final preservation evidence are there.
+The working tree remains on refactor/workspace-pull-refresh at dd34ff56f261d1060ef4bc87eaa37abc4598a867,
+parent a8265eb08059f66ddb9dfa0289d93d29b429c0b4; origin/main d034e53d70f0045e862bd388a283f7029db4b59c.
+All 303 dirty statuses and 339 generated outputs are preserved. No Git publication is approved.
+
+NEXT: discuss/select the simplification direction. Options are limited test consolidation; retiring
+legacy paths and consolidating ownership/test layers; or additionally replacing discovery/cache
+negotiation with already-supported single-request full protected reads and immutable Session
+baselines. The last option trades larger repeated payloads for fewer states and requests. The
+review also found historical cache retention without production eviction, duplicate/stale tests,
+misplaced pure tests and expensive inherited relation permutations. No remedy is implemented.
+Do NOT automatically resume the old nine-test patch. Agree the desired final contracts first.
+
+The prior implementation handoff follows as preserved history and validation evidence, not current
+approval to continue its proposed next step.
+
+Allors3 handoff — 2026-10-15 — implementation retained; test extension awaits approval
+
+Read AGENTS.md and the latest normal-lifecycle section of
+ docs/internals/workspace-caller-migration-inventory.md.
+This final note supersedes the progress note archived at
+ attempts/handoff-before-final.txt under the evidence root below.
+
+Repository and authorization
+Repository: /Users/koen/repos/allors3
+Branch: refactor/workspace-pull-refresh
+HEAD: dd34ff56f261d1060ef4bc87eaa37abc4598a867
+Parent: a8265eb08059f66ddb9dfa0289d93d29b429c0b4
+Index SHA256: b6c009d0aa32c5c08d72be77b2a27ab8ac5605a6a355db17492df5c1eda81d18
+All original 270 dirty paths are retained; there are now 303 dirty statuses.
+Changes remain within 81 approved paths: 73 edits, two additions, six deletions.
+All 339 generated outputs and 2,629 incoming path states outside this cutover are unchanged.
+No staging, commit, push, PR, merge, reset, stash or branch change was performed or approved.
+Server-endpoint removal and signals remain unapproved.
+
+The user's go approved the reconciled 81-path lifecycle/default/caller cutover, exact old/new test
+maps, .NET fresh-service ownership and once initialization, docs, builds, validation and cleanup.
+That implementation is retained, but the subtask is NOT COMPLETE: the full build fails and the
+required matrix is not green. Existing-test changes outside the exact map need explicit approval.
+No reply approved the earlier async questions or the consolidated v2 extension. Do not infer approval.
+There are no active test runners or task hosts; cleanup is complete.
+
+Evidence
+Root: /private/tmp/allors-normal-lifecycle-implementation
+before/ and incoming-hashes.json preserve 2,708 incoming states: 2,664 files and 44 deletions.
+manifest.json holds the approved 81 paths; approval-baseline/ holds immutable maps and original
+bodies; approval.txt records go. Older reconciliation, Invoke, ordering and design evidence is intact.
+Do not run old evidence scripts that overwrite earlier directories. Use fresh attempt labels.
+
+Implementation
+Ready normal factories bootstrap directly through the same protected coordinator used by Sessions.
+Read, PushRead and InvokeRead are mandatory. Connections capture configuration/identity, own Session
+registration and close/drain, and refresh affected state after ordinary Push and Invoke. .NET reserves
+fresh services, calls initialization once and releases services after drain. Profiles, fixtures,
+callers and nine documentation paths follow the lifecycle. No generated source was edited.
+Behavioral reds and fixes are retained for .NET's outgoing Push close-before-dispatch race and
+TypeScript cleanup swallowing falsy thrown values.
+
+Validation completed
+- Supplementary selections: .NET service-free-3 has 711 passes; TS focused-falsy-final has 634 passes.
+- Eight TS type checks, consumer check, four scripts/84 checks and formatting passed.
+- Fresh six-project lint: three existing errors and 28 warnings, no new fingerprints; baseline had
+  29 warnings. The 23 missing adapter-test barrel exports remain a limitation. No full barrel/Core
+  build success is claimed.
+- Generate-2 succeeded in 35.85 seconds with all 339 generated outputs unchanged. The first sandboxed
+  failure is preserved. Core and Identity Debug publishes succeeded.
+- Full solution build: exactly six CS1061 errors at obsolete raw-operation test assertions, plus
+  897 warnings. Diagnostic comparisons are recorded; one new CA1068 fingerprint is in a test helper.
+- matrix-1-source-freeze.json captured 2,677 source/config inputs and 12 external configurations;
+  all remained unchanged for the full runs.
+- observed-validation-8.json is the FINAL first pass: 21 executions; 5,627 rows = 5,590 passed,
+  36 failed, one unchanged Core Merge skip. All 5,377 retained and 250 new identities/multiplicities
+  match. Two Core Server.Local provider executions could not run because of the compiler errors.
+  Memory suites: 416 passed/one skip. Identity/Entra Local: 470 passed. Local workspace: 919 passed/
+  four failed per provider. Each HTTP codec/provider: 245 passed/four failed. TS: 859 passed/six
+  failed per provider. Core remote: 54 passed per provider; Identity remote: 30 passed per provider.
+- dotnet-runtime/exact-new-arguments-six-suites-audit.json verifies all 26 new methods/79 source
+  tuples and 190 expanded new rows across Local and HTTP. Eight HTTP Profile failures stay recorded.
+  Three new Server.Local methods/four rows are source-verified only. TS verifies all 30 exact new
+  cases per provider, all passing.
+
+Authorized corrections completed after the full runners exited
+attempts/matrix-1-before-approved-corrections/ archives the three sources about to change and all
+36 tested .NET artifacts with verified hashes. Only these three bodies changed from matrix 1:
+- Both new HTTP NormalProfileLoginDrainsBeforeReplacingCapturedIdentity tests now capture/compare
+  raw IUnitDiff tuples instead of reading held.Name after Session closure.
+- TS databasPullOtherSession now uses its explicitly approved toBeNull expectation before its own Pull.
+approved-corrections-source-freeze.json records the current source/configuration inputs.
+approved-corrections/summary.json and exact-focused-results.json record successful builds of both
+HTTP test projects and all eight HTTP plus two TS rows passing across both providers. These focused
+results do not replace the failed full pass or establish a fresh green matrix.
+The final TS check preserves all other 506 callback bodies and six protocol fixtures. Spec type
+check/format passed; file lint has zero errors and one unchanged warning. Earlier census evidence
+is unchanged. .NET source audit: 139 mapped old methods/274 rows, 113 unchanged methods, 26 new/79 rows.
+TS source audit: 139 mapped callbacks/184 rows, 269 retained callbacks/651 rows, 15 new callbacks/30 rows.
+Independent reviews are under dotnet-runtime/final-* and approved-corrections/typescript-audit/.
+
+Pending exact extension — DO NOT APPLY without approval
+Review: root/pending-scope-extension-v2/proposal.txt and pending-extension.patch.
+Nine existing test bodies across six files; no production changes or added rows. Shared
+ dotnet/Core/Workspace/Tests/Tests/PullTests.cs is the only added path, taking scope to 82 paths
+(74 edits, two additions, six deletions).
+1. Core Server.Local ScopedSessionReadsAndMergesThroughEverySqlTransport: replace six calls to
+   removed raw Pull/Sync/Access/Permission/Push/Invoke methods with public-method absence checks.
+   Preserve its three rows and all read/merge/request/diagnostic assertions. Clears six compiler errors.
+2–3. Shared .NET AssociationMany2ManyContainedIn/RoleMany2ManyContainedIn: assert one named empty
+   collection instead of no map entry. Preserve other membership checks and 66 other shared methods.
+4. Local JsonApiPullDisposesItsTransaction(false/true): rename to
+   NormalLocalPullDisposesItsReadTransactions(throwDuringRead: false/true). Observe real protected
+   read transactions/identity: two attempts on success, one on injected failure. Failure returns a
+   sanitized read-failed ScopedPullResult; it does not throw. Assert terminal invalidation and
+   usability of identity in a fresh writer transaction.
+   COVERAGE TRADEOFF: this removes the legacy mutable PullEvent's uncommitted-object rollback probe.
+   Normal reads emit no PullEvent and forbid writes. The replacement proves Dispose entry and
+   terminal invalidation, NOT independently physical rollback, connection release or completed
+   service cleanup: the guard closes first. Keeping that legacy coverage needs a separately scoped
+   endpoint-test design. Exact two-row method/parameter renames are mapped in the packet.
+5. TS failed bootstrap: replace /retired/i with the exact original scope-mismatch diagnostic;
+   retain title, one request, zero Session closes and one disposal.
+6–7. TS named-empty-collection callbacks: size zero becomes one plus exact empty named membership.
+8. TS changeSetAfterPushOne2One: exact set of new c1x and removed c1B after default affected refresh;
+   retain later empty checkpoint.
+9. TS databaseManyToManySetRole: only ten assertions in two Push-before-add blocks; writable refreshed
+   baseline and actual forward/inverse relations. No extra Pull or refresh:false override.
+The patch dry run passed, but it has NOT been applied, compiled or executed. V1 is preserved; V2
+corrects V1's mistaken expected exception in the transaction-failure proposal.
+Proposed counts: .NET 142 mapped methods/278 rows and 178 other methods/306 rows unchanged including
+66 in the new shared file; TS 143 mapped/188 rows and 265 retained/647 rows. New cases unchanged.
+Twenty-six failures from the first full pass belong to these migrations. The full target remains
+6,534 passes and one skip; it has not been achieved.
+
+Performance limitation
+ dotnet-harness/relation-performance-exact-results.* compares 16 passing cases from four unchanged
+relation bodies across Local/both providers and both PostgreSQL codecs. Durations are 5.17–9.80 times
+those in the earlier concurrent runs. The prior Newtonsoft full suite had one unrelated ordering
+failure, but all four selected cases passed; its later green correction run was narrower. Both
+compared PG codecs used Core on port 5000; SystemText SQL on 4200 is not in this cohort. Concurrency
+and contention differ. No isolated cause, acceptable threshold or optimization approval is implied.
+
+Cleanup complete
+All full/focused runners exited before cleanup. cleanup.py removed 15 remaining task databases per
+provider; fixtures had already removed other manifested databases. verify-cleanup.py passed:
+original 37 PostgreSQL and 43 SQL Server databases preserved, no owned/prefix stray databases,
+none of 11 recorded task hosts alive, original service identities preserved and authenticated
+checks passed. Evidence: resource-cleanup.json, cleanup-verification.json, final catalog/process
+snapshots and independent dotnet-runtime/independent-post-cleanup-review.json.
+Do not stop the pre-existing database services. No task cleanup remains.
+
+Exact next step
+Get the explicit v2 decision, including the rollback-probe replacement. If approved, apply only that
+packet, update scope/test identity maps, audit untouched bodies, run affected cases first, then fresh
+generation/full build/publishes/full 23-execution matrix and quality checks. Use fresh evidence and
+isolated task resources; clean them afterwards. Preserve previous failures and focused successes.
+Do not reuse matrix-1 totals as green on changed sources. Git publication remains unapproved.
+A fresh session is useful after this long run; it is optional and does not grant approval.
+
+Copyable restart prompt
+Read AGENTS.md, /private/tmp/allors-workspace-next-step.txt and docs/internals/workspace-caller-migration-inventory.md.
+Use refactor/workspace-pull-refresh at dd34ff56f261d1060ef4bc87eaa37abc4598a867; parent a8265eb08059f66ddb9dfa0289d93d29b429c0b4. Preserve all 303 dirty paths, including the original 270.
+Next: [pending approval for root/pending-scope-extension-v2: nine existing test bodies in six files, 81 to 82 paths, including the stated rollback-probe replacement], then affected cases and fresh full validation. Git publication remains unapproved.

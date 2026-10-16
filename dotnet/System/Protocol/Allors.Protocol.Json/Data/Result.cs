@@ -5,15 +5,8 @@
 
 namespace Allors.Protocol.Json.Data
 {
-    using System;
-
     public class Result : IVisitable
     {
-        /// <summary>
-        /// Select Ref
-        /// </summary>
-        public Guid? r { get; set; }
-
         /// <summary>
         /// Select
         /// </summary>

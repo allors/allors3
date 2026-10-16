@@ -30,10 +30,6 @@ namespace Allors.Database.Configuration
 
         private IPrefetchPolicyCache prefetchPolicyCache;
 
-        private IPreparedSelects preparedSelects;
-
-        private IPreparedExtents preparedExtents;
-
         private ITreeCache treeCache;
 
         private IPermissions permissions;
@@ -43,10 +39,6 @@ namespace Allors.Database.Configuration
         private ICaches caches;
 
         private IDerivationService derivationService;
-
-        private IProcedures procedures;
-
-        private IWorkspaceMask workspaceMask;
 
         protected DatabaseServices(Engine engine, IConfiguration configuration = null)
         {
@@ -86,7 +78,6 @@ namespace Allors.Database.Configuration
                 // System
                 { } type when type == typeof(IMetaCache) => (T)this.metaCache,
                 { } type when type == typeof(IDerivationService) => (T)(this.derivationService ??= this.CreateDerivationFactory()),
-                { } type when type == typeof(IProcedures) => (T)(this.procedures ??= new Procedures(this.Database.ObjectFactory.Assembly)),
                 { } type when type == typeof(ISecurity) => (T)(this.security ??= new Security(this)),
                 { } type when type == typeof(IPrefetchPolicyCache) => (T)(this.prefetchPolicyCache ??= new PrefetchPolicyCache(this.Database, this.metaCache)),
                 // Core
@@ -94,13 +85,10 @@ namespace Allors.Database.Configuration
                 { } type when type == typeof(IRanges<long>) => (T)(this.ranges ??= new DefaultStructRanges<long>()),
                 { } type when type == typeof(IClassById) => (T)(this.classById ??= new ClassById()),
                 { } type when type == typeof(IVersionedIdByStrategy) => (T)(this.versionedIdByStrategy ??= new VersionedIdByStrategy()),
-                { } type when type == typeof(IPreparedSelects) => (T)(this.preparedSelects ??= new PreparedSelects()),
-                { } type when type == typeof(IPreparedExtents) => (T)(this.preparedExtents ??= new PreparedExtents()),
                 { } type when type == typeof(ITreeCache) => (T)(this.treeCache ??= new TreeCache()),
                 { } type when type == typeof(IPermissions) => (T)(this.permissions ??= new Permissions()),
                 { } type when type == typeof(ITime) => (T)(this.time ??= new Time()),
                 { } type when type == typeof(ICaches) => (T)(this.caches ??= new Caches()),
-                { } type when type == typeof(IWorkspaceMask) => (T)(this.workspaceMask ??= new WorkspaceMask()),
                 _ => throw new NotSupportedException($"Service {typeof(T)} not supported")
             };
 

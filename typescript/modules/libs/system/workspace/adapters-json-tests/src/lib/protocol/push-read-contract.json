@@ -1,0 +1,142 @@
+{
+  "request": {
+    "v": 1,
+    "i": "save-1",
+    "sc": {
+      "p": "population-1",
+      "u": 7,
+      "w": "Default",
+      "r": "schema-1",
+      "x": "tenant=blue"
+    },
+    "x": "tenant=blue",
+    "push": {
+      "n": [
+        {
+          "w": -1,
+          "t": "C1",
+          "r": [
+            {
+              "t": "number",
+              "u": -3
+            }
+          ]
+        }
+      ],
+      "o": [
+        {
+          "d": 101,
+          "v": 7,
+          "r": []
+        }
+      ]
+    },
+    "returnChanged": true,
+    "discover": {
+      "l": [
+        {
+          "o": 101
+        }
+      ],
+      "d": []
+    }
+  },
+  "response": {
+    "i": "save-1",
+    "sc": {
+      "p": "population-1",
+      "u": 7,
+      "w": "Default",
+      "r": "schema-1",
+      "x": "tenant=blue"
+    },
+    "push": {
+      "k": "committed",
+      "n": [
+        {
+          "w": -1,
+          "d": 102
+        }
+      ]
+    },
+    "changed": {
+      "i": "save-1",
+      "sc": {
+        "p": "population-1",
+        "u": 7,
+        "w": "Default",
+        "r": "schema-1",
+        "x": "tenant=blue"
+      },
+      "k": "changed",
+      "p": [
+        {
+          "i": 101,
+          "c": "C1",
+          "v": 8,
+          "g": [0],
+          "r": [],
+          "p": {
+            "ro": [
+              {
+                "t": "number",
+                "v": -3
+              }
+            ]
+          }
+        }
+      ],
+      "s": [
+        {
+          "k": "grant",
+          "i": 11,
+          "v": 4,
+          "p": {
+            "p": [201]
+          }
+        }
+      ],
+      "pm": [
+        {
+          "i": 201,
+          "p": {
+            "c": "C1",
+            "o": 2,
+            "t": "number"
+          }
+        }
+      ],
+      "u": [102]
+    },
+    "discovery": {
+      "i": "save-1",
+      "sc": {
+        "p": "population-1",
+        "u": 7,
+        "w": "Default",
+        "r": "schema-1",
+        "x": "tenant=blue"
+      },
+      "k": "discovery",
+      "p": [],
+      "s": []
+    }
+  },
+  "failure": {
+    "i": "save-1",
+    "sc": {
+      "p": "population-1",
+      "u": 7,
+      "w": "Default",
+      "r": "schema-1",
+      "x": "tenant=blue"
+    },
+    "k": "error",
+    "e": [
+      {
+        "c": "read-failed",
+        "m": "Refresh the committed objects."
+      }
+    ]
+  }
+}

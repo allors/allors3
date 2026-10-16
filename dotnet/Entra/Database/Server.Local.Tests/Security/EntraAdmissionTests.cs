@@ -788,6 +788,30 @@ namespace Tests
 
         private static ClaimsPrincipal PersonWith(params Claim[] more) => Person(more: more);
 
+        [Fact]
+        public void ReadIdentityResolvesCommittedAdmissionWithoutInvokingTheFactoryAgain()
+        {
+            var database = NewDatabase();
+            var factory = new TestFactory();
+            var admission = new EntraAdmission(new StubDatabaseService { Database = database }, userFactory: factory);
+            var principal = Person();
+            Assert.Null(admission.Admit(principal, signIn: true));
+            var captured = ReadUserIdentity.Capture(EntraAdmission.SessionPrincipal(principal), new EntraUserResolver());
+            using var transaction = database.CreateTransaction();
+            transaction.Rollback();
+
+            var user = captured.Resolve(transaction);
+
+            Assert.NotNull(user);
+            Assert.Equal("Jane Doe", user.EntraDisplayName);
+            Assert.Equal(ObjectId, user.EntraObjectId);
+            Assert.Equal(1, factory.Calls);
+            var changes = transaction.Checkpoint();
+            Assert.Empty(changes.Created);
+            Assert.Empty(changes.Deleted);
+            Assert.Empty(changes.Roles);
+        }
+
         private static ClaimsPrincipal Person(string name = "Jane Doe", string email = "jane@example.com", Guid? objectId = null, params Claim[] more)
         {
             var claims = new List<Claim>

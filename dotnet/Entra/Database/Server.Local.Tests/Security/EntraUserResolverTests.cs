@@ -13,6 +13,7 @@ namespace Tests
     using Allors.Database.Domain;
     using Allors.Database.Meta;
     using Allors.Security;
+    using Allors.Services;
     using Xunit;
     using MemoryConfiguration = Allors.Database.Adapters.Memory.Configuration;
     using MemoryDatabase = Allors.Database.Adapters.Memory.Database;
@@ -55,6 +56,40 @@ namespace Tests
             var principal = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(ClaimTypes.NameIdentifier, "1") }, "Tests"));
 
             Assert.Null(new EntraUserResolver().Resolve(principal, transaction));
+        }
+
+        [Fact]
+        public void ReadIdentityResolvesTheCapturedEntraIdentityWithoutChangingData()
+        {
+            var database = NewDatabase();
+            var objectId = Guid.NewGuid();
+            var userId = NewUser(database, objectId);
+            var principal = Principal(Tenant, objectId);
+            var captured = ReadUserIdentity.Capture(principal, new EntraUserResolver());
+            var identity = (ClaimsIdentity)principal.Identity;
+            identity.RemoveClaim(identity.FindFirst(EntraClaims.ObjectIdClaim));
+            identity.AddClaim(new Claim(EntraClaims.ObjectIdClaim, Guid.NewGuid().ToString()));
+            using var transaction = database.CreateTransaction();
+
+            Assert.Equal(userId, captured.Resolve(transaction)?.Id);
+
+            var changes = transaction.Checkpoint();
+            Assert.Empty(changes.Created);
+            Assert.Empty(changes.Deleted);
+            Assert.Empty(changes.Roles);
+        }
+
+        [Fact]
+        public void ReadIdentityDoesNotProvisionAnUnknownEntraIdentity()
+        {
+            using var transaction = NewDatabase().CreateTransaction();
+            var captured = ReadUserIdentity.Capture(Principal(Tenant, Guid.NewGuid()), new EntraUserResolver());
+
+            Assert.Null(captured.Resolve(transaction));
+
+            var changes = transaction.Checkpoint();
+            Assert.Empty(changes.Created);
+            Assert.Empty(changes.Roles);
         }
 
         private static ClaimsPrincipal Principal(Guid tenantId, Guid objectId) =>

@@ -190,7 +190,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void PushShouldNotUpdateVersion()
+        public async void PushShouldUpdateVersionAfterDefaultRefresh()
         {
             await this.Login("administrator");
 
@@ -200,11 +200,15 @@ namespace Tests.Workspace
             person.FirstName = "Johny";
             person.LastName = "Doey";
 
+            Assert.True(person.Id < 0);
             Assert.Equal(Version.WorkspaceInitial.Value, person.Strategy.Version);
 
             Assert.False((await session.PushAsync()).HasErrors);
 
-            Assert.Equal(Version.WorkspaceInitial.Value, person.Strategy.Version);
+            Assert.True(person.Id > 0);
+            Assert.True(person.Strategy.Version > 0);
+            Assert.Same(person, session.Instantiate<Person>(person.Id));
+            Assert.True(person.CanWriteFirstName);
         }
 
         [Fact]
@@ -246,6 +250,36 @@ namespace Tests.Workspace
 
             pushResult = await session.PushAsync();
             Assert.False(pushResult.HasErrors);
+        }
+
+        [Fact]
+        public async System.Threading.Tasks.Task PushWithoutRefreshRetainsVersionAndRequiresReadBeforeWrite()
+        {
+            await this.Login("administrator");
+            using var session = this.Workspace.CreateSession();
+            var person = session.Create<Person>();
+            person.FirstName = "Johny";
+            person.LastName = "Doey";
+            var temporaryId = person.Id;
+            Assert.True(temporaryId < 0);
+            Assert.Equal(Version.WorkspaceInitial.Value, person.Strategy.Version);
+            var saved = await session.PushAsync(new PushOptions { Refresh = false });
+            Assert.Equal(MutationOutcome.Committed, saved.Outcome);
+            Assert.Equal(MutationAcknowledgementStatus.Applied, saved.Application.Acknowledgement);
+            Assert.Equal(MutationReadStatus.NotRequested, saved.Refresh.Status);
+            var mapping = Assert.Single(saved.CreationMappings);
+            Assert.Equal(temporaryId, mapping.WorkspaceId);
+            Assert.Equal(person.Id, mapping.DatabaseId);
+            Assert.True(person.Id > 0);
+            Assert.Same(person, session.Instantiate<Person>(person.Id));
+            Assert.Null(session.Instantiate<Person>(temporaryId));
+            Assert.Equal(Version.WorkspaceInitial.Value, person.Strategy.Version);
+            Assert.False(person.CanWriteFirstName);
+            Assert.False((await session.PullAsync(new Pull { Object = person })).HasErrors);
+            Assert.True(person.Strategy.Version > 0);
+            Assert.True(person.CanWriteFirstName);
+            person.FirstName = "After read";
+            Assert.Equal("After read", person.FirstName);
         }
     }
 }

@@ -6,7 +6,6 @@
 namespace Commands
 {
     using System;
-    using System.Data;
     using Allors.Database;
     using Allors.Database.Adapters;
     using Allors.Database.Configuration;
@@ -25,6 +24,7 @@ namespace Commands
     [Subcommand(
         typeof(Save),
         typeof(Load),
+        typeof(Population),
         typeof(Populate),
         typeof(Init)
         )]
@@ -33,9 +33,6 @@ namespace Commands
         private IConfigurationRoot configuration;
 
         private IDatabase database;
-
-        [Option("-i", Description = "Isolation Level (Snapshot|RepeatableRead|Serializable)")]
-        public IsolationLevel? IsolationLevel { get; set; }
 
         [Option("-t", Description = "Command Timeout in seconds")]
         public int? CommandTimeout { get; set; }
@@ -72,7 +69,7 @@ namespace Commands
                     var metaPopulation = new MetaBuilder().Build();
                     var engine = new Engine(Rules.Create(metaPopulation));
                     var objectFactory = new ObjectFactory(metaPopulation, typeof(User));
-                    var databaseBuilder = new DatabaseBuilder(new DefaultDatabaseServices(engine), this.Configuration, objectFactory, this.IsolationLevel, this.CommandTimeout);
+                    var databaseBuilder = new DatabaseBuilder(new DefaultDatabaseServices(engine), this.Configuration, objectFactory, commandTimeout: this.CommandTimeout);
                     this.database = databaseBuilder.Build();
                 }
 

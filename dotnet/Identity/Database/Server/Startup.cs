@@ -41,6 +41,11 @@ namespace Allors.Server
                 ApplicationName = "Allors.Identity",
             });
 
+            services.AddAllorsRead(new Database.Protocol.Json.ReadConfiguration(new System.Collections.Generic.Dictionary<string, string>
+            {
+                ["Default"] = "identity-read-v1",
+            }));
+
             services.AddAllorsRateLimiting(this.Configuration, IdentityPaths.Authentication);
 
             services.AddAllorsIdentity(this.Configuration, this.Environment);
@@ -49,6 +54,7 @@ namespace Allors.Server
         public void Configure(IApplicationBuilder app)
         {
             var metaPopulation = new MetaBuilder().Build();
+            metaPopulation.Person.AssignedWorkspaceNames = new[] { "Default" };
             var engine = new Engine(Rules.Create(metaPopulation));
             var objectFactory = new ObjectFactory(metaPopulation, typeof(User));
             var databaseBuilder = new DatabaseBuilder(new DefaultDatabaseServices(engine, this.Configuration), this.Configuration, objectFactory, null, 60);

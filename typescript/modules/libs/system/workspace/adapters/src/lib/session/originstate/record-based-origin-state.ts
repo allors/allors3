@@ -34,6 +34,10 @@ export abstract class RecordBasedOriginState {
 
   private previousChangedRoleByRelationType: Map<RelationType, unknown>;
 
+  protected get compareExactRecords(): boolean {
+    return false;
+  }
+
   getUnitRole(roleType: RoleType): IUnit {
     if (
       this.changedRoleByRelationType != null &&
@@ -213,6 +217,10 @@ export abstract class RecordBasedOriginState {
   }
 
   checkpoint(changeSet: ChangeSet) {
+    if (this.compareExactRecords) {
+      this.checkpointExact(changeSet);
+      return;
+    }
     //  Same record
     if (
       this.previousRecord == null ||
@@ -323,6 +331,71 @@ export abstract class RecordBasedOriginState {
       });
     }
 
+    this.previousRecord = this.record;
+    this.previousChangedRoleByRelationType = new Map(
+      this.changedRoleByRelationType
+    );
+  }
+
+  private checkpointExact(changeSet: ChangeSet): void {
+    const roles = new Set<RoleType>();
+    if (this.record !== this.previousRecord)
+      for (const role of this.roleTypes) roles.add(role);
+    for (const relation of this.changedRoleByRelationType?.keys() ?? [])
+      roles.add(relation.roleType);
+    for (const relation of this.previousChangedRoleByRelationType?.keys() ?? [])
+      roles.add(relation.roleType);
+    const ids = (value: unknown, many: boolean): number[] => {
+      const values = many
+        ? (value as unknown[]) ?? []
+        : value == null
+        ? []
+        : [value];
+      return values
+        .map((item) => (typeof item === 'number' ? item : (item as IObject).id))
+        .sort((a, b) => a - b);
+    };
+    const loaded = (values: number[]): IRange<IObject> =>
+      this.objectRanges.importFrom(
+        values
+          .map((id) => this.session.getObject(id))
+          .filter((object) => object != null)
+      );
+    for (const role of roles) {
+      const relation = role.relationType;
+      const current = this.changedRoleByRelationType?.has(relation)
+        ? this.changedRoleByRelationType.get(relation)
+        : this.record?.getRole(role);
+      const previous = this.previousChangedRoleByRelationType?.has(relation)
+        ? this.previousChangedRoleByRelationType.get(relation)
+        : this.previousRecord?.getRole(role);
+      if (role.objectType.isUnit) {
+        if (
+          !(
+            current instanceof Date &&
+            previous instanceof Date &&
+            current.getTime() === previous.getTime()
+          )
+        )
+          changeSet.diffUnit(this.object, relation, current, previous);
+        continue;
+      }
+      const currentIds = ids(current, role.isMany);
+      const previousIds = ids(previous, role.isMany);
+      if (
+        currentIds.length === previousIds.length &&
+        currentIds.every((id, index) => id === previousIds[index])
+      )
+        continue;
+      // The association changed even when neither endpoint has been loaded by this Session.
+      changeSet.diffUnit(this.object, relation, true, false);
+      changeSet.diffCompositesStrategyStrategy(
+        this.object,
+        relation,
+        loaded(currentIds),
+        loaded(previousIds)
+      );
+    }
     this.previousRecord = this.record;
     this.previousChangedRoleByRelationType = new Map(
       this.changedRoleByRelationType
@@ -450,7 +523,7 @@ export abstract class RecordBasedOriginState {
     this.onChange();
   }
 
-  private assertStrategy(object: IObject) {
+  protected assertStrategy(object: IObject) {
     if (object == null) {
       throw new Error('Object is not present in session.');
     }

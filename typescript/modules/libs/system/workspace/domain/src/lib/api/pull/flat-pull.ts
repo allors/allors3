@@ -7,8 +7,6 @@ import { IObject } from '../../iobject';
 import { TypeForParameter } from '../../types';
 
 export interface FlatPull {
-  extentRef?: string;
-
   extent?: Extent;
 
   predicate?: Predicate;
@@ -18,8 +16,6 @@ export interface FlatPull {
   object?: IObject;
 
   objectId?: number | string;
-
-  selectRef?: string;
 
   select?: Select | any;
 
