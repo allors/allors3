@@ -22,7 +22,7 @@ internals page. The tests below are authoritative. The platform boundary is in
 | `DatabaseConnection` | Privately held current database records and permission maps, refreshed by Pull/Sync/Access. Callers must use a connection sequentially. |
 | `DatabaseOriginState` for a session object | Retains the last accepted database record and its version. `OnPulled` obtains the connection's current record, checks `CanMerge`, and replaces the session record only when accepted. A merge error leaves this object's entire record in place. |
 | `RecordBasedOriginState` | Holds local role changes separately. Reads prefer the local value; otherwise they use the retained record. `Diff` compares local changes with that record. `Reset` clears local changes without fetching or accepting a newer record. |
-| Remote `DatabaseOriginState` | Builds Push using the retained version. To-many additions/removals are calculated against the retained record. The .NET Local adapter uses the same workspace implementation as HTTP. |
+| Remote `DatabaseOriginState` | Builds Push using the retained version. To-many additions/removals are calculated against the retained record. |
 
 The tests characterize an editing baseline per object with relation targets loaded. They do not
 establish snapshot consistency across an object graph.
@@ -70,8 +70,8 @@ Tests live in [the .NET MergeTests](../../../../../dotnet/Core/Workspace/Tests/T
 [DiffTests](../../../../../dotnet/Core/Workspace/Tests/Tests/DiffTests.cs),
 [TypeScript merge specs](../../../../../typescript/modules/libs/system/workspace/adapters-json-tests/src/lib/runtime/merge.spec.ts),
 and [diff specs](../../../../../typescript/modules/libs/system/workspace/adapters-json-tests/src/lib/runtime/diff.spec.ts).
-The .NET cases run through Local, System.Text.Json HTTP, and Newtonsoft.Json HTTP; TypeScript
-uses HTTP.
+The .NET cases run through the System.Text.Json and Newtonsoft.Json HTTP adapters; the TypeScript
+cases run through the TypeScript HTTP adapter.
 
 ## Unit merge equality
 
@@ -79,7 +79,7 @@ Merge compares the retained baseline with the refreshed remote value for each lo
 role. It compares DateTime and binary values by content in both runtimes; the local value does
 not decide whether the remote baseline changed.
 
-| Locally edited role | .NET (all three adapters) | TypeScript HTTP |
+| Locally edited role | .NET (both HTTP adapters) | TypeScript HTTP |
 | --- | --- | --- |
 | DateTime | `Equals` compares DateTime values. | Date timestamps are compared with `getTime()`. |
 | Binary | `SequenceEqual` compares byte-array contents, including length. | Binary is a base64 string, compared by value. |
@@ -108,8 +108,10 @@ A retained data record does **not** pin authorization. The record retains grant/
 but `DatabaseRecord.IsPermitted` / `isPermitted` resolves those IDs through live connection maps.
 Refreshing those maps can affect permission checks on an object whose data baseline is older.
 The `RefreshesKnownGrantWhenAnObjectIsSynchronized` and
-`RefreshesKnownRevocationWhenAnObjectIsSynchronized` tests, and TypeScript
-[security specs](../../../../../typescript/modules/libs/system/workspace/adapters-json-tests/src/lib/runtime/security.spec.ts),
+`RefreshesKnownRevocationWhenAnObjectIsSynchronized` tests in
+[the shared .NET SecurityTests](../../../../../dotnet/Core/Workspace/Tests/Tests/SecurityTests.cs) run through
+both HTTP adapters. They and the TypeScript
+[security specs](../../../../../typescript/modules/libs/system/workspace/adapters-json-tests/src/lib/runtime/security.spec.ts)
 pin the existing synchronized-object refresh behaviour. They do not guarantee permission
 freshness on a Pull that needs no Sync, or when the retained record's grant/revocation IDs change
 on the server. Data-baseline retention and authorization freshness require separate policies.
@@ -117,7 +119,7 @@ on the server. Data-baseline retention and authorization freshness require separ
 The guided permissions example combines that refresh mechanism with the live-map lookup in
 [the .NET database record](../../../../../dotnet/System/Workspace/Adapters/Allors.Workspace.Adapters.Remote/Database/DatabaseRecord.cs)
 and [the TypeScript database record](../../../../../typescript/modules/libs/system/workspace/adapters-json/src/lib/database/database-record.ts).
-The [local .NET security tests](../../../../../dotnet/Core/Workspace/Tests.Local/Tests/SecurityTests.cs)
+The [shared .NET security tests](../../../../../dotnet/Core/Workspace/Tests/Tests/SecurityTests.cs)
 and TypeScript specs verify synchronized-object refresh; they do not directly characterize the
 older editing record shown in the example. Its table displays held values independently of
 permission to expose them.
