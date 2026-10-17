@@ -11,9 +11,26 @@ Changes accumulate under **[Unreleased]** until a version is released.
 
 ### Added
 
+- A guided workspace session state explanation with seven prepared TypeScript scenarios:
+  remote refresh, disjoint edits, string and relation conflicts, Reset after Push, and a
+  qualified illustration of live permission maps. Diagrams and value tables distinguish the
+  connection record, the accepted editing baseline, local edits and diff originals. The same
+  scenario data supplies the keyboard controls, complete static steps and Markdown export.
+
+- An Astro and Starlight documentation website in `docs/`, with separate user and maintainer
+  navigation, search, browser-rendered Mermaid diagrams and an explicit unreleased v3.2 label.
+  Markdown exports and `llms.txt` share the pages' metadata and explanations. A separate
+  GitHub Actions workflow validates links, exports and browser behaviour at root and project
+  deployment paths; publishing requires a manual run from `main`.
+
+- A human writing guide and terminology reference: Oxford English, Diátaxis, stable names and
+  visual explanations chosen for the subject. Agent instructions require applying the same
+  guide and reviewing changes; terminology changes require prior agreement. The documentation
+  website decision record describes the Starlight site and guided workspace example.
+
 - Workspace session baseline characterization tests across .NET Local, both .NET JSON HTTP
   adapters, and TypeScript HTTP, with a maintainer map in
-  `docs/internals/workspace-session-state.md`. They cover remote refresh, disjoint and conflicting
+  `docs/src/content/docs/internals/workspace-session-state.mdx`. They cover remote refresh, disjoint and conflicting
   edits, diff/version retention, Reset/Pull recovery, and DateTime/binary unit equality.
 
 - A domain extends several domains: `[Extends]` takes the names of all of them, and the graph
@@ -45,13 +62,13 @@ Changes accumulate under **[Unreleased]** until a version is released.
 - Documentation for users and maintainers under `docs/`, starting with the domain model:
   functional domains, plug-ins and their hosts, the concrete domain that selects plug-ins, and
   the order of the domains. The first page for maintainers,
-  `docs/internals/domain-inheritance.md`, maps domain inheritance from `[Extends]` to the order
+  `docs/src/content/docs/internals/domain-inheritance.md`, maps domain inheritance from `[Extends]` to the order
   of the hooks: which part owns what, why the ids decide the order, and which test of the
   Diamond tree pins what.
   A page on logging says how the host receives the logs of Allors. A page on authentication
   says how Core, an authentication plug-in and the application's domain share a sign-in, and a
-  how-to guide takes an application through signing in with Microsoft Entra ID. `AGENTS.md`
-  holds the rules for these pages.
+  how-to guide takes an application through signing in with Microsoft Entra ID. The writing
+  guide in `docs/src/content/docs/internals/writing-documentation.md` holds the rules for these pages.
 - The build target `DotnetSystemSharedTest` and the CI job `CiDotnetSystemSharedTest` for the
   `Ranges` tests in `dotnet/System/Shared.Tests`, which no target or job ran before.
 - A `Generate.Tests` project for the generator and its templates. `WorkspaceTemplateTests`

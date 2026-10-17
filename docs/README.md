@@ -1,51 +1,129 @@
-# Documentation
+# Documentation website
 
-Documentation for Allors3, written for two audiences. Users build applications on Allors3: they
-declare a domain, inherit Core, select plug-ins, and host the result. Maintainers change the
-platform itself.
+> **Status: Current.** How-to guide for maintainers.
 
-[README.md](../README.md) introduces the platform, [ARCHITECTURE.md](../ARCHITECTURE.md) draws
-its boundary, and [AGENTS.md](../AGENTS.md) holds the rules for working in this repository,
-including the rules for these pages.
+The Allors3 documentation uses Astro and Starlight. Human pages live in
+[`src/content/docs/`](src/content/docs/index.md); start with the
+[documentation index](src/content/docs/index.md). This website documents `main`, which is
+intended for an **unreleased v3.2**. Use documentation from the relevant branch when working
+on another version.
 
-## For users
+## Run locally
 
-The pages in this folder are written for users. Maintainers read them too.
+Use Node.js 24 and npm. The website has its own package and lockfile, separate from the
+platform's TypeScript dependencies. From the repository root:
 
-| Page | Kind | Status | Content |
-| --- | --- | --- | --- |
-| [Domains](domains.md) | Explanation | Current | The kinds of domains: functional domains, plug-ins and their hosts, and the concrete domain that selects plug-ins; extending several domains, and the order of the domains, which decides the order of the hooks. |
-| [Authentication](authentication.md) | Explanation | Current | How Core, an authentication plug-in and the application's domain share a sign-in: the session and the scheme per request, the user resolver, and the user factory. |
-| [Sign in with Microsoft Entra ID](entra.md) | How-to guide | Current | The steps for an application that selects the Entra plug-in: the app registration, the configuration, `Startup`, the user factory, browsers, clients and programs, guests, and a check against a tenant. |
-| [Logging](logging.md) | Reference | Current | How Allors logs through `Microsoft.Extensions.Logging`, what the host does to receive the logs, and which messages Allors writes. |
+```sh
+cd docs
+npm ci
+npm run dev
+```
 
-## For maintainers
+Open the local URL printed by Astro, under `/allors3/`. Development mode provides a fast
+preview; use a production build to check search and generated exports:
 
-The pages under `internals/` describe how the platform is built and how work on it is planned.
-An application must not rely on them: they can change with any version.
+```sh
+npm run build
+npm run preview
+```
 
-| Page | Status | Content |
-| --- | --- | --- |
-| [Domain inheritance](internals/domain-inheritance.md) | Current | Which part owns what, from `[Extends]` to the order of the hooks: the attribute, the parser, the template, the meta sort, the method compiler and the hand-written dispatch; why the ids decide the order; and the platform test domains of the Diamond tree. |
-| [Workspace session state](internals/workspace-session-state.md) | Current | Ownership of editing baselines, merge/diff/reset characterization across .NET and TypeScript, unit merge equality, and separate authorization-freshness decisions. |
+The build clears Astro's content cache so changes to the local Markdown transformations are
+applied to every page.
 
-## Kind
+## Edit a page
 
-Every user page is of one kind.
+Read the [writing guide](src/content/docs/internals/writing-documentation.md) and
+[terminology reference](src/content/docs/terminology.md) before editing. Keep Markdown as the
+default; use MDX when a page needs a component, with the component implementation separate
+from the prose.
 
-| Kind | What the reader gets |
-| --- | --- |
-| Tutorial | A first result, step by step. |
-| How-to guide | The steps for one task. |
-| Reference | Facts to look up. |
-| Explanation | The model behind the facts. |
+Every page has frontmatter with `title`, `description`, `audience`, `kind` and `status`.
+Keep its opening status line and the documentation index consistent with that metadata.
+Starlight renders the title, so page content starts with the status line, followed by
+second-level headings. Update navigation in `astro.config.mjs` when adding a page.
 
-## Status
+Use relative Markdown links between source pages so they remain useful in the checkout.
+The build converts them to website URLs. Repository links outside the documentation are
+converted to GitHub links. Check headings and anchors after changing a title or moving a page.
 
-Every page opens with a status line.
+Use Mermaid code fences for diagrams where the notation fits. Diagrams render in the browser;
+a successful site build alone does not validate their rendering. Keep the explanation of
+arrows and notation in the page, and provide accessible labels as described in the writing
+guide.
 
-| Status | Meaning |
-| --- | --- |
-| Current | Describes what the repository does today. |
-| Planned | Agreed, and not built yet or only partly. The page says which parts exist. |
-| Historical | Kept for its reasoning. It points to the page that holds the current truth. |
+## Check a change
+
+Run these commands from `docs/`:
+
+```sh
+npm test
+npm run check
+npm run build
+npm run check:links
+npx playwright install chromium
+npm run test:browser
+```
+
+The browser checks use the production preview and cover navigation, search, diagrams and
+accessibility at desktop and narrow widths. On Linux, use
+`npx playwright install --with-deps chromium` to install system dependencies as well.
+Review prose and representative rendered pages too; automated checks do not establish that
+an explanation is accurate or clear.
+
+The default deployment origin is `https://allors.github.io`, with `/allors3/` as the base path.
+`DOCS_SITE` changes the origin and `DOCS_BASE` changes the base path. Use the same settings for
+build, link checking and preview. For example, check deployment at the origin root:
+
+```sh
+DOCS_BASE=/ npm run build
+DOCS_BASE=/ npm run check:links
+DOCS_BASE=/ npm run test:browser
+```
+
+Rebuild with the default settings before previewing or publishing under `/allors3/` again.
+The documentation workflow validates both base paths.
+
+## Review exports
+
+The build generates Markdown exports and `llms.txt` from rendered page content and the same
+metadata used by the website. Titles, audience, kind, status and version context belong to
+that source; do not maintain a separate explanation for agents. `llms.txt` is an agent
+discovery proposal. Agents working in a checkout should use its documentation.
+
+Each page is exported at `<slug>.md` under the deployment base path; the documentation index
+is `index.md`. These files and `llms.txt` are generated during production builds.
+
+Mermaid source is retained in Markdown exports. A custom interactive component must mark its
+wrapper with `data-documentation-interactive` and render a useful static explanation that
+preserves its meaning, including any contract otherwise revealed only through interaction.
+Render scenario steps and descriptions from the same content or data that drives the
+interaction. `<details>` explanations are retained in exports. Give SVG drawings a title and
+description, or a figure caption. Use `data-documentation-export-ignore` only for interface
+controls that add no meaning to the explanation.
+
+Keep that explanation in the page or component so the website and exports share it. Inspect
+the relevant exported Markdown after changing a diagram or component; an empty placeholder
+does not preserve the explanation.
+
+The [workspace session state example](src/content/docs/internals/workspace-session-state.mdx#guided-example)
+uses this contract. Prepared actions and explanations live in
+`src/examples/workspace-session-state.ts`; its finite model supplies the records, local values
+and diffs for each step. Astro renders every step into the static transcript. Ordinary
+TypeScript controls select a rendered step for the live view, so the browser, no-JavaScript
+view and Markdown export share the same explanation. The model tests check the cited platform
+cases; they do not replace the authoritative workspace tests or model arbitrary operations.
+
+## Publish
+
+The [documentation workflow](../.github/workflows/documentation.yml) checks relevant pull
+requests and changes to `main`. Those events validate the site without publishing it.
+
+After publication has been approved, configure the repository's Pages source as **GitHub
+Actions** and its `github-pages` environment for deployment from `main`. Run the
+**Documentation** workflow manually on `main` with **publish** selected. Both base-path
+validation jobs must pass before the workflow deploys the `/allors3/` build. The default
+manual run leaves **publish** unselected and only validates.
+
+The workflow follows GitHub's
+[custom Pages workflow](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages)
+model. Changing the workflow does not configure repository hosting or publish the site.

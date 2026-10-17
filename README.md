@@ -3,18 +3,18 @@
 [![CI](https://github.com/allors/allors3/actions/workflows/ci.yml/badge.svg)](https://github.com/allors/allors3/actions/workflows/ci.yml)
 
 Allors3 is an actively developed platform for applications built with **domain inheritance**.
-An application declares its own domain that extends Core and inherits its model and behavior,
+An application declares its own domain that extends Core and inherits its model and behaviour,
 directly or through other domains; a domain can extend several domains.
 
-The [documentation](docs/README.md) is written for users and for maintainers. It starts with
-the [kinds of domains](docs/domains.md).
+The [documentation](docs/src/content/docs/index.md) is written for users and for maintainers.
+It starts with the [kinds of domains](docs/src/content/docs/domains.md).
 
 ## Direction for v3.2
 
 The agreed scope for v3.2 is:
 
 - Keep **System and Core**: the database and workspace engines, metadata, adapters, protocols,
-  generators, foundational domain behavior, authorization, and hosting building blocks.
+  generators, foundational domain behaviour, authorization, and hosting building blocks.
 - Add authentication plug-ins: **Identity** with ASP.NET Core Identity and **Entra** with
   Microsoft Entra ID. Authorization stays in Core. An application selects one.
 - Remove **Base and Apps**, including their business domains, applications, and Angular/Material
@@ -39,8 +39,9 @@ Pull requests are the default contribution workflow. The retained version branch
 `v3.0`, and `v3.1`. Work on `main` is intended for v3.2 once the transition settles.
 
 [version.json](version.json) already specifies `3.2.0-alpha.{height}`. This is the development
-version, not a completed v3.2 release. Changes are recorded in [CHANGELOG.md](CHANGELOG.md), and
-contribution rules are in [AGENTS.md](AGENTS.md).
+version, not a completed v3.2 release. Changes are recorded in [CHANGELOG.md](CHANGELOG.md).
+For documentation contributions, follow the [writing guide](docs/src/content/docs/internals/writing-documentation.md)
+and [agreed terminology](docs/src/content/docs/terminology.md). Agent instructions are in `AGENTS.md`.
 
 ## Configuration
 

@@ -1,4 +1,10 @@
-# Logging
+---
+title: "Logging"
+description: "Receive Allors logs through Microsoft.Extensions.Logging and look up the messages the platform writes."
+audience: "Users"
+kind: "Reference"
+status: "Current"
+---
 
 > **Status: Current.**
 

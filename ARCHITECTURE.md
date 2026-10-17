@@ -36,9 +36,9 @@ applications, which do not exist yet, where it remains relevant.
 
 Core is an abstract domain. A production application declares its own domain, which extends Core
 directly or through other domains, and a domain extends one or more domains: the domains of an
-application form a directed acyclic graph. [docs/domains.md](docs/domains.md) describes the kinds
+application form a directed acyclic graph. [Domains](docs/src/content/docs/domains.md) describes the kinds
 of domains and the order of the domains, which decides the order of the hooks;
-[docs/internals/domain-inheritance.md](docs/internals/domain-inheritance.md) maps which part owns
+[Domain inheritance](docs/src/content/docs/internals/domain-inheritance.md) maps which part owns
 what, from the declaration to the hooks. Allors3 will continue to use domain inheritance as it
 develops.
 
@@ -59,9 +59,9 @@ writable endpoints, and associations are the inverse, read-only endpoints.
 ## Authentication plug-ins
 
 Authentication lives in plug-ins that Core hosts: Identity, with ASP.NET Core Identity, and
-Entra, with Microsoft Entra ID. Authorization stays in Core. [docs/domains.md](docs/domains.md)
+Entra, with Microsoft Entra ID. Authorization stays in Core. [Domains](docs/src/content/docs/domains.md)
 describes the kinds of domains and how an application selects a plug-in;
-[docs/authentication.md](docs/authentication.md) describes how Core, a plug-in and the
+[Authentication](docs/src/content/docs/authentication.md) describes how Core, a plug-in and the
 application's domain share a sign-in.
 
 **Current implementation:** the Identity tree, `dotnet/Identity`, is Core ← Identity ← Test, and
@@ -134,7 +134,7 @@ The platform test domains live in the Diamond tree, `dotnet/Diamond`: the functi
 Level1 and Level2 and the test plug-in Plugin1, hosted by Core. They exist to prove the platform
 across domain levels and carry no production behavior. The tree's `Test` domain extends Level2
 and Plugin1, so its population is a diamond, and its tests pin the order of the domains and of
-the hooks; [docs/internals/domain-inheritance.md](docs/internals/domain-inheritance.md) says
+the hooks; [Domain inheritance](docs/src/content/docs/internals/domain-inheritance.md) says
 which test pins what.
 
 Test coverage must continue to exercise inheritance across domain levels, as well as relations,

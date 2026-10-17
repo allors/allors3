@@ -8,8 +8,8 @@
   verify them. See [ARCHITECTURE.md](ARCHITECTURE.md).
 - Identity and Entra are plug-ins for authentication, with ASP.NET Core Identity and with
   Microsoft Entra ID, hosted by Core; authorization stays in Core. See
-  [docs/domains.md](docs/domains.md). The plug-ins hold authentication; Core's `User` keeps no
-  authentication field.
+  [Domains](docs/src/content/docs/domains.md). The plug-ins hold authentication; Core's `User`
+  keeps no authentication field.
 - Base and Apps were removed without a separate continuation. They continue on the `v3.1` branch.
 - Signals are to become the default API of every workspace, both .NET and TypeScript. Breaking
   workspace API changes for this transition are approved; a parallel compatibility API is not
@@ -35,8 +35,8 @@
   Object-id ranges (`IRanges<long>`) therefore never contain `0`.
 - A domain extends one or more domains, and the order of the domains, which decides the order
   of the hooks, follows from the inheritance graph and the domain ids; see
-  [docs/domains.md](docs/domains.md). Generate the id of a new domain; never choose it to
-  steer the order.
+  [Domains](docs/src/content/docs/domains.md). Generate the id of a new domain; never choose
+  it to steer the order.
 - Follow existing patterns; keep public API changes focused on the agreed work.
 - Never edit generated files (`*.g.ts`, `*.g.cs`); regenerate with `./build.sh Generate` when needed.
 - Follow existing naming and structure; avoid new conventions without reason.
@@ -84,25 +84,30 @@
 
 ## Documentation
 
-- Documentation lives in `docs/`, for two audiences. Pages for users, who build applications on
-  Allors3, sit at the top of `docs/`. Pages for maintainers, who change the platform, sit under
-  `docs/internals/`. [docs/README.md](docs/README.md) lists every page and defines the kinds and
-  the statuses.
-- Every page opens with a status line: Current, Planned, or Historical. Every user page is of
-  one kind: tutorial, how-to guide, reference, or explanation.
-- A user page never requires reading an internals page, and it says what an application can
-  rely on today.
-- An internals page assumes the user pages and links to them instead of repeating them. It is a
-  map: it says which part owns what, and why. Depth stays in code comments and tests.
-  Applications must not rely on internals pages.
-- Create a folder together with its first page, not before.
-- A fact has one home. Link to it instead of repeating it.
-- When a test can check a rule, write the test and name it in the page. The test is authoritative.
-- Update the pages that a change makes untrue in the same pull request.
-- A plan that has landed becomes Historical. It keeps its path and points to the page that holds
-  the current truth.
-- Use the vocabulary of [docs/domains.md](docs/domains.md): functional domain, plug-in, host, and
-  concrete domain.
+- `docs/src/content/docs/` is human documentation for application developers and platform
+  maintainers. The [documentation index](docs/src/content/docs/index.md) lists the pages.
+  This file holds agent instructions; use the human pages for technical facts rather than
+  maintaining a separate account for agents.
+- Before changing documentation, comments or public-facing explanations, read and apply the
+  [writing guide](docs/src/content/docs/internals/writing-documentation.md) and
+  [terminology reference](docs/src/content/docs/terminology.md). The guide owns the audience,
+  Diátaxis, status, Oxford English and visual explanation rules. Preserve exact identifiers
+  and external names.
+- Do not rename an established concept or substitute a competing term without prior agreement.
+  Explain the proposed meaning, reason and affected scope before asking. Existing agreement
+  in the current work is sufficient; do not ask again. In particular, retain adapter rather
+  than silently substituting codec.
+- Apply an approved terminology change consistently across its agreed scope, including code,
+  prose, diagrams, examples and pull request text. Search for remaining uses and explain any
+  intentional exceptions. Approval of a term does not itself authorize a breaking API change.
+- Update pages made untrue by a change in the same pull request. Maintain the index, page
+  statuses and links according to the writing guide. Use documentation from the checkout's
+  branch/version when a published page describes something different.
+- Before completing work, review the changed material for factual accuracy, agreed terminology,
+  Oxford spelling and clear practitioner language. Include diagram labels, example output,
+  interface text, commit messages and pull request descriptions where affected. Verify links
+  and relevant examples or interactive behaviour. Editorial review is required; no prose
+  linter is part of the initial tooling.
 
 ## Testing — where test code may live (important)
 

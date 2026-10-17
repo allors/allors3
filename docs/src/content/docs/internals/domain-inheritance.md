@@ -1,4 +1,10 @@
-# Domain inheritance
+---
+title: "Domain inheritance"
+description: "Ownership of domain inheritance from the Extends attribute to the order of the hooks."
+audience: "Maintainers"
+kind: "Explanation"
+status: "Current"
+---
 
 > **Status: Current.**
 
@@ -79,5 +85,6 @@ The tree inherits Core through compile globs on Core's `Core*` folders, as the I
 an application do, and has a database side with the domain tests on the memory adapter; it has
 no commands, server or workspace. Build targets `DotnetDiamondMerge`, `DotnetDiamondGenerate`,
 `DotnetDiamondDatabaseTest` and `DotnetDiamondTest`; CI job `CiDotnetDiamondTest` in the
-`memory` job. The test domains carry no production behavior; [AGENTS.md](../../AGENTS.md) says
-where test code may live.
+`memory` job. The test domains carry no production behaviour; the
+[test scaffolding boundary](../../../../../ARCHITECTURE.md#test-scaffolding-is-separate-from-inherited-code)
+says where test code may live.
