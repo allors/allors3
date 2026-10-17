@@ -43,6 +43,10 @@ jobs:
     name: Detect documentation-only changes
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    env:
+      # The suite jobs generate the nl-BE locale that the workflow env selects; this job does not.
+      LANG: C.UTF-8
+      LC_ALL: C.UTF-8
     outputs:
       platform: ${{ steps.paths.outputs.platform }}
     steps:
