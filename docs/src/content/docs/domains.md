@@ -1,4 +1,10 @@
-# Domains
+---
+title: "Domains"
+description: "Functional domains, plug-ins, the concrete domain and the order of the domains."
+audience: "Users"
+kind: "Explanation"
+status: "Current"
+---
 
 > **Status: Current.** [Current implementation](#current-implementation) names the trees and
 > the tests.
@@ -15,7 +21,7 @@ directed acyclic graph.
 
 | Kind | Optional | What it is |
 | --- | --- | --- |
-| Functional domain | No | Model and behavior that every domain after it builds on. Core is the first one. |
+| Functional domain | No | Model and behaviour that every domain after it builds on. Core is the first one. |
 | Plug-in | Yes | One way to provide a functionality that its host leaves open. Identity is one. |
 | Concrete domain | | The application's own domain. It extends the functional domains it builds on and selects the plug-ins. |
 
@@ -42,10 +48,18 @@ functional domain it builds on and each plug-in it selects.
 
 ## The normal arrangement
 
-```text
-Custom --extends--> Sales --extends--> Core         functional domain
-Custom --extends--> Stock --extends--> Core         functional domain
-Custom --extends--> Identity --extends--> Core      plug-in, hosted by Core
+Each arrow points from a domain to a domain it extends.
+
+```mermaid
+flowchart LR
+    accTitle: A concrete domain selects functional domains and a plug-in
+    accDescr: Custom extends Sales, Stock and Identity. Sales and Stock are functional domains. Identity is a plug-in hosted by Core. Each of the three extends Core.
+    Custom --> Sales[Sales — functional domain]
+    Custom --> Stock[Stock — functional domain]
+    Custom --> Identity[Identity — plug-in]
+    Sales --> Core
+    Stock --> Core
+    Identity --> Core
 ```
 
 - The concrete domain extends the functional domains it builds on, one or more, and selects the
@@ -103,7 +117,7 @@ and the domains that a domain extends keep their order in every application that
 domain. The ids compare as written, character by character, ignoring case. A domain's id is
 generated, never chosen to steer the order.
 
-Two structures have no order. Generation and the start of the application stop with a message
+These structures have no order. Generation and the start of the application stop with a message
 that names the domains:
 
 - a cycle: a domain extends itself through other domains;

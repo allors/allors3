@@ -1,4 +1,10 @@
-# Sign in with Microsoft Entra ID
+---
+title: "Sign in with Microsoft Entra ID"
+description: "Configure an application to sign in users and programs with the Microsoft Entra ID plug-in."
+audience: "Users"
+kind: "How-to guide"
+status: "Current"
+---
 
 > **Status: Current.**
 
@@ -53,7 +59,7 @@ The plug-in reads the `Entra` section, in the shape of the template
 
 `Instance` defaults to the public cloud and `SessionLifetime` to 12 hours, both in
 `EntraDefaults`. A secret goes in the environment rather than the file:
-`Entra__ClientSecret=…`, as the [README](../README.md#configuration) describes.
+`Entra__ClientSecret=…`, as the [README](../../../../README.md#configuration) describes.
 
 Omit `SessionLifetime` to use the default. If supplied, it must be a positive duration in
 `hh:mm:ss` or `d.hh:mm:ss` format, with two digits each for hours (00–23), minutes and seconds

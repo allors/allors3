@@ -1,0 +1,86 @@
+---
+import { diff, formatValue, outcomeLabels, roles, visibleValues, type Frame } from '../examples/workspace-session-state';
+interface Props { frame: Frame; scenarioId: string; stepNumber: number }
+const { frame, scenarioId, stepNumber } = Astro.props;
+const { state } = frame;
+const values = visibleValues(state);
+const differences = diff(state);
+const records = [
+  { label: 'Database', record: state.database, note: 'Committed values' },
+  { label: 'Connection', record: state.connection, note: 'Current shared record' },
+  { label: 'Retained record', record: state.retained, note: 'This object’s accepted baseline' },
+];
+---
+
+<section data-frame data-scenario-id={scenarioId} data-step-id={frame.id} data-step-title={frame.title}>
+  <div class="frame-heading">
+    <h4>{stepNumber}. {frame.title}</h4>
+    <p class="outcome" data-outcome data-error={frame.outcome.endsWith('error')}>{outcomeLabels[frame.outcome]}</p>
+  </div>
+  <p>{frame.explanation}</p>
+  <figure class="record-flow">
+    <div class="records" data-records>
+      {records.map(({ label, record, note }, index) => <>
+        {index > 0 && <span class="flow-arrow" aria-hidden="true">→</span>}
+        <div class="record">
+          <strong>{label}</strong>
+          <p class="version">v{record.version}</p>
+          <p>{note}</p>
+        </div>
+      </>)}
+    </div>
+    <figcaption>Arrows show the path of a record: Pull/Sync refreshes the connection; the editing object’s Pull accepts or rejects its replacement. Matching version labels mean the same record in this example.</figcaption>
+  </figure>
+  <div class="read-rule"><strong>Session read</strong> = local edit, when present; otherwise the retained value.</div>
+  <table tabindex="0">
+    <caption>Values after this step</caption>
+    <thead><tr>
+      <th scope="col">Role</th><th scope="col">Database</th><th scope="col">Connection</th>
+      <th scope="col">Retained</th><th scope="col">Local edit</th><th scope="col">Session read</th><th scope="col">Diff original</th>
+    </tr></thead>
+    <tbody>{roles.map(({ key, label }) => {
+      const difference = differences.find((entry) => entry.role === key);
+      return <tr>
+        <th scope="row">{label}</th>
+        <td>{formatValue(key, state.database.values[key])}</td>
+        <td>{formatValue(key, state.connection.values[key])}</td>
+        <td>{formatValue(key, state.retained.values[key])}</td>
+        <td>{formatValue(key, state.local[key])}</td>
+        <td>{formatValue(key, values[key])}</td>
+        <td>{formatValue(key, difference?.original)}</td>
+      </tr>;
+    })}</tbody>
+  </table>
+  <p class="state-note">Diffs: {differences.length}. Marked pushed: {state.pushed ? 'yes' : 'no'}. A dash (—) means no local edit or diff; <code>null</code> is a value.</p>
+  {scenarioId === 'permissions' && <p class="permission-note">Read permission through retained grant G: <strong>{state.grantAllowsRead ? 'allowed' : 'denied'}</strong>. Grant ID G stays fixed; the connection map supplies its permissions. The table shows held data, independently of permission to expose it.</p>}
+</section>
+
+<style>
+  [data-frame] { min-width: 0; }
+  .frame-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap; }
+  .frame-heading h4 { margin: 0; font-size: 1.1rem; }
+  .outcome { margin: 0; padding: 0.15rem 0.65rem; border: 1px solid var(--sl-color-text-accent); border-radius: 1rem; font-size: 0.875rem; color: var(--sl-color-text-accent); }
+  .outcome[data-error='true'] { border-style: dashed; font-weight: 700; }
+  .record-flow { margin: 1.25rem 0; }
+  .records { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr); gap: 0.5rem; align-items: center; }
+  .record { display: flex; flex-direction: column; align-self: stretch; gap: 0.25rem; border: 1px solid var(--sl-color-gray-4); border-radius: 0.4rem; padding: 0.75rem; background: var(--sl-color-bg); }
+  .record > * { margin: 0; }
+  .record > p:last-child { font-size: 0.875rem; line-height: 1.45; }
+  .record:last-child { border: 2px solid var(--sl-color-text-accent); }
+  .version { font-size: 1.6rem; font-weight: 700; color: var(--sl-color-text-accent); }
+  .flow-arrow { font-size: 1.4rem; }
+  figcaption, .state-note { font-size: 0.875rem; line-height: 1.5; }
+  figcaption { margin-top: 0.75rem; }
+  .read-rule { border-inline-start: 3px solid var(--sl-color-text-accent); padding: 0.4rem 0.75rem; }
+  table { width: 100%; font-size: 0.8125rem; line-height: 1.5; margin-block: 0.75rem; }
+  caption { text-align: start; font-weight: 700; padding-bottom: 0.5rem; color: var(--sl-color-text); }
+  th, td { padding: 0.5rem; white-space: nowrap; }
+  .permission-note { border-inline-start: 3px solid var(--sl-color-text-accent); padding-inline-start: 0.75rem; }
+  @media (max-width: 36rem) {
+    .records { grid-template-columns: 1fr; gap: 0.25rem; }
+    .record { display: grid; grid-template-columns: 1fr auto; padding: 0.5rem 0.75rem; }
+    .record > p:last-child { grid-column: 1 / -1; }
+    .version { font-size: 1.25rem; }
+    .flow-arrow { justify-self: center; transform: rotate(90deg); line-height: 1; }
+  }
+</style>

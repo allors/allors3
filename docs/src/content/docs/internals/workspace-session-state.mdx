@@ -1,11 +1,19 @@
-# Workspace session state
+---
+title: "Workspace session state"
+description: "Editing baselines, merge, diff, reset and authorization freshness in the .NET and TypeScript workspaces."
+audience: "Maintainers"
+kind: "Explanation"
+status: "Current"
+---
+
+import WorkspaceSessionState from '../../../components/WorkspaceSessionState.astro';
 
 > **Status: Current.**
 
 This page maps the current editing baseline in the .NET and TypeScript workspaces. It records
-baseline and merge behavior ahead of the connection/session split; applications must not rely on this
+baseline and merge behaviour ahead of the connection/session split; applications must not rely on this
 internals page. The tests below are authoritative. The platform boundary is in
-[ARCHITECTURE.md](../../ARCHITECTURE.md); domain terminology is in [Domains](../domains.md).
+[ARCHITECTURE.md](../../../../../ARCHITECTURE.md); domain terminology is in [Domains](../domains.md).
 
 ## Ownership
 
@@ -19,13 +27,35 @@ internals page. The tests below are authoritative. The platform boundary is in
 The tests characterize an editing baseline per object with relation targets loaded. They do not
 establish snapshot consistency across an object graph.
 
+## Guided example
+
+Choose a prepared scenario, then move through its steps. The diagram follows one object,
+`c1A`, from committed database values through the shared connection to its accepted editing
+baseline. The table separates those records from local edits, session reads and diff originals.
+Going backwards or choosing another scenario only changes the view; the example makes no
+platform calls.
+
+The string, integer, to-one and to-many labels stand for `C1AllorsString`, `C1AllorsInteger`,
+`C1C1Many2One` and `C1C1Many2Manies` in the tests below. Relation targets `c1B`, `c1C` and `c1D`
+are already loaded; braces show membership, not order. Versions `v1`, `v2` and `v3` label
+successive records in the illustration, not literal platform version numbers.
+
+The first five scenarios follow the baseline characterization matrix. Reset after successful
+Push follows the existing reset tests. The permissions scenario illustrates the implementation's
+lookup through live connection maps, with a fixed grant ID and no revocation. Its scope is
+explained under [Push and permissions are separate](#push-and-permissions-are-separate).
+The example is a finite explanatory model; the platform tests remain authoritative. Unit merge
+equality is described [below](#unit-merge-equality), outside these prepared scenarios.
+
+<WorkspaceSessionState />
+
 ## Characterization matrix
 
 The tests use two sessions of one workspace/connection. A remote session changes and pushes an
 object, then pulls it to refresh the shared connection. The editing session has local changes
 to a string, a many-to-one role, and a many-to-many role. All relation targets are loaded.
 
-| Case | Observed behavior | Authoritative tests |
+| Case | Observed behaviour | Authoritative tests |
 | --- | --- | --- |
 | Only the remote session pulls | The editing session keeps its version, untouched integer value, local values, and all three diff originals. Its Push reports a version error (.NET returns a result; TypeScript throws `ResultError` with that result). Reset returns to the old baseline; a subsequent Pull accepts the remote record. | `DatabaseDiffRetainsBaselineWhenAnotherSessionRefreshes` / `databaseDiffRetainsBaselineWhenAnotherSessionRefreshes` |
 | Remote changes only the integer | Editing Pull accepts the newer version and integer while preserving all three local edits and their diff originals. A subsequent Push succeeds and preserves both sides' changes. | `DatabaseEditingBaselineAfterPull("disjoint")` / `databaseEditingBaselineAfterPull: disjoint` |
@@ -34,12 +64,12 @@ to a string, a many-to-one role, and a many-to-many role. All relation targets a
 The to-many conflict deliberately uses additions of different members. Merge compares the whole
 role against its baseline; it does not combine independent membership changes within that role.
 The representative relation cases do not establish every cardinality or inverse-association
-behavior.
+behaviour.
 
-Tests live in [the .NET MergeTests](../../dotnet/Core/Workspace/Tests/Tests/MergeTests.cs),
-[DiffTests](../../dotnet/Core/Workspace/Tests/Tests/DiffTests.cs),
-[TypeScript merge specs](../../typescript/modules/libs/system/workspace/adapters-json-tests/src/lib/runtime/merge.spec.ts),
-and [diff specs](../../typescript/modules/libs/system/workspace/adapters-json-tests/src/lib/runtime/diff.spec.ts).
+Tests live in [the .NET MergeTests](../../../../../dotnet/Core/Workspace/Tests/Tests/MergeTests.cs),
+[DiffTests](../../../../../dotnet/Core/Workspace/Tests/Tests/DiffTests.cs),
+[TypeScript merge specs](../../../../../typescript/modules/libs/system/workspace/adapters-json-tests/src/lib/runtime/merge.spec.ts),
+and [diff specs](../../../../../typescript/modules/libs/system/workspace/adapters-json-tests/src/lib/runtime/diff.spec.ts).
 The .NET cases run through Local, System.Text.Json HTTP, and Newtonsoft.Json HTTP; TypeScript
 uses HTTP.
 
@@ -79,16 +109,24 @@ but `DatabaseRecord.IsPermitted` / `isPermitted` resolves those IDs through live
 Refreshing those maps can affect permission checks on an object whose data baseline is older.
 The `RefreshesKnownGrantWhenAnObjectIsSynchronized` and
 `RefreshesKnownRevocationWhenAnObjectIsSynchronized` tests, and TypeScript
-[security specs](../../typescript/modules/libs/system/workspace/adapters-json-tests/src/lib/runtime/security.spec.ts),
-pin the existing synchronized-object refresh behavior. They do not guarantee permission
+[security specs](../../../../../typescript/modules/libs/system/workspace/adapters-json-tests/src/lib/runtime/security.spec.ts),
+pin the existing synchronized-object refresh behaviour. They do not guarantee permission
 freshness on a Pull that needs no Sync, or when the retained record's grant/revocation IDs change
 on the server. Data-baseline retention and authorization freshness require separate policies.
+
+The guided permissions example combines that refresh mechanism with the live-map lookup in
+[the .NET database record](../../../../../dotnet/System/Workspace/Adapters/Allors.Workspace.Adapters.Remote/Database/DatabaseRecord.cs)
+and [the TypeScript database record](../../../../../typescript/modules/libs/system/workspace/adapters-json/src/lib/database/database-record.ts).
+The [local .NET security tests](../../../../../dotnet/Core/Workspace/Tests.Local/Tests/SecurityTests.cs)
+and TypeScript specs verify synchronized-object refresh; they do not directly characterize the
+older editing record shown in the example. Its table displays held values independently of
+permission to expose them.
 
 ## Open decisions
 
 - Decide whether failed Push should keep returning an error result in .NET and throwing
   `ResultError` in TypeScript. The baseline tests now pin both surfaces; aligning them would be
-  an API behavior change for callers and needs separate approval.
+  an API behaviour change for callers and needs separate approval.
 - Decide whether to preserve the current baseline transitions in the connection/session split,
   including Reset after Push and whole-role conflict detection. The matrix is evidence for that
   decision, not approval to change semantics or to combine to-many membership edits.

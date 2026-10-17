@@ -1,4 +1,10 @@
-# Authentication
+---
+title: "Authentication"
+description: "How Core, an authentication plug-in and the application share a sign-in."
+audience: "Users"
+kind: "Explanation"
+status: "Current"
+---
 
 > **Status: Current.**
 

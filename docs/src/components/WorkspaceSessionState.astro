@@ -1,0 +1,75 @@
+---
+import { getFrames, scenarios } from '../examples/workspace-session-state';
+import WorkspaceStateFrame from './WorkspaceStateFrame.astro';
+const walkthroughs = scenarios.map((scenario) => ({ ...scenario, frames: getFrames(scenario) }));
+const first = walkthroughs[0]!;
+---
+
+<div class="workspace-example" data-workspace-example data-documentation-interactive>
+  <div data-documentation-export-ignore>
+    <p class="table-help">Wide tables scroll horizontally. With a table focused, use the arrow keys to read all columns.</p>
+    <div class="controls" data-controls hidden>
+      <div class="field">
+        <label for="workspace-scenario">Scenario</label>
+        <select id="workspace-scenario" data-scenario-select>
+          {walkthroughs.map(({ id, title }) => <option value={id}>{title}</option>)}
+        </select>
+      </div>
+      <div class="field">
+        <label for="workspace-step">Step</label>
+        <select id="workspace-step" data-step-select>
+          {first.frames.map(({ id, title }, i) => <option value={id}>{i + 1}. {title}</option>)}
+        </select>
+      </div>
+      <div class="step-buttons">
+        <button type="button" data-previous disabled>Previous step</button>
+        <button type="button" data-next>Next step</button>
+      </div>
+    </div>
+    <h3 data-scenario-title>{first.title}</h3>
+    <p class="scenario-summary" data-scenario-summary>{first.summary}</p>
+    <p class="progress" role="status" aria-live="polite" aria-atomic="true" data-step-status></p>
+    <div class="live-frame" data-live-frame>
+      <WorkspaceStateFrame frame={first.frames[0]!} scenarioId={first.id} stepNumber={1} />
+    </div>
+  </div>
+
+  <details class="transcript" data-scenario-transcript>
+    <summary>Read every scenario and value</summary>
+    <p>These are the same steps and values shown by the controls. They are available without JavaScript and in the Markdown export. Choose a scenario below to read its complete sequence.</p>
+    {walkthroughs.map((scenario) => <details data-scenario-source={scenario.id}>
+      <summary><h3>{scenario.title}</h3></summary>
+      <p data-summary>{scenario.summary}</p>
+      {scenario.frames.map((frame, i) => <WorkspaceStateFrame frame={frame} scenarioId={scenario.id} stepNumber={i + 1} />)}
+    </details>)}
+  </details>
+</div>
+
+<script>
+  import { initialiseWorkspaceExamples } from './workspace-session-state-controls';
+  initialiseWorkspaceExamples();
+</script>
+
+<style>
+  .workspace-example { border: 1px solid var(--sl-color-gray-4); border-radius: 0.5rem; padding: 1.25rem; margin-block: 1.5rem; }
+  .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .controls[hidden] { display: none; }
+  .field { min-width: 0; }
+  label { display: block; margin: 0 0 0.35rem; font-weight: 700; }
+  select, button { font: inherit; color: var(--sl-color-text); background: var(--sl-color-bg); border: 1px solid var(--sl-color-gray-3); border-radius: 0.3rem; padding: 0.55rem 0.65rem; min-height: 2.75rem; }
+  select { width: 100%; text-overflow: ellipsis; }
+  button { cursor: pointer; }
+  button:disabled { cursor: default; opacity: 0.55; }
+  select:focus-visible, button:focus-visible { outline: 2px solid var(--sl-color-text-accent); outline-offset: 3px; }
+  .step-buttons { display: flex; flex-wrap: wrap; gap: 0.75rem; grid-column: 1 / -1; margin: 0; }
+  .step-buttons button { margin: 0; }
+  .progress { font-size: 0.875rem; font-weight: 700; color: var(--sl-color-text-accent); }
+  .table-help { font-size: 0.875rem; margin-top: 0; }
+  .live-frame { margin-block: 1rem; }
+  .transcript { margin-top: 1.25rem; border-top: 1px solid var(--sl-color-gray-4); padding-top: 1rem; }
+  .transcript :global([data-frame]) { border-top: 1px solid var(--sl-color-gray-4); margin-top: 1.5rem; padding-top: 1.25rem; }
+  @media (max-width: 36rem) {
+    .workspace-example { padding: 0.75rem; }
+    .controls { grid-template-columns: minmax(0, 1fr); }
+  }
+</style>
