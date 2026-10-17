@@ -257,3 +257,11 @@ test('all scenario explanations and snapshots survive without JavaScript and in 
     await context.close();
   }
 });
+
+test('the Markdown export carries the explanation but no interface hints', async ({ request }) => {
+  const response = await request.get('internals/workspace-session-state.md');
+  expect(response.ok(), 'The Markdown export must be published with the page').toBe(true);
+  const markdown = await response.text();
+  expect(markdown).toContain('Read every scenario and value');
+  expect(markdown, 'Keyboard hints describe the website, not the export').not.toContain('arrow keys');
+});
