@@ -19,8 +19,9 @@ Changes accumulate under **[Unreleased]** until a version is released.
 
 - An Astro and Starlight documentation website in `docs/`, with separate user and maintainer
   navigation, search, browser-rendered Mermaid diagrams and an explicit unreleased v3.2 label.
-  Markdown exports and `llms.txt` share the pages' metadata and explanations. A separate
-  GitHub Actions workflow validates links, exports and browser behaviour at root and project
+  Markdown exports and `llms.txt` share the pages' metadata and explanations. The build checks
+  heading anchors of repository links against the checkout. A separate GitHub Actions
+  workflow validates links, exports and browser behaviour at root and project
   deployment paths; publishing requires a manual run from `main`.
 
 - A human writing guide and terminology reference: Oxford English, Diátaxis, stable names and

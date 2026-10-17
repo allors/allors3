@@ -44,7 +44,8 @@ second-level headings. Update navigation in `astro.config.mjs` when adding a pag
 
 Use relative Markdown links between source pages so they remain useful in the checkout.
 The build converts them to website URLs. Repository links outside the documentation are
-converted to GitHub links. Check headings and anchors after changing a title or moving a page.
+converted to GitHub links, and the build checks their heading anchors against the checkout.
+Check headings and anchors after changing a title or moving a page.
 
 Use Mermaid code fences for diagrams where the notation fits. Diagrams render in the browser;
 a successful site build alone does not validate their rendering. Keep the explanation of

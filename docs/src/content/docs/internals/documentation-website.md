@@ -77,7 +77,8 @@ The website uses Astro 7 and Starlight 0.42, with exact dependencies recorded in
 `docs/package-lock.json`. Page metadata supplies the title, description, audience, kind and
 status. The website and exports identify the documented version as `main`, intended for an
 unreleased v3.2. Source links remain relative Markdown links; the build converts documentation
-links to site routes and repository links to the documented GitHub branch.
+links to site routes and repository links to the documented GitHub branch, and checks the
+heading anchors of repository links against the checkout.
 
 Starlight provides navigation and Pagefind search. `astro-mermaid` renders fenced Mermaid
 source in the browser. The domain-arrangement diagram demonstrates that rendering.
