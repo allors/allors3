@@ -36,10 +36,54 @@ env:
   HEADLESS: 'true'
 
 jobs:
+  # Documentation-only changes skip the platform suites below. GitHub reports a job skipped by
+  # its `if` as successful, so the required status checks of the main ruleset still pass; a
+  # path filter on the workflow itself would leave them pending.
+  changes:
+    name: Detect documentation-only changes
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      # The suite jobs generate the nl-BE locale that the workflow env selects; this job does not.
+      LANG: C.UTF-8
+      LC_ALL: C.UTF-8
+    outputs:
+      platform: ${{ steps.paths.outputs.platform }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          submodules: false
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Compare the changed paths with the documentation paths
+        id: paths
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+          HEAD_SHA: ${{ github.sha }}
+        run: |
+          platform=true
+          if [ "$EVENT_NAME" = "pull_request" ] || [ "$EVENT_NAME" = "push" ]; then
+            if git cat-file -e "$BASE_SHA^{commit}" 2>/dev/null; then
+              changed=$(git diff --name-only "$BASE_SHA" "$HEAD_SHA")
+              printf '%s\n' "$changed"
+              if [ -n "$changed" ] && ! printf '%s\n' "$changed" | grep -v -E '^(docs/|\.github/workflows/documentation\.yml$|(AGENTS|ARCHITECTURE|CHANGELOG|README)\.md$)' | grep -q .; then
+                platform=false
+              fi
+            else
+              echo "Base commit '$BASE_SHA' is not available; running the platform suites."
+            fi
+          fi
+          echo "platform=$platform" >> "$GITHUB_OUTPUT"
+          echo "Run the platform suites: $platform"
+
   # Suites without a database: Allors.Shared, the in-memory adapter and the Diamond tree, no provider.
   memory:
     name: ${{ matrix.target }}
     runs-on: ubuntu-latest
+    needs: changes
+    if: ${{ !cancelled() && needs.changes.outputs.platform != 'false' }}
     timeout-minutes: 60
     strategy:
       fail-fast: false
@@ -88,6 +132,8 @@ jobs:
   npgsql:
     name: ${{ matrix.target }} (npgsql)
     runs-on: ubuntu-latest
+    needs: changes
+    if: ${{ !cancelled() && needs.changes.outputs.platform != 'false' }}
     timeout-minutes: 240
     services:
       postgres:
@@ -158,6 +204,8 @@ jobs:
   sqlclient:
     name: ${{ matrix.target }} (sqlclient)
     runs-on: ubuntu-latest
+    needs: changes
+    if: ${{ !cancelled() && needs.changes.outputs.platform != 'false' }}
     timeout-minutes: 240
     services:
       sqlserver:
