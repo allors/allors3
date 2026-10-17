@@ -19,7 +19,7 @@ humans. Agents use the same technical content, following the instructions in `AG
 
 ## For users
 
-The pages in this folder are written for users. Maintainers read them too.
+The following pages are written for users. Maintainers read them too.
 
 | Page | Kind | Status | Content |
 | --- | --- | --- | --- |

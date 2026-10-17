@@ -108,6 +108,9 @@
   interface text, commit messages and pull request descriptions where affected. Verify links
   and relevant examples or interactive behaviour. Editorial review is required; no prose
   linter is part of the initial tooling.
+- The website in `docs/` has its own checks. Run them from `docs/` before completing
+  documentation work, as [docs/README.md](docs/README.md) describes: `npm test`, `npm run check`,
+  `npm run build`, `npm run check:links` and `npm run test:browser`.
 
 ## Testing — where test code may live (important)
 
@@ -122,11 +125,12 @@
   routes, or test-only config to the production library itself.
 - The platform test domains are `Level1`, `Level2` and the test plug-in `Plugin1` in the Diamond
   tree, `dotnet/Diamond`. They exist to prove the platform across domain levels and carry no
-  production behavior.
+  production behaviour.
 - The Base and Apps tests retired with their domains. Platform coverage that only they provided,
-  including behavior across inherited domain levels, is still to be restored in the platform
+  including behaviour across inherited domain levels, is still to be restored in the platform
   test domains and, once they exist, in test applications, where it remains relevant.
 
 ## Build Commands
 
-Build uses Nuke. 
+Build uses Nuke. The documentation website in `docs/` builds with npm;
+[docs/README.md](docs/README.md) lists its commands.

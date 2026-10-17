@@ -6,9 +6,9 @@ kind: "Decision record"
 status: "Planned"
 ---
 
-> **Status: Planned.** At the review on 2026-10-17, the website, exports and guided example
-> were implemented and locally validated. The changes had not yet landed or been published.
-> The implementation history and validation results are recorded below.
+> **Status: Planned.** The website, its Markdown exports and the guided example are built, and
+> the checks that the documentation workflow runs pass for both deployment paths. Publication
+> to GitHub Pages has not been run and the repository's Pages settings are unchanged.
 
 This record describes the documentation website and its first interactive explanation. The
 [writing guide](writing-documentation.md) owns the editorial rules and
@@ -55,9 +55,9 @@ its changes and validation, followed by explicit approval before starting the ne
 
 | Subtask | Scope | Validation | State |
 | --- | --- | --- | --- |
-| 1. Editorial foundation | Writing guide, terminology reference, human and agent entry points, this decision record and changelog. | Check local links and anchors, page inventory and status, terminology and the diff; obtain an independent editorial review. | Complete; validation below. |
-| 2. Website and exports | Move the human pages into the Starlight project; update links and instructions; add navigation, search, browser diagram rendering, Markdown exports and `llms.txt`; prepare GitHub Pages build and deployment configuration. | Build the site; check links and search; inspect rendering and accessibility at desktop and narrow widths; verify exports and deployment base paths. | Complete; validation below. |
-| 3. Guided visual example | Extend the workspace session state explanation with appropriate diagrams and prepared interactive scenarios, using ordinary TypeScript. | Test the scenario model against the documented platform cases; verify controls, state changes, keyboard use and the exported explanation. | Complete; approved and validated on 2026-10-17. |
+| 1. Editorial foundation | Writing guide, terminology reference, human and agent entry points, this decision record and changelog. | Check local links and anchors, page inventory and status, terminology and the diff; obtain an independent editorial review. | Complete. |
+| 2. Website and exports | Move the human pages into the Starlight project; update links and instructions; add navigation, search, browser diagram rendering, Markdown exports and `llms.txt`; prepare GitHub Pages build and deployment configuration. | Build the site; check links and search; inspect rendering and accessibility at desktop and narrow widths; verify exports and deployment base paths. | Complete. |
+| 3. Guided visual example | Extend the workspace session state explanation with appropriate diagrams and prepared interactive scenarios, using ordinary TypeScript. | Test the scenario model against the documented platform cases; verify controls, state changes, keyboard use and the exported explanation. | Complete. |
 
 The website work moves the existing pages and preserves their meaning before broad editorial
 rewrites. Update incoming links or provide redirects where paths change. Do not add empty
@@ -125,70 +125,17 @@ implementation illustration: a retained grant ID resolves through a live connect
 It does not claim that the security tests characterize an older editing record, or that Pull
 without Sync and changes to grant/revocation IDs provide general permission freshness.
 
-## Implementation history
+## Validation
 
-The following records the implementation and local validation completed on 2026-10-16 and
-2026-10-17. These results describe those checks, not the state of a later checkout or deployment.
+The documentation workflow runs the same checks for the `/allors3/` and `/` deployment paths:
+the tooling and scenario-model tests, the Astro and TypeScript check, the production build with
+its exports, the link check over the published HTML, Markdown and `llms.txt`, and the browser
+tests. The browser tests cover keyboard navigation and search, Mermaid rendering in both
+themes, the guided example's controls, static transcript and export, and axe WCAG 2 A/AA checks
+at desktop and narrow widths. The [website instructions](../../../../README.md) say how to run
+the same checks locally.
 
-- Work began on `docs/documentation-website` from commit
-  `d034e53d70f0045e862bd388a283f7029db4b59c`.
-- Subtask 1 established the writing guide, terminology reference, documentation index and
-  this decision record, with corresponding agent instructions, README links and changelog
-  entries. Subtask 2 preserved that material while moving human pages into
-  `docs/src/content/docs/` and replacing `docs/README.md` with website instructions.
-- Subtask 2 placed ten human pages in the website project, with frontmatter and updated
-  incoming links. It added navigation, search, Mermaid rendering, exports and the manual
-  Pages workflow. The domain diagram retained its original relationships.
-- Subtask 3 followed explicit approval on 2026-10-17. It converted the session state page to
-  `docs/src/content/docs/internals/workspace-session-state.mdx`, updated incoming source links
-  and retained its published route/export. It added the model under
-  `docs/src/examples/`, `WorkspaceSessionState.astro`, `WorkspaceStateFrame.astro` and
-  `workspace-session-state-controls.ts` under `docs/src/components/`, plus
-  `docs/tests/workspace-session-state.test.mjs` and
-  `docs/tests/browser/workspace-session-state.spec.ts`. The index, website instructions,
-  writing-guide references, changelog and this record were updated to describe the example.
-- Subtask 1 validation on 2026-10-16: 71 local links across 14 Markdown files passed; all 10
-  documentation pages were indexed and had status lines. Independent editorial review and
-  `git diff --check` passed. `./build.sh DotnetSystemSharedTest` built successfully and passed
-  all 56 tests, with none skipped. The full platform suite was not run.
-- Subtask 2 validation on 2026-10-17: all 19 tooling tests passed; Astro and TypeScript checks
-  reported no errors, warnings or hints. Builds and export generation passed at `/allors3/`
-  and `/`. Each build passed 513 local-link checks across 22 published files. The 12 browser
-  tests passed at both bases, with desktop 1440 × 1000 and narrow 390 × 844 viewports: keyboard
-  navigation and search, Mermaid rendering and theme changes, readable diagram labels,
-  keyboard scrolling, page width and axe WCAG 2 A/AA checks. Screenshots were also reviewed.
-- Export review covered the domains page (Mermaid, table and C#), workspace session state
-  (baseline matrix and behavioural distinctions) and the planned decision record. Titles,
-  audience, kind, status, version, source, heading anchors and explanations were retained.
-  Unit fixtures cover static custom-component explanations and rejection of empty placeholders;
-  the actual workspace interaction was covered by the subtask 3 checks below.
-- Subtask 2 editorial review closed with no outstanding findings. Source checks passed for
-  78 local links and 19 heading anchors across 15 Markdown files. Workflow YAML, `actionlint`
-  and `git diff --check` passed. No platform code changed; its tests were not rerun for this
-  website migration.
-- Subtask 3 validation on 2026-10-17: the nine new scenario-model tests were first run against
-  the absent implementation and failed as expected, then passed. All 28 tooling/model tests
-  passed. Astro and TypeScript checks reported no errors, warnings or hints. Production builds
-  and exports passed at `/allors3/` and `/`, with 524 local-link checks across 22 published files.
-  All 18 browser tests passed at both bases, including the 12 existing tests, unchanged.
-  The new checks visited all 45 steps at both viewports, exercised keyboard scenario selection,
-  forward/backward navigation, direct step selection, live announcements and table scrolling,
-  and compared concrete values, versions and error outcomes.
-- Subtask 3 accessibility/export review: desktop 1440 × 1000 and narrow 390 × 844 screenshots
-  were reviewed, including light/dark diagrams and narrow controls. Axe WCAG 2 A/AA checks
-  passed. With JavaScript disabled, every scenario and snapshot remained readable. Export
-  checks compared all 45 step explanations and value tables with the rendered transcript;
-  version labels, scenario headings and the runtime-specific error explanation were retained.
-  Independent semantic and editorial review closed with no outstanding findings. No platform
-  code, existing tests or dependencies changed in this subtask; platform suites were not rerun.
-- Build notices recorded on 2026-10-17: Mermaid included chunks larger than 500 kB; Starlight
-  reported its absent optional i18n collection and custom 404 entry while generating the default 404.
-  The forced cache clear was intentional. The dependency audit reported 10 moderate and 2 low
-  package entries, from Expressive Code's selector-parser chain and Mermaid's KaTeX dependency;
-  it reported no high or critical entries. No automatic downgrade or major dependency override
-  was applied. The lockfile recorded the versions used.
-- The complete-change review on 2026-10-17 found no blocking correctness issues. It identified
-  one editorial cleanup: replace temporary handoff statements with dated implementation
-  history. That review reran all 28 tooling/model tests, all 18 browser tests at `/allors3/`,
-  the production build, type checks, 524 link checks, `actionlint` and `git diff --check`;
-  all passed. Actual GitHub deployment was not tested.
+Automated checks do not establish that an explanation is accurate or clear. The writing guide
+requires editorial review of changed pages and of representative exports, and the guided
+example's model tests check the cited platform cases without replacing the platform tests.
+Deployment to GitHub Pages is exercised only by a publication run.
