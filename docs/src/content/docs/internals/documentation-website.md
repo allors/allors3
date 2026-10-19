@@ -1,14 +1,15 @@
 ---
 title: "Documentation website"
-description: "Agreed documentation website design, implementation subtasks and validation."
+description: "Agreed documentation website design, implementation subtasks, validation and publication."
 audience: "Maintainers"
 kind: "Decision record"
-status: "Planned"
+status: "Current"
 ---
 
-> **Status: Planned.** The website, its Markdown exports and the guided example are built, and
-> the checks that the documentation workflow runs pass for both deployment paths. Publication
-> to GitHub Pages has not been run and the repository's Pages settings are unchanged.
+> **Status: Current.** The website, its Markdown exports and the guided example are built, the
+> checks that the documentation workflow runs pass for both deployment paths, and the website is
+> published at `https://docs.allors.com/allors3/`, beneath the Allors documentation home, from
+> the repository's Pages source **GitHub Actions**.
 
 This record describes the documentation website and its first interactive explanation. The
 [writing guide](writing-documentation.md) owns the editorial rules and
@@ -23,7 +24,7 @@ validation and publication.
 | Readers | Human documentation serves application developers and platform maintainers. Agent instructions and discovery have separate entry points and reuse the human technical content. |
 | Site | Astro with Starlight. `docs/` is the website project, with the conventional content location `docs/src/content/docs/`. User and maintainer content have separate navigation groups. |
 | Authoring | Markdown by default; MDX where a page needs a component. Keep component implementation separate from page prose. |
-| Hosting | GitHub Pages, built with GitHub Actions. |
+| Hosting | GitHub Pages, built with GitHub Actions, at the path `/allors3/` beneath the shared origin `https://docs.allors.com`, whose root is the Allors documentation home; `/` is also validated. The origin's own site and its custom domain belong to the documentation home, not to this repository. |
 | Visuals | Any diagram or other visual that helps explain the subject. Mermaid where suitable; editable drawing sources and SVG for other diagrams. |
 | Rendering | Render Mermaid diagrams in the browser. Verify diagrams in the browser as well as checking the site build. |
 | Interaction | Astro with ordinary JavaScript or TypeScript first. Add a UI framework only when a concrete interaction justifies it; no UI framework is selected for the initial implementation. |
@@ -100,9 +101,11 @@ drawings with no useful textual equivalent. The website instructions describe th
 contract. Representative exports must still receive editorial review.
 
 The documentation workflow validates both `/allors3/` and `/`. Normal push and pull request
-runs do not publish. Publication is prepared as a manual workflow on `main` with `publish`
-selected, after both validation jobs pass. Repository Pages settings are not changed by this
-work.
+runs do not publish. Publication is a manual workflow run on `main` with `publish` selected,
+after both validation jobs pass; it deploys the `/allors3/` build to the repository's GitHub
+Pages site, which the custom domain of the organisation site `allors/allors.github.io` serves
+at `https://docs.allors.com/allors3/`. The sidebar's first entry links to the documentation
+home at the root of that origin, and the link checker leaves that link to the home's own build.
 
 ## Guided example implementation
 
