@@ -47,7 +47,8 @@ namespace Allors.Protocol.Json.SystemTextJson
                         UnitTags.Unique => XmlConvert.ToGuid(@string),
                         _ => throw new Exception($"{@string} not supported for tag {tag}")
                     };
-                // These values pass through ToJson unchanged on an in-process call.
+                // ToJson leaves these CLR values unchanged, so a caller that converts without
+                // serializing gets them back as they are; UnitConversionWithoutSerialization pins this.
                 case DateTime dateTime:
                     return dateTime;
                 case bool @bool:
