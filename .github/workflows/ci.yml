@@ -36,9 +36,10 @@ env:
   HEADLESS: 'true'
 
 jobs:
-  # Documentation-only changes skip the platform suites below. GitHub reports a job skipped by
-  # its `if` as successful, so the required status checks of the main ruleset still pass; a
-  # path filter on the workflow itself would leave them pending.
+  # Documentation-only changes skip the platform suites below. The `result` job at the end always
+  # runs and is the one status check that the main ruleset requires: a matrix job skipped by its
+  # `if` reports a single check under its unrendered name, so the suites themselves cannot be
+  # required, and a path filter on the workflow itself would leave every check pending.
   changes:
     name: Detect documentation-only changes
     runs-on: ubuntu-latest
@@ -278,3 +279,45 @@ jobs:
           path: artifacts/Tests/*.trx
           reporter: dotnet-trx
           fail-on-error: false
+
+  # The one required status check: the suites passed, or all were skipped for a documentation-only change.
+  result:
+    name: CI result
+    runs-on: ubuntu-latest
+    needs: [changes, memory, npgsql, sqlclient]
+    if: ${{ always() }}
+    timeout-minutes: 5
+    env:
+      # The suite jobs generate the nl-BE locale that the workflow env selects; this job does not.
+      LANG: C.UTF-8
+      LC_ALL: C.UTF-8
+    steps:
+      - name: Require the platform suites to have passed or to have been skipped for a documentation-only change
+        env:
+          CHANGES: ${{ needs.changes.result }}
+          PLATFORM: ${{ needs.changes.outputs.platform }}
+          MEMORY: ${{ needs.memory.result }}
+          NPGSQL: ${{ needs.npgsql.result }}
+          SQLCLIENT: ${{ needs.sqlclient.result }}
+        run: |
+          echo "changes=$CHANGES platform=$PLATFORM memory=$MEMORY npgsql=$NPGSQL sqlclient=$SQLCLIENT"
+          if [ "$CHANGES" != "success" ]; then
+            echo "The change detection did not succeed; every suite must have passed."
+            PLATFORM=true
+          fi
+          for suite in "$MEMORY" "$NPGSQL" "$SQLCLIENT"; do
+            case "$suite" in
+              success) ;;
+              skipped)
+                if [ "$PLATFORM" != "false" ]; then
+                  echo "A platform suite was skipped although the platform changed."
+                  exit 1
+                fi
+                ;;
+              *)
+                echo "A platform suite ended as '$suite'."
+                exit 1
+                ;;
+            esac
+          done
+          echo "The platform suites passed, or were all skipped for a documentation-only change."
