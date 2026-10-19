@@ -5,8 +5,11 @@
 
 namespace Tests.Workspace
 {
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using Allors;
+    using Allors.Workspace;
     using Allors.Workspace.Data;
     using Allors.Workspace.Domain;
     using Xunit;
@@ -21,6 +24,89 @@ namespace Tests.Workspace
         {
             await base.InitializeAsync();
             await this.Login("administrator");
+        }
+
+        [Fact]
+        public async Task RefreshesKnownGrantWhenAnObjectIsSynchronized()
+        {
+            var session = this.Workspace.CreateSession();
+            var result = await session.PullAsync(new Pull { Extent = new Filter(this.M.C1) });
+            var c1 = result.GetCollection<C1>().First();
+            Assert.True(c1.CanReadC1AllorsString);
+
+            var change = await session.CallAsync(new Procedure("TestPermissionRefresh")
+            {
+                Objects = new Dictionary<string, IObject> { ["target"] = c1 },
+                Values = new Dictionary<string, string> { ["action"] = "removeGrantRead" },
+            });
+            Assert.False(change.HasErrors);
+
+            result = await session.PullAsync(new Pull { Object = c1 });
+            Assert.False(result.HasErrors);
+            Assert.False(c1.CanReadC1AllorsString);
+        }
+
+        [Fact]
+        public async Task RefreshesKnownRevocationWhenAnObjectIsSynchronized()
+        {
+            var session = this.Workspace.CreateSession();
+            var result = await session.PullAsync(new Pull { Extent = new Filter(this.M.Denied) });
+            var denied = Assert.Single(result.GetCollection<Denied>());
+            Assert.True(denied.CanReadDefaultWorkspaceProperty);
+            Assert.False(denied.CanWriteDefaultWorkspaceProperty);
+
+            foreach (var denyRead in new[] { true, false })
+            {
+                var change = await session.CallAsync(new Procedure("TestPermissionRefresh")
+                {
+                    Objects = new Dictionary<string, IObject> { ["target"] = denied },
+                    Values = new Dictionary<string, string>
+                    {
+                        ["action"] = denyRead ? "addReadRevocation" : "removeReadRevocation",
+                    },
+                });
+                Assert.False(change.HasErrors);
+
+                result = await session.PullAsync(new Pull { Object = denied });
+                Assert.False(result.HasErrors);
+                Assert.Equal(!denyRead, denied.CanReadDefaultWorkspaceProperty);
+                Assert.False(denied.CanWriteDefaultWorkspaceProperty);
+            }
+        }
+
+        [Fact]
+        public async Task RejectedExistingObjectPushReturnsAccessErrorAndRollsBack()
+        {
+            var session = this.Workspace.CreateSession();
+            var result = await session.PullAsync(new Pull { Extent = new Filter(this.M.C1) });
+            var c1 = result.GetCollection<C1>().First();
+            var originalInteger = c1.C1AllorsInteger;
+            var originalString = c1.C1AllorsString;
+            Assert.True(c1.CanWriteC1AllorsString);
+            c1.C1AllorsInteger = 2345;
+            c1.C1AllorsString = "Rejected edit";
+
+            var administration = this.Profile.CreateExclusiveWorkspace().CreateSession();
+            var change = await administration.CallAsync(new Procedure("TestPermissionRefresh")
+            {
+                Objects = new Dictionary<string, IObject> { ["target"] = c1 },
+                Values = new Dictionary<string, string> { ["action"] = "removeGrantWrite" },
+            });
+            Assert.False(change.HasErrors);
+
+            var pushResult = await session.PushAsync();
+            Assert.True(pushResult.HasErrors);
+            Assert.Same(c1, Assert.Single(pushResult.AccessErrors));
+            Assert.Empty(pushResult.VersionErrors);
+            Assert.Equal(2345, c1.C1AllorsInteger);
+            Assert.Equal("Rejected edit", c1.C1AllorsString);
+
+            var verification = this.Profile.CreateExclusiveWorkspace().CreateSession();
+            var stored = await verification.PullAsync(new Pull { ObjectId = c1.Id });
+            Assert.False(stored.HasErrors);
+            var storedC1 = stored.GetObject<C1>();
+            Assert.Equal(originalInteger, storedC1.C1AllorsInteger);
+            Assert.Equal(originalString, storedC1.C1AllorsString);
         }
 
         [Fact]

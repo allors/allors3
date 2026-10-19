@@ -3,7 +3,7 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation.DatabaseRole.Local
+namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation.DatabaseRole.Remote
 {
     using Workspace.Remote;
     using Xunit;

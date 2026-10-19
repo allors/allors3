@@ -41,6 +41,30 @@ namespace Allors.Database.Domain
                     c1.C1AllorsString = "Changed after the read permission was removed";
                     break;
 
+                case "removeGrantWrite":
+                    if (target is not C1 writableC1)
+                    {
+                        throw new ArgumentException("removeGrantWrite requires a C1 object in 'target'.");
+                    }
+
+                    var writePermissionId = writableC1.Strategy.Class.WritePermissionIdByRelationTypeId[writableC1.Meta.C1AllorsString.RelationType.Id];
+                    var writePermission = (Permission)context.Transaction.Instantiate(writePermissionId);
+                    var writeGrants = context.AccessControl[writableC1].Grants
+                        .Select(grant => (Grant)context.Transaction.Instantiate(grant.Id))
+                        .ToArray();
+                    if (!writeGrants.Any(grant => grant.EffectivePermissions.Contains(writePermission)))
+                    {
+                        throw new InvalidOperationException("The target C1 must have a grant for writing C1AllorsString before removing it.");
+                    }
+
+                    foreach (var grant in writeGrants)
+                    {
+                        grant.Role.RemovePermission(writePermission);
+                    }
+
+                    // Keep the object's version unchanged so a later Push tests access denial.
+                    break;
+
                 case "addReadRevocation":
                 case "removeReadRevocation":
                     if (target is not Denied denied)
@@ -65,7 +89,7 @@ namespace Allors.Database.Domain
                     break;
 
                 default:
-                    throw new ArgumentException($"Unknown permission refresh action '{action}'. Use removeGrantRead, addReadRevocation, or removeReadRevocation.");
+                    throw new ArgumentException($"Unknown permission refresh action '{action}'. Use removeGrantRead, removeGrantWrite, addReadRevocation, or removeReadRevocation.");
             }
 
             var validation = context.Transaction.Derive();

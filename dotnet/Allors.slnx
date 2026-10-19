@@ -24,7 +24,6 @@
     <Project Path="Core/Workspace/Domain/Workspace.Domain.csproj" />
     <Project Path="Core/Workspace/Meta.Lazy/Workspace.Meta.Lazy.csproj" />
     <Project Path="Core/Workspace/Meta/Workspace.Meta.csproj" />
-    <Project Path="Core/Workspace/Tests.Local/Workspace.Tests.Local.csproj" />
     <Project Path="Core/Workspace/Tests.Remote.Json.Newtonsoft/Workspace.Tests.Remote.Json.Newtonsoft.csproj" />
     <Project Path="Core/Workspace/Tests.Remote.Json.SystemText/Workspace.Tests.Remote.Json.SystemText.csproj" />
     <Project Path="Core/Workspace/Tests/Workspace.Tests.csproj" />
@@ -121,7 +120,6 @@
     <Project Path="System/Workspace/Allors.Workspace.Protocol.Json/Allors.Workspace.Protocol.Json.csproj" />
   </Folder>
   <Folder Name="/System/Workspace/Adapters/">
-    <Project Path="System/Workspace/Adapters/Allors.Workspace.Adapters.Local/Allors.Workspace.Adapters.Local.csproj" />
     <Project Path="System/Workspace/Adapters/Allors.Workspace.Adapters.Remote.Newtonsoft/Allors.Workspace.Adapters.Remote.Newtonsoft.csproj" />
     <Project Path="System/Workspace/Adapters/Allors.Workspace.Adapters.Remote.SystemText/Allors.Workspace.Adapters.Remote.SystemText.csproj" />
     <Project Path="System/Workspace/Adapters/Allors.Workspace.Adapters.Remote/Allors.Workspace.Adapters.Remote.csproj" />
