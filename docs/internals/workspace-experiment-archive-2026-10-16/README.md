@@ -54,5 +54,5 @@ binaries, installed dependencies and ignored generated outputs are not added to 
 regenerate outputs through the normal build when working from this snapshot.
 
 No runtime or test behavior changes are made solely for archiving. Recover this experiment from
-`chore/archive-workspace-pull-refresh`; use `main` as the starting point for the separate replacement
+`archive/workspace-protected-reads`; use `main` as the starting point for the separate replacement
 PR. Do not merge the archive as the Local-removal change.
