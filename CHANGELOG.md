@@ -22,7 +22,9 @@ Changes accumulate under **[Unreleased]** until a version is released.
   Markdown exports and `llms.txt` share the pages' metadata and explanations. The build checks
   heading anchors of repository links against the checkout. A separate GitHub Actions
   workflow validates links, exports and browser behaviour at root and project
-  deployment paths; publishing requires a manual run from `main`.
+  deployment paths; publishing requires a manual run from `main`. The website is published
+  at `https://docs.allors.com/allors3/`, beneath the Allors documentation home, and its
+  sidebar links back to that home.
 
 - A human writing guide and terminology reference: Oxford English, Diátaxis, stable names and
   visual explanations chosen for the subject. Agent instructions require applying the same
