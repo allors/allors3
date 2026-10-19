@@ -146,8 +146,10 @@ Changes accumulate under **[Unreleased]** until a version is released.
 ### Changed
 
 - The platform CI workflow skips its test suites for changes limited to `docs/`, the
-  documentation workflow and the root Markdown files. The skipped jobs still report the
-  status checks that `main` requires.
+  documentation workflow and the root Markdown files. One job, `CI result`, reports the status
+  check that `main` requires: it passes when every suite passed or when all of them were skipped
+  for such a change, and fails otherwise. A skipped suite reports no check of its own, so the
+  suites themselves cannot be required.
 
 - The .NET local workspace adapter calls the extracted JSON `Api` in process and reuses
   the JSON workspace/session implementation. Requests use one database transaction each,
