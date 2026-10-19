@@ -1,5 +1,8 @@
 # Allors3
 
+> **Archived spike.** This branch is a frozen learning experiment and is not meant to be merged.
+> [ARCHIVE.md](ARCHIVE.md) says what it tried, what reached `main` and where to read more.
+
 [![CI](https://github.com/allors/allors3/actions/workflows/ci.yml/badge.svg)](https://github.com/allors/allors3/actions/workflows/ci.yml)
 
 Allors3 is an actively developed platform for applications built with **domain inheritance**.
