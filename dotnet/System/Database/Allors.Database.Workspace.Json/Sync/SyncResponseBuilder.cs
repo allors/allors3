@@ -23,8 +23,6 @@ namespace Allors.Database.Protocol.Json
         private readonly IDictionary<IClass, ISet<IRoleType>> roleTypesByClass;
         private readonly IDictionary<IClass, PrefetchPolicy> prefetchPolicyByClass;
 
-        private readonly HashSet<IObject> maskedObjects;
-
         public SyncResponseBuilder(ITransaction transaction,
             IAccessControl accessControl,
             ISet<IClass> allowedClasses,
@@ -39,7 +37,6 @@ namespace Allors.Database.Protocol.Json
             this.prefetchPolicyByClass = prefetchPolicyByClass;
             this.unitConvert = unitConvert;
             this.ranges = ranges;
-            this.maskedObjects = new HashSet<IObject>();
 
             this.AccessControl = accessControl;
         }
@@ -109,20 +106,6 @@ namespace Allors.Database.Protocol.Json
             return syncResponseRole;
         }
 
-        public bool Include(IObject @object)
-        {
-            if (@object == null || this.allowedClasses?.Contains(@object.Strategy.Class) != true || this.maskedObjects.Contains(@object))
-            {
-                return false;
-            }
-
-            if (this.AccessControl[@object].IsMasked())
-            {
-                this.maskedObjects.Add(@object);
-                return false;
-            }
-
-            return true;
-        }
+        public bool Include(IObject @object) => @object != null && this.allowedClasses?.Contains(@object.Strategy.Class) == true;
     }
 }

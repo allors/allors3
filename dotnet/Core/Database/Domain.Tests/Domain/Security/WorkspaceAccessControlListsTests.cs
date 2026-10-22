@@ -30,7 +30,7 @@ namespace Allors.Database.Domain.Tests
 
             var organisation = new OrganisationBuilder(this.Transaction).WithName("Organisation").Build();
 
-            var aclService = new WorkspaceAclsService(this.Security, new WorkspaceMask(this.M), person);
+            var aclService = new WorkspaceAclsService(this.Security, person);
             var acl = aclService.Create(this.workspaceName)[organisation];
 
             Assert.False(acl.CanRead(this.M.Organisation.Name));
@@ -52,7 +52,7 @@ namespace Allors.Database.Domain.Tests
 
             var organisation = new OrganisationBuilder(this.Transaction).WithName("Organisation").Build();
 
-            var aclService = new WorkspaceAclsService(this.Security, new WorkspaceMask(this.M), person);
+            var aclService = new WorkspaceAclsService(this.Security, person);
             var acl = aclService.Create(this.workspaceName)[organisation];
 
             Assert.True(acl.CanRead(this.M.Organisation.Name));
@@ -75,7 +75,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
             this.Transaction.Commit();
 
-            var aclService = new WorkspaceAclsService(this.Security, new WorkspaceMask(this.M), administrator);
+            var aclService = new WorkspaceAclsService(this.Security, administrator);
             var acl = aclService.Create(this.workspaceName)[administrator];
 
             Assert.DoesNotContain(revocation.Id, acl.Revocations.Select(v => v.Id));
@@ -97,7 +97,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
             this.Transaction.Commit();
 
-            var aclService = new WorkspaceAclsService(this.Security, new WorkspaceMask(this.M), administrator);
+            var aclService = new WorkspaceAclsService(this.Security, administrator);
             var acl = aclService.Create(this.workspaceName)[administrator];
 
             Assert.Contains(revocation.Id, acl.Revocations.Select(v => v.Id));
@@ -119,7 +119,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
             this.Transaction.Commit();
 
-            var aclService = new WorkspaceAclsService(this.Security, new WorkspaceMask(this.M), administrator);
+            var aclService = new WorkspaceAclsService(this.Security, administrator);
             var acl = aclService.Create("X")[administrator];
 
             Assert.DoesNotContain(revocation.Id, acl.Revocations.Select(v => v.Id));

@@ -57,10 +57,10 @@ namespace Allors.Database.Protocol.Json
             var objects = extent.Build(this.transaction, this.pull.Arguments).ToArray();
             this.transaction.Prefetch(this.prefetchPolicyCache.Security, objects);
 
-            var trimmed = objects.Where(response.Include).ToArray();
+            var included = objects.Where(response.Include).ToArray();
 
             var name = extent.ObjectType.PluralName;
-            response.AddCollection(name, extent.ObjectType, trimmed);
+            response.AddCollection(name, extent.ObjectType, included);
         }
 
         private void WithResults(IExtent dataExtent, PullResponseBuilder response)
@@ -70,7 +70,7 @@ namespace Allors.Database.Protocol.Json
             var extent = dataExtent.Build(this.transaction, this.pull.Arguments);
             this.transaction.Prefetch(this.prefetchPolicyCache.Security, extent);
 
-            IObject[] trimmed;
+            IObject[] included;
             if (results.All(v => v.Take.HasValue))
             {
                 var resultsRequired = results.Aggregate(0, (acc, v) =>
@@ -79,18 +79,18 @@ namespace Allors.Database.Protocol.Json
                     return resultRequired > acc ? resultRequired : acc;
                 });
 
-                trimmed = extent.Where(response.Include).Take(resultsRequired).ToArray();
+                included = extent.Where(response.Include).Take(resultsRequired).ToArray();
             }
             else
             {
-                trimmed = extent.Where(response.Include).ToArray();
+                included = extent.Where(response.Include).ToArray();
             }
 
             foreach (var result in results)
             {
                 var name = result.Name;
 
-                var objects = trimmed;
+                var objects = included;
                 if (result.Skip.HasValue || result.Take.HasValue)
                 {
                     var paged = result.Skip.HasValue ? objects.Skip(result.Skip.Value) : objects;

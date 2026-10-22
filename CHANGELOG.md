@@ -280,6 +280,16 @@ Changes accumulate under **[Unreleased]** until a version is released.
 
 ### Removed
 
+- Workspace object masking: `IWorkspaceMask`, the `IsMasked` members of `IAccessControlList`
+  and the access controls, and the mask tables of the test configurations. No production
+  configuration masked a class; the only entries were in Core's test configuration, for
+  `TrimFrom` and `TrimTo`. For a class of a workspace, Pull and Sync now always return an
+  object whose roles the user cannot read, with its identity, version, grants and revocations,
+  and a readable relation keeps its target. Role permissions still decide which role values
+  Sync returns. The `WorkspaceAclsService` and `WorkspaceAccessControl` constructors lose
+  their mask parameter, and a configuration that registered an `IWorkspaceMask` removes the
+  registration. The Core test domain's `TrimFrom` and `TrimTo` classes, their population and
+  the TypeScript `trim` test, which existed only to exercise masking, are removed with it.
 - The in-process .NET workspace adapter `Allors.Workspace.Adapters.Local`, its
   `Workspace.Tests.Local` project, the Nuke targets `DotnetCoreWorkspaceLocalTest` and
   `CiDotnetCoreWorkspaceLocalTest`, and the CI matrix leg. .NET workspaces use the
