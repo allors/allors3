@@ -6,7 +6,9 @@
 
 namespace Tests
 {
+    using System.Linq;
     using System.Threading;
+    using Allors;
     using Allors.Database.Domain;
     using Allors.Database.Protocol.Json;
     using Allors.Protocol.Json.Api.Sync;
@@ -75,6 +77,63 @@ namespace Tests
             var syncResponse = api.Sync(syncRequest);
 
             Assert.Empty(syncResponse.o);
+        }
+
+        [Fact]
+        public void ReadableRelationsKeepTargetsWithoutReadableRoles()
+        {
+            this.SetUser("jane@example.com");
+
+            var unreadable = new DataBuilder(this.Transaction).WithString("Hidden value").Build();
+            var readable = new DataBuilder(this.Transaction).WithString("Visible value").Build();
+            var readPermissions = new Permissions(this.Transaction).Extent()
+                .Where(v => Equals(v.Class, this.M.Data) && v.Operation == Operations.Read && v.InWorkspace("Default"))
+                .ToArray();
+            Assert.NotEmpty(readPermissions);
+
+            var revocation = new RevocationBuilder(this.Transaction).Build();
+            foreach (var permission in readPermissions)
+            {
+                revocation.AddDeniedPermission(permission);
+            }
+
+            unreadable.AddRevocation(revocation);
+
+            var organisation = new OrganisationBuilder(this.Transaction)
+                .WithName("Hidden organisation name")
+                .WithOneData(unreadable)
+                .WithManyData(unreadable)
+                .WithManyData(readable)
+                .Build();
+            var namePermission = new Permissions(this.Transaction).Get(this.M.Organisation, this.M.Organisation.Name, Operations.Read);
+            organisation.AddRevocation(new RevocationBuilder(this.Transaction).WithDeniedPermission(namePermission).Build());
+
+            this.Transaction.Derive();
+            this.Transaction.Commit();
+
+            var api = new Api(this.Transaction, "Default", CancellationToken.None);
+            var targetAcl = api.AccessControl[unreadable];
+            Assert.Contains(this.M.Data.String, api.RoleTypesByClass[this.M.Data]);
+            Assert.All(api.RoleTypesByClass[this.M.Data], roleType => Assert.False(targetAcl.CanRead(roleType)));
+            Assert.True(api.AccessControl[readable].CanRead(this.M.Data.String));
+            Assert.False(api.AccessControl[organisation].CanRead(this.M.Organisation.Name));
+            Assert.True(api.AccessControl[organisation].CanRead(this.M.Organisation.OneData));
+            Assert.True(api.AccessControl[organisation].CanRead(this.M.Organisation.ManyDatas));
+            Assert.Equal("Hidden value", unreadable.String);
+            Assert.Equal("Hidden organisation name", organisation.Name);
+
+            var response = api.Sync(new SyncRequest { o = new[] { organisation.Id, unreadable.Id, readable.Id } });
+            Assert.Equal(3, response.o.Length);
+
+            var syncOrganisation = Assert.Single(response.o, v => v.i == organisation.Id);
+            Assert.Null(syncOrganisation.GetRole(this.M.Organisation.Name));
+            Assert.Equal(unreadable.Id, syncOrganisation.GetRole(this.M.Organisation.OneData).o);
+            Assert.Equal(new[] { unreadable.Id, readable.Id }.OrderBy(v => v), syncOrganisation.GetRole(this.M.Organisation.ManyDatas).c);
+
+            var syncUnreadable = Assert.Single(response.o, v => v.i == unreadable.Id);
+            Assert.Empty(syncUnreadable.ro);
+            var syncReadable = Assert.Single(response.o, v => v.i == readable.Id);
+            Assert.Equal("Visible value", syncReadable.GetRole(this.M.Data.String).v);
         }
     }
 }

@@ -11,6 +11,10 @@ Changes accumulate under **[Unreleased]** until a version is released.
 
 ### Added
 
+- JSON API regression tests for objects with no readable roles: Pull and Sync retain their
+  identity, version, grants and revocations, readable to-one and to-many relations retain
+  unreadable targets, and Sync omits denied role values.
+
 - A guided workspace session state explanation with seven prepared TypeScript scenarios:
   remote refresh, disjoint edits, string and relation conflicts, Reset after Push, and a
   qualified illustration of live permission maps. Diagrams and value tables distinguish the
