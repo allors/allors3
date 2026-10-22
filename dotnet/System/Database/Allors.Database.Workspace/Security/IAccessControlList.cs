@@ -22,7 +22,5 @@ namespace Allors.Database.Security
         bool CanWrite(IRoleType roleType);
 
         bool CanExecute(IMethodType methodType);
-
-        bool IsMasked();
     }
 }

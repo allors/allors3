@@ -46,8 +46,6 @@ namespace Allors.Database.Configuration
 
         private IProcedures procedures;
 
-        private IWorkspaceMask workspaceMask;
-
         private HookLog hookLog;
 
         protected DatabaseServices(Engine engine, IConfiguration configuration = null)
@@ -102,7 +100,6 @@ namespace Allors.Database.Configuration
                 { } type when type == typeof(IPermissions) => (T)(this.permissions ??= new Permissions()),
                 { } type when type == typeof(ITime) => (T)(this.time ??= new Time()),
                 { } type when type == typeof(ICaches) => (T)(this.caches ??= new Caches()),
-                { } type when type == typeof(IWorkspaceMask) => (T)(this.workspaceMask ??= new WorkspaceMask()),
                 // Level1 and Plugin1: the concrete domain provides one hook log for both services
                 { } type when type == typeof(ILevel1Log) => (T)(object)(this.hookLog ??= new HookLog()),
                 { } type when type == typeof(IPlugin1Log) => (T)(object)(this.hookLog ??= new HookLog()),

@@ -9,22 +9,19 @@ namespace Allors.Database.Domain
     using System.Collections.Generic;
     using System.Linq;
     using Database.Security;
-    using Meta;
 
     public class WorkspaceAccessControl : IAccessControl
     {
         private readonly ISecurity security;
         private readonly IUser user;
-        private readonly IDictionary<IClass, IRoleType> masks;
         private readonly string workspaceName;
 
         private readonly Dictionary<IObject, IAccessControlList> aclByObject;
 
-        public WorkspaceAccessControl(ISecurity security, IUser user, IDictionary<IClass, IRoleType> masks, string workspaceName)
+        public WorkspaceAccessControl(ISecurity security, IUser user, string workspaceName)
         {
             this.security = security;
             this.user = user;
-            this.masks = masks;
             this.workspaceName = workspaceName;
 
             this.aclByObject = new Dictionary<IObject, IAccessControlList>();
@@ -42,17 +39,6 @@ namespace Allors.Database.Domain
 
                 return acl;
             }
-        }
-
-        public bool IsMasked(IObject @object)
-        {
-            if (!this.masks.TryGetValue(@object.Strategy.Class, out var mask))
-            {
-                return false;
-            }
-
-            var acl = this[@object];
-            return !acl.CanRead(mask);
         }
 
         private WorkspaceAccessControlList GetAccessControlList(Object @object)
@@ -105,9 +91,9 @@ namespace Allors.Database.Domain
                     .ToArray();
             }
 
-            return new WorkspaceAccessControlList(this, @object, versionedGrants, versionedRevocations);
+            return new WorkspaceAccessControlList(@object, versionedGrants, versionedRevocations);
         }
 
-        private WorkspaceAccessControlList Create(IObject @object, IVersionedGrant[] grants, IVersionedRevocation[] revocations) => new WorkspaceAccessControlList(this, @object, grants, revocations);
+        private WorkspaceAccessControlList Create(IObject @object, IVersionedGrant[] grants, IVersionedRevocation[] revocations) => new WorkspaceAccessControlList(@object, grants, revocations);
     }
 }

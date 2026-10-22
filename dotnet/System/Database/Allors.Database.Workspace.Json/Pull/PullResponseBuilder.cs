@@ -28,8 +28,7 @@ namespace Allors.Database.Protocol.Json
         private readonly Dictionary<string, IObject> objectByName = new Dictionary<string, IObject>();
         private readonly Dictionary<string, object> valueByName = new Dictionary<string, object>();
 
-        private readonly HashSet<IObject> maskedObjects;
-        private readonly HashSet<IObject> unmaskedObjects;
+        private readonly HashSet<IObject> objects;
 
         private readonly IPrefetchPolicyCache prefetchPolicyCache;
 
@@ -60,8 +59,7 @@ namespace Allors.Database.Protocol.Json
 
             this.prefetchPolicyCache = prefetchPolicyCache;
 
-            this.maskedObjects = new HashSet<IObject>();
-            this.unmaskedObjects = new HashSet<IObject>();
+            this.objects = new HashSet<IObject>();
         }
 
         public ITransaction Transaction { get; }
@@ -112,20 +110,14 @@ namespace Allors.Database.Protocol.Json
 
         private void AddObjectInternal(string name, IObject @object, Node[] tree = null)
         {
-            if (@object == null || this.maskedObjects.Contains(@object))
+            if (!this.Include(@object))
             {
                 return;
             }
 
             this.Transaction.Prefetch(this.prefetchPolicyCache.Security, @object);
 
-            if (!this.Include(@object))
-            {
-                this.maskedObjects.Add(@object);
-                return;
-            }
-
-            this.unmaskedObjects.Add(@object);
+            this.objects.Add(@object);
             this.objectByName[name] = @object;
             tree?.Resolve(@object, this.AccessControl, this.Add, this.prefetchPolicyCache, this.Transaction);
         }
@@ -140,7 +132,7 @@ namespace Allors.Database.Protocol.Json
             }
 
             this.Transaction.Prefetch(this.prefetchPolicyCache.Security, collection);
-            var trimmed = collection.Where(this.Include);
+            var included = collection.Where(this.Include);
 
             this.collectionsByName.TryGetValue(name, out var existingCollection);
 
@@ -150,17 +142,17 @@ namespace Allors.Database.Protocol.Json
 
                 if (existingCollection != null)
                 {
-                    newCollection = trimmed.ToArray();
+                    newCollection = included.ToArray();
                     existingCollection.UnionWith(newCollection);
                 }
                 else
                 {
-                    var newSet = new HashSet<IObject>(trimmed);
+                    var newSet = new HashSet<IObject>(included);
                     newCollection = newSet;
                     this.collectionsByName.Add(name, newSet);
                 }
 
-                this.unmaskedObjects.UnionWith(newCollection);
+                this.objects.UnionWith(newCollection);
 
                 tree.Resolve(newCollection, this.AccessControl, this.Add, this.prefetchPolicyCache, this.Transaction);
             }
@@ -168,13 +160,13 @@ namespace Allors.Database.Protocol.Json
             {
                 if (existingCollection != null)
                 {
-                    existingCollection.UnionWith(trimmed);
+                    existingCollection.UnionWith(included);
                 }
                 else
                 {
-                    var newWorkspaceCollection = new HashSet<IObject>(trimmed);
+                    var newWorkspaceCollection = new HashSet<IObject>(included);
                     this.collectionsByName.Add(name, newWorkspaceCollection);
-                    this.unmaskedObjects.UnionWith(newWorkspaceCollection);
+                    this.objects.UnionWith(newWorkspaceCollection);
                 }
             }
         }
@@ -262,7 +254,7 @@ namespace Allors.Database.Protocol.Json
 
             pullResponse = new PullResponse
             {
-                p = this.unmaskedObjects.Select(v =>
+                p = this.objects.Select(v =>
                 {
                     var accessControlList = this.AccessControl[v];
                     var grants = accessControlList.Grants;
@@ -298,22 +290,7 @@ namespace Allors.Database.Protocol.Json
             return pullResponse;
         }
 
-        public bool Include(IObject @object)
-        {
-            if (@object == null || this.AllowedClasses?.Contains(@object.Strategy.Class) != true ||
-                this.maskedObjects.Contains(@object))
-            {
-                return false;
-            }
-
-            if (this.AccessControl[@object].IsMasked())
-            {
-                this.maskedObjects.Add(@object);
-                return false;
-            }
-
-            return true;
-        }
+        public bool Include(IObject @object) => @object != null && this.AllowedClasses?.Contains(@object.Strategy.Class) == true;
 
         private void AddDependencies()
         {
@@ -324,7 +301,7 @@ namespace Allors.Database.Protocol.Json
 
             this.ThrowIfCancellationRequested();
 
-            var current = this.unmaskedObjects.ToArray();
+            var current = this.objects.ToArray();
 
             while (current.Length > 0)
             {
@@ -386,8 +363,8 @@ namespace Allors.Database.Protocol.Json
                     }
                 }
 
-                current = newObjects.Except(this.unmaskedObjects).ToArray();
-                this.unmaskedObjects.UnionWith(newObjects);
+                current = newObjects.Except(this.objects).ToArray();
+                this.objects.UnionWith(newObjects);
             }
         }
 
@@ -395,7 +372,7 @@ namespace Allors.Database.Protocol.Json
         {
             if (this.Include(@object))
             {
-                this.unmaskedObjects.Add(@object);
+                this.objects.Add(@object);
             }
         }
 
