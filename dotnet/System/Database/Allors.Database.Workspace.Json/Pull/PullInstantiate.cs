@@ -12,7 +12,7 @@ namespace Allors.Database.Protocol.Json
     using Data;
     using Security;
 
-    public class PullInstantiate
+    internal class PullInstantiate
     {
         private readonly ITransaction transaction;
         private readonly Pull pull;

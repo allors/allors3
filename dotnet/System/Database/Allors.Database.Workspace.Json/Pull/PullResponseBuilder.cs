@@ -17,7 +17,7 @@ namespace Allors.Database.Protocol.Json
     using Security;
     using Services;
 
-    public class PullResponseBuilder
+    internal class PullResponseBuilder
     {
         private readonly IUnitConvert unitConvert;
         private readonly IRanges<long> ranges;
@@ -162,9 +162,9 @@ namespace Allors.Database.Protocol.Json
             }
         }
 
-        public PullResponse Build(PullRequest pullRequest = null)
+        public PullResponse Build(PullRequest pullRequest)
         {
-            if (pullRequest?.l != null)
+            if (pullRequest.l != null)
             {
                 var pulls = pullRequest.l.FromJson(this.Transaction, this.unitConvert);
 
