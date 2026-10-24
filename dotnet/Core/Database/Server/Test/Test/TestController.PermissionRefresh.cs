@@ -8,9 +8,9 @@ namespace Allors.Server.Controllers
     using System;
     using System.Linq;
     using Database.Domain;
-    using MetaPopulation = Allors.Database.Meta.MetaPopulation;
     using Database.Services;
     using Microsoft.AspNetCore.Mvc;
+    using MetaPopulation = Allors.Database.Meta.MetaPopulation;
 
     public partial class TestController
     {
@@ -22,7 +22,7 @@ namespace Allors.Server.Controllers
                 using var transaction = this.Database.CreateTransaction();
                 var m = this.Database.Services.Get<MetaPopulation>();
                 transaction.Services.Get<IUserService>().User = new Users(transaction).FindBy(m.User.UniqueId, Users.AdministratorId);
-                var accessControl = transaction.Services.Get<IWorkspaceAclsService>().Create("Default");
+                var accessControl = transaction.Services.Get<IWorkspaceAclsService>().Create(this.WorkspaceService.Name);
                 var action = request.Action;
                 var target = transaction.Instantiate(request.Target);
 

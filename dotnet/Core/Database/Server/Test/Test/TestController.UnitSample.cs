@@ -7,9 +7,9 @@ namespace Allors.Server.Controllers
 {
     using System;
     using Database.Domain;
-    using MetaPopulation = Allors.Database.Meta.MetaPopulation;
     using Database.Services;
     using Microsoft.AspNetCore.Mvc;
+    using MetaPopulation = Allors.Database.Meta.MetaPopulation;
 
     public partial class TestController
     {
