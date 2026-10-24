@@ -151,6 +151,11 @@ Changes accumulate under **[Unreleased]** until a version is released.
 
 ### Changed
 
+- **Breaking:** Pull JSON requests reject unknown JSON fields with HTTP 400, including nested
+  typed request fields. Request `p` is removed entirely, so both null and non-null values are
+  rejected by the same generic validation. Query-argument dictionary keys remain
+  application-defined.
+
 - The platform CI workflow skips its test suites for changes limited to `docs/`, the
   documentation workflow and the root Markdown files. One job, `CI result`, reports the status
   check that `main` requires: it passes when every suite passed or when all of them were skipped
@@ -285,17 +290,13 @@ Changes accumulate under **[Unreleased]** until a version is released.
 ### Removed
 
 - **Breaking:** named workspace procedures, their registry, dispatch, contracts and conversions,
-  TypeScript `session.call` and `PullArgs`, and both .NET `CallAsync` overloads. The custom-route Pull transport,
-  `Api.CreatePullResponseBuilder` helper and custom Pull sample controllers are removed too.
-  Use Invoke to call domain methods or application HTTP endpoints for other actions. Pull
-  responses retain named objects and collections, the object pool (`p`) and scalar values.
-  Ordinary Pull retains security synchronization and session merging.
-- **Breaking:** Pull JSON requests reject unknown JSON fields with HTTP 400, including nested typed
-  request fields. Request `p` is removed entirely, so both null and non-null values are rejected
-  by the same generic validation. Query-argument dictionary keys remain application-defined.
-  Permission-refresh tests use explicit fixture setup, unit samples use ordinary Pull, scalar
-  values retain serializer/result round-trip coverage, and authentication/antiforgery tests
-  exercise the standard Pull endpoint.
+  TypeScript `session.call` and `PullArgs`, and both .NET `CallAsync` overloads. The custom-route
+  Pull transport, the `Api.CreatePullResponseBuilder` helper and the custom Pull sample
+  controllers are removed too, and `PullResponseBuilder` is internal to
+  `Allors.Database.Workspace.Json`. Use Invoke to call domain methods or application HTTP
+  endpoints for other actions. Pull responses retain named objects and collections, the object
+  pool (`p`) and scalar values. Ordinary Pull retains security synchronization and session
+  merging.
 
 - Workspace object masking: `IWorkspaceMask`, the `IsMasked` members of `IAccessControlList`
   and the access controls, and the mask tables of the test configurations. No production
