@@ -14,12 +14,15 @@ namespace Tests
     using System.Net;
     using System.Security.Claims;
     using System.Text.Encodings.Web;
+    using System.Text.Json;
     using System.Threading.Tasks;
     using Allors.Database;
     using Allors.Database.Configuration;
     using Allors.Database.Configuration.Derivations.Default;
     using Allors.Database.Domain;
     using Allors.Database.Meta;
+    using Allors.Protocol.Json.Api.Pull;
+    using Allors.Protocol.Json.Api.Push;
     using Allors.Server;
     using Allors.Services;
     using Microsoft.AspNetCore.Authentication;
@@ -53,6 +56,48 @@ namespace Tests
     // application may want around it is a building block it switches on itself.
     public class AllorsServerTests
     {
+        [Theory]
+        [InlineData("{\"unexpected\":null}")]
+        [InlineData("{\"unexpected\":false}")]
+        [InlineData("{\"p\":null}")]
+        [InlineData("{\"p\":{}}")]
+        [InlineData("{\"l\":[{\"unexpected\":1}]}")]
+        [InlineData("{\"l\":[{\"e\":{\"unexpected\":1}}]}")]
+        [InlineData("{\"l\":[{\"r\":[{\"unexpected\":1}]}]}")]
+        [InlineData("{\"d\":[{\"unexpected\":1}]}")]
+        public void PullRequestRejectsUnknownFields(string json)
+        {
+            using var provider = Services().BuildServiceProvider();
+            var options = provider.GetRequiredService<IOptions<JsonOptions>>().Value.JsonSerializerOptions;
+
+            Assert.Throws<JsonException>(() => JsonSerializer.Deserialize<PullRequest>(json, options));
+        }
+
+        [Fact]
+        public void PullRequestKeepsQueryArgumentsAndConfiguredJsonBehaviour()
+        {
+            using var provider = Services().BuildServiceProvider();
+            var options = provider.GetRequiredService<IOptions<JsonOptions>>().Value.JsonSerializerOptions;
+            var request = JsonSerializer.Deserialize<PullRequest>(
+                "{\"x\":\"request-id\",\"l\":[{\"o\":\"42\",\"a\":{\"custom\":{\"nested\":true}}}],\"d\":[]}", options);
+
+            Assert.Equal("request-id", request.x);
+            Assert.Equal(42, Assert.Single(request.l).o);
+            Assert.True(((JsonElement)request.l[0].a["custom"]).GetProperty("nested").GetBoolean());
+            var roundTrip = JsonSerializer.Deserialize<PullRequest>(JsonSerializer.Serialize(request, options), options);
+            Assert.Equal(request.l[0].o, roundTrip.l[0].o);
+        }
+
+        [Fact]
+        public void PullRequestStrictnessLeavesOtherRequestsUnchanged()
+        {
+            using var provider = Services().BuildServiceProvider();
+            var options = provider.GetRequiredService<IOptions<JsonOptions>>().Value.JsonSerializerOptions;
+
+            Assert.NotNull(JsonSerializer.Deserialize<PushRequest>("{\"unexpected\":null}", options));
+            Assert.NotNull(JsonSerializer.Deserialize<PullRequest>("{}", options));
+        }
+
         [Fact]
         public void AddAllorsServerSetsNoFallbackPolicy()
         {

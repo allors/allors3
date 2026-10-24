@@ -288,8 +288,6 @@ namespace Allors.Workspace.Adapters
 
         public abstract Task<IInvokeResult> InvokeAsync(Method method, InvokeOptions options = null);
         public abstract Task<IInvokeResult> InvokeAsync(Method[] methods, InvokeOptions options = null);
-        public abstract Task<IPullResult> CallAsync(Procedure procedure, params Pull[] pull);
-        public abstract Task<IPullResult> CallAsync(object args, string name);
         public abstract Task<IPullResult> PullAsync(params Pull[] pull);
         public abstract Task<IPushResult> PushAsync();
 

@@ -9,7 +9,6 @@ import {
 import {
   IUnit,
   TypeForParameter,
-  Procedure as DataProcedure,
   Pull as DataPull,
   Extent as DataExtent,
   Predicate as DataPredicate,
@@ -23,7 +22,6 @@ import {
   Extent,
   ExtentKind,
   Predicate,
-  Procedure,
   Pull,
   Result,
   Select,
@@ -76,20 +74,6 @@ export function dependencyToJson(from: Dependency): PullDependency {
       r: asRoleTypeToJson(from.propertyType),
     };
   }
-}
-
-export function procedureToJson(from: DataProcedure): Procedure {
-  if (from == null) {
-    return null;
-  }
-
-  return {
-    n: from.name,
-    c: collectionToJson(from.collections),
-    o: objectsToJson(from.objects),
-    v: valuesToJson(from.values),
-    p: poolToJson(from.pool),
-  };
 }
 
 export function pullToJson(from: DataPull): Pull {
@@ -385,54 +369,6 @@ export function extentRefToJson(from: string): string {
   return from;
 }
 
-export function collectionToJson(
-  from: { [name: string]: IObject[] } | Map<string, IObject[]>
-): { [name: string]: number[] } {
-  return map<IObject[], number[]>(from, (v) => v.map((w) => w.id));
-}
-
-export function objectsToJson(
-  from: { [name: string]: IObject } | Map<string, IObject>
-): { [name: string]: number } {
-  return map<IObject, number>(from, (v) => v.id);
-}
-
-export function valuesToJson(
-  from: { [name: string]: IUnit } | Map<string, IUnit>
-): { [name: string]: IUnit } {
-  return map<IUnit, IUnit>(from, (v) => v);
-}
-
-export function poolToJson(from: Map<IObject, number>): number[][] {
-  if (from == null) {
-    return null;
-  }
-
-  return Array.from(from, ([object, version]) => [object.id, version]);
-}
-
 export function pathsToJson(from: RoleType[]): string[] {
   return from?.map((v) => v.relationType.tag);
-}
-
-function map<T1, T2>(
-  from: { [name: string]: T1 } | Map<string, T1>,
-  fn: (T1) => T2
-): { [name: string]: T2 } {
-  if (from == null) {
-    return null;
-  }
-
-  const result = {};
-  if (from instanceof Map) {
-    for (const [key, value] of from) {
-      result[key] = fn(value);
-    }
-  } else {
-    for (const key of Object.keys(from)) {
-      result[key] = fn(from[key]);
-    }
-  }
-
-  return result;
 }

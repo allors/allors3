@@ -115,12 +115,6 @@ namespace Allors.Workspace.Adapters.Remote
             return new InvokeResult(this, invokeResponse);
         }
 
-        public override async Task<IPullResult> CallAsync(object args, string name)
-        {
-            var pullResponse = await this.DatabaseConnection.Pull(args, name);
-            return await this.OnPull(pullResponse);
-        }
-
         public override async Task<IPullResult> PullAsync(params Pull[] pulls)
         {
             foreach (var pull in pulls)
@@ -132,18 +126,6 @@ namespace Allors.Workspace.Adapters.Remote
             }
 
             var pullRequest = new PullRequest { l = pulls.Select(v => v.ToJson(this.DatabaseConnection.UnitConvert)).ToArray() };
-
-            var pullResponse = await this.DatabaseConnection.Pull(pullRequest);
-            return await this.OnPull(pullResponse);
-        }
-
-        public override async Task<IPullResult> CallAsync(Procedure procedure, params Pull[] pull)
-        {
-            var pullRequest = new PullRequest
-            {
-                p = procedure.ToJson(this.DatabaseConnection.UnitConvert),
-                l = pull.Select(v => v.ToJson(this.DatabaseConnection.UnitConvert)).ToArray()
-            };
 
             var pullResponse = await this.DatabaseConnection.Pull(pullRequest);
             return await this.OnPull(pullResponse);

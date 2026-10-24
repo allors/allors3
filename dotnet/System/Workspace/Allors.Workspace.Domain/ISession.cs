@@ -60,10 +60,6 @@ namespace Allors.Workspace
 
         Task<IInvokeResult> InvokeAsync(Method[] methods, InvokeOptions options = null);
 
-        Task<IPullResult> CallAsync(Procedure procedure, params Pull[] pull);
-
-        Task<IPullResult> CallAsync(object args, string name);
-
         Task<IPullResult> PullAsync(params Pull[] pull);
 
         Task<IPushResult> PushAsync();
