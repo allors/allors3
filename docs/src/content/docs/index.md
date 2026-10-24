@@ -38,6 +38,7 @@ An application must not rely on them: they can change with any version.
 | --- | --- | --- | --- |
 | [Domain inheritance](internals/domain-inheritance.md) | Explanation | Current | Which part owns what, from `[Extends]` to the order of the hooks: the attribute, the parser, the template, the meta sort, the method compiler and the hand-written dispatch; why the ids decide the order; and the platform test domains of the Diamond tree. |
 | [Workspace session state](internals/workspace-session-state.mdx) | Explanation | Current | A guided example of editing baselines, merge/diff/reset characterization across .NET and TypeScript, unit merge equality, and separate authorization-freshness decisions. |
+| [Session and versioned cache design](internals/workspace-versioned-cache.md) | Explanation | Planned | Proposed session queues, complete immutable cache entries, exact security bindings, hydration retries and validation. |
 | [Writing documentation](internals/writing-documentation.md) | How-to guide | Current | Audience, Diátaxis, status, Oxford English, stable terminology, visual explanations and review. |
 | [Documentation website](internals/documentation-website.md) | Decision record | Current | Agreed website design, implementation subtasks, validation and publication. |
 

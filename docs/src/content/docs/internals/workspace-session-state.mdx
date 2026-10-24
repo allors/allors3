@@ -126,6 +126,10 @@ permission to expose them.
 
 ## Open decisions
 
+The [session and versioned cache design](workspace-versioned-cache.md) proposes session-local
+serialization, immutable shared entries and explicit security bindings. It is not implemented;
+the current behaviour and characterization matrix above still apply.
+
 - Decide whether failed Push should keep returning an error result in .NET and throwing
   `ResultError` in TypeScript. The baseline tests now pin both surfaces; aligning them would be
   an API behaviour change for callers and needs separate approval.
@@ -136,5 +140,6 @@ permission to expose them.
   membership and Pulls without Sync. Retaining records alone cannot provide an authorization
   snapshot or a general freshness guarantee.
 
-The connection/session split, Push error-contract changes, protocol envelopes, shared or
-persistent caching, and signals remain separate work.
+The proposed connection/session split and versioned cache are tracked in that design. Push
+error-contract changes, broader protocol envelopes, persistent caching and signals remain
+separate work.
