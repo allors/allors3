@@ -20,7 +20,5 @@ namespace Allors.Protocol.Json.Data
         void VisitResult(Result result);
 
         void VisitSort(Sort sort);
-
-        void VisitProcedure(Procedure procedure);
     }
 }

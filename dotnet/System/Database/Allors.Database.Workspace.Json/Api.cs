@@ -177,13 +177,6 @@ namespace Allors.Database.Protocol.Json
             return responseBuilder.Build(permissionRequest);
         }
 
-        // TODO: Delete
-        public PullResponseBuilder CreatePullResponseBuilder(string dependencyId = null)
-        {
-            // TODO: Dependencies
-            return new PullResponseBuilder(this.Transaction, this.AccessControl, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents, this.UnitConvert, this.Ranges, null, this.PrefetchPolicyCache, this.CancellationToken);
-        }
-
         private IDictionary<IClass, ISet<IPropertyType>> ToDependencies(PullDependency[] pullDependencies)
         {
             if (pullDependencies == null)

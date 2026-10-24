@@ -8,7 +8,6 @@ import {
   IRule,
   ISession,
   Method,
-  Procedure,
   Pull,
 } from '@allors/system/workspace/domain';
 import {
@@ -308,8 +307,6 @@ export abstract class Session implements ISession {
     methodOrMethods: Method | Method[],
     options?: InvokeOptions
   ): Promise<IInvokeResult>;
-
-  abstract call(procedure: Procedure, ...pulls: Pull[]): Promise<IPullResult>;
 
   abstract pull(pulls: Pull | Pull[]): Promise<IPullResult>;
 

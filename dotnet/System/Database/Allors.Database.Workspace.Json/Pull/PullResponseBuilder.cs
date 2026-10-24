@@ -11,14 +11,13 @@ namespace Allors.Database.Protocol.Json
     using Allors.Protocol.Json;
     using Allors.Protocol.Json.Api.Pull;
     using Data;
-    using Derivations;
     using Domain;
     using Meta;
     using Ranges;
     using Security;
     using Services;
 
-    public class PullResponseBuilder : IProcedureContext, IProcedureOutput
+    internal class PullResponseBuilder
     {
         private readonly IUnitConvert unitConvert;
         private readonly IRanges<long> ranges;
@@ -31,8 +30,6 @@ namespace Allors.Database.Protocol.Json
         private readonly HashSet<IObject> objects;
 
         private readonly IPrefetchPolicyCache prefetchPolicyCache;
-
-        private List<IValidation> errors;
 
         public PullResponseBuilder(
             ITransaction transaction,
@@ -72,12 +69,6 @@ namespace Allors.Database.Protocol.Json
 
         public IPreparedExtents PreparedExtents { get; }
         public CancellationToken CancellationToken { get; }
-
-        public void AddError(IValidation validation)
-        {
-            this.errors ??= new List<IValidation>();
-            this.errors.Add(validation);
-        }
 
         public void AddCollection(string name, IComposite objectType, in IEnumerable<IObject> collection) => this.AddCollectionInternal(name, objectType, collection, null);
 
@@ -171,58 +162,9 @@ namespace Allors.Database.Protocol.Json
             }
         }
 
-        public PullResponse Build(PullRequest pullRequest = null)
+        public PullResponse Build(PullRequest pullRequest)
         {
-            var pullResponse = new PullResponse();
-
-            var procedure = pullRequest?.p?.FromJson(this.Transaction, this.unitConvert);
-
-            if (procedure != null)
-            {
-                if (procedure.Pool != null)
-                {
-                    foreach (var kvp in procedure.Pool)
-                    {
-                        var @object = kvp.Key;
-                        var version = kvp.Value;
-
-                        if (!@object.Strategy.ObjectVersion.Equals(version))
-                        {
-                            pullResponse.AddVersionError(@object);
-                        }
-                    }
-
-                    if (pullResponse.HasErrors)
-                    {
-                        return pullResponse;
-                    }
-                }
-
-                var procedures = this.Transaction.Database.Services.Get<IProcedures>();
-                var proc = procedures.Get(procedure.Name);
-                if (proc == null)
-                {
-                    pullResponse._e = $"Missing procedure {procedure.Name}";
-                    return pullResponse;
-                }
-
-                var input = new ProcedureInput(this.Transaction.Database.ObjectFactory, procedure);
-
-                this.ThrowIfCancellationRequested();
-                proc.Execute(this, input, this);
-
-                if (this.errors?.Count > 0)
-                {
-                    foreach (var error in this.errors)
-                    {
-                        pullResponse.AddDerivationErrors(error);
-                    }
-
-                    return pullResponse;
-                }
-            }
-
-            if (pullRequest?.l != null)
+            if (pullRequest.l != null)
             {
                 var pulls = pullRequest.l.FromJson(this.Transaction, this.unitConvert);
 
@@ -252,7 +194,7 @@ namespace Allors.Database.Protocol.Json
 
             this.ThrowIfCancellationRequested();
 
-            pullResponse = new PullResponse
+            var pullResponse = new PullResponse
             {
                 p = this.objects.Select(v =>
                 {

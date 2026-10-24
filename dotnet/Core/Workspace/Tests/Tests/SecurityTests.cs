@@ -5,11 +5,9 @@
 
 namespace Tests.Workspace
 {
-    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using Allors;
-    using Allors.Workspace;
     using Allors.Workspace.Data;
     using Allors.Workspace.Domain;
     using Xunit;
@@ -34,12 +32,7 @@ namespace Tests.Workspace
             var c1 = result.GetCollection<C1>().First();
             Assert.True(c1.CanReadC1AllorsString);
 
-            var change = await session.CallAsync(new Procedure("TestPermissionRefresh")
-            {
-                Objects = new Dictionary<string, IObject> { ["target"] = c1 },
-                Values = new Dictionary<string, string> { ["action"] = "removeGrantRead" },
-            });
-            Assert.False(change.HasErrors);
+            await this.Profile.ChangePermissions(c1.Id, "removeGrantRead");
 
             result = await session.PullAsync(new Pull { Object = c1 });
             Assert.False(result.HasErrors);
@@ -57,15 +50,7 @@ namespace Tests.Workspace
 
             foreach (var denyRead in new[] { true, false })
             {
-                var change = await session.CallAsync(new Procedure("TestPermissionRefresh")
-                {
-                    Objects = new Dictionary<string, IObject> { ["target"] = denied },
-                    Values = new Dictionary<string, string>
-                    {
-                        ["action"] = denyRead ? "addReadRevocation" : "removeReadRevocation",
-                    },
-                });
-                Assert.False(change.HasErrors);
+                await this.Profile.ChangePermissions(denied.Id, denyRead ? "addReadRevocation" : "removeReadRevocation");
 
                 result = await session.PullAsync(new Pull { Object = denied });
                 Assert.False(result.HasErrors);
@@ -86,13 +71,7 @@ namespace Tests.Workspace
             c1.C1AllorsInteger = 2345;
             c1.C1AllorsString = "Rejected edit";
 
-            var administration = this.Profile.CreateExclusiveWorkspace().CreateSession();
-            var change = await administration.CallAsync(new Procedure("TestPermissionRefresh")
-            {
-                Objects = new Dictionary<string, IObject> { ["target"] = c1 },
-                Values = new Dictionary<string, string> { ["action"] = "removeGrantWrite" },
-            });
-            Assert.False(change.HasErrors);
+            await this.Profile.ChangePermissions(c1.Id, "removeGrantWrite");
 
             var pushResult = await session.PushAsync();
             Assert.True(pushResult.HasErrors);

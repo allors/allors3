@@ -18,5 +18,9 @@ namespace Tests.Workspace
         IWorkspace Workspace { get; }
 
         Task Login(string userName);
+
+        Task ChangePermissions(long target, string action);
+
+        Task<long> SetupUnitSample(int step);
     }
 }

@@ -128,12 +128,10 @@ test('refreshes a cached grant when an object is synchronized', async () => {
   const c1 = c1s[0];
   expect(c1.strategy.canRead(m.C1.C1AllorsString)).toBeTruthy();
 
-  const mutation = await session.call({
-    name: 'TestPermissionRefresh',
-    objects: { target: c1 },
-    values: { action: 'removeGrantRead' },
+  await fixture.jsonClient.post('Test/PermissionRefresh', {
+    target: c1.id,
+    action: 'removeGrantRead',
   });
-  expect(mutation.hasErrors).toBeFalsy();
 
   const refreshed = await session.pull({ object: c1 });
   expect(refreshed.hasErrors).toBeFalsy();
@@ -156,14 +154,10 @@ test('refreshes a cached revocation when an object is synchronized', async () =>
   expect(denied.strategy.canWrite(m.Denied.DefaultWorkspaceProperty)).toBeFalsy();
 
   for (const denyRead of [true, false]) {
-    const mutation = await session.call({
-      name: 'TestPermissionRefresh',
-      objects: { target: denied },
-      values: {
-        action: denyRead ? 'addReadRevocation' : 'removeReadRevocation',
-      },
+    await fixture.jsonClient.post('Test/PermissionRefresh', {
+      target: denied.id,
+      action: denyRead ? 'addReadRevocation' : 'removeReadRevocation',
     });
-    expect(mutation.hasErrors).toBeFalsy();
 
     const refreshed = await session.pull({ object: denied });
     expect(refreshed.hasErrors).toBeFalsy();

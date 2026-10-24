@@ -9,6 +9,7 @@ namespace Allors.Server.Tests
     using System.Linq;
     using System.Net;
     using System.Net.Http;
+    using System.Text;
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using Database.Domain;
@@ -35,7 +36,7 @@ namespace Allors.Server.Tests
             var client = await this.SignInWithCookieAsync("xsrfuser", "xsrf-password");
             await client.GetAsync(new Uri("allors/Test/Ready", UriKind.Relative));
 
-            var response = await client.PostAsync(new Uri("allors/Organisations/Pull", UriKind.Relative), null);
+            var response = await client.PostAsync(new Uri("allors/pull", UriKind.Relative), new StringContent("{}", Encoding.UTF8, "application/json"));
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
@@ -48,7 +49,10 @@ namespace Allors.Server.Tests
             var safeResponse = await client.GetAsync(new Uri("allors/Test/Ready", UriKind.Relative));
             var xsrf = ExtractSetCookieValue(safeResponse, "XSRF-TOKEN");
 
-            var request = new HttpRequestMessage(HttpMethod.Post, new Uri("allors/Organisations/Pull", UriKind.Relative));
+            var request = new HttpRequestMessage(HttpMethod.Post, new Uri("allors/pull", UriKind.Relative))
+            {
+                Content = new StringContent("{}", Encoding.UTF8, "application/json"),
+            };
             request.Headers.Add("X-XSRF-TOKEN", xsrf);
             var response = await client.SendAsync(request);
 
@@ -69,7 +73,10 @@ namespace Allors.Server.Tests
             var xsrf = JarXsrfToken(jar);
             Assert.False(string.IsNullOrEmpty(xsrf), "A readable XSRF-TOKEN cookie should be present after login.");
 
-            var request = new HttpRequestMessage(HttpMethod.Post, new Uri("allors/Organisations/Pull", UriKind.Relative));
+            var request = new HttpRequestMessage(HttpMethod.Post, new Uri("allors/pull", UriKind.Relative))
+            {
+                Content = new StringContent("{}", Encoding.UTF8, "application/json"),
+            };
             request.Headers.Add("X-XSRF-TOKEN", xsrf);
             var response = await client.SendAsync(request);
 
@@ -95,7 +102,10 @@ namespace Allors.Server.Tests
             await LoginWithCookieAsync(client, "xsrfuser", "xsrf-password");
             await client.GetAsync(new Uri("allors/Test/Ready", UriKind.Relative));
 
-            var request = new HttpRequestMessage(HttpMethod.Post, new Uri("allors/Organisations/Pull", UriKind.Relative));
+            var request = new HttpRequestMessage(HttpMethod.Post, new Uri("allors/pull", UriKind.Relative))
+            {
+                Content = new StringContent("{}", Encoding.UTF8, "application/json"),
+            };
             request.Headers.Add("X-XSRF-TOKEN", JarXsrfToken(jar));
             var response = await client.SendAsync(request);
 
@@ -113,14 +123,20 @@ namespace Allors.Server.Tests
             // A token that no longer validates (corruption, data-protection key loss) must not
             // wedge the session: the rejecting 400 drops it and the next safe GET re-mints.
             jar.Add(new Cookie("XSRF-TOKEN", "garbage", "/", "localhost"));
-            var poisoned = new HttpRequestMessage(HttpMethod.Post, new Uri("allors/Organisations/Pull", UriKind.Relative));
+            var poisoned = new HttpRequestMessage(HttpMethod.Post, new Uri("allors/pull", UriKind.Relative))
+            {
+                Content = new StringContent("{}", Encoding.UTF8, "application/json"),
+            };
             poisoned.Headers.Add("X-XSRF-TOKEN", "garbage");
             var poisonedResponse = await client.SendAsync(poisoned);
             Assert.Equal(HttpStatusCode.BadRequest, poisonedResponse.StatusCode);
 
             await client.GetAsync(new Uri("allors/Test/Ready", UriKind.Relative));
 
-            var request = new HttpRequestMessage(HttpMethod.Post, new Uri("allors/Organisations/Pull", UriKind.Relative));
+            var request = new HttpRequestMessage(HttpMethod.Post, new Uri("allors/pull", UriKind.Relative))
+            {
+                Content = new StringContent("{}", Encoding.UTF8, "application/json"),
+            };
             request.Headers.Add("X-XSRF-TOKEN", JarXsrfToken(jar));
             var response = await client.SendAsync(request);
 

@@ -14,7 +14,7 @@ namespace Allors.Database.Protocol.Json
     using Security;
     using Services;
 
-    public class PullExtent
+    internal class PullExtent
     {
         private readonly ITransaction transaction;
         private readonly Pull pull;

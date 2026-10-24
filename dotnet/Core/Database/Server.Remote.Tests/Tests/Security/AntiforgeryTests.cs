@@ -8,6 +8,7 @@ namespace Allors.Server.Tests
     using System;
     using System.Linq;
     using System.Net.Http;
+    using System.Text;
     using System.Threading.Tasks;
     using Xunit;
 
@@ -37,7 +38,7 @@ namespace Allors.Server.Tests
         {
             await this.SignIn(this.Administrator);
 
-            var response = await this.HttpClient.PostAsync(new Uri("Organisations/Pull", UriKind.Relative), null);
+            var response = await this.HttpClient.PostAsync(new Uri("pull", UriKind.Relative), new StringContent("{}", Encoding.UTF8, "application/json"));
 
             Assert.True(response.IsSuccessStatusCode, $"Non-cookie (test-header) clients are antiforgery-exempt; was {(int)response.StatusCode}.");
         }

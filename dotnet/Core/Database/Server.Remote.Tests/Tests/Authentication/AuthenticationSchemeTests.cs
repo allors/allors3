@@ -8,6 +8,7 @@ namespace Allors.Server.Tests
     using System;
     using System.Net;
     using System.Net.Http;
+    using System.Text;
     using System.Threading.Tasks;
     using Xunit;
 
@@ -22,7 +23,7 @@ namespace Allors.Server.Tests
                 BaseAddress = new Uri(Url),
             };
 
-            var response = await client.PostAsync(new Uri("Organisations/Pull", UriKind.Relative), null);
+            var response = await client.PostAsync(new Uri("pull", UriKind.Relative), new StringContent("{}", Encoding.UTF8, "application/json"));
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.False(response.Headers.Contains("Location"), "An /allors request must get a raw 401, not a login-page redirect.");

@@ -18,10 +18,5 @@ namespace Allors.Protocol.Json.Api.Pull
         /// List of Pulls
         /// </summary>
         public Pull[] l { get; set; }
-
-        /// <summary>
-        /// Procedure
-        /// </summary>
-        public Procedure p { get; set; }
     }
 }
