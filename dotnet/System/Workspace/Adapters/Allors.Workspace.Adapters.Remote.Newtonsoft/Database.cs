@@ -41,14 +41,6 @@ namespace Allors.Workspace.Adapters.Remote.Newtonsoft
 
         public HttpClient HttpClient { get; }
 
-        public override async Task<PullResponse> Pull(object args, string name)
-        {
-            var uri = new Uri($"{name}/pull", UriKind.Relative);
-            var response = await this.PostAsJsonAsync(uri, args);
-            response.EnsureSuccessStatusCode();
-            return await this.ReadAsAsync<PullResponse>(response);
-        }
-
         public override async Task<PullResponse> Pull(PullRequest pullRequest)
         {
             var uri = new Uri("pull", UriKind.Relative);

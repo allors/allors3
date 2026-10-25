@@ -1,4 +1,4 @@
-import { C1, I12 } from '@allors/default/workspace/domain';
+import { C1, I12, UnitSample } from '@allors/default/workspace/domain';
 import { Pull } from '@allors/system/workspace/domain';
 import {
   Fixture,
@@ -18,6 +18,52 @@ let fixture: Fixture;
 beforeEach(async () => {
   fixture = new Fixture();
   await fixture.init();
+});
+
+test('pull with null unit roles', async () => {
+  const { workspace, m, jsonClient } = fixture;
+  const session = workspace.createSession();
+  const { id } = await jsonClient.post<{ id: number }>('Test/UnitSample', {
+    step: 0,
+  });
+
+  const result = await session.pull({ objectId: id });
+
+  expect(result.hasErrors).toBeFalsy();
+  const unitSample = result.object<UnitSample>(m.UnitSample);
+  expect(unitSample.AllorsBinary).toBeNull();
+  expect(unitSample.AllorsBoolean).toBeNull();
+  expect(unitSample.AllorsDateTime).toBeNull();
+  expect(unitSample.AllorsDecimal).toBeNull();
+  expect(unitSample.AllorsDouble).toBeNull();
+  expect(unitSample.AllorsInteger).toBeNull();
+  expect(unitSample.AllorsString).toBeNull();
+  expect(unitSample.AllorsUnique).toBeNull();
+});
+
+test('pull with unit role values', async () => {
+  const { workspace, m, jsonClient } = fixture;
+  const session = workspace.createSession();
+  const { id } = await jsonClient.post<{ id: number }>('Test/UnitSample', {
+    step: 1,
+  });
+
+  const result = await session.pull({ objectId: id });
+
+  expect(result.hasErrors).toBeFalsy();
+  const unitSample = result.object<UnitSample>(m.UnitSample);
+  expect(unitSample.AllorsBinary).toEqual('AQID');
+  expect(unitSample.AllorsBoolean).toBeTruthy();
+  expect(new Date(unitSample.AllorsDateTime)).toEqual(
+    new Date('1973-03-27T00:00:00Z')
+  );
+  expect(unitSample.AllorsDecimal).toEqual('12.34');
+  expect(unitSample.AllorsDouble).toEqual(123);
+  expect(unitSample.AllorsInteger).toEqual(1000);
+  expect(unitSample.AllorsString).toEqual('a string');
+  expect(unitSample.AllorsUnique).toEqual(
+    '2946cf37-71be-4681-8fe6-d0024d59beff'
+  );
 });
 
 test('andGreaterThanLessThan', async () => {

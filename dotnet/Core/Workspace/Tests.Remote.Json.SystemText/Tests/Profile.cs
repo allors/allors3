@@ -6,7 +6,9 @@
 namespace Tests.Workspace.Remote
 {
     using System;
+    using System.Collections.Generic;
     using System.Net.Http;
+    using System.Net.Http.Json;
     using System.Threading.Tasks;
     using Allors.Ranges;
     using Allors.Workspace;
@@ -75,6 +77,20 @@ namespace Tests.Workspace.Remote
         }
 
         public IWorkspace CreateWorkspace() => this.DatabaseConnection.CreateWorkspace();
+
+        public async Task<long> SetupUnitSample(int step)
+        {
+            using var response = await this.httpClient.PostAsJsonAsync("Test/UnitSample", new { step });
+            response.EnsureSuccessStatusCode();
+            var result = await response.Content.ReadFromJsonAsync<Dictionary<string, long>>();
+            return result["id"];
+        }
+
+        public async Task ChangePermissions(long target, string action)
+        {
+            using var response = await this.httpClient.PostAsJsonAsync("Test/PermissionRefresh", new { target, action });
+            response.EnsureSuccessStatusCode();
+        }
 
         public Task Login(string user)
         {

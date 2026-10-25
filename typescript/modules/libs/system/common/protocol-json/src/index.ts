@@ -13,7 +13,6 @@ export * from './lib/api/permission/permission-request';
 export * from './lib/api/permission/permission-response';
 export * from './lib/api/permission/permission-response-permission';
 
-export * from './lib/api/pull/pull-args';
 export * from './lib/api/pull/pull-dependency';
 export * from './lib/api/pull/pull-request';
 export * from './lib/api/pull/pull-response';
@@ -40,7 +39,6 @@ export * from './lib/data/extent-kind';
 export * from './lib/data/node';
 export * from './lib/data/predicate';
 export * from './lib/data/predicate-kind';
-export * from './lib/data/procedure';
 export * from './lib/data/property-kind';
 export * from './lib/data/pull';
 export * from './lib/data/result';

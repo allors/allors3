@@ -8,6 +8,7 @@ namespace Allors.Server
     using System;
     using System.IO;
     using System.Linq;
+    using System.Text.Json.Serialization;
     using System.Threading.RateLimiting;
     using Allors.Services;
     using Microsoft.AspNetCore.Authentication.Cookies;
@@ -83,6 +84,7 @@ namespace Allors.Server
             });
 
             var mvcBuilder = options.UseControllersWithViews ? services.AddControllersWithViews() : services.AddControllers();
+            mvcBuilder.AddJsonOptions(jsonOptions => jsonOptions.JsonSerializerOptions.UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow);
 
             services.PostConfigure<ApiBehaviorOptions>(apiBehaviorOptions =>
             {

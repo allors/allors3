@@ -10,6 +10,7 @@ namespace Tests.Workspace
 {
     using System;
     using System.Linq;
+    using System.Threading.Tasks;
     using Allors;
     using Allors.Workspace.Data;
     using Allors.Workspace.Meta;
@@ -19,10 +20,66 @@ namespace Tests.Workspace
     using C2 = Allors.Workspace.Domain.C2;
     using I12 = Allors.Workspace.Domain.I12;
     using I2 = Allors.Workspace.Domain.I2;
+    using UnitSample = Allors.Workspace.Domain.UnitSample;
 
     public abstract class PullTests : Test
     {
         protected PullTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public async Task UnitSamplesWithNulls()
+        {
+            await this.Login("administrator");
+            var session = this.Workspace.CreateSession();
+
+            var id = await this.Profile.SetupUnitSample(0);
+            var result = await session.PullAsync(new Pull { ObjectId = id });
+
+            Assert.False(result.HasErrors);
+
+            var unitSample = result.GetObject<UnitSample>();
+
+            Assert.False(unitSample.ExistAllorsBinary);
+            Assert.False(unitSample.ExistAllorsBoolean);
+            Assert.False(unitSample.ExistAllorsDateTime);
+            Assert.False(unitSample.ExistAllorsDecimal);
+            Assert.False(unitSample.ExistAllorsDouble);
+            Assert.False(unitSample.ExistAllorsInteger);
+            Assert.False(unitSample.ExistAllorsString);
+            Assert.False(unitSample.ExistAllorsUnique);
+        }
+
+        [Fact]
+        public async Task UnitSamplesWithValues()
+        {
+            await this.Login("administrator");
+            var session = this.Workspace.CreateSession();
+
+            var id = await this.Profile.SetupUnitSample(1);
+            var result = await session.PullAsync(new Pull { ObjectId = id });
+
+            Assert.False(result.HasErrors);
+
+            var unitSample = result.GetObject<UnitSample>();
+
+            Assert.True(unitSample.ExistAllorsBinary);
+            Assert.True(unitSample.ExistAllorsBoolean);
+            Assert.True(unitSample.ExistAllorsDateTime);
+            Assert.True(unitSample.ExistAllorsDecimal);
+            Assert.True(unitSample.ExistAllorsDouble);
+            Assert.True(unitSample.ExistAllorsInteger);
+            Assert.True(unitSample.ExistAllorsString);
+            Assert.True(unitSample.ExistAllorsUnique);
+
+            Assert.Equal(new byte[] { 1, 2, 3 }, unitSample.AllorsBinary);
+            Assert.True(unitSample.AllorsBoolean);
+            Assert.Equal(new System.DateTime(1973, 3, 27, 0, 0, 0, DateTimeKind.Utc), unitSample.AllorsDateTime);
+            Assert.Equal(12.34m, unitSample.AllorsDecimal);
+            Assert.Equal(123d, unitSample.AllorsDouble);
+            Assert.Equal(1000, unitSample.AllorsInteger);
+            Assert.Equal("a string", unitSample.AllorsString);
+            Assert.Equal(new Guid("2946CF37-71BE-4681-8FE6-D0024D59BEFF"), unitSample.AllorsUnique);
+        }
 
         [Fact]
         public async void AndGreaterThanLessThan()

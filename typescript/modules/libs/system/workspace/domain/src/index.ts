@@ -5,7 +5,6 @@ export * from './lib/api/derivation/idatabase-validation';
 
 export * from './lib/api/pull/flat-pull';
 export * from './lib/api/pull/flat-result';
-export * from './lib/api/pull/procedure';
 export * from './lib/api/pull/pull';
 export * from './lib/api/pull/ipull-result';
 export * from './lib/api/pull/iinvoke-result';

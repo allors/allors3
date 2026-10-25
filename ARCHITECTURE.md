@@ -158,6 +158,13 @@ writes `UseRouting`, `UseAuthentication` and `UseAuthorization` itself and calls
 and the API endpoints, and its callback maps the application's own endpoints, such as Razor
 Pages or the Entra sign-in.
 
+`AddAllorsServer` configures System.Text.Json to reject unknown JSON fields throughout typed
+request bodies for all MVC controllers, including application controllers. Dictionary keys
+and untyped values remain application-defined. Controllers with `[ApiController]`, including
+the Allors API, return HTTP 400 when deserialization fails; other controllers handle invalid
+model state themselves. `AllorsServerTests` checks this JSON policy and preserves the configured
+number handling and query-argument dictionaries.
+
 The rest are building blocks in Core's inheritable server folder that a `Startup` switches on:
 `AddAllorsDefaultDeny`; `AddAllorsRateLimiting`, with the paths of the plug-in and of
 `Security:AuthenticationRateLimit`; `AddAllorsDataProtection`, with
