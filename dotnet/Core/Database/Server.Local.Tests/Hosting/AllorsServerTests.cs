@@ -21,6 +21,7 @@ namespace Tests
     using Allors.Database.Configuration.Derivations.Default;
     using Allors.Database.Domain;
     using Allors.Database.Meta;
+    using Allors.Protocol.Json.Api.Invoke;
     using Allors.Protocol.Json.Api.Pull;
     using Allors.Protocol.Json.Api.Push;
     using Allors.Server;
@@ -88,14 +89,31 @@ namespace Tests
             Assert.Equal(request.l[0].o, roundTrip.l[0].o);
         }
 
-        [Fact]
-        public void PullRequestStrictnessLeavesOtherRequestsUnchanged()
+        [Theory]
+        [InlineData(typeof(PushRequest), "{\"unexpected\":null}")]
+        [InlineData(typeof(PushRequest), "{\"o\":[{\"r\":[{\"unexpected\":true}]}]}")]
+        [InlineData(typeof(InvokeRequest), "{\"unexpected\":false}")]
+        [InlineData(typeof(InvokeRequest), "{\"l\":[],\"o\":{\"unexpected\":true}}")]
+        [InlineData(typeof(ApplicationRequest), "{\"unexpected\":null}")]
+        [InlineData(typeof(ApplicationRequest), "{\"details\":{\"unexpected\":true}}")]
+        public void MvcRequestsRejectUnknownFields(Type requestType, string json)
         {
             using var provider = Services().BuildServiceProvider();
             var options = provider.GetRequiredService<IOptions<JsonOptions>>().Value.JsonSerializerOptions;
 
-            Assert.NotNull(JsonSerializer.Deserialize<PushRequest>("{\"unexpected\":null}", options));
-            Assert.NotNull(JsonSerializer.Deserialize<PullRequest>("{}", options));
+            Assert.Throws<JsonException>(() => JsonSerializer.Deserialize(json, requestType, options));
+        }
+
+        [Fact]
+        public void ApplicationRequestsKeepConfiguredJsonBehaviour()
+        {
+            using var provider = Services().BuildServiceProvider();
+            var options = provider.GetRequiredService<IOptions<JsonOptions>>().Value.JsonSerializerOptions;
+            var request = JsonSerializer.Deserialize<ApplicationRequest>(
+                "{\"NAME\":\"sample\",\"details\":{\"count\":\"42\"}}", options);
+
+            Assert.Equal("sample", request.Name);
+            Assert.Equal(42, request.Details.Count);
         }
 
         [Fact]
@@ -1387,6 +1405,18 @@ namespace Tests
                 this.Response.Headers[ChallengedHeader] = this.Scheme.Name;
                 return Task.CompletedTask;
             }
+        }
+
+        private sealed class ApplicationRequest
+        {
+            public string Name { get; set; }
+
+            public ApplicationDetails Details { get; set; }
+        }
+
+        private sealed class ApplicationDetails
+        {
+            public int Count { get; set; }
         }
 
         private sealed class FirstUserResolver : IUserResolver

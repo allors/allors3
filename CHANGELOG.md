@@ -151,10 +151,11 @@ Changes accumulate under **[Unreleased]** until a version is released.
 
 ### Changed
 
-- **Breaking:** Pull JSON requests reject unknown JSON fields with HTTP 400, including nested
-  typed request fields. Request `p` is removed entirely, so both null and non-null values are
-  rejected by the same generic validation. Query-argument dictionary keys remain
-  application-defined.
+- **Breaking:** the server's MVC JSON handling rejects unknown fields, including nested typed
+  request fields, across protocol, authentication and application requests. API controllers
+  return HTTP 400 for invalid JSON contracts. Pull request `p` is removed entirely, so both
+  null and non-null values are rejected by the same generic validation. Dictionary keys and
+  untyped argument values remain application-defined.
 
 - The platform CI workflow skips its test suites for changes limited to `docs/`, the
   documentation workflow and the root Markdown files. One job, `CI result`, reports the status
