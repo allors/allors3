@@ -81,6 +81,7 @@ test('pushNewObjectWithChangedRoles', async () => {
   const newObject = session.create<C1>(m.C1);
   newObject.C1AllorsString = 'A new object';
   newObject.C1AllorsInteger = -2147483648;
+  newObject.C1AllorsDouble = 1.5;
 
   const pushResult = await session.push();
 
@@ -91,6 +92,7 @@ test('pushNewObjectWithChangedRoles', async () => {
   expect(pullResult.hasErrors).toBeFalsy();
   expect(newObject.C1AllorsString).toBe('A new object');
   expect(newObject.C1AllorsInteger).toBe(-2147483648);
+  expect(newObject.C1AllorsDouble).toBe(1.5);
 });
 
 test('pushExistingObjectWithChangedRoles', async () => {
@@ -101,6 +103,7 @@ test('pushExistingObjectWithChangedRoles', async () => {
 
   c1a.C1AllorsString = 'X';
   c1a.C1AllorsInteger = 2147483647;
+  c1a.C1AllorsDouble = -1.5;
 
   const pushResult = await session.push();
 
@@ -111,6 +114,7 @@ test('pushExistingObjectWithChangedRoles', async () => {
   expect(pullResult.hasErrors).toBeFalsy();
   expect(c1a.C1AllorsString).toBe('X');
   expect(c1a.C1AllorsInteger).toBe(2147483647);
+  expect(c1a.C1AllorsDouble).toBe(-1.5);
 });
 
 test('changesBeforeCheckpointShouldBePushed', async () => {

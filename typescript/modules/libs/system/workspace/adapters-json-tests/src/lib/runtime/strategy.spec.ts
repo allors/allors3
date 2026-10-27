@@ -15,6 +15,7 @@ test('setUnitWrongObjectType', async () => {
 
   const c1a = await fixture.pullC1(session, name_c1A);
   const originalInteger = c1a.C1AllorsInteger;
+  const originalDouble = c1a.C1AllorsDouble;
 
   let hasErrors: boolean;
 
@@ -39,6 +40,25 @@ test('setUnitWrongObjectType', async () => {
 
     expect(hasErrors).toBeTruthy();
     expect(c1a.C1AllorsInteger).toBe(originalInteger);
+  }
+
+  for (const value of [
+    '12',
+    '',
+    true,
+    false,
+    new Date('2020-01-01T00:00:00Z'),
+    NaN,
+  ]) {
+    try {
+      c1a.strategy.setUnitRole(m.C1.C1AllorsDouble, value);
+      hasErrors = false;
+    } catch (e) {
+      hasErrors = true;
+    }
+
+    expect(hasErrors).toBeTruthy();
+    expect(c1a.C1AllorsDouble).toBe(originalDouble);
   }
 });
 

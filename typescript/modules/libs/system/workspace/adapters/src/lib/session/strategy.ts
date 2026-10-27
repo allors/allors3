@@ -540,7 +540,7 @@ export abstract class Strategy implements IStrategy {
         error = !(value instanceof Date);
         break;
       case UnitTags.Float:
-        error = isNaN(value as number);
+        error = typeof value !== 'number' || Number.isNaN(value);
         break;
       case UnitTags.Integer:
         error =
