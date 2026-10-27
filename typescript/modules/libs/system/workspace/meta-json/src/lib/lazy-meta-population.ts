@@ -24,6 +24,7 @@ import {
   PropertyType,
   RelationType,
   Unit,
+  UnitTags,
 } from '@allors/system/workspace/meta';
 
 export class LazyMetaPopulation implements InternalMetaPopulation {
@@ -47,16 +48,9 @@ export class LazyMetaPopulation implements InternalMetaPopulation {
     const lookup = new Lookup(data);
 
     this.units = new Set(
-      [
-        'Binary',
-        'Boolean',
-        'DateTime',
-        'Decimal',
-        'Float',
-        'Integer',
-        'String',
-        'Unique',
-      ].map((name, i) => new LazyUnit(this, (i + 1).toString(), name))
+      Object.entries(UnitTags).map(
+        ([name, tag]) => new LazyUnit(this, tag, name)
+      )
     );
     this.interfaces = new Set(
       data.i?.map((v) => new LazyInterface(this, v, lookup)) ?? []
