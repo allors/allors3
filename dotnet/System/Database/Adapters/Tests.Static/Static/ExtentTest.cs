@@ -17080,6 +17080,32 @@ namespace Allors.Database.Adapters
                 }
 
                 Assert.True(exceptionThrown);
+
+                var invalidExtent = this.Transaction.Extent(m.C1);
+                exceptionThrown = false;
+                try
+                {
+                    invalidExtent.Filter.AddBetween(m.C1.C1AllorsInteger, 0L, 1);
+                }
+                catch (ArgumentException)
+                {
+                    exceptionThrown = true;
+                }
+
+                Assert.True(exceptionThrown);
+
+                invalidExtent = this.Transaction.Extent(m.C1);
+                exceptionThrown = false;
+                try
+                {
+                    invalidExtent.Filter.AddBetween(m.C1.C1AllorsInteger, 0, 1L);
+                }
+                catch (ArgumentException)
+                {
+                    exceptionThrown = true;
+                }
+
+                Assert.True(exceptionThrown);
             }
         }
 
@@ -17144,6 +17170,19 @@ namespace Allors.Database.Adapters
                 }
 
                 Assert.True(exceptionThrown);
+
+                var invalidExtent = this.Transaction.Extent(m.C1);
+                exceptionThrown = false;
+                try
+                {
+                    invalidExtent.Filter.AddEquals(m.C1.C1AllorsInteger, 1L);
+                }
+                catch (ArgumentException)
+                {
+                    exceptionThrown = true;
+                }
+
+                Assert.True(exceptionThrown);
             }
         }
 
@@ -17168,6 +17207,19 @@ namespace Allors.Database.Adapters
                 {
                     var extent = this.Transaction.Extent(m.C1);
                     extent.Filter.AddGreaterThan(m.C1.C1C2one2one, 0);
+                }
+                catch (ArgumentException)
+                {
+                    exceptionThrown = true;
+                }
+
+                Assert.True(exceptionThrown);
+
+                var invalidExtent = this.Transaction.Extent(m.C1);
+                exceptionThrown = false;
+                try
+                {
+                    invalidExtent.Filter.AddGreaterThan(m.C1.C1AllorsInteger, 1L);
                 }
                 catch (ArgumentException)
                 {
@@ -17220,6 +17272,19 @@ namespace Allors.Database.Adapters
                 {
                     var extent = this.Transaction.Extent(m.C1);
                     extent.Filter.AddLessThan(m.C1.C1C2one2one, 1);
+                }
+                catch (ArgumentException)
+                {
+                    exceptionThrown = true;
+                }
+
+                Assert.True(exceptionThrown);
+
+                var invalidExtent = this.Transaction.Extent(m.C1);
+                exceptionThrown = false;
+                try
+                {
+                    invalidExtent.Filter.AddLessThan(m.C1.C1AllorsInteger, 1L);
                 }
                 catch (ArgumentException)
                 {

@@ -35,7 +35,7 @@ namespace Allors.Database.Adapters.Memory
             }
             else
             {
-                this.equals = equals;
+                this.equals = equals is IRoleType ? equals : roleType.Normalize(equals);
             }
         }
 
@@ -54,10 +54,6 @@ namespace Allors.Database.Adapters.Memory
             {
                 var equalsRole = (IRoleType)this.equals;
                 equalsValue = strategy.GetInternalizedUnitRole(equalsRole);
-            }
-            else if (this.roleType.ObjectType is IUnit)
-            {
-                equalsValue = this.roleType.Normalize(this.@equals);
             }
 
             if (equalsValue == null)

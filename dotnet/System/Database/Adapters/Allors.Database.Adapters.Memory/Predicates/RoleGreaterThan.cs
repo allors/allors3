@@ -25,7 +25,7 @@ namespace Allors.Database.Adapters.Memory
 
             this.extent = extent;
             this.roleType = roleType;
-            this.compare = compare;
+            this.compare = compare is IRoleType ? compare : roleType.Normalize(compare);
         }
 
         internal override ThreeValuedLogic Evaluate(Strategy strategy)
@@ -35,10 +35,6 @@ namespace Allors.Database.Adapters.Memory
             if (this.compare is IRoleType compareRole)
             {
                 compareValue = strategy.GetInternalizedUnitRole(compareRole);
-            }
-            else if (this.roleType.ObjectType is IUnit)
-            {
-                compareValue = this.roleType.Normalize(this.compare);
             }
 
             if (!(strategy.GetInternalizedUnitRole(this.roleType) is IComparable comparable))
