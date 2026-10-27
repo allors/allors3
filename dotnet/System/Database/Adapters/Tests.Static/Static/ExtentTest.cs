@@ -5928,7 +5928,7 @@ namespace Allors.Database.Adapters
                 exception = false;
                 try
                 {
-                    extent.Filter.AddNot().AddGreaterThan(m.I2.I2AllorsInteger, 0);
+                    extent.Filter.AddNot().AddGreaterThan(m.S2.S2AllorsInteger, 0);
                 }
                 catch
                 {
@@ -5943,7 +5943,7 @@ namespace Allors.Database.Adapters
                 exception = false;
                 try
                 {
-                    extent.Filter.AddNot().AddGreaterThan(m.I2.I2AllorsInteger, 1);
+                    extent.Filter.AddNot().AddGreaterThan(m.S2.S2AllorsInteger, 1);
                 }
                 catch
                 {
@@ -5958,7 +5958,7 @@ namespace Allors.Database.Adapters
                 exception = false;
                 try
                 {
-                    extent.Filter.AddNot().AddGreaterThan(m.I2.I2AllorsInteger, 2);
+                    extent.Filter.AddNot().AddGreaterThan(m.S2.S2AllorsInteger, 2);
                 }
                 catch
                 {
@@ -9656,7 +9656,7 @@ namespace Allors.Database.Adapters
                 exception = false;
                 try
                 {
-                    extent.Filter.AddGreaterThan(m.I2.I2AllorsInteger, 0);
+                    extent.Filter.AddGreaterThan(m.S2.S2AllorsInteger, 0);
                 }
                 catch
                 {
@@ -9671,7 +9671,7 @@ namespace Allors.Database.Adapters
                 exception = false;
                 try
                 {
-                    extent.Filter.AddGreaterThan(m.I2.I2AllorsInteger, 1);
+                    extent.Filter.AddGreaterThan(m.S2.S2AllorsInteger, 1);
                 }
                 catch
                 {
@@ -9686,7 +9686,7 @@ namespace Allors.Database.Adapters
                 exception = false;
                 try
                 {
-                    extent.Filter.AddGreaterThan(m.I2.I2AllorsInteger, 2);
+                    extent.Filter.AddGreaterThan(m.S2.S2AllorsInteger, 2);
                 }
                 catch
                 {
@@ -10346,7 +10346,7 @@ namespace Allors.Database.Adapters
                 exception = false;
                 try
                 {
-                    extent.Filter.AddGreaterThan(m.I2.I2AllorsInteger, 0);
+                    extent.Filter.AddGreaterThan(m.S2.S2AllorsInteger, 0);
                 }
                 catch
                 {
@@ -10361,7 +10361,7 @@ namespace Allors.Database.Adapters
                 exception = false;
                 try
                 {
-                    extent.Filter.AddGreaterThan(m.I2.I2AllorsInteger, 1);
+                    extent.Filter.AddGreaterThan(m.S2.S2AllorsInteger, 1);
                 }
                 catch
                 {
@@ -10376,7 +10376,7 @@ namespace Allors.Database.Adapters
                 exception = false;
                 try
                 {
-                    extent.Filter.AddGreaterThan(m.I2.I2AllorsInteger, 2);
+                    extent.Filter.AddGreaterThan(m.S2.S2AllorsInteger, 2);
                 }
                 catch
                 {
@@ -11283,7 +11283,7 @@ namespace Allors.Database.Adapters
                 exception = false;
                 try
                 {
-                    extent.Filter.AddGreaterThan(m.I2.I2AllorsDouble, 0);
+                    extent.Filter.AddGreaterThan(m.S2.S2AllorsDouble, 0);
                 }
                 catch
                 {
@@ -11298,7 +11298,7 @@ namespace Allors.Database.Adapters
                 exception = false;
                 try
                 {
-                    extent.Filter.AddGreaterThan(m.I2.I2AllorsDouble, 1);
+                    extent.Filter.AddGreaterThan(m.S2.S2AllorsDouble, 1);
                 }
                 catch
                 {
@@ -11313,7 +11313,7 @@ namespace Allors.Database.Adapters
                 exception = false;
                 try
                 {
-                    extent.Filter.AddGreaterThan(m.I2.I2AllorsDouble, 2);
+                    extent.Filter.AddGreaterThan(m.S2.S2AllorsDouble, 2);
                 }
                 catch
                 {
@@ -12639,7 +12639,7 @@ namespace Allors.Database.Adapters
                     exception = false;
                     try
                     {
-                        extent.Filter.AddGreaterThan(m.I2.I2AllorsDateTime, dateTime3);
+                        extent.Filter.AddGreaterThan(m.S2.S2AllorsDateTime, dateTime3);
                     }
                     catch
                     {
@@ -12654,7 +12654,7 @@ namespace Allors.Database.Adapters
                     exception = false;
                     try
                     {
-                        extent.Filter.AddGreaterThan(m.I2.I2AllorsDateTime, dateTime4);
+                        extent.Filter.AddGreaterThan(m.S2.S2AllorsDateTime, dateTime4);
                     }
                     catch
                     {
@@ -12669,7 +12669,7 @@ namespace Allors.Database.Adapters
                     exception = false;
                     try
                     {
-                        extent.Filter.AddGreaterThan(m.I2.I2AllorsDateTime, dateTime5);
+                        extent.Filter.AddGreaterThan(m.S2.S2AllorsDateTime, dateTime5);
                     }
                     catch
                     {
@@ -13709,7 +13709,7 @@ namespace Allors.Database.Adapters
                 exception = false;
                 try
                 {
-                    extent.Filter.AddGreaterThan(m.I2.I2AllorsDecimal, 0);
+                    extent.Filter.AddGreaterThan(m.S2.S2AllorsDecimal, 0);
                 }
                 catch
                 {
@@ -13724,7 +13724,7 @@ namespace Allors.Database.Adapters
                 exception = false;
                 try
                 {
-                    extent.Filter.AddGreaterThan(m.I2.I2AllorsDecimal, 1);
+                    extent.Filter.AddGreaterThan(m.S2.S2AllorsDecimal, 1);
                 }
                 catch
                 {
@@ -13739,7 +13739,7 @@ namespace Allors.Database.Adapters
                 exception = false;
                 try
                 {
-                    extent.Filter.AddGreaterThan(m.I2.I2AllorsDecimal, 2);
+                    extent.Filter.AddGreaterThan(m.S2.S2AllorsDecimal, 2);
                 }
                 catch
                 {
