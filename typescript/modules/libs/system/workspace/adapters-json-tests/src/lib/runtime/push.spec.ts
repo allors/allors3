@@ -80,14 +80,17 @@ test('pushNewObjectWithChangedRoles', async () => {
 
   const newObject = session.create<C1>(m.C1);
   newObject.C1AllorsString = 'A new object';
+  newObject.C1AllorsInteger = -2147483648;
 
   const pushResult = await session.push();
 
   expect(pushResult.hasErrors).toBeFalsy();
 
-  await session.pull([{ object: newObject }]);
+  const pullResult = await session.pull([{ object: newObject }]);
 
+  expect(pullResult.hasErrors).toBeFalsy();
   expect(newObject.C1AllorsString).toBe('A new object');
+  expect(newObject.C1AllorsInteger).toBe(-2147483648);
 });
 
 test('pushExistingObjectWithChangedRoles', async () => {
@@ -97,14 +100,17 @@ test('pushExistingObjectWithChangedRoles', async () => {
   const c1a = await fixture.pullC1(session, name_c1A);
 
   c1a.C1AllorsString = 'X';
+  c1a.C1AllorsInteger = 2147483647;
 
   const pushResult = await session.push();
 
   expect(pushResult.hasErrors).toBeFalsy();
 
-  await session.pull([{ object: c1a }]);
+  const pullResult = await session.pull([{ object: c1a }]);
 
+  expect(pullResult.hasErrors).toBeFalsy();
   expect(c1a.C1AllorsString).toBe('X');
+  expect(c1a.C1AllorsInteger).toBe(2147483647);
 });
 
 test('changesBeforeCheckpointShouldBePushed', async () => {

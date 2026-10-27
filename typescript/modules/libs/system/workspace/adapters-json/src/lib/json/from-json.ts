@@ -43,7 +43,12 @@ export function unitFromJson(tag: string, value: unknown): IUnit {
       break;
 
     case UnitTags.Integer:
-      if (typeof value === 'number') {
+      if (
+        typeof value === 'number' &&
+        Number.isInteger(value) &&
+        value >= -2147483648 &&
+        value <= 2147483647
+      ) {
         return value;
       }
       break;
@@ -61,5 +66,5 @@ export function unitFromJson(tag: string, value: unknown): IUnit {
       break;
   }
 
-  throw new Error(`Unsupported value: ${value} for tab ${tag}`);
+  throw new Error(`Unsupported value: ${value} for tag ${tag}`);
 }

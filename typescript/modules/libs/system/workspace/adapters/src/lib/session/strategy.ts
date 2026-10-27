@@ -543,7 +543,11 @@ export abstract class Strategy implements IStrategy {
         error = isNaN(value as number);
         break;
       case UnitTags.Integer:
-        error = !Number.isInteger(value as number);
+        error =
+          typeof value !== 'number' ||
+          !Number.isInteger(value) ||
+          value < -2147483648 ||
+          value > 2147483647;
         break;
     }
 

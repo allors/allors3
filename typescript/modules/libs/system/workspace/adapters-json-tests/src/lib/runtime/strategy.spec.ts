@@ -14,17 +14,32 @@ test('setUnitWrongObjectType', async () => {
   const session = workspace.createSession();
 
   const c1a = await fixture.pullC1(session, name_c1A);
+  const originalInteger = c1a.C1AllorsInteger;
 
   let hasErrors: boolean;
 
-  try {
-    c1a.strategy.setUnitRole(m.C1.C1AllorsInteger, 'Not an integer');
-    hasErrors = false;
-  } catch (e) {
-    hasErrors = true;
-  }
+  for (const value of [
+    'Not an integer',
+    '12',
+    true,
+    false,
+    1.5,
+    -2147483649,
+    2147483648,
+    NaN,
+    -Infinity,
+    Infinity,
+  ]) {
+    try {
+      c1a.strategy.setUnitRole(m.C1.C1AllorsInteger, value);
+      hasErrors = false;
+    } catch (e) {
+      hasErrors = true;
+    }
 
-  expect(hasErrors).toBeTruthy();
+    expect(hasErrors).toBeTruthy();
+    expect(c1a.C1AllorsInteger).toBe(originalInteger);
+  }
 });
 
 test('setCompositeRoleWrongObjectType', async () => {
