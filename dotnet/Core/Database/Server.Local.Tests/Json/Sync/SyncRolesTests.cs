@@ -51,6 +51,12 @@ namespace Tests
 
             Assert.Equal("x1:x", wx1WorkspaceXString.v);
             Assert.Equal("x1:xy", wx1WorkspaceXYString.v);
+            Assert.NotEmpty(syncResponse.p);
+            Assert.All(syncResponse.p, definition =>
+            {
+                var permission = Assert.IsAssignableFrom<Permission>(this.Transaction.Instantiate(definition.i));
+                Assert.True(permission.InWorkspace("X"));
+            });
         }
 
 
@@ -77,6 +83,9 @@ namespace Tests
             var syncResponse = api.Sync(syncRequest);
 
             Assert.Empty(syncResponse.o);
+            Assert.Empty(syncResponse.g);
+            Assert.Empty(syncResponse.r);
+            Assert.Empty(syncResponse.p);
         }
 
         [Fact]
@@ -134,6 +143,16 @@ namespace Tests
             Assert.Empty(syncUnreadable.ro);
             var syncReadable = Assert.Single(response.o, v => v.i == readable.Id);
             Assert.Equal("Visible value", syncReadable.GetRole(this.M.Data.String).v);
+
+            var acls = new[] { api.AccessControl[organisation], targetAcl, api.AccessControl[readable] };
+            Assert.Equal(acls.SelectMany(v => v.Grants).Select(v => v.Id).Distinct().OrderBy(v => v), response.g.Select(v => v.i));
+            Assert.Equal(acls.SelectMany(v => v.Revocations).Select(v => v.Id).Distinct().OrderBy(v => v), response.r.Select(v => v.i));
+            var expectedPermissionIds = acls.SelectMany(v => v.Grants).SelectMany(v => v.PermissionSet)
+                .Concat(acls.SelectMany(v => v.Revocations).SelectMany(v => v.PermissionSet))
+                .Distinct().OrderBy(v => v);
+            Assert.Equal(expectedPermissionIds, response.p.Select(v => v.i));
+            Assert.Contains(response.p, v => v.i == namePermission.Id && v.c == this.M.Organisation.Tag &&
+                v.t == this.M.Organisation.Name.RelationType.Tag && v.o == (long)Operations.Read);
         }
     }
 }

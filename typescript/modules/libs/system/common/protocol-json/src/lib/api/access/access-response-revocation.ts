@@ -5,6 +5,6 @@ export interface AccessResponseRevocation {
   /** Version */
   v: number;
 
-  /** PermissionIds */
-  p: number[];
+  /** Permission IDs; absent or null in Sync when the complete entry was advertised */
+  p?: number[] | null;
 }

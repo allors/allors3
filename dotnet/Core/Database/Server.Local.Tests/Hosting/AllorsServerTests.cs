@@ -24,6 +24,8 @@ namespace Tests
     using Allors.Protocol.Json.Api.Invoke;
     using Allors.Protocol.Json.Api.Pull;
     using Allors.Protocol.Json.Api.Push;
+    using Allors.Protocol.Json.Api.Security;
+    using Allors.Protocol.Json.Api.Sync;
     using Allors.Server;
     using Allors.Services;
     using Microsoft.AspNetCore.Authentication;
@@ -89,11 +91,56 @@ namespace Tests
             Assert.Equal(request.l[0].o, roundTrip.l[0].o);
         }
 
+        [Fact]
+        public void SyncKeepsKnownVersionsAndPermissionPresence()
+        {
+            using var provider = Services().BuildServiceProvider();
+            var options = provider.GetRequiredService<IOptions<JsonOptions>>().Value.JsonSerializerOptions;
+            var request = JsonSerializer.Deserialize<SyncRequest>(
+                "{\"o\":[42],\"g\":[[11,4],[12,5]],\"r\":[[21,7]]}", options);
+
+            Assert.Equal(new long[] { 42 }, request.o);
+            Assert.Equal(new long[] { 11, 4 }, request.g[0]);
+            Assert.Equal(new long[] { 12, 5 }, request.g[1]);
+            Assert.Equal(new long[] { 21, 7 }, Assert.Single(request.r));
+            var roundTrip = JsonSerializer.Deserialize<SyncRequest>(JsonSerializer.Serialize(request, options), options);
+            Assert.Equal(request.g, roundTrip.g);
+            Assert.Equal(request.r, roundTrip.r);
+
+            var response = new SyncResponse
+            {
+                o = Array.Empty<SyncResponseObject>(),
+                g = new[]
+                {
+                    new AccessResponseGrant { i = 11, v = 4 },
+                    new AccessResponseGrant { i = 12, v = 5, p = Array.Empty<long>() },
+                },
+                r = new[]
+                {
+                    new AccessResponseRevocation { i = 21, v = 7 },
+                    new AccessResponseRevocation { i = 22, v = 8, p = Array.Empty<long>() },
+                },
+                p = Array.Empty<PermissionResponsePermission>(),
+            };
+
+            using var json = JsonDocument.Parse(JsonSerializer.Serialize(response, options));
+            foreach (var name in new[] { "g", "r" })
+            {
+                var entries = json.RootElement.GetProperty(name);
+                Assert.Equal(JsonValueKind.Null, entries[0].GetProperty("p").ValueKind);
+                Assert.Equal(JsonValueKind.Array, entries[1].GetProperty("p").ValueKind);
+                Assert.Empty(entries[1].GetProperty("p").EnumerateArray());
+            }
+
+            Assert.Equal(JsonValueKind.Array, json.RootElement.GetProperty("p").ValueKind);
+        }
+
         [Theory]
         [InlineData(typeof(PushRequest), "{\"unexpected\":null}")]
         [InlineData(typeof(PushRequest), "{\"o\":[{\"r\":[{\"unexpected\":true}]}]}")]
         [InlineData(typeof(InvokeRequest), "{\"unexpected\":false}")]
         [InlineData(typeof(InvokeRequest), "{\"l\":[],\"o\":{\"unexpected\":true}}")]
+        [InlineData(typeof(SyncRequest), "{\"o\":[],\"g\":[],\"r\":[],\"unexpected\":true}")]
         [InlineData(typeof(ApplicationRequest), "{\"unexpected\":null}")]
         [InlineData(typeof(ApplicationRequest), "{\"details\":{\"unexpected\":true}}")]
         public void MvcRequestsRejectUnknownFields(Type requestType, string json)

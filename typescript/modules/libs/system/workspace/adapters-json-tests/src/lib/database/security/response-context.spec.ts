@@ -44,6 +44,9 @@ test('synchronization refreshes distinct cached and uncached access ids across o
   expect(
     database.onSyncResponse({
       o: [object, { ...object, i: 102, g: [11, 13], r: [21, 23] }],
+      g: [11, 12, 13].map((i) => ({ i, v: 1, p: [] })),
+      r: [21, 22, 23].map((i) => ({ i, v: 1, p: [] })),
+      p: [],
     })
   ).toEqual({ g: [11, 12, 13], r: [21, 22, 23] });
 
@@ -51,9 +54,12 @@ test('synchronization refreshes distinct cached and uncached access ids across o
   expect(
     database.onSyncResponse({
       o: [{ ...object, v: 2, g: [11], r: [21] }],
+      g: [{ i: 11, v: 1, p: [] }],
+      r: [{ i: 21, v: 1, p: [] }],
+      p: [],
     })
   ).toEqual({ g: [11], r: [21] });
-  expect(database.onSyncResponse({ o: [] })).toBeNull();
+  expect(database.onSyncResponse({ o: [], g: [], r: [], p: [] })).toBeNull();
 });
 
 test('an unchanged pull does not repeat synchronization or access requests', async () => {
@@ -70,7 +76,12 @@ test('an unchanged pull does not repeat synchronization or access requests', asy
   };
   const client: IDatabaseJsonClient = {
     pull: jest.fn().mockResolvedValue({ p: [object] }),
-    sync: jest.fn().mockResolvedValue({ o: [object] }),
+    sync: jest.fn().mockResolvedValue({
+      o: [object],
+      g: [{ i: 11, v: 1, p: [] }],
+      r: [{ i: 21, v: 1, p: [] }],
+      p: [],
+    }),
     access: jest.fn().mockResolvedValue({
       g: [{ i: 11, v: 1, p: [] }],
       r: [{ i: 21, v: 1, p: [] }],
