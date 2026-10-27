@@ -124,17 +124,17 @@ and TypeScript specs verify synchronized-object refresh; they do not directly ch
 older editing record shown in the example. Its table displays held values independently of
 permission to expose them.
 
-## Open decisions
+## Agreed replacement and remaining decisions
+
+The [hybrid Sync and session snapshot design](workspace-hybrid-sync.md) defines the agreed
+replacement. Edited objects will retain their active data and security together while Pull
+records the latest complete snapshot. Reset will discard edits and adopt that snapshot without
+another request. The server/protocol implementation has started; these client changes are
+pending, so the characterization matrix and guided example above still describe current behaviour.
 
 - Decide whether failed Push should keep returning an error result in .NET and throwing
   `ResultError` in TypeScript. The baseline tests now pin both surfaces; aligning them would be
   an API behaviour change for callers and needs separate approval.
-- Decide whether to preserve the current baseline transitions in the connection/session split,
-  including Reset after Push and whole-role conflict detection. The matrix is evidence for that
-  decision, not approval to change semantics or to combine to-many membership edits.
-- Define authorization freshness independently of data baselines, including changes to grant
-  membership and Pulls without Sync. Retaining records alone cannot provide an authorization
-  snapshot or a general freshness guarantee.
 
-The connection/session split, Push error-contract changes, protocol envelopes, shared or
-persistent caching, and signals remain separate work.
+The new snapshot rules replace automatic data merging on Pull. Push error-contract changes,
+persistent caching and signals remain separate work.
