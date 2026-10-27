@@ -1925,9 +1925,10 @@ namespace Allors.Database.Adapters
                         mark();
                         c1A.Strategy.SetUnitRole(m.C1.C1AllorsBoolean, "Oops");
                     }
-                    catch (ArgumentException)
+                    catch (ArgumentException exception)
                     {
                         exceptionThrown = true;
+                        Assert.Equal("Invalid value type for role 'C1.C1AllorsBoolean': expected Boolean, received System.String.", exception.Message);
                     }
 
                     Assert.True(exceptionThrown);
@@ -1938,9 +1939,10 @@ namespace Allors.Database.Adapters
                         mark();
                         c1A.Strategy.SetUnitRole(m.C1.C1AllorsDecimal, "Oops");
                     }
-                    catch
+                    catch (ArgumentException exception)
                     {
                         exceptionThrown = true;
+                        Assert.Equal("Invalid value type for role 'C1.C1AllorsDecimal': expected Decimal, received System.String.", exception.Message);
                     }
 
                     Assert.True(exceptionThrown);
@@ -1951,9 +1953,10 @@ namespace Allors.Database.Adapters
                         mark();
                         c1A.Strategy.SetUnitRole(m.C1.C1AllorsDouble, "Oops");
                     }
-                    catch
+                    catch (ArgumentException exception)
                     {
                         exceptionThrown = true;
+                        Assert.Equal("Invalid value type for role 'C1.C1AllorsDouble': expected Float, received System.String.", exception.Message);
                     }
 
                     Assert.True(exceptionThrown);
@@ -1964,9 +1967,10 @@ namespace Allors.Database.Adapters
                         mark();
                         c1A.Strategy.SetUnitRole(m.C1.C1AllorsInteger, "Oops");
                     }
-                    catch
+                    catch (ArgumentException exception)
                     {
                         exceptionThrown = true;
+                        Assert.Equal("Invalid value type for role 'C1.C1AllorsInteger': expected Integer, received System.String.", exception.Message);
                     }
 
                     Assert.True(exceptionThrown);
@@ -1977,9 +1981,10 @@ namespace Allors.Database.Adapters
                         mark();
                         c1A.Strategy.SetUnitRole(m.C1.C1AllorsString, 0);
                     }
-                    catch
+                    catch (ArgumentException exception)
                     {
                         exceptionThrown = true;
+                        Assert.Equal("Invalid value type for role 'C1.C1AllorsString': expected String, received System.Int32.", exception.Message);
                     }
 
                     Assert.True(exceptionThrown);
@@ -1990,9 +1995,52 @@ namespace Allors.Database.Adapters
                         mark();
                         c1A.Strategy.SetUnitRole(m.C1.C1AllorsInteger, 0L);
                     }
-                    catch
+                    catch (ArgumentException exception)
                     {
                         exceptionThrown = true;
+                        Assert.Equal("Invalid value type for role 'C1.C1AllorsInteger': expected Integer, received System.Int64.", exception.Message);
+                    }
+
+                    Assert.True(exceptionThrown);
+
+                    exceptionThrown = false;
+                    try
+                    {
+                        mark();
+                        c1A.Strategy.SetUnitRole(m.C1.C1AllorsDateTime, "Oops");
+                    }
+                    catch (ArgumentException exception)
+                    {
+                        exceptionThrown = true;
+                        Assert.Equal("Invalid value type for role 'C1.C1AllorsDateTime': expected DateTime, received System.String.", exception.Message);
+                    }
+
+                    Assert.True(exceptionThrown);
+
+                    exceptionThrown = false;
+                    try
+                    {
+                        mark();
+                        c1A.Strategy.SetUnitRole(m.C1.C1AllorsUnique, "Oops");
+                    }
+                    catch (ArgumentException exception)
+                    {
+                        exceptionThrown = true;
+                        Assert.Equal("Invalid value type for role 'C1.C1AllorsUnique': expected Unique, received System.String.", exception.Message);
+                    }
+
+                    Assert.True(exceptionThrown);
+
+                    exceptionThrown = false;
+                    try
+                    {
+                        mark();
+                        c1A.Strategy.SetUnitRole(m.C1.C1AllorsBinary, "Oops");
+                    }
+                    catch (ArgumentException exception)
+                    {
+                        exceptionThrown = true;
+                        Assert.Equal("Invalid value type for role 'C1.C1AllorsBinary': expected Binary, received System.String.", exception.Message);
                     }
 
                     Assert.True(exceptionThrown);
