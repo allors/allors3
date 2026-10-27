@@ -6,6 +6,9 @@
 namespace Tests.Workspace.Remote
 {
     using System.Text.Json;
+    using System.Net.Http;
+    using Allors.Workspace;
+    using Allors.Ranges;
     using Allors.Protocol.Json.Api.Sync;
     using Xunit;
 
@@ -14,6 +17,11 @@ namespace Tests.Workspace.Remote
         public SecurityTests(Fixture fixture) : base(fixture) => this.Profile = new Profile();
 
         public override IProfile Profile { get; }
+
+        protected override IWorkspace CreateWorkspace(HttpClient client) =>
+            new Allors.Workspace.Adapters.Remote.SystemText.DatabaseConnection(
+                (Allors.Workspace.Adapters.Remote.Configuration)this.Workspace.Configuration,
+                () => new Allors.Workspace.WorkspaceServices(), client, new Allors.Workspace.Adapters.IdGenerator(), new DefaultStructRanges<long>()).CreateWorkspace();
 
         [Fact]
         public void SyncSecuritySurvivesSerialization()

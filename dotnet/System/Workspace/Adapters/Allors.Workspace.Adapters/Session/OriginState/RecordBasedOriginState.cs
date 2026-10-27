@@ -168,109 +168,38 @@ namespace Allors.Workspace.Adapters
 
         public void Checkpoint(ChangeSet changeSet)
         {
-            // Same record
-            if (this.PreviousRecord == null || this.Record == null || this.Record.Version == this.PreviousRecord.Version)
+            var relations = !ReferenceEquals(this.Record, this.PreviousRecord)
+                ? this.RoleTypes.Select(v => v.RelationType)
+                : (this.ChangedRoleByRelationType?.Keys ?? Enumerable.Empty<IRelationType>())
+                    .Union(this.PreviousChangedRoleByRelationType?.Keys ?? Enumerable.Empty<IRelationType>());
+            foreach (var relation in relations)
             {
-                if (this.ChangedRoleByRelationType != null)
+                if (this.ChangedRoleByRelationType?.TryGetValue(relation, out var current) != true) current = this.Record?.GetRole(relation.RoleType);
+                if (this.PreviousChangedRoleByRelationType?.TryGetValue(relation, out var previous) != true) previous = this.PreviousRecord?.GetRole(relation.RoleType);
+                if (relation.RoleType.ObjectType.IsUnit)
                 {
-                    foreach (var kvp in this.ChangedRoleByRelationType)
-                    {
-                        var relationType = kvp.Key;
-                        var current = kvp.Value;
-
-                        if (this.PreviousChangedRoleByRelationType != null && this.PreviousChangedRoleByRelationType.TryGetValue(relationType, out var previousChangedRole))
-                        {
-                            if (relationType.RoleType.ObjectType.IsUnit)
-                            {
-                                changeSet.DiffUnit(this.Strategy, relationType, current, previousChangedRole);
-                            }
-                            else if (relationType.RoleType.IsOne)
-                            {
-                                changeSet.DiffComposite(this.Strategy, relationType, (Strategy)current, (Strategy)previousChangedRole);
-                            }
-                            else
-                            {
-                                changeSet.DiffComposites(this.Strategy, relationType, (IRange<Strategy>)current, (IRange<Strategy>)previousChangedRole);
-                            }
-                        }
-                        else
-                        {
-                            var previous = this.Record?.GetRole(relationType.RoleType);
-
-                            if (relationType.RoleType.ObjectType.IsUnit)
-                            {
-                                changeSet.DiffUnit(this.Strategy, relationType, current, previous);
-                            }
-                            else if (relationType.RoleType.IsOne)
-                            {
-                                changeSet.DiffComposite(this.Strategy, relationType, (Strategy)current, (long?)previous);
-                            }
-                            else
-                            {
-                                changeSet.DiffComposites(this.Strategy, relationType, (IRange<Strategy>)current, (IRange<long>)previous);
-                            }
-
-                        }
-                    }
+                    if (current is byte[] bytes && previous is byte[] previousBytes && bytes.SequenceEqual(previousBytes)) continue;
+                    changeSet.DiffUnit(this.Strategy, relation, current, previous);
                 }
-            }
-            // Different record
-            else
-            {
-                foreach (var roleType in this.RoleTypes)
+                else if (relation.RoleType.IsOne)
                 {
-                    var relationType = roleType.RelationType;
-
-                    object previous = null;
-                    object current = null;
-
-                    if (this.PreviousChangedRoleByRelationType?.TryGetValue(relationType, out previous) == true)
-                    {
-                        if (this.ChangedRoleByRelationType?.TryGetValue(relationType, out current) != true)
-                        {
-                            current = this.Record.GetRole(roleType);
-                        }
-
-                        if (relationType.RoleType.ObjectType.IsUnit)
-                        {
-                            changeSet.DiffUnit(this.Strategy, relationType, current, previous);
-                        }
-                        else if (relationType.RoleType.IsOne)
-                        {
-                            changeSet.DiffComposite(this.Strategy, relationType, (Strategy)current, (Strategy)previous);
-                        }
-                        else
-                        {
-                            changeSet.DiffComposites(this.Strategy, relationType, (IRange<Strategy>)current, (IRange<Strategy>)previous);
-                        }
-                    }
-                    else
-                    {
-                        previous = this.PreviousRecord?.GetRole(roleType);
-                        if (this.ChangedRoleByRelationType?.TryGetValue(relationType, out current) != true)
-                        {
-                            current = this.Record.GetRole(roleType);
-                        }
-
-                        if (relationType.RoleType.ObjectType.IsUnit)
-                        {
-                            changeSet.DiffUnit(this.Strategy, relationType, current, previous);
-                        }
-                        else if (relationType.RoleType.IsOne)
-                        {
-                            changeSet.DiffComposite(this.Strategy, relationType, (long?)current, (long?)previous);
-                        }
-                        else
-                        {
-                            changeSet.DiffComposites(this.Strategy, relationType, (IRange<long>)current, (IRange<long>)previous);
-                        }
-                    }
+                    changeSet.DiffComposite(this.Strategy, relation, RoleId(current), RoleId(previous));
+                }
+                else
+                {
+                    changeSet.DiffComposites(this.Strategy, relation, this.Ids(current), this.Ids(previous));
                 }
             }
 
             this.PreviousRecord = this.Record;
             this.PreviousChangedRoleByRelationType = this.ChangedRoleByRelationType != null ? new Dictionary<IRelationType, object>(this.ChangedRoleByRelationType) : null;
         }
+
+        private static long? RoleId(object value) => value is Strategy strategy ? strategy.Id : (long?)value;
+
+        private IRange<long> Ids(object value) => value is IRange<Strategy> strategies
+            ? this.Session.Workspace.RecordRanges.Import(strategies.Select(v => v.Id))
+            : (IRange<long>)value;
 
         public void Diff(IList<IDiff> diffs)
         {
@@ -359,9 +288,9 @@ namespace Allors.Workspace.Adapters
             return true;
         }
 
-        public bool HashChanges() => this.ChangedRoleByRelationType != null;
+        public bool HashChanges() => this.ChangedRoleByRelationType?.Count > 0;
 
-        public void Reset() => this.ChangedRoleByRelationType = null;
+        public virtual void Reset() => this.ChangedRoleByRelationType = null;
 
         public bool IsAssociationForRole(IRoleType roleType, Strategy forRole)
         {

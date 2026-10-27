@@ -8,7 +8,8 @@ const differences = diff(state);
 const records = [
   { label: 'Database', record: state.database, note: 'Committed values' },
   { label: 'Connection', record: state.connection, note: 'Current shared record' },
-  { label: 'Retained record', record: state.retained, note: 'This object’s accepted baseline' },
+  { label: 'Latest received', record: state.latestReceived, note: 'This session’s Reset target' },
+  { label: 'Retained record', record: state.retained, note: 'This object’s active snapshot' },
 ];
 ---
 
@@ -25,17 +26,19 @@ const records = [
         <div class="record">
           <strong>{label}</strong>
           <p class="version">v{record.version}</p>
+          <p class="security-version">Grant G@{record.grantVersion}</p>
           <p>{note}</p>
         </div>
       </>)}
     </div>
-    <figcaption>Arrows show the path of a record: Pull/Sync refreshes the connection; the editing object’s Pull accepts or rejects its replacement. Matching version labels mean the same record in this example.</figcaption>
+    <figcaption>Arrows show adoption: this session’s Pull/Sync selects its latest received snapshot. An unedited object adopts it immediately; an edited object keeps its active snapshot until Reset. Data and grant versions identify the snapshot together.</figcaption>
   </figure>
   <div class="read-rule"><strong>Session read</strong> = local edit, when present; otherwise the retained value.</div>
   <table tabindex="0">
     <caption>Values after this step</caption>
     <thead><tr>
       <th scope="col">Role</th><th scope="col">Database</th><th scope="col">Connection</th>
+      <th scope="col">Latest received</th>
       <th scope="col">Retained</th><th scope="col">Local edit</th><th scope="col">Session read</th><th scope="col">Diff original</th>
     </tr></thead>
     <tbody>{roles.map(({ key, label }) => {
@@ -44,6 +47,7 @@ const records = [
         <th scope="row">{label}</th>
         <td>{formatValue(key, state.database.values[key])}</td>
         <td>{formatValue(key, state.connection.values[key])}</td>
+        <td>{formatValue(key, state.latestReceived.values[key])}</td>
         <td>{formatValue(key, state.retained.values[key])}</td>
         <td>{formatValue(key, state.local[key])}</td>
         <td>{formatValue(key, values[key])}</td>
@@ -52,7 +56,7 @@ const records = [
     })}</tbody>
   </table>
   <p class="state-note">Diffs: {differences.length}. Marked pushed: {state.pushed ? 'yes' : 'no'}. A dash (—) means no local edit or diff; <code>null</code> is a value.</p>
-  {scenarioId === 'permissions' && <p class="permission-note">Read permission through retained grant G: <strong>{state.grantAllowsRead ? 'allowed' : 'denied'}</strong>. Grant ID G stays fixed; the connection map supplies its permissions. The table shows held data, independently of permission to expose it.</p>}
+  {scenarioId === 'permissions' && <p class="permission-note">Read permission through retained grant G: <strong>{state.retained.grantAllowsRead ? 'allowed' : 'denied'}</strong>. This object retains G@{state.retained.grantVersion}; Reset selects G@{state.latestReceived.grantVersion} with its matching data. Server operations still apply their authorization checks.</p>}
 </section>
 
 <style>
@@ -62,7 +66,7 @@ const records = [
   .outcome { margin: 0; padding: 0.15rem 0.65rem; border: 1px solid var(--sl-color-text-accent); border-radius: 1rem; font-size: 0.875rem; color: var(--sl-color-text-accent); }
   .outcome[data-error='true'] { border-style: dashed; font-weight: 700; }
   .record-flow { margin: 1.25rem 0; }
-  .records { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr); gap: 0.5rem; align-items: center; }
+  .records { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr); gap: 0.5rem; align-items: center; }
   .record { display: flex; flex-direction: column; align-self: stretch; gap: 0.25rem; border: 1px solid var(--sl-color-gray-4); border-radius: 0.4rem; padding: 0.75rem; background: var(--sl-color-bg); }
   .record > * { margin: 0; }
   .record > p:last-child { font-size: 0.875rem; line-height: 1.45; }

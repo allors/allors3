@@ -15,7 +15,7 @@ beforeEach(async () => {
   await fixture.init();
 });
 
-test('databaseMergeError', async () => {
+test('databaseRefreshKeepsEditsUntilReset', async () => {
   const { workspace, m } = fixture;
   const session1 = workspace.createSession();
   const session2 = workspace.createSession();
@@ -45,12 +45,11 @@ test('databaseMergeError', async () => {
 
   result = await session1.pull([pull]);
 
-  expect(result.hasErrors).toBeTruthy();
-  expect(result.mergeErrors.length).toBe(1);
-
-  const mergeError = result.mergeErrors[0];
-
-  expect(mergeError.strategy).toBe(c1a_1.strategy);
+  expect(result.hasErrors).toBe(false);
+  expect(result.mergeErrors ?? []).toHaveLength(0);
+  expect(c1a_1.C1AllorsString).toBe('X');
+  c1a_1.strategy.reset();
+  expect(c1a_1.C1AllorsString).toBe('Y');
 });
 
 test.each(['disjoint', 'string', 'to-one', 'to-many'])(
@@ -97,18 +96,12 @@ test.each(['disjoint', 'string', 'to-one', 'to-many'])(
     expect((await remote.pull(pull)).hasErrors).toBe(false);
     expect(source.strategy.version).not.toBe(version);
     const result = await editing.pull(pull);
-    const conflict = remoteEdit !== 'disjoint';
-    expect(result.hasErrors).toBe(conflict);
-    expect(result.mergeErrors ?? []).toHaveLength(conflict ? 1 : 0);
-    if (conflict) {
-      expect(result.mergeErrors[0].strategy).toBe(edited.strategy);
-    }
+    expect(result.hasErrors).toBe(false);
+    expect(result.mergeErrors ?? []).toHaveLength(0);
 
-    // A conflicting role rejects the entire replacement record for this object.
-    expect(edited.strategy.version).toBe(
-      conflict ? version : source.strategy.version
-    );
-    expect(edited.C1AllorsInteger).toBe(conflict ? 1 : 2);
+    // Every database edit pins the complete active snapshot, including disjoint edits.
+    expect(edited.strategy.version).toBe(version);
+    expect(edited.C1AllorsInteger).toBe(1);
     expect(edited.C1AllorsString).toBe('local');
     expect(edited.C1C1Many2One).toBe(localTarget);
     expect(edited.C1C1Many2Manies.map((v) => v.id).sort()).toEqual(
@@ -135,31 +128,7 @@ test.each(['disjoint', 'string', 'to-one', 'to-many'])(
       [baselineTarget.id, localTarget.id].sort()
     );
 
-    if (!conflict) {
-      // Push must now use the accepted version, preserving the remote integer.
-      expect((await editing.push()).hasErrors).toBe(false);
-      expect((await editing.pull(pull)).hasErrors).toBe(false);
-      expect(edited.strategy.diff()).toHaveLength(0);
-      expect((await remote.pull(pull)).hasErrors).toBe(false);
-      expect(source.C1AllorsString).toBe('local');
-      expect(source.C1AllorsInteger).toBe(2);
-      expect(source.C1C1Many2One.id).toBe(localTarget.id);
-      expect(source.C1C1Many2Manies.map((v) => v.id).sort()).toEqual(
-        [baselineTarget.id, localTarget.id].sort()
-      );
-      return;
-    }
-
     edited.strategy.reset();
-    expect(edited.strategy.version).toBe(version);
-    expect(edited.C1AllorsString).toBe('baseline');
-    expect(edited.C1AllorsInteger).toBe(1);
-    expect(edited.C1C1Many2One).toBe(baselineTarget);
-    expect(edited.C1C1Many2Manies).toEqual([baselineTarget]);
-    expect(edited.strategy.diff()).toHaveLength(0);
-    expect(edited.strategy.hasChanges).toBe(false);
-
-    expect((await editing.pull(pull)).hasErrors).toBe(false);
     expect(edited.strategy.version).toBe(source.strategy.version);
     expect(edited.C1AllorsString).toBe(source.C1AllorsString);
     expect(edited.C1AllorsInteger).toBe(2);
@@ -199,8 +168,8 @@ test.each(['dateTime', 'binary'])(
     expect(source.strategy.version).not.toBe(version);
     expect(result.hasErrors).toBe(false);
     expect(result.mergeErrors ?? []).toHaveLength(0);
-    expect(edited.strategy.version).toBe(source.strategy.version);
-    expect(edited.C1AllorsInteger).toBe(2);
+    expect(edited.strategy.version).toBe(version);
+    expect(edited.C1AllorsInteger).toBe(1);
     expect(edited.strategy.getUnitRole(roleType)).toEqual(local);
     const diffs = edited.strategy.diff();
     expect(diffs).toHaveLength(1);
@@ -211,7 +180,6 @@ test.each(['dateTime', 'binary'])(
     edited.strategy.reset();
     expect(edited.strategy.getUnitRole(roleType)).toEqual(baseline);
     expect(edited.strategy.diff()).toHaveLength(0);
-    expect((await editing.pull({ object: edited })).hasErrors).toBe(false);
     expect(edited.strategy.version).toBe(source.strategy.version);
     expect(edited.C1AllorsInteger).toBe(2);
     expect(edited.strategy.getUnitRole(roleType)).toEqual(baseline);
@@ -260,8 +228,6 @@ test.each([
       : remoteEdit === 'null-to-value'
       ? initialValue
       : baseline;
-  const conflict =
-    remoteEdit !== 'unchanged-null' && remoteEdit !== 'local-removal';
 
   source.strategy.setUnitRole(roleType, baseline);
   source.C1AllorsInteger = 1;
@@ -280,15 +246,10 @@ test.each([
   expect(source.strategy.getUnitRole(roleType)).toEqual(remoteValue);
 
   const result = await editing.pull({ object: edited });
-  expect(result.hasErrors).toBe(conflict);
-  expect(result.mergeErrors ?? []).toHaveLength(conflict ? 1 : 0);
-  if (conflict) {
-    expect(result.mergeErrors[0].strategy).toBe(edited.strategy);
-  }
-  expect(edited.strategy.version).toBe(
-    conflict ? version : source.strategy.version
-  );
-  expect(edited.C1AllorsInteger).toBe(conflict ? 1 : 2);
+  expect(result.hasErrors).toBe(false);
+  expect(result.mergeErrors ?? []).toHaveLength(0);
+  expect(edited.strategy.version).toBe(version);
+  expect(edited.C1AllorsInteger).toBe(1);
   expect(edited.strategy.getUnitRole(roleType)).toEqual(local);
   const diffs = edited.strategy.diff();
   expect(diffs).toHaveLength(1);
@@ -298,12 +259,6 @@ test.each([
   expect(diff.changedRole).toEqual(local);
 
   edited.strategy.reset();
-  expect(edited.strategy.version).toBe(
-    conflict ? version : source.strategy.version
-  );
-  expect(edited.strategy.getUnitRole(roleType)).toEqual(baseline);
-  expect(edited.strategy.diff()).toHaveLength(0);
-  expect((await editing.pull({ object: edited })).hasErrors).toBe(false);
   expect(edited.strategy.version).toBe(source.strategy.version);
   expect(edited.C1AllorsInteger).toBe(2);
   expect(edited.strategy.getUnitRole(roleType)).toEqual(remoteValue);

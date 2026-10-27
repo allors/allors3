@@ -213,116 +213,57 @@ export abstract class RecordBasedOriginState {
   }
 
   checkpoint(changeSet: ChangeSet) {
-    //  Same record
-    if (
-      this.previousRecord == null ||
-      this.record == null ||
-      this.record.version == this.previousRecord.version
-    ) {
-      this.changedRoleByRelationType?.forEach((current, relationType) => {
+    const relations = new Set<RelationType>([
+      ...(this.record !== this.previousRecord
+        ? [...this.roleTypes].map((roleType) => roleType.relationType)
+        : []),
+      ...(this.changedRoleByRelationType?.keys() ?? []),
+      ...(this.previousChangedRoleByRelationType?.keys() ?? []),
+    ]);
+    for (const relation of relations) {
+      const roleType = relation.roleType;
+      const currentChanged = this.changedRoleByRelationType?.has(relation);
+      const previousChanged =
+        this.previousChangedRoleByRelationType?.has(relation);
+      const current = currentChanged
+        ? this.changedRoleByRelationType.get(relation)
+        : this.record?.getRole(roleType);
+      const previous = previousChanged
+        ? this.previousChangedRoleByRelationType.get(relation)
+        : this.previousRecord?.getRole(roleType);
+      if (roleType.objectType.isUnit) {
         if (
-          this.previousChangedRoleByRelationType != null &&
-          this.previousChangedRoleByRelationType.has(relationType)
+          current instanceof Date &&
+          previous instanceof Date &&
+          current.getTime() === previous.getTime()
         ) {
-          const previous =
-            this.previousChangedRoleByRelationType.get(relationType);
-
-          if (relationType.roleType.objectType.isUnit) {
-            changeSet.diffUnit(this.object, relationType, current, previous);
-          } else if (relationType.roleType.isOne) {
-            changeSet.diffCompositeStrategyStrategy(
-              this.object,
-              relationType,
-              current as IObject,
-              previous as IObject
-            );
-          } else {
-            changeSet.diffCompositesStrategyStrategy(
-              this.object,
-              relationType,
-              current as IRange<IObject>,
-              previous as IRange<IObject>
-            );
-          }
-        } else {
-          const previous = this.record?.getRole(relationType.roleType);
-
-          if (relationType.roleType.objectType.isUnit) {
-            changeSet.diffUnit(this.object, relationType, current, previous);
-          } else if (relationType.roleType.isOne) {
-            changeSet.diffCompositeStrategyRecord(
-              this.object,
-              relationType,
-              current as IObject,
-              previous as number
-            );
-          } else {
-            changeSet.diffCompositesStrategyRecord(
-              this.object,
-              relationType,
-              current as IRange<IObject>,
-              previous as IRange<number>
-            );
-          }
+          continue;
         }
-      });
-      //  Previous changed roles
-    } else {
-      //  Different record
-      this.roleTypes.forEach((roleType) => {
-        const relationType = roleType.relationType;
-
-        if (this.previousChangedRoleByRelationType?.has(relationType)) {
-          const previous =
-            this.previousChangedRoleByRelationType.get(relationType);
-          const current = this.changedRoleByRelationType?.has(relationType)
-            ? this.changedRoleByRelationType.get(relationType)
-            : this.record.getRole(roleType);
-
-          if (relationType.roleType.objectType.isUnit) {
-            changeSet.diffUnit(this.object, relationType, current, previous);
-          } else if (relationType.roleType.isOne) {
-            changeSet.diffCompositeStrategyStrategy(
-              this.object,
-              relationType,
-              current as IObject,
-              previous as IObject
-            );
-          } else {
-            changeSet.diffCompositesStrategyStrategy(
-              this.object,
-              relationType,
-              current as IRange<IObject>,
-              previous as IRange<IObject>
-            );
-          }
-        } else {
-          const previous = this.previousRecord?.getRole(roleType);
-          const current = this.changedRoleByRelationType?.has(relationType)
-            ? this.changedRoleByRelationType?.get(relationType)
-            : this.record.getRole(roleType);
-
-          if (relationType.roleType.objectType.isUnit) {
-            changeSet.diffUnit(this.object, relationType, current, previous);
-          } else if (relationType.roleType.isOne) {
-            changeSet.diffCompositeRecordRecord(
-              this.object,
-              relationType,
-              current as number,
-              previous as number
-            );
-          } else {
-            changeSet.diffCompositesRecordRecord(
-              this.object,
-              relationType,
-              current as IRange<number>,
-              previous as IRange<number>
-            );
-          }
-        }
-      });
+        changeSet.diffUnit(this.object, relation, current, previous);
+      } else if (roleType.isOne) {
+        changeSet.diffCompositeRecordRecord(
+          this.object,
+          relation,
+          currentChanged ? (current as IObject)?.id : (current as number),
+          previousChanged ? (previous as IObject)?.id : (previous as number)
+        );
+      } else {
+        changeSet.diffCompositesStrategyStrategy(
+          this.object,
+          relation,
+          currentChanged
+            ? (current as IRange<IObject>)
+            : (current as IRange<number>)?.map((id) =>
+                this.session.getObject(id)
+              ),
+          previousChanged
+            ? (previous as IRange<IObject>)
+            : (previous as IRange<number>)?.map((id) =>
+                this.session.getObject(id)
+              )
+        );
+      }
     }
-
     this.previousRecord = this.record;
     this.previousChangedRoleByRelationType = new Map(
       this.changedRoleByRelationType

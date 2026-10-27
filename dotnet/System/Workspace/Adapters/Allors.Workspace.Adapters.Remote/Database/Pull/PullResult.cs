@@ -30,6 +30,13 @@ namespace Allors.Workspace.Adapters.Remote
             this.unitConvert = unitConvert;
         }
 
+        internal void Prepare(Func<long, IObject> instantiate)
+        {
+            this.objects = (this.pullResponse.o ?? new Dictionary<string, long>()).ToDictionary(pair => pair.Key.ToUpperInvariant(), pair => instantiate(pair.Value));
+            this.collections = (this.pullResponse.c ?? new Dictionary<string, long[]>()).ToDictionary(pair => pair.Key.ToUpperInvariant(), pair => pair.Value.Select(instantiate).ToArray());
+            this.values = (this.pullResponse.v ?? new Dictionary<string, object>()).ToDictionary(pair => pair.Key.ToUpperInvariant(), pair => pair.Value is ICloneable cloneable ? cloneable.Clone() : pair.Value);
+        }
+
         private IWorkspace Workspace { get; }
 
         public IDictionary<string, IObject> Objects => this.objects ??= this.pullResponse.o.ToDictionary(pair => pair.Key.ToUpperInvariant(), pair => this.Session.Instantiate<IObject>(pair.Value));

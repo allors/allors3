@@ -12,7 +12,7 @@ const localDiff = [
 ];
 
 function record(version, values) {
-  return { version, values };
+  return { version, values, grantVersion: 1, grantAllowsRead: true };
 }
 
 function scenario(id) {
@@ -69,6 +69,7 @@ test('another session refreshes the connection without replacing the editing rec
   assert.equal(refreshed.outcome, 'refreshed');
   assert.deepEqual(refreshed.state.connection, record(2, remote));
   assert.deepEqual(refreshed.state.retained, record(1, baseline));
+  assert.deepEqual(refreshed.state.latestReceived, record(1, baseline));
   assert.deepEqual(refreshed.state.local, local);
   assert.deepEqual(visibleValues(refreshed.state), { ...baseline, ...local });
   assertDiff(refreshed.state, localDiff);
@@ -92,15 +93,22 @@ test('another session refreshes the connection without replacing the editing rec
 });
 
 // DatabaseEditingBaselineAfterPull("disjoint") and databaseEditingBaselineAfterPull: disjoint.
-test('a disjoint editing Pull accepts the integer and version while preserving all three local edits', () => {
+test('disjoint edits pin the active snapshot until Reset, then chosen edits can be reapplied', () => {
   const sequence = frames('disjoint');
   const remoteValues = { ...baseline, integer: 2 };
   const accepted = sequence['editing-pull'];
-  assert.equal(accepted.outcome, 'accepted');
-  assert.deepEqual(accepted.state.retained, record(2, remoteValues));
+  assert.equal(accepted.outcome, 'pinned');
+  assert.deepEqual(accepted.state.retained, record(1, baseline));
+  assert.deepEqual(accepted.state.latestReceived, record(2, remoteValues));
   assert.deepEqual(accepted.state.local, local);
-  assert.deepEqual(visibleValues(accepted.state), { ...remoteValues, ...local });
+  assert.deepEqual(visibleValues(accepted.state), { ...baseline, ...local });
   assertDiff(accepted.state, localDiff);
+
+  assert.deepEqual(sequence.reset.state.retained, record(2, remoteValues));
+  assert.deepEqual(sequence.reset.state.connection, accepted.state.connection);
+  assert.deepEqual(sequence.reset.state.database, accepted.state.database);
+  assertDiff(sequence.reset.state, []);
+  assert.deepEqual(visibleValues(sequence.reapply.state), { ...remoteValues, ...local });
 
   const pushed = sequence.push;
   assert.equal(pushed.outcome, 'pushed');
@@ -124,27 +132,26 @@ for (const [id, remoteChange] of [
   ['to-one-conflict', { toOne: 'c1D' }],
   ['to-many-conflict', { toMany: ['c1B', 'c1D'] }],
 ]) {
-  test(`${id}: one conflicting role rejects the entire record until Reset followed by Pull`, () => {
+  test(`${id}: edits pin the whole snapshot and Reset adopts the already-received replacement`, () => {
     const sequence = frames(id);
     const remoteValues = { ...baseline, integer: 2, ...remoteChange };
     const rejected = sequence['editing-pull'];
-    assert.equal(rejected.outcome, 'merge-error');
+    assert.equal(rejected.outcome, 'pinned');
     assert.deepEqual(rejected.state.connection, record(2, remoteValues));
     assert.deepEqual(rejected.state.retained, record(1, baseline));
+    assert.deepEqual(rejected.state.latestReceived, record(2, remoteValues));
     assert.deepEqual(rejected.state.local, local);
     assert.deepEqual(visibleValues(rejected.state), { ...baseline, ...local });
     assertDiff(rejected.state, localDiff);
 
-    assert.deepEqual(sequence.reset.state.retained, record(1, baseline));
-    assert.deepEqual(visibleValues(sequence.reset.state), baseline);
+    assert.deepEqual(sequence.reset.state.retained, record(2, remoteValues));
+    assert.deepEqual(visibleValues(sequence.reset.state), remoteValues);
     assert.deepEqual(sequence.reset.state.local, {});
     assertDiff(sequence.reset.state, []);
 
-    const recovered = sequence['recovery-pull'];
-    assert.equal(recovered.outcome, 'accepted');
-    assert.deepEqual(recovered.state.retained, record(2, remoteValues));
-    assert.deepEqual(visibleValues(recovered.state), remoteValues);
-    assertDiff(recovered.state, []);
+    assert.equal(sequence['recovery-pull'], undefined);
+    assert.deepEqual(sequence.reset.state.connection, rejected.state.connection);
+    assert.deepEqual(sequence.reset.state.database, rejected.state.database);
   });
 }
 
@@ -178,18 +185,28 @@ test('Reset after successful Push exposes the last pulled value and preserves th
   assertDiff(recovered.state, []);
 });
 
-test('the known-grant illustration changes the live permission map without accepting the newer data record', () => {
+test('security-only changes remain pinned with data until Reset adopts the session’s latest snapshot', () => {
   const sequence = frames('permissions');
-  const before = sequence['remote-pull'];
+  const before = sequence['local-edit'];
   const after = sequence['permission-refresh'];
-  assert.equal(before.state.grantAllowsRead, true);
+  assert.equal(before.state.retained.grantAllowsRead, true);
   assert.equal(after.outcome, 'permission-refreshed');
-  assert.equal(after.state.grantAllowsRead, false);
+  assert.equal(after.state.retained.grantAllowsRead, true);
+  assert.equal(after.state.connection.grantAllowsRead, false);
   assert.deepEqual(after.state.retained, record(1, baseline));
-  assert.deepEqual(after.state.connection, record(2, { ...baseline, integer: 2 }));
-  assert.deepEqual(after.state, { ...before.state, grantAllowsRead: false });
+  assert.deepEqual(after.state.latestReceived, record(1, baseline));
   assert.deepEqual(visibleValues(after.state), visibleValues(before.state));
   assert.deepEqual(diff(after.state), diff(before.state));
+  const received = sequence['editing-pull'];
+  assert.equal(received.outcome, 'pinned');
+  assert.equal(received.state.latestReceived.version, 1);
+  assert.equal(received.state.latestReceived.grantVersion, 2);
+  assert.equal(received.state.latestReceived.grantAllowsRead, false);
+  assert.deepEqual(received.state.retained, before.state.retained);
+  assert.deepEqual(sequence.reset.state.retained, received.state.latestReceived);
+  assert.equal(sequence.reset.state.retained.grantAllowsRead, false);
+  assert.equal(visibleValues(sequence.reset.state).string, null);
+  assertDiff(sequence.reset.state, []);
 });
 
 test('revisiting scenarios and changing returned frames cannot leak state into other steps or visits', () => {
@@ -200,7 +217,8 @@ test('revisiting scenarios and changing returned frames cannot leak state into o
     final.state.retained.values.toMany.push('unrelated');
     final.state.connection.values.string = 'unrelated';
     final.state.local.string = 'unrelated';
-    final.state.grantAllowsRead = !final.state.grantAllowsRead;
+    final.state.retained.grantAllowsRead = !final.state.retained.grantAllowsRead;
+    final.state.latestReceived.values.string = 'unrelated';
     assert.deepEqual(visited[0], original[0], `${entry.id}: the initial frame changed`);
     for (const other of scenarios) getFrames(other);
     assert.deepEqual(getFrames(entry), original, `${entry.id}: a new visit changed`);

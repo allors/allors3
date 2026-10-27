@@ -5,83 +5,89 @@
 
 namespace Allors.Workspace.Adapters.Remote
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Allors.Protocol.Json.Api.Sync;
     using Meta;
     using Ranges;
 
-    internal class DatabaseRecord : Adapters.DatabaseRecord
+    internal sealed class DatabaseRecord : Adapters.DatabaseRecord
     {
         private readonly DatabaseConnection database;
+        private readonly Dictionary<IRelationType, object> roles;
+        private readonly ResponseContext.AccessEntry[] grants;
+        private readonly ResponseContext.AccessEntry[] revocations;
 
-        private Dictionary<IRelationType, object> roleByRelationType;
-        private SyncResponseRole[] syncResponseRoles;
-
-        internal DatabaseRecord(DatabaseConnection database, IClass @class, long id, long version) : base(@class, id, version) => this.database = database;
-
-        internal static DatabaseRecord FromResponse(DatabaseConnection database, ResponseContext ctx, SyncResponseObject syncResponseObject) =>
-            new DatabaseRecord(database, (IClass)database.Configuration.MetaPopulation.FindByTag(syncResponseObject.c), syncResponseObject.i, syncResponseObject.v)
-            {
-                syncResponseRoles = syncResponseObject.ro,
-                GrantIds = database.Ranges.Load(ctx.CollectGrants(syncResponseObject.g)),
-                RevocationIds = database.Ranges.Load(ctx.CollectRevocations(syncResponseObject.r))
-            };
-
-        internal IRange<long> GrantIds { get; private set; }
-
-        internal IRange<long> RevocationIds { get; private set; }
-
-        private Dictionary<IRelationType, object> RoleByRelationType
+        private DatabaseRecord(DatabaseConnection database, IClass @class, long id, long version, string binding,
+            Dictionary<IRelationType, object> roles, IEnumerable<ResponseContext.AccessEntry> grants,
+            IEnumerable<ResponseContext.AccessEntry> revocations) : base(@class, id, version)
         {
-            get
+            this.database = database;
+            this.Key = (id, version, binding);
+            this.roles = roles;
+            this.grants = grants.ToArray();
+            this.revocations = revocations.ToArray();
+        }
+
+        internal (long Id, long Version, string Security) Key { get; }
+
+        internal static DatabaseRecord FromResponse(DatabaseConnection database, SyncResponseObject response, string binding,
+            IEnumerable<ResponseContext.AccessEntry> grants, IEnumerable<ResponseContext.AccessEntry> revocations)
+        {
+            var meta = database.Configuration.MetaPopulation;
+            var @class = meta.FindByTag(response.c) as IClass;
+            if (@class == null || response.i <= 0 || response.v < 0) throw ResponseContext.Invalid("Sync contains an invalid object identity or class");
+            var roles = new Dictionary<IRelationType, object>();
+            foreach (var value in response.ro ?? Array.Empty<SyncResponseRole>())
             {
-                if (this.syncResponseRoles != null)
+                var relation = value == null ? null : meta.FindByTag(value.t) as IRelationType;
+                var role = relation?.RoleType;
+                if (role == null || !@class.DatabaseOriginRoleTypes.Contains(role) || roles.ContainsKey(relation)) throw ResponseContext.Invalid("Sync contains an unknown or duplicate role");
+                object decoded;
+                if (role.ObjectType.IsUnit)
                 {
-                    var ranges = this.database.Ranges;
-                    var metaPopulation = this.database.Configuration.MetaPopulation;
-                    this.roleByRelationType = this.syncResponseRoles.ToDictionary(
-                        v => (IRelationType)metaPopulation.FindByTag(v.t),
-                        v =>
-                        {
-                            var roleType = ((IRelationType)metaPopulation.FindByTag(v.t)).RoleType;
-                            var objectType = roleType.ObjectType;
-
-                            if (objectType.IsUnit)
-                            {
-                                return this.database.UnitConvert.UnitFromJson(objectType.Tag, v.v);
-                            }
-
-                            if (roleType.IsOne)
-                            {
-                                return v.o;
-                            }
-
-                            return ranges.Load(v.c);
-                        });
-
-                    this.syncResponseRoles = null;
+                    if (value.o != null || value.c != null) throw ResponseContext.Invalid("Sync contains an invalid unit role");
+                    decoded = database.UnitConvert.UnitFromJson(role.ObjectType.Tag, value.v);
+                    if (decoded is byte[] bytes) decoded = bytes.ToArray();
+                }
+                else if (role.IsOne)
+                {
+                    if (value.v != null || value.c != null || value.o <= 0) throw ResponseContext.Invalid("Sync contains an invalid to-one role");
+                    decoded = value.o;
+                }
+                else
+                {
+                    if (value.v != null || value.o != null) throw ResponseContext.Invalid("Sync contains an invalid to-many role");
+                    decoded = database.Ranges.Load(ResponseContext.Ids(value.c));
                 }
 
-                return this.roleByRelationType;
+                roles.Add(relation, decoded);
             }
+
+            return new DatabaseRecord(database, @class, response.i, response.v, binding, roles, grants, revocations);
         }
 
         public override object GetRole(IRoleType roleType)
         {
-            object @object = null;
-            this.RoleByRelationType?.TryGetValue(roleType.RelationType, out @object);
-            return @object;
+            this.roles.TryGetValue(roleType.RelationType, out var value);
+            if (value is byte[] bytes) return bytes.ToArray();
+            if (value is IRange<long> range) return this.database.Ranges.Load(range.ToArray());
+            return value;
         }
 
-        public override bool IsPermitted(long permission)
-        {
-            if (this.GrantIds == null)
-            {
-                return false;
-            }
+        public override bool IsPermitted(long permission) =>
+            this.grants.Any(v => v.Contains(permission)) && !this.revocations.Any(v => v.Contains(permission));
 
-            return !this.RevocationIds.Any(v => this.database.RevocationById[v].PermissionIds.Contains(permission)) && this.GrantIds.Any(v => this.database.AccessControlById[v].PermissionIds.Contains(permission));
+        internal bool SameContents(DatabaseRecord other) =>
+            this.Class == other.Class && this.roles.Count == other.roles.Count && this.roles.All(entry =>
+                other.roles.TryGetValue(entry.Key, out var value) && Equal(entry.Value, value));
+
+        private static bool Equal(object left, object right)
+        {
+            if (left is byte[] bytes) return right is byte[] otherBytes && bytes.SequenceEqual(otherBytes);
+            if (left is IRange<long> range) return right is IRange<long> otherRange && range.SequenceEqual(otherRange);
+            return Equals(left, right);
         }
     }
 }

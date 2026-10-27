@@ -3,12 +3,10 @@ title: "Hybrid Sync and session snapshots"
 description: "Agreed protocol and session design for complete Sync responses, immutable security bindings and Reset without another Pull."
 audience: "Maintainers"
 kind: "Explanation"
-status: "Planned"
+status: "Current"
 ---
 
-> **Status: Planned.** Agreed design, with implementation in progress. The first step adds
-> bundled Sync security and known-version requests to the server and protocol models. Remote
-> client loading, immutable cache bindings and the new Reset behaviour remain to be implemented.
+> **Status: Current.** Explanation of the server and both remote workspace clients.
 
 The normal loading workflow is Pull followed by Sync when data or security differs from the
 client's complete cache entries. Sync returns every security dependency that the client has
@@ -16,9 +14,9 @@ not explicitly advertised as known. No historical security service or security-v
 retry is needed. Completion is deterministic for each Sync response; Pull and Sync may observe
 different server states.
 
-The [current session state explanation](workspace-session-state.mdx) describes the existing
-clients until their implementation changes. The snapshot rules below intentionally replace
-automatic merging on Pull and change Reset to adopt data already received by that session.
+The [session state explanation](workspace-session-state.mdx) describes editing, diff and Reset,
+with a guided example. Pull preserves edited objects, and Reset adopts data already received
+by that session.
 
 ## Complete security in Sync
 
@@ -76,13 +74,11 @@ Every permission referenced by included contents has its definition in the respo
 This first implementation does not separately advertise known permission definitions. That
 optimization can be evaluated later without changing the completeness rule.
 
-New clients must reject missing tables, omitted unadvertised contents, inconsistent versions
-and missing definitions before publication or session adoption. They must not manufacture
-empty grants or silently fall back to the latest cached entry by ID. Clients rebuilt with these
-request models require an updated server: the .NET serializers also send null `g` and `r`
-members, which an older server rejects as unknown fields. The first implementation step retains the
-existing Access and Permission endpoints while existing clients still use them; the new loading
-workflow will not call them.
+Clients reject missing tables, omitted unadvertised contents, inconsistent versions
+and missing definitions before publication or session adoption. They do not manufacture
+empty grants or silently fall back to the latest cached entry by ID. Updated clients require
+a matching server: older servers reject the new request members as unknown fields. The server retains the
+existing Access and Permission endpoints, but the remote loading workflow does not call them.
 
 ## Shared entries and session ownership
 
@@ -94,50 +90,36 @@ immutable, including their permission ranges and other contained collections.
 Sessions retain references to the entries they selected. Publishing another version into a
 shared cache does not advance an existing session object. Cache-index eviction must not
 invalidate entries retained by sessions or active loading workflows.
+The current indexes retain versions for the connection's lifetime; no eviction policy is
+implemented yet.
 
 A loading workflow stages its returned objects and dependencies, validates the complete result,
 and only then publishes and adopts selected references. Failed loading leaves the session's
 active snapshots, latest received snapshots and edits unchanged. Session-local scheduling and
 all adoption paths must preserve that rule while allowing different sessions to load concurrently.
 
-## Edited objects and Reset
+Each session orders its asynchronous Pull, Push and Invoke operations. A Pull that started
+before Push cannot later clear changes acknowledged by that Push. Separate sessions can load
+concurrently; this does not make synchronous object mutation safe from multiple threads.
 
-Each session object retains an active snapshot, a latest received snapshot and its local edits.
-A snapshot contains both the data record and its exact grant/revocation bindings. The latest
-received snapshot is selected by that session's own successful Pull/Sync, including complete
-cache hits. It is never an unqualified lookup of the connection's latest record.
+## Session adoption
 
-| Event | Agreed behaviour |
-| --- | --- |
-| A complete snapshot arrives and the object has no edits | Adopt the data and security together. |
-| A complete snapshot arrives and the object has edits | Keep its active data, security and edits; retain the received snapshot as the latest. |
-| Another complete snapshot arrives while edits remain | Replace only the latest received reference. The active snapshot remains pinned. |
-| The user resets the object | Clear its edits and adopt its latest received snapshot, including security, without a network request. |
-| The user reapplies selected changes | Create new edits against the adopted snapshot through the normal permission checks. |
-| Loading or validation fails | Keep the existing snapshots and edits. |
-
-Any local edits pin the active snapshot, including when the server changes different roles.
-Pull does not automatically merge an edited object. Applications can preserve chosen changes
-before Reset and reapply them afterward. Reset never adopts a snapshot solely because another
-session loaded it. Data and security advance together, so newly readable roles are adopted
-with the data that their security permitted the server to return.
+A session receives complete snapshots selected by its own successful Pull/Sync workflow,
+including cache hits. An object with pending database-role edits keeps its active data and
+security snapshot. The session retains its latest received snapshot separately, and Reset
+adopts that reference while clearing the edits, without a request. Session-origin values retain
+their separate lifecycle. The [session state explanation](workspace-session-state.mdx) owns the
+full editing rules and their behavioural coverage.
 
 Server-side authorization remains authoritative for subsequent operations. Cached permission
 descriptions do not grant authority to perform a server operation.
 
 ## Implementation and validation
 
-The first implementation step covers the shared protocol models, Sync response construction,
-known-version omission, and serializer parity. It must prove cold responses are complete,
-exact known entries omit only their contents, newer versions are included, shared dependencies
-are deduplicated, and empty permission sets remain distinct from omitted contents.
+The C# and TypeScript clients use the same contract. Server regressions cover cold responses,
+exact known entries, changed security versions, deduplicated dependencies, and empty versus
+omitted contents. Client regressions cover complete cache hits, security-only changes, pinned
+edits, Reset adoption, isolation between sessions and failure before adoption. The session
+explanation links the authoritative tests.
 
-The following step implements the TypeScript and .NET remote loading paths, selected immutable
-bindings, response validation, session isolation and Reset adoption. Its tests must cover
-security-only changes, edited and unedited objects, repeated Pull before Reset, cross-session
-isolation, rejected responses, and reapplying changes after Reset. Existing merge and Reset
-expectations change only where the agreed snapshot rules require it.
-
-The platform change is incomplete until both remote clients follow the same contract. The
-current session explanation and guided example must then be updated to match the new tests.
 Signals, persistent caching and unrelated Push error-contract changes remain separate work.

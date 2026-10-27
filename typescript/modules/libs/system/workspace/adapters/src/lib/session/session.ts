@@ -133,6 +133,15 @@ export abstract class Session implements ISession {
       }
     }
 
+    for (const object of this.objectByWorkspaceId.values()) {
+      if (
+        object.strategy.hasChanges ||
+        (object.strategy as Strategy).DatabaseOriginState?.hasPendingSnapshot
+      ) {
+        objects.add(object);
+      }
+    }
+
     for (const object of objects) {
       object.strategy.reset();
     }

@@ -7,7 +7,6 @@ namespace Allors.Workspace.Adapters.Remote
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Threading.Tasks;
     using Allors.Protocol.Json;
     using Allors.Protocol.Json.Api.Invoke;
@@ -20,35 +19,20 @@ namespace Allors.Workspace.Adapters.Remote
 
     public abstract class DatabaseConnection : Adapters.DatabaseConnection
     {
-        private readonly Dictionary<long, DatabaseRecord> recordsById;
-
+        private readonly object cacheLock = new object();
+        private readonly Dictionary<long, DatabaseRecord> recordsById = new Dictionary<long, DatabaseRecord>();
+        private readonly Dictionary<(long Id, long Version, string Security), DatabaseRecord> records = new Dictionary<(long, long, string), DatabaseRecord>();
+        private readonly Dictionary<(long Id, long Version), ResponseContext.AccessEntry> grants = new Dictionary<(long, long), ResponseContext.AccessEntry>();
+        private readonly Dictionary<(long Id, long Version), ResponseContext.AccessEntry> revocations = new Dictionary<(long, long), ResponseContext.AccessEntry>();
+        private readonly Dictionary<long, ResponseContext.PermissionEntry> permissions = new Dictionary<long, ResponseContext.PermissionEntry>();
+        private readonly Dictionary<(IClass Class, IOperandType Operand, Operations Operation), long> permissionIds = new Dictionary<(IClass, IOperandType, Operations), long>();
         private readonly Func<IWorkspaceServices> servicesBuilder;
-
-        private readonly Dictionary<IClass, Dictionary<IOperandType, long>> readPermissionByOperandTypeByClass;
-        private readonly Dictionary<IClass, Dictionary<IOperandType, long>> writePermissionByOperandTypeByClass;
-        private readonly Dictionary<IClass, Dictionary<IOperandType, long>> executePermissionByOperandTypeByClass;
 
         protected DatabaseConnection(Adapters.Configuration configuration, IdGenerator idGenerator, Func<IWorkspaceServices> servicesBuilder, IRanges<long> ranges) : base(configuration, idGenerator)
         {
             this.Ranges = ranges;
             this.servicesBuilder = servicesBuilder;
-
-            this.recordsById = new Dictionary<long, DatabaseRecord>();
-
-            this.AccessControlById = new Dictionary<long, AccessControl>();
-            this.RevocationById = new Dictionary<long, Revocation>();
-            this.Permissions = new HashSet<long>();
-
-            this.readPermissionByOperandTypeByClass = new Dictionary<IClass, Dictionary<IOperandType, long>>();
-            this.writePermissionByOperandTypeByClass = new Dictionary<IClass, Dictionary<IOperandType, long>>();
-            this.executePermissionByOperandTypeByClass = new Dictionary<IClass, Dictionary<IOperandType, long>>();
         }
-
-        internal Dictionary<long, AccessControl> AccessControlById { get; }
-
-        internal Dictionary<long, Revocation> RevocationById { get; }
-
-        internal ISet<long> Permissions { get; }
 
         public abstract IUnitConvert UnitConvert { get; }
 
@@ -56,221 +40,68 @@ namespace Allors.Workspace.Adapters.Remote
 
         public override IWorkspace CreateWorkspace() => new Workspace(this, this.servicesBuilder(), this.Ranges);
 
-        internal SyncRequest OnPullResponse(PullResponse response) =>
-            new SyncRequest
-            {
-                o = response.p
-                    .Where(v =>
-                    {
-                        if (!this.recordsById.TryGetValue(v.i, out var @record))
-                        {
-                            return true;
-                        }
-
-                        if (!@record.Version.Equals(v.v))
-                        {
-                            return true;
-                        }
-
-                        if (!@record.GrantIds.Equals(this.Ranges.Load(v.g)))
-                        {
-                            return true;
-                        }
-
-                        if (!@record.RevocationIds.Equals(this.Ranges.Load(v.r)))
-                        {
-                            return true;
-                        }
-
-                        return false;
-                    })
-                    .Select(v => v.i).ToArray()
-            };
-
-        internal AccessRequest OnSyncResponse(SyncResponse syncResponse)
+        internal ResponseContext OnPullResponse(PullResponse response)
         {
-            var ctx = new ResponseContext();
-
-            foreach (var syncResponseObject in syncResponse.o)
+            lock (this.cacheLock)
             {
-                var databaseObjects = DatabaseRecord.FromResponse(this, ctx, syncResponseObject);
-                this.recordsById[databaseObjects.Id] = databaseObjects;
+                return new ResponseContext(this, response, this.records, this.grants, this.revocations);
             }
-
-            if (ctx.GrantIdsToRefresh.Count > 0 || ctx.RevocationIdsToRefresh.Count > 0)
-            {
-                return new AccessRequest
-                {
-                    g = ctx.GrantIdsToRefresh.ToArray(),
-                    r = ctx.RevocationIdsToRefresh.ToArray(),
-                };
-            }
-
-            return null;
         }
 
-        internal PermissionRequest AccessResponse(AccessResponse accessResponse)
+        internal void Publish(ResponseContext context)
         {
-            HashSet<long> missingPermissionIds = null;
-            if (accessResponse.g != null)
+            lock (this.cacheLock)
             {
-                foreach (var syncResponseAccessControl in accessResponse.g)
+                // Other sessions may have completed while this response was in flight.
+                // Check every identity before publishing any part of this response.
+                foreach (var record in context.Records.Values)
                 {
-                    var id = syncResponseAccessControl.i;
-                    var version = syncResponseAccessControl.v;
-                    var permissionIds = this.Ranges.Load(syncResponseAccessControl.p);
-                    this.AccessControlById[id] = new AccessControl { Version = version, PermissionIds = this.Ranges.Load(permissionIds) };
-
-                    foreach (var permissionId in permissionIds)
-                    {
-                        if (this.Permissions.Contains(permissionId))
-                        {
-                            continue;
-                        }
-
-                        missingPermissionIds ??= new HashSet<long>();
-                        missingPermissionIds.Add(permissionId);
-                    }
+                    if (this.recordsById.TryGetValue(record.Id, out var previous) && previous.Class != record.Class) throw ResponseContext.Invalid("An object's class changed");
                 }
-            }
 
-            if (accessResponse.r != null)
-            {
-                foreach (var syncResponseRevocation in accessResponse.r)
+                context.ValidatePublication(this.records, this.grants, this.revocations, this.permissions, this.permissionIds);
+                foreach (var entry in context.Grants) this.grants[entry.Key] = entry.Value;
+                foreach (var entry in context.Revocations) this.revocations[entry.Key] = entry.Value;
+                foreach (var entry in context.Permissions)
                 {
-                    var id = syncResponseRevocation.i;
-                    var version = syncResponseRevocation.v;
-                    var permissionIds = this.Ranges.Load(syncResponseRevocation.p);
-                    this.RevocationById[id] = new Revocation { Version = version, PermissionIds = this.Ranges.Load(permissionIds) };
-
-                    foreach (var permissionId in permissionIds)
-                    {
-                        if (this.Permissions.Contains(permissionId))
-                        {
-                            continue;
-                        }
-
-                        missingPermissionIds ??= new HashSet<long>();
-                        missingPermissionIds.Add(permissionId);
-                    }
+                    this.permissions[entry.Key] = entry.Value;
+                    this.permissionIds[entry.Value.Key] = entry.Key;
                 }
-            }
 
-            return missingPermissionIds != null ? new PermissionRequest { p = missingPermissionIds.ToArray() } : null;
-        }
-
-        internal void PermissionResponse(PermissionResponse permissionResponse)
-        {
-            if (permissionResponse.p != null)
-            {
-                foreach (var syncResponsePermission in permissionResponse.p)
+                foreach (var record in context.Records.Values)
                 {
-                    var id = syncResponsePermission.i;
-                    var @class = (IClass)this.Configuration.MetaPopulation.FindByTag(syncResponsePermission.c);
-                    var metaObject = this.Configuration.MetaPopulation.FindByTag(syncResponsePermission.t);
-                    var operandType = (IOperandType)(metaObject as IRelationType)?.RoleType ?? (IMethodType)metaObject;
-                    var operation = (Operations)syncResponsePermission.o;
-
-                    this.Permissions.Add(id);
-
-                    switch (operation)
-                    {
-                        case Operations.Read:
-                            if (!this.readPermissionByOperandTypeByClass.TryGetValue(@class, out var readPermissionByOperandType))
-                            {
-                                readPermissionByOperandType = new Dictionary<IOperandType, long>();
-                                this.readPermissionByOperandTypeByClass[@class] = readPermissionByOperandType;
-                            }
-
-                            readPermissionByOperandType[operandType] = id;
-
-                            break;
-
-                        case Operations.Write:
-                            if (!this.writePermissionByOperandTypeByClass.TryGetValue(@class, out var writePermissionByOperandType))
-                            {
-                                writePermissionByOperandType = new Dictionary<IOperandType, long>();
-                                this.writePermissionByOperandTypeByClass[@class] = writePermissionByOperandType;
-                            }
-
-                            writePermissionByOperandType[operandType] = id;
-
-                            break;
-
-                        case Operations.Execute:
-                            if (!this.executePermissionByOperandTypeByClass.TryGetValue(@class, out var executePermissionByOperandType))
-                            {
-                                executePermissionByOperandType = new Dictionary<IOperandType, long>();
-                                this.executePermissionByOperandTypeByClass[@class] = executePermissionByOperandType;
-                            }
-
-                            executePermissionByOperandType[operandType] = id;
-
-                            break;
-                        case Operations.Create:
-                            throw new NotSupportedException("Create not supported");
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
+                    this.records[record.Key] = record;
+                    this.recordsById[record.Id] = record;
                 }
             }
         }
 
         public override long GetPermission(IClass @class, IOperandType operandType, Operations operation)
         {
-            switch (operation)
+            if (operation != Operations.Read && operation != Operations.Write && operation != Operations.Execute)
             {
-                case Operations.Read:
-                    if (this.readPermissionByOperandTypeByClass.TryGetValue(@class,
-                        out var readPermissionByOperandType) && readPermissionByOperandType.TryGetValue(operandType, out var readPermission))
-                    {
-                        return readPermission;
-                    }
+                throw new NotSupportedException($"Operation {operation} is not supported");
+            }
 
-                    return 0;
-
-                case Operations.Write:
-                    if (this.writePermissionByOperandTypeByClass.TryGetValue(@class,
-                        out var writePermissionByOperandType) && writePermissionByOperandType.TryGetValue(operandType, out var writePermission))
-                    {
-                        return writePermission;
-                    }
-
-                    return 0;
-
-                case Operations.Execute:
-                    if (this.executePermissionByOperandTypeByClass.TryGetValue(@class,
-                        out var executePermissionByOperandType) && executePermissionByOperandType.TryGetValue(operandType, out var executePermission))
-                    {
-                        return executePermission;
-                    }
-
-                    return 0;
-
-                case Operations.Create:
-                    throw new NotSupportedException("Create is not supported");
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(operation));
+            lock (this.cacheLock)
+            {
+                return this.permissionIds.TryGetValue((@class, operandType, operation), out var id) ? id : 0;
             }
         }
 
         public override Adapters.DatabaseRecord GetRecord(long id)
         {
-            this.recordsById.TryGetValue(id, out var databaseObjects);
-            return databaseObjects;
+            lock (this.cacheLock)
+            {
+                return this.recordsById.TryGetValue(id, out var record) ? record : null;
+            }
         }
 
         public abstract Task<PullResponse> Pull(PullRequest pullRequest);
-
         public abstract Task<SyncResponse> Sync(SyncRequest syncRequest);
-
         public abstract Task<PushResponse> Push(PushRequest pushRequest);
-
         public abstract Task<InvokeResponse> Invoke(InvokeRequest invokeRequest);
-
         public abstract Task<AccessResponse> Access(AccessRequest accessRequest);
-
         public abstract Task<PermissionResponse> Permission(PermissionRequest permissionRequest);
     }
 }

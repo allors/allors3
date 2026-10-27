@@ -7,6 +7,7 @@ namespace Allors.Workspace.Adapters.Remote
 {
     using System;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
     using Allors.Protocol.Json.Api.Invoke;
     using Allors.Protocol.Json.Api.Pull;
@@ -24,6 +25,8 @@ namespace Allors.Workspace.Adapters.Remote
             this.DatabaseConnection = workspace.DatabaseConnection;
         }
 
+        private readonly SemaphoreSlim operationGate = new SemaphoreSlim(1, 1);
+
         private DatabaseConnection DatabaseConnection { get; }
 
         public new Workspace Workspace => (Workspace)base.Workspace;
@@ -38,61 +41,50 @@ namespace Allors.Workspace.Adapters.Remote
             return (T)strategy.Object;
         }
 
-        private void InstantiateDatabaseStrategy(long id)
-        {
-            var databaseRecord = (DatabaseRecord)base.Workspace.DatabaseConnection.GetRecord(id);
-            var strategy = new Strategy(this, databaseRecord);
-            this.AddStrategy(strategy);
-
-            this.ChangeSetTracker.OnInstantiated(strategy);
-        }
-
         internal async Task<IPullResult> OnPull(PullResponse pullResponse)
         {
             var pullResult = new PullResult(this, pullResponse, this.DatabaseConnection.UnitConvert);
+            if (pullResult.HasErrors) return pullResult;
 
-            if (pullResult.HasErrors)
+            var context = this.DatabaseConnection.OnPullResponse(pullResponse);
+            var request = context.SyncRequest;
+            if (request.o.Length > 0) context.OnSync(await this.DatabaseConnection.Sync(request));
+
+            var strategies = context.Records.ToDictionary(entry => entry.Key, entry =>
             {
-                return pullResult;
-            }
-
-            var syncRequest = this.Workspace.DatabaseConnection.OnPullResponse(pullResponse);
-            if (syncRequest.o.Length > 0)
-            {
-                var database = (DatabaseConnection)base.Workspace.DatabaseConnection;
-                var syncResponse = await database.Sync(syncRequest);
-                var accessRequest = database.OnSyncResponse(syncResponse);
-
-                if (accessRequest != null)
+                if (this.StrategyByWorkspaceId.TryGetValue(entry.Key, out var existing))
                 {
-                    var accessResponse = await database.Access(accessRequest);
-                    var permissionRequest = database.AccessResponse(accessResponse);
-                    if (permissionRequest != null)
-                    {
-                        var permissionResponse = await database.Permission(permissionRequest);
-                        database.PermissionResponse(permissionResponse);
-                    }
+                    if (existing.Class != entry.Value.Class) throw ResponseContext.Invalid("An object's class changed");
+                    return existing;
                 }
-            }
 
-            foreach (var v in pullResponse.p)
+                return new Strategy(this, entry.Value);
+            });
+            pullResult.Prepare(id => id == 0 ? null : strategies[id].Object);
+            this.DatabaseConnection.Publish(context);
+            foreach (var entry in strategies)
             {
-                if (this.StrategyByWorkspaceId.TryGetValue(v.i, out var strategy))
-                {
-                    strategy.DatabaseOriginState.OnPulled(pullResult);
-                }
+                if (this.StrategyByWorkspaceId.ContainsKey(entry.Key)) entry.Value.DatabaseOriginState.OnPulled(context.Records[entry.Key]);
                 else
                 {
-                    this.InstantiateDatabaseStrategy(v.i);
+                    this.AddStrategy(entry.Value);
+                    this.ChangeSetTracker.OnInstantiated(entry.Value);
                 }
             }
 
             return pullResult;
         }
 
+        private async Task<T> InOrder<T>(Func<Task<T>> operation)
+        {
+            await this.operationGate.WaitAsync();
+            try { return await operation(); }
+            finally { this.operationGate.Release(); }
+        }
+
         public override async Task<IInvokeResult> InvokeAsync(Method method, InvokeOptions options = null) => await this.InvokeAsync(new[] { method }, options);
 
-        public override async Task<IInvokeResult> InvokeAsync(Method[] methods, InvokeOptions options = null)
+        public override Task<IInvokeResult> InvokeAsync(Method[] methods, InvokeOptions options = null) => this.InOrder(async () =>
         {
             var invokeRequest = new InvokeRequest
             {
@@ -112,10 +104,10 @@ namespace Allors.Workspace.Adapters.Remote
             };
 
             var invokeResponse = await this.DatabaseConnection.Invoke(invokeRequest);
-            return new InvokeResult(this, invokeResponse);
-        }
+            return (IInvokeResult)new InvokeResult(this, invokeResponse);
+        });
 
-        public override async Task<IPullResult> PullAsync(params Pull[] pulls)
+        public override Task<IPullResult> PullAsync(params Pull[] pulls) => this.InOrder(async () =>
         {
             foreach (var pull in pulls)
             {
@@ -129,9 +121,9 @@ namespace Allors.Workspace.Adapters.Remote
 
             var pullResponse = await this.DatabaseConnection.Pull(pullRequest);
             return await this.OnPull(pullResponse);
-        }
+        });
 
-        public override async Task<IPushResult> PushAsync()
+        public override Task<IPushResult> PushAsync() => this.InOrder(async () =>
         {
             var databaseTracker = this.PushToDatabaseTracker;
 
@@ -144,7 +136,7 @@ namespace Allors.Workspace.Adapters.Remote
 
             if (pushResponse.HasErrors)
             {
-                return new PushResult(this, pushResponse);
+                return (IPushResult)new PushResult(this, pushResponse);
             }
 
 
@@ -170,7 +162,7 @@ namespace Allors.Workspace.Adapters.Remote
                 }
             }
 
-            return new PushResult(this, pushResponse);
-        }
+            return (IPushResult)new PushResult(this, pushResponse);
+        });
     }
 }
