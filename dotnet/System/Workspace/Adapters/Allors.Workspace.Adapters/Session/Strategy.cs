@@ -434,49 +434,49 @@ namespace Allors.Workspace.Adapters
                 case UnitTags.Binary:
                     if (!(value is byte[]))
                     {
-                        throw new ArgumentException($"{nameof(value)} is not a Binary");
+                        throw new ArgumentException($"Invalid value type for role '{roleType.AssociationType.ObjectType.SingularName}.{roleType.Name}': expected Binary, received {value.GetType().FullName}.");
                     }
                     break;
                 case UnitTags.Boolean:
                     if (!(value is bool))
                     {
-                        throw new ArgumentException($"{nameof(value)} is not an Bool");
+                        throw new ArgumentException($"Invalid value type for role '{roleType.AssociationType.ObjectType.SingularName}.{roleType.Name}': expected Boolean, received {value.GetType().FullName}.");
                     }
                     break;
                 case UnitTags.DateTime:
                     if (!(value is DateTime))
                     {
-                        throw new ArgumentException($"{nameof(value)} is not an DateTime");
+                        throw new ArgumentException($"Invalid value type for role '{roleType.AssociationType.ObjectType.SingularName}.{roleType.Name}': expected DateTime, received {value.GetType().FullName}.");
                     }
                     break;
                 case UnitTags.Decimal:
                     if (!(value is decimal))
                     {
-                        throw new ArgumentException($"{nameof(value)} is not an Decimal");
+                        throw new ArgumentException($"Invalid value type for role '{roleType.AssociationType.ObjectType.SingularName}.{roleType.Name}': expected Decimal, received {value.GetType().FullName}.");
                     }
                     break;
                 case UnitTags.Float:
                     if (!(value is double))
                     {
-                        throw new ArgumentException($"{nameof(value)} is not an Float");
+                        throw new ArgumentException($"Invalid value type for role '{roleType.AssociationType.ObjectType.SingularName}.{roleType.Name}': expected Float, received {value.GetType().FullName}.");
                     }
                     break;
                 case UnitTags.Integer:
                     if (!(value is int))
                     {
-                        throw new ArgumentException($"{nameof(value)} is not an Integer");
+                        throw new ArgumentException($"Invalid value type for role '{roleType.AssociationType.ObjectType.SingularName}.{roleType.Name}': expected Integer, received {value.GetType().FullName}.");
                     }
                     break;
                 case UnitTags.String:
                     if (!(value is string))
                     {
-                        throw new ArgumentException($"{nameof(value)} is not an String");
+                        throw new ArgumentException($"Invalid value type for role '{roleType.AssociationType.ObjectType.SingularName}.{roleType.Name}': expected String, received {value.GetType().FullName}.");
                     }
                     break;
                 case UnitTags.Unique:
                     if (!(value is Guid))
                     {
-                        throw new ArgumentException($"{nameof(value)} is not an Unique");
+                        throw new ArgumentException($"Invalid value type for role '{roleType.AssociationType.ObjectType.SingularName}.{roleType.Name}': expected Unique, received {value.GetType().FullName}.");
                     }
                     break;
                 default:

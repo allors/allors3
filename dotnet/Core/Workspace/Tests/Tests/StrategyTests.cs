@@ -39,9 +39,101 @@ namespace Tests.Workspace
                 c1.Strategy.SetUnitRole(this.M.C1.C1AllorsInteger, "Not an integer");
                 hasErrors = false;
             }
-            catch (Exception)
+            catch (ArgumentException exception)
             {
                 hasErrors = true;
+                Assert.Equal("Invalid value type for role 'C1.C1AllorsInteger': expected Integer, received System.String.", exception.Message);
+            }
+
+            Assert.True(hasErrors);
+
+            try
+            {
+                c1.Strategy.SetUnitRole(this.M.C1.C1AllorsBinary, "Not a binary");
+                hasErrors = false;
+            }
+            catch (ArgumentException exception)
+            {
+                hasErrors = true;
+                Assert.Equal("Invalid value type for role 'C1.C1AllorsBinary': expected Binary, received System.String.", exception.Message);
+            }
+
+            Assert.True(hasErrors);
+
+            try
+            {
+                c1.Strategy.SetUnitRole(this.M.C1.C1AllorsBoolean, "Not a boolean");
+                hasErrors = false;
+            }
+            catch (ArgumentException exception)
+            {
+                hasErrors = true;
+                Assert.Equal("Invalid value type for role 'C1.C1AllorsBoolean': expected Boolean, received System.String.", exception.Message);
+            }
+
+            Assert.True(hasErrors);
+
+            try
+            {
+                c1.Strategy.SetUnitRole(this.M.C1.C1AllorsDateTime, "Not a date");
+                hasErrors = false;
+            }
+            catch (ArgumentException exception)
+            {
+                hasErrors = true;
+                Assert.Equal("Invalid value type for role 'C1.C1AllorsDateTime': expected DateTime, received System.String.", exception.Message);
+            }
+
+            Assert.True(hasErrors);
+
+            try
+            {
+                c1.Strategy.SetUnitRole(this.M.C1.C1AllorsDecimal, 0);
+                hasErrors = false;
+            }
+            catch (ArgumentException exception)
+            {
+                hasErrors = true;
+                Assert.Equal("Invalid value type for role 'C1.C1AllorsDecimal': expected Decimal, received System.Int32.", exception.Message);
+            }
+
+            Assert.True(hasErrors);
+
+            try
+            {
+                c1.Strategy.SetUnitRole(this.M.C1.C1AllorsDouble, 0f);
+                hasErrors = false;
+            }
+            catch (ArgumentException exception)
+            {
+                hasErrors = true;
+                Assert.Equal("Invalid value type for role 'C1.C1AllorsDouble': expected Float, received System.Single.", exception.Message);
+            }
+
+            Assert.True(hasErrors);
+
+            try
+            {
+                c1.Strategy.SetUnitRole(this.M.C1.C1AllorsString, 0);
+                hasErrors = false;
+            }
+            catch (ArgumentException exception)
+            {
+                hasErrors = true;
+                Assert.Equal("Invalid value type for role 'C1.C1AllorsString': expected String, received System.Int32.", exception.Message);
+            }
+
+            Assert.True(hasErrors);
+
+            try
+            {
+                c1.Strategy.SetUnitRole(this.M.C1.C1AllorsUnique, "Not a unique");
+                hasErrors = false;
+            }
+            catch (ArgumentException exception)
+            {
+                hasErrors = true;
+                Assert.Equal("Invalid value type for role 'C1.C1AllorsUnique': expected Unique, received System.String.", exception.Message);
             }
 
             Assert.True(hasErrors);
