@@ -11,6 +11,7 @@ namespace Tests
     using Allors;
     using Allors.Database.Domain;
     using Allors.Database.Protocol.Json;
+    using Allors.Protocol.Json.Api.Pull;
     using Allors.Protocol.Json.Api.Sync;
     using Xunit;
 
@@ -67,6 +68,37 @@ namespace Tests
             Assert.Equal(person.Id, syncObject.i);
             Assert.Equal(this.M.Person.Tag, syncObject.c);
             Assert.Equal(person.Strategy.ObjectVersion, syncObject.v);
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void SharedGrantAcrossSecurityTokensHasOneBinding(bool warmCache)
+        {
+            var user = Assert.IsAssignableFrom<User>(this.SetUser("noacl"));
+            var permission = new Permissions(this.Transaction).Get(this.M.Data, this.M.Data.String, Operations.Read);
+            var role = new RoleBuilder(this.Transaction).WithName("Shared Sync grant").WithPermission(permission).Build();
+            var grant = new GrantBuilder(this.Transaction).WithSubject(user).WithRole(role).Build();
+            var first = new SecurityTokenBuilder(this.Transaction).WithGrant(grant).Build();
+            var second = new SecurityTokenBuilder(this.Transaction).WithGrant(grant).Build();
+            var data = new DataBuilder(this.Transaction).WithString("Visible value").WithSecurityToken(first).WithSecurityToken(second).Build();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
+
+            if (warmCache)
+            {
+                this.Security.GetVersionedGrants(this.Transaction, user, new[] { first }, "Default");
+            }
+
+            var api = new Api(this.Transaction, "Default", CancellationToken.None);
+            var pull = api.Pull(new PullRequest { l = new[] { new Allors.Protocol.Json.Data.Pull { o = data.Id } } });
+            Assert.Equal(new[] { grant.Id }, Assert.Single(pull.p).g);
+            Assert.Equal(new[] { grant.Id, grant.Strategy.ObjectVersion }, Assert.Single(pull.g));
+
+            var sync = api.Sync(new SyncRequest { o = new[] { data.Id } });
+            Assert.Equal(new[] { grant.Id }, Assert.Single(sync.o).g);
+            Assert.Equal(grant.Id, Assert.Single(sync.g).i);
+            Assert.Equal(permission.Id, Assert.Single(sync.p).i);
         }
 
         [Fact]

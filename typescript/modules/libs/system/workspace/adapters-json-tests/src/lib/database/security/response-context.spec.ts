@@ -93,17 +93,20 @@ const flush = async () => {
   }
 };
 
-test('an unchanged pull does not repeat synchronization or request Access or Permission', async () => {
-  const { session, client, response, select, enqueue } = setup();
-  const initial = response();
-  enqueue(initial);
-  await session.pull({ objectId: 101 });
-  client.pull.mockResolvedValueOnce(select(initial));
-  await session.pull({ objectId: 101 });
-  expect(client.sync).toHaveBeenCalledTimes(1);
-  expect(client.access).not.toHaveBeenCalled();
-  expect(client.permission).not.toHaveBeenCalled();
-});
+test.each([0, 2])(
+  'an unchanged pull does not repeat synchronization or request Access or Permission: security version %s',
+  async (securityVersion) => {
+    const { session, client, response, select, enqueue } = setup();
+    const initial = response(2, securityVersion, securityVersion);
+    enqueue(initial);
+    await session.pull({ objectId: 101 });
+    client.pull.mockResolvedValueOnce(select(initial));
+    await session.pull({ objectId: 101 });
+    expect(client.sync).toHaveBeenCalledTimes(1);
+    expect(client.access).not.toHaveBeenCalled();
+    expect(client.permission).not.toHaveBeenCalled();
+  }
+);
 
 test('security-only changes refresh cached revocations independently of permission IDs', async () => {
   const { session, client, m, response, enqueue } = setup();
@@ -174,9 +177,16 @@ test('a disjoint refresh stays pinned and repeated Pull replaces the Reset targe
 
 test.each([
   'missing tables',
+  'unknown object version in Pull',
+  'workspace object version in Pull',
+  'unknown object version in Sync',
+  'workspace object version in Sync',
   'missing definition',
   'unadvertised omission',
   'unknown role',
+  'unit with object member',
+  'to-one with value member',
+  'to-many with object member',
   'missing object',
   'duplicate access',
   'bad result',
@@ -192,6 +202,18 @@ test.each([
   const invalid = response(3, 3, 3, 'remote');
   const pull = select(invalid);
   switch (kind) {
+    case 'unknown object version in Pull':
+      pull.p[0].v = 0;
+      break;
+    case 'workspace object version in Pull':
+      pull.p[0].v = 1;
+      break;
+    case 'unknown object version in Sync':
+      invalid.o[0].v = 0;
+      break;
+    case 'workspace object version in Sync':
+      invalid.o[0].v = 1;
+      break;
     case 'missing tables':
       delete invalid.g;
       break;
@@ -203,6 +225,21 @@ test.each([
       break;
     case 'unknown role':
       invalid.o[0].ro[0].t = 'unknown';
+      break;
+    case 'unit with object member':
+      invalid.o[0].ro[0]['o'] = 101;
+      break;
+    case 'to-one with value member':
+      invalid.o[0].ro.push({
+        t: m.C1.C1C1Many2One.relationType.tag,
+        v: 101,
+      } as any);
+      break;
+    case 'to-many with object member':
+      invalid.o[0].ro.push({
+        t: m.C1.C1C1Many2Manies.relationType.tag,
+        o: 101,
+      } as any);
       break;
     case 'missing object':
       invalid.o = [];
@@ -235,9 +272,11 @@ test.each([
   );
   expect(rejected).toBe(true);
   expect(database.getRecord(101).version).toBe(2);
+  expect(database.getAccess('g:11:3')).toBeUndefined();
   expect(edited.C1AllorsString).toBe('local');
   edited.strategy.reset();
   expect(edited.strategy.version).toBe(2);
+  client.sync.mockReset();
   enqueue(response(4));
   await session.pull({ objectId: 101 });
   expect(edited.strategy.version).toBe(4);
@@ -502,30 +541,45 @@ test('Pull owns named result buffers while Sync is in flight', async () => {
   expect(result.value('Numbers')).toEqual([1, 2]);
 });
 
-test('Checkpoint reports a to-one change even when neither target is loaded', async () => {
-  const { session, m, response, enqueue } = setup();
-  const related = (version: number, target: number) => {
-    const sync = response(version);
-    sync.p.push({
-      i: 34,
-      c: m.C1.tag,
-      t: m.C1.C1C1Many2One.relationType.tag,
-      o: Operations.Read,
-    });
-    sync.g[0].p.push(34);
-    sync.o[0].ro.push({
-      t: m.C1.C1C1Many2One.relationType.tag,
-      o: target,
-    } as any);
-    return sync;
-  };
-  enqueue(related(2, 102));
-  const object = (await session.pull({ objectId: 101 })).object<C1>('C1');
-  session.checkpoint();
-  enqueue(related(3, 103));
-  await session.pull({ objectId: 101 });
-  const changes = session.checkpoint();
-  expect(
-    changes.associationsByRoleType.get(m.C1.C1C1Many2One)?.has(object)
-  ).toBe(true);
-});
+test.each([
+  [false, false],
+  [true, false],
+  [false, true],
+  [true, true],
+])(
+  'Checkpoint reports relation changes even when neither target is loaded: many=%s, reset=%s',
+  async (many, reset) => {
+    const { session, m, response, enqueue } = setup();
+    const role = many ? m.C1.C1C1Many2Manies : m.C1.C1C1Many2One;
+    const related = (version: number, target: number) => {
+      const sync = response(version);
+      sync.p.push({
+        i: 34,
+        c: m.C1.tag,
+        t: role.relationType.tag,
+        o: Operations.Read,
+      });
+      sync.g[0].p.push(34);
+      sync.o[0].ro.push({
+        t: role.relationType.tag,
+        ...(many ? { c: [target] } : { o: target }),
+      } as any);
+      return sync;
+    };
+    enqueue(related(2, 102));
+    const object = (await session.pull({ objectId: 101 })).object<C1>('C1');
+    if (reset) {
+      object.C1AllorsString = 'local';
+    }
+    session.checkpoint();
+    enqueue(related(3, 103));
+    await session.pull({ objectId: 101 });
+    if (reset) {
+      expect(object.strategy.version).toBe(2);
+      object.strategy.reset();
+    }
+    const changes = session.checkpoint();
+    expect(changes.associationsByRoleType.get(role)?.has(object)).toBe(true);
+    expect(changes.rolesByAssociationType.size).toBe(0);
+  }
+);

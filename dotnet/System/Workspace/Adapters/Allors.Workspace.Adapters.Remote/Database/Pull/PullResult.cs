@@ -26,15 +26,37 @@ namespace Allors.Workspace.Adapters.Remote
         public PullResult(Adapters.Session session, PullResponse response, IUnitConvert unitConvert) : base(session, response)
         {
             this.Workspace = session.Workspace;
-            this.pullResponse = response;
+            this.pullResponse = new PullResponse
+            {
+                p = response.p,
+                g = response.g,
+                r = response.r,
+                o = response.o?.ToDictionary(pair => pair.Key, pair => pair.Value),
+                c = response.c?.ToDictionary(pair => pair.Key, pair => pair.Value?.ToArray()),
+                v = response.v?.ToDictionary(pair => pair.Key, pair => CopyValue(pair.Value)),
+            };
             this.unitConvert = unitConvert;
+        }
+
+        internal PullResponse Selection => this.pullResponse;
+
+        private static object CopyValue(object value)
+        {
+            if (value is object[] array)
+            {
+                var copy = (object[])array.Clone();
+                for (var i = 0; i < copy.Length; ++i) copy[i] = CopyValue(copy[i]);
+                return copy;
+            }
+
+            return value is ICloneable cloneable ? cloneable.Clone() : value;
         }
 
         internal void Prepare(Func<long, IObject> instantiate)
         {
             this.objects = (this.pullResponse.o ?? new Dictionary<string, long>()).ToDictionary(pair => pair.Key.ToUpperInvariant(), pair => instantiate(pair.Value));
             this.collections = (this.pullResponse.c ?? new Dictionary<string, long[]>()).ToDictionary(pair => pair.Key.ToUpperInvariant(), pair => pair.Value.Select(instantiate).ToArray());
-            this.values = (this.pullResponse.v ?? new Dictionary<string, object>()).ToDictionary(pair => pair.Key.ToUpperInvariant(), pair => pair.Value is ICloneable cloneable ? cloneable.Clone() : pair.Value);
+            this.values = (this.pullResponse.v ?? new Dictionary<string, object>()).ToDictionary(pair => pair.Key.ToUpperInvariant(), pair => pair.Value);
         }
 
         private IWorkspace Workspace { get; }

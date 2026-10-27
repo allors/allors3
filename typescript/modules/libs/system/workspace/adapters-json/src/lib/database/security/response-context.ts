@@ -1,4 +1,7 @@
-import { MapMap } from '@allors/system/workspace/adapters';
+import {
+  MapMap,
+  WorkspaceInitialVersion,
+} from '@allors/system/workspace/adapters';
 import {
   AccessResponseGrant,
   PermissionResponsePermission,
@@ -54,7 +57,7 @@ export class ResponseContext {
       'Pull objects'
     )) {
       ResponseContext.id(object.i);
-      ResponseContext.version(object.v);
+      ResponseContext.objectVersion(object.v);
       if (this.pool.has(object.i)) {
         throw new Error('Pull contains duplicate object IDs.');
       }
@@ -124,7 +127,7 @@ export class ResponseContext {
     const loaded = new Set<number>();
     for (const object of ResponseContext.array(response.o, 'Sync objects')) {
       ResponseContext.id(object.i);
-      ResponseContext.version(object.v);
+      ResponseContext.objectVersion(object.v);
       if (!requested.has(object.i) || loaded.has(object.i)) {
         throw new Error('Sync contains an unexpected or duplicate object.');
       }
@@ -334,6 +337,12 @@ export class ResponseContext {
   static id(value: number): void {
     if (!Number.isSafeInteger(value) || value <= 0) {
       throw new Error('Response IDs must be positive safe integers.');
+    }
+  }
+  static objectVersion(value: number): void {
+    ResponseContext.version(value);
+    if (value <= WorkspaceInitialVersion) {
+      throw new Error('Response object versions must be database versions.');
     }
   }
   static version(value: number): void {

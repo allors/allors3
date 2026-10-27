@@ -136,8 +136,22 @@ namespace Allors.Workspace.Adapters
         public void DiffComposites(Strategy association, IRelationType relationType, IRange<long> currentRange, IRange<long> previous)
         {
             var ranges = this.Session.Workspace.RecordRanges;
-            var current = this.Session.Workspace.StrategyRanges.Load(ranges.Ensure(currentRange).Select(v => this.Session.GetStrategy(v)));
-            this.DiffComposites(association, relationType, current, previous);
+            var current = ranges.Ensure(currentRange);
+            previous = ranges.Ensure(previous);
+            var hasChange = false;
+            foreach (var id in current.Except(previous))
+            {
+                this.AddRole(relationType, this.Session.GetStrategy(id));
+                hasChange = true;
+            }
+
+            foreach (var id in previous.Except(current))
+            {
+                this.AddRole(relationType, this.Session.GetStrategy(id));
+                hasChange = true;
+            }
+
+            if (hasChange) this.AddAssociation(relationType, association);
         }
 
         public void DiffComposites(Strategy association, IRelationType relationType, IRange<Strategy> current, IRange<Strategy> previous)
@@ -177,6 +191,7 @@ namespace Allors.Workspace.Adapters
 
         private void AddRole(IRelationType relationType, Strategy role)
         {
+            if (role == null) return;
             var associationType = relationType.AssociationType;
 
             if (!this.RolesByAssociationType.TryGetValue(associationType, out var roles))

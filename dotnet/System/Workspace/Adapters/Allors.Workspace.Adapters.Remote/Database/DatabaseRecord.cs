@@ -37,9 +37,9 @@ namespace Allors.Workspace.Adapters.Remote
         {
             var meta = database.Configuration.MetaPopulation;
             var @class = meta.FindByTag(response.c) as IClass;
-            if (@class == null || response.i <= 0 || response.v < 0) throw ResponseContext.Invalid("Sync contains an invalid object identity or class");
+            if (@class == null || response.i <= 0 || response.v < Allors.Version.DatabaseInitial.Value) throw ResponseContext.Invalid("Sync contains an invalid object identity or class");
             var roles = new Dictionary<IRelationType, object>();
-            foreach (var value in response.ro ?? Array.Empty<SyncResponseRole>())
+            foreach (var value in response.ro ?? throw ResponseContext.Invalid("Sync must include each object role table"))
             {
                 var relation = value == null ? null : meta.FindByTag(value.t) as IRelationType;
                 var role = relation?.RoleType;

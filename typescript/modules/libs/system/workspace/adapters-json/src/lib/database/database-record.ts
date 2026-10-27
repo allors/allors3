@@ -58,6 +58,11 @@ export class DatabaseRecord extends SystemDatabaseRecord {
       }
       let value: unknown;
       if (roleType.objectType.isUnit) {
+        if (role.o != null || role.c != null) {
+          throw new Error(
+            'Sync unit roles cannot contain relationship members.'
+          );
+        }
         value = unitFromJson(roleType.objectType.tag, role.v);
         if (value instanceof Date) {
           if (!Number.isFinite(value.getTime())) {
@@ -66,11 +71,21 @@ export class DatabaseRecord extends SystemDatabaseRecord {
           value = new Date(value.getTime());
         }
       } else if (roleType.isOne) {
+        if (role.v != null || role.c != null) {
+          throw new Error(
+            'Sync to-one roles cannot contain unit or collection members.'
+          );
+        }
         value = role.o == null || role.o === 0 ? undefined : role.o;
         if (value != null) {
           ResponseContext.id(value as number);
         }
       } else {
+        if (role.v != null || role.o != null) {
+          throw new Error(
+            'Sync to-many roles cannot contain unit or object members.'
+          );
+        }
         value = Object.freeze(ResponseContext.ids(role.c));
       }
       roles.set(relation, value);

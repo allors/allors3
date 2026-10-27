@@ -34,7 +34,7 @@ namespace Allors.Workspace.Adapters.Remote
             var ids = new HashSet<long>();
             foreach (var item in response.p ?? throw Invalid("Pull pool is missing"))
             {
-                if (item == null || item.i <= 0 || item.v < 0 || !ids.Add(item.i)) throw Invalid("Pull contains an invalid or duplicate object");
+                if (item == null || item.i <= 0 || item.v < Allors.Version.DatabaseInitial.Value || !ids.Add(item.i)) throw Invalid("Pull contains an invalid or duplicate object");
                 var key = (item.i, item.v, Binding(item.g, item.r, grantVersions, revocationVersions));
                 if (records.TryGetValue(key, out var record)) this.Records.Add(item.i, record);
                 else this.requested.Add(item.i);

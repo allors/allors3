@@ -46,7 +46,7 @@ namespace Allors.Workspace.Adapters.Remote
             var pullResult = new PullResult(this, pullResponse, this.DatabaseConnection.UnitConvert);
             if (pullResult.HasErrors) return pullResult;
 
-            var context = this.DatabaseConnection.OnPullResponse(pullResponse);
+            var context = this.DatabaseConnection.OnPullResponse(pullResult.Selection);
             var request = context.SyncRequest;
             if (request.o.Length > 0) context.OnSync(await this.DatabaseConnection.Sync(request));
 

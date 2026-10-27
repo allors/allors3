@@ -248,19 +248,15 @@ export abstract class RecordBasedOriginState {
           previousChanged ? (previous as IObject)?.id : (previous as number)
         );
       } else {
-        changeSet.diffCompositesStrategyStrategy(
+        changeSet.diffCompositesRecordRecord(
           this.object,
           relation,
           currentChanged
-            ? (current as IRange<IObject>)
-            : (current as IRange<number>)?.map((id) =>
-                this.session.getObject(id)
-              ),
+            ? (current as IRange<IObject>)?.map((object) => object.id)
+            : (current as IRange<number>),
           previousChanged
-            ? (previous as IRange<IObject>)
-            : (previous as IRange<number>)?.map((id) =>
-                this.session.getObject(id)
-              )
+            ? (previous as IRange<IObject>)?.map((object) => object.id)
+            : (previous as IRange<number>)
         );
       }
     }

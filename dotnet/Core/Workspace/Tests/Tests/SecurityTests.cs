@@ -38,6 +38,8 @@ namespace Tests.Workspace
 
         protected abstract IWorkspace CreateWorkspace(HttpClient client);
 
+        protected abstract IPullResult CreatePullResult(ISession session, PullResponse response);
+
         [Theory]
         [InlineData(false)]
         [InlineData(true)]
@@ -202,6 +204,11 @@ namespace Tests.Workspace
         [InlineData("missing-object")]
         [InlineData("invalid-role")]
         [InlineData("result-name")]
+        [InlineData("pull-version-zero")]
+        [InlineData("pull-version-initial")]
+        [InlineData("sync-version-zero")]
+        [InlineData("sync-version-initial")]
+        [InlineData("missing-role-table")]
         public async Task HybridSyncRejectsIncompleteResponsesBeforePublishing(string failure)
         {
             var stage = 0;
@@ -211,6 +218,8 @@ namespace Tests.Workspace
                 {
                     var response = Manifest(stage == 0 ? 1 : 2, stage == 0 ? 1 : 2);
                     if (stage == 1 && failure == "result-name") response.o.Add("c1", 1);
+                    if (stage == 1 && failure == "pull-version-zero") response.p[0].v = 0;
+                    if (stage == 1 && failure == "pull-version-initial") response.p[0].v = 1;
                     if (stage == 1 && failure == "invalid-role") response.p = new[] { response.p[0], new PullResponseObject { i = 2, v = 3, g = new long[] { 11 } } };
                     return Json(response);
                 }
@@ -224,6 +233,9 @@ namespace Tests.Workspace
                     switch (failure)
                     {
                         case "missing-table": snapshot.r = null; break;
+                        case "sync-version-zero": snapshot.o[0].v = 0; break;
+                        case "sync-version-initial": snapshot.o[0].v = 1; break;
+                        case "missing-role-table": snapshot.o[0].ro = null; break;
                         case "unadvertised-entry": snapshot.g[0].p = null; break;
                         case "missing-definition": snapshot.p = Array.Empty<PermissionResponsePermission>(); break;
                         case "duplicate-entry": snapshot.g = new[] { snapshot.g[0], snapshot.g[0] }; break;
@@ -293,6 +305,73 @@ namespace Tests.Workspace
             Assert.False((await push).HasErrors);
             Assert.False((await invoke).HasErrors);
             Assert.Equal(new[] { "/pull", "/pull", "/sync", "/push", "/invoke" }, paths);
+        }
+
+        [Fact]
+        public async Task HybridPullResultsOwnTheirNamedBuffersBeforeMaterialization()
+        {
+            using var handler = new ResponseHandler(request => Task.FromResult(Json(
+                request.RequestUri.AbsolutePath.EndsWith("/pull") ? (object)Manifest(1, 1) : this.Snapshot(1, 1, true))));
+            using var client = new HttpClient(handler) { BaseAddress = new Uri("http://test/") };
+            var workspace = this.CreateWorkspace(client);
+            var session = workspace.CreateSession();
+            var value = (await session.PullAsync(new Pull { ObjectId = 1 })).GetObject<C1>();
+            var response = Manifest(1, 1);
+            response.c.Add("C1s", new long[] { 1 });
+            var bytes = new byte[] { 1, 2 };
+            response.v.Add("Bytes", bytes);
+            var names = new[] { "original" };
+            var binaries = new[] { new byte[] { 3, 4 } };
+            response.v.Add("Names", names);
+            response.v.Add("Binaries", binaries);
+            var result = this.CreatePullResult(session, response);
+
+            response.o["C1"] = 0;
+            response.c["C1s"][0] = 0;
+            bytes[0] = 99;
+            names[0] = "changed";
+            binaries[0][0] = 99;
+
+            Assert.Same(value, result.GetObject<C1>());
+            Assert.Equal(new[] { value }, result.GetCollection<C1>());
+            Assert.Equal(new byte[] { 1, 2 }, result.GetValue<byte[]>("Bytes"));
+            Assert.Equal(new[] { "original" }, result.GetValue<string[]>("Names"));
+            Assert.Equal(new byte[] { 3, 4 }, Assert.Single(result.GetValue<byte[][]>("Binaries")));
+        }
+
+        [Theory]
+        [InlineData(false, false)]
+        [InlineData(false, true)]
+        [InlineData(true, false)]
+        [InlineData(true, true)]
+        public async Task HybridCheckpointsPreserveUnloadedRelationChanges(bool many, bool reset)
+        {
+            var version = 1;
+            Allors.Workspace.Meta.IRoleType roleType = many ? this.M.C1.C1C1Many2Manies : this.M.C1.C1C1Many2One;
+            using var handler = new ResponseHandler(request =>
+            {
+                if (request.RequestUri.AbsolutePath.EndsWith("/pull")) return Task.FromResult(Json(Manifest(version, 1)));
+                var snapshot = this.Snapshot(version, 1, true);
+                snapshot.p = snapshot.p.Append(new PermissionResponsePermission { i = 36, c = this.M.C1.Tag, t = roleType.RelationType.Tag, o = (long)Operations.Read }).ToArray();
+                snapshot.g[0].p = snapshot.g[0].p.Append(36L).ToArray();
+                snapshot.o[0].ro = snapshot.o[0].ro.Append(many
+                    ? new SyncResponseRole { t = roleType.RelationType.Tag, c = new long[] { version + 1 } }
+                    : new SyncResponseRole { t = roleType.RelationType.Tag, o = version + 1 }).ToArray();
+                return Task.FromResult(Json(snapshot));
+            });
+            using var client = new HttpClient(handler) { BaseAddress = new Uri("http://test/") };
+            var session = this.CreateWorkspace(client).CreateSession();
+            var value = (await session.PullAsync(new Pull { ObjectId = 1 })).GetObject<C1>();
+            if (reset) value.C1AllorsString = "local";
+            session.Checkpoint();
+            version = 2;
+            await session.PullAsync(new Pull { ObjectId = 1 });
+            if (reset) value.Strategy.Reset();
+            var changes = session.Checkpoint();
+
+            Assert.True(changes.AssociationsByRoleType.TryGetValue(roleType, out var changed));
+            Assert.Contains(value.Strategy, changed);
+            Assert.All(changes.RolesByAssociationType.Values, targets => Assert.DoesNotContain(null, targets));
         }
 
         private static PullResponse Manifest(long dataVersion, long grantVersion) => new PullResponse
