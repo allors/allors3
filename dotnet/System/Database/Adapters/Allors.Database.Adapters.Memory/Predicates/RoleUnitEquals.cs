@@ -26,7 +26,7 @@ namespace Allors.Database.Adapters.Memory
             {
                 if (roleType.ObjectType is IUnit unitType && unitType.IsInteger)
                 {
-                    this.equals = (int)equals;
+                    this.equals = Convert.ToInt32(equals);
                 }
                 else
                 {

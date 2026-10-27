@@ -30,6 +30,45 @@ namespace Allors.Database.Adapters
 
     public abstract class ExtentTest : IDisposable
     {
+        private enum SByteEnumeration : sbyte
+        {
+            One = 1,
+        }
+
+        private enum ByteEnumeration : byte
+        {
+            One = 1,
+        }
+
+        private enum ShortEnumeration : short
+        {
+            One = 1,
+        }
+
+        private enum UShortEnumeration : ushort
+        {
+            One = 1,
+        }
+
+        private enum UIntEnumeration : uint
+        {
+            One = 1,
+            TooLarge = 2147483648U,
+        }
+
+        private enum LongEnumeration : long
+        {
+            One = 1,
+            TooSmall = -2147483649L,
+            TooLarge = 2147483648L,
+        }
+
+        private enum ULongEnumeration : ulong
+        {
+            One = 1,
+            TooLarge = 2147483648UL,
+        }
+
         protected static readonly bool[] TrueFalse = { true, false };
 
         #region Population
@@ -13976,14 +14015,27 @@ namespace Allors.Database.Adapters
                 this.AssertC4(extent, false, false, false, false);
 
                 // Equal 1
-                extent = this.Transaction.Extent(m.C1);
-                extent.Filter.AddEquals(m.C1.C1AllorsInteger, Zero2Four.One);
+                foreach (var enumeration in new Enum[]
+                {
+                    Zero2Four.One,
+                    SByteEnumeration.One,
+                    ByteEnumeration.One,
+                    ShortEnumeration.One,
+                    UShortEnumeration.One,
+                    UIntEnumeration.One,
+                    LongEnumeration.One,
+                    ULongEnumeration.One,
+                })
+                {
+                    extent = this.Transaction.Extent(m.C1);
+                    extent.Filter.AddEquals(m.C1.C1AllorsInteger, enumeration);
 
-                Assert.Single(extent);
-                this.AssertC1(extent, false, true, false, false);
-                this.AssertC2(extent, false, false, false, false);
-                this.AssertC3(extent, false, false, false, false);
-                this.AssertC4(extent, false, false, false, false);
+                    Assert.Single(extent);
+                    this.AssertC1(extent, false, true, false, false);
+                    this.AssertC2(extent, false, false, false, false);
+                    this.AssertC3(extent, false, false, false, false);
+                    this.AssertC4(extent, false, false, false, false);
+                }
 
                 // Equal 2
                 extent = this.Transaction.Extent(m.C1);
@@ -14217,6 +14269,28 @@ namespace Allors.Database.Adapters
 
                 Assert.Null(first);
                 Assert.True(exceptionThrown, "Only integer supports Enumeration");
+
+                foreach (var enumeration in new Enum[]
+                {
+                    UIntEnumeration.TooLarge,
+                    LongEnumeration.TooSmall,
+                    LongEnumeration.TooLarge,
+                    ULongEnumeration.TooLarge,
+                })
+                {
+                    extent = this.Transaction.Extent(m.C1);
+                    exceptionThrown = false;
+                    try
+                    {
+                        extent.Filter.AddEquals(m.C1.C1AllorsInteger, enumeration);
+                    }
+                    catch (OverflowException)
+                    {
+                        exceptionThrown = true;
+                    }
+
+                    Assert.True(exceptionThrown);
+                }
             }
         }
 
