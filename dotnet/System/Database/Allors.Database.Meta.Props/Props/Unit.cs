@@ -86,7 +86,7 @@ namespace Allors.Database.Meta
                     break;
 
                 case UnitTags.DateTime:
-                    this.clrType = typeof(DateTime);
+                    this.clrType = typeof(global::System.DateTime);
                     break;
 
                 case UnitTags.Decimal:
