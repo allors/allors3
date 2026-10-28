@@ -137,6 +137,25 @@ test.each(['disjoint', 'string', 'to-one', 'to-many'])(
       source.C1C1Many2Manies.map((v) => v.id).sort()
     );
     expect(edited.strategy.diff()).toHaveLength(0);
+
+    edited.C1AllorsString = 'local';
+    edited.C1C1Many2One = localTarget;
+    edited.addC1C1Many2Many(localTarget);
+    expect((await editing.push()).hasErrors).toBe(false);
+
+    const observer = workspace.createSession();
+    const observed = await observer.pull(pull);
+    expect(observed.hasErrors).toBe(false);
+    const saved = observed.collection<C1>(m.C1).find((v) => v.Name === name_c1A);
+    expect(saved.C1AllorsString).toBe('local');
+    expect(saved.C1AllorsInteger).toBe(2);
+    expect(saved.C1C1Many2One.id).toBe(localTarget.id);
+    expect(saved.C1C1Many2Manies.map((v) => v.id).sort()).toEqual(
+      (remoteEdit === 'to-many'
+        ? [baselineTarget.id, remoteTarget.id, localTarget.id]
+        : [baselineTarget.id, localTarget.id]
+      ).sort()
+    );
   }
 );
 

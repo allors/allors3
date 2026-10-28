@@ -116,6 +116,23 @@ namespace Tests.Workspace
             Assert.Equal(source.C1C1Many2One.Id, edited.C1C1Many2One.Id);
             Assert.Equal(source.C1C1Many2Manies.Select(v => v.Id).OrderBy(v => v), edited.C1C1Many2Manies.Select(v => v.Id).OrderBy(v => v));
             Assert.Empty(edited.Strategy.Diff());
+
+            edited.C1AllorsString = "local";
+            edited.C1C1Many2One = localTarget;
+            edited.AddC1C1Many2Many(localTarget);
+            Assert.False((await editing.PushAsync()).HasErrors);
+
+            var observer = this.Workspace.CreateSession();
+            var observedResult = await observer.PullAsync(pull);
+            Assert.False(observedResult.HasErrors);
+            var saved = observedResult.GetCollection<C1>().Single(v => v.Id == edited.Id);
+            Assert.Equal("local", saved.C1AllorsString);
+            Assert.Equal(2, saved.C1AllorsInteger);
+            Assert.Equal(localTarget.Id, saved.C1C1Many2One.Id);
+            var expectedTargets = remoteEdit == "to-many"
+                ? new[] { baselineTarget.Id, localTarget.Id, remoteTarget.Id }
+                : new[] { baselineTarget.Id, localTarget.Id };
+            Assert.Equal(expectedTargets.OrderBy(v => v), saved.C1C1Many2Manies.Select(v => v.Id).OrderBy(v => v));
         }
 
         [Theory]
