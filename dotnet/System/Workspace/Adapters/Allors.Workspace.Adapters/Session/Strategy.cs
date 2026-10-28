@@ -434,55 +434,58 @@ namespace Allors.Workspace.Adapters
                 case UnitTags.Binary:
                     if (!(value is byte[]))
                     {
-                        throw new ArgumentException($"{nameof(value)} is not a Binary");
+                        throw InvalidValueType(roleType, value);
                     }
                     break;
                 case UnitTags.Boolean:
                     if (!(value is bool))
                     {
-                        throw new ArgumentException($"{nameof(value)} is not an Bool");
+                        throw InvalidValueType(roleType, value);
                     }
                     break;
                 case UnitTags.DateTime:
                     if (!(value is DateTime))
                     {
-                        throw new ArgumentException($"{nameof(value)} is not an DateTime");
+                        throw InvalidValueType(roleType, value);
                     }
                     break;
                 case UnitTags.Decimal:
                     if (!(value is decimal))
                     {
-                        throw new ArgumentException($"{nameof(value)} is not an Decimal");
+                        throw InvalidValueType(roleType, value);
                     }
                     break;
                 case UnitTags.Float:
                     if (!(value is double))
                     {
-                        throw new ArgumentException($"{nameof(value)} is not an Float");
+                        throw InvalidValueType(roleType, value);
                     }
                     break;
                 case UnitTags.Integer:
                     if (!(value is int))
                     {
-                        throw new ArgumentException($"{nameof(value)} is not an Integer");
+                        throw InvalidValueType(roleType, value);
                     }
                     break;
                 case UnitTags.String:
                     if (!(value is string))
                     {
-                        throw new ArgumentException($"{nameof(value)} is not an String");
+                        throw InvalidValueType(roleType, value);
                     }
                     break;
                 case UnitTags.Unique:
                     if (!(value is Guid))
                     {
-                        throw new ArgumentException($"{nameof(value)} is not an Unique");
+                        throw InvalidValueType(roleType, value);
                     }
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(roleType));
             }
         }
+
+        private static ArgumentException InvalidValueType(IRoleType roleType, object value) =>
+            new ArgumentException($"Invalid value type for role '{roleType.AssociationType.ObjectType.SingularName}.{roleType.Name}': expected {roleType.ObjectType.SingularName}, received {value.GetType().FullName}.");
 
         private void AssertComposite(IObject value)
         {

@@ -43,45 +43,47 @@ namespace Allors.Protocol.Json.Newtonsoft
                     UnitTags.Integer => XmlConvert.ToInt32(stringValue),
                     UnitTags.String => value,
                     UnitTags.Unique => XmlConvert.ToGuid(stringValue),
-                    _ => throw new Exception($"Can not convert from string for unit type with tag {tag}"),
+                    _ => throw CreateConversionException(tag, value),
                 },
                 int intValue => tag switch
                 {
                     UnitTags.Decimal => Convert.ToDecimal(intValue),
                     UnitTags.Float => Convert.ToDouble(intValue),
                     UnitTags.Integer => intValue,
-                    _ => throw new Exception($"Can not convert from long to unit type with tag {tag}"),
+                    _ => throw CreateConversionException(tag, value),
                 },
                 long longValue => tag switch
                 {
                     UnitTags.Decimal => Convert.ToDecimal(longValue),
                     UnitTags.Float => Convert.ToDouble(longValue),
-                    UnitTags.Integer => Convert.ToInt32(longValue),
-                    _ => throw new Exception($"Can not convert from long to unit type with tag {tag}"),
+                    UnitTags.Integer => longValue >= int.MinValue && longValue <= int.MaxValue
+                        ? (int)longValue
+                        : throw UnitConversionErrors.NotAnInteger(value.GetType().FullName, longValue.ToString(CultureInfo.InvariantCulture)),
+                    _ => throw CreateConversionException(tag, value),
                 },
                 float floatValue => tag switch
                 {
                     UnitTags.Decimal => Convert.ToDecimal(floatValue),
                     UnitTags.Float => Convert.ToDouble(floatValue),
-                    _ => throw new Exception($"Can not convert from long to unit type with tag {tag}"),
+                    _ => throw CreateConversionException(tag, value),
                 },
                 double doubleValue => tag switch
                 {
                     UnitTags.Decimal => Convert.ToDecimal(doubleValue),
                     UnitTags.Float => doubleValue,
-                    _ => throw new Exception($"Can not convert from long to unit type with tag {tag}"),
+                    _ => throw CreateConversionException(tag, value),
                 },
                 DateTime dateValue => tag switch
                 {
                     UnitTags.DateTime => dateValue,
-                    _ => throw new Exception($"Can not convert from DateTime to unit type with tag {tag}"),
+                    _ => throw CreateConversionException(tag, value),
                 },
                 bool boolValue => tag switch
                 {
                     UnitTags.Boolean => boolValue,
-                    _ => throw new Exception($"Can not convert from bool to unit type with tag {tag}"),
+                    _ => throw CreateConversionException(tag, value),
                 },
-                _ => value,
+                _ => throw CreateConversionException(tag, value),
             };
 
         public long? LongFromJson(object value) => (long?)value;
@@ -94,5 +96,8 @@ namespace Allors.Protocol.Json.Newtonsoft
         };
 
         public string StringFromJson(object value) => (string)value;
+
+        private static Exception CreateConversionException(string tag, object value) =>
+            UnitConversionErrors.Unsupported(tag, value.GetType().FullName);
     }
 }

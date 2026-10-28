@@ -24,8 +24,8 @@ namespace Allors.Database.Adapters.Memory
             this.extent = extent;
             this.roleType = roleType;
 
-            this.first = first;
-            this.second = second;
+            this.first = first is IRoleType ? first : roleType.Normalize(first);
+            this.second = second is IRoleType ? second : roleType.Normalize(second);
         }
 
         internal override ThreeValuedLogic Evaluate(Strategy strategy)
@@ -37,18 +37,10 @@ namespace Allors.Database.Adapters.Memory
             {
                 firstValue = strategy.GetInternalizedUnitRole(firstRole);
             }
-            else if (this.roleType.ObjectType is IUnit)
-            {
-                firstValue = this.roleType.Normalize(this.first);
-            }
 
             if (this.second is IRoleType secondRole)
             {
                 secondValue = strategy.GetInternalizedUnitRole(secondRole);
-            }
-            else if (this.roleType.ObjectType is IUnit)
-            {
-                secondValue = this.roleType.Normalize(this.second);
             }
 
             if (!(strategy.GetInternalizedUnitRole(this.roleType) is IComparable comparable))

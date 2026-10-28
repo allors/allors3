@@ -17,7 +17,11 @@ namespace Allors.Database.Domain.Tests
         public void Build()
         {
             var metaBuilder = new MetaBuilder();
-            metaBuilder.Build();
+            var metaPopulation = metaBuilder.Build();
+
+            metaPopulation.DateTime.Bind();
+
+            Assert.Equal(typeof(global::System.DateTime), metaPopulation.DateTime.ClrType);
         }
 
     }

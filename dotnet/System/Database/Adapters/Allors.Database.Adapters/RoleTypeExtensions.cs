@@ -40,7 +40,7 @@ namespace Allors.Database.Adapters
                 case UnitTags.String:
                     if (!(unit is string))
                     {
-                        throw new ArgumentException("RoleType is not a String.");
+                        throw InvalidValueType(roleType, unit);
                     }
 
                     var stringUnit = (string)unit;
@@ -54,7 +54,7 @@ namespace Allors.Database.Adapters
                 case UnitTags.Integer:
                     if (!(unit is int))
                     {
-                        throw new ArgumentException("RoleType is not an Integer.");
+                        throw InvalidValueType(roleType, unit);
                     }
 
                     break;
@@ -78,7 +78,7 @@ namespace Allors.Database.Adapters
                     }
                     else if (!(unit is DateTime))
                     {
-                        throw new ArgumentException("RoleType is not a DateTime.");
+                        throw InvalidValueType(roleType, unit);
                     }
 
                     break;
@@ -89,7 +89,7 @@ namespace Allors.Database.Adapters
                     }
                     else if (!(unit is decimal))
                     {
-                        throw new ArgumentException("RoleType is not a Decimal.");
+                        throw InvalidValueType(roleType, unit);
                     }
 
                     break;
@@ -100,28 +100,28 @@ namespace Allors.Database.Adapters
                     }
                     else if (!(unit is double))
                     {
-                        throw new ArgumentException("RoleType is not a Float.");
+                        throw InvalidValueType(roleType, unit);
                     }
 
                     break;
                 case UnitTags.Boolean:
                     if (!(unit is bool))
                     {
-                        throw new ArgumentException("RoleType is not a Boolean.");
+                        throw InvalidValueType(roleType, unit);
                     }
 
                     break;
                 case UnitTags.Unique:
                     if (!(unit is Guid))
                     {
-                        throw new ArgumentException("RoleType is not a Boolean.");
+                        throw InvalidValueType(roleType, unit);
                     }
 
                     break;
                 case UnitTags.Binary:
                     if (!(unit is byte[]))
                     {
-                        throw new ArgumentException("RoleType is not a Boolean.");
+                        throw InvalidValueType(roleType, unit);
                     }
 
                     break;
@@ -131,5 +131,8 @@ namespace Allors.Database.Adapters
 
             return normalizedUnit;
         }
+
+        private static ArgumentException InvalidValueType(IRoleType roleType, object unit) =>
+            new ArgumentException($"Invalid value type for role '{roleType}': expected {roleType.ObjectType.SingularName}, received {unit.GetType().FullName}.");
     }
 }

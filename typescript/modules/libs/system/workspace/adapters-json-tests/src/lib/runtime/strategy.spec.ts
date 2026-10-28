@@ -14,17 +14,65 @@ test('setUnitWrongObjectType', async () => {
   const session = workspace.createSession();
 
   const c1a = await fixture.pullC1(session, name_c1A);
+  const originalInteger = c1a.C1AllorsInteger;
+  const originalDouble = c1a.C1AllorsDouble;
 
   let hasErrors: boolean;
 
-  try {
-    c1a.strategy.setUnitRole(m.C1.C1AllorsInteger, 'Not an integer');
-    hasErrors = false;
-  } catch (e) {
-    hasErrors = true;
+  for (const value of [
+    'Not an integer',
+    '12',
+    true,
+    false,
+    1.5,
+    -2147483649,
+    2147483648,
+    NaN,
+    -Infinity,
+    Infinity,
+  ]) {
+    try {
+      c1a.strategy.setUnitRole(m.C1.C1AllorsInteger, value);
+      hasErrors = false;
+    } catch (e) {
+      hasErrors = true;
+    }
+
+    expect(hasErrors).toBeTruthy();
+    expect(c1a.C1AllorsInteger).toBe(originalInteger);
   }
 
-  expect(hasErrors).toBeTruthy();
+  for (const value of [
+    '12',
+    '',
+    true,
+    false,
+    new Date('2020-01-01T00:00:00Z'),
+    NaN,
+  ]) {
+    try {
+      c1a.strategy.setUnitRole(m.C1.C1AllorsDouble, value);
+      hasErrors = false;
+    } catch (e) {
+      hasErrors = true;
+    }
+
+    expect(hasErrors).toBeTruthy();
+    expect(c1a.C1AllorsDouble).toBe(originalDouble);
+  }
+
+  expect(() =>
+    c1a.strategy.setUnitRole(m.C1.C1AllorsInteger, 2147483648)
+  ).toThrow(
+    new Error(
+      "Invalid value for role 'C1.C1AllorsInteger': expected Integer (a whole number from -2147483648 through 2147483647), received number 2147483648."
+    )
+  );
+  expect(() => c1a.strategy.setUnitRole(m.C1.C1AllorsDouble, '12')).toThrow(
+    new Error(
+      'Invalid value for role \'C1.C1AllorsDouble\': expected Float (a number, not NaN), received string "12".'
+    )
+  );
 });
 
 test('setCompositeRoleWrongObjectType', async () => {
