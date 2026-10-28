@@ -1,6 +1,6 @@
 import { data } from '@allors/default/workspace/meta-json';
 import { C1 } from '@allors/default/workspace/domain';
-import { SyncResponse } from '@allors/system/common/protocol-json';
+import { PullResponse, SyncResponse } from '@allors/system/common/protocol-json';
 import { IDatabaseJsonClient } from '@allors/system/workspace/adapters-json';
 import { LazyMetaPopulation } from '@allors/system/workspace/meta-json';
 import { IUnitDiff, Operations } from '@allors/system/workspace/domain';
@@ -192,7 +192,26 @@ test.each([
   'missing object',
   'duplicate access',
   'bad result',
+  'object result outside pool',
+  'invalid object result ID',
+  'null collection result',
+  'non-array collection result',
+  'invalid collection dictionary',
+  'invalid object dictionary',
+  'invalid value dictionary',
   'duplicate result name',
+  'unsorted Pull grants',
+  'duplicate Pull grants',
+  'unsorted Pull revocations',
+  'duplicate Pull revocations',
+  'unsorted Sync grants',
+  'duplicate Sync grants',
+  'unsorted Sync revocations',
+  'duplicate Sync revocations',
+  'unsorted permissions',
+  'duplicate permissions',
+  'unsorted to-many IDs',
+  'duplicate to-many IDs',
   'changed permission identity',
   'duplicate permission identity',
   'changed cached contents',
@@ -204,8 +223,9 @@ test.each([
   const edited = (await session.pull({ objectId: 101 })).object<C1>('C1');
   edited.C1AllorsString = 'local';
   const invalid = response(3, 3, 3, 'remote');
-  const pull = select(invalid);
+  const pull = select(invalid) as unknown as PullResponse;
   let expectedMessage: string;
+  let expectNoSync = false;
   switch (kind) {
     case 'unknown object version in Pull':
       pull.p[0].v = 0;
@@ -263,9 +283,78 @@ test.each([
       break;
     case 'bad result':
       pull.c.C1s = [999];
+      expectNoSync = true;
+      break;
+    case 'object result outside pool':
+      pull.o.C1 = 999;
+      expectNoSync = true;
+      break;
+    case 'invalid object result ID':
+      pull.o.C1 = -1;
+      expectNoSync = true;
+      break;
+    case 'null collection result':
+      pull.c.C1s = null;
+      expectNoSync = true;
+      break;
+    case 'non-array collection result':
+      pull.c.C1s = {} as any;
+      expectNoSync = true;
+      break;
+    case 'invalid collection dictionary':
+      pull.c = [] as any;
+      expectNoSync = true;
+      break;
+    case 'invalid object dictionary':
+      pull.o = 101 as any;
+      expectNoSync = true;
+      break;
+    case 'invalid value dictionary':
+      pull.v = [] as any;
+      expectNoSync = true;
       break;
     case 'duplicate result name':
       pull.o['c1'] = 101;
+      expectNoSync = true;
+      break;
+    case 'unsorted Pull grants':
+    case 'duplicate Pull grants':
+      pull.p[0].g = kind.startsWith('unsorted') ? [12, 11] : [11, 11];
+      pull.g.push([12, 3]);
+      expectNoSync = true;
+      expectedMessage = 'Response ID ranges must be sorted and distinct.';
+      break;
+    case 'unsorted Pull revocations':
+    case 'duplicate Pull revocations':
+      pull.p[0].r = kind.startsWith('unsorted') ? [22, 21] : [21, 21];
+      pull.r.push([22, 3]);
+      expectNoSync = true;
+      expectedMessage = 'Response ID ranges must be sorted and distinct.';
+      break;
+    case 'unsorted Sync grants':
+    case 'duplicate Sync grants':
+      invalid.o[0].g = kind.startsWith('unsorted') ? [12, 11] : [11, 11];
+      invalid.g.push({ i: 12, v: 3, p: [] });
+      expectedMessage = 'Response ID ranges must be sorted and distinct.';
+      break;
+    case 'unsorted Sync revocations':
+    case 'duplicate Sync revocations':
+      invalid.o[0].r = kind.startsWith('unsorted') ? [22, 21] : [21, 21];
+      invalid.r.push({ i: 22, v: 3, p: [] });
+      expectedMessage = 'Response ID ranges must be sorted and distinct.';
+      break;
+    case 'unsorted permissions':
+    case 'duplicate permissions':
+      invalid.g[0].p = kind.startsWith('unsorted') ? [32, 31] : [31, 31];
+      expectedMessage = 'Response ID ranges must be sorted and distinct.';
+      break;
+    case 'unsorted to-many IDs':
+    case 'duplicate to-many IDs':
+      invalid.o[0].ro.push({
+        t: m.C1.C1C1Many2Manies.relationType.tag,
+        c: kind.startsWith('unsorted') ? [103, 102] : [102, 102],
+      } as any);
+      expectedMessage = 'Response ID ranges must be sorted and distinct.';
       break;
     case 'changed permission identity':
       invalid.p[0].o = Operations.Write;
@@ -293,6 +382,7 @@ test.each([
   }
   client.pull.mockResolvedValueOnce(pull);
   client.sync.mockResolvedValueOnce(invalid);
+  const syncCount = client.sync.mock.calls.length;
   let rejectionMessage: string;
   const rejected = await session.pull({ objectId: 101 }).then(
     () => false,
@@ -302,6 +392,9 @@ test.each([
     }
   );
   expect(rejected).toBe(true);
+  if (expectNoSync) {
+    expect(client.sync).toHaveBeenCalledTimes(syncCount);
+  }
   if (expectedMessage) {
     expect(rejectionMessage).toBe(expectedMessage);
   }
@@ -635,7 +728,13 @@ test('Reset refreshes cached relationships and subsequent checkpoints contain ob
 test('Pull owns named result buffers while Sync is in flight', async () => {
   const { session, client, response, select } = setup();
   const sync = response();
-  const pull = { ...select(sync), v: { Numbers: [1, 2] } };
+  sync.o.push({ ...sync.o[0], i: 102 });
+  const pull = {
+    ...select(sync),
+    c: { C1s: [102, 101, 102] },
+    o: { C1: 101, Zero: 0, Null: null },
+    v: { Numbers: [1, 2] },
+  };
   client.pull.mockResolvedValueOnce(pull);
   let release: (value: SyncResponse) => void;
   client.sync.mockImplementationOnce(
@@ -652,8 +751,12 @@ test('Pull owns named result buffers while Sync is in flight', async () => {
   release(sync);
   const result = await pending;
   expect(result.object<C1>('C1').id).toBe(101);
+  expect(result.object('Zero')).toBeNull();
+  expect(result.object('Null')).toBeNull();
   expect(result.collection<C1>('C1s').map((object) => object.id)).toEqual([
+    102,
     101,
+    102,
   ]);
   expect(result.value('Numbers')).toEqual([1, 2]);
 });

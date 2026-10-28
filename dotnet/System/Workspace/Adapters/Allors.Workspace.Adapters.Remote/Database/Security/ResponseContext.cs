@@ -133,8 +133,11 @@ namespace Allors.Workspace.Adapters.Remote
         internal static long[] Ids(long[] values)
         {
             var ids = values?.ToArray() ?? Array.Empty<long>();
-            if (ids.Any(id => id <= 0) || ids.Distinct().Count() != ids.Length) throw Invalid("An object or security reference contains invalid or duplicate IDs");
-            Array.Sort(ids);
+            for (var i = 0; i < ids.Length; ++i)
+            {
+                if (ids[i] <= 0 || i > 0 && ids[i] <= ids[i - 1]) throw Invalid("An object or security reference must contain sorted, distinct positive IDs.");
+            }
+
             return ids;
         }
 

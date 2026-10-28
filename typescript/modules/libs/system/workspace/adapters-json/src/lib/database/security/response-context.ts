@@ -86,6 +86,7 @@ export class ResponseContext {
         }
       }
     }
+    this.validateSelection(this.pool);
     this.request = {
       x: context,
       o: missing,
@@ -163,6 +164,15 @@ export class ResponseContext {
   }
 
   validateResult(): void {
+    if (this.records.size !== this.pool.size) {
+      throw new Error('Pull did not load every selected object.');
+    }
+    this.validateSelection(this.records);
+  }
+
+  private validateSelection(
+    selected: ReadonlySet<number> | ReadonlyMap<number, DatabaseRecord>
+  ): void {
     for (const results of [this.response.c, this.response.o, this.response.v]) {
       if (results == null) {
         continue;
@@ -175,13 +185,10 @@ export class ResponseContext {
         throw new Error('Pull contains duplicate result names.');
       }
     }
-    if (this.records.size !== this.pool.size) {
-      throw new Error('Pull did not load every selected object.');
-    }
     for (const ids of Object.values(this.response.c ?? {})) {
       for (const id of ResponseContext.array(ids, 'Pull result collection')) {
         ResponseContext.id(id);
-        if (!this.records.has(id)) {
+        if (!selected.has(id)) {
           throw new Error('Pull result references an object outside its pool.');
         }
       }
@@ -191,7 +198,7 @@ export class ResponseContext {
         continue;
       }
       ResponseContext.id(id);
-      if (!this.records.has(id)) {
+      if (!selected.has(id)) {
         throw new Error('Pull result references an object outside its pool.');
       }
     }

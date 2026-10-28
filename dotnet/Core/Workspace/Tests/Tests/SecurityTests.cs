@@ -333,9 +333,17 @@ namespace Tests.Workspace
         [InlineData("revocation-publication-conflict")]
         [InlineData("permission-conflict")]
         [InlineData("permission-identity-conflict")]
+        [InlineData("pull-grants-order")]
+        [InlineData("pull-revocations-order")]
+        [InlineData("sync-grants-order")]
+        [InlineData("sync-revocations-order")]
+        [InlineData("grant-permissions-order")]
+        [InlineData("revoked-permissions-order")]
+        [InlineData("many-role-order")]
         public async Task HybridSyncRejectsIncompleteResponsesBeforePublishing(string failure)
         {
             var stage = 0;
+            var syncCount = 0;
             var withRevocation = failure.StartsWith("revocation-", StringComparison.Ordinal);
             var expectedMessages = new Dictionary<string, string>
             {
@@ -366,10 +374,32 @@ namespace Tests.Workspace
                     if (stage == 1 && failure == "pull-version-zero") response.p[0].v = 0;
                     if (stage == 1 && failure == "pull-version-initial") response.p[0].v = 1;
                     if (stage == 1 && failure == "invalid-role") response.p = new[] { response.p[0], new PullResponseObject { i = 2, v = 3, g = new long[] { 11 } } };
+                    if (stage > 0 && (failure == "pull-grants-order" || failure == "sync-grants-order"))
+                    {
+                        response.g = new[] { new long[] { 12, 2 }, response.g[0] };
+                        response.p[0].g = stage == 1 && failure == "pull-grants-order" ? new long[] { 12, 11 } : new long[] { 11, 12 };
+                    }
+                    if (stage > 0 && (failure == "pull-revocations-order" || failure == "sync-revocations-order"))
+                    {
+                        response.r = new[] { new long[] { 22, 2 }, new long[] { 21, 2 } };
+                        response.p[0].r = stage == 1 && failure == "pull-revocations-order" ? new long[] { 22, 21 } : new long[] { 21, 22 };
+                    }
+                    if (stage > 0 && failure == "revoked-permissions-order")
+                    {
+                        response.r = new[] { new long[] { 21, 2 } };
+                        response.p[0].r = new long[] { 21 };
+                    }
+                    if (stage > 0 && failure == "many-role-order")
+                    {
+                        response.p = response.p.Concat(new[] { new PullResponseObject { i = 2, v = 3, g = new long[] { 11 } }, new PullResponseObject { i = 3, v = 3, g = new long[] { 11 } } }).ToArray();
+                        response.c.Add("Ordered", new long[] { 3, 1, 2, 3 });
+                        response.o.Add("None", 0);
+                    }
                     return Json(response);
                 }
 
                 Assert.EndsWith("/sync", request.RequestUri.AbsolutePath);
+                ++syncCount;
                 var hint = JsonSerializer.Deserialize<SyncRequest>(await request.Content.ReadAsStringAsync());
                 Assert.DoesNotContain(hint.g, pair => pair[1] == 2);
                 var snapshot = this.Snapshot(stage == 0 ? 1 : 2, stage == 0 ? 1 : 2, stage == 0);
@@ -377,6 +407,28 @@ namespace Tests.Workspace
                 {
                     snapshot.o[0].r = new long[] { 21 };
                     snapshot.r = new[] { new AccessResponseRevocation { i = 21, v = stage < 2 ? 1 : 2, p = stage == 1 ? new long[] { 32 } : Array.Empty<long>() } };
+                }
+                if (stage > 0 && (failure == "pull-grants-order" || failure == "sync-grants-order"))
+                {
+                    snapshot.g = new[] { new AccessResponseGrant { i = 12, v = 2, p = Array.Empty<long>() }, snapshot.g[0] };
+                    snapshot.o[0].g = stage == 1 && failure == "sync-grants-order" ? new long[] { 12, 11 } : new long[] { 11, 12 };
+                }
+                if (stage > 0 && (failure == "pull-revocations-order" || failure == "sync-revocations-order"))
+                {
+                    snapshot.r = new[] { new AccessResponseRevocation { i = 22, v = 2, p = Array.Empty<long>() }, new AccessResponseRevocation { i = 21, v = 2, p = Array.Empty<long>() } };
+                    snapshot.o[0].r = stage == 1 && failure == "sync-revocations-order" ? new long[] { 22, 21 } : new long[] { 21, 22 };
+                }
+                if (stage > 0 && failure == "revoked-permissions-order")
+                {
+                    snapshot.r = new[] { new AccessResponseRevocation { i = 21, v = 2, p = stage == 1 ? new long[] { 33, 32 } : new long[] { 32, 33 } } };
+                    snapshot.o[0].r = new long[] { 21 };
+                }
+                if (stage > 0 && failure == "many-role-order")
+                {
+                    snapshot.p = snapshot.p.Append(new PermissionResponsePermission { i = 36, c = this.M.C1.Tag, t = this.M.C1.C1C1Many2Manies.RelationType.Tag, o = (long)Operations.Read }).ToArray();
+                    snapshot.g[0].p = snapshot.g[0].p.Append(36L).ToArray();
+                    snapshot.o[0].ro = snapshot.o[0].ro.Append(new SyncResponseRole { t = this.M.C1.C1C1Many2Manies.RelationType.Tag, c = stage == 1 ? new long[] { 3, 2 } : new long[] { 2, 3 } }).ToArray();
+                    snapshot.o = snapshot.o.Concat(new[] { new SyncResponseObject { i = 2, v = 3, c = this.M.C1.Tag, g = new long[] { 11 }, ro = Array.Empty<SyncResponseRole>() }, new SyncResponseObject { i = 3, v = 3, c = this.M.C1.Tag, g = new long[] { 11 }, ro = Array.Empty<SyncResponseRole>() } }).ToArray();
                 }
                 if (stage == 1)
                 {
@@ -390,6 +442,7 @@ namespace Tests.Workspace
                         case "missing-definition": snapshot.p = Array.Empty<PermissionResponsePermission>(); break;
                         case "duplicate-entry": snapshot.g = new[] { snapshot.g[0], snapshot.g[0] }; break;
                         case "missing-object": snapshot.o = Array.Empty<SyncResponseObject>(); break;
+                        case "grant-permissions-order": snapshot.g[0].p = snapshot.g[0].p.Reverse().ToArray(); break;
                         case "unknown-role": snapshot.o[0].ro = snapshot.o[0].ro.Append(new SyncResponseRole { t = "unknown-role", v = "ignored" }).ToArray(); break;
                         case "duplicate-role": snapshot.o[0].ro = snapshot.o[0].ro.Append(snapshot.o[0].ro[0]).ToArray(); break;
                         case "wrong-class-role": snapshot.o[0].ro = snapshot.o[0].ro.Append(new SyncResponseRole { t = this.M.Denied.DefaultWorkspaceProperty.RelationType.Tag, v = "ignored" }).ToArray(); break;
@@ -409,7 +462,7 @@ namespace Tests.Workspace
                             break;
                         case "permission-identity-conflict":
                             snapshot.p[0].i = 36;
-                            snapshot.g[0].p = snapshot.g[0].p.Select(id => id == 32 ? 36 : id).ToArray();
+                            snapshot.g[0].p = snapshot.g[0].p.Select(id => id == 32 ? 36 : id).OrderBy(id => id).ToArray();
                             break;
                         case "invalid-role":
                             var invalid = this.Snapshot(2, 2, false).o[0];
@@ -429,6 +482,8 @@ namespace Tests.Workspace
             value.C1AllorsString = "local";
             stage = 1;
             var error = await Assert.ThrowsAnyAsync<Exception>(() => session.PullAsync(pull));
+            Assert.Equal(failure.StartsWith("pull-", StringComparison.Ordinal) || failure.StartsWith("result-", StringComparison.Ordinal) ? 1 : 2, syncCount);
+            if (failure.EndsWith("-order", StringComparison.Ordinal)) Assert.Equal("An object or security reference must contain sorted, distinct positive IDs.", error.Message);
             if (expectedMessages.TryGetValue(failure, out var expectedMessage)) Assert.Equal(expectedMessage, error.Message);
             Assert.Equal("local", value.C1AllorsString);
             Assert.True(value.CanReadC1AllorsString);
@@ -436,9 +491,16 @@ namespace Tests.Workspace
             Assert.Equal("value1", value.C1AllorsString);
             Assert.Equal(2, value.Strategy.Version);
             stage = 2;
-            Assert.False((await session.PullAsync(pull)).HasErrors);
+            var recovered = await session.PullAsync(pull);
+            Assert.False(recovered.HasErrors);
             Assert.Equal(3, value.Strategy.Version);
             Assert.False(value.CanReadC1AllorsString);
+            if (failure == "many-role-order")
+            {
+                Assert.Equal(new long[] { 2, 3 }, value.C1C1Many2Manies.Select(target => target.Id));
+                Assert.Equal(new long[] { 3, 1, 2, 3 }, recovered.GetCollection<C1>("Ordered").Select(target => target.Id));
+                Assert.Null(recovered.GetObject<C1>("None"));
+            }
         }
 
         [Fact]
@@ -666,7 +728,7 @@ namespace Tests.Workspace
             return new SyncResponse
             {
                 o = new[] { new SyncResponseObject { i = 1, v = dataVersion + 1, c = this.M.C1.Tag, g = new long[] { 11 }, ro = roles.ToArray() } },
-                g = new[] { new AccessResponseGrant { i = 11, v = grantVersion, p = permissions.Select(v => v.i).ToArray() } },
+                g = new[] { new AccessResponseGrant { i = 11, v = grantVersion, p = permissions.Select(v => v.i).OrderBy(id => id).ToArray() } },
                 r = Array.Empty<AccessResponseRevocation>(),
                 p = permissions.ToArray(),
             };
