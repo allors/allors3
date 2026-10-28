@@ -18,6 +18,19 @@ import { DatabaseOriginState } from './originstate/database-origin-state';
 import { frozenEmptyArray } from '../collections/frozen-empty-array';
 import { isNewId, Session } from './session';
 
+function describeValue(value: unknown): string {
+  switch (typeof value) {
+    case 'string':
+      return `string ${JSON.stringify(value)}`;
+    case 'number':
+    case 'boolean':
+    case 'bigint':
+      return `${typeof value} ${String(value)}`;
+    default:
+      return value instanceof Date ? 'Date' : typeof value;
+  }
+}
+
 export abstract class Strategy implements IStrategy {
   DatabaseOriginState: DatabaseOriginState;
 
@@ -524,6 +537,7 @@ export abstract class Strategy implements IStrategy {
       return;
     }
 
+    let expected = roleType.objectType.singularName;
     let error = false;
 
     switch (roleType.objectType.tag) {
@@ -531,18 +545,24 @@ export abstract class Strategy implements IStrategy {
       case UnitTags.Decimal:
       case UnitTags.String:
       case UnitTags.Unique:
+        expected = `${roleType.objectType.singularName} (a string)`;
         error = typeof value !== 'string';
         break;
       case UnitTags.Boolean:
+        expected = 'Boolean (a boolean)';
         error = typeof value !== 'boolean';
         break;
       case UnitTags.DateTime:
+        expected = 'DateTime (a Date)';
         error = !(value instanceof Date);
         break;
       case UnitTags.Float:
+        expected = 'Float (a number, not NaN)';
         error = typeof value !== 'number' || Number.isNaN(value);
         break;
       case UnitTags.Integer:
+        expected =
+          'Integer (a whole number from -2147483648 through 2147483647)';
         error =
           typeof value !== 'number' ||
           !Number.isInteger(value) ||
@@ -552,7 +572,13 @@ export abstract class Strategy implements IStrategy {
     }
 
     if (error) {
-      throw new Error(`value is not a ${roleType.objectType.singularName}`);
+      throw new Error(
+        `Invalid value for role '${
+          roleType.associationType.objectType.singularName
+        }.${roleType.name}': expected ${expected}, received ${describeValue(
+          value
+        )}.`
+      );
     }
   }
 

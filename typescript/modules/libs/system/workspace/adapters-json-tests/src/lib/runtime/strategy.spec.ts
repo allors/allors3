@@ -60,6 +60,19 @@ test('setUnitWrongObjectType', async () => {
     expect(hasErrors).toBeTruthy();
     expect(c1a.C1AllorsDouble).toBe(originalDouble);
   }
+
+  expect(() =>
+    c1a.strategy.setUnitRole(m.C1.C1AllorsInteger, 2147483648)
+  ).toThrow(
+    new Error(
+      "Invalid value for role 'C1.C1AllorsInteger': expected Integer (a whole number from -2147483648 through 2147483647), received number 2147483648."
+    )
+  );
+  expect(() => c1a.strategy.setUnitRole(m.C1.C1AllorsDouble, '12')).toThrow(
+    new Error(
+      'Invalid value for role \'C1.C1AllorsDouble\': expected Float (a number, not NaN), received string "12".'
+    )
+  );
 });
 
 test('setCompositeRoleWrongObjectType', async () => {
