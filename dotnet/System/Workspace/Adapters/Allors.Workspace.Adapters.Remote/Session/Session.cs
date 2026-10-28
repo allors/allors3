@@ -63,7 +63,7 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 if (this.StrategyByWorkspaceId.TryGetValue(entry.Key, out var existing))
                 {
-                    if (existing.Class != entry.Value.Class) throw ResponseContext.Invalid("An object's class changed");
+                    if (existing.Class != entry.Value.Class) throw ResponseContext.Invalid($"Sync changed the class of object {entry.Key} from '{existing.Class.Tag}' to '{entry.Value.Class.Tag}'.");
                     return existing;
                 }
 

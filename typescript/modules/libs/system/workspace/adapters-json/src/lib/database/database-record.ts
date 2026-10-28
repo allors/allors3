@@ -49,12 +49,20 @@ export class DatabaseRecord extends SystemDatabaseRecord {
     for (const role of ResponseContext.array(wire.ro, 'Sync roles')) {
       const relation = meta.get(role.t) as RelationType;
       const roleType = relation?.roleType;
-      if (
-        !roleType ||
-        !cls.databaseOriginRoleTypes.has(roleType) ||
-        roles.has(relation)
-      ) {
-        throw new Error('Sync contains an unknown or duplicate role.');
+      if (!roleType) {
+        throw new Error(
+          `Sync object ${wire.i} (class '${wire.c}') references unknown role tag '${role.t}'. Check that the client and server use matching workspace models; regenerate your workspace if needed.`
+        );
+      }
+      if (!cls.databaseOriginRoleTypes.has(roleType)) {
+        throw new Error(
+          `Sync object ${wire.i} (class '${wire.c}') contains role tag '${role.t}' that is not a database role of this class.`
+        );
+      }
+      if (roles.has(relation)) {
+        throw new Error(
+          `Sync object ${wire.i} (class '${wire.c}') contains duplicate role tag '${role.t}'. Return each role only once.`
+        );
       }
       let value: unknown;
       if (roleType.objectType.isUnit) {

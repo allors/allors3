@@ -184,6 +184,8 @@ test.each([
   'missing definition',
   'unadvertised omission',
   'unknown role',
+  'duplicate role',
+  'role from another class',
   'unit with object member',
   'to-one with value member',
   'to-many with object member',
@@ -194,6 +196,8 @@ test.each([
   'changed permission identity',
   'duplicate permission identity',
   'changed cached contents',
+  'changed cached revocation contents',
+  'changed object class',
 ])('invalid Sync adopts and publishes nothing: %s', async (kind) => {
   const { database, session, client, m, response, select, enqueue } = setup();
   enqueue(response());
@@ -201,6 +205,7 @@ test.each([
   edited.C1AllorsString = 'local';
   const invalid = response(3, 3, 3, 'remote');
   const pull = select(invalid);
+  let expectedMessage: string;
   switch (kind) {
     case 'unknown object version in Pull':
       pull.p[0].v = 0;
@@ -225,6 +230,15 @@ test.each([
       break;
     case 'unknown role':
       invalid.o[0].ro[0].t = 'unknown';
+      expectedMessage = `Sync object 101 (class '${m.C1.tag}') references unknown role tag 'unknown'. Check that the client and server use matching workspace models; regenerate your workspace if needed.`;
+      break;
+    case 'duplicate role':
+      invalid.o[0].ro.push({ ...invalid.o[0].ro[0] });
+      expectedMessage = `Sync object 101 (class '${m.C1.tag}') contains duplicate role tag '${m.C1.C1AllorsString.relationType.tag}'. Return each role only once.`;
+      break;
+    case 'role from another class':
+      invalid.o[0].ro[0].t = m.C2.C2AllorsString.relationType.tag;
+      expectedMessage = `Sync object 101 (class '${m.C1.tag}') contains role tag '${m.C2.C2AllorsString.relationType.tag}' that is not a database role of this class.`;
       break;
     case 'unit with object member':
       invalid.o[0].ro[0]['o'] = 101;
@@ -255,22 +269,42 @@ test.each([
       break;
     case 'changed permission identity':
       invalid.p[0].o = Operations.Write;
+      expectedMessage = 'Sync changed the definition of permission 31.';
       break;
     case 'duplicate permission identity':
       invalid.p.push({ ...invalid.p[0], i: 99 });
+      expectedMessage = `Sync permission 99 conflicts with cached permission 31 for class '${m.C1.tag}', operand '${m.C1.C1AllorsString.relationType.tag}' and operation ${Operations.Read}.`;
       break;
     case 'changed cached contents':
       invalid.g[0].v = 2;
       invalid.g[0].p = [31];
+      expectedMessage = 'Sync changed the contents of grant 11 without changing version 2.';
+      break;
+    case 'changed cached revocation contents':
+      invalid.r[0].v = 2;
+      invalid.r[0].p = [32];
+      expectedMessage = 'Sync changed the contents of revocation 21 without changing version 2.';
+      break;
+    case 'changed object class':
+      invalid.o[0].c = m.C2.tag;
+      invalid.o[0].ro = [];
+      expectedMessage = `Sync changed the class of object 101 from '${m.C1.tag}' to '${m.C2.tag}'.`;
       break;
   }
   client.pull.mockResolvedValueOnce(pull);
   client.sync.mockResolvedValueOnce(invalid);
+  let rejectionMessage: string;
   const rejected = await session.pull({ objectId: 101 }).then(
     () => false,
-    () => true
+    (error: Error) => {
+      rejectionMessage = error.message;
+      return true;
+    }
   );
   expect(rejected).toBe(true);
+  if (expectedMessage) {
+    expect(rejectionMessage).toBe(expectedMessage);
+  }
   expect(database.getRecord(101).version).toBe(2);
   expect(database.getAccess('g:11:3')).toBeUndefined();
   expect(edited.C1AllorsString).toBe('local');
@@ -530,12 +564,9 @@ test('a concurrent conflicting payload version cannot replace published cache or
   enqueue(response(3, 2, 2, 'published'));
   await other.pull({ objectId: 101 });
   release(invalid);
-  expect(
-    await pending.then(
-      () => false,
-      () => true
-    )
-  ).toBe(true);
+  await expect(pending).rejects.toThrow(
+    'Sync changed the contents of object 101 at data version 3 without changing its security versions.'
+  );
   expect(database.getRecord(101).getRole(m.C1.C1AllorsString)).toBe(
     'published'
   );

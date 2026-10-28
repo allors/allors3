@@ -150,7 +150,9 @@ export class ResponseContext {
       const record = DatabaseRecord.fromResponse(this.database, object, g, r);
       const existing = this.database.getRecord(record.id);
       if (existing && existing.cls !== record.cls) {
-        throw new Error('Sync changed the class of an existing object.');
+        throw new Error(
+          `Sync changed the class of object ${record.id} from '${existing.cls.tag}' to '${record.cls.tag}'.`
+        );
       }
       this.records.set(record.id, record);
       this.synchronizedRecords.push(record);
@@ -203,13 +205,19 @@ export class ResponseContext {
       definition.operation
     );
     if (
-      (cached &&
-        (cached.cls !== definition.cls ||
-          cached.operandType !== definition.operandType ||
-          cached.operation !== definition.operation)) ||
-      (id != null && id !== definition.id)
+      cached &&
+      (cached.cls !== definition.cls ||
+        cached.operandType !== definition.operandType ||
+        cached.operation !== definition.operation)
     ) {
-      throw new Error('Sync changed an existing permission definition.');
+      throw new Error(
+        `Sync changed the definition of permission ${definition.id}.`
+      );
+    }
+    if (id != null && id !== definition.id) {
+      throw new Error(
+        `Sync permission ${definition.id} conflicts with cached permission ${id} for class '${definition.cls.tag}', operand '${definition.operandType.operandTag}' and operation ${definition.operation}.`
+      );
     }
   }
 
@@ -247,7 +255,7 @@ export class ResponseContext {
         const cached = this.database.getAccess(key);
         if (cached && !ResponseContext.sameIds(cached.permissionIds, ids)) {
           throw new Error(
-            'Sync changed the contents of an existing access version.'
+            `Sync changed the contents of ${kind === 'g' ? 'grant' : 'revocation'} ${wire.i} without changing version ${wire.v}.`
           );
         }
         entry = Object.freeze({

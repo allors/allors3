@@ -43,7 +43,9 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 var relation = value == null ? null : meta.FindByTag(value.t) as IRelationType;
                 var role = relation?.RoleType;
-                if (role == null || !@class.DatabaseOriginRoleTypes.Contains(role) || roles.ContainsKey(relation)) throw ResponseContext.Invalid("Sync contains an unknown or duplicate role");
+                if (role == null) throw ResponseContext.Invalid($"Sync object {response.i} (class '{response.c}') references unknown role tag '{value?.t ?? "<null>"}'. Check that the client and server use matching workspace models; regenerate your workspace if needed.");
+                if (!@class.DatabaseOriginRoleTypes.Contains(role)) throw ResponseContext.Invalid($"Sync object {response.i} (class '{response.c}') contains role tag '{value.t}' that is not a database role of this class.");
+                if (roles.ContainsKey(relation)) throw ResponseContext.Invalid($"Sync object {response.i} (class '{response.c}') contains duplicate role tag '{value.t}'. Return each role only once.");
                 object decoded;
                 if (role.ObjectType.IsUnit)
                 {

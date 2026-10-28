@@ -72,7 +72,7 @@ export class DatabaseConnection extends SystemDatabaseConnection {
         !ResponseContext.sameIds(existing.permissionIds, entry.permissionIds)
       ) {
         throw new Error(
-          'Sync changed the contents of an existing access version.'
+          `Sync changed the contents of ${entry.key.startsWith('g:') ? 'grant' : 'revocation'} ${entry.id} without changing version ${entry.version}.`
         );
       }
     }
@@ -80,12 +80,14 @@ export class DatabaseConnection extends SystemDatabaseConnection {
       const existing = this.getPayload(record.key);
       if (existing && !existing.samePayload(record)) {
         throw new Error(
-          'Sync changed the contents of an existing object snapshot.'
+          `Sync changed the contents of object ${record.id} at data version ${record.version} without changing its security versions.`
         );
       }
       const current = this.getRecord(record.id);
       if (current && current.cls !== record.cls) {
-        throw new Error('Sync changed the class of an existing object.');
+        throw new Error(
+          `Sync changed the class of object ${record.id} from '${current.cls.tag}' to '${record.cls.tag}'.`
+        );
       }
     }
     for (const definition of context.definitions.values()) {

@@ -82,14 +82,14 @@ namespace Allors.Workspace.Adapters.Remote
             foreach (var entry in response.g)
             {
                 if (entry == null) throw Invalid("Sync contains a null grant");
-                this.AddAccess(entry.i, entry.v, entry.p, this.knownGrants, this.Grants, grantVersions);
+                this.AddAccess("grant", entry.i, entry.v, entry.p, this.knownGrants, this.Grants, grantVersions);
             }
 
             var revocationVersions = new Dictionary<long, long>();
             foreach (var entry in response.r)
             {
                 if (entry == null) throw Invalid("Sync contains a null revocation");
-                this.AddAccess(entry.i, entry.v, entry.p, this.knownRevocations, this.Revocations, revocationVersions);
+                this.AddAccess("revocation", entry.i, entry.v, entry.p, this.knownRevocations, this.Revocations, revocationVersions);
             }
 
             var received = new HashSet<long>();
@@ -114,17 +114,17 @@ namespace Allors.Workspace.Adapters.Remote
             Dictionary<long, PermissionEntry> permissions,
             Dictionary<(IClass Class, IOperandType Operand, Operations Operation), long> permissionIds)
         {
-            foreach (var entry in this.Grants) if (grants.TryGetValue(entry.Key, out var known) && !known.SameContents(entry.Value)) throw Invalid("Grant contents changed without a version change");
-            foreach (var entry in this.Revocations) if (revocations.TryGetValue(entry.Key, out var known) && !known.SameContents(entry.Value)) throw Invalid("Revocation contents changed without a version change");
+            foreach (var entry in this.Grants) if (grants.TryGetValue(entry.Key, out var known) && !known.SameContents(entry.Value)) throw Invalid($"Sync changed the contents of grant {entry.Key.Id} without changing version {entry.Key.Version}.");
+            foreach (var entry in this.Revocations) if (revocations.TryGetValue(entry.Key, out var known) && !known.SameContents(entry.Value)) throw Invalid($"Sync changed the contents of revocation {entry.Key.Id} without changing version {entry.Key.Version}.");
             foreach (var entry in this.Permissions)
             {
-                if (permissions.TryGetValue(entry.Key, out var known) && !known.Key.Equals(entry.Value.Key)) throw Invalid("Permission identity changed");
-                if (permissionIds.TryGetValue(entry.Value.Key, out var id) && id != entry.Key) throw Invalid("Permission definition has conflicting identities");
+                if (permissions.TryGetValue(entry.Key, out var known) && !known.Key.Equals(entry.Value.Key)) throw Invalid($"Sync changed the definition of permission {entry.Key}.");
+                if (permissionIds.TryGetValue(entry.Value.Key, out var id) && id != entry.Key) throw Invalid($"Sync permission {entry.Key} conflicts with cached permission {id} for class '{entry.Value.Key.Class.Tag}', operand '{entry.Value.Key.Operand.OperandTag}' and operation {(long)entry.Value.Key.Operation}.");
             }
 
             foreach (var record in this.Records.Values)
             {
-                if (records.TryGetValue(record.Key, out var known) && !known.SameContents(record)) throw Invalid("Object contents changed without a data or security version change");
+                if (records.TryGetValue(record.Key, out var known) && !known.SameContents(record)) throw Invalid($"Sync changed the contents of object {record.Id} at data version {record.Version} without changing its security versions.");
             }
         }
 
@@ -169,7 +169,7 @@ namespace Allors.Workspace.Adapters.Remote
             }
         }
 
-        private void AddAccess(long id, long version, long[] contents,
+        private void AddAccess(string kind, long id, long version, long[] contents,
             Dictionary<(long Id, long Version), AccessEntry> known,
             Dictionary<(long Id, long Version), AccessEntry> staged, Dictionary<long, long> versions)
         {
@@ -185,7 +185,7 @@ namespace Allors.Workspace.Adapters.Remote
                 var ids = Ids(contents);
                 if (ids.Any(permission => !this.Permissions.ContainsKey(permission))) throw Invalid("Sync omitted a referenced permission definition");
                 entry = new AccessEntry(ids);
-                if (known.TryGetValue((id, version), out var previous) && !previous.SameContents(entry)) throw Invalid("Security contents changed without a version change");
+                if (known.TryGetValue((id, version), out var previous) && !previous.SameContents(entry)) throw Invalid($"Sync changed the contents of {kind} {id} without changing version {version}.");
             }
 
             staged.Add((id, version), entry);

@@ -322,14 +322,46 @@ namespace Tests.Workspace
         [InlineData("sync-version-zero")]
         [InlineData("sync-version-initial")]
         [InlineData("missing-role-table")]
+        [InlineData("unknown-role")]
+        [InlineData("duplicate-role")]
+        [InlineData("wrong-class-role")]
+        [InlineData("object-conflict")]
+        [InlineData("class-conflict")]
+        [InlineData("grant-known-conflict")]
+        [InlineData("grant-publication-conflict")]
+        [InlineData("revocation-known-conflict")]
+        [InlineData("revocation-publication-conflict")]
+        [InlineData("permission-conflict")]
+        [InlineData("permission-identity-conflict")]
         public async Task HybridSyncRejectsIncompleteResponsesBeforePublishing(string failure)
         {
             var stage = 0;
+            var withRevocation = failure.StartsWith("revocation-", StringComparison.Ordinal);
+            var expectedMessages = new Dictionary<string, string>
+            {
+                ["unknown-role"] = $"Sync object 1 (class '{this.M.C1.Tag}') references unknown role tag 'unknown-role'. Check that the client and server use matching workspace models; regenerate your workspace if needed.",
+                ["duplicate-role"] = $"Sync object 1 (class '{this.M.C1.Tag}') contains duplicate role tag '{this.M.C1.C1AllorsInteger.RelationType.Tag}'. Return each role only once.",
+                ["wrong-class-role"] = $"Sync object 1 (class '{this.M.C1.Tag}') contains role tag '{this.M.Denied.DefaultWorkspaceProperty.RelationType.Tag}' that is not a database role of this class.",
+                ["object-conflict"] = "Sync changed the contents of object 1 at data version 2 without changing its security versions.",
+                ["class-conflict"] = $"Sync changed the class of object 1 from '{this.M.C1.Tag}' to '{this.M.Denied.Tag}'.",
+                ["grant-known-conflict"] = "Sync changed the contents of grant 11 without changing version 1.",
+                ["grant-publication-conflict"] = "Sync changed the contents of grant 11 without changing version 1.",
+                ["revocation-known-conflict"] = "Sync changed the contents of revocation 21 without changing version 1.",
+                ["revocation-publication-conflict"] = "Sync changed the contents of revocation 21 without changing version 1.",
+                ["permission-conflict"] = "Sync changed the definition of permission 32.",
+                ["permission-identity-conflict"] = $"Sync permission 36 conflicts with cached permission 32 for class '{this.M.C1.Tag}', operand '{this.M.C1.C1AllorsString.RelationType.Tag}' and operation {(long)Operations.Write}.",
+            };
             using var handler = new ResponseHandler(async request =>
             {
                 if (request.RequestUri.AbsolutePath.EndsWith("/pull"))
                 {
                     var response = Manifest(stage == 0 ? 1 : 2, stage == 0 ? 1 : 2);
+                    if (stage == 1 && failure == "grant-known-conflict") response.g[0][1] = 1;
+                    if (withRevocation)
+                    {
+                        response.p[0].r = new long[] { 21 };
+                        response.r = new[] { new long[] { 21, stage == 0 || stage == 1 && failure == "revocation-known-conflict" ? 1 : 2 } };
+                    }
                     if (stage == 1 && failure == "result-name") response.o.Add("c1", 1);
                     if (stage == 1 && failure == "pull-version-zero") response.p[0].v = 0;
                     if (stage == 1 && failure == "pull-version-initial") response.p[0].v = 1;
@@ -341,6 +373,11 @@ namespace Tests.Workspace
                 var hint = JsonSerializer.Deserialize<SyncRequest>(await request.Content.ReadAsStringAsync());
                 Assert.DoesNotContain(hint.g, pair => pair[1] == 2);
                 var snapshot = this.Snapshot(stage == 0 ? 1 : 2, stage == 0 ? 1 : 2, stage == 0);
+                if (withRevocation)
+                {
+                    snapshot.o[0].r = new long[] { 21 };
+                    snapshot.r = new[] { new AccessResponseRevocation { i = 21, v = stage < 2 ? 1 : 2, p = stage == 1 ? new long[] { 32 } : Array.Empty<long>() } };
+                }
                 if (stage == 1)
                 {
                     switch (failure)
@@ -353,6 +390,27 @@ namespace Tests.Workspace
                         case "missing-definition": snapshot.p = Array.Empty<PermissionResponsePermission>(); break;
                         case "duplicate-entry": snapshot.g = new[] { snapshot.g[0], snapshot.g[0] }; break;
                         case "missing-object": snapshot.o = Array.Empty<SyncResponseObject>(); break;
+                        case "unknown-role": snapshot.o[0].ro = snapshot.o[0].ro.Append(new SyncResponseRole { t = "unknown-role", v = "ignored" }).ToArray(); break;
+                        case "duplicate-role": snapshot.o[0].ro = snapshot.o[0].ro.Append(snapshot.o[0].ro[0]).ToArray(); break;
+                        case "wrong-class-role": snapshot.o[0].ro = snapshot.o[0].ro.Append(new SyncResponseRole { t = this.M.Denied.DefaultWorkspaceProperty.RelationType.Tag, v = "ignored" }).ToArray(); break;
+                        case "object-conflict":
+                            snapshot = this.Snapshot(1, 1, true);
+                            snapshot.o[0].ro[0].v = "changed";
+                            break;
+                        case "class-conflict":
+                            snapshot.o[0].c = this.M.Denied.Tag;
+                            snapshot.o[0].ro = Array.Empty<SyncResponseRole>();
+                            break;
+                        case "grant-known-conflict":
+                        case "grant-publication-conflict": snapshot.g[0].v = 1; break;
+                        case "permission-conflict":
+                            snapshot.p[0].t = this.M.C1.ClassMethod.Tag;
+                            snapshot.p[0].o = (long)Operations.Execute;
+                            break;
+                        case "permission-identity-conflict":
+                            snapshot.p[0].i = 36;
+                            snapshot.g[0].p = snapshot.g[0].p.Select(id => id == 32 ? 36 : id).ToArray();
+                            break;
                         case "invalid-role":
                             var invalid = this.Snapshot(2, 2, false).o[0];
                             invalid.i = 2;
@@ -370,7 +428,8 @@ namespace Tests.Workspace
             var value = (await session.PullAsync(pull)).GetObject<C1>();
             value.C1AllorsString = "local";
             stage = 1;
-            await Assert.ThrowsAnyAsync<Exception>(() => session.PullAsync(pull));
+            var error = await Assert.ThrowsAnyAsync<Exception>(() => session.PullAsync(pull));
+            if (expectedMessages.TryGetValue(failure, out var expectedMessage)) Assert.Equal(expectedMessage, error.Message);
             Assert.Equal("local", value.C1AllorsString);
             Assert.True(value.CanReadC1AllorsString);
             session.Reset();

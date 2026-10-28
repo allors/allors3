@@ -56,7 +56,7 @@ namespace Allors.Workspace.Adapters.Remote
                 // Check every identity before publishing any part of this response.
                 foreach (var record in context.Records.Values)
                 {
-                    if (this.recordsById.TryGetValue(record.Id, out var previous) && previous.Class != record.Class) throw ResponseContext.Invalid("An object's class changed");
+                    if (this.recordsById.TryGetValue(record.Id, out var previous) && previous.Class != record.Class) throw ResponseContext.Invalid($"Sync changed the class of object {record.Id} from '{previous.Class.Tag}' to '{record.Class.Tag}'.");
                 }
 
                 context.ValidatePublication(this.records, this.grants, this.revocations, this.permissions, this.permissionIds);
