@@ -95,11 +95,11 @@ export class ChangeSet implements IChangeSet {
     }
 
     if (previous != null) {
-      this.addRole(relationType, (this.session as Session).getObject(previous));
+      this.addRole(relationType, this.session.getObjectIfInstantiated(previous));
     }
 
     if (current != null) {
-      this.addRole(relationType, (this.session as Session).getObject(current));
+      this.addRole(relationType, this.session.getObjectIfInstantiated(current));
     }
 
     this.addAssociation(relationType, association);
@@ -149,18 +149,24 @@ export class ChangeSet implements IChangeSet {
     currentRange: IRange<number>,
     previousRange: IRange<number>
   ) {
-    const current: IRange<IObject> = currentRange?.map((v) =>
-      (this.session as Session).getObject(v)
-    );
-    const previous: IRange<IObject> = previousRange?.map((v) =>
-      (this.session as Session).getObject(v)
-    );
-    this.diffCompositesStrategyStrategy(
-      association,
-      relationType,
-      current,
-      previous
-    );
+    const current = new Set(currentRange);
+    const previous = new Set(previousRange);
+    let hasChange = false;
+    for (const id of previous) {
+      if (!current.has(id)) {
+        this.addRole(relationType, this.session.getObjectIfInstantiated(id));
+        hasChange = true;
+      }
+    }
+    for (const id of current) {
+      if (!previous.has(id)) {
+        this.addRole(relationType, this.session.getObjectIfInstantiated(id));
+        hasChange = true;
+      }
+    }
+    if (hasChange) {
+      this.addAssociation(relationType, association);
+    }
   }
 
   public diffCompositesStrategyStrategy(

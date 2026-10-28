@@ -1,6 +1,6 @@
 ---
 title: "Workspace session state"
-description: "Editing baselines, merge, diff, reset and authorization freshness in the .NET and TypeScript workspaces."
+description: "Pinned editing snapshots, session isolation, diff and Reset in the .NET and TypeScript workspaces."
 audience: "Maintainers"
 kind: "Explanation"
 status: "Current"
@@ -8,133 +8,110 @@ status: "Current"
 
 import WorkspaceSessionState from '../../../components/WorkspaceSessionState.astro';
 
-> **Status: Current.**
+> **Status: Current.** Explanation for maintainers of the .NET and TypeScript remote workspaces.
 
-This page maps the current editing baseline in the .NET and TypeScript workspaces. It records
-baseline and merge behaviour ahead of the connection/session split; applications must not rely on this
-internals page. The tests below are authoritative. The platform boundary is in
-[ARCHITECTURE.md](../../../../../ARCHITECTURE.md); domain terminology is in [Domains](../domains.md).
+A session object keeps its data and security together. While it has pending database-role
+edits, Pull leaves its active snapshot in place and records the latest complete snapshot
+received by that session. Reset clears those edits and adopts the latest received snapshot
+without another request. Applications can preserve chosen edits before Reset and reapply them
+against the adopted snapshot.
+
+Here, edits mean changes to database-origin roles, including changes to roles that the server
+has not changed. Session-origin values keep their existing, separate lifecycle. The platform
+boundary is in [ARCHITECTURE.md](../../../../../ARCHITECTURE.md); relation terminology is in
+[Domains](../domains.md) and [Terminology](../terminology.md).
 
 ## Ownership
 
 | Owner | State and responsibility |
 | --- | --- |
-| `DatabaseConnection` | Privately held current database records and permission maps, refreshed by Pull/Sync/Access. Callers must use a connection sequentially. |
-| `DatabaseOriginState` for a session object | Retains the last accepted database record and its version. `OnPulled` obtains the connection's current record, checks `CanMerge`, and replaces the session record only when accepted. A merge error leaves this object's entire record in place. |
-| `RecordBasedOriginState` | Holds local role changes separately. Reads prefer the local value; otherwise they use the retained record. `Diff` compares local changes with that record. `Reset` clears local changes without fetching or accepting a newer record. |
-| Remote `DatabaseOriginState` | Builds Push using the retained version. To-many additions/removals are calculated against the retained record. |
+| `DatabaseConnection` | Shares complete cached payloads and exact grant/revocation versions. Publishing another version does not modify retained entries. |
+| Loading workflow | Selects complete cache entries, obtains missing data and security through Sync, and validates the result before publication or session adoption. |
+| Session object | Retains an active snapshot and the latest complete snapshot received by its own successful loading workflow, including cache hits. |
+| `DatabaseOriginState` | Reads and diffs against the active snapshot, stores database-role edits separately, and uses the active data version for Push. Reset clears edits and adopts the latest received snapshot. |
 
-The tests characterize an editing baseline per object with relation targets loaded. They do not
-establish snapshot consistency across an object graph.
+A snapshot contains an object data record and its exact grant/revocation bindings. The same
+object data version can have different readable values under different security versions.
+The [hybrid Sync explanation](workspace-hybrid-sync.md) describes the wire contract and cache
+ownership. The rules here are per object; they do not establish snapshot consistency across
+an entire object graph.
+
+## Pull and Reset
+
+| Event | Result |
+| --- | --- |
+| This session loads an unedited object | Adopt the received data and security together. |
+| This session loads an edited object | Keep its active data, security, edits and diff originals. Record the received snapshot as the latest. No automatic merge occurs. |
+| This session loads another complete snapshot before Reset | Replace its latest received snapshot; keep the active snapshot pinned. |
+| Another session loads the object | Neither this object's active snapshot nor its Reset target changes. |
+| Reset | Clear edits and adopt this session's latest received snapshot. No Pull or Sync is needed. |
+| Loading or validation fails | Preserve the session's snapshots and edits. |
+
+A change to an untouched integer does not advance an object with a locally edited string.
+The rule is the same for strings, units, to-one roles and to-many roles. After Reset, an
+application may reapply selected changes after checking the adopted snapshot's permissions.
+Those changes become ordinary edits with new diff originals. To-many changes are not combined
+automatically.
+
+If only another session has loaded a newer snapshot, Reset still uses this session's previous
+snapshot. A later Pull is needed to receive something newer in that case. Reset never selects
+an arbitrary latest entry from the shared connection.
 
 ## Guided example
 
-Choose a prepared scenario, then move through its steps. The diagram follows one object,
-`c1A`, from committed database values through the shared connection to its accepted editing
-baseline. The table separates those records from local edits, session reads and diff originals.
-Going backwards or choosing another scenario only changes the view; the example makes no
-platform calls.
+Choose a prepared scenario and move through its steps. The diagram follows one object,
+`c1A`, through the database, shared connection, this session's latest received snapshot and its
+active retained record. The table separates those records from local edits, session reads and
+diff originals. Going backwards changes only the view; the example makes no platform calls.
 
 The string, integer, to-one and to-many labels stand for `C1AllorsString`, `C1AllorsInteger`,
-`C1C1Many2One` and `C1C1Many2Manies` in the tests below. Relation targets `c1B`, `c1C` and `c1D`
-are already loaded; braces show membership, not order. Versions `v1`, `v2` and `v3` label
-successive records in the illustration, not literal platform version numbers.
-
-The first five scenarios follow the baseline characterization matrix. Reset after successful
-Push follows the existing reset tests. The permissions scenario illustrates the implementation's
-lookup through live connection maps, with a fixed grant ID and no revocation. Its scope is
-explained under [Push and permissions are separate](#push-and-permissions-are-separate).
-The example is a finite explanatory model; the platform tests remain authoritative. Unit merge
-equality is described [below](#unit-merge-equality), outside these prepared scenarios.
+`C1C1Many2One` and `C1C1Many2Manies` in the tests. Relation targets `c1B`, `c1C` and `c1D` are
+already loaded; braces show membership, not order. Versions `v1`, `v2` and `v3`, and grant
+versions `G@1` and `G@2`, are illustrative labels rather than literal platform version numbers.
+The permissions scenario shows a security-only change: the data version stays the same while
+the readable projection changes. A null string in that received snapshot represents the
+absence of a readable string value.
 
 <WorkspaceSessionState />
 
-## Characterization matrix
+## Behavioural coverage
 
-The tests use two sessions of one workspace/connection. A remote session changes and pushes an
-object, then pulls it to refresh the shared connection. The editing session has local changes
-to a string, a many-to-one role, and a many-to-many role. All relation targets are loaded.
+The existing editing-baseline matrix covers a remote integer change and overlapping string,
+to-one and to-many changes. Each editing Pull retains the active snapshot; Reset adopts the
+latest received one. DateTime and binary cases follow the same rule regardless of whether the
+remote value equals the original value. Diff originals continue to describe the active
+snapshot until Reset clears the edits.
 
-| Case | Observed behaviour | Authoritative tests |
-| --- | --- | --- |
-| Only the remote session pulls | The editing session keeps its version, untouched integer value, local values, and all three diff originals. Its Push reports a version error (.NET returns a result; TypeScript throws `ResultError` with that result). Reset returns to the old baseline; a subsequent Pull accepts the remote record. | `DatabaseDiffRetainsBaselineWhenAnotherSessionRefreshes` / `databaseDiffRetainsBaselineWhenAnotherSessionRefreshes` |
-| Remote changes only the integer | Editing Pull accepts the newer version and integer while preserving all three local edits and their diff originals. A subsequent Push succeeds and preserves both sides' changes. | `DatabaseEditingBaselineAfterPull("disjoint")` / `databaseEditingBaselineAfterPull: disjoint` |
-| Remote changes one locally edited role plus the integer | Editing Pull reports one merge error for the object. Its version, integer, all local edits, and all diff originals remain unchanged. Reset clears edits but keeps the old record; Pull then accepts the remote record. | The `string`, `to-one`, and `to-many` rows of the same tests |
+The cross-session diff cases verify that another session's Pull does not change the editing
+baseline or Reset target. Push with an old data version can still fail: .NET returns an error
+result, while TypeScript throws `ResultError` containing that result. That API difference is
+unchanged.
 
-The to-many conflict deliberately uses additions of different members. Merge compares the whole
-role against its baseline; it does not combine independent membership changes within that role.
-The representative relation cases do not establish every cardinality or inverse-association
-behaviour.
+Authoritative tests live in the .NET
+[MergeTests](../../../../../dotnet/Core/Workspace/Tests/Tests/MergeTests.cs),
+[DiffTests](../../../../../dotnet/Core/Workspace/Tests/Tests/DiffTests.cs), and
+[SecurityTests](../../../../../dotnet/Core/Workspace/Tests/Tests/SecurityTests.cs), and the
+TypeScript [merge specs](../../../../../typescript/modules/libs/system/workspace/adapters-json-tests/src/lib/runtime/merge.spec.ts),
+[diff specs](../../../../../typescript/modules/libs/system/workspace/adapters-json-tests/src/lib/runtime/diff.spec.ts),
+[security specs](../../../../../typescript/modules/libs/system/workspace/adapters-json-tests/src/lib/runtime/security.spec.ts),
+and [loading regressions](../../../../../typescript/modules/libs/system/workspace/adapters-json-tests/src/lib/database/security/response-context.spec.ts).
+The .NET remote cases run through both the System.Text.Json and Newtonsoft.Json HTTP adapters.
+The finite guided example supplements these tests; it does not replace them.
 
-Tests live in [the .NET MergeTests](../../../../../dotnet/Core/Workspace/Tests/Tests/MergeTests.cs),
-[DiffTests](../../../../../dotnet/Core/Workspace/Tests/Tests/DiffTests.cs),
-[TypeScript merge specs](../../../../../typescript/modules/libs/system/workspace/adapters-json-tests/src/lib/runtime/merge.spec.ts),
-and [diff specs](../../../../../typescript/modules/libs/system/workspace/adapters-json-tests/src/lib/runtime/diff.spec.ts).
-The .NET cases run through the System.Text.Json and Newtonsoft.Json HTTP adapters; the TypeScript
-cases run through the TypeScript HTTP adapter.
+## Push and authorization
 
-## Unit merge equality
+A successful Push marks the database state as pushed; it does not fetch a new snapshot.
+The next successful Pull that includes the object clears those already-committed edits and
+adopts its received snapshot.
+Reset after Push, with no newer snapshot received, exposes the previous pulled value. This does
+not undo the database Push. The existing `ResetUnitAfterPushTest` and `resetUnitAfterPush` cases
+cover that sequence.
 
-Merge compares the retained baseline with the refreshed remote value for each locally edited
-role. It compares DateTime and binary values by content in both runtimes; the local value does
-not decide whether the remote baseline changed.
+An active snapshot retains the grant/revocation versions used to filter its data. Refreshing
+another cache entry does not change its read, write or execute permission description. Reset
+adopts the received permissions with their matching data, including values that have become
+readable or are no longer readable.
 
-| Locally edited role | .NET (both HTTP adapters) | TypeScript HTTP |
-| --- | --- | --- |
-| DateTime | `Equals` compares DateTime values. | Date timestamps are compared with `getTime()`. |
-| Binary | `SequenceEqual` compares byte-array contents, including length. | Binary is a base64 string, compared by value. |
-
-`DatabaseUnitEqualityDuringDisjointPull` / `databaseUnitEqualityDuringDisjointPull` start with a
-non-null unit value, edit it locally, and change only an integer remotely. Pull accepts the new
-record/version while preserving the local edit and its diff original. A newly decoded array or
-Date instance representing the same value does not cause a conflict.
-
-`DatabaseUnitValueEqualityDuringPull` / `databaseUnitValueEqualityDuringPull` cover both units
-with an unchanged null baseline, null-to-value and value-to-null transitions, different remote
-values, and local removal with an unchanged remote value. Binary also covers a length change
-with the same starting bytes. Equal baselines accept the refreshed record; actual changes report
-a conflict and retain the old record/local edit until Reset followed by Pull. Null remains
-distinct from a non-null value. Other unit types and relation comparisons keep their existing
-rules. Binary comparison can scan the byte contents; DateTime comparison is constant-time.
-
-## Push and permissions are separate
-
-A successful Push marks the session object's database state as pushed. It does not accept a new
-baseline. Its next Pull clears pushed local changes and accepts the connection record without
-the ordinary merge check. The existing `ResetUnitAfterPushTest` and `resetUnitAfterPush` tests
-remain unchanged: Reset after Push, without Pull, exposes the last pulled value.
-
-A retained data record does **not** pin authorization. The record retains grant/revocation IDs,
-but `DatabaseRecord.IsPermitted` / `isPermitted` resolves those IDs through live connection maps.
-Refreshing those maps can affect permission checks on an object whose data baseline is older.
-The `RefreshesKnownGrantWhenAnObjectIsSynchronized` and
-`RefreshesKnownRevocationWhenAnObjectIsSynchronized` tests in
-[the shared .NET SecurityTests](../../../../../dotnet/Core/Workspace/Tests/Tests/SecurityTests.cs) run through
-both HTTP adapters. They and the TypeScript
-[security specs](../../../../../typescript/modules/libs/system/workspace/adapters-json-tests/src/lib/runtime/security.spec.ts)
-pin the existing synchronized-object refresh behaviour. They do not guarantee permission
-freshness on a Pull that needs no Sync, or when the retained record's grant/revocation IDs change
-on the server. Data-baseline retention and authorization freshness require separate policies.
-
-The guided permissions example combines that refresh mechanism with the live-map lookup in
-[the .NET database record](../../../../../dotnet/System/Workspace/Adapters/Allors.Workspace.Adapters.Remote/Database/DatabaseRecord.cs)
-and [the TypeScript database record](../../../../../typescript/modules/libs/system/workspace/adapters-json/src/lib/database/database-record.ts).
-The [shared .NET security tests](../../../../../dotnet/Core/Workspace/Tests/Tests/SecurityTests.cs)
-and TypeScript specs verify synchronized-object refresh; they do not directly characterize the
-older editing record shown in the example. Its table displays held values independently of
-permission to expose them.
-
-## Open decisions
-
-- Decide whether failed Push should keep returning an error result in .NET and throwing
-  `ResultError` in TypeScript. The baseline tests now pin both surfaces; aligning them would be
-  an API behaviour change for callers and needs separate approval.
-- Decide whether to preserve the current baseline transitions in the connection/session split,
-  including Reset after Push and whole-role conflict detection. The matrix is evidence for that
-  decision, not approval to change semantics or to combine to-many membership edits.
-- Define authorization freshness independently of data baselines, including changes to grant
-  membership and Pulls without Sync. Retaining records alone cannot provide an authorization
-  snapshot or a general freshness guarantee.
-
-The connection/session split, Push error-contract changes, protocol envelopes, shared or
-persistent caching, and signals remain separate work.
+Cached descriptions do not authorize server operations. Push and Invoke continue to apply
+their server authorization and version checks. Signals, persistent caching and alignment of
+the two Push error APIs remain separate work.

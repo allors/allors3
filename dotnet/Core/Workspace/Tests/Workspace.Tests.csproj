@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\System\Protocol\Allors.Protocol.Json\Allors.Protocol.Json.csproj" />
     <ProjectReference Include="..\..\Database\Configuration\Configuration.csproj" />
     <ProjectReference Include="..\Configuration\Workspace.Configuration.csproj" />
     <ProjectReference Include="..\Meta.Lazy\Workspace.Meta.Lazy.csproj" />

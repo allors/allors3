@@ -42,6 +42,37 @@ namespace Allors.Server.Tests
         }
 
         [Theory]
+        [InlineData("g", "[null]", 0)]
+        [InlineData("r", "[null]", 0)]
+        [InlineData("g", "[[]]", 0)]
+        [InlineData("r", "[[]]", 0)]
+        [InlineData("g", "[[1]]", 0)]
+        [InlineData("r", "[[1]]", 0)]
+        [InlineData("g", "[[1,2,3]]", 0)]
+        [InlineData("r", "[[1,2,3]]", 0)]
+        [InlineData("g", "[[0,2]]", 0)]
+        [InlineData("r", "[[0,2]]", 0)]
+        [InlineData("g", "[[-1,2]]", 0)]
+        [InlineData("r", "[[-1,2]]", 0)]
+        [InlineData("g", "[[1,-1]]", 0)]
+        [InlineData("r", "[[1,-1]]", 0)]
+        [InlineData("g", "[[1,0],[2]]", 1)]
+        [InlineData("r", "[[1,0],[2]]", 1)]
+        public async Task InvalidSyncCacheEntriesReturnBadRequest(string field, string entries, int index)
+        {
+            await this.SignIn(this.Administrator);
+            using var content = new StringContent($"{{\"o\":[],\"{field}\":{entries}}}", Encoding.UTF8, "application/json");
+            using var response = await this.HttpClient.PostAsync(new Uri("sync", UriKind.Relative), content);
+
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            using var problem = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+            var errors = problem.RootElement.GetProperty("errors").GetProperty($"{field}[{index}]").ToString();
+            Assert.Contains("[id, version]", errors);
+            Assert.Contains("positive ID", errors);
+            Assert.Contains("non-negative version", errors);
+        }
+
+        [Theory]
         [InlineData("{}")]
         [InlineData("{\"l\":[],\"d\":[],\"x\":\"request-id\"}")]
         public async Task OrdinaryRequestsRemainValid(string json)
@@ -59,6 +90,10 @@ namespace Allors.Server.Tests
         [InlineData("push", "{\"n\":[],\"o\":[]}", "hasErrors", JsonValueKind.False)]
         [InlineData("invoke", "{\"l\":[],\"o\":{\"i\":false,\"c\":false}}", "hasErrors", JsonValueKind.False)]
         [InlineData("sync", "{\"o\":[]}", "o", JsonValueKind.Array)]
+        [InlineData("sync", "{\"o\":[],\"g\":null,\"r\":null}", "o", JsonValueKind.Array)]
+        [InlineData("sync", "{\"o\":[],\"g\":[],\"r\":[]}", "o", JsonValueKind.Array)]
+        [InlineData("sync", "{\"o\":[],\"g\":[[1,0],[1,0]],\"r\":[[2,0],[2,0]]}", "o", JsonValueKind.Array)]
+        [InlineData("sync", "{\"o\":[],\"g\":[[1,0],[1,1],[1,2]],\"r\":[[2,0],[2,1],[2,2]]}", "o", JsonValueKind.Array)]
         [InlineData("access", "{\"g\":[],\"r\":[]}", "g", JsonValueKind.Null)]
         [InlineData("permission", "{\"p\":[]}", "p", JsonValueKind.Null)]
         public async Task EmptyProtocolOperationsRemainValid(string endpoint, string json, string responseField, JsonValueKind responseKind)

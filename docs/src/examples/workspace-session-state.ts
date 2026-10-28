@@ -8,14 +8,14 @@ export interface RoleValues {
 }
 
 export type Role = keyof RoleValues;
-export interface RecordSnapshot { version: number; values: RoleValues }
+export interface RecordSnapshot { version: number; values: RoleValues; grantVersion: number; grantAllowsRead: boolean }
 export interface State {
   database: RecordSnapshot;
   connection: RecordSnapshot;
   retained: RecordSnapshot;
+  latestReceived: RecordSnapshot;
   local: Partial<RoleValues>;
   pushed: boolean;
-  grantAllowsRead: boolean;
 }
 
 type Action =
@@ -25,7 +25,7 @@ type Action =
   | { kind: 'remote-pull' | 'pull' | 'push' | 'reset' | 'permission-refresh' };
 
 export type Outcome = 'ready' | 'edited' | 'remote-pushed' | 'refreshed' | 'accepted'
-  | 'merge-error' | 'version-error' | 'pushed' | 'reset' | 'permission-refreshed';
+  | 'pinned' | 'version-error' | 'pushed' | 'reset' | 'permission-refreshed';
 
 interface Step { id: string; title: string; explanation: string; action: Action }
 export interface Scenario {
@@ -44,9 +44,9 @@ export const roles: { key: Role; label: string }[] = [
 
 export const outcomeLabels: Record<Outcome, string> = {
   ready: 'Ready', edited: 'Local edits', 'remote-pushed': 'Remote Push succeeded',
-  refreshed: 'Connection refreshed', accepted: 'Pull accepted', 'merge-error': 'Merge error',
+  refreshed: 'Connection refreshed', accepted: 'Pull accepted', pinned: 'Active snapshot pinned',
   'version-error': 'Version error', pushed: 'Push succeeded', reset: 'Reset complete',
-  'permission-refreshed': 'Permission map refreshed',
+  'permission-refreshed': 'Shared security refreshed',
 };
 
 const baseline: RoleValues = { string: 'baseline', integer: 1, toOne: 'c1B', toMany: ['c1B'] };
@@ -62,19 +62,19 @@ const edit: Step = {
 };
 const remotePull: Step = {
   id: 'remote-pull', title: 'Pull in the remote session', action: { kind: 'remote-pull' },
-  explanation: 'The remote session pulls the changed object, refreshing the shared connection. The editing object has not pulled: its retained version, integer, local edits and diff originals remain unchanged.',
+  explanation: 'The remote session pulls the changed object, refreshing the shared connection. The editing object has not pulled: its active and latest received snapshots, local edits and diff originals remain unchanged.',
 };
 const reset: Step = {
   id: 'reset', title: 'Reset the editing object', action: { kind: 'reset' },
-  explanation: 'Reset clears local edits and their diffs. Reads expose the retained record again. Reset does not fetch data or accept the connection record.',
+  explanation: 'Reset clears local edits and adopts the latest complete data and security snapshot already received by this session. It makes no network request. Another session’s Pull cannot change this Reset target.',
 };
 const recoveryPull: Step = {
   id: 'recovery-pull', title: 'Pull after Reset', action: { kind: 'pull' },
-  explanation: 'With no local edits left to conflict, the editing Pull accepts the refreshed record and its version. The session now reads the remote values.',
+  explanation: 'This editing session has not yet received the remote snapshot. Its Pull now accepts the refreshed record and its security. The session now reads the remote values.',
 };
 const pushedPull: Step = {
   id: 'recovery-pull', title: 'Pull after Push', action: { kind: 'pull' },
-  explanation: 'The editing Pull refreshes the connection, clears pushed local changes and accepts the new record without the ordinary merge check. The pushed flag is cleared and no diffs remain.',
+  explanation: 'The editing Pull refreshes the connection, clears pushed local changes and accepts the new snapshot. The pushed flag is cleared and no diffs remain.',
 };
 
 function remotePush(values: Partial<RoleValues>, explanation: string): Step {
@@ -87,9 +87,9 @@ function conflict(id: string, title: string, change: Partial<RoleValues>, reason
     steps: [start, edit,
       remotePush({ integer: 2, ...change }, `${reason} The remote session also changes the integer to 2 and pushes successfully. The connection and editing records still hold their earlier values until Pull.`),
       remotePull,
-      { id: 'editing-pull', title: 'Pull encounters a conflict', action: { kind: 'pull' },
-        explanation: 'Pull returns one merge error for c1A in both runtimes. One locally edited role has a different remote baseline, so the entire replacement record is rejected for this object. Even the untouched integer stays 1. All three local edits and diff originals remain.' },
-      reset, recoveryPull],
+      { id: 'editing-pull', title: 'Receive the newer snapshot', action: { kind: 'pull' },
+        explanation: 'Pull records the latest complete snapshot for this session. The object has edits, so its active data and security remain pinned. The integer stays 1, and all three local edits and diff originals remain. Pull does not attempt a merge.' },
+      reset],
   };
 }
 
@@ -106,13 +106,16 @@ export const scenarios: Scenario[] = [
       reset, recoveryPull],
   },
   {
-    id: 'disjoint', title: 'Disjoint edits merge',
-    summary: 'A remote integer change can be accepted while local string and relation edits remain. The next Push preserves both sides’ changes.',
+    id: 'disjoint', title: 'Disjoint edits stay pinned',
+    summary: 'Even a change to an untouched role leaves the edited object pinned. Reset adopts the latest received snapshot; the application can then reapply selected edits.',
     steps: [start, edit,
       remotePush({ integer: 2 }, 'The remote session changes only the integer to 2 and pushes. The remote values of the three locally edited roles remain unchanged.'),
       remotePull,
-      { id: 'editing-pull', title: 'Pull accepts the disjoint change', action: { kind: 'pull' },
-        explanation: 'For every locally edited role, the refreshed value still matches the retained baseline, so Pull accepts the whole new record. Its integer is 2 and its version is newer. The local edits and all three diff originals are preserved.' },
+      { id: 'editing-pull', title: 'Receive the disjoint change', action: { kind: 'pull' },
+        explanation: 'The latest received snapshot has integer 2. Because the object has local edits, its active snapshot stays at integer 1 with its original version and security. Pull succeeds without automatically merging.' },
+      reset,
+      { id: 'reapply', title: 'Reapply the chosen edits', action: { kind: 'edit', values: local },
+        explanation: 'The application saved the chosen edits before Reset. It reapplies them through the normal permission checks against the newly adopted snapshot. The remote integer remains 2.' },
       { id: 'push', title: 'Push using the accepted version', action: { kind: 'push' },
         explanation: 'Push succeeds using the newly accepted version. The database keeps the remote integer and receives the local string and relation changes. The editing object is marked pushed, but its baseline and local edits stay in place until Pull.' },
       pushedPull],
@@ -122,28 +125,29 @@ export const scenarios: Scenario[] = [
   conflict('to-one-conflict', 'Conflicting to-one role', { toOne: 'c1D' },
     'The remote session selects c1D for the to-one role while the editing session selects c1C.'),
   conflict('to-many-conflict', 'Conflicting to-many role', { toMany: ['c1B', 'c1D'] },
-    'The remote session adds c1D while the editing session adds c1C. Merge compares the whole role; it does not combine these different membership additions.'),
+    'The remote session adds c1D while the editing session adds c1C. Pull keeps the entire active snapshot pinned; Reset adopts the remote membership without combining additions.'),
   {
     id: 'push-reset', title: 'Reset after successful Push', initial: { string: null },
     summary: 'A successful Push does not accept a new baseline. Reset before Pull exposes the last pulled string, even though the database contains the pushed value.',
     steps: [
-      { ...start, explanation: 'The editing session has pulled c1A with a null string. The other displayed roles use the same illustrative starting values as the merge examples.' },
+      { ...start, explanation: 'The editing session has pulled c1A with a null string. The other displayed roles use the same illustrative starting values as the editing examples.' },
       { id: 'local-edit', title: 'Change the string to "X"', action: { kind: 'edit', values: { string: 'X' } },
         explanation: 'The string reads "X" from the local edit; its diff original is null.' },
       { id: 'push', title: 'Push the string successfully', action: { kind: 'push' },
         explanation: 'The database receives "X" and the object is marked pushed. Its retained string is still null; the local value still reads "X". Push does not fetch a replacement record. CanWrite is false while the object is marked pushed.' },
       { ...reset, explanation: 'Reset clears the local string edit, exposing null from the retained record. It does not undo the database Push, fetch a record or clear the pushed flag.' },
-      { ...pushedPull, explanation: 'Pull refreshes the connection and accepts the pushed string "X". The object was still marked pushed, so Pull bypasses the ordinary merge check and clears that flag. No diffs remain.' },
+      { ...pushedPull, explanation: 'Pull refreshes the connection and accepts the pushed string "X". The object was still marked pushed, so Pull clears the committed edits and that flag. No diffs remain.' },
     ],
   },
   {
-    id: 'permissions', title: 'A retained record is not an authorization snapshot',
-    summary: 'Implementation illustration: the retained record refers to a known grant G. With that ID unchanged and no revocation, read permission depends on G in the live connection map. This is not a general permission-freshness guarantee.',
+    id: 'permissions', title: 'Data and security stay together',
+    summary: 'A grant changes while the object’s data version stays the same. The editing object keeps its old security until Reset adopts the snapshot received by its own Pull.',
     steps: [start, edit,
-      remotePush({ integer: 2 }, 'The remote session changes the integer to 2 and pushes. The retained record’s grant ID G is unchanged in this illustration.'),
-      remotePull,
-      { id: 'permission-refresh', title: 'Refresh the known grant map', action: { kind: 'permission-refresh' },
-        explanation: 'A subsequent Sync/Access refresh through the connection updates known grant G so it no longer allows reading the string. A permission check through the editing object’s retained grant ID now denies that read, although its data baseline and local values are unchanged. The displayed values describe held data, not authorization to expose it. The security tests cover synchronized-object grant and revocation refresh; retaining an older editing record here illustrates the implementation’s live-map lookup. Pull without Sync and changed grant/revocation IDs have no general freshness guarantee.' },
+      { id: 'permission-refresh', title: 'Another session receives changed security', action: { kind: 'permission-refresh' },
+        explanation: 'The server removes read permission for the string from grant G. Another session loads this change into the shared cache. G has a new version; the object’s data version is unchanged. The editing session keeps its active snapshot and its own Reset target.' },
+      { id: 'editing-pull', title: 'Receive the new security snapshot', action: { kind: 'pull' },
+        explanation: 'The editing session now receives the new grant version with the corresponding filtered data. Local edits pin its active data and security, so reading the string remains allowed on that active snapshot. The latest received snapshot denies the read and contains no string value.' },
+      reset,
     ],
   },
 ];
@@ -158,45 +162,46 @@ export function diff(state: State) {
   }));
 }
 
-function sameValue(left: RoleValues[Role], right: RoleValues[Role]): boolean {
-  if (Array.isArray(left) && Array.isArray(right)) {
-    const sortedRight = [...right].sort();
-    return left.length === right.length && [...left].sort().every((value, i) => value === sortedRight[i]);
-  }
-  return left === right;
-}
-
 function apply(state: State, action: Action): Outcome {
   switch (action.kind) {
     case 'start': return 'ready';
     case 'edit': state.local = structuredClone(action.values); return 'edited';
     case 'remote-push':
-      state.database = { version: state.database.version + 1, values: structuredClone({ ...state.database.values, ...action.values }) };
+      state.database = { ...state.database, version: state.database.version + 1, values: structuredClone({ ...state.database.values, ...action.values }) };
       return 'remote-pushed';
     case 'remote-pull': state.connection = structuredClone(state.database); return 'refreshed';
     case 'pull':
       state.connection = structuredClone(state.database);
-      if (!state.pushed && roles.some(({ key }) => Object.hasOwn(state.local, key) &&
-          !sameValue(state.retained.values[key], state.connection.values[key]))) return 'merge-error';
+      if (!state.connection.grantAllowsRead) state.connection.values.string = null;
+      state.latestReceived = structuredClone(state.connection);
+      if (!state.pushed && Object.keys(state.local).length > 0) return 'pinned';
       if (state.pushed) state.local = {};
       state.pushed = false;
       state.retained = structuredClone(state.connection);
       return 'accepted';
     case 'push':
       if (state.retained.version !== state.database.version) return 'version-error';
-      state.database = { version: state.database.version + 1, values: visibleValues(state) };
+      state.database = { ...state.database, version: state.database.version + 1, values: visibleValues(state) };
       state.pushed = true;
       return 'pushed';
-    case 'reset': state.local = {}; return 'reset';
-    case 'permission-refresh': state.grantAllowsRead = false; return 'permission-refreshed';
+    case 'reset':
+      state.local = {};
+      state.retained = structuredClone(state.latestReceived);
+      return 'reset';
+    case 'permission-refresh':
+      state.database.grantVersion++;
+      state.database.grantAllowsRead = false;
+      state.connection = structuredClone(state.database);
+      state.connection.values.string = null;
+      return 'permission-refreshed';
   }
 }
 
 export function getFrames(scenario: Scenario): Frame[] {
-  const record = { version: 1, values: { ...baseline, ...scenario.initial } };
+  const record = { version: 1, values: { ...baseline, ...scenario.initial }, grantVersion: 1, grantAllowsRead: true };
   const state: State = {
     database: structuredClone(record), connection: structuredClone(record), retained: structuredClone(record),
-    local: {}, pushed: false, grantAllowsRead: true,
+    latestReceived: structuredClone(record), local: {}, pushed: false,
   };
   return scenario.steps.map(({ action, ...step }) => {
     const outcome = apply(state, action);

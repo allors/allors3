@@ -152,6 +152,7 @@ namespace Allors.Database.Protocol.Json
                 if (existingCollection != null)
                 {
                     existingCollection.UnionWith(included);
+                    this.objects.UnionWith(included);
                 }
                 else
                 {

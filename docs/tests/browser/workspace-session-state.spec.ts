@@ -4,12 +4,12 @@ import { expect, test, type Locator, type Page } from '@playwright/test';
 const route = 'internals/workspace-session-state/';
 const scenarios = [
   { id: 'remote-refresh', steps: ['start', 'local-edit', 'remote-push', 'remote-pull', 'push', 'reset', 'recovery-pull'] },
-  { id: 'disjoint', steps: ['start', 'local-edit', 'remote-push', 'remote-pull', 'editing-pull', 'push', 'recovery-pull'] },
-  { id: 'string-conflict', steps: ['start', 'local-edit', 'remote-push', 'remote-pull', 'editing-pull', 'reset', 'recovery-pull'] },
-  { id: 'to-one-conflict', steps: ['start', 'local-edit', 'remote-push', 'remote-pull', 'editing-pull', 'reset', 'recovery-pull'] },
-  { id: 'to-many-conflict', steps: ['start', 'local-edit', 'remote-push', 'remote-pull', 'editing-pull', 'reset', 'recovery-pull'] },
+  { id: 'disjoint', steps: ['start', 'local-edit', 'remote-push', 'remote-pull', 'editing-pull', 'reset', 'reapply', 'push', 'recovery-pull'] },
+  { id: 'string-conflict', steps: ['start', 'local-edit', 'remote-push', 'remote-pull', 'editing-pull', 'reset'] },
+  { id: 'to-one-conflict', steps: ['start', 'local-edit', 'remote-push', 'remote-pull', 'editing-pull', 'reset'] },
+  { id: 'to-many-conflict', steps: ['start', 'local-edit', 'remote-push', 'remote-pull', 'editing-pull', 'reset'] },
   { id: 'push-reset', steps: ['start', 'local-edit', 'push', 'reset', 'recovery-pull'] },
-  { id: 'permissions', steps: ['start', 'local-edit', 'remote-push', 'remote-pull', 'permission-refresh'] },
+  { id: 'permissions', steps: ['start', 'local-edit', 'permission-refresh', 'editing-pull', 'reset'] },
 ];
 
 async function tabTo(page: Page, target: Locator) {
@@ -45,8 +45,8 @@ async function expectValues(frame: Locator, role: string, values: Record<string,
   }
 }
 
-async function expectVersions(frame: Locator, versions: [string, string, string]) {
-  for (const [index, owner] of ['Database', 'Connection', 'Retained record'].entries()) {
+async function expectVersions(frame: Locator, versions: [string, string, string, string]) {
+  for (const [index, owner] of ['Database', 'Connection', 'Latest received', 'Retained record'].entries()) {
     const card = frame.locator('[data-records]').getByText(owner, { exact: true }).locator('..');
     await expect(card.getByText(versions[index], { exact: true })).toBeVisible();
   }
@@ -117,7 +117,7 @@ test('prepared scenarios support keyboard navigation, step selection and returni
   }
   await scenario.selectOption('disjoint');
   await step.selectOption('editing-pull');
-  await expectValues(currentFrame(page), 'Integer', { Retained: '2', 'Session read': '2' });
+  await expectValues(currentFrame(page), 'Integer', { 'Latest received': '2', Retained: '1', 'Session read': '1' });
   await previous.click();
   await expect(step).toHaveValue('remote-pull');
   await expectValues(currentFrame(page), 'Integer', { Retained: '1', 'Session read': '1' });
@@ -127,12 +127,12 @@ test('prepared scenarios support keyboard navigation, step selection and returni
   expect(errors, 'Changing walkthrough scenarios must not raise script errors').toEqual([]);
 });
 
-test('snapshots distinguish retained records, local edits and complete-role conflicts', async ({ page }, testInfo) => {
+test('snapshots distinguish latest received records, pinned edits and Reset adoption', async ({ page }, testInfo) => {
   await page.goto(route);
   let frame = await showStep(page, 'remote-refresh', 'remote-push');
-  await expectVersions(frame, ['v2', 'v1', 'v1']);
+  await expectVersions(frame, ['v2', 'v1', 'v1', 'v1']);
   frame = await showStep(page, 'remote-refresh', 'remote-pull');
-  await expectVersions(frame, ['v2', 'v2', 'v1']);
+  await expectVersions(frame, ['v2', 'v2', 'v1', 'v1']);
   await expectValues(frame, 'String', { Database: '"remote"', Connection: '"remote"', Retained: '"baseline"', 'Local edit': '"local"', 'Session read': '"local"', 'Diff original': '"baseline"' });
   await expectValues(frame, 'Integer', { Database: '2', Connection: '2', Retained: '1', 'Session read': '1' });
   frame = await showStep(page, 'remote-refresh', 'push');
@@ -145,19 +145,19 @@ test('snapshots distinguish retained records, local edits and complete-role conf
   await expectValues(frame, 'String', { Retained: '"remote"', 'Session read': '"remote"' });
 
   frame = await showStep(page, 'disjoint', 'editing-pull');
-  await expectVersions(frame, ['v2', 'v2', 'v2']);
-  await expect(frame.locator('[data-outcome]')).toHaveText('Pull accepted');
-  await expectValues(frame, 'Integer', { Database: '2', Connection: '2', Retained: '2', 'Session read': '2' });
+  await expectVersions(frame, ['v2', 'v2', 'v2', 'v1']);
+  await expect(frame.locator('[data-outcome]')).toHaveText('Active snapshot pinned');
+  await expectValues(frame, 'Integer', { Database: '2', Connection: '2', 'Latest received': '2', Retained: '1', 'Session read': '1' });
   await expectValues(frame, 'String', { Retained: '"baseline"', 'Local edit': '"local"', 'Session read': '"local"', 'Diff original': '"baseline"' });
   frame = await showStep(page, 'disjoint', 'push');
-  await expectVersions(frame, ['v3', 'v2', 'v2']);
+  await expectVersions(frame, ['v3', 'v2', 'v2', 'v2']);
   await expect(frame.locator('[data-outcome]')).toHaveText('Push succeeded');
   await expectValues(frame, 'Integer', { Database: '2', 'Session read': '2' });
 
   for (const id of ['string-conflict', 'to-one-conflict', 'to-many-conflict']) {
     frame = await showStep(page, id, 'editing-pull');
-    await expectVersions(frame, ['v2', 'v2', 'v1']);
-    await expect(frame.locator('[data-outcome]')).toHaveText('Merge error');
+    await expectVersions(frame, ['v2', 'v2', 'v2', 'v1']);
+    await expect(frame.locator('[data-outcome]')).toHaveText('Active snapshot pinned');
     await expectValues(frame, 'Integer', { Connection: '2', Retained: '1', 'Session read': '1' });
     await expectValues(frame, 'String', { Retained: '"baseline"', 'Session read': '"local"', 'Diff original': '"baseline"' });
     await expectValues(frame, 'To-one', { Retained: 'c1B', 'Session read': 'c1C', 'Diff original': 'c1B' });
@@ -201,13 +201,16 @@ test('snapshots distinguish retained records, local edits and complete-role conf
   await expectValues(frame, 'String', { Database: '"X"', Retained: 'null', 'Session read': 'null' });
   frame = await showStep(page, 'push-reset', 'recovery-pull');
   await expectValues(frame, 'String', { Retained: '"X"', 'Session read': '"X"' });
-  frame = await showStep(page, 'permissions', 'remote-pull');
-  await expect(frame).toContainText('Read permission through retained grant G: allowed');
   frame = await showStep(page, 'permissions', 'permission-refresh');
-  await expectVersions(frame, ['v2', 'v2', 'v1']);
-  await expect(frame.locator('[data-outcome]')).toHaveText('Permission map refreshed');
-  await expectValues(frame, 'Integer', { Connection: '2', Retained: '1', 'Session read': '1' });
+  await expect(frame).toContainText('Read permission through retained grant G: allowed');
+  frame = await showStep(page, 'permissions', 'editing-pull');
+  await expectVersions(frame, ['v1', 'v1', 'v1', 'v1']);
+  await expect(frame.locator('[data-outcome]')).toHaveText('Active snapshot pinned');
+  await expectValues(frame, 'String', { Connection: 'null', 'Latest received': 'null', Retained: '"baseline"', 'Session read': '"local"' });
+  await expect(frame).toContainText('Read permission through retained grant G: allowed');
+  frame = await showStep(page, 'permissions', 'reset');
   await expect(frame).toContainText('Read permission through retained grant G: denied');
+  await expectValues(frame, 'String', { Retained: 'null', 'Session read': 'null' });
 });
 
 test('all scenario explanations and snapshots survive without JavaScript and in Markdown exports', async ({ browser, baseURL, request }, testInfo) => {
@@ -247,10 +250,10 @@ test('all scenario explanations and snapshots survive without JavaScript and in 
         }
       }
     }
-    expect(markdown).toContain('| Role | Database | Connection | Retained | Local edit | Session read | Diff original |');
-    expect(markdown.match(/\| Role \| Database \| Connection \| Retained \| Local edit \| Session read \| Diff original \|/g))
+    expect(markdown).toContain('| Role | Database | Connection | Latest received | Retained | Local edit | Session read | Diff original |');
+    expect(markdown.match(/\| Role \| Database \| Connection \| Latest received \| Retained \| Local edit \| Session read \| Diff original \|/g))
       .toHaveLength(scenarios.reduce((count, scenario) => count + scenario.steps.length, 0));
-    expect(markdown).toContain('| To-many | {c1B, c1D} | {c1B, c1D} | {c1B} | {c1B, c1C} | {c1B, c1C} | {c1B} |');
+    expect(markdown).toContain('| To-many | {c1B, c1D} | {c1B, c1D} | {c1B, c1D} | {c1B} | {c1B, c1C} | {c1B, c1C} | {c1B} |');
     expect(markdown).toContain('ResultError');
     await expectNoPageOverflow(page);
   } finally {

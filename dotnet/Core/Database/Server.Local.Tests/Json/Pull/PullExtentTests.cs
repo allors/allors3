@@ -107,6 +107,30 @@ namespace Tests
         }
 
         [Fact]
+        public void RepeatedNamedResultIncludesEveryObjectInPool()
+        {
+            this.SetUser("jane@example.com");
+            var first = new DataBuilder(this.Transaction).WithString("First").Build();
+            var second = new DataBuilder(this.Transaction).WithString("Second").Build();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
+
+            var request = new PullRequest
+            {
+                l = new[] { "First", "Second" }.Select(value => new Allors.Database.Data.Pull
+                {
+                    Extent = new Extent(this.M.Data) { Predicate = new Equals(this.M.Data.String) { Value = value } },
+                    Results = new[] { new Result { Name = "Datas" } },
+                }.ToJson(this.UnitConvert)).ToArray(),
+            };
+
+            var response = new Api(this.Transaction, "Default", CancellationToken.None).Pull(request);
+            var expected = new[] { first.Id, second.Id }.OrderBy(v => v);
+            Assert.Equal(expected, response.c["Datas"].OrderBy(v => v));
+            Assert.Equal(expected, response.p.Select(v => v.i).OrderBy(v => v));
+        }
+
+        [Fact]
         public async void IncludeRoleOne2One()
         {
             var user = this.SetUser("jane@example.com");

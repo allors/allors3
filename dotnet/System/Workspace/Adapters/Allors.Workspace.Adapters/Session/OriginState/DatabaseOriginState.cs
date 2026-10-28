@@ -13,6 +13,7 @@ namespace Allors.Workspace.Adapters
         protected DatabaseOriginState(DatabaseRecord record)
         {
             this.DatabaseRecord = record;
+            this.LatestReceivedRecord = record;
             this.PreviousRecord = this.DatabaseRecord;
             this.IsPushed = false;
         }
@@ -28,6 +29,8 @@ namespace Allors.Workspace.Adapters
         protected override IRecord Record => this.DatabaseRecord;
 
         protected DatabaseRecord DatabaseRecord { get; private set; }
+
+        private DatabaseRecord LatestReceivedRecord { get; set; }
 
         private bool IsPushed { get; set; }
 
@@ -88,25 +91,29 @@ namespace Allors.Workspace.Adapters
 
         public void OnPushed() => this.IsPushed = true;
 
-        public void OnPulled(IPullResultInternals pull)
+        public void OnPulled(DatabaseRecord record)
         {
-            var newRecord = this.Session.Workspace.DatabaseConnection.GetRecord(this.Id);
-
-            if (!this.IsPushed)
+            this.LatestReceivedRecord = record;
+            if (this.IsPushed)
             {
-                if (!this.CanMerge(newRecord))
-                {
-                    pull.AddMergeError(this.Strategy.Object);
-                    return;
-                }
-            }
-            else
-            {
-                this.Reset();
+                base.Reset();
                 this.IsPushed = false;
             }
+            else if (this.ChangedRoleByRelationType?.Count > 0)
+            {
+                return;
+            }
 
-            this.DatabaseRecord = newRecord;
+            this.DatabaseRecord = record;
+            this.Session.ChangeSetTracker.OnDatabaseChanged(this);
+        }
+
+        public override void Reset()
+        {
+            base.Reset();
+            this.Session.PushToDatabaseTracker.Changed?.Remove(this);
+            this.DatabaseRecord = this.LatestReceivedRecord;
+            this.Session.ChangeSetTracker.OnDatabaseChanged(this);
         }
 
         protected override void OnChange()

@@ -21,7 +21,7 @@ namespace Tests.Workspace
         protected MergeTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
-        public async void DatabaseMergeError()
+        public async void DatabaseEditsPinTheReceivedSnapshot()
         {
             await this.Login("administrator");
 
@@ -43,12 +43,13 @@ namespace Tests.Workspace
 
             result = await session1.PullAsync(pull);
 
-            Assert.True(result.HasErrors);
-            Assert.Single(result.MergeErrors);
-
-            var mergeError = result.MergeErrors.First();
-
-            Assert.Equal(c1a_1.Strategy, mergeError.Strategy);
+            Assert.False(result.HasErrors);
+            Assert.Empty(result.MergeErrors);
+            Assert.Equal("X", c1a_1.C1AllorsString);
+            session1.Checkpoint();
+            session1.Reset();
+            Assert.Equal("Y", c1a_1.C1AllorsString);
+            Assert.False(c1a_1.Strategy.HasChanges);
         }
 
         [Theory]
@@ -94,55 +95,44 @@ namespace Tests.Workspace
             Assert.False((await remote.PullAsync(pull)).HasErrors);
             Assert.NotEqual(version, source.Strategy.Version);
             var result = await editing.PullAsync(pull);
-            var conflict = remoteEdit != "disjoint";
-            Assert.Equal(conflict, result.HasErrors);
-            if (conflict)
-            {
-                Assert.Same(edited.Strategy, Assert.Single(result.MergeErrors).Strategy);
-            }
-            else
-            {
-                Assert.Empty(result.MergeErrors);
-            }
-
-            // A conflicting role rejects the entire replacement record for this object.
-            Assert.Equal(conflict ? version : source.Strategy.Version, edited.Strategy.Version);
-            Assert.Equal(conflict ? 1 : 2, edited.C1AllorsInteger);
+            Assert.False(result.HasErrors);
+            Assert.Empty(result.MergeErrors);
+            Assert.Equal(version, edited.Strategy.Version);
+            Assert.Equal(1, edited.C1AllorsInteger);
             Assert.Equal("local", edited.C1AllorsString);
             Assert.Same(localTarget, edited.C1C1Many2One);
             Assert.Equal(new[] { baselineTarget.Id, localTarget.Id }.OrderBy(v => v), edited.C1C1Many2Manies.Select(v => v.Id).OrderBy(v => v));
             this.AssertEditingDiff(edited, baselineTarget, localTarget);
 
-            if (!conflict)
-            {
-                // Push must now use the accepted version, preserving the remote integer.
-                Assert.False((await editing.PushAsync()).HasErrors);
-                Assert.False((await editing.PullAsync(pull)).HasErrors);
-                Assert.Empty(edited.Strategy.Diff());
-                Assert.False((await remote.PullAsync(pull)).HasErrors);
-                Assert.Equal("local", source.C1AllorsString);
-                Assert.Equal(2, source.C1AllorsInteger);
-                Assert.Equal(localTarget.Id, source.C1C1Many2One.Id);
-                Assert.Equal(new[] { baselineTarget.Id, localTarget.Id }.OrderBy(v => v), source.C1C1Many2Manies.Select(v => v.Id).OrderBy(v => v));
-                return;
-            }
-
+            editing.Checkpoint();
             edited.Strategy.Reset();
-            Assert.Equal(version, edited.Strategy.Version);
-            Assert.Equal("baseline", edited.C1AllorsString);
-            Assert.Equal(1, edited.C1AllorsInteger);
-            Assert.Same(baselineTarget, edited.C1C1Many2One);
-            Assert.Same(baselineTarget, Assert.Single(edited.C1C1Many2Manies));
-            Assert.Empty(edited.Strategy.Diff());
-            Assert.False(edited.Strategy.HasChanges);
-
-            Assert.False((await editing.PullAsync(pull)).HasErrors);
+            var resetChanges = editing.Checkpoint();
+            Assert.Contains(edited.Strategy, resetChanges.AssociationsByRoleType[this.M.C1.C1C1Many2One]);
+            Assert.Contains(localTarget.Strategy, resetChanges.RolesByAssociationType[this.M.C1.C1C1Many2One.AssociationType]);
+            Assert.DoesNotContain(resetChanges.RolesByAssociationType.Values.SelectMany(v => v), v => v == null);
             Assert.Equal(source.Strategy.Version, edited.Strategy.Version);
             Assert.Equal(source.C1AllorsString, edited.C1AllorsString);
             Assert.Equal(2, edited.C1AllorsInteger);
             Assert.Equal(source.C1C1Many2One.Id, edited.C1C1Many2One.Id);
             Assert.Equal(source.C1C1Many2Manies.Select(v => v.Id).OrderBy(v => v), edited.C1C1Many2Manies.Select(v => v.Id).OrderBy(v => v));
             Assert.Empty(edited.Strategy.Diff());
+
+            edited.C1AllorsString = "local";
+            edited.C1C1Many2One = localTarget;
+            edited.AddC1C1Many2Many(localTarget);
+            Assert.False((await editing.PushAsync()).HasErrors);
+
+            var observer = this.Workspace.CreateSession();
+            var observedResult = await observer.PullAsync(pull);
+            Assert.False(observedResult.HasErrors);
+            var saved = observedResult.GetCollection<C1>().Single(v => v.Id == edited.Id);
+            Assert.Equal("local", saved.C1AllorsString);
+            Assert.Equal(2, saved.C1AllorsInteger);
+            Assert.Equal(localTarget.Id, saved.C1C1Many2One.Id);
+            var expectedTargets = remoteEdit == "to-many"
+                ? new[] { baselineTarget.Id, localTarget.Id, remoteTarget.Id }
+                : new[] { baselineTarget.Id, localTarget.Id };
+            Assert.Equal(expectedTargets.OrderBy(v => v), saved.C1C1Many2Manies.Select(v => v.Id).OrderBy(v => v));
         }
 
         [Theory]
@@ -163,6 +153,7 @@ namespace Tests.Workspace
             Assert.False((await remote.PushAsync()).HasErrors);
             Assert.False((await remote.PullAsync(pull)).HasErrors);
             var edited = (await editing.PullAsync(pull)).GetCollection<C1>()[0];
+            var version = edited.Strategy.Version;
             edited.Strategy.SetUnitRole(roleType, local);
             source.C1AllorsInteger = 2;
             Assert.False((await remote.PushAsync()).HasErrors);
@@ -172,8 +163,8 @@ namespace Tests.Workspace
             var result = await editing.PullAsync(pull);
             Assert.False(result.HasErrors);
             Assert.Empty(result.MergeErrors);
-            Assert.Equal(source.Strategy.Version, edited.Strategy.Version);
-            Assert.Equal(2, edited.C1AllorsInteger);
+            Assert.Equal(version, edited.Strategy.Version);
+            Assert.Equal(1, edited.C1AllorsInteger);
             Assert.Equal(local, edited.Strategy.GetUnitRole(roleType));
             var diff = Assert.IsAssignableFrom<IUnitDiff>(Assert.Single(edited.Strategy.Diff()));
             Assert.Equal(roleType.RelationType, diff.RelationType);
@@ -243,19 +234,10 @@ namespace Tests.Workspace
             Assert.Equal(incoming, source.Strategy.GetUnitRole(roleType));
 
             var result = await editing.PullAsync(pull);
-            var conflict = remoteEdit != "unchanged-null" && remoteEdit != "local-removal";
-            Assert.Equal(conflict, result.HasErrors);
-            if (conflict)
-            {
-                Assert.Same(edited.Strategy, Assert.Single(result.MergeErrors).Strategy);
-            }
-            else
-            {
-                Assert.Empty(result.MergeErrors);
-            }
-
-            Assert.Equal(conflict ? version : source.Strategy.Version, edited.Strategy.Version);
-            Assert.Equal(conflict ? 1 : 2, edited.C1AllorsInteger);
+            Assert.False(result.HasErrors);
+            Assert.Empty(result.MergeErrors);
+            Assert.Equal(version, edited.Strategy.Version);
+            Assert.Equal(1, edited.C1AllorsInteger);
             Assert.Equal(local, edited.Strategy.GetUnitRole(roleType));
             Assert.True(edited.Strategy.HasChanges);
             var diff = Assert.IsAssignableFrom<IUnitDiff>(Assert.Single(edited.Strategy.Diff()));
@@ -264,9 +246,9 @@ namespace Tests.Workspace
             Assert.Equal(local, diff.ChangedRole);
 
             edited.Strategy.Reset();
-            Assert.Equal(conflict ? version : source.Strategy.Version, edited.Strategy.Version);
-            Assert.Equal(conflict ? 1 : 2, edited.C1AllorsInteger);
-            Assert.Equal(baseline, edited.Strategy.GetUnitRole(roleType));
+            Assert.Equal(source.Strategy.Version, edited.Strategy.Version);
+            Assert.Equal(2, edited.C1AllorsInteger);
+            Assert.Equal(incoming, edited.Strategy.GetUnitRole(roleType));
             Assert.Empty(edited.Strategy.Diff());
             Assert.False(edited.Strategy.HasChanges);
             Assert.False((await editing.PullAsync(pull)).HasErrors);

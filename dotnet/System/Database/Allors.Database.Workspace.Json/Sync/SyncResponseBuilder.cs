@@ -5,9 +5,11 @@
 
 namespace Allors.Database.Protocol.Json
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Allors.Protocol.Json;
+    using Allors.Protocol.Json.Api.Security;
     using Meta;
     using Allors.Protocol.Json.Api.Sync;
     using Ranges;
@@ -45,6 +47,11 @@ namespace Allors.Database.Protocol.Json
 
         public SyncResponse Build(SyncRequest syncRequest)
         {
+            var knownGrants = ReadKnownVersions(syncRequest.g, nameof(syncRequest.g));
+            var knownRevocations = ReadKnownVersions(syncRequest.r, nameof(syncRequest.r));
+            var grants = new Dictionary<long, AccessResponseGrant>();
+            var revocations = new Dictionary<long, AccessResponseRevocation>();
+            var permissionIds = new HashSet<long>();
             var requestObjects = this.transaction.Instantiate(syncRequest.o);
 
             foreach (var groupBy in requestObjects.GroupBy(v => v.Strategy.Class, v => v))
@@ -57,28 +64,111 @@ namespace Allors.Database.Protocol.Json
                 }
             }
 
+            var objects = requestObjects.Where(this.Include).Select(v =>
+            {
+                var @class = v.Strategy.Class;
+                var acl = this.AccessControl[v];
+                var roleTypes = this.roleTypesByClass[@class];
+
+                foreach (var grant in acl.Grants)
+                {
+                    if (grants.TryGetValue(grant.Id, out var existing))
+                    {
+                        if (existing.v != grant.Version)
+                        {
+                            throw new InvalidOperationException("Sync cannot bind one grant ID to different versions in the same response.");
+                        }
+
+                        continue;
+                    }
+
+                    var entry = new AccessResponseGrant
+                    {
+                        i = grant.Id,
+                        v = grant.Version,
+                        p = knownGrants.Contains((grant.Id, grant.Version)) ? null : grant.PermissionRange.ToArray(),
+                    };
+                    grants.Add(entry.i, entry);
+                    if (entry.p != null)
+                    {
+                        permissionIds.UnionWith(entry.p);
+                    }
+                }
+
+                foreach (var revocation in acl.Revocations)
+                {
+                    if (revocations.TryGetValue(revocation.Id, out var existing))
+                    {
+                        if (existing.v != revocation.Version)
+                        {
+                            throw new InvalidOperationException("Sync cannot bind one revocation ID to different versions in the same response.");
+                        }
+
+                        continue;
+                    }
+
+                    var entry = new AccessResponseRevocation
+                    {
+                        i = revocation.Id,
+                        v = revocation.Version,
+                        p = knownRevocations.Contains((revocation.Id, revocation.Version)) ? null : revocation.PermissionRange.ToArray(),
+                    };
+                    revocations.Add(entry.i, entry);
+                    if (entry.p != null)
+                    {
+                        permissionIds.UnionWith(entry.p);
+                    }
+                }
+
+                return new SyncResponseObject
+                {
+                    i = v.Id,
+                    v = v.Strategy.ObjectVersion,
+                    c = v.Strategy.Class.Tag,
+                    ro = roleTypes
+                        .Where(w => acl.CanRead(w) && v.Strategy.ExistRole(w))
+                        .Select(w => this.CreateSyncResponseRole(v, w, this.unitConvert))
+                        .ToArray(),
+                    g = this.ranges.Import(acl.Grants.Select(w => w.Id)).Save(),
+                    r = this.ranges.Import(acl.Revocations.Select(w => w.Id)).Save(),
+                };
+            }).ToArray();
+
+            var permissions = new PermissionResponseBuilder(this.transaction, this.allowedClasses)
+                .Build(new PermissionRequest { p = permissionIds.OrderBy(v => v).ToArray() }).p ?? Array.Empty<PermissionResponsePermission>();
+            if (permissions.Length != permissionIds.Count || !permissionIds.SetEquals(permissions.Select(v => v.i)))
+            {
+                throw new InvalidOperationException("Sync cannot return complete permission definitions for the selected access entries.");
+            }
+
             return new SyncResponse
             {
-                o = requestObjects.Where(this.Include).Select(v =>
-                {
-                    var @class = v.Strategy.Class;
-                    var acl = this.AccessControl[v];
-                    var roleTypes = this.roleTypesByClass[@class];
-
-                    return new SyncResponseObject
-                    {
-                        i = v.Id,
-                        v = v.Strategy.ObjectVersion,
-                        c = v.Strategy.Class.Tag,
-                        ro = roleTypes
-                            .Where(w => acl.CanRead(w) && v.Strategy.ExistRole(w))
-                            .Select(w => this.CreateSyncResponseRole(v, w, this.unitConvert))
-                            .ToArray(),
-                        g = this.ranges.Import(acl.Grants.Select(w => w.Id)).Save(),
-                        r = this.ranges.Import(acl.Revocations.Select(w => w.Id)).Save(),
-                    };
-                }).ToArray(),
+                o = objects,
+                g = grants.Values.OrderBy(v => v.i).ToArray(),
+                r = revocations.Values.OrderBy(v => v.i).ToArray(),
+                p = permissions,
             };
+        }
+
+        private static HashSet<(long Id, long Version)> ReadKnownVersions(long[][] entries, string parameterName)
+        {
+            var versions = new HashSet<(long Id, long Version)>();
+            if (entries == null)
+            {
+                return versions;
+            }
+
+            foreach (var entry in entries)
+            {
+                if (entry == null || entry.Length != 2 || entry[0] <= 0 || entry[1] < 0)
+                {
+                    throw new ArgumentException("Sync cache entries must be [id, version] pairs with a positive ID and a non-negative version.", parameterName);
+                }
+
+                versions.Add((entry[0], entry[1]));
+            }
+
+            return versions;
         }
 
         private SyncResponseRole CreateSyncResponseRole(IObject @object, IRoleType roleType, IUnitConvert unitConvert)

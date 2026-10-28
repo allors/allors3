@@ -26,10 +26,41 @@ export class PullResult extends Result implements IPullResult {
 
   workspace: IWorkspace;
 
-  constructor(session: ISession, private pullResponse: PullResponse) {
-    super(session, pullResponse);
+  private readonly pullResponse: PullResponse;
 
+  constructor(session: ISession, pullResponse: PullResponse) {
+    super(session, {
+      ...pullResponse,
+      c: PullResult.copyDictionary(pullResponse.c, (ids) =>
+        Array.isArray(ids) ? [...ids] : ids
+      ),
+      o: PullResult.copyDictionary(pullResponse.o),
+      v: PullResult.copyDictionary(pullResponse.v, PullResult.copyValue),
+    } as PullResponse);
+    this.pullResponse = this.response as PullResponse;
     this.workspace = session.workspace;
+  }
+
+  private static copyDictionary<T>(
+    value: { [key: string]: T },
+    copy: (entry: T) => T = (entry) => entry
+  ): { [key: string]: T } {
+    if (value == null || typeof value !== 'object' || Array.isArray(value)) {
+      return value;
+    }
+    return Object.fromEntries(
+      Object.entries(value).map(([key, entry]) => [key, copy(entry)])
+    );
+  }
+
+  private static copyValue<T>(value: T): T {
+    if (Array.isArray(value)) {
+      return value.map(PullResult.copyValue) as T;
+    }
+    if (value instanceof Date) {
+      return new Date(value.getTime()) as T;
+    }
+    return value;
   }
 
   override get hasErrors(): boolean {

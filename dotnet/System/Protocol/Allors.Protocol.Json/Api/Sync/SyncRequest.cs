@@ -11,5 +11,15 @@ namespace Allors.Protocol.Json.Api.Sync
         /// Objects
         /// </summary>
         public long[] o { get; set; }
+
+        /// <summary>
+        /// Complete cached grants [id, version]
+        /// </summary>
+        public long[][] g { get; set; }
+
+        /// <summary>
+        /// Complete cached revocations [id, version]
+        /// </summary>
+        public long[][] r { get; set; }
     }
 }

@@ -19,10 +19,17 @@ export abstract class DatabaseOriginState extends RecordBasedOriginState {
 
   private isPushed: boolean;
 
+  private latestRecord: DatabaseRecord;
+
   protected constructor(public databaseRecord: DatabaseRecord) {
     super();
     this.previousRecord = this.databaseRecord;
+    this.latestRecord = this.databaseRecord;
     this.isPushed = false;
+  }
+
+  get hasPendingSnapshot(): boolean {
+    return this.latestRecord !== this.databaseRecord;
   }
 
   get version(): number {
@@ -106,20 +113,27 @@ export abstract class DatabaseOriginState extends RecordBasedOriginState {
     this.isPushed = true;
   }
 
-  onPulled(pull: IPullResult) {
-    const newRecord = this.session.workspace.database.getRecord(this.id);
-    if (!this.isPushed) {
-      if (!this.canMerge(newRecord)) {
-        pull.addMergeError(this.object);
-        return;
-      }
-    } else {
+  onPulled(pull: IPullResult, newRecord: DatabaseRecord) {
+    this.latestRecord = newRecord;
+    if (this.isPushed) {
       this.changedRoleByRelationType = null;
       this.isPushed = false;
+    } else if (this.hasChanges) {
+      return;
     }
-
     this.databaseRecord = newRecord;
     this.cachedRoleByRelationType = null;
+    this.session.changeSetTracker.onDatabaseChanged(this);
+  }
+
+  override reset() {
+    super.reset();
+    if (this.latestRecord) {
+      this.databaseRecord = this.latestRecord;
+    }
+    this.cachedRoleByRelationType = null;
+    this.session.pushToDatabaseTracker.changed?.delete(this);
+    this.session.changeSetTracker.onDatabaseChanged(this);
   }
 
   onChange() {

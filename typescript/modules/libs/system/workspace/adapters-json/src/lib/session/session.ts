@@ -15,7 +15,7 @@ import {
   Pull,
   ResultError,
 } from '@allors/system/workspace/domain';
-import { Class, Origin } from '@allors/system/workspace/meta';
+import { Class } from '@allors/system/workspace/meta';
 import { DatabaseConnection } from '../database/database-connection';
 import { DatabaseRecord } from '../database/database-record';
 import { InvokeResult } from '../database/invoke/invoke-result';
@@ -28,6 +28,8 @@ import { Strategy } from './strategy';
 
 export class Session extends SystemSession {
   database: DatabaseConnection;
+
+  private operationQueue: Promise<unknown> = Promise.resolve();
 
   constructor(workspace: Workspace) {
     super(workspace);
@@ -64,7 +66,14 @@ export class Session extends SystemSession {
     return strategy.object;
   }
 
-  async invoke(
+  invoke(
+    methodOrMethods: Method | Method[],
+    options?: InvokeOptions
+  ): Promise<IInvokeResult> {
+    return this.enqueue(() => this.invokeCore(methodOrMethods, options));
+  }
+
+  private async invokeCore(
     methodOrMethods: Method | Method[],
     options?: InvokeOptions
   ): Promise<IInvokeResult> {
@@ -99,26 +108,29 @@ export class Session extends SystemSession {
     return result;
   }
 
-  async pull(pullOrPulls: Pull | Pull[]): Promise<IPullResult> {
-    const pulls = Array.isArray(pullOrPulls) ? pullOrPulls : [pullOrPulls];
-
-    for (const pull of pulls) {
-      if (pull.objectId < 0 || pull.object?.id < 0) {
-        throw new Error('Id is not in the database');
+  pull(pullOrPulls: Pull | Pull[]): Promise<IPullResult> {
+    return this.enqueue(async () => {
+      const pulls = Array.isArray(pullOrPulls) ? pullOrPulls : [pullOrPulls];
+      for (const pull of pulls) {
+        if (pull.objectId < 0 || pull.object?.id < 0) {
+          throw new Error('Id is not in the database');
+        }
       }
-    }
-
-    const pullRequest: PullRequest = {
-      x: this.context,
-      d: dependenciesToJson(this.dependencies),
-      l: pulls.map((v) => pullToJson(v)),
-    };
-
-    const pullResponse = await this.database.client.pull(pullRequest);
-    return await this.onPull(pullResponse);
+      const request: PullRequest = {
+        x: this.context,
+        d: dependenciesToJson(this.dependencies),
+        l: pulls.map((v) => pullToJson(v)),
+      };
+      const response = await this.database.client.pull(request);
+      return this.onPull(response, request.x);
+    });
   }
 
-  async push(): Promise<IPushResult> {
+  push(): Promise<IPushResult> {
+    return this.enqueue(() => this.pushCore());
+  }
+
+  private async pushCore(): Promise<IPushResult> {
     const pushRequest: PushRequest = {
       x: this.context,
     };
@@ -166,39 +178,51 @@ export class Session extends SystemSession {
     return pushResult;
   }
 
-  private async onPull(pullResponse: PullResponse): Promise<IPullResult> {
-    const pullResult = new PullResult(this, pullResponse);
+  private enqueue<T>(operation: () => Promise<T>): Promise<T> {
+    const workflow = this.operationQueue.then(operation);
+    this.operationQueue = workflow.catch(() => undefined);
+    return workflow;
+  }
 
-    if (pullResponse.p == null || pullResult.hasErrors) {
-      return pullResult;
+  private async onPull(
+    pullResponse: PullResponse,
+    context: string
+  ): Promise<IPullResult> {
+    const result = new PullResult(this, pullResponse);
+    if (result.hasErrors) {
+      return result;
     }
-
-    const syncRequest = this.database.onPullResonse(pullResponse, this.context);
-    if (syncRequest.o.length > 0) {
-      const syncResponse = await this.database.client.sync(syncRequest);
-      const accessRequest = this.database.onSyncResponse(syncResponse);
-
-      if (accessRequest != null) {
-        const accessResponse = await this.database.client.access(accessRequest);
-        const permissionRequest = this.database.accessResponse(accessResponse);
-        if (permissionRequest != null) {
-          const permissionResponse = await this.database.client.permission(
-            permissionRequest
-          );
-          this.database.permissionResponse(permissionResponse);
-        }
+    const loading = this.database.prepare(
+      result.response as PullResponse,
+      context
+    );
+    if (loading.request.o.length > 0) {
+      loading.load(await this.database.client.sync(loading.request));
+    }
+    loading.validateResult();
+    const newObjects = new Map<number, IObject>();
+    for (const record of loading.records.values()) {
+      if (!this.objectByWorkspaceId.has(record.id)) {
+        newObjects.set(
+          record.id,
+          Strategy.fromDatabaseRecord(this, record).object
+        );
       }
     }
-
-    for (const v of pullResponse.p) {
-      if (this.objectByWorkspaceId.has(v.i)) {
-        const object = this.objectByWorkspaceId.get(v.i);
-        (object.strategy as Strategy).DatabaseOriginState.onPulled(pullResult);
+    this.database.publish(loading);
+    for (const record of loading.records.values()) {
+      const created = newObjects.get(record.id);
+      if (created) {
+        this.addObject(created);
       } else {
-        this.instantiateDatabaseStrategy(v.i);
+        (
+          this.objectByWorkspaceId.get(record.id).strategy as Strategy
+        ).DatabaseOriginState.onPulled(result, record);
       }
     }
-
-    return pullResult;
+    // Bind named results now; later access cannot discover a different connection record.
+    void result.objects;
+    void result.collections;
+    return result;
   }
 }

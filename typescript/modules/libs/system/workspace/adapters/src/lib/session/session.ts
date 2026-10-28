@@ -133,6 +133,15 @@ export abstract class Session implements ISession {
       }
     }
 
+    for (const object of this.objectByWorkspaceId.values()) {
+      if (
+        object.strategy.hasChanges ||
+        (object.strategy as Strategy).DatabaseOriginState?.hasPendingSnapshot
+      ) {
+        objects.add(object);
+      }
+    }
+
     for (const object of objects) {
       object.strategy.reset();
     }
@@ -206,6 +215,10 @@ export abstract class Session implements ISession {
     }
 
     return this.instantiateDatabaseStrategy(id);
+  }
+
+  public getObjectIfInstantiated(id: number): IObject {
+    return this.objectByWorkspaceId.get(id) ?? null;
   }
 
   public getCompositeAssociation(
