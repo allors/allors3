@@ -27,7 +27,8 @@ namespace Allors.Server.Tests
         [InlineData("push", "{\"o\":[{\"r\":[{\"extra\":true}]}]}", "extra")]
         [InlineData("invoke", "{\"l\":[],\"extra\":[]}", "extra")]
         [InlineData("invoke", "{\"l\":[],\"o\":{\"extra\":true}}", "extra")]
-        [InlineData("sync", "{\"o\":[],\"extra\":null}", "extra")]
+        [InlineData("sync", "{\"pull\":{},\"o\":[],\"extra\":null}", "extra")]
+        [InlineData("sync", "{\"pull\":{\"extra\":null}}", "extra")]
         [InlineData("access", "{\"g\":[],\"r\":[],\"extra\":{}}", "extra")]
         [InlineData("permission", "{\"p\":[],\"extra\":1}", "extra")]
         public async Task UnknownFieldsReturnBadRequest(string endpoint, string json, string field)
@@ -58,7 +59,10 @@ namespace Allors.Server.Tests
         [Theory]
         [InlineData("push", "{\"n\":[],\"o\":[]}", "hasErrors", JsonValueKind.False)]
         [InlineData("invoke", "{\"l\":[],\"o\":{\"i\":false,\"c\":false}}", "hasErrors", JsonValueKind.False)]
-        [InlineData("sync", "{\"o\":[]}", "o", JsonValueKind.Array)]
+        [InlineData("sync", "{\"pull\":{},\"o\":[]}", "o", JsonValueKind.Array)]
+        [InlineData("sync", "{\"pull\":{},\"o\":[]}", "g", JsonValueKind.Array)]
+        [InlineData("sync", "{\"pull\":{},\"o\":[]}", "r", JsonValueKind.Array)]
+        [InlineData("sync", "{\"pull\":{},\"o\":[]}", "p", JsonValueKind.Array)]
         [InlineData("access", "{\"g\":[],\"r\":[]}", "g", JsonValueKind.Null)]
         [InlineData("permission", "{\"p\":[]}", "p", JsonValueKind.Null)]
         public async Task EmptyProtocolOperationsRemainValid(string endpoint, string json, string responseField, JsonValueKind responseKind)
@@ -75,6 +79,22 @@ namespace Allors.Server.Tests
             {
                 Assert.Empty(field.EnumerateArray());
             }
+        }
+
+        [Theory]
+        [InlineData("{}", "original Pull")]
+        [InlineData("{\"pull\":{},\"g\":[[1,1],[1,2]]}", "one entry per ID")]
+        [InlineData("{\"pull\":{},\"r\":[[1]]}", "[id, version]")]
+        [InlineData("{\"pull\":{},\"o\":[{\"i\":1,\"v\":1,\"g\":[2]}]}", "security cache table")]
+        public async Task InvalidSyncCacheHintsReturnBadRequest(string json, string message)
+        {
+            await this.SignIn(this.Administrator);
+            using var content = new StringContent(json, Encoding.UTF8, "application/json");
+            using var response = await this.HttpClient.PostAsync(new Uri("sync", UriKind.Relative), content);
+
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            using var result = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+            Assert.Contains(message, result.RootElement.GetProperty("_e").GetString());
         }
     }
 }

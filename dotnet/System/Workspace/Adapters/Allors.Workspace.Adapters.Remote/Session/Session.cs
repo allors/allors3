@@ -6,6 +6,7 @@
 namespace Allors.Workspace.Adapters.Remote
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using Allors.Protocol.Json.Api.Invoke;
@@ -38,53 +39,74 @@ namespace Allors.Workspace.Adapters.Remote
             return (T)strategy.Object;
         }
 
-        private void InstantiateDatabaseStrategy(long id)
+        internal async Task<IPullResult> OnPull(PullRequest pullRequest, PullResponse pullResponse)
         {
-            var databaseRecord = (DatabaseRecord)base.Workspace.DatabaseConnection.GetRecord(id);
-            var strategy = new Strategy(this, databaseRecord);
-            this.AddStrategy(strategy);
-
-            this.ChangeSetTracker.OnInstantiated(strategy);
-        }
-
-        internal async Task<IPullResult> OnPull(PullResponse pullResponse)
-        {
-            var pullResult = new PullResult(this, pullResponse, this.DatabaseConnection.UnitConvert);
-
-            if (pullResult.HasErrors)
+            if (pullResponse == null)
             {
-                return pullResult;
+                throw ResponseContext.Invalid("Pull returned no response");
             }
 
-            var syncRequest = this.Workspace.DatabaseConnection.OnPullResponse(pullResponse);
-            if (syncRequest.o.Length > 0)
+            if (pullResponse.HasErrors)
             {
-                var database = (DatabaseConnection)base.Workspace.DatabaseConnection;
-                var syncResponse = await database.Sync(syncRequest);
-                var accessRequest = database.OnSyncResponse(syncResponse);
+                return new PullResult(this, pullResponse, this.DatabaseConnection.UnitConvert);
+            }
 
-                if (accessRequest != null)
+            var database = this.DatabaseConnection;
+            var context = database.OnPullResponse(pullRequest, pullResponse);
+            if (context.NeedsSync)
+            {
+                var syncResponse = await database.Sync(context.SyncRequest);
+                if (syncResponse == null)
                 {
-                    var accessResponse = await database.Access(accessRequest);
-                    var permissionRequest = database.AccessResponse(accessResponse);
-                    if (permissionRequest != null)
-                    {
-                        var permissionResponse = await database.Permission(permissionRequest);
-                        database.PermissionResponse(permissionResponse);
-                    }
+                    throw ResponseContext.Invalid("Sync returned no response");
                 }
+
+                if (syncResponse.HasErrors)
+                {
+                    return new PullResult(this, new PullResponse
+                    {
+                        _e = syncResponse._e, _a = syncResponse._a, _v = syncResponse._v,
+                        _m = syncResponse._m, _d = syncResponse._d,
+                    }, database.UnitConvert);
+                }
+
+                context.OnSync(syncResponse);
             }
 
-            foreach (var v in pullResponse.p)
+            var pullResult = new PullResult(this, context.Result, database.UnitConvert);
+            var created = new List<Strategy>();
+            foreach (var record in context.Records.Values)
             {
-                if (this.StrategyByWorkspaceId.TryGetValue(v.i, out var strategy))
+                if (this.StrategyByWorkspaceId.TryGetValue(record.Id, out var existing))
                 {
-                    strategy.DatabaseOriginState.OnPulled(pullResult);
+                    if (existing.Class != record.Class)
+                    {
+                        throw ResponseContext.Invalid($"Sync changed the class of session object {record.Id} from '{existing.Class.Tag}' to '{record.Class.Tag}'.");
+                    }
                 }
                 else
                 {
-                    this.InstantiateDatabaseStrategy(v.i);
+                    created.Add(new Strategy(this, record));
                 }
+            }
+
+            database.Publish(context);
+            foreach (var record in context.Records.Values)
+            {
+                if (this.StrategyByWorkspaceId.TryGetValue(record.Id, out var strategy))
+                {
+                    strategy.DatabaseOriginState.OnPulled(pullResult, record);
+                }
+            }
+
+            foreach (var strategy in created)
+            {
+                this.AddStrategy(strategy);
+            }
+
+            foreach (var strategy in created)
+            {
+                this.ChangeSetTracker.OnInstantiated(strategy);
             }
 
             return pullResult;
@@ -125,10 +147,19 @@ namespace Allors.Workspace.Adapters.Remote
                 }
             }
 
-            var pullRequest = new PullRequest { l = pulls.Select(v => v.ToJson(this.DatabaseConnection.UnitConvert)).ToArray() };
+            var pullRequest = new PullRequest
+            {
+                l = pulls.Select(v => v.ToJson(this.DatabaseConnection.UnitConvert)).ToArray(),
+                d = this.dependencies?.Where(v => v.PropertyType.ObjectType.IsComposite).Select(v => new PullDependency
+                {
+                    o = v.ObjectType.Tag,
+                    r = (v.PropertyType as IRoleType)?.RelationType.Tag,
+                    a = (v.PropertyType as IAssociationType)?.RelationType.Tag,
+                }).ToArray(),
+            };
 
             var pullResponse = await this.DatabaseConnection.Pull(pullRequest);
-            return await this.OnPull(pullResponse);
+            return await this.OnPull(pullRequest, pullResponse);
         }
 
         public override async Task<IPushResult> PushAsync()

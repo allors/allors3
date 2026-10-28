@@ -27,6 +27,7 @@ export * from './lib/api/push/push-response-new-object';
 
 export * from './lib/api/sync/sync-request';
 export * from './lib/api/sync/sync-response';
+export * from './lib/api/sync/sync-response-result';
 export * from './lib/api/sync/sync-response-object';
 export * from './lib/api/sync/sync-response-role';
 

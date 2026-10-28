@@ -6,5 +6,5 @@ export interface AccessResponseGrant {
   v: number;
 
   /** PermissionIds */
-  p: number[];
+  p?: number[];
 }

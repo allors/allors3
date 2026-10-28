@@ -36,6 +36,12 @@ namespace Allors.Database.Protocol.Json
 
                 securityResponse.p = permissions.Select(v => v switch
                 {
+                    ICreatePermission permission => new PermissionResponsePermission
+                    {
+                        i = permission.Strategy.ObjectId,
+                        c = permission.Class.Tag,
+                        o = (long)Operations.Create
+                    },
                     IReadPermission permission => new PermissionResponsePermission
                     {
                         i = permission.Strategy.ObjectId,

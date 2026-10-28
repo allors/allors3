@@ -35,7 +35,7 @@ namespace Tests
 
             var syncRequest = new SyncRequest
             {
-                o = new[] { x1.Id },
+                pull = new Allors.Protocol.Json.Api.Pull.PullRequest { l = new[] { new Allors.Protocol.Json.Data.Pull { o = x1.Id } } },
             };
             var api = new Api(this.Transaction, "X", CancellationToken.None);
             var syncResponse = api.Sync(syncRequest);
@@ -71,7 +71,7 @@ namespace Tests
 
             var syncRequest = new SyncRequest
             {
-                o = new[] { x1.Id},
+                pull = new Allors.Protocol.Json.Api.Pull.PullRequest { l = new[] { new Allors.Protocol.Json.Data.Pull { o = x1.Id } } },
             };
             var api = new Api(this.Transaction, "Y", CancellationToken.None);
             var syncResponse = api.Sync(syncRequest);
@@ -122,7 +122,7 @@ namespace Tests
             Assert.Equal("Hidden value", unreadable.String);
             Assert.Equal("Hidden organisation name", organisation.Name);
 
-            var response = api.Sync(new SyncRequest { o = new[] { organisation.Id, unreadable.Id, readable.Id } });
+            var response = api.Sync(new SyncRequest { pull = new Allors.Protocol.Json.Api.Pull.PullRequest { l = new[] { organisation.Id, unreadable.Id, readable.Id }.Select(id => new Allors.Protocol.Json.Data.Pull { o = id }).ToArray() } });
             Assert.Equal(3, response.o.Length);
 
             var syncOrganisation = Assert.Single(response.o, v => v.i == organisation.Id);

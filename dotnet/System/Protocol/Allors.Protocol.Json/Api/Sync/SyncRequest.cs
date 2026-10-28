@@ -5,11 +5,28 @@
 
 namespace Allors.Protocol.Json.Api.Sync
 {
+    using Pull;
+
     public class SyncRequest : Request
     {
         /// <summary>
-        /// Objects
+        /// The original Pull request, including arguments and dependencies.
         /// </summary>
-        public long[] o { get; set; }
+        public PullRequest pull { get; set; }
+
+        /// <summary>
+        /// Complete cached objects matching the first Pull response.
+        /// </summary>
+        public PullResponseObject[] o { get; set; }
+
+        /// <summary>
+        /// Complete cached grants [id, version], with one version per id.
+        /// </summary>
+        public long[][] g { get; set; }
+
+        /// <summary>
+        /// Complete cached revocations [id, version], with one version per id.
+        /// </summary>
+        public long[][] r { get; set; }
     }
 }

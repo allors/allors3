@@ -285,26 +285,31 @@ namespace Allors.Database.Configuration
 
         private IVersionedGrant[] GetVersionedGrants(ITransaction transaction, IUser user, IEnumerable<KeyValuePair<long, long>> grants, string workspaceName)
         {
-            var result = new List<IVersionedGrant>();
+            var result = new Dictionary<long, IVersionedGrant>();
 
             var versionedGrantById = this.versionedGrantsByWorkspace[workspaceName];
 
-            IList<long> missingIds = null;
+            ISet<long> missingIds = null;
             foreach (var kvp in grants)
             {
                 var grantId = kvp.Key;
                 var grantVersion = kvp.Value;
 
+                if (result.ContainsKey(grantId) || missingIds?.Contains(grantId) == true)
+                {
+                    continue;
+                }
+
                 if (versionedGrantById.TryGetValue(grantId, out var versionedGrant) && versionedGrant.Version == grantVersion)
                 {
                     if (user != null && versionedGrant.UserSet.Contains(user.Id))
                     {
-                        result.Add(versionedGrant);
+                        result.Add(grantId, versionedGrant);
                     }
                 }
                 else
                 {
-                    missingIds ??= new List<long>();
+                    missingIds ??= new HashSet<long>();
                     missingIds.Add(grantId);
                 }
             }
@@ -322,12 +327,12 @@ namespace Allors.Database.Configuration
                     versionedGrantById[grant.Id] = versionedGrant;
                     if (user != null && versionedGrant.UserSet.Contains(user.Id))
                     {
-                        result.Add(versionedGrant);
+                        result.Add(grant.Id, versionedGrant);
                     }
                 }
             }
 
-            return result.ToArray();
+            return result.Values.ToArray();
         }
     }
 }

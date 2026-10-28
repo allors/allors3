@@ -6,5 +6,5 @@ export interface AccessResponseRevocation {
   v: number;
 
   /** PermissionIds */
-  p: number[];
+  p?: number[];
 }
