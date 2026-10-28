@@ -6,6 +6,7 @@
 namespace Allors.Workspace.Adapters.Remote
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
@@ -27,9 +28,17 @@ namespace Allors.Workspace.Adapters.Remote
 
         private readonly SemaphoreSlim operationGate = new SemaphoreSlim(1, 1);
 
+        private List<EventArgs> pendingChangeEvents;
+
         private DatabaseConnection DatabaseConnection { get; }
 
         public new Workspace Workspace => (Workspace)base.Workspace;
+
+        public override void OnChanged(EventArgs e)
+        {
+            if (this.pendingChangeEvents != null) this.pendingChangeEvents.Add(e);
+            else base.OnChanged(e);
+        }
 
         public override T Create<T>(IClass @class)
         {
@@ -62,15 +71,23 @@ namespace Allors.Workspace.Adapters.Remote
             });
             pullResult.Prepare(id => id == 0 ? null : strategies[id].Object);
             this.DatabaseConnection.Publish(context);
-            foreach (var entry in strategies)
+            var changeEvents = new List<EventArgs>();
+            this.pendingChangeEvents = changeEvents;
+            try
             {
-                if (this.StrategyByWorkspaceId.ContainsKey(entry.Key)) entry.Value.DatabaseOriginState.OnPulled(context.Records[entry.Key]);
-                else
+                foreach (var entry in strategies)
                 {
-                    this.AddStrategy(entry.Value);
-                    this.ChangeSetTracker.OnInstantiated(entry.Value);
+                    if (this.StrategyByWorkspaceId.ContainsKey(entry.Key)) entry.Value.DatabaseOriginState.OnPulled(context.Records[entry.Key]);
+                    else
+                    {
+                        this.AddStrategy(entry.Value);
+                        this.ChangeSetTracker.OnInstantiated(entry.Value);
+                    }
                 }
             }
+            finally { this.pendingChangeEvents = null; }
+
+            foreach (var e in changeEvents) this.OnChanged(e);
 
             return pullResult;
         }

@@ -487,6 +487,96 @@ namespace Tests.Workspace
             Assert.All(changes.RolesByAssociationType.Values, targets => Assert.DoesNotContain(null, targets));
         }
 
+        [Theory]
+        [InlineData(0, false)]
+        [InlineData(1, false)]
+        [InlineData(2, false)]
+        [InlineData(1, true)]
+        public async Task HybridPullNotificationsObserveCompleteSession(int initialObjectCount, bool throwFromHandler)
+        {
+            var version = 1;
+            using var handler = new ResponseHandler(request =>
+            {
+                var includeTarget = version > 1 || initialObjectCount == 2;
+                if (request.RequestUri.AbsolutePath.EndsWith("/pull"))
+                {
+                    var manifest = Manifest(version, 1);
+                    if (includeTarget) manifest.p = manifest.p.Append(new PullResponseObject { i = 2, v = version + 1, g = new long[] { 11 } }).ToArray();
+                    return Task.FromResult(Json(manifest));
+                }
+
+                Assert.EndsWith("/sync", request.RequestUri.AbsolutePath);
+                var snapshot = this.Snapshot(version, 1, true);
+                snapshot.p = snapshot.p.Append(new PermissionResponsePermission { i = 36, c = this.M.C1.Tag, t = this.M.C1.C1C1Many2One.RelationType.Tag, o = (long)Operations.Read }).ToArray();
+                snapshot.g[0].p = snapshot.g[0].p.Append(36L).ToArray();
+                if (version > 1) snapshot.o[0].ro = snapshot.o[0].ro.Append(new SyncResponseRole { t = this.M.C1.C1C1Many2One.RelationType.Tag, o = 2 }).ToArray();
+                if (includeTarget)
+                {
+                    var target = this.Snapshot(version, 1, true).o[0];
+                    target.i = 2;
+                    snapshot.o = snapshot.o.Append(target).ToArray();
+                }
+
+                return Task.FromResult(Json(snapshot));
+            });
+            using var client = new HttpClient(handler) { BaseAddress = new Uri("http://test/") };
+            var session = this.CreateWorkspace(client).CreateSession();
+            var pull = new Pull { ObjectId = 1 };
+            if (initialObjectCount > 0) await session.PullAsync(pull);
+            session.Checkpoint();
+
+            version = 2;
+            var notifications = 0;
+            var expectedException = new InvalidOperationException("Notification failure");
+            EventHandler onChange = (_, _) =>
+            {
+                ++notifications;
+                var source = session.Instantiate<C1>(1);
+                Assert.Equal("value2", source.C1AllorsString);
+                var target = source.C1C1Many2One;
+                Assert.Equal(2, target.Id);
+                Assert.Equal("value2", target.C1AllorsString);
+                if (notifications != 1) return;
+
+                var changes = session.Checkpoint();
+                Assert.Equal(2 - initialObjectCount, changes.Instantiated.Count);
+                if (initialObjectCount == 0) Assert.Contains(source.Strategy, changes.Instantiated);
+                else
+                {
+                    Assert.Contains(source.Strategy, changes.AssociationsByRoleType[this.M.C1.C1AllorsString]);
+                    Assert.Contains(source.Strategy, changes.AssociationsByRoleType[this.M.C1.C1C1Many2One]);
+                    Assert.Contains(target.Strategy, changes.RolesByAssociationType[this.M.C1.C1C1Many2One.AssociationType]);
+                }
+
+                if (initialObjectCount < 2) Assert.Contains(target.Strategy, changes.Instantiated);
+                else Assert.Contains(target.Strategy, changes.AssociationsByRoleType[this.M.C1.C1AllorsString]);
+                if (throwFromHandler) throw expectedException;
+            };
+            session.OnChange += onChange;
+            try
+            {
+                if (throwFromHandler) Assert.Same(expectedException, await Assert.ThrowsAsync<InvalidOperationException>(() => session.PullAsync(pull)));
+                else Assert.False((await session.PullAsync(pull)).HasErrors);
+            }
+            finally
+            {
+                session.OnChange -= onChange;
+            }
+
+            Assert.Equal(throwFromHandler ? 1 : 2, notifications);
+            Assert.Empty(session.Checkpoint().AssociationsByRoleType);
+            if (throwFromHandler)
+            {
+                version = 3;
+                var recoveredNotifications = 0;
+                session.OnChange += (_, _) => ++recoveredNotifications;
+                Assert.False((await session.PullAsync(pull).WaitAsync(TimeSpan.FromSeconds(10))).HasErrors);
+                Assert.Equal(2, recoveredNotifications);
+                Assert.Equal("value3", session.Instantiate<C1>(1).C1AllorsString);
+                Assert.Equal("value3", session.Instantiate<C1>(2).C1AllorsString);
+            }
+        }
+
         private static PullResponse Manifest(long dataVersion, long grantVersion) => new PullResponse
         {
             p = new[] { new PullResponseObject { i = 1, v = dataVersion + 1, g = new long[] { 11 } } },
