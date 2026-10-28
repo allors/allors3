@@ -340,6 +340,92 @@ test('same-session pulls queue through adoption while other sessions remain conc
   await waiting;
 });
 
+test.each(['data', 'grant', 'revocation'])(
+  'a delayed cache hit cannot replace another session\'s synchronized snapshot: %s',
+  async (change) => {
+    const { database, session, client, m, response, select, enqueue } = setup();
+    const initial = response();
+    enqueue(initial);
+    const edited = (await session.pull({ objectId: 101 })).object<C1>('C1');
+    edited.C1AllorsString = 'local';
+
+    const additional = response(2, 2, 2, 'additional');
+    additional.o[0].i = 102;
+    const pull = select(initial);
+    pull.p.push(...select(additional).p);
+    client.pull.mockResolvedValueOnce(pull);
+    let release: (value: SyncResponse) => void;
+    client.sync.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          release = resolve;
+        })
+    );
+    const pending = session.pull({ objectId: 101 });
+    await flush();
+    expect(client.sync).toHaveBeenLastCalledWith({
+      x: undefined,
+      o: [102],
+      g: [[11, 2]],
+      r: [[21, 2]],
+    });
+
+    const updated =
+      change === 'data'
+        ? response(3, 2, 2, 'remote')
+        : response(
+            2,
+            change === 'grant' ? 3 : 2,
+            change === 'revocation' ? 3 : 2
+          );
+    if (change === 'grant') {
+      updated.g[0].p = [21, 31];
+    } else if (change === 'revocation') {
+      updated.r[0].p = [32];
+    }
+    const other = database.createWorkspace().createSession();
+    enqueue(updated);
+    const refreshed = (await other.pull({ objectId: 101 })).object<C1>('C1');
+    const latest = database.getRecord(101);
+    expect(refreshed.strategy.version).toBe(updated.o[0].v);
+    expect(refreshed.strategy.canWrite(m.C1.C1AllorsString)).toBe(
+      change === 'data'
+    );
+
+    release(additional);
+    const result = await pending;
+    expect(result.object<C1>('C1')).toBe(edited);
+    expect(edited.C1AllorsString).toBe('local');
+    expect(edited.strategy.version).toBe(2);
+    expect(edited.strategy.canWrite(m.C1.C1AllorsString)).toBe(true);
+    session.reset();
+    expect(edited.C1AllorsString).toBe('baseline');
+    expect(edited.strategy.version).toBe(2);
+    expect(edited.strategy.canWrite(m.C1.C1AllorsString)).toBe(true);
+    expect(database.getRecord(102).getRole(m.C1.C1AllorsString)).toBe(
+      'additional'
+    );
+    expect(database.getRecord(101) === latest).toBe(true);
+
+    const observer = database.createWorkspace().createSession();
+    const observed = observer.instantiate<C1>(101);
+    expect(observed.strategy.version).toBe(updated.o[0].v);
+    expect(observed.C1AllorsString).toBe(
+      change === 'data' ? 'remote' : 'baseline'
+    );
+    expect(observed.strategy.canWrite(m.C1.C1AllorsString)).toBe(
+      change === 'data'
+    );
+    const syncCount = client.sync.mock.calls.length;
+    client.pull.mockResolvedValueOnce(select(updated));
+    expect((await observer.pull({ objectId: 101 })).object<C1>('C1')).toBe(
+      observed
+    );
+    expect(client.sync).toHaveBeenCalledTimes(syncCount);
+    expect(database.getRecord(101) === latest).toBe(true);
+  }
+);
+
 test.each([false, true])(
   'session Reset after Checkpoint adopts the latest snapshot even when the last edit was restored: %s',
   async (restore) => {

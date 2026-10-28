@@ -97,7 +97,7 @@ export class DatabaseConnection extends SystemDatabaseConnection {
     for (const entry of context.entries.values()) {
       this.accessByKey.set(entry.key, entry);
     }
-    for (const record of context.records.values()) {
+    for (const record of context.synchronizedRecords) {
       this.recordsByKey.set(record.key, record);
       this.recordsById.set(record.id, record);
     }

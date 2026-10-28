@@ -23,6 +23,9 @@ namespace Tests.Workspace.Remote
                 (Allors.Workspace.Adapters.Remote.Configuration)this.Workspace.Configuration,
                 () => new Allors.Workspace.WorkspaceServices(), client, new Allors.Workspace.Adapters.IdGenerator(), new DefaultStructRanges<long>()).CreateWorkspace();
 
+        protected override object GetCachedRecord(IWorkspace workspace, long id) =>
+            ((Allors.Workspace.Adapters.Workspace)workspace).DatabaseConnection.GetRecord(id);
+
         protected override IPullResult CreatePullResult(ISession session, Allors.Protocol.Json.Api.Pull.PullResponse response)
         {
             var database = (Allors.Workspace.Adapters.Remote.DatabaseConnection)((Allors.Workspace.Adapters.Workspace)session.Workspace).DatabaseConnection;

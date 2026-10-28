@@ -68,7 +68,7 @@ namespace Allors.Workspace.Adapters.Remote
                     this.permissionIds[entry.Value.Key] = entry.Key;
                 }
 
-                foreach (var record in context.Records.Values)
+                foreach (var record in context.SynchronizedRecords)
                 {
                     this.records[record.Key] = record;
                     this.recordsById[record.Id] = record;

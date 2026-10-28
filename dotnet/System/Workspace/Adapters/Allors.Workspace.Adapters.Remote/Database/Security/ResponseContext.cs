@@ -54,6 +54,7 @@ namespace Allors.Workspace.Adapters.Remote
         }
 
         internal Dictionary<long, DatabaseRecord> Records { get; } = new Dictionary<long, DatabaseRecord>();
+        internal List<DatabaseRecord> SynchronizedRecords { get; } = new List<DatabaseRecord>();
         internal Dictionary<(long Id, long Version), AccessEntry> Grants { get; } = new Dictionary<(long, long), AccessEntry>();
         internal Dictionary<(long Id, long Version), AccessEntry> Revocations { get; } = new Dictionary<(long, long), AccessEntry>();
         internal Dictionary<long, PermissionEntry> Permissions { get; } = new Dictionary<long, PermissionEntry>();
@@ -100,6 +101,7 @@ namespace Allors.Workspace.Adapters.Remote
                 var revocations = Ids(item.r).Select(id => this.Revocations[(id, revocationVersions[id])]);
                 var record = DatabaseRecord.FromResponse(this.database, item, binding, grants, revocations);
                 this.Records.Add(record.Id, record);
+                this.SynchronizedRecords.Add(record);
             }
 
             if (!received.SetEquals(this.requested)) throw Invalid("Sync did not return every requested object");

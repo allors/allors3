@@ -40,6 +40,8 @@ namespace Tests.Workspace
 
         protected abstract IPullResult CreatePullResult(ISession session, PullResponse response);
 
+        protected abstract object GetCachedRecord(IWorkspace workspace, long id);
+
         [Theory]
         [InlineData(false)]
         [InlineData(true)]
@@ -194,6 +196,117 @@ namespace Tests.Workspace
             Assert.Equal(2, newer.C1AllorsInteger);
             Assert.False(newer.CanReadC1AllorsString);
             Assert.Equal(2, syncCount);
+        }
+
+        [Theory]
+        [InlineData("data")]
+        [InlineData("grant")]
+        [InlineData("revocation")]
+        public async Task HybridCachedSelectionsDoNotReplaceConcurrentPublishedRecords(string change)
+        {
+            var entered = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var release = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var pullCount = 0;
+            var syncCount = 0;
+            var newerDataVersion = change == "data" ? 2 : 1;
+            var newerSecurityVersion = change == "data" ? 1 : 2;
+            PullResponse Selection(long dataVersion, long securityVersion)
+            {
+                var selection = Manifest(dataVersion, change == "grant" ? securityVersion : 1);
+                if (change == "revocation")
+                {
+                    selection.p[0].r = new long[] { 21 };
+                    selection.r = new[] { new long[] { 21, securityVersion } };
+                }
+
+                return selection;
+            }
+
+            SyncResponse Complete(long dataVersion, long securityVersion)
+            {
+                var snapshot = this.Snapshot(dataVersion, change == "grant" ? securityVersion : 1, change != "grant" || securityVersion == 1);
+                if (change == "revocation")
+                {
+                    snapshot.o[0].r = new long[] { 21 };
+                    snapshot.r = new[] { new AccessResponseRevocation { i = 21, v = securityVersion, p = securityVersion == 1 ? Array.Empty<long>() : new long[] { 31 } } };
+                    if (securityVersion != 1) snapshot.o[0].ro = snapshot.o[0].ro.Where(role => role.t != this.M.C1.C1AllorsString.RelationType.Tag).ToArray();
+                }
+
+                return snapshot;
+            }
+
+            using var handler = new ResponseHandler(async request =>
+            {
+                if (request.RequestUri.AbsolutePath.EndsWith("/pull"))
+                {
+                    var call = Interlocked.Increment(ref pullCount);
+                    var selection = call <= 2 ? Selection(1, 1) : Selection(newerDataVersion, newerSecurityVersion);
+                    if (call == 2)
+                    {
+                        selection.p = selection.p.Append(new PullResponseObject { i = 2, v = 2, g = new long[] { 11 }, r = selection.p[0].r }).ToArray();
+                        selection.o.Add("Y", 2);
+                    }
+
+                    return Json(selection);
+                }
+
+                Assert.EndsWith("/sync", request.RequestUri.AbsolutePath);
+                var sync = Interlocked.Increment(ref syncCount);
+                var syncRequest = JsonSerializer.Deserialize<SyncRequest>(await request.Content.ReadAsStringAsync());
+                if (sync == 2)
+                {
+                    Assert.Equal(new long[] { 2 }, syncRequest.o);
+                    entered.SetResult(true);
+                    await release.Task;
+                    var snapshot = Complete(1, 1);
+                    snapshot.o[0].i = 2;
+                    return Json(snapshot);
+                }
+
+                Assert.Equal(new long[] { 1 }, syncRequest.o);
+                return Json(sync == 1 ? Complete(1, 1) : Complete(newerDataVersion, newerSecurityVersion));
+            });
+            using var client = new HttpClient(handler) { BaseAddress = new Uri("http://test/") };
+            var workspace = this.CreateWorkspace(client);
+            var first = workspace.CreateSession();
+            var second = workspace.CreateSession();
+            var pull = new Pull { ObjectId = 1 };
+            var original = (await first.PullAsync(pull)).GetObject<C1>();
+            original.C1AllorsString = "local";
+            var pending = first.PullAsync(pull);
+            object published = null;
+            try
+            {
+                await entered.Task.WaitAsync(TimeSpan.FromSeconds(10));
+                var newer = (await second.PullAsync(pull).WaitAsync(TimeSpan.FromSeconds(10))).GetObject<C1>();
+                Assert.Equal(newerDataVersion + 1, newer.Strategy.Version);
+                Assert.Equal(change == "data", newer.CanReadC1AllorsString);
+                published = this.GetCachedRecord(workspace, 1);
+            }
+            finally
+            {
+                release.TrySetResult(true);
+            }
+
+            var completed = await pending.WaitAsync(TimeSpan.FromSeconds(10));
+            Assert.Same(published, this.GetCachedRecord(workspace, 1));
+            Assert.Same(original, completed.GetObject<C1>());
+            Assert.Equal("local", original.C1AllorsString);
+            Assert.Equal(2, original.Strategy.Version);
+            Assert.True(original.CanReadC1AllorsString);
+            Assert.NotNull(this.GetCachedRecord(workspace, 2));
+            Assert.Equal(2, completed.GetObject<C1>("Y").Strategy.Version);
+            Assert.Equal("value1", completed.GetObject<C1>("Y").C1AllorsString);
+            original.Strategy.Reset();
+            Assert.Equal("value1", original.C1AllorsString);
+            Assert.Equal(2, original.Strategy.Version);
+            Assert.True(original.CanReadC1AllorsString);
+
+            var cached = (await workspace.CreateSession().PullAsync(pull)).GetObject<C1>();
+            Assert.Equal(newerDataVersion + 1, cached.Strategy.Version);
+            Assert.Equal(change == "data", cached.CanReadC1AllorsString);
+            Assert.Same(published, this.GetCachedRecord(workspace, 1));
+            Assert.Equal(3, syncCount);
         }
 
         [Theory]

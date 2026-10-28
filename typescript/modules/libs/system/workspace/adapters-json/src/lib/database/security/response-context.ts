@@ -36,6 +36,7 @@ export interface AccessEntry {
 
 export class ResponseContext {
   readonly records = new Map<number, DatabaseRecord>();
+  readonly synchronizedRecords: DatabaseRecord[] = [];
   readonly entries = new Map<string, AccessEntry>();
   readonly definitions = new Map<number, PermissionDefinition>();
   readonly request: SyncRequest;
@@ -152,6 +153,7 @@ export class ResponseContext {
         throw new Error('Sync changed the class of an existing object.');
       }
       this.records.set(record.id, record);
+      this.synchronizedRecords.push(record);
     }
     if (loaded.size !== requested.size) {
       throw new Error('Sync omitted a requested object.');
