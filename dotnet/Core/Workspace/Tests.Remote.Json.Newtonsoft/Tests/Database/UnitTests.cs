@@ -25,6 +25,9 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation.Remote
             { UnitTags.Decimal, true, "Cannot convert System.Boolean to Decimal (tag '4')." },
             { UnitTags.Float, new DateTime(2026, 10, 9, 12, 34, 56, DateTimeKind.Utc), "Cannot convert System.DateTime to Float (tag '5')." },
             { UnitTags.Integer, 0d, "Cannot convert System.Double to Integer (tag '6')." },
+            { UnitTags.Integer, 1.5m, "Cannot convert System.Decimal to Integer (tag '6')." },
+            { UnitTags.Integer, 2147483648L, "Cannot convert System.Int64 to Integer (tag '6'): 2147483648 is not a whole number from -2147483648 through 2147483647." },
+            { UnitTags.Integer, -2147483649L, "Cannot convert System.Int64 to Integer (tag '6'): -2147483649 is not a whole number from -2147483648 through 2147483647." },
             { UnitTags.String, 0, "Cannot convert System.Int32 to String (tag '7')." },
             { UnitTags.Unique, 0, "Cannot convert System.Int32 to Unique (tag '8')." },
             { "99", "value", "Cannot convert System.String to unknown unit (tag '99')." },
@@ -50,6 +53,15 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation.Remote
             }
 
             Assert.True(hasErrors);
+        }
+
+        [Fact]
+        public void UnitConversionFromLongToInteger()
+        {
+            var convert = new UnitConvert();
+
+            Assert.Equal(int.MinValue, Assert.IsType<int>(convert.UnitFromJson(UnitTags.Integer, (long)int.MinValue)));
+            Assert.Equal(int.MaxValue, Assert.IsType<int>(convert.UnitFromJson(UnitTags.Integer, (long)int.MaxValue)));
         }
     }
 }

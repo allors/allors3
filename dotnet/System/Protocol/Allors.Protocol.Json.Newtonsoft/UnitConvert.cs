@@ -56,7 +56,9 @@ namespace Allors.Protocol.Json.Newtonsoft
                 {
                     UnitTags.Decimal => Convert.ToDecimal(longValue),
                     UnitTags.Float => Convert.ToDouble(longValue),
-                    UnitTags.Integer => Convert.ToInt32(longValue),
+                    UnitTags.Integer => longValue >= int.MinValue && longValue <= int.MaxValue
+                        ? (int)longValue
+                        : throw UnitConversionErrors.NotAnInteger(value.GetType().FullName, longValue.ToString(CultureInfo.InvariantCulture)),
                     _ => throw CreateConversionException(tag, value),
                 },
                 float floatValue => tag switch
@@ -81,7 +83,7 @@ namespace Allors.Protocol.Json.Newtonsoft
                     UnitTags.Boolean => boolValue,
                     _ => throw CreateConversionException(tag, value),
                 },
-                _ => value,
+                _ => throw CreateConversionException(tag, value),
             };
 
         public long? LongFromJson(object value) => (long?)value;
@@ -95,22 +97,7 @@ namespace Allors.Protocol.Json.Newtonsoft
 
         public string StringFromJson(object value) => (string)value;
 
-        private static Exception CreateConversionException(string tag, object value)
-        {
-            var unitName = tag switch
-            {
-                UnitTags.Binary => UnitNames.Binary,
-                UnitTags.Boolean => UnitNames.Boolean,
-                UnitTags.DateTime => UnitNames.DateTime,
-                UnitTags.Decimal => UnitNames.Decimal,
-                UnitTags.Float => UnitNames.Float,
-                UnitTags.Integer => UnitNames.Integer,
-                UnitTags.String => UnitNames.String,
-                UnitTags.Unique => UnitNames.Unique,
-                _ => "unknown unit",
-            };
-
-            return new Exception($"Cannot convert {value.GetType().FullName} to {unitName} (tag '{tag}').");
-        }
+        private static Exception CreateConversionException(string tag, object value) =>
+            UnitConversionErrors.Unsupported(tag, value.GetType().FullName);
     }
 }

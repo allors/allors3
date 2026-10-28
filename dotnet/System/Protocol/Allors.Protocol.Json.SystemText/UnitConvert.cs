@@ -45,7 +45,7 @@ namespace Allors.Protocol.Json.SystemTextJson
                         UnitTags.Integer => XmlConvert.ToInt32(@string),
                         UnitTags.String => @string,
                         UnitTags.Unique => XmlConvert.ToGuid(@string),
-                        _ => throw new Exception($"{@string} not supported for tag {tag}")
+                        _ => throw UnitConversionErrors.Unsupported(tag, typeof(string).FullName)
                     };
                 // ToJson leaves these CLR values unchanged, so a caller that converts without
                 // serializing gets them back as they are; UnitConversionWithoutSerialization pins this.
@@ -60,29 +60,51 @@ namespace Allors.Protocol.Json.SystemTextJson
                 default:
                 {
                     var element = (JsonElement)value;
-                    return element.ValueKind switch
+                    switch (element.ValueKind)
                     {
-                        JsonValueKind.Null => null,
-                        JsonValueKind.Undefined => null,
-                        JsonValueKind.False => false,
-                        JsonValueKind.True => true,
-                        _ => tag switch
-                        {
-                            UnitTags.DateTime => element.GetDateTime(),
-                            UnitTags.Binary => Convert.FromBase64String(element.GetString()),
-                            UnitTags.Decimal => element.ValueKind == JsonValueKind.String
-                                ? Convert.ToDecimal(element.GetString(), CultureInfo.InvariantCulture)
-                                : element.GetDecimal(),
-                            UnitTags.Float => element.GetDouble(),
-                            UnitTags.Integer => element.GetInt32(),
-                            UnitTags.String => element.GetString(),
-                            UnitTags.Unique => element.GetGuid(),
-                            _ => throw new Exception($"{element.ValueKind} not supported for tag {tag}")
-                        }
-                    };
+                        case JsonValueKind.Null:
+                        case JsonValueKind.Undefined:
+                            return null;
+                        case JsonValueKind.False:
+                        case JsonValueKind.True:
+                            return tag == UnitTags.Boolean ? element.GetBoolean() : throw CreateConversionException(tag, element);
+                        case JsonValueKind.String:
+                            return tag switch
+                            {
+                                UnitTags.DateTime => element.GetDateTime(),
+                                UnitTags.Binary => Convert.FromBase64String(element.GetString()),
+                                UnitTags.Decimal => Convert.ToDecimal(element.GetString(), CultureInfo.InvariantCulture),
+                                UnitTags.String => element.GetString(),
+                                UnitTags.Unique => element.GetGuid(),
+                                _ => throw CreateConversionException(tag, element)
+                            };
+                        case JsonValueKind.Number:
+                            return tag switch
+                            {
+                                UnitTags.Decimal => element.GetDecimal(),
+                                UnitTags.Float => element.GetDouble(),
+                                UnitTags.Integer => element.TryGetInt32(out var integer)
+                                    ? integer
+                                    : throw UnitConversionErrors.NotAnInteger(Source(element), element.GetRawText()),
+                                _ => throw CreateConversionException(tag, element)
+                            };
+                        default:
+                            throw CreateConversionException(tag, element);
+                    }
                 }
             }
         }
+
+        private static Exception CreateConversionException(string tag, JsonElement element) =>
+            UnitConversionErrors.Unsupported(tag, Source(element));
+
+        private static string Source(JsonElement element) =>
+            element.ValueKind switch
+            {
+                JsonValueKind.False => "JSON Boolean",
+                JsonValueKind.True => "JSON Boolean",
+                _ => $"JSON {element.ValueKind}"
+            };
 
 
         public long? LongFromJson(object value) =>
