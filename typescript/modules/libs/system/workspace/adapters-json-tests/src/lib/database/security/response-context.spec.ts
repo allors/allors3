@@ -627,15 +627,21 @@ test('Pull owns named result buffers while Sync is in flight', async () => {
   expect(result.value('Numbers')).toEqual([1, 2]);
 });
 
-test.each([
-  [false, false],
-  [true, false],
-  [false, true],
-  [true, true],
-])(
-  'Checkpoint reports relation changes even when neither target is loaded: many=%s, reset=%s',
-  async (many, reset) => {
-    const { session, m, response, enqueue } = setup();
+test.each(
+  [
+    [false, false],
+    [true, false],
+    [false, true],
+    [true, true],
+  ].flatMap(([many, reset]) =>
+    ['uncached', 'cached', 'loaded'].map(
+      (targets) => [many, reset, targets] as const
+    )
+  )
+)(
+  'Checkpoint reports relation changes without loading targets: many=%s, reset=%s, targets=%s',
+  async (many, reset, targets) => {
+    const { database, session, client, m, response, select, enqueue } = setup();
     const role = many ? m.C1.C1C1Many2Manies : m.C1.C1C1Many2One;
     const related = (version: number, target: number) => {
       const sync = response(version);
@@ -658,14 +664,52 @@ test.each([
       object.C1AllorsString = 'local';
     }
     session.checkpoint();
+    if (targets !== 'uncached') {
+      const targetResponse = related(2, 102);
+      targetResponse.o = [102, 103].map((i) => ({
+        ...targetResponse.o[0],
+        i,
+        ro: [],
+      }));
+      const targetPull = {
+        ...select(targetResponse),
+        c: { C1s: [102, 103] },
+        o: { C1: 102 },
+      };
+      const other = database.createWorkspace().createSession();
+      client.pull.mockResolvedValueOnce(targetPull);
+      client.sync.mockResolvedValueOnce(targetResponse);
+      await other.pull({ objectId: 102 });
+      if (targets === 'loaded') {
+        client.pull.mockResolvedValueOnce(targetPull);
+        await session.pull({ objectId: 102 });
+      }
+    }
+    const loadedIds = targets === 'loaded' ? [101, 102, 103] : [101];
+    expect(session.instantiate<C1>(m.C1).map((v) => v.id).sort()).toEqual(
+      loadedIds
+    );
     enqueue(related(3, 103));
     await session.pull({ objectId: 101 });
     if (reset) {
       expect(object.strategy.version).toBe(2);
+      expect(object.C1AllorsString).toBe('local');
       object.strategy.reset();
     }
     const changes = session.checkpoint();
+    expect(session.instantiate<C1>(m.C1).map((v) => v.id).sort()).toEqual(
+      loadedIds
+    );
     expect(changes.associationsByRoleType.get(role)?.has(object)).toBe(true);
-    expect(changes.rolesByAssociationType.size).toBe(0);
+    if (targets === 'loaded') {
+      expect(changes.rolesByAssociationType.size).toBe(1);
+      expect(
+        [...changes.rolesByAssociationType.get(role.associationType)]
+          .map((v) => v.id)
+          .sort()
+      ).toEqual([102, 103]);
+    } else {
+      expect(changes.rolesByAssociationType.size).toBe(0);
+    }
   }
 );

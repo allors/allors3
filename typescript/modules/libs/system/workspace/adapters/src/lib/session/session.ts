@@ -217,6 +217,10 @@ export abstract class Session implements ISession {
     return this.instantiateDatabaseStrategy(id);
   }
 
+  public getObjectIfInstantiated(id: number): IObject {
+    return this.objectByWorkspaceId.get(id) ?? null;
+  }
+
   public getCompositeAssociation(
     role: IObject,
     associationType: AssociationType
