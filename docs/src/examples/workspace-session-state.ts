@@ -8,24 +8,39 @@ export interface RoleValues {
 }
 
 export type Role = keyof RoleValues;
-export interface RecordSnapshot { version: number; values: RoleValues }
+export interface RecordSnapshot {
+  version: number;
+  values: RoleValues;
+  security: { version: number; allowsRead: boolean };
+}
+export interface SelectionResult { object: string; collection: string[]; value: number }
+export interface SelectionState {
+  query: SelectionResult;
+  pull: SelectionResult | null;
+  completed: SelectionResult;
+  cached: string[];
+  advertised: string[];
+  pool: string[];
+}
 export interface State {
   database: RecordSnapshot;
   connection: RecordSnapshot;
   retained: RecordSnapshot;
   local: Partial<RoleValues>;
   pushed: boolean;
-  grantAllowsRead: boolean;
+  selection?: SelectionState;
 }
 
 type Action =
   | { kind: 'start' }
   | { kind: 'edit'; values: Partial<RoleValues> }
   | { kind: 'remote-push'; values: Partial<RoleValues> }
-  | { kind: 'remote-pull' | 'pull' | 'push' | 'reset' | 'permission-refresh' };
+  | { kind: 'remote-pull' | 'pull' | 'push' | 'reset' | 'permission-refresh'
+      | 'first-pull' | 'selection-changes' | 'sync' | 'cache-hit' };
 
 export type Outcome = 'ready' | 'edited' | 'remote-pushed' | 'refreshed' | 'accepted'
-  | 'merge-error' | 'version-error' | 'pushed' | 'reset' | 'permission-refreshed';
+  | 'merge-error' | 'version-error' | 'pushed' | 'reset' | 'security-refreshed'
+  | 'waiting-for-sync' | 'selection-changed' | 'synchronized' | 'cache-hit';
 
 interface Step { id: string; title: string; explanation: string; action: Action }
 export interface Scenario {
@@ -46,7 +61,9 @@ export const outcomeLabels: Record<Outcome, string> = {
   ready: 'Ready', edited: 'Local edits', 'remote-pushed': 'Remote Push succeeded',
   refreshed: 'Connection refreshed', accepted: 'Pull accepted', 'merge-error': 'Merge error',
   'version-error': 'Version error', pushed: 'Push succeeded', reset: 'Reset complete',
-  'permission-refreshed': 'Permission map refreshed',
+  'security-refreshed': 'Exact security record loaded',
+  'waiting-for-sync': 'Waiting for Sync', 'selection-changed': 'Query membership changed',
+  synchronized: 'Sync completed the load', 'cache-hit': 'Pull completed from cache',
 };
 
 const baseline: RoleValues = { string: 'baseline', integer: 1, toOne: 'c1B', toMany: ['c1B'] };
@@ -137,19 +154,40 @@ export const scenarios: Scenario[] = [
     ],
   },
   {
-    id: 'permissions', title: 'A retained record is not an authorization snapshot',
-    summary: 'Implementation illustration: the retained record refers to a known grant G. With that ID unchanged and no revocation, read permission depends on G in the live connection map. This is not a general permission-freshness guarantee.',
+    id: 'permissions', title: 'Security stays with the retained record',
+    summary: 'Each record binds its data to exact security entries. Another session can load a newer version of grant G without changing the editing object’s permission checks.',
     steps: [start, edit,
-      remotePush({ integer: 2 }, 'The remote session changes the integer to 2 and pushes. The retained record’s grant ID G is unchanged in this illustration.'),
+      remotePush({ integer: 2 }, 'The remote session changes the integer to 2 and pushes. Grant G still allows reading the string.'),
       remotePull,
-      { id: 'permission-refresh', title: 'Refresh the known grant map', action: { kind: 'permission-refresh' },
-        explanation: 'A subsequent Sync/Access refresh through the connection updates known grant G so it no longer allows reading the string. A permission check through the editing object’s retained grant ID now denies that read, although its data baseline and local values are unchanged. The displayed values describe held data, not authorization to expose it. The security tests cover synchronized-object grant and revocation refresh; retaining an older editing record here illustrates the implementation’s live-map lookup. Pull without Sync and changed grant/revocation IDs have no general freshness guarantee.' },
+      { id: 'permission-refresh', title: 'Load a changed grant in the remote session', action: { kind: 'permission-refresh' },
+        explanation: 'Grant G changes to security version 2 and no longer permits reading the string. The remote session loads fresh object contents with that exact security entry, even though the data version is unchanged. Its connection record omits the string. The editing object still retains grant G at version 1, so its permission check and local string read remain unchanged.' },
+      { id: 'editing-pull', title: 'The editing Pull encounters a conflict', action: { kind: 'pull' },
+        explanation: 'The final record has no readable string, while the editing object changed that role locally. The ordinary merge check rejects the replacement for this object. Its old data and security remain together, along with its local edits. Server authorization still applies to later requests.' },
+      { ...reset, explanation: 'Reset clears the local edits. The object still holds its old data and grant G at version 1; Reset does not load new permissions.' },
+      { ...recoveryPull, explanation: 'With no local edits left to conflict, Pull accepts the exact cached record with grant G at version 2. Reading the string now returns null. The existing cache completes this selection without Sync; the server has authorized the Pull.' },
+    ],
+  },
+  {
+    id: 'final-selection', title: 'The completing response chooses the results',
+    summary: 'Sync executes the same Pull again. Its named object, ordered collection, value and complete object pool replace the first selection. Objects absent from it remain in the session.',
+    steps: [
+      { ...start, explanation: 'The session already holds c1A and its relation targets. The cards and role table continue to show c1A throughout this scenario. Its exact data and security record is cached; c1E and c1F are not cached.' },
+      { id: 'first-pull', title: 'Pull selects an uncached object', action: { kind: 'first-pull' },
+        explanation: 'Pull selects c1A and c1E. Only c1A has an exact complete cached record, so the load needs Sync. The client retains that record and advertises it with the original Pull request. The completed results have not changed yet.' },
+      { id: 'selection-changes', title: 'The query membership changes', action: { kind: 'selection-changes' },
+        explanation: 'Before Sync executes, c1A leaves the query and c1F enters it. This prepared query now returns c1F, c1E and c1F in that order. The in-flight load has still published no replacement results.' },
+      { id: 'sync', title: 'Sync completes its own selection', action: { kind: 'sync' },
+        explanation: 'Sync executes the original Pull again and returns the new named object, collection and value, plus complete records for c1F and c1E. The client validates all contents before publishing them. Collection order and repetition are preserved. The existing c1A object keeps its retained record because absence from the final selection does not delete it.' },
+      { id: 'cache-hit', title: 'The next Pull completes from cache', action: { kind: 'cache-hit' },
+        explanation: 'A later Pull selects the same records with the same data and security versions. Every selected object has an exact complete cached entry, so this Pull supplies the completed results without Sync. Cache declarations never replace the server’s authorization checks.' },
     ],
   },
 ];
 
 export function visibleValues(state: State): RoleValues {
-  return structuredClone({ ...state.retained.values, ...state.local });
+  const values = structuredClone({ ...state.retained.values, ...state.local });
+  if (!state.retained.security.allowsRead) values.string = null;
+  return values;
 }
 
 export function diff(state: State) {
@@ -166,16 +204,22 @@ function sameValue(left: RoleValues[Role], right: RoleValues[Role]): boolean {
   return left === right;
 }
 
+function loadedRecord(record: RecordSnapshot): RecordSnapshot {
+  const loaded = structuredClone(record);
+  if (!loaded.security.allowsRead) loaded.values.string = null;
+  return loaded;
+}
+
 function apply(state: State, action: Action): Outcome {
   switch (action.kind) {
     case 'start': return 'ready';
     case 'edit': state.local = structuredClone(action.values); return 'edited';
     case 'remote-push':
-      state.database = { version: state.database.version + 1, values: structuredClone({ ...state.database.values, ...action.values }) };
+      state.database = { ...state.database, version: state.database.version + 1, values: structuredClone({ ...state.database.values, ...action.values }) };
       return 'remote-pushed';
-    case 'remote-pull': state.connection = structuredClone(state.database); return 'refreshed';
+    case 'remote-pull': state.connection = loadedRecord(state.database); return 'refreshed';
     case 'pull':
-      state.connection = structuredClone(state.database);
+      state.connection = loadedRecord(state.database);
       if (!state.pushed && roles.some(({ key }) => Object.hasOwn(state.local, key) &&
           !sameValue(state.retained.values[key], state.connection.values[key]))) return 'merge-error';
       if (state.pushed) state.local = {};
@@ -184,20 +228,57 @@ function apply(state: State, action: Action): Outcome {
       return 'accepted';
     case 'push':
       if (state.retained.version !== state.database.version) return 'version-error';
-      state.database = { version: state.database.version + 1, values: visibleValues(state) };
+      state.database = { ...state.database, version: state.database.version + 1, values: visibleValues(state) };
       state.pushed = true;
       return 'pushed';
     case 'reset': state.local = {}; return 'reset';
-    case 'permission-refresh': state.grantAllowsRead = false; return 'permission-refreshed';
+    case 'permission-refresh':
+      state.database.security = { version: state.database.security.version + 1, allowsRead: false };
+      state.connection = loadedRecord(state.database);
+      return 'security-refreshed';
+    case 'first-pull': {
+      const selection = state.selection!;
+      selection.pull = structuredClone(selection.query);
+      selection.advertised = [...new Set(selection.pull.collection)].filter((id) => selection.cached.includes(id));
+      return 'waiting-for-sync';
+    }
+    case 'selection-changes':
+      state.selection!.query = { object: 'c1F', collection: ['c1F', 'c1E', 'c1F'], value: 3 };
+      return 'selection-changed';
+    case 'sync': {
+      const selection = state.selection!;
+      selection.completed = structuredClone(selection.query);
+      selection.pool = [...new Set(selection.completed.collection)];
+      selection.cached = [...new Set([...selection.cached, ...selection.pool])];
+      return 'synchronized';
+    }
+    case 'cache-hit': {
+      const selection = state.selection!;
+      if (!selection.query.collection.every((id) => selection.cached.includes(id))) {
+        throw new Error('The prepared cache-hit step requires every selected record to be cached.');
+      }
+      selection.pull = structuredClone(selection.query);
+      selection.completed = structuredClone(selection.pull);
+      selection.advertised = [];
+      return 'cache-hit';
+    }
   }
 }
 
 export function getFrames(scenario: Scenario): Frame[] {
-  const record = { version: 1, values: { ...baseline, ...scenario.initial } };
+  const record = { version: 1, values: { ...baseline, ...scenario.initial }, security: { version: 1, allowsRead: true } };
   const state: State = {
     database: structuredClone(record), connection: structuredClone(record), retained: structuredClone(record),
-    local: {}, pushed: false, grantAllowsRead: true,
+    local: {}, pushed: false,
   };
+  if (scenario.id === 'final-selection') {
+    state.selection = {
+      query: { object: 'c1A', collection: ['c1A', 'c1E'], value: 2 },
+      pull: null,
+      completed: { object: 'c1A', collection: ['c1A'], value: 1 },
+      cached: ['c1A'], advertised: [], pool: ['c1A'],
+    };
+  }
   return scenario.steps.map(({ action, ...step }) => {
     const outcome = apply(state, action);
     return { ...step, outcome, state: structuredClone(state) };

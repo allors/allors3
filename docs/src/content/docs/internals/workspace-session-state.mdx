@@ -1,6 +1,6 @@
 ---
 title: "Workspace session state"
-description: "Editing baselines, merge, diff, reset and authorization freshness in the .NET and TypeScript workspaces."
+description: "Final load selections, retained data and security, and editing baselines in the .NET and TypeScript workspaces."
 audience: "Maintainers"
 kind: "Explanation"
 status: "Current"
@@ -10,8 +10,9 @@ import WorkspaceSessionState from '../../../components/WorkspaceSessionState.ast
 
 > **Status: Current.**
 
-This page maps the current editing baseline in the .NET and TypeScript workspaces. It records
-baseline and merge behaviour ahead of the connection/session split; applications must not rely on this
+This page explains how the .NET and TypeScript workspaces complete a load and retain an editing
+baseline. Each accepted database record holds both data and the security state used for its
+permission checks. This is a maintainer explanation; applications must not rely on this
 internals page. The tests below are authoritative. The platform boundary is in
 [ARCHITECTURE.md](../../../../../ARCHITECTURE.md); domain terminology is in [Domains](../domains.md).
 
@@ -19,13 +20,66 @@ internals page. The tests below are authoritative. The platform boundary is in
 
 | Owner | State and responsibility |
 | --- | --- |
-| `DatabaseConnection` | Privately held current database records and permission maps, refreshed by Pull/Sync/Access. Callers must use a connection sequentially. |
-| `DatabaseOriginState` for a session object | Retains the last accepted database record and its version. `OnPulled` obtains the connection's current record, checks `CanMerge`, and replaces the session record only when accepted. A merge error leaves this object's entire record in place. |
+| `DatabaseConnection` | Shares immutable database records, versioned grant/revocation contents and permission definitions between sessions. Records are cached by object ID, data version and the complete security binding: grant/revocation IDs and their versions. A separate current-record index supports lookup by ID. |
+| Load response context | Retains the exact cache entries advertised for this operation, validates the completing response, and supplies its records for session adoption. Another session's refresh cannot substitute a different record for an advertised entry. |
+| `DatabaseOriginState` for a session object | Retains the last accepted database record, including its security state. `OnPulled` receives the completed load's record, checks `CanMerge`, and replaces the session record only when accepted. A merge error leaves this object's entire previous record in place. |
 | `RecordBasedOriginState` | Holds local role changes separately. Reads prefer the local value; otherwise they use the retained record. `Diff` compares local changes with that record. `Reset` clears local changes without fetching or accepting a newer record. |
 | Remote `DatabaseOriginState` | Builds Push using the retained version. To-many additions/removals are calculated against the retained record. |
 
-The tests characterize an editing baseline per object with relation targets loaded. They do not
-establish snapshot consistency across an object graph.
+## Completing a load
+
+Whichever response completes a load determines its results. Pull supplies named objects,
+collections and values, together with a pool of object versions and security bindings.
+
+1. If the connection already holds every complete record and its exact security state, Pull
+   completes the load from those retained entries. No Sync is needed.
+2. Otherwise, Sync receives the original Pull request, including its arguments and dependencies,
+   and descriptions of the complete records and security entries the client can reuse. The
+   server re-executes that request. Sync's named results and complete object pool replace the
+   first Pull's selection; they are not additions to it.
+3. The client validates all selected records, security contents and permission definitions before
+   publishing cache entries or adopting session records. Missing, inconsistent or malformed
+   contents fail the load without partially publishing that response.
+
+Sync evaluates its selection, object contents and security using the same transaction and
+access-control instance. The SQL snapshot regression
+`SelectionContentsAndSecurityUseTheSameSnapshot` in
+[the server Sync tests](../../../../../dotnet/Core/Database/Server.Local.Tests/Json/Sync/SyncObjectTests.cs)
+checks this when another transaction commits data and security changes during Sync.
+
+The cache reuse rules distinguish missing contents from complete empty contents:
+
+| Sync contents | Meaning |
+| --- | --- |
+| Omitted or null object role table | Reuse the exact complete record advertised by this operation, including its security binding. Matching the data version alone is insufficient. |
+| Omitted or null grant/revocation permission list | Reuse the exact advertised entry for that ID and version. |
+| Empty role table or permission list | Complete contents with no entries. This is not a request to reuse cached contents. |
+
+A security change can therefore require Sync and fresh object contents even when the data
+version is unchanged. Normal loads obtain security contents and permission definitions in
+Sync; they no longer make separate Access or Permission requests. Those transport methods
+remain available. The revised protocol requires matching client and server versions; it has
+no compatibility bridge to the previous protocol.
+
+Named collections preserve their order and repeated objects. An object absent from the final
+selection is absent from that result; its absence does not delete an existing session object.
+Cache reuse does not replace the shared current-record index with an older advertised entry.
+Versioned entries remain in memory for the connection's lifetime; eviction and persistence
+are not implemented.
+
+The [shared .NET Pull tests](../../../../../dotnet/Core/Workspace/Tests/Tests/PullTests.cs) cover
+`PullUsesFinalSelectionAndCompletesExactCacheHits`,
+`PullRetainsAdvertisedRecordsAcrossOverlappingSessions`,
+`PullFinalAbsencePreservesExistingSessionObjects` and
+`PullRejectsIncompleteResponsesAtomically`. The corresponding TypeScript coverage is in
+[the Pull result specs](../../../../../typescript/modules/libs/system/workspace/adapters-json-tests/src/lib/database/pull/pull-result.spec.ts)
+and [response context specs](../../../../../typescript/modules/libs/system/workspace/adapters-json-tests/src/lib/database/security/response-context.spec.ts).
+
+These guarantees cover overlapping loads in distinct sessions sharing a connection. They do
+not establish concurrent use of one session. After a valid load, merge acceptance remains
+per object: one object can retain an older record after a merge error while another accepts
+the new record. Local edits and objects retained from earlier loads also remain in the session.
+The resulting session is therefore not a snapshot of the whole object graph.
 
 ## Guided example
 
@@ -41,9 +95,10 @@ are already loaded; braces show membership, not order. Versions `v1`, `v2` and `
 successive records in the illustration, not literal platform version numbers.
 
 The first five scenarios follow the baseline characterization matrix. Reset after successful
-Push follows the existing reset tests. The permissions scenario illustrates the implementation's
-lookup through live connection maps, with a fixed grant ID and no revocation. Its scope is
-explained under [Push and permissions are separate](#push-and-permissions-are-separate).
+Push follows the existing reset tests. The permissions scenario shows a retained security
+version alongside the editing baseline, with a fixed grant ID and no revocation. Its scope is
+explained under [Retained permissions](#retained-permissions). The final-selection scenario
+shows Sync replacing the first Pull's results while an existing session object remains present.
 The example is a finite explanatory model; the platform tests remain authoritative. Unit merge
 equality is described [below](#unit-merge-equality), outside these prepared scenarios.
 
@@ -97,32 +152,43 @@ a conflict and retain the old record/local edit until Reset followed by Pull. Nu
 distinct from a non-null value. Other unit types and relation comparisons keep their existing
 rules. Binary comparison can scan the byte contents; DateTime comparison is constant-time.
 
-## Push and permissions are separate
+## Push does not accept a new baseline
 
 A successful Push marks the session object's database state as pushed. It does not accept a new
-baseline. Its next Pull clears pushed local changes and accepts the connection record without
-the ordinary merge check. The existing `ResetUnitAfterPushTest` and `resetUnitAfterPush` tests
-remain unchanged: Reset after Push, without Pull, exposes the last pulled value.
+baseline. When a later completed load includes the object, it clears the pushed local changes
+and accepts that load's record without the ordinary merge check. The existing
+`ResetUnitAfterPushTest` and `resetUnitAfterPush` tests remain unchanged: Reset after Push,
+without Pull, exposes the last pulled value.
 
-A retained data record does **not** pin authorization. The record retains grant/revocation IDs,
-but `DatabaseRecord.IsPermitted` / `isPermitted` resolves those IDs through live connection maps.
-Refreshing those maps can affect permission checks on an object whose data baseline is older.
-The `RefreshesKnownGrantWhenAnObjectIsSynchronized` and
-`RefreshesKnownRevocationWhenAnObjectIsSynchronized` tests in
-[the shared .NET SecurityTests](../../../../../dotnet/Core/Workspace/Tests/Tests/SecurityTests.cs) run through
-both HTTP adapters. They and the TypeScript
-[security specs](../../../../../typescript/modules/libs/system/workspace/adapters-json-tests/src/lib/runtime/security.spec.ts)
-pin the existing synchronized-object refresh behaviour. They do not guarantee permission
-freshness on a Pull that needs no Sync, or when the retained record's grant/revocation IDs change
-on the server. Data-baseline retention and authorization freshness require separate policies.
+## Retained permissions
 
-The guided permissions example combines that refresh mechanism with the live-map lookup in
+`DatabaseRecord.IsPermitted` / `isPermitted` uses the immutable grant and revocation contents
+retained by that record. Refreshing the shared connection from another session changes neither
+the editing session's data baseline nor its permission checks. The implementation is in
 [the .NET database record](../../../../../dotnet/System/Workspace/Adapters/Allors.Workspace.Adapters.Remote/Database/DatabaseRecord.cs)
 and [the TypeScript database record](../../../../../typescript/modules/libs/system/workspace/adapters-json/src/lib/database/database-record.ts).
-The [shared .NET security tests](../../../../../dotnet/Core/Workspace/Tests/Tests/SecurityTests.cs)
-and TypeScript specs verify synchronized-object refresh; they do not directly characterize the
-older editing record shown in the example. Its table displays held values independently of
-permission to expose them.
+
+`PullRequiresContentsWhenOnlySecurityChanges` in the shared .NET Pull tests checks both sides:
+the loading session adopts changed permissions and contents even without a data-version
+change, while the other session retains its earlier
+readable value and permission. The TypeScript response context specs check that changed
+security requires fresh contents even with a cached object. The existing
+`RefreshesKnownGrantWhenAnObjectIsSynchronized` and
+`RefreshesKnownRevocationWhenAnObjectIsSynchronized` tests in
+[the shared .NET security tests](../../../../../dotnet/Core/Workspace/Tests/Tests/SecurityTests.cs)
+and [TypeScript security specs](../../../../../typescript/modules/libs/system/workspace/adapters-json-tests/src/lib/runtime/security.spec.ts)
+also cover permission changes on a synchronized object.
+
+Adopting a record updates its data and security together. A merge conflict retains both from
+the old record, along with the local edits. Reset clears those edits but keeps that record;
+a subsequent Pull can accept the new one. The guided permissions scenario illustrates these
+combined rules. Its table shows held values separately from permission to expose them.
+
+This is a retained authorization snapshot, not a guarantee of the server's latest permissions.
+Server changes take effect in the session when it accepts a completed load's record. Push is
+still authorized by the server: `RejectedExistingObjectPushReturnsAccessErrorAndRollsBack` in
+the shared security tests checks that a server-side permission removal rejects an existing
+object's Push even though the client retained permission to edit it.
 
 ## Open decisions
 
@@ -132,9 +198,10 @@ permission to expose them.
 - Decide whether to preserve the current baseline transitions in the connection/session split,
   including Reset after Push and whole-role conflict detection. The matrix is evidence for that
   decision, not approval to change semantics or to combine to-many membership edits.
-- Define authorization freshness independently of data baselines, including changes to grant
-  membership and Pulls without Sync. Retaining records alone cannot provide an authorization
-  snapshot or a general freshness guarantee.
+- Any automatic refresh or invalidation policy must account for retained data and security,
+  including records kept after a merge conflict. The current load contract does not itself
+  schedule refreshes or update idle sessions.
 
-The connection/session split, Push error-contract changes, protocol envelopes, shared or
-persistent caching, and signals remain separate work.
+The connection/session split, Push error-contract changes, cache eviction or persistence, and
+signals remain separate work. The final-selection protocol and shared versioned caches described
+above are implemented.

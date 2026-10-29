@@ -68,8 +68,8 @@ package. Publishing the site and creating a pull request remain explicit review 
 The pilot follows the current implementation and tests cited by the
 [workspace session state page](workspace-session-state.mdx). In particular, an accepted editing
 baseline is per object, Reset does not fetch
-a new record, a successful Push does not itself accept a new baseline, and a retained data
-record is not an authorization snapshot. Preserve the current differences between .NET and
+a new record, a successful Push does not itself accept a new baseline, and each accepted record
+retains both data and security. Preserve the current differences between .NET and
 TypeScript. Signals remain planned; the documentation must not suggest that they exist today.
 
 ## Website implementation
@@ -111,22 +111,26 @@ home at the root of that origin, and the link checker leaves that link to the ho
 
 The workspace session state page uses MDX to include an Astro component. Its website route
 and Markdown export URL are unchanged. The finite TypeScript model in
-`docs/src/examples/workspace-session-state.ts` supplies seven prepared scenarios and 45 steps:
+`docs/src/examples/workspace-session-state.ts` supplies prepared scenarios:
 another session refreshes, disjoint edits, string/to-one/to-many conflicts, Reset after Push,
-and a qualified illustration of live permission maps. It makes no platform calls and does
+retained permissions, and Sync's final selection. It makes no platform calls and does
 not replace the authoritative workspace tests. Unit equality remains in the page's prose.
 
 Each step shows database, connection and retained-record versions, plus local values, session
-reads and diff originals. Versions are illustrative labels. Astro renders all steps into a
-static transcript; ordinary TypeScript controls copy the selected step into the live view.
+reads and diff originals. The permission scenario distinguishes security versions; the
+final-selection scenario also shows the selected objects. Versions are illustrative labels.
+Astro renders all steps into a static transcript; ordinary TypeScript controls copy the
+selected step into the live view.
 The transcript remains usable without JavaScript and supplies the complete Markdown export.
 The website and exports therefore share scenario explanations and calculated snapshots.
 
 The first five scenarios follow the existing .NET and TypeScript characterization tests.
-Reset after Push uses their null-to-`"X"` string case. The permission scenario is explicitly an
-implementation illustration: a retained grant ID resolves through a live connection map.
-It does not claim that the security tests characterize an older editing record, or that Pull
-without Sync and changes to grant/revocation IDs provide general permission freshness.
+Reset after Push uses their null-to-`"X"` string case. The permission scenario illustrates
+retained security through another session's refresh, a merge conflict, Reset, and a later
+accepted Pull. The final-selection scenario follows the load contract: Sync replaces the
+first Pull's results, preserves collection order and repetitions, and does not delete an
+existing session object absent from the final selection. The session state page owns these
+rules and links to their platform tests.
 
 ## Validation
 
