@@ -168,9 +168,9 @@ namespace Allors.Workspace.Adapters
 
         public T Instantiate<T>(long? id) where T : class, IObject => id.HasValue ? this.Instantiate<T>((long)id) : default;
 
-        public T Instantiate<T>(long id) where T : class, IObject => (T)this.GetStrategy(id)?.Object;
+        public T Instantiate<T>(long id) where T : class, IObject => (T)this.InstantiateStrategy(id)?.Object;
 
-        public T Instantiate<T>(string idAsString) where T : class, IObject => long.TryParse(idAsString, out var id) ? (T)this.GetStrategy(id)?.Object : default;
+        public T Instantiate<T>(string idAsString) where T : class, IObject => long.TryParse(idAsString, out var id) ? this.Instantiate<T>(id) : default;
 
         public IEnumerable<T> Instantiate<T>(IEnumerable<IObject> objects) where T : class, IObject => objects.Select(this.Instantiate<T>);
 
@@ -206,6 +206,18 @@ namespace Allors.Workspace.Adapters
         }
 
         #endregion
+
+        // Id 0 denotes no object; any other id must be held by this session.
+        private Strategy InstantiateStrategy(long id)
+        {
+            var strategy = this.GetStrategy(id);
+            if (strategy == null && id != 0)
+            {
+                throw new InvalidOperationException($"Object {id} is not in this session. Pull it before instantiating it.");
+            }
+
+            return strategy;
+        }
 
         public Strategy GetStrategy(long id)
         {

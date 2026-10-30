@@ -41,6 +41,24 @@ namespace Allors.Workspace.Adapters.Remote.SystemText
 
         public HttpClient HttpClient { get; }
 
+        protected override bool ValidUnitType(string tag, object value)
+        {
+            if (value is JsonElement element)
+            {
+                return element.ValueKind switch
+                {
+                    JsonValueKind.Null => true,
+                    JsonValueKind.String => base.ValidUnitType(tag, element.GetString()),
+                    JsonValueKind.True => tag == UnitTags.Boolean,
+                    JsonValueKind.False => tag == UnitTags.Boolean,
+                    JsonValueKind.Number => tag == UnitTags.Integer || tag == UnitTags.Float,
+                    _ => false,
+                };
+            }
+
+            return base.ValidUnitType(tag, value);
+        }
+
         public override async Task<PullResponse> Pull(PullRequest pullRequest)
         {
             var uri = new Uri("pull", UriKind.Relative);

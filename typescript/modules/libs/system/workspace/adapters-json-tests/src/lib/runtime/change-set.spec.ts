@@ -18,6 +18,7 @@ test('changeSetConstruction', async () => {
   expect(changeSet.created.size).toBe(0);
   expect(changeSet.associationsByRoleType.size).toBe(0);
   expect(changeSet.rolesByAssociationType.size).toBe(0);
+  expect(changeSet.roleIdsByAssociationType.size).toBe(0);
 });
 
 test('changeSetAfterPush', async () => {
@@ -814,6 +815,9 @@ test('changeSetAfterPushMany2Many', async () => {
       .values()
       .next().value
   ).toBe(c1b);
+  expect(
+    changeSet.roleIdsByAssociationType.get(m.C1.C1C1Many2Manies.associationType)
+  ).toEqual(new Set([c1b.id]));
 
   await session.push();
   changeSet = session.checkpoint();
@@ -821,6 +825,7 @@ test('changeSetAfterPushMany2Many', async () => {
   expect(changeSet.created.size).toBe(0);
   expect(changeSet.associationsByRoleType.size).toBe(0);
   expect(changeSet.rolesByAssociationType.size).toBe(0);
+  expect(changeSet.roleIdsByAssociationType.size).toBe(0);
 });
 
 test('changeSetAfterPushMany2ManyRemove', async () => {

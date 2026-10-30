@@ -21,8 +21,6 @@ namespace Allors.Workspace.Adapters
 
         public abstract IWorkspace CreateWorkspace();
 
-        public abstract DatabaseRecord GetRecord(long id);
-
         public abstract long GetPermission(IClass @class, IOperandType operandType, Operations operation);
 
         public long NextId() => this.idGenerator.Next();

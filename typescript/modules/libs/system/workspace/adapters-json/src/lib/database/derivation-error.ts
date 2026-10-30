@@ -1,4 +1,5 @@
 import { ResponseDerivationError } from '@allors/system/common/protocol-json';
+import { Session } from '@allors/system/workspace/adapters';
 import {
   IDatabaseDerivationError,
   ISession,
@@ -18,7 +19,8 @@ export class DerivationError implements IDatabaseDerivationError {
   get roles(): Role[] {
     return this.responseDerivationError.r.map((r) => {
       return {
-        object: this.session.instantiate(r[0]),
+        // A derivation error may concern an object this session does not hold.
+        object: (this.session as Session).getObject(r[0]),
         relationType:
           this.session.workspace.configuration.metaPopulation.metaObjectByTag.get(
             r[1]

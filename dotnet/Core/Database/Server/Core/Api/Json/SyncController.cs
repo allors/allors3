@@ -5,6 +5,7 @@
 
 namespace Allors.Database.Protocol.Json
 {
+    using System;
     using System.Threading;
     using Allors.Protocol.Json.Api.Sync;
     using Allors.Services;
@@ -33,13 +34,24 @@ namespace Allors.Database.Protocol.Json
         private ILogger<Api> ApiLogger { get; }
 
         [HttpPost]
-        public ActionResult<SyncResponse> Post([FromBody]SyncRequest syncRequest, CancellationToken cancellationToken) =>
-            this.PolicyService.SyncPolicy.Execute(
+        public ActionResult<SyncResponse> Post([FromBody]SyncRequest syncRequest, CancellationToken cancellationToken)
+        {
+            try
+            {
+                SyncResponseBuilder.ValidateRequest(syncRequest);
+            }
+            catch (ArgumentException exception)
+            {
+                return this.BadRequest(new SyncResponse { _e = exception.Message });
+            }
+
+            return this.PolicyService.SyncPolicy.Execute(
                 () =>
                 {
                     using var transaction = this.TransactionService.Transaction;
                     var api = new Api(transaction, this.WorkspaceService.Name, cancellationToken, this.ApiLogger);
                     return api.Sync(syncRequest);
                 });
+        }
     }
 }

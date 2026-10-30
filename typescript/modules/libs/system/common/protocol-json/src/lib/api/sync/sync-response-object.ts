@@ -17,5 +17,5 @@ export interface SyncResponseObject {
   r: number[];
 
   /** Roles */
-  ro: SyncResponseRole[];
+  ro?: SyncResponseRole[];
 }

@@ -151,7 +151,9 @@ namespace Allors.Database.Protocol.Json
             {
                 if (existingCollection != null)
                 {
-                    existingCollection.UnionWith(included);
+                    var added = included.ToArray();
+                    existingCollection.UnionWith(added);
+                    this.objects.UnionWith(added);
                 }
                 else
                 {
@@ -168,12 +170,18 @@ namespace Allors.Database.Protocol.Json
             {
                 var pulls = pullRequest.l.FromJson(this.Transaction, this.unitConvert);
 
-                foreach (var pull in pulls)
+                for (var i = 0; i < pulls.Length; i++)
                 {
                     this.ThrowIfCancellationRequested();
+                    var pull = pulls[i];
 
-                    if (pull.Object != null)
+                    if (pullRequest.l[i].o.HasValue)
                     {
+                        if (pull.Object == null)
+                        {
+                            continue;
+                        }
+
                         var pullInstantiate = new PullInstantiate(this.Transaction, pull, this.AccessControl, this.PreparedSelects);
                         pullInstantiate.Execute(this);
                     }

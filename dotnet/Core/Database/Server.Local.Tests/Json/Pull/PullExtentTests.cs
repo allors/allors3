@@ -104,6 +104,19 @@ namespace Tests
             Assert.Equal(data.Strategy.ObjectId, @object.i);
             Assert.Equal(data.Strategy.ObjectVersion, @object.v);
             Assert.Equal(acl.Grants.Select(v => v.Id), @object.g);
+
+            var second = new DataBuilder(this.Transaction).WithString("Second").Build();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
+
+            pullRequest.l = new[] { "First", "Second" }.Select(value => new Allors.Database.Data.Pull
+            {
+                Extent = new Extent(this.M.Data) { Predicate = new Equals(this.M.Data.String) { Value = value } },
+                Results = new[] { new Result { Name = "Datas" } },
+            }.ToJson(this.UnitConvert)).ToArray();
+            pullResponse = new Api(this.Transaction, "Default", CancellationToken.None).Pull(pullRequest);
+            Assert.Equal(new[] { data.Id, second.Id }, pullResponse.c["Datas"]);
+            Assert.Equal(new[] { data.Id, second.Id }.OrderBy(v => v), pullResponse.p.Select(v => v.i).OrderBy(v => v));
         }
 
         [Fact]

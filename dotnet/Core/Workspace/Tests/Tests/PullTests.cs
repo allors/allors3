@@ -9,7 +9,14 @@
 namespace Tests.Workspace
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
+    using System.Net;
+    using System.Net.Http;
+    using System.Text;
+    using System.Text.Json;
+    using System.Text.Json.Nodes;
+    using System.Threading;
     using System.Threading.Tasks;
     using Allors;
     using Allors.Workspace.Data;
@@ -25,6 +32,402 @@ namespace Tests.Workspace
     public abstract class PullTests : Test
     {
         protected PullTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public async Task PullUsesFinalSelectionAndCompletesExactCacheHits()
+        {
+            var requests = new List<string>();
+            var ids = new[] { 1L, 2L };
+            var binary = new byte[] { 1, 2 };
+            var dependencies = new[] { "original" };
+            var arguments = new Dictionary<string, object> { ["value"] = "original", ["ids"] = ids, ["binary"] = binary };
+            JsonNode originalRequest = null;
+            var workspace = this.Profile.CreateWorkspace(new PullHandler((path, body) =>
+            {
+                requests.Add(path);
+                if (path == "pull")
+                {
+                    if (requests.Count == 1)
+                    {
+                        originalRequest = body.DeepClone();
+                        Assert.Equal("original", body["l"][0]["a"]["value"].GetValue<string>());
+                        Assert.Single(body["d"].AsArray());
+                        Assert.Equal(this.M.C1.C1C1Many2One.RelationType.Tag, body["d"][0]["r"].GetValue<string>());
+                        arguments["value"] = "changed";
+                        dependencies[0] = "changed";
+                        ids[0] = 99;
+                        binary[0] = 99;
+                    }
+
+                    return Task.FromResult(requests.Count == 1
+                        ? this.PullSnapshot(new[] { 1L }, "initial", 2)
+                        : this.PullSnapshot(new[] { 3L, 2L, 3L }, "final", 3));
+                }
+
+                Assert.Equal("sync", path);
+                Assert.NotNull(body["pull"]);
+                Assert.Single(body["pull"]["l"].AsArray());
+                Assert.True(JsonNode.DeepEquals(originalRequest, body["pull"]));
+                return Task.FromResult(this.SyncSnapshot(new[] { 3L, 2L, 3L }, "final", 3));
+            }));
+            var session = workspace.CreateSession();
+            session.OnChange += (_, _) =>
+            {
+                Assert.NotNull(session.Instantiate<C1>(2));
+                Assert.NotNull(session.Instantiate<C1>(3));
+            };
+            session.Activate(new[] { new PullDependencyRule(this.M) });
+            var pull = new Pull
+            {
+                Extent = new Filter(this.M.C1)
+                {
+                    Predicate = new Equals(this.M.C1.C1AllorsString) { Parameter = "value", Dependencies = dependencies },
+                },
+                Arguments = arguments,
+            };
+            var result = await session.PullAsync(pull);
+
+            Assert.False(result.HasErrors);
+            Assert.Equal(new[] { 3L, 2L, 3L }, result.GetCollection<C1>("selection").Select(v => v.Id));
+            Assert.Equal(3, result.GetObject<C1>("selected").Id);
+            Assert.Equal("final", result.GetValue<string>("value"));
+            Assert.Throws<InvalidOperationException>(() => session.Instantiate<C1>(1));
+
+            result = await session.PullAsync(pull);
+            Assert.False(result.HasErrors);
+            Assert.Equal(new[] { 3L, 2L, 3L }, result.GetCollection<C1>("selection").Select(v => v.Id));
+            Assert.Equal(new[] { "pull", "sync", "pull" }, requests);
+        }
+
+        [Theory]
+        [InlineData("object")]
+        [InlineData("grant")]
+        [InlineData("revocation")]
+        [InlineData("permission")]
+        [InlineData("result")]
+        [InlineData("role")]
+        [InlineData("create")]
+        [InlineData("transport")]
+        [InlineData("unit")]
+        [InlineData("to-one")]
+        [InlineData("duplicate-grant")]
+        [InlineData("duplicate-permission")]
+        [InlineData("boolean-string")]
+        [InlineData("integer-string")]
+        [InlineData("float-string")]
+        [InlineData("decimal-number")]
+        [InlineData("decimal-overflow")]
+        [InlineData("decimal-precision")]
+        [InlineData("binary")]
+        [InlineData("unique")]
+        [InlineData("date")]
+        [InlineData("date-only")]
+        [InlineData("date-hour")]
+        [InlineData("object-refresh")]
+        [InlineData("transport-refresh")]
+        [InlineData("class-after-push")]
+        public async Task PullRejectsIncompleteResponsesAtomically(string missing)
+        {
+            var refresh = missing.EndsWith("-refresh", StringComparison.Ordinal);
+            var pushed = missing == "class-after-push";
+            var failure = missing.Replace("-refresh", string.Empty);
+            var warmed = false;
+            var workspace = this.Profile.CreateWorkspace(new PullHandler((path, body) =>
+            {
+                if (path == "push")
+                {
+                    return Task.FromResult(new JsonObject
+                    {
+                        ["n"] = new JsonArray(new JsonObject { ["w"] = body["n"][0]["w"].GetValue<long>(), ["d"] = 1 }),
+                    });
+                }
+
+                if (path == "pull")
+                {
+                    return Task.FromResult(this.PullSnapshot(new[] { 1L, 2L }, "initial", warmed ? 3 : 2));
+                }
+
+                Assert.Equal("sync", path);
+                if (refresh && !warmed)
+                {
+                    warmed = true;
+                    return Task.FromResult(this.SyncSnapshot(new[] { 1L, 2L }, "cached", 2));
+                }
+
+                if (failure == "transport")
+                {
+                    throw new OperationCanceledException("Simulated interrupted Sync");
+                }
+
+                var response = this.SyncSnapshot(new[] { 1L, 2L }, "final", warmed ? 3 : 2);
+                void SetInvalidUnit(IRoleType role, object value) => response["o"][1]["ro"][0] =
+                    new JsonObject { ["t"] = role.RelationType.Tag, ["v"] = JsonSerializer.SerializeToNode(value) };
+                switch (failure)
+                {
+                    case "object": response["o"][1]["ro"] = null; break;
+                    case "grant": response["g"][0]["p"] = null; break;
+                    case "revocation": response["r"][0]["p"] = null; break;
+                    case "permission": response["p"] = new JsonArray(); break;
+                    case "result": response["result"]["c"]["selection"] = new JsonArray(1, 99); break;
+                    case "role": response["o"][1]["ro"][0]["t"] = "unknown-role"; break;
+                    case "create": response["p"][1]["t"] = this.M.C1.C1AllorsString.RelationType.Tag; break;
+                    case "unit": response["o"][1]["ro"][0]["v"] = true; break;
+                    case "to-one":
+                        response["o"][1]["ro"][0] = new JsonObject { ["t"] = this.M.C1.C1C1Many2One.RelationType.Tag, ["o"] = -1 };
+                        break;
+                    case "duplicate-grant": response["g"].AsArray().Add(response["g"][0].DeepClone()); break;
+                    case "duplicate-permission": response["p"].AsArray().Add(response["p"][0].DeepClone()); break;
+                    case "boolean-string": SetInvalidUnit(this.M.C1.C1AllorsBoolean, "true"); break;
+                    case "integer-string": SetInvalidUnit(this.M.C1.C1AllorsInteger, "12"); break;
+                    case "float-string": SetInvalidUnit(this.M.C1.C1AllorsDouble, "12.5"); break;
+                    case "decimal-number": SetInvalidUnit(this.M.C1.C1AllorsDecimal, 12.5); break;
+                    case "decimal-overflow": SetInvalidUnit(this.M.C1.C1AllorsDecimal, "79228162514264337593543950335.1"); break;
+                    case "decimal-precision": SetInvalidUnit(this.M.C1.C1AllorsDecimal, "0.12345678901234567890123456789"); break;
+                    case "binary": SetInvalidUnit(this.M.C1.C1AllorsBinary, "not-base64"); break;
+                    case "unique": SetInvalidUnit(this.M.C1.C1AllorsUnique, "2946CF3771BE46818FE6D0024D59BEFF"); break;
+                    case "date": SetInvalidUnit(this.M.C1.C1AllorsDateTime, "2024-02-31T00:00:00Z"); break;
+                    case "date-only": SetInvalidUnit(this.M.C1.C1AllorsDateTime, "2024-01-01"); break;
+                    case "date-hour": SetInvalidUnit(this.M.C1.C1AllorsDateTime, "2024-01-01T24:00:00Z"); break;
+                    case "class-after-push":
+                        response["o"][0]["c"] = this.M.C2.Tag;
+                        response["o"][0]["ro"] = new JsonArray();
+                        break;
+                }
+
+                return Task.FromResult(response);
+            }));
+            var session = workspace.CreateSession();
+            C1 existing = null;
+            if (pushed)
+            {
+                existing = session.Create<C1>();
+                existing.C1AllorsString = "local";
+                Assert.False((await session.PushAsync()).HasErrors);
+                Assert.Equal(1, existing.Id);
+                Assert.Empty(this.Profile.CachedVersions(workspace, 1));
+            }
+            else if (refresh)
+            {
+                Assert.False((await session.PullAsync(new Pull { ObjectId = 1 })).HasErrors);
+                existing = session.Instantiate<C1>(1);
+            }
+
+            await Assert.ThrowsAnyAsync<Exception>(() => session.PullAsync(new Pull { ObjectId = 1 }));
+            if (pushed)
+            {
+                Assert.Same(existing, session.Instantiate<C1>(1));
+                Assert.Equal("local", existing.C1AllorsString);
+                Assert.Equal(Allors.Version.WorkspaceInitial.Value, existing.Strategy.Version);
+                Assert.Throws<InvalidOperationException>(() => session.Instantiate<C1>(2));
+                Assert.Empty(this.Profile.CachedVersions(workspace, 1));
+                Assert.Empty(this.Profile.CachedVersions(workspace, 2));
+            }
+            else if (refresh)
+            {
+                Assert.Same(existing, session.Instantiate<C1>(1));
+                Assert.Equal("cached", existing.C1AllorsString);
+                Assert.Equal("cached", session.Instantiate<C1>(2).C1AllorsString);
+                Assert.Equal(2, existing.Strategy.Version);
+                Assert.Equal(new[] { 2L }, this.Profile.CachedVersions(workspace, 1));
+                Assert.Equal(new[] { 2L }, this.Profile.CachedVersions(workspace, 2));
+            }
+            else
+            {
+                Assert.Throws<InvalidOperationException>(() => session.Instantiate<C1>(1));
+                Assert.Throws<InvalidOperationException>(() => session.Instantiate<C1>(2));
+                Assert.Empty(this.Profile.CachedVersions(workspace, 1));
+                Assert.Empty(this.Profile.CachedVersions(workspace, 2));
+            }
+        }
+
+        [Fact]
+        public async Task PullRetainsAdvertisedRecordsAcrossOverlappingSessions()
+        {
+            var delayed = new TaskCompletionSource<JsonObject>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var advertised = new TaskCompletionSource<JsonObject>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var pulls = 0;
+            var workspace = this.Profile.CreateWorkspace(new PullHandler((path, body) =>
+            {
+                if (path == "pull")
+                {
+                    ++pulls;
+                    return Task.FromResult(this.PullSnapshot(pulls == 2 ? new[] { 1L, 2L } : new[] { 1L }, "initial", pulls == 3 ? 3 : 2));
+                }
+
+                Assert.Equal("sync", path);
+                if (pulls == 2)
+                {
+                    advertised.SetResult(body);
+                    return delayed.Task;
+                }
+
+                return Task.FromResult(this.SyncSnapshot(new[] { 1L }, pulls == 3 ? "newer" : "cached", pulls == 3 ? 3 : 2));
+            }));
+            var first = workspace.CreateSession();
+            var current = workspace.CreateSession();
+            await first.PullAsync(new Pull { ObjectId = 1 });
+            var pending = first.PullAsync(new Pull { ObjectId = 1 });
+            var request = await advertised.Task;
+            Assert.Single(request["o"].AsArray());
+            Assert.Equal(1, request["o"][0]["i"].GetValue<long>());
+            Assert.Single(request["g"].AsArray());
+            await current.PullAsync(new Pull { ObjectId = 1 });
+
+            var response = this.SyncSnapshot(new[] { 1L, 2L }, "retained", 2);
+            response["o"][0]["ro"] = null;
+            response["o"][1]["ro"] = new JsonArray();
+            response["g"][0]["p"] = null;
+            response["r"][0]["p"] = null;
+            response["p"] = new JsonArray();
+            delayed.SetResult(response);
+            Assert.False((await pending).HasErrors);
+            Assert.Equal("cached", first.Instantiate<C1>(1).C1AllorsString);
+            Assert.Null(first.Instantiate<C1>(2).C1AllorsString);
+            Assert.Equal("newer", current.Instantiate<C1>(1).C1AllorsString);
+            Assert.Equal(new[] { 2L, 3L }, this.Profile.CachedVersions(workspace, 1));
+
+            await first.PullAsync(new Pull { ObjectId = 1 });
+            Assert.Equal("cached", first.Instantiate<C1>(1).C1AllorsString);
+            Assert.Equal(new[] { 2L, 3L }, this.Profile.CachedVersions(workspace, 1));
+        }
+
+        [Fact]
+        public async Task PullFinalAbsencePreservesExistingSessionObjects()
+        {
+            var pulls = 0;
+            var workspace = this.Profile.CreateWorkspace(new PullHandler((path, body) =>
+            {
+                if (path == "pull")
+                {
+                    ++pulls;
+                    return Task.FromResult(this.PullSnapshot(pulls == 1 ? new[] { 1L } : new[] { 1L, 2L }, "initial", 2));
+                }
+
+                Assert.Equal("sync", path);
+                return Task.FromResult(this.SyncSnapshot(pulls == 1 ? new[] { 1L } : Array.Empty<long>(), "final", 2));
+            }));
+            var session = workspace.CreateSession();
+            await session.PullAsync(new Pull { ObjectId = 1 });
+            var existing = session.Instantiate<C1>(1);
+            var result = await session.PullAsync(new Pull { ObjectId = 1 });
+            Assert.False(result.HasErrors);
+            Assert.Null(result.GetObject<C1>("selected"));
+            Assert.Empty(result.GetCollection<C1>("selection"));
+            Assert.Same(existing, session.Instantiate<C1>(1));
+            Assert.Equal("final", existing.C1AllorsString);
+            Assert.Throws<InvalidOperationException>(() => session.Instantiate<C1>(2));
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task PullRequiresContentsWhenOnlySecurityChanges(bool omitObject)
+        {
+            var pulls = 0;
+            var synchronizations = 0;
+            var workspace = this.Profile.CreateWorkspace(new PullHandler((path, body) =>
+            {
+                if (path == "pull")
+                {
+                    ++pulls;
+                    var response = this.PullSnapshot(new[] { 1L }, "initial", 2);
+                    response["g"][0][1] = pulls;
+                    return Task.FromResult(response);
+                }
+
+                Assert.Equal("sync", path);
+                ++synchronizations;
+                var synced = this.SyncSnapshot(new[] { 1L }, "cached", 2);
+                if (pulls == 2)
+                {
+                    Assert.Empty(body["o"].AsArray());
+                    synced["g"][0]["v"] = 2;
+                    synced["g"][0]["p"] = new JsonArray();
+                    synced["r"][0]["p"] = null;
+                    synced["o"][0]["ro"] = omitObject ? null : new JsonArray();
+                    synced["p"] = new JsonArray();
+                }
+
+                return Task.FromResult(synced);
+            }));
+            var first = workspace.CreateSession();
+            var second = workspace.CreateSession();
+            await first.PullAsync(new Pull { ObjectId = 1 });
+            if (omitObject)
+            {
+                await Assert.ThrowsAsync<InvalidOperationException>(() => second.PullAsync(new Pull { ObjectId = 1 }));
+                Assert.Throws<InvalidOperationException>(() => second.Instantiate<C1>(1));
+            }
+            else
+            {
+                Assert.False((await second.PullAsync(new Pull { ObjectId = 1 })).HasErrors);
+                Assert.False(second.Instantiate<C1>(1).CanReadC1AllorsString);
+                Assert.Null(second.Instantiate<C1>(1).C1AllorsString);
+            }
+
+            Assert.Equal(2, synchronizations);
+            Assert.True(first.Instantiate<C1>(1).CanReadC1AllorsString);
+            Assert.Equal("cached", first.Instantiate<C1>(1).C1AllorsString);
+        }
+
+        private JsonObject PullSnapshot(long[] ids, string value, long version) => new JsonObject
+        {
+            ["o"] = new JsonObject { ["selected"] = ids.FirstOrDefault() },
+            ["c"] = new JsonObject { ["selection"] = JsonSerializer.SerializeToNode(ids) },
+            ["v"] = new JsonObject { ["value"] = value },
+            ["p"] = JsonSerializer.SerializeToNode(ids.Distinct().Select(id => new { i = id, v = version, g = new[] { 10L }, r = new[] { 20L } })),
+            ["g"] = new JsonArray(new JsonArray(10, 1)),
+            ["r"] = new JsonArray(new JsonArray(20, 1)),
+        };
+
+        private JsonObject SyncSnapshot(long[] ids, string value, long version) => new JsonObject
+        {
+            ["result"] = new JsonObject
+            {
+                ["o"] = new JsonObject { ["selected"] = ids.FirstOrDefault() },
+                ["c"] = new JsonObject { ["selection"] = JsonSerializer.SerializeToNode(ids) },
+                ["v"] = new JsonObject { ["value"] = value },
+            },
+            ["o"] = JsonSerializer.SerializeToNode(ids.Distinct().Select(id => new
+            {
+                i = id, v = version, c = this.M.C1.Tag, g = new[] { 10L }, r = new[] { 20L },
+                ro = new[] { new { t = this.M.C1.C1AllorsString.RelationType.Tag, v = value } },
+            })),
+            ["g"] = JsonSerializer.SerializeToNode(new[] { new { i = 10L, v = 1L, p = new[] { 100L, 101L } } }),
+            ["r"] = JsonSerializer.SerializeToNode(new[] { new { i = 20L, v = 1L, p = new[] { 102L } } }),
+            ["p"] = JsonSerializer.SerializeToNode(new[]
+            {
+                new { i = 100L, c = this.M.C1.Tag, t = this.M.C1.C1AllorsString.RelationType.Tag, o = (int)Operations.Read },
+                new { i = 101L, c = this.M.C1.Tag, t = (string)null, o = (int)Operations.Create },
+                new { i = 102L, c = this.M.C1.Tag, t = this.M.C1.C1AllorsString.RelationType.Tag, o = (int)Operations.Write },
+            }),
+        };
+
+        private sealed class PullHandler : HttpMessageHandler
+        {
+            private readonly Func<string, JsonObject, Task<JsonObject>> respond;
+
+            internal PullHandler(Func<string, JsonObject, Task<JsonObject>> respond) => this.respond = respond;
+
+            protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+            {
+                var body = JsonNode.Parse(await request.Content.ReadAsStringAsync(cancellationToken)).AsObject();
+                var response = await this.respond(request.RequestUri.Segments.Last(), body);
+                return new HttpResponseMessage(HttpStatusCode.OK)
+                {
+                    Content = new StringContent(response.ToJsonString(), Encoding.UTF8, "application/json"),
+                };
+            }
+        }
+
+        private sealed class PullDependencyRule : Allors.Workspace.Domain.PersonSessionFullNameRule
+        {
+            internal PullDependencyRule(M m) : base(m) => this.Dependencies = new IDependency[]
+            {
+                new Dependency(m.C1, m.C1.C1C1Many2One),
+                new Dependency(m.C1, m.C1.C1AllorsString),
+            };
+        }
 
         [Fact]
         public async Task UnitSamplesWithNulls()

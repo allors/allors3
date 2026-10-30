@@ -5,6 +5,7 @@
 
 namespace Allors.Workspace.Protocol.Json
 {
+    using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
     using Allors.Protocol.Json;
@@ -52,7 +53,7 @@ namespace Allors.Workspace.Protocol.Json
             var predicate = new Predicate
             {
                 k = PredicateKind.And,
-                d = visited.Dependencies,
+                d = visited.Dependencies?.ToArray(),
             };
 
             this.predicates.Push(predicate);
@@ -75,7 +76,7 @@ namespace Allors.Workspace.Protocol.Json
             var predicate = new Predicate
             {
                 k = PredicateKind.Between,
-                d = visited.Dependencies,
+                d = visited.Dependencies?.ToArray(),
                 r = visited.RoleType?.RelationType.Tag,
                 vs = visited.Values?.Select(this.unitConvert.ToJson).ToArray(),
                 pas = visited.Paths?.Select(v => v.RelationType.Tag).ToArray(),
@@ -90,7 +91,7 @@ namespace Allors.Workspace.Protocol.Json
             var predicate = new Predicate
             {
                 k = PredicateKind.ContainedIn,
-                d = visited.Dependencies,
+                d = visited.Dependencies?.ToArray(),
                 a = (visited.PropertyType as IAssociationType)?.RelationType.Tag,
                 r = (visited.PropertyType as IRoleType)?.RelationType.Tag,
                 obs = visited.Objects?.Select(v => v.Id).ToArray(),
@@ -111,7 +112,7 @@ namespace Allors.Workspace.Protocol.Json
             var predicate = new Predicate
             {
                 k = PredicateKind.Contains,
-                d = visited.Dependencies,
+                d = visited.Dependencies?.ToArray(),
                 a = (visited.PropertyType as IAssociationType)?.RelationType.Tag,
                 r = (visited.PropertyType as IRoleType)?.RelationType.Tag,
                 ob = visited.Object?.Id,
@@ -126,7 +127,7 @@ namespace Allors.Workspace.Protocol.Json
             var predicate = new Predicate
             {
                 k = PredicateKind.Equals,
-                d = visited.Dependencies,
+                d = visited.Dependencies?.ToArray(),
                 a = (visited.PropertyType as IAssociationType)?.RelationType.Tag,
                 r = (visited.PropertyType as IRoleType)?.RelationType.Tag,
                 ob = visited.Object?.Id,
@@ -177,7 +178,7 @@ namespace Allors.Workspace.Protocol.Json
             var predicate = new Predicate
             {
                 k = PredicateKind.Exists,
-                d = visited.Dependencies,
+                d = visited.Dependencies?.ToArray(),
                 a = (visited.PropertyType as IAssociationType)?.RelationType.Tag,
                 r = (visited.PropertyType as IRoleType)?.RelationType.Tag,
                 p = visited.Parameter,
@@ -244,7 +245,7 @@ namespace Allors.Workspace.Protocol.Json
             var predicate = new Predicate
             {
                 k = PredicateKind.GreaterThan,
-                d = visited.Dependencies,
+                d = visited.Dependencies?.ToArray(),
                 r = visited.RoleType?.RelationType.Tag,
                 v = this.unitConvert.ToJson(visited.Value),
                 pa = visited.Path?.RelationType.Tag,
@@ -259,7 +260,7 @@ namespace Allors.Workspace.Protocol.Json
             var predicate = new Predicate
             {
                 k = PredicateKind.InstanceOf,
-                d = visited.Dependencies,
+                d = visited.Dependencies?.ToArray(),
                 o = visited.ObjectType?.Tag,
                 a = (visited.PropertyType as IAssociationType)?.RelationType.Tag,
                 r = (visited.PropertyType as IRoleType)?.RelationType.Tag,
@@ -307,7 +308,7 @@ namespace Allors.Workspace.Protocol.Json
             var predicate = new Predicate
             {
                 k = PredicateKind.LessThan,
-                d = visited.Dependencies,
+                d = visited.Dependencies?.ToArray(),
                 r = visited.RoleType?.RelationType.Tag,
                 v = this.unitConvert.ToJson(visited.Value),
                 pa = visited.Path?.RelationType.Tag,
@@ -322,7 +323,7 @@ namespace Allors.Workspace.Protocol.Json
             var predicate = new Predicate
             {
                 k = PredicateKind.Like,
-                d = visited.Dependencies,
+                d = visited.Dependencies?.ToArray(),
                 r = visited.RoleType?.RelationType.Tag,
                 v = this.unitConvert.ToJson(visited.Value),
                 p = visited.Parameter,
@@ -358,7 +359,7 @@ namespace Allors.Workspace.Protocol.Json
             var predicate = new Predicate()
             {
                 k = PredicateKind.Not,
-                d = visited.Dependencies,
+                d = visited.Dependencies?.ToArray(),
             };
 
             this.predicates.Push(predicate);
@@ -375,7 +376,7 @@ namespace Allors.Workspace.Protocol.Json
             var predicate = new Predicate()
             {
                 k = PredicateKind.Or,
-                d = visited.Dependencies,
+                d = visited.Dependencies?.ToArray(),
             };
 
             this.predicates.Push(predicate);
@@ -400,6 +401,7 @@ namespace Allors.Workspace.Protocol.Json
                 er = visited.ExtentRef,
                 t = visited.ObjectType?.Tag,
                 o = visited.ObjectId ?? visited.Object?.Id,
+                a = visited.Arguments?.ToDictionary(v => v.Key, v => this.ArgumentToJson(v.Value)),
             };
 
             if (visited.Extent != null)
@@ -422,6 +424,31 @@ namespace Allors.Workspace.Protocol.Json
             }
 
             this.Pull = pull;
+        }
+
+        private object ArgumentToJson(object value)
+        {
+            if (value is IObject @object)
+            {
+                return @object.Id;
+            }
+
+            if (value is long id)
+            {
+                return id;
+            }
+
+            if (value is IDictionary<string, object> dictionary)
+            {
+                return dictionary.ToDictionary(v => v.Key, v => this.ArgumentToJson(v.Value));
+            }
+
+            if (value is IEnumerable collection && !(value is string) && !(value is byte[]))
+            {
+                return collection.Cast<object>().Select(this.ArgumentToJson).ToArray();
+            }
+
+            return this.unitConvert.ToJson(value);
         }
 
         public void VisitResult(Data.Result visited)

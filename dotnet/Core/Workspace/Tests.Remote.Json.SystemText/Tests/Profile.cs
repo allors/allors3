@@ -78,6 +78,12 @@ namespace Tests.Workspace.Remote
 
         public IWorkspace CreateWorkspace() => this.DatabaseConnection.CreateWorkspace();
 
+        public IWorkspace CreateWorkspace(HttpMessageHandler handler) =>
+            new DatabaseConnection(this.configuration, this.servicesBuilder,
+                new HttpClient(handler) { BaseAddress = new Uri(Url) }, this.idGenerator, this.defaultRanges).CreateWorkspace();
+
+        public long[] CachedVersions(IWorkspace workspace, long id) => ((Allors.Workspace.Adapters.Remote.DatabaseConnection)((Allors.Workspace.Adapters.Workspace)workspace).DatabaseConnection).CachedVersions(id);
+
         public async Task<long> SetupUnitSample(int step)
         {
             using var response = await this.httpClient.PostAsJsonAsync("Test/UnitSample", new { step });

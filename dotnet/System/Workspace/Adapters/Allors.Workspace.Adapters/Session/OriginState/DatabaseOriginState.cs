@@ -88,10 +88,8 @@ namespace Allors.Workspace.Adapters
 
         public void OnPushed() => this.IsPushed = true;
 
-        public void OnPulled(IPullResultInternals pull)
+        public void OnPulled(IPullResultInternals pull, DatabaseRecord newRecord)
         {
-            var newRecord = this.Session.Workspace.DatabaseConnection.GetRecord(this.Id);
-
             if (!this.IsPushed)
             {
                 if (!this.CanMerge(newRecord))

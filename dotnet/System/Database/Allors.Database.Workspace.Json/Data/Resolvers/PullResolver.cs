@@ -21,6 +21,10 @@ namespace Allors.Database.Protocol.Json
 
         public void Prepare(HashSet<long> objectIds) => objectIds.Add(this.objectId);
 
-        public void Resolve(Dictionary<long, IObject> objectById) => this.pull.Object = objectById[this.objectId];
+        public void Resolve(Dictionary<long, IObject> objectById)
+        {
+            objectById.TryGetValue(this.objectId, out var @object);
+            this.pull.Object = @object;
+        }
     }
 }

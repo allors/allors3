@@ -55,7 +55,7 @@ namespace Allors.Workspace.Adapters.Remote.Newtonsoft
             var response = await this.PostAsJsonAsync(uri, syncRequest);
             response.EnsureSuccessStatusCode();
 
-            return await this.ReadAsAsync<SyncResponse>(response);
+            return await this.ReadAsAsync<SyncResponse>(response, new SyncRoleConverter());
         }
 
         public override async Task<PushResponse> Push(PushRequest pushRequest)
@@ -105,10 +105,40 @@ namespace Allors.Workspace.Adapters.Remote.Newtonsoft
                         new StringContent(json, Encoding.UTF8, "application/json"));
                 });
 
-        private async Task<T> ReadAsAsync<T>(HttpResponseMessage response)
+        private async Task<T> ReadAsAsync<T>(HttpResponseMessage response, params JsonConverter[] converters)
         {
             var json = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<T>(json);
+            return JsonConvert.DeserializeObject<T>(json, converters);
+        }
+
+        private sealed class SyncRoleConverter : JsonConverter
+        {
+            public override bool CanWrite => false;
+
+            public override bool CanConvert(Type objectType) => objectType == typeof(SyncResponseRole);
+
+            public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+            {
+                if (reader.TokenType == JsonToken.Null)
+                {
+                    return null;
+                }
+
+                var previous = reader.DateParseHandling;
+                reader.DateParseHandling = DateParseHandling.None;
+                try
+                {
+                    var role = new SyncResponseRole();
+                    serializer.Populate(reader, role);
+                    return role;
+                }
+                finally
+                {
+                    reader.DateParseHandling = previous;
+                }
+            }
+
+            public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer) => throw new NotSupportedException();
         }
     }
 }

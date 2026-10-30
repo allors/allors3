@@ -134,10 +134,10 @@ export abstract class Strategy implements IStrategy {
     }
 
     if (roleType.isOne) {
-      return this.getCompositeRole(roleType) != null;
+      return this.getCompositeRoleId(roleType) !== 0;
     }
 
-    return this.getCompositesRole(roleType)?.length > 0;
+    return this.getCompositesRoleIds(roleType).length > 0;
   }
 
   getRole(roleType: RoleType): unknown {
@@ -181,10 +181,7 @@ export abstract class Strategy implements IStrategy {
     }
   }
 
-  getCompositeRole<T extends IObject>(
-    roleType: RoleType,
-    skipMissing?: boolean
-  ): T {
+  getCompositeRole<T extends IObject>(roleType: RoleType): T {
     if (roleType.relationType.isDerived) {
       const rule = this.session.resolve(this, roleType);
       if (rule != null) {
@@ -202,20 +199,39 @@ export abstract class Strategy implements IStrategy {
         );
       case Origin.Database:
         return this.canRead(roleType)
-          ? (this.DatabaseOriginState?.getCompositeRole(
-              roleType,
-              skipMissing
-            ) as T) ?? null
+          ? (this.DatabaseOriginState?.getCompositeRole(roleType) as T) ?? null
           : null;
       default:
         throw new Error('Unknown origin');
     }
   }
 
-  getCompositesRole<T extends IObject>(
-    roleType: RoleType,
-    skipMissing?: boolean
-  ): T[] {
+  getCompositeRoleId(roleType: RoleType): number {
+    if (roleType.relationType.isDerived) {
+      const rule = this.session.resolve(this, roleType);
+      if (rule != null) {
+        return (rule.derive(this.object) as IObject)?.id ?? 0;
+      }
+    }
+
+    switch (roleType.origin) {
+      case Origin.Session:
+        return (
+          this.session.sessionOriginState.getCompositeRole(
+            this.object,
+            roleType
+          )?.id ?? 0
+        );
+      case Origin.Database:
+        return this.canRead(roleType)
+          ? this.DatabaseOriginState?.getCompositeRoleId(roleType) ?? 0
+          : 0;
+      default:
+        throw new Error('Unknown origin');
+    }
+  }
+
+  getCompositesRole<T extends IObject>(roleType: RoleType): T[] {
     if (roleType.relationType.isDerived) {
       const rule = this.session.resolve(this, roleType);
       if (rule != null) {
@@ -233,11 +249,35 @@ export abstract class Strategy implements IStrategy {
         );
       case Origin.Database:
         return this.canRead(roleType)
-          ? (this.DatabaseOriginState?.getCompositesRole(
-              roleType,
-              skipMissing
-            ) as T[]) ?? (frozenEmptyArray as T[])
+          ? (this.DatabaseOriginState?.getCompositesRole(roleType) as T[]) ??
+              (frozenEmptyArray as T[])
           : (frozenEmptyArray as T[]);
+      default:
+        throw new Error('Unknown origin');
+    }
+  }
+
+  getCompositesRoleIds(roleType: RoleType): ReadonlyArray<number> {
+    if (roleType.relationType.isDerived) {
+      const rule = this.session.resolve(this, roleType);
+      if (rule != null) {
+        return (rule.derive(this.object) as IObject[]).map((v) => v.id);
+      }
+    }
+
+    switch (roleType.origin) {
+      case Origin.Session:
+        return (
+          this.session.sessionOriginState.getCompositesRole(
+            this.object,
+            roleType
+          ) ?? (frozenEmptyArray as IObject[])
+        ).map((v) => v.id);
+      case Origin.Database:
+        return this.canRead(roleType)
+          ? this.DatabaseOriginState?.getCompositesRoleIds(roleType) ??
+              (frozenEmptyArray as number[])
+          : (frozenEmptyArray as number[]);
       default:
         throw new Error('Unknown origin');
     }

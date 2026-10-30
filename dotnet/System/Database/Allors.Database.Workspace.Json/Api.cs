@@ -149,12 +149,16 @@ namespace Allors.Database.Protocol.Json
 
         public SyncResponse Sync(SyncRequest syncRequest)
         {
+            SyncResponseBuilder.ValidateRequest(syncRequest);
             var @event = this.Sink?.OnSync(this.Transaction, syncRequest);
             this.Sink?.OnBefore(@event);
 
+            var dependencies = this.ToDependencies(syncRequest.pull.d);
+            var pullResponseBuilder = new PullResponseBuilder(this.Transaction, this.AccessControl, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents, this.UnitConvert, this.Ranges, dependencies, this.PrefetchPolicyCache, this.CancellationToken);
+            var finalSelection = pullResponseBuilder.Build(syncRequest.pull);
             var prefetchPolicyByClass = this.PrefetchPolicyCache.WorkspacePrefetchPolicyByClass(this.WorkspaceName);
             var syncResponseBuilder = new SyncResponseBuilder(this.Transaction, this.AccessControl, this.AllowedClasses, this.RoleTypesByClass, prefetchPolicyByClass, this.UnitConvert, this.Ranges);
-            var syncResponse = syncResponseBuilder.Build(syncRequest);
+            var syncResponse = syncResponseBuilder.Build(syncRequest, finalSelection);
 
             if (@event != null)
             {

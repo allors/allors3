@@ -23,9 +23,10 @@ namespace Allors.Workspace.Adapters.Remote
 
         public string Message => this.responseDerivationError.m;
 
+        // A derivation error may concern an object this session does not hold.
         public IEnumerable<Role> Roles =>
             from r in this.responseDerivationError.r
-            let association = this.session.Instantiate<IObject>(r.i)
+            let association = ((Adapters.Session)this.session).GetStrategy(r.i)?.Object
             let relationType = (IRelationType)this.session.Workspace.Configuration.MetaPopulation.FindByTag(r.r)
             select new Role(association, relationType);
     }

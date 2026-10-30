@@ -26,6 +26,29 @@ namespace Tests
         public IUnitConvert UnitConvert { get; }
 
         [Fact]
+        public void DeletedRequestedObject()
+        {
+            this.SetUser("jane@example.com");
+            var data = new DataBuilder(this.Transaction).WithString("Deleted").Build();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
+
+            var request = new PullRequest
+            {
+                l = new[] { new Allors.Protocol.Json.Data.Pull { o = data.Id } },
+            };
+            Assert.Single(new Api(this.Transaction, "Default", CancellationToken.None).Pull(request).p);
+
+            data.Strategy.Delete();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
+
+            var response = new Api(this.Transaction, "Default", CancellationToken.None).Pull(request);
+            Assert.Empty(response.p);
+            Assert.Empty(response.o);
+        }
+
+        [Fact]
         public async void NamedResult()
         {
             var user = this.SetUser("jane@example.com");

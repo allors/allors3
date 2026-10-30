@@ -163,7 +163,7 @@ namespace Tests
 
             var syncRequest = new SyncRequest
             {
-                o = new[] { this.x[0].Id },
+                pull = new PullRequest { l = new[] { new Allors.Protocol.Json.Data.Pull { o = this.x[0].Id } } },
             };
 
             var api = new Api(this.Transaction, "Default", CancellationToken.None);

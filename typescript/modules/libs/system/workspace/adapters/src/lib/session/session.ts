@@ -163,16 +163,16 @@ export abstract class Session implements ISession {
   instantiate<T extends IObject>(obj: T): T[];
   instantiate<T extends IObject>(args: unknown): unknown {
     if (typeof args === 'number') {
-      return (this.getObject(args) as unknown as T) ?? null;
+      return this.instantiateObject(args) as unknown as T;
     }
 
     if (args instanceof ObjectBase) {
-      return (this.getObject(args.id) as unknown as T) ?? null;
+      return this.instantiateObject(args.id) as unknown as T;
     }
 
     if (Array.isArray(args)) {
       return args
-        .map((v) => this.getObject(v))
+        .map((v) => this.instantiateObject(v))
         .filter((v) => v != null) as unknown as T[];
     }
 
@@ -196,16 +196,24 @@ export abstract class Session implements ISession {
 
   abstract onDelete(strategy: Strategy);
 
+  // Id 0 denotes no object; any other id must be held by this session.
+  private instantiateObject(id: number): IObject {
+    const object = this.getObject(id);
+    if (object == null && id !== 0) {
+      throw new Error(
+        `Object ${id} is not in this session. Pull it before instantiating it.`
+      );
+    }
+
+    return object;
+  }
+
   public getObject(id: number): IObject {
     if (id == 0) {
       return null;
     }
 
-    if (this.objectByWorkspaceId.has(id)) {
-      return this.objectByWorkspaceId.get(id);
-    }
-
-    return this.instantiateDatabaseStrategy(id);
+    return this.objectByWorkspaceId.get(id) ?? null;
   }
 
   public getCompositeAssociation(
@@ -311,6 +319,4 @@ export abstract class Session implements ISession {
   abstract pull(pulls: Pull | Pull[]): Promise<IPullResult>;
 
   abstract push(): Promise<IPushResult>;
-
-  abstract instantiateDatabaseStrategy(id: number): IObject;
 }

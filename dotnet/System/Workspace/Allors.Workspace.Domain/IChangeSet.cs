@@ -45,7 +45,13 @@ namespace Allors.Workspace
 
         /// <summary>
         /// Gets the role objects by changed association type.
+        /// Only roles this session holds appear here; every changed role ID is in RoleIdsByAssociationType.
         /// </summary>
         IDictionary<IAssociationType, ISet<IStrategy>> RolesByAssociationType { get; }
+
+        /// <summary>
+        /// Gets the role IDs by changed association type.
+        /// </summary>
+        IDictionary<IAssociationType, ISet<long>> RoleIdsByAssociationType { get; }
     }
 }

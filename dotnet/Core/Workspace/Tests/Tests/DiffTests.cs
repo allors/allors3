@@ -192,6 +192,10 @@ namespace Tests.Workspace
             var many = (ICompositesDiff)diffs.Single(v => v.RelationType == this.M.C1.C1C1Many2Manies.RelationType);
             Assert.Same(baselineTarget.Strategy, Assert.Single(many.OriginalRoles));
             Assert.Equal(new[] { baselineTarget.Id, localTarget.Id }.OrderBy(v => v), many.ChangedRoles.Select(v => v.Id).OrderBy(v => v));
+            Assert.Equal(baselineTarget.Id, one.OriginalRoleId);
+            Assert.Equal(localTarget.Id, one.ChangedRoleId);
+            Assert.Equal(new[] { baselineTarget.Id }, many.OriginalRoleIds);
+            Assert.Equal(new[] { baselineTarget.Id, localTarget.Id }.OrderBy(v => v), many.ChangedRoleIds.OrderBy(v => v));
 
             var pushed = await editing.PushAsync();
             Assert.True(pushed.HasErrors);

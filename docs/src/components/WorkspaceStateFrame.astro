@@ -5,6 +5,12 @@ const { frame, scenarioId, stepNumber } = Astro.props;
 const { state } = frame;
 const values = visibleValues(state);
 const differences = diff(state);
+const selection = state.selection;
+const resultStages = selection ? [
+  { label: 'Query now', result: selection.query },
+  { label: 'Latest Pull', result: selection.pull },
+  { label: 'Completed load', result: selection.completed },
+] : [];
 const records = [
   { label: 'Database', record: state.database, note: 'Committed values' },
   { label: 'Connection', record: state.connection, note: 'Current shared record' },
@@ -25,13 +31,14 @@ const records = [
         <div class="record">
           <strong>{label}</strong>
           <p class="version">v{record.version}</p>
+          <p class="security-version">Grant G v{record.security.version}</p>
           <p>{note}</p>
         </div>
       </>)}
     </div>
-    <figcaption>Arrows show the path of a record: Pull/Sync refreshes the connection; the editing object’s Pull accepts or rejects its replacement. Matching version labels mean the same record in this example.</figcaption>
+    <figcaption>A load can publish a fresh connection record and offer its exact data and security record to the editing object. The arrows show these two steps; the object can accept or reject the offered record. Reusing an exact cached record leaves newer shared current records in place.</figcaption>
   </figure>
-  <div class="read-rule"><strong>Session read</strong> = local edit, when present; otherwise the retained value.</div>
+  <div class="read-rule"><strong>Session read</strong> = local edit, when present; otherwise the retained value, subject to the retained record’s permissions.</div>
   <table tabindex="0">
     <caption>Values after this step</caption>
     <thead><tr>
@@ -52,7 +59,20 @@ const records = [
     })}</tbody>
   </table>
   <p class="state-note">Diffs: {differences.length}. Marked pushed: {state.pushed ? 'yes' : 'no'}. A dash (—) means no local edit or diff; <code>null</code> is a value.</p>
-  {scenarioId === 'permissions' && <p class="permission-note">Read permission through retained grant G: <strong>{state.grantAllowsRead ? 'allowed' : 'denied'}</strong>. Grant ID G stays fixed; the connection map supplies its permissions. The table shows held data, independently of permission to expose it.</p>}
+  {scenarioId === 'permissions' && <p class="permission-note">Read permission through retained grant G at security version {state.retained.security.version}: <strong data-retained-permission>{state.retained.security.allowsRead ? 'allowed' : 'denied'}</strong>. Checks use the retained entry. The Database, Connection, Retained and Local edit columns describe held values; Session read applies the retained permissions.</p>}
+  {selection && <div data-selection>
+    <table tabindex="0">
+      <caption>Named results for this query</caption>
+      <thead><tr><th scope="col">Named result</th>{resultStages.map(({ label }) => <th scope="col">{label}</th>)}</tr></thead>
+      <tbody>
+        <tr><th scope="row">Selected object</th>{resultStages.map(({ result }) => <td>{result?.object ?? '—'}</td>)}</tr>
+        <tr><th scope="row">Ordered collection</th>{resultStages.map(({ result }) => <td>{result ? result.collection.join(' → ') : '—'}</td>)}</tr>
+        <tr><th scope="row">Count</th>{resultStages.map(({ result }) => <td>{result?.value ?? '—'}</td>)}</tr>
+      </tbody>
+    </table>
+    <p class="state-note">Exact cached records: {selection.cached.join(', ')}. Advertised to Sync: {selection.advertised.join(', ') || 'none'}. Pool of the completed load: {selection.pool.join(', ')}.</p>
+    <p>c1A remains in the session with the retained record shown above, even when it is absent from the completed selection.</p>
+  </div>}
 </section>
 
 <style>
@@ -79,7 +99,7 @@ const records = [
   @media (max-width: 36rem) {
     .records { grid-template-columns: 1fr; gap: 0.25rem; }
     .record { display: grid; grid-template-columns: 1fr auto; padding: 0.5rem 0.75rem; }
-    .record > p:last-child { grid-column: 1 / -1; }
+    .record > p:not(.version) { grid-column: 1 / -1; }
     .version { font-size: 1.25rem; }
     .flow-arrow { justify-self: center; transform: rotate(90deg); line-height: 1; }
   }

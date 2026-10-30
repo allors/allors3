@@ -10,17 +10,20 @@ export class Strategy extends SystemStrategy {
   constructor(
     public override session: Session,
     public override cls: Class,
-    public override id: number
+    public override id: number,
+    record?: DatabaseRecord
   ) {
     super(session, cls, id);
 
-    this.DatabaseOriginState = new DatabaseOriginState(
-      this.object,
-      session.workspace.database.getRecord(this.id)
-    );
+    this.DatabaseOriginState = new DatabaseOriginState(this.object, record);
   }
 
   static fromDatabaseRecord(session: Session, databaseRecord: DatabaseRecord) {
-    return new Strategy(session, databaseRecord.cls, databaseRecord.id);
+    return new Strategy(
+      session,
+      databaseRecord.cls,
+      databaseRecord.id,
+      databaseRecord
+    );
   }
 }

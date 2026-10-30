@@ -5,8 +5,8 @@ export interface PermissionResponsePermission {
   /** Class Tag */
   c: string;
 
-  /** Operand Type Tag */
-  t: string;
+  /** Operand Type Tag, omitted for Create */
+  t?: string;
 
   /** Operation */
   o: number;

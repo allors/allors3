@@ -5,6 +5,7 @@
 
 namespace Tests.Workspace
 {
+    using System.Net.Http;
     using System.Threading.Tasks;
     using Allors.Workspace;
     using Xunit;
@@ -14,6 +15,10 @@ namespace Tests.Workspace
         IWorkspace CreateExclusiveWorkspace();
 
         IWorkspace CreateWorkspace();
+
+        IWorkspace CreateWorkspace(HttpMessageHandler handler);
+
+        long[] CachedVersions(IWorkspace workspace, long id);
 
         IWorkspace Workspace { get; }
 

@@ -52,9 +52,13 @@ namespace Allors.Workspace
 
         T GetCompositeRole<T>(IRoleType roleType) where T : class, IObject;
 
+        long GetCompositeRoleId(IRoleType roleType);
+
         void SetCompositeRole<T>(IRoleType roleType, T value) where T : class, IObject;
 
         IEnumerable<T> GetCompositesRole<T>(IRoleType roleType) where T : class, IObject;
+
+        IEnumerable<long> GetCompositesRoleIds(IRoleType roleType);
 
         void AddCompositesRole<T>(IRoleType roleType, T value) where T : class, IObject;
 

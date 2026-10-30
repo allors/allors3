@@ -5,7 +5,10 @@ import {
   IWorkspace,
   IUnit,
 } from '@allors/system/workspace/domain';
-import { PullResponse } from '@allors/system/common/protocol-json';
+import {
+  Response,
+  SyncResponseResult,
+} from '@allors/system/common/protocol-json';
 import { Result } from '../result';
 import {
   AssociationType,
@@ -26,7 +29,10 @@ export class PullResult extends Result implements IPullResult {
 
   workspace: IWorkspace;
 
-  constructor(session: ISession, private pullResponse: PullResponse) {
+  constructor(
+    session: ISession,
+    private pullResponse: Response & SyncResponseResult
+  ) {
     super(session, pullResponse);
 
     this.workspace = session.workspace;
@@ -63,7 +69,7 @@ export class PullResult extends Result implements IPullResult {
       ? new Map(
           Object.keys(this.pullResponse.v).map((v) => [
             v.toUpperCase(),
-            this.pullResponse.v[v],
+            this.pullResponse.v[v] as IUnit,
           ])
         )
       : (frozenEmptyMap as Map<string, IUnit>);

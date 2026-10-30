@@ -13,6 +13,10 @@ namespace Allors.Workspace.Adapters
         {
         }
 
+        public long OriginalRoleId { get; set; }
+
+        public long ChangedRoleId { get; set; }
+
         public IStrategy OriginalRole { get; set; }
 
         public IStrategy ChangedRole { get; set; }

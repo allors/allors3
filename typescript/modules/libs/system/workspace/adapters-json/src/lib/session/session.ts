@@ -17,7 +17,6 @@ import {
 } from '@allors/system/workspace/domain';
 import { Class, Origin } from '@allors/system/workspace/meta';
 import { DatabaseConnection } from '../database/database-connection';
-import { DatabaseRecord } from '../database/database-record';
 import { InvokeResult } from '../database/invoke/invoke-result';
 import { PullResult } from '../database/pull/pull-result';
 import { PushResult } from '../database/push/push-result';
@@ -48,20 +47,6 @@ export class Session extends SystemSession {
     this.removeObject(strategy.object);
     this.pushToDatabaseTracker.onDelete(strategy.object);
     this.changeSetTracker.onDelete(strategy.object);
-  }
-
-  instantiateDatabaseStrategy(id: number): IObject {
-    const databaseRecord = this.workspace.database.getRecord(
-      id
-    ) as DatabaseRecord;
-
-    if (databaseRecord == null) {
-      return null;
-    }
-
-    const strategy = Strategy.fromDatabaseRecord(this, databaseRecord);
-    this.addObject(strategy.object);
-    return strategy.object;
   }
 
   async invoke(
@@ -108,14 +93,16 @@ export class Session extends SystemSession {
       }
     }
 
-    const pullRequest: PullRequest = {
-      x: this.context,
-      d: dependenciesToJson(this.dependencies),
-      l: pulls.map((v) => pullToJson(v)),
-    };
+    const pullRequest: PullRequest = JSON.parse(
+      JSON.stringify({
+        x: this.context,
+        d: dependenciesToJson(this.dependencies),
+        l: pulls.map((v) => pullToJson(v)),
+      })
+    );
 
     const pullResponse = await this.database.client.pull(pullRequest);
-    return await this.onPull(pullResponse);
+    return await this.onPull(pullResponse, pullRequest);
   }
 
   async push(): Promise<IPushResult> {
@@ -166,39 +153,67 @@ export class Session extends SystemSession {
     return pushResult;
   }
 
-  private async onPull(pullResponse: PullResponse): Promise<IPullResult> {
-    const pullResult = new PullResult(this, pullResponse);
-
-    if (pullResponse.p == null || pullResult.hasErrors) {
-      return pullResult;
+  private async onPull(
+    pullResponse: PullResponse,
+    pullRequest: PullRequest
+  ): Promise<IPullResult> {
+    if (pullResponse == null) {
+      throw new Error(
+        'Pull response is missing. Retry the load with a matching server.'
+      );
+    }
+    const initialResult = new PullResult(this, pullResponse);
+    if (initialResult.hasErrors) {
+      return initialResult;
     }
 
-    const syncRequest = this.database.onPullResonse(pullResponse, this.context);
-    if (syncRequest.o.length > 0) {
-      const syncResponse = await this.database.client.sync(syncRequest);
-      const accessRequest = this.database.onSyncResponse(syncResponse);
-
-      if (accessRequest != null) {
-        const accessResponse = await this.database.client.access(accessRequest);
-        const permissionRequest = this.database.accessResponse(accessResponse);
-        if (permissionRequest != null) {
-          const permissionResponse = await this.database.client.permission(
-            permissionRequest
-          );
-          this.database.permissionResponse(permissionResponse);
-        }
+    const context = this.database.prepare(pullResponse, pullRequest);
+    if (context.requiresSync) {
+      const response = await this.database.client.sync(context.request);
+      if (response == null) {
+        throw new Error(
+          'Sync response is missing. Retry the load with a matching server.'
+        );
+      }
+      const result = new PullResult(this, {
+        ...response,
+        ...response.result,
+        o: response.result?.o,
+      });
+      if (result.hasErrors) {
+        return result;
+      }
+      context.load(response);
+    }
+    context.validateResult();
+    const pullResult = new PullResult(this, context.response);
+    const created = new Map<number, IObject>();
+    for (const record of context.records.values()) {
+      const existing = this.objectByWorkspaceId.get(record.id);
+      if (existing && existing.strategy.cls !== record.cls) {
+        throw new Error(
+          `Load returned class '${record.cls.tag}' for object ${record.id}, but the session has class '${existing.strategy.cls.tag}'. Check the object identity and class in the server response.`
+        );
+      }
+      if (!existing) {
+        created.set(
+          record.id,
+          Strategy.fromDatabaseRecord(this, record).object
+        );
       }
     }
-
-    for (const v of pullResponse.p) {
-      if (this.objectByWorkspaceId.has(v.i)) {
-        const object = this.objectByWorkspaceId.get(v.i);
-        (object.strategy as Strategy).DatabaseOriginState.onPulled(pullResult);
+    this.database.publish(context);
+    for (const record of context.records.values()) {
+      const object = this.objectByWorkspaceId.get(record.id);
+      if (object) {
+        (object.strategy as Strategy).DatabaseOriginState.onPulled(
+          pullResult,
+          record
+        );
       } else {
-        this.instantiateDatabaseStrategy(v.i);
+        this.addObject(created.get(record.id));
       }
     }
-
     return pullResult;
   }
 }

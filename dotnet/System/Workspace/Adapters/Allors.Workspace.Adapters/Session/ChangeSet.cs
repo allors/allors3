@@ -24,6 +24,7 @@ namespace Allors.Workspace.Adapters
             this.Instantiated = instantiated ?? EmptySet<IStrategy>.Instance;
             this.AssociationsByRoleType = new Dictionary<IRoleType, ISet<IStrategy>>();
             this.RolesByAssociationType = new Dictionary<IAssociationType, ISet<IStrategy>>();
+            this.RoleIdsByAssociationType = new Dictionary<IAssociationType, ISet<long>>();
         }
 
         private Session Session { get; }
@@ -38,6 +39,8 @@ namespace Allors.Workspace.Adapters
 
         public IDictionary<IAssociationType, ISet<IStrategy>> RolesByAssociationType { get; }
 
+        public IDictionary<IAssociationType, ISet<long>> RoleIdsByAssociationType { get; }
+
         public void AddSessionStateChanges(IDictionary<IPropertyType, IDictionary<Strategy, object>> sessionStateChangeSet)
         {
             foreach (var kvp in sessionStateChangeSet)
@@ -48,6 +51,7 @@ namespace Allors.Workspace.Adapters
                 {
                     case IAssociationType associationType:
                         this.RolesByAssociationType.Add(associationType, strategies);
+                        this.RoleIdsByAssociationType.Add(associationType, new HashSet<long>(kvp.Value.Keys.Select(v => v.Id)));
                         break;
                     case IRoleType roleType:
                         this.AssociationsByRoleType.Add(roleType, strategies);
@@ -66,93 +70,39 @@ namespace Allors.Workspace.Adapters
             }
         }
 
-        public void DiffComposite(Strategy association, IRelationType relationType, Strategy current, long? previous)
+        public void DiffComposite(Strategy association, IRelationType relationType, long current, long previous)
         {
-            if (Equals(current?.Id, previous))
+            if (current == previous)
             {
                 return;
             }
 
-            if (previous != null)
+            if (previous != 0)
             {
-                this.AddRole(relationType, this.Session.GetStrategy((long)previous));
+                this.AddRoleId(relationType, previous);
             }
 
-            if (current != null)
+            if (current != 0)
             {
-                this.AddRole(relationType, current);
+                this.AddRoleId(relationType, current);
             }
 
             this.AddAssociation(relationType, association);
         }
 
-        public void DiffComposite(Strategy association, IRelationType relationType, long? current, long? previous)
-        {
-            if (Equals(current, previous))
-            {
-                return;
-            }
-
-            if (previous != null)
-            {
-                this.AddRole(relationType, this.Session.GetStrategy((long)previous));
-            }
-
-            if (current != null)
-            {
-                this.AddRole(relationType, this.Session.GetStrategy((long)current));
-            }
-
-            this.AddAssociation(relationType, association);
-        }
-
-        public void DiffComposite(Strategy association, IRelationType relationType, Strategy current, Strategy previous)
-        {
-            if (Equals(current, previous))
-            {
-                return;
-            }
-
-            if (previous != null)
-            {
-                this.AddRole(relationType, previous);
-            }
-
-            if (current != null)
-            {
-                this.AddRole(relationType, current);
-            }
-
-            this.AddAssociation(relationType, association);
-        }
-
-        public void DiffComposites(Strategy association, IRelationType relationType, IRange<Strategy> current, IRange<long> previousRange)
-        {
-            var ranges = this.Session.Workspace.RecordRanges;
-            var previous = this.Session.Workspace.StrategyRanges.Load(ranges.Ensure(previousRange).Select(v => this.Session.GetStrategy(v)));
-            this.DiffComposites(association, relationType, current, previous);
-        }
-
-        public void DiffComposites(Strategy association, IRelationType relationType, IRange<long> currentRange, IRange<long> previous)
-        {
-            var ranges = this.Session.Workspace.RecordRanges;
-            var current = this.Session.Workspace.StrategyRanges.Load(ranges.Ensure(currentRange).Select(v => this.Session.GetStrategy(v)));
-            this.DiffComposites(association, relationType, current, previous);
-        }
-
-        public void DiffComposites(Strategy association, IRelationType relationType, IRange<Strategy> current, IRange<Strategy> previous)
+        public void DiffComposites(Strategy association, IRelationType relationType, IRange<long> current, IRange<long> previous)
         {
             var hasChange = false;
 
-            foreach (var v in current.Except(previous))
+            foreach (var v in previous.Except(current))
             {
-                this.AddRole(relationType, v);
+                this.AddRoleId(relationType, v);
                 hasChange = true;
             }
 
-            foreach (var v in previous.Except(current))
+            foreach (var v in current.Except(previous))
             {
-                this.AddRole(relationType, v);
+                this.AddRoleId(relationType, v);
                 hasChange = true;
             }
 
@@ -173,6 +123,26 @@ namespace Allors.Workspace.Adapters
             }
 
             associations.Add(association);
+        }
+
+        // The ID is always recorded; the strategy only when this session holds it.
+        private void AddRoleId(IRelationType relationType, long id)
+        {
+            var associationType = relationType.AssociationType;
+
+            if (!this.RoleIdsByAssociationType.TryGetValue(associationType, out var roleIds))
+            {
+                roleIds = new HashSet<long>();
+                this.RoleIdsByAssociationType.Add(associationType, roleIds);
+            }
+
+            roleIds.Add(id);
+
+            var role = this.Session.GetStrategy(id);
+            if (role != null)
+            {
+                this.AddRole(relationType, role);
+            }
         }
 
         private void AddRole(IRelationType relationType, Strategy role)

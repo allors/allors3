@@ -12,7 +12,7 @@ const localDiff = [
 ];
 
 function record(version, values) {
-  return { version, values };
+  return { version, values, security: { version: 1, allowsRead: true } };
 }
 
 function scenario(id) {
@@ -33,7 +33,7 @@ function assertDiff(state, expected) {
 
 test('prepared scenarios identify every step and expose explanations without running the controls', () => {
   assert.deepEqual(scenarios.map((entry) => entry.id).sort(), [
-    'disjoint', 'permissions', 'push-reset', 'remote-refresh',
+    'disjoint', 'final-selection', 'permissions', 'push-reset', 'remote-refresh',
     'string-conflict', 'to-many-conflict', 'to-one-conflict',
   ]);
   for (const entry of scenarios) {
@@ -178,18 +178,56 @@ test('Reset after successful Push exposes the last pulled value and preserves th
   assertDiff(recovered.state, []);
 });
 
-test('the known-grant illustration changes the live permission map without accepting the newer data record', () => {
+test('security versions stay with retained records until an editing Pull accepts their replacement', () => {
   const sequence = frames('permissions');
   const before = sequence['remote-pull'];
-  const after = sequence['permission-refresh'];
-  assert.equal(before.state.grantAllowsRead, true);
-  assert.equal(after.outcome, 'permission-refreshed');
-  assert.equal(after.state.grantAllowsRead, false);
-  assert.deepEqual(after.state.retained, record(1, baseline));
-  assert.deepEqual(after.state.connection, record(2, { ...baseline, integer: 2 }));
-  assert.deepEqual(after.state, { ...before.state, grantAllowsRead: false });
-  assert.deepEqual(visibleValues(after.state), visibleValues(before.state));
-  assert.deepEqual(diff(after.state), diff(before.state));
+  const refreshed = sequence['permission-refresh'];
+  assert.equal(before.state.retained.security.allowsRead, true);
+  assert.equal(refreshed.outcome, 'security-refreshed');
+  assert.deepEqual(refreshed.state.connection.security, { version: 2, allowsRead: false });
+  assert.deepEqual(refreshed.state.retained.security, { version: 1, allowsRead: true });
+  assert.equal(refreshed.state.connection.version, before.state.connection.version);
+  assert.equal(refreshed.state.connection.values.string, null);
+  assert.deepEqual(refreshed.state.retained.values, baseline);
+  assert.deepEqual(visibleValues(refreshed.state), visibleValues(before.state));
+  assert.deepEqual(diff(refreshed.state), diff(before.state));
+
+  const rejected = sequence['editing-pull'];
+  assert.equal(rejected.outcome, 'merge-error');
+  assert.deepEqual(rejected.state.retained, refreshed.state.retained);
+  assert.equal(visibleValues(rejected.state).string, 'local');
+  assert.deepEqual(sequence.reset.state.retained, refreshed.state.retained);
+  assert.equal(visibleValues(sequence.reset.state).string, 'baseline');
+
+  const accepted = sequence['recovery-pull'];
+  assert.equal(accepted.outcome, 'accepted');
+  assert.deepEqual(accepted.state.retained, accepted.state.connection);
+  assert.deepEqual(accepted.state.retained.security, { version: 2, allowsRead: false });
+  assert.equal(visibleValues(accepted.state).string, null);
+  assert.deepEqual(accepted.state.local, {});
+});
+
+test('the completing response supplies the final selection and cache reuse needs no Sync', () => {
+  const sequence = frames('final-selection');
+  const initial = sequence.start.state;
+  const first = sequence['first-pull'].state;
+  assert.deepEqual(first.selection.pull, { object: 'c1A', collection: ['c1A', 'c1E'], value: 2 });
+  assert.deepEqual(first.selection.advertised, ['c1A']);
+  assert.deepEqual(first.selection.completed, initial.selection.completed);
+  assert.deepEqual(sequence['selection-changes'].state.selection.completed, initial.selection.completed);
+
+  const synced = sequence.sync;
+  assert.equal(synced.outcome, 'synchronized');
+  assert.deepEqual(synced.state.selection.completed, { object: 'c1F', collection: ['c1F', 'c1E', 'c1F'], value: 3 });
+  assert.deepEqual(synced.state.selection.pool, ['c1F', 'c1E']);
+  assert.deepEqual(synced.state.retained, initial.retained);
+  assert.deepEqual(synced.state.connection, initial.connection);
+
+  const cached = sequence['cache-hit'];
+  assert.equal(cached.outcome, 'cache-hit');
+  assert.deepEqual(cached.state.selection.completed, cached.state.selection.pull);
+  assert.deepEqual(cached.state.selection.completed, synced.state.selection.completed);
+  assert.deepEqual(cached.state.retained, initial.retained);
 });
 
 test('revisiting scenarios and changing returned frames cannot leak state into other steps or visits', () => {
@@ -200,7 +238,8 @@ test('revisiting scenarios and changing returned frames cannot leak state into o
     final.state.retained.values.toMany.push('unrelated');
     final.state.connection.values.string = 'unrelated';
     final.state.local.string = 'unrelated';
-    final.state.grantAllowsRead = !final.state.grantAllowsRead;
+    final.state.retained.security.allowsRead = !final.state.retained.security.allowsRead;
+    if (final.state.selection) final.state.selection.completed.collection.push('unrelated');
     assert.deepEqual(visited[0], original[0], `${entry.id}: the initial frame changed`);
     for (const other of scenarios) getFrames(other);
     assert.deepEqual(getFrames(entry), original, `${entry.id}: a new visit changed`);

@@ -9,7 +9,8 @@ const scenarios = [
   { id: 'to-one-conflict', steps: ['start', 'local-edit', 'remote-push', 'remote-pull', 'editing-pull', 'reset', 'recovery-pull'] },
   { id: 'to-many-conflict', steps: ['start', 'local-edit', 'remote-push', 'remote-pull', 'editing-pull', 'reset', 'recovery-pull'] },
   { id: 'push-reset', steps: ['start', 'local-edit', 'push', 'reset', 'recovery-pull'] },
-  { id: 'permissions', steps: ['start', 'local-edit', 'remote-push', 'remote-pull', 'permission-refresh'] },
+  { id: 'permissions', steps: ['start', 'local-edit', 'remote-push', 'remote-pull', 'permission-refresh', 'editing-pull', 'reset', 'recovery-pull'] },
+  { id: 'final-selection', steps: ['start', 'first-pull', 'selection-changes', 'sync', 'cache-hit'] },
 ];
 
 async function tabTo(page: Page, target: Locator) {
@@ -127,7 +128,7 @@ test('prepared scenarios support keyboard navigation, step selection and returni
   expect(errors, 'Changing walkthrough scenarios must not raise script errors').toEqual([]);
 });
 
-test('snapshots distinguish retained records, local edits and complete-role conflicts', async ({ page }, testInfo) => {
+test('snapshots distinguish retained records, local edits, security and final results', async ({ page }, testInfo) => {
   await page.goto(route);
   let frame = await showStep(page, 'remote-refresh', 'remote-push');
   await expectVersions(frame, ['v2', 'v1', 'v1']);
@@ -202,12 +203,37 @@ test('snapshots distinguish retained records, local edits and complete-role conf
   frame = await showStep(page, 'push-reset', 'recovery-pull');
   await expectValues(frame, 'String', { Retained: '"X"', 'Session read': '"X"' });
   frame = await showStep(page, 'permissions', 'remote-pull');
-  await expect(frame).toContainText('Read permission through retained grant G: allowed');
+  await expect(frame.locator('[data-retained-permission]')).toHaveText('allowed');
   frame = await showStep(page, 'permissions', 'permission-refresh');
   await expectVersions(frame, ['v2', 'v2', 'v1']);
-  await expect(frame.locator('[data-outcome]')).toHaveText('Permission map refreshed');
+  await expect(frame.locator('[data-outcome]')).toHaveText('Exact security record loaded');
   await expectValues(frame, 'Integer', { Connection: '2', Retained: '1', 'Session read': '1' });
-  await expect(frame).toContainText('Read permission through retained grant G: denied');
+  await expectValues(frame, 'String', { Connection: 'null', Retained: '"baseline"', 'Session read': '"local"' });
+  await expect(frame.locator('.security-version')).toHaveText(['Grant G v2', 'Grant G v2', 'Grant G v1']);
+  await expect(frame.locator('[data-retained-permission]')).toHaveText('allowed');
+  frame = await showStep(page, 'permissions', 'editing-pull');
+  await expect(frame.locator('[data-outcome]')).toHaveText('Merge error');
+  await expect(frame.locator('[data-retained-permission]')).toHaveText('allowed');
+  frame = await showStep(page, 'permissions', 'reset');
+  await expectValues(frame, 'String', { 'Session read': '"baseline"' });
+  await expect(frame.locator('[data-retained-permission]')).toHaveText('allowed');
+  frame = await showStep(page, 'permissions', 'recovery-pull');
+  await expect(frame.locator('[data-retained-permission]')).toHaveText('denied');
+  await expectValues(frame, 'String', { Retained: 'null', 'Session read': 'null' });
+
+  frame = await showStep(page, 'final-selection', 'first-pull');
+  await expect(frame.locator('[data-selection]')).toContainText('Advertised to Sync: c1A.');
+  let collection = frame.getByRole('table', { name: 'Named results for this query' }).getByRole('row').filter({ hasText: 'Ordered collection' });
+  await expect(collection.getByRole('cell')).toHaveText(['c1A → c1E', 'c1A → c1E', 'c1A']);
+  frame = await showStep(page, 'final-selection', 'sync');
+  collection = frame.getByRole('table', { name: 'Named results for this query' }).getByRole('row').filter({ hasText: 'Ordered collection' });
+  await expect(collection.getByRole('cell')).toHaveText(['c1F → c1E → c1F', 'c1A → c1E', 'c1F → c1E → c1F']);
+  await expect(frame.locator('[data-selection]')).toContainText('Pool of the completed load: c1F, c1E.');
+  await expectVersions(frame, ['v1', 'v1', 'v1']);
+  await expectValues(frame, 'String', { Retained: '"baseline"', 'Session read': '"baseline"' });
+  frame = await showStep(page, 'final-selection', 'cache-hit');
+  await expect(frame.locator('[data-outcome]')).toHaveText('Pull completed from cache');
+  await expectNoPageOverflow(page);
 });
 
 test('all scenario explanations and snapshots survive without JavaScript and in Markdown exports', async ({ browser, baseURL, request }, testInfo) => {
@@ -252,6 +278,9 @@ test('all scenario explanations and snapshots survive without JavaScript and in 
       .toHaveLength(scenarios.reduce((count, scenario) => count + scenario.steps.length, 0));
     expect(markdown).toContain('| To-many | {c1B, c1D} | {c1B, c1D} | {c1B} | {c1B, c1C} | {c1B, c1C} | {c1B} |');
     expect(markdown).toContain('ResultError');
+    expect(markdown).toContain('| Named result | Query now | Latest Pull | Completed load |');
+    expect(markdown).toContain('| Ordered collection | c1F → c1E → c1F | c1A → c1E | c1F → c1E → c1F |');
+    expect(markdown).toContain('Security stays with the retained record');
     await expectNoPageOverflow(page);
   } finally {
     await context.close();

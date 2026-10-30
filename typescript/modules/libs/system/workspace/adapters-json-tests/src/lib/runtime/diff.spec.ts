@@ -234,6 +234,12 @@ test('databaseDiffRetainsBaselineWhenAnotherSessionRefreshes', async () => {
   expect(many.changedRoles.map((v) => v.id).sort()).toEqual(
     [baselineTarget.id, localTarget.id].sort()
   );
+  expect(one.originalRoleId).toBe(baselineTarget.id);
+  expect(one.changedRoleId).toBe(localTarget.id);
+  expect([...many.originalRoleIds]).toEqual([baselineTarget.id]);
+  expect([...many.changedRoleIds].sort()).toEqual(
+    [baselineTarget.id, localTarget.id].sort()
+  );
 
   // TypeScript rejects the promise; .NET returns the failed push result.
   const pushed = await editing.push().catch((error: unknown) => error);

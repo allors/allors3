@@ -48,15 +48,13 @@ export interface IStrategy {
 
   getUnitRole(roleType: RoleType): IUnit;
 
-  getCompositeRole<T extends IObject>(
-    roleType: RoleType,
-    skipMissing?: boolean
-  ): T;
+  getCompositeRole<T extends IObject>(roleType: RoleType): T;
 
-  getCompositesRole<T extends IObject>(
-    roleType: RoleType,
-    skipMissing?: boolean
-  ): ReadonlyArray<T>;
+  getCompositeRoleId(roleType: RoleType): number;
+
+  getCompositesRole<T extends IObject>(roleType: RoleType): ReadonlyArray<T>;
+
+  getCompositesRoleIds(roleType: RoleType): ReadonlyArray<number>;
 
   setRole(roleType: RoleType, value: unknown): void;
 
