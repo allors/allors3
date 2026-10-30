@@ -39,6 +39,36 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation.DatabaseRole
         }
 
         [Fact]
+        public async Task AddMovesRoleFromPreviousAssociation()
+        {
+            var session = this.Workspace.CreateSession();
+
+            var c1a = session.Create<C1>();
+            var c1b = session.Create<C1>();
+            var c1c = session.Create<C1>();
+            var c1d = session.Create<C1>();
+
+            c1a.AddC1C1One2Many(c1b);
+            c1a.AddC1C1One2Many(c1c);
+
+            Assert.False((await session.PushAsync()).HasErrors);
+            Assert.False((await session.PullAsync(new Pull { Object = c1a }, new Pull { Object = c1b }, new Pull { Object = c1c }, new Pull { Object = c1d })).HasErrors);
+
+            c1d.AddC1C1One2Many(c1b);
+
+            Assert.Same(c1c, Assert.Single(c1a.C1C1One2Manies));
+            Assert.Same(c1b, Assert.Single(c1d.C1C1One2Manies));
+            Assert.Same(c1d, c1b.C1WhereC1C1One2Many);
+
+            Assert.False((await session.PushAsync()).HasErrors);
+            Assert.False((await session.PullAsync(new Pull { Object = c1a }, new Pull { Object = c1d })).HasErrors);
+
+            Assert.Same(c1c, Assert.Single(c1a.C1C1One2Manies));
+            Assert.Same(c1b, Assert.Single(c1d.C1C1One2Manies));
+            Assert.Same(c1d, c1b.C1WhereC1C1One2Many);
+        }
+
+        [Fact]
         public async void SetRole()
         {
             foreach (DatabaseMode mode1 in Enum.GetValues(typeof(DatabaseMode)))

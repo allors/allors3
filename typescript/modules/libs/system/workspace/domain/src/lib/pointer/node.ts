@@ -16,11 +16,10 @@ export interface Node {
 function getComposite(
   strategy: IStrategy,
   propertyType: PropertyType,
-  ofType: Composite,
-  skipMissing?: boolean
+  ofType: Composite
 ): IObject {
   const composite = propertyType.isRoleType
-    ? strategy.getCompositeRole(propertyType as RoleType, skipMissing)
+    ? strategy.getCompositeRole(propertyType as RoleType)
     : strategy.getCompositeAssociation(propertyType as AssociationType);
 
   if (composite == null || ofType == null) {
@@ -33,11 +32,10 @@ function getComposite(
 function getComposites(
   strategy: IStrategy,
   propertyType: PropertyType,
-  ofType: Composite,
-  skipMissing?: boolean
+  ofType: Composite
 ): Readonly<IObject[]> {
   const composites = propertyType.isRoleType
-    ? strategy.getCompositesRole(propertyType as RoleType, skipMissing)
+    ? strategy.getCompositesRole(propertyType as RoleType)
     : strategy.getCompositesAssociation(propertyType as AssociationType);
 
   if (composites == null || ofType == null) {
@@ -50,20 +48,18 @@ function getComposites(
 function resolveRecursive(
   object: IObject,
   node: Node,
-  results: Set<IObject>,
-  skipMissing?: boolean
+  results: Set<IObject>
 ): void {
   if (node.propertyType.isOne) {
     const resolved = getComposite(
       object.strategy,
       node.propertyType,
-      node.ofType,
-      skipMissing
+      node.ofType
     );
     if (resolved != null) {
       if (node.nodes?.length > 0) {
         for (const subNode of node.nodes) {
-          resolveRecursive(resolved, subNode, results, skipMissing);
+          resolveRecursive(resolved, subNode, results);
         }
       } else {
         results.add(resolved);
@@ -73,14 +69,13 @@ function resolveRecursive(
     const resolveds = getComposites(
       object.strategy,
       node.propertyType,
-      node.ofType,
-      skipMissing
+      node.ofType
     );
     if (resolveds != null) {
       if (node.nodes?.length > 0) {
         for (const resolved of resolveds) {
           for (const subNode of node.nodes) {
-            resolveRecursive(resolved, subNode, results, skipMissing);
+            resolveRecursive(resolved, subNode, results);
           }
         }
       } else {
@@ -92,13 +87,9 @@ function resolveRecursive(
   }
 }
 
-export function nodeResolve(
-  obj: IObject,
-  node: Node,
-  skipMissing?: boolean
-): Set<IObject> {
+export function nodeResolve(obj: IObject, node: Node): Set<IObject> {
   const results: Set<IObject> = new Set();
-  resolveRecursive(obj, node, results, skipMissing);
+  resolveRecursive(obj, node, results);
   return results;
 }
 

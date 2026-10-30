@@ -11,19 +11,22 @@ import { frozenEmptySet } from '../collections/frozen-empty-set';
 import { IRange, Ranges } from '../collections/ranges/ranges';
 
 import { Session } from './session';
+import { Workspace } from '../workspace/workspace';
 
 export class ChangeSet implements IChangeSet {
   associationsByRoleType: Map<RoleType, Set<IObject>>;
   rolesByAssociationType: Map<AssociationType, Set<IObject>>;
+  roleIdsByAssociationType: Map<AssociationType, Set<number>>;
 
-  private ranges: Ranges<IObject>;
+  private ranges: Ranges<number>;
 
   public constructor(public session: Session, public created: Set<IObject>) {
     this.associationsByRoleType = new Map();
     this.rolesByAssociationType = new Map();
+    this.roleIdsByAssociationType = new Map();
     this.created ??= frozenEmptySet as Set<IObject>;
 
-    this.ranges = this.session.ranges;
+    this.ranges = (this.session.workspace as Workspace).ranges;
   }
 
   public addSessionStateChanges(
@@ -40,6 +43,10 @@ export class ChangeSet implements IChangeSet {
         this.rolesByAssociationType.set(
           propertyType as AssociationType,
           strategies
+        );
+        this.roleIdsByAssociationType.set(
+          propertyType as AssociationType,
+          new Set([...strategies].map((v) => v.id))
         );
       } else if (propertyType.isRoleType) {
         this.associationsByRoleType.set(propertyType as RoleType, strategies);
@@ -60,31 +67,7 @@ export class ChangeSet implements IChangeSet {
     }
   }
 
-  public diffCompositeStrategyRecord(
-    association: IObject,
-    relationType: RelationType,
-    current: IObject,
-    previous: number
-  ) {
-    if (current?.id === previous) {
-      return;
-    }
-
-    if (previous != null) {
-      const previousStrategy = (this.session as Session).getObject(previous);
-      if (previousStrategy) {
-        this.addRole(relationType, previousStrategy);
-      }
-    }
-
-    if (current != null) {
-      this.addRole(relationType, current);
-    }
-
-    this.addAssociation(relationType, association);
-  }
-
-  public diffCompositeRecordRecord(
+  public diffComposite(
     association: IObject,
     relationType: RelationType,
     current: number,
@@ -94,93 +77,35 @@ export class ChangeSet implements IChangeSet {
       return;
     }
 
-    if (previous != null) {
-      this.addRole(relationType, (this.session as Session).getObject(previous));
+    if (previous !== 0) {
+      this.addRoleId(relationType, previous);
     }
 
-    if (current != null) {
-      this.addRole(relationType, (this.session as Session).getObject(current));
-    }
-
-    this.addAssociation(relationType, association);
-  }
-
-  public diffCompositeStrategyStrategy(
-    association: IObject,
-    relationType: RelationType,
-    current: IObject,
-    previous: IObject
-  ) {
-    if (current === previous) {
-      return;
-    }
-
-    if (previous != null) {
-      this.addRole(relationType, previous);
-    }
-
-    if (current != null) {
-      this.addRole(relationType, current);
+    if (current !== 0) {
+      this.addRoleId(relationType, current);
     }
 
     this.addAssociation(relationType, association);
   }
 
-  public diffCompositesStrategyRecord(
+  public diffComposites(
     association: IObject,
     relationType: RelationType,
-    current: IRange<IObject>,
-    previousRange: IRange<number>
-  ) {
-    const previous: IRange<IObject> = previousRange?.map((v) =>
-      (this.session as Session).getObject(v)
-    );
-    this.diffCompositesStrategyStrategy(
-      association,
-      relationType,
-      current,
-      previous
-    );
-  }
-
-  public diffCompositesRecordRecord(
-    association: IObject,
-    relationType: RelationType,
-    currentRange: IRange<number>,
-    previousRange: IRange<number>
-  ) {
-    const current: IRange<IObject> = currentRange?.map((v) =>
-      (this.session as Session).getObject(v)
-    );
-    const previous: IRange<IObject> = previousRange?.map((v) =>
-      (this.session as Session).getObject(v)
-    );
-    this.diffCompositesStrategyStrategy(
-      association,
-      relationType,
-      current,
-      previous
-    );
-  }
-
-  public diffCompositesStrategyStrategy(
-    association: IObject,
-    relationType: RelationType,
-    current: IRange<IObject>,
-    previous: IRange<IObject>
+    current: IRange<number>,
+    previous: IRange<number>
   ) {
     let hasChange = false;
 
     for (const v of this.ranges.enumerate(previous)) {
       if (!this.ranges.has(current, v)) {
-        this.addRole(relationType, v);
+        this.addRoleId(relationType, v);
         hasChange = true;
       }
     }
 
     for (const v of this.ranges.enumerate(current)) {
       if (!this.ranges.has(previous, v)) {
-        this.addRole(relationType, v);
+        this.addRoleId(relationType, v);
         hasChange = true;
       }
     }
@@ -207,9 +132,23 @@ export class ChangeSet implements IChangeSet {
     associations.add(association);
   }
 
+  // The id is always recorded; the object only when this session holds it.
+  private addRoleId(relationType: RelationType, id: number) {
+    const associationType = relationType.associationType;
+
+    let roleIds = this.roleIdsByAssociationType.get(associationType);
+    if (!roleIds) {
+      roleIds = new Set();
+      this.roleIdsByAssociationType.set(associationType, roleIds);
+    }
+
+    roleIds.add(id);
+
+    this.addRole(relationType, this.session.getObject(id));
+  }
+
   private addRole(relationType: RelationType, role: IObject) {
     if (role == null) {
-      // TODO: Investigate
       return;
     }
 

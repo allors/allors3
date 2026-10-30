@@ -4,10 +4,10 @@ import {
   PushRequestRole,
 } from '@allors/system/common/protocol-json';
 import {
+  CompositesDelta,
   DatabaseOriginState as SystemDatabaseOriginState,
   DatabaseRecord,
   Strategy,
-  IRange,
 } from '@allors/system/workspace/adapters';
 import { unitToJson } from '../../json/to-json';
 import { IObject } from '@allors/system/workspace/domain';
@@ -47,25 +47,11 @@ export class DatabaseOriginState extends SystemDatabaseOriginState {
         } else if (relationType.roleType.isOne) {
           pushRequestRole.c = (roleValue as Strategy)?.id;
         } else {
-          const roleStrategies = roleValue as IRange<Strategy>;
-          const roleIds = ranges.importFrom(roleStrategies?.map((v) => v.id));
-          if (!this.existRecord) {
-            pushRequestRole.a = ranges.save(roleIds);
-          } else {
-            const databaseRole = this.databaseRecord.getRole(
-              relationType.roleType
-            ) as IRange<number>;
-            if (databaseRole == null) {
-              pushRequestRole.a = ranges.save(roleIds);
-            } else {
-              pushRequestRole.a = ranges.save(
-                ranges.difference(roleIds, databaseRole)
-              );
-              pushRequestRole.r = ranges.save(
-                ranges.difference(databaseRole, roleIds)
-              );
-            }
-          }
+          const delta = roleValue as CompositesDelta;
+          pushRequestRole.a = ranges.save(
+            ranges.importFrom(delta.added?.map((v) => v.id))
+          );
+          pushRequestRole.r = ranges.save(delta.removed);
         }
 
         roles.push(pushRequestRole);

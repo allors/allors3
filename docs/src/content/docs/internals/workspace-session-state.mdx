@@ -23,8 +23,8 @@ internals page. The tests below are authoritative. The platform boundary is in
 | `DatabaseConnection` | Shares immutable database records, versioned grant/revocation contents and permission definitions between sessions. Records are cached by object ID, data version and the complete security binding: grant/revocation IDs and their versions. There is no lookup by object ID alone. |
 | Load response context | Retains the exact cache entries advertised for this operation, validates the completing response, and supplies its records for session adoption. Another session's refresh cannot substitute a different record for an advertised entry. |
 | `DatabaseOriginState` for a session object | Retains the last accepted database record, including its security state. `OnPulled` receives the completed load's record, checks `CanMerge`, and replaces the session record only when accepted. A merge error leaves this object's entire previous record in place. |
-| `RecordBasedOriginState` | Holds local role changes separately. Reads prefer the local value; otherwise they use the retained record. `Diff` compares local changes with that record. `Reset` clears local changes without fetching or accepting a newer record. |
-| Remote `DatabaseOriginState` | Builds Push using the retained version. To-many additions/removals are calculated against the retained record. |
+| `RecordBasedOriginState` | Holds local role changes separately. A to-many change is the set of objects added to and the IDs removed from the retained record's role, so adding or removing one member needs only that member in the session. Reads prefer the local value; otherwise they use the retained record. Role IDs are readable without the objects; reading the objects requires every member to be in the session. `Diff` compares local changes with that record and carries IDs, with objects for the members the session holds. `Reset` clears local changes without fetching or accepting a newer record. |
+| Remote `DatabaseOriginState` | Builds Push using the retained version. To-many changes are sent as their stored additions and removals. |
 
 ## Completing a load
 

@@ -12,6 +12,7 @@ export * from './lib/database/security/revocation';
 export * from './lib/database/database-connection';
 export * from './lib/database/database-record';
 
+export * from './lib/session/originstate/composites-delta';
 export * from './lib/session/originstate/database-origin-state';
 export * from './lib/session/originstate/property-by-object-by-property-type';
 export * from './lib/session/originstate/record-based-origin-state';

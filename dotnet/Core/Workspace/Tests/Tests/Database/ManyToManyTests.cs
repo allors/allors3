@@ -11,6 +11,7 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation.DatabaseRole
     using Allors.Workspace.Data;
     using System;
     using System.Linq;
+    using Allors.Workspace;
 
     public abstract class ManyToManyTests : Test
     {
@@ -506,6 +507,60 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation.DatabaseRole
                     }
                 }
             }
+        }
+
+        [Fact]
+        public async Task AddAndRemoveWithoutPullingMembers()
+        {
+            var roleType = this.M.C1.C1C1Many2Manies;
+
+            var session1 = this.Workspace.CreateSession();
+            var c1a_1 = session1.Create<C1>();
+            var c1b_1 = session1.Create<C1>();
+            var c1c_1 = session1.Create<C1>();
+            c1a_1.AddC1C1Many2Many(c1b_1);
+            c1a_1.AddC1C1Many2Many(c1c_1);
+            Assert.False((await session1.PushAsync()).HasErrors);
+
+            var session2 = this.Workspace.CreateSession();
+            Assert.False((await session2.PullAsync(new Pull { Object = c1a_1 }, new Pull { Object = c1b_1 })).HasErrors);
+            var c1a_2 = session2.Instantiate(c1a_1);
+            var c1b_2 = session2.Instantiate(c1b_1);
+            var c1d_2 = session2.Create<C1>();
+            var c1dWorkspaceId = c1d_2.Id;
+            var originalIds = new[] { c1b_1.Id, c1c_1.Id }.OrderBy(v => v);
+            var changedIds = new[] { c1c_1.Id, c1dWorkspaceId }.OrderBy(v => v);
+
+            Assert.Equal(originalIds, c1a_2.Strategy.GetCompositesRoleIds(roleType));
+            var exception = Assert.Throws<Exception>(() => c1a_2.C1C1Many2Manies.ToArray());
+            Assert.Contains("in role C1.C1C1Many2Manies is not in this session", exception.Message);
+
+            c1a_2.AddC1C1Many2Many(c1d_2);
+            c1a_2.RemoveC1C1Many2Many(c1b_2);
+
+            Assert.Equal(changedIds, c1a_2.Strategy.GetCompositesRoleIds(roleType));
+            Assert.True(c1a_2.Strategy.ExistRole(roleType));
+            Assert.Same(c1a_2, Assert.Single(c1d_2.C1sWhereC1C1Many2Many));
+            Assert.Empty(c1b_2.C1sWhereC1C1Many2Many);
+
+            var diff = (ICompositesDiff)Assert.Single(c1a_2.Strategy.Diff());
+            Assert.Equal(originalIds, diff.OriginalRoleIds);
+            Assert.Equal(changedIds, diff.ChangedRoleIds);
+            Assert.Same(c1b_2.Strategy, Assert.Single(diff.OriginalRoles));
+            Assert.Same(c1d_2.Strategy, Assert.Single(diff.ChangedRoles));
+
+            var changeSet = session2.Checkpoint();
+            Assert.Same(c1a_2.Strategy, Assert.Single(changeSet.AssociationsByRoleType[roleType]));
+            Assert.True(changeSet.RolesByAssociationType[roleType.AssociationType].SetEquals(new IStrategy[] { c1b_2.Strategy, c1d_2.Strategy }));
+            Assert.True(changeSet.RoleIdsByAssociationType[roleType.AssociationType].SetEquals(new[] { c1b_1.Id, c1dWorkspaceId }));
+
+            Assert.False((await session2.PushAsync()).HasErrors);
+
+            var session3 = this.Workspace.CreateSession();
+            var pull = new Pull { Object = c1a_1, Results = new[] { new Result { Select = new Select { Include = new[] { new Node(roleType) } } } } };
+            Assert.False((await session3.PullAsync(pull)).HasErrors);
+            var c1a_3 = session3.Instantiate(c1a_1);
+            Assert.Equal(new[] { c1c_1.Id, c1d_2.Id }.OrderBy(v => v), c1a_3.C1C1Many2Manies.Select(v => v.Id).OrderBy(v => v));
         }
     }
 }

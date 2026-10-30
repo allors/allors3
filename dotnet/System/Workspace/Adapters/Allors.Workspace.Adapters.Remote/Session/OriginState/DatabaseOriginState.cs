@@ -56,25 +56,9 @@ namespace Allors.Workspace.Adapters.Remote
                     }
                     else
                     {
-                        var roleIds = ranges.Load(((IRange<Adapters.Strategy>)roleValue)?.Select(v => v.Id));
-
-                        if (!this.ExistRecord)
-                        {
-                            pushRequestRole.a = roleIds.Save();
-                        }
-                        else
-                        {
-                            var databaseRole = ranges.Ensure(this.DatabaseRecord.GetRole(relationType.RoleType));
-                            if (databaseRole.IsEmpty)
-                            {
-                                pushRequestRole.a = roleIds.Save();
-                            }
-                            else
-                            {
-                                pushRequestRole.a = ranges.Except(roleIds, databaseRole).Save();
-                                pushRequestRole.r = ranges.Except(databaseRole, roleIds).Save();
-                            }
-                        }
+                        var delta = (CompositesDelta)roleValue;
+                        pushRequestRole.a = ranges.Import(delta.Added.Select(v => v.Id)).Save();
+                        pushRequestRole.r = delta.Removed.Save();
                     }
 
                     roles.Add(pushRequestRole);

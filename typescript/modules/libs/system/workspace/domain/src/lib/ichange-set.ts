@@ -10,4 +10,6 @@ export interface IChangeSet {
   associationsByRoleType: Map<RoleType, Set<IObject>>;
 
   rolesByAssociationType: Map<AssociationType, Set<IObject>>;
+
+  roleIdsByAssociationType: Map<AssociationType, Set<number>>;
 }

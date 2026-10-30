@@ -16,11 +16,10 @@ export interface Path {
 function getComposite(
   strategy: IStrategy,
   propertyType: PropertyType,
-  ofType: Composite,
-  skipMissing?: boolean
+  ofType: Composite
 ): IObject {
   const composite = propertyType.isRoleType
-    ? strategy.getCompositeRole(propertyType as RoleType, skipMissing)
+    ? strategy.getCompositeRole(propertyType as RoleType)
     : strategy.getCompositeAssociation(propertyType as AssociationType);
 
   if (composite == null || ofType == null) {
@@ -33,11 +32,10 @@ function getComposite(
 function getComposites(
   strategy: IStrategy,
   propertyType: PropertyType,
-  ofType: Composite,
-  skipMissing?: boolean
+  ofType: Composite
 ): Readonly<IObject[]> {
   const composites = propertyType.isRoleType
-    ? strategy.getCompositesRole(propertyType as RoleType, skipMissing)
+    ? strategy.getCompositesRole(propertyType as RoleType)
     : strategy.getCompositesAssociation(propertyType as AssociationType);
 
   if (composites == null || ofType == null) {
@@ -50,19 +48,17 @@ function getComposites(
 function resolveRecursive(
   object: IObject,
   path: Path,
-  results: Set<IObject>,
-  skipMissing?: boolean
+  results: Set<IObject>
 ): void {
   if (path.propertyType.isOne) {
     const resolved = getComposite(
       object.strategy,
       path.propertyType,
-      path.ofType,
-      skipMissing
+      path.ofType
     );
     if (resolved != null) {
       if (path.next) {
-        resolveRecursive(resolved, path.next, results, skipMissing);
+        resolveRecursive(resolved, path.next, results);
       } else {
         results.add(resolved);
       }
@@ -71,13 +67,12 @@ function resolveRecursive(
     const resolveds = getComposites(
       object.strategy,
       path.propertyType,
-      path.ofType,
-      skipMissing
+      path.ofType
     );
     if (resolveds != null) {
       if (path.next) {
         for (const resolved of resolveds) {
-          resolveRecursive(resolved, path.next, results, skipMissing);
+          resolveRecursive(resolved, path.next, results);
         }
       } else {
         for (const resolved of resolveds) {
@@ -92,13 +87,9 @@ export function isPath(path: unknown): path is Path {
   return (path as Path).propertyType != null;
 }
 
-export function pathResolve(
-  obj: IObject,
-  path: Path,
-  skipMissing?: boolean
-): Set<IObject> {
+export function pathResolve(obj: IObject, path: Path): Set<IObject> {
   const results: Set<IObject> = new Set();
-  resolveRecursive(obj, path, results, skipMissing);
+  resolveRecursive(obj, path, results);
   return results;
 }
 

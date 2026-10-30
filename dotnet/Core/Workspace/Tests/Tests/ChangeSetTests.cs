@@ -469,6 +469,7 @@ namespace Tests.Workspace
             Assert.Single(changeSet.Created);
             Assert.Single(changeSet.AssociationsByRoleType);
             Assert.Single(changeSet.RolesByAssociationType);
+            Assert.Equal(new[] { c1b.Id }, changeSet.RoleIdsByAssociationType[this.M.C1.C1C1Many2Manies.AssociationType]);
 
             await session.PushAsync();
             changeSet = session.Checkpoint();
@@ -476,6 +477,7 @@ namespace Tests.Workspace
             Assert.Empty(changeSet.Created);
             Assert.Empty(changeSet.AssociationsByRoleType);
             Assert.Empty(changeSet.RolesByAssociationType);
+            Assert.Empty(changeSet.RoleIdsByAssociationType);
         }
 
         [Fact]
