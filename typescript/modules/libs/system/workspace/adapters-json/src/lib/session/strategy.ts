@@ -15,10 +15,7 @@ export class Strategy extends SystemStrategy {
   ) {
     super(session, cls, id);
 
-    this.DatabaseOriginState = new DatabaseOriginState(
-      this.object,
-      record ?? session.workspace.database.getRecord(this.id)
-    );
+    this.DatabaseOriginState = new DatabaseOriginState(this.object, record);
   }
 
   static fromDatabaseRecord(session: Session, databaseRecord: DatabaseRecord) {

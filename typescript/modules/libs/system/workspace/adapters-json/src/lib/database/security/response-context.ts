@@ -190,12 +190,6 @@ export class ResponseContext {
         record = DatabaseRecord.fromResponse(this.database, object, g, r);
         this.synchronizedRecords.push(record);
       }
-      const existing = this.database.getRecord(record.id);
-      if (existing && existing.cls !== record.cls) {
-        throw new Error(
-          `Sync changed the class of object ${record.id} from '${existing.cls.tag}' to '${record.cls.tag}'.`
-        );
-      }
       this.records.set(record.id, record);
     }
     this.validateResult();

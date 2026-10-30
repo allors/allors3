@@ -21,7 +21,6 @@ namespace Allors.Workspace.Adapters.Remote
     public abstract class DatabaseConnection : Adapters.DatabaseConnection
     {
         private readonly object cacheLock = new object();
-        private readonly Dictionary<long, DatabaseRecord> recordsById = new Dictionary<long, DatabaseRecord>();
         private readonly Dictionary<(long Id, long Version, string Security), DatabaseRecord> records = new Dictionary<(long, long, string), DatabaseRecord>();
         private readonly Dictionary<(long Id, long Version), ResponseContext.AccessEntry> grants = new Dictionary<(long, long), ResponseContext.AccessEntry>();
         private readonly Dictionary<(long Id, long Version), ResponseContext.AccessEntry> revocations = new Dictionary<(long, long), ResponseContext.AccessEntry>();
@@ -112,14 +111,6 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 // Other sessions may have completed while this response was in flight.
                 // Check every identity before publishing any part of this response.
-                foreach (var record in context.Records.Values)
-                {
-                    if (this.recordsById.TryGetValue(record.Id, out var previous) && previous.Class != record.Class)
-                    {
-                        throw ResponseContext.Invalid($"Sync changed the class of object {record.Id} from '{previous.Class.Tag}' to '{record.Class.Tag}'.");
-                    }
-                }
-
                 context.ValidatePublication(this.records, this.grants, this.revocations, this.permissions, this.permissionIds);
                 foreach (var entry in context.Grants)
                 {
@@ -140,7 +131,6 @@ namespace Allors.Workspace.Adapters.Remote
                 foreach (var record in context.SynchronizedRecords)
                 {
                     this.records[record.Key] = record;
-                    this.recordsById[record.Id] = record;
                 }
             }
         }
@@ -163,11 +153,21 @@ namespace Allors.Workspace.Adapters.Remote
             }
         }
 
-        public override Adapters.DatabaseRecord GetRecord(long id)
+        public long[] CachedVersions(long id)
         {
             lock (this.cacheLock)
             {
-                return this.recordsById.TryGetValue(id, out var record) ? record : null;
+                var versions = new List<long>();
+                foreach (var key in this.records.Keys)
+                {
+                    if (key.Id == id)
+                    {
+                        versions.Add(key.Version);
+                    }
+                }
+
+                versions.Sort();
+                return versions.ToArray();
             }
         }
 

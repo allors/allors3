@@ -204,7 +204,7 @@ namespace Tests.Workspace
                 existing.C1AllorsString = "local";
                 Assert.False((await session.PushAsync()).HasErrors);
                 Assert.Equal(1, existing.Id);
-                Assert.Null(this.Profile.GetCachedVersion(workspace, 1));
+                Assert.Empty(this.Profile.CachedVersions(workspace, 1));
             }
             else if (refresh)
             {
@@ -219,8 +219,8 @@ namespace Tests.Workspace
                 Assert.Equal("local", existing.C1AllorsString);
                 Assert.Equal(Allors.Version.WorkspaceInitial.Value, existing.Strategy.Version);
                 Assert.Null(session.Instantiate<C1>(2));
-                Assert.Null(this.Profile.GetCachedVersion(workspace, 1));
-                Assert.Null(this.Profile.GetCachedVersion(workspace, 2));
+                Assert.Empty(this.Profile.CachedVersions(workspace, 1));
+                Assert.Empty(this.Profile.CachedVersions(workspace, 2));
             }
             else if (refresh)
             {
@@ -228,15 +228,15 @@ namespace Tests.Workspace
                 Assert.Equal("cached", existing.C1AllorsString);
                 Assert.Equal("cached", session.Instantiate<C1>(2).C1AllorsString);
                 Assert.Equal(2, existing.Strategy.Version);
-                Assert.Equal(2, this.Profile.GetCachedVersion(workspace, 1));
-                Assert.Equal(2, this.Profile.GetCachedVersion(workspace, 2));
+                Assert.Equal(new[] { 2L }, this.Profile.CachedVersions(workspace, 1));
+                Assert.Equal(new[] { 2L }, this.Profile.CachedVersions(workspace, 2));
             }
             else
             {
                 Assert.Null(session.Instantiate<C1>(1));
                 Assert.Null(session.Instantiate<C1>(2));
-                Assert.Null(this.Profile.GetCachedVersion(workspace, 1));
-                Assert.Null(this.Profile.GetCachedVersion(workspace, 2));
+                Assert.Empty(this.Profile.CachedVersions(workspace, 1));
+                Assert.Empty(this.Profile.CachedVersions(workspace, 2));
             }
         }
 
@@ -284,11 +284,11 @@ namespace Tests.Workspace
             Assert.Equal("cached", first.Instantiate<C1>(1).C1AllorsString);
             Assert.Null(first.Instantiate<C1>(2).C1AllorsString);
             Assert.Equal("newer", current.Instantiate<C1>(1).C1AllorsString);
-            Assert.Equal(3, this.Profile.GetCachedVersion(workspace, 1));
+            Assert.Equal(new[] { 2L, 3L }, this.Profile.CachedVersions(workspace, 1));
 
             await first.PullAsync(new Pull { ObjectId = 1 });
             Assert.Equal("cached", first.Instantiate<C1>(1).C1AllorsString);
-            Assert.Equal(3, this.Profile.GetCachedVersion(workspace, 1));
+            Assert.Equal(new[] { 2L, 3L }, this.Profile.CachedVersions(workspace, 1));
         }
 
         [Fact]

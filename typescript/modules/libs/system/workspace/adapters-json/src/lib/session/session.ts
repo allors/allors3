@@ -17,7 +17,6 @@ import {
 } from '@allors/system/workspace/domain';
 import { Class, Origin } from '@allors/system/workspace/meta';
 import { DatabaseConnection } from '../database/database-connection';
-import { DatabaseRecord } from '../database/database-record';
 import { InvokeResult } from '../database/invoke/invoke-result';
 import { PullResult } from '../database/pull/pull-result';
 import { PushResult } from '../database/push/push-result';
@@ -48,20 +47,6 @@ export class Session extends SystemSession {
     this.removeObject(strategy.object);
     this.pushToDatabaseTracker.onDelete(strategy.object);
     this.changeSetTracker.onDelete(strategy.object);
-  }
-
-  instantiateDatabaseStrategy(id: number): IObject {
-    const databaseRecord = this.workspace.database.getRecord(
-      id
-    ) as DatabaseRecord;
-
-    if (databaseRecord == null) {
-      return null;
-    }
-
-    const strategy = Strategy.fromDatabaseRecord(this, databaseRecord);
-    this.addObject(strategy.object);
-    return strategy.object;
   }
 
   async invoke(

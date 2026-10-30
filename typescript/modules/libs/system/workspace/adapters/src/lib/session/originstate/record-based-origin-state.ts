@@ -68,7 +68,7 @@ export abstract class RecordBasedOriginState {
     const obj = this.session.getObject(role);
 
     if (!skipMissing) {
-      this.assertStrategy(obj);
+      this.assertStrategy(obj, role, roleType);
     }
 
     return obj;
@@ -120,7 +120,7 @@ export abstract class RecordBasedOriginState {
         .map((v) => {
           const obj = this.session.getObject(v);
           if (!skipMissing) {
-            this.assertStrategy(obj);
+            this.assertStrategy(obj, v, roleType);
           }
           return obj;
         })
@@ -138,7 +138,7 @@ export abstract class RecordBasedOriginState {
 
     const objects = role.map((v) => {
       const obj = this.session.getObject(v);
-      this.assertStrategy(obj);
+      this.assertStrategy(obj, v, roleType);
       return obj;
     });
 
@@ -450,9 +450,14 @@ export abstract class RecordBasedOriginState {
     this.onChange();
   }
 
-  private assertStrategy(object: IObject) {
+  private assertStrategy(object: IObject, id: number, roleType: RoleType) {
     if (object == null) {
-      throw new Error('Object is not present in session.');
+      const role = `${roleType.associationType.objectType.singularName}.${
+        roleType.isMany ? roleType.pluralName : roleType.singularName
+      }`;
+      throw new Error(
+        `Object ${id} in role ${role} is not in this session. Include the role in the Pull, or pull the object, before reading it.`
+      );
     }
   }
 

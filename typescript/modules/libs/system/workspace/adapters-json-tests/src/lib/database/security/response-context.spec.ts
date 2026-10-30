@@ -190,8 +190,8 @@ test('an invalid final object does not publish earlier contents or adopt session
 
   await expect(session.pull({ objectId: 101 })).rejects.toThrow();
 
-  expect(database.getRecord(101)).toBeUndefined();
-  expect(database.getRecord(102)).toBeUndefined();
+  expect(database.cachedVersions(101)).toEqual([]);
+  expect(database.cachedVersions(102)).toEqual([]);
   expect(session.instantiate(101)).toBeNull();
   expect(client.access).not.toHaveBeenCalled();
 });
@@ -323,7 +323,7 @@ test('an overlapping load retains advertised entries without replacing a newer c
   await Promise.resolve();
   const fast = workspace.createSession();
   await fast.pull({ objectId: 101 });
-  const current = database.getRecord(101);
+  expect(database.cachedVersions(101)).toEqual([2, 3]);
   expect((client.sync as jest.Mock).mock.calls[1][0]).toEqual(
     expect.objectContaining({
       o: [{ i: 101, v: 2, g: [11], r: [] }],
@@ -342,7 +342,8 @@ test('an overlapping load retains advertised entries without replacing a newer c
   expect(result.object('selected').strategy.getRole(fixture.m.C1.Name)).toBe(
     'first'
   );
-  expect(database.getRecord(101)).toBe(current);
+  expect(database.cachedVersions(101)).toEqual([2, 3]);
+  expect(database.cachedVersions(102)).toEqual([2]);
   expect(fast.instantiate(101).strategy.getRole(fixture.m.C1.Name)).toBe(
     'fresh'
   );
@@ -510,7 +511,7 @@ test.each([
     });
     expect((await session.push()).hasErrors).toBe(false);
     expect(pushed.id).toBe(101);
-    expect(database.getRecord(101)).toBeUndefined();
+    expect(database.cachedVersions(101)).toEqual([]);
   }
   const failure = await session.pull({ objectId: 101 }).then(
     () => null,
@@ -520,7 +521,7 @@ test.each([
   expect(client.sync).toHaveBeenCalledTimes(
     invalid === 'missing Pull pool' ? 0 : 1
   );
-  expect(database.getRecord(101)).toBeUndefined();
+  expect(database.cachedVersions(101)).toEqual([]);
   expect(session.instantiate(101)).toBe(pushed);
   if (pushed) {
     expect(pushed.strategy.cls).toBe(fixture.m.C1);
@@ -535,7 +536,7 @@ test.each([
     expect(recovered.hasErrors).toBe(false);
     expect(recovered.object('selected')).toBe(pushed);
     expect(pushed.strategy.version).toBe(2);
-    expect(database.getRecord(101).cls).toBe(fixture.m.C1);
+    expect(database.cachedVersions(101)).toEqual([2]);
   }
 });
 
@@ -586,10 +587,10 @@ test.each(['data', 'security'])(
     database.client = client;
     const session = database.createWorkspace().createSession();
     await session.pull({ objectId: 101 });
-    const record = database.getRecord(101);
+    expect(database.cachedVersions(101)).toEqual([2]);
     await expect(session.pull({ objectId: 101 })).rejects.toThrow('advertised');
     expect((client.sync as jest.Mock).mock.calls[1][0].o).toEqual([]);
-    expect(database.getRecord(101)).toBe(record);
+    expect(database.cachedVersions(101)).toEqual([2]);
     expect(session.instantiate(101).strategy.version).toBe(2);
   }
 );
@@ -629,13 +630,13 @@ test.each(['malformed', 'network'])(
     database.client = client;
     const session = database.createWorkspace().createSession();
     await session.pull({ objectId: 101 });
-    const record = database.getRecord(101);
+    expect(database.cachedVersions(101)).toEqual([2]);
     const original = session.instantiate(101);
     await expect(session.pull({ objectId: 101 })).rejects.toThrow(
       failureType === 'network' ? 'network failure' : 'advertised'
     );
-    expect(database.getRecord(101)).toBe(record);
-    expect(database.getRecord(102)).toBeUndefined();
+    expect(database.cachedVersions(101)).toEqual([2]);
+    expect(database.cachedVersions(102)).toEqual([]);
     expect(session.instantiate(101)).toBe(original);
     expect(original.strategy.version).toBe(2);
     await session.pull({ objectId: 101 });

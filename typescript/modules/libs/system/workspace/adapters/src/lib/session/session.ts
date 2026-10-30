@@ -201,11 +201,7 @@ export abstract class Session implements ISession {
       return null;
     }
 
-    if (this.objectByWorkspaceId.has(id)) {
-      return this.objectByWorkspaceId.get(id);
-    }
-
-    return this.instantiateDatabaseStrategy(id);
+    return this.objectByWorkspaceId.get(id) ?? null;
   }
 
   public getCompositeAssociation(
@@ -311,6 +307,4 @@ export abstract class Session implements ISession {
   abstract pull(pulls: Pull | Pull[]): Promise<IPullResult>;
 
   abstract push(): Promise<IPushResult>;
-
-  abstract instantiateDatabaseStrategy(id: number): IObject;
 }

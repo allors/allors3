@@ -7,7 +7,6 @@ import { Class, OperandType } from '@allors/system/workspace/meta';
 
 import { DefaultNumberRanges } from '../collections/ranges/default-number-ranges';
 import { Ranges } from '../collections/ranges/ranges';
-import { DatabaseRecord } from './database-record';
 
 export type IdGenerator = () => number;
 
@@ -19,8 +18,6 @@ export abstract class DatabaseConnection {
   }
 
   abstract createWorkspace(): IWorkspace;
-
-  abstract getRecord(id: number): DatabaseRecord | undefined;
 
   abstract getPermission(
     cls: Class,

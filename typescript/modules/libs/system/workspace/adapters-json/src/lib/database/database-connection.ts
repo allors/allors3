@@ -19,7 +19,6 @@ import { Workspace } from '../workspace/workspace';
 import { IDatabaseJsonClient } from '../idatabase-json-client';
 
 export class DatabaseConnection extends SystemDatabaseConnection {
-  private readonly recordsById = new Map<number, DatabaseRecord>();
   private readonly recordsByKey = new Map<string, DatabaseRecord>();
   private readonly accessByKey = new Map<string, AccessEntry>();
   private readonly permissionsById = new Map<number, PermissionDefinition>();
@@ -86,12 +85,6 @@ export class DatabaseConnection extends SystemDatabaseConnection {
           `Sync changed the contents of object ${record.id} at data version ${record.version} without changing its security versions.`
         );
       }
-      const current = this.getRecord(record.id);
-      if (current && current.cls !== record.cls) {
-        throw new Error(
-          `Sync changed the class of object ${record.id} from '${current.cls.tag}' to '${record.cls.tag}'.`
-        );
-      }
     }
     for (const definition of context.definitions.values()) {
       this.permissionsById.set(definition.id, definition);
@@ -104,7 +97,6 @@ export class DatabaseConnection extends SystemDatabaseConnection {
     }
     for (const record of context.synchronizedRecords) {
       this.recordsByKey.set(record.key, record);
-      this.recordsById.set(record.id, record);
     }
   }
 
@@ -132,7 +124,13 @@ export class DatabaseConnection extends SystemDatabaseConnection {
       ?.get(cls, operandType);
   }
 
-  getRecord(id: number): DatabaseRecord | undefined {
-    return this.recordsById.get(id);
+  cachedVersions(id: number): number[] {
+    const versions: number[] = [];
+    for (const record of this.recordsByKey.values()) {
+      if (record.id === id) {
+        versions.push(record.version);
+      }
+    }
+    return versions.sort((a, b) => a - b);
   }
 }

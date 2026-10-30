@@ -18,7 +18,7 @@ namespace Tests.Workspace
 
         IWorkspace CreateWorkspace(HttpMessageHandler handler);
 
-        long? GetCachedVersion(IWorkspace workspace, long id);
+        long[] CachedVersions(IWorkspace workspace, long id);
 
         IWorkspace Workspace { get; }
 

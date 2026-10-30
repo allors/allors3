@@ -82,7 +82,7 @@ namespace Tests.Workspace.Remote
             new DatabaseConnection(this.configuration, this.servicesBuilder,
                 new HttpClient(handler) { BaseAddress = new Uri(Url) }, this.idGenerator, this.defaultRanges).CreateWorkspace();
 
-        public long? GetCachedVersion(IWorkspace workspace, long id) => ((Allors.Workspace.Adapters.Workspace)workspace).DatabaseConnection.GetRecord(id)?.Version;
+        public long[] CachedVersions(IWorkspace workspace, long id) => ((Allors.Workspace.Adapters.Remote.DatabaseConnection)((Allors.Workspace.Adapters.Workspace)workspace).DatabaseConnection).CachedVersions(id);
 
         public async Task<long> SetupUnitSample(int step)
         {

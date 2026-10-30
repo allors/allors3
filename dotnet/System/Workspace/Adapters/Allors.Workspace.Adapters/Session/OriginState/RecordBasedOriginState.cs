@@ -54,7 +54,7 @@ namespace Allors.Workspace.Adapters
             }
 
             var strategy = this.Session.GetStrategy((long)role);
-            this.AssertStrategy(strategy);
+            this.AssertStrategy(strategy, (long)role, roleType);
             return strategy;
         }
 
@@ -99,7 +99,7 @@ namespace Allors.Workspace.Adapters
             return this.Ranges.Load(role.Select(v =>
             {
                 var strategy = this.Session.GetStrategy(v);
-                this.AssertStrategy(strategy);
+                this.AssertStrategy(strategy, v, roleType);
                 return strategy;
             }));
         }
@@ -442,11 +442,11 @@ namespace Allors.Workspace.Adapters
             return role.IsEmpty ? roleIds.IsEmpty : role.Select(v => v.Id).SequenceEqual(roleIds);
         }
 
-        private void AssertStrategy(Strategy strategy)
+        private void AssertStrategy(Strategy strategy, long id, IRoleType roleType)
         {
             if (strategy == null)
             {
-                throw new Exception("Strategy is not in Session.");
+                throw new Exception($"Object {id} in role {roleType.AssociationType.ObjectType.SingularName}.{roleType.Name} is not in this session. Include the role in the Pull, or pull the object, before reading it.");
             }
         }
 

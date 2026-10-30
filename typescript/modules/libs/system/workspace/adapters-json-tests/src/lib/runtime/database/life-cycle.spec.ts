@@ -1,6 +1,6 @@
 import { C1, C2 } from '@allors/default/workspace/domain';
 import exp = require('constants');
-import { Fixture, name_c1A, name_c2A } from '../../fixture';
+import { Fixture, name_c1A, name_c1C, name_c2A, name_c2C } from '../../fixture';
 import '../../matchers';
 
 let fixture: Fixture;
@@ -52,8 +52,21 @@ test('databasPullOtherSession', async () => {
 
   const c1a_2 = session2.instantiate(c1a_1);
 
-  expect(c1a_2).not.toBeNull();
-  expect(c1a_2.id).toBe(c1a_1.id);
+  expect(c1a_2).toBeNull();
+});
+
+test('databaseRoleToObjectPulledByOtherSession', async () => {
+  const { workspace } = fixture;
+  const session1 = workspace.createSession();
+  const session2 = workspace.createSession();
+
+  const c2c_1 = await fixture.pullC2(session1, name_c2C);
+  const c1c_2 = await fixture.pullC1(session2, name_c1C);
+
+  expect(session2.instantiate(c2c_1.id)).toBeNull();
+  expect(() => c1c_2.C1C2One2One).toThrow(
+    `Object ${c2c_1.id} in role C1.C1C2One2One is not in this session. Include the role in the Pull, or pull the object, before reading it.`
+  );
 });
 
 test('databasPullOtherSessionNonExistingId', async () => {
