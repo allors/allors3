@@ -192,7 +192,9 @@ test('an invalid final object does not publish earlier contents or adopt session
 
   expect(database.cachedVersions(101)).toEqual([]);
   expect(database.cachedVersions(102)).toEqual([]);
-  expect(session.instantiate(101)).toBeNull();
+  expect(() => session.instantiate(101)).toThrow(
+    'Object 101 is not in this session. Pull it before instantiating it.'
+  );
   expect(client.access).not.toHaveBeenCalled();
 });
 
@@ -522,10 +524,14 @@ test.each([
     invalid === 'missing Pull pool' ? 0 : 1
   );
   expect(database.cachedVersions(101)).toEqual([]);
-  expect(session.instantiate(101)).toBe(pushed);
   if (pushed) {
+    expect(session.instantiate(101)).toBe(pushed);
     expect(pushed.strategy.cls).toBe(fixture.m.C1);
     expect(pushed.strategy.version).toBe(WorkspaceInitialVersion);
+  } else {
+    expect(() => session.instantiate(101)).toThrow(
+      'Object 101 is not in this session. Pull it before instantiating it.'
+    );
   }
   expect(
     database.getPermission(fixture.m.C1, fixture.m.C1.Name, 2)

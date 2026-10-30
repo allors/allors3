@@ -95,7 +95,9 @@ test('Sync replaces named objects, ordered repeated collections and values from 
     102, 103, 102,
   ]);
   expect(result.value('count')).toBe(3);
-  expect(session.instantiate(101)).toBeNull();
+  expect(() => session.instantiate(101)).toThrow(
+    'Object 101 is not in this session. Pull it before instantiating it.'
+  );
   expect(client.sync).toHaveBeenCalledWith(
     expect.objectContaining({
       pull: expect.objectContaining({ l: expect.any(Array) }),

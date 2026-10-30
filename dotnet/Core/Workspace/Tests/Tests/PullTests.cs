@@ -91,7 +91,7 @@ namespace Tests.Workspace
             Assert.Equal(new[] { 3L, 2L, 3L }, result.GetCollection<C1>("selection").Select(v => v.Id));
             Assert.Equal(3, result.GetObject<C1>("selected").Id);
             Assert.Equal("final", result.GetValue<string>("value"));
-            Assert.Null(session.Instantiate<C1>(1));
+            Assert.Throws<InvalidOperationException>(() => session.Instantiate<C1>(1));
 
             result = await session.PullAsync(pull);
             Assert.False(result.HasErrors);
@@ -218,7 +218,7 @@ namespace Tests.Workspace
                 Assert.Same(existing, session.Instantiate<C1>(1));
                 Assert.Equal("local", existing.C1AllorsString);
                 Assert.Equal(Allors.Version.WorkspaceInitial.Value, existing.Strategy.Version);
-                Assert.Null(session.Instantiate<C1>(2));
+                Assert.Throws<InvalidOperationException>(() => session.Instantiate<C1>(2));
                 Assert.Empty(this.Profile.CachedVersions(workspace, 1));
                 Assert.Empty(this.Profile.CachedVersions(workspace, 2));
             }
@@ -233,8 +233,8 @@ namespace Tests.Workspace
             }
             else
             {
-                Assert.Null(session.Instantiate<C1>(1));
-                Assert.Null(session.Instantiate<C1>(2));
+                Assert.Throws<InvalidOperationException>(() => session.Instantiate<C1>(1));
+                Assert.Throws<InvalidOperationException>(() => session.Instantiate<C1>(2));
                 Assert.Empty(this.Profile.CachedVersions(workspace, 1));
                 Assert.Empty(this.Profile.CachedVersions(workspace, 2));
             }
@@ -315,7 +315,7 @@ namespace Tests.Workspace
             Assert.Empty(result.GetCollection<C1>("selection"));
             Assert.Same(existing, session.Instantiate<C1>(1));
             Assert.Equal("final", existing.C1AllorsString);
-            Assert.Null(session.Instantiate<C1>(2));
+            Assert.Throws<InvalidOperationException>(() => session.Instantiate<C1>(2));
         }
 
         [Theory]
@@ -356,7 +356,7 @@ namespace Tests.Workspace
             if (omitObject)
             {
                 await Assert.ThrowsAsync<InvalidOperationException>(() => second.PullAsync(new Pull { ObjectId = 1 }));
-                Assert.Null(second.Instantiate<C1>(1));
+                Assert.Throws<InvalidOperationException>(() => second.Instantiate<C1>(1));
             }
             else
             {

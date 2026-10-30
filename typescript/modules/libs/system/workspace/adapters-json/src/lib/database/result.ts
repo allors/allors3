@@ -1,4 +1,5 @@
 import { Response } from '@allors/system/common/protocol-json';
+import { Session } from '@allors/system/workspace/adapters';
 import {
   IDatabaseDerivationError,
   IObject,
@@ -30,15 +31,26 @@ export abstract class Result implements IResult {
   }
 
   get versionErrors(): IObject[] {
-    return this.session.instantiate(this.response._v);
+    return this.heldObjects(this.response._v);
   }
 
   get accessErrors(): IObject[] {
-    return this.session.instantiate(this.response._a);
+    return this.heldObjects(this.response._a);
   }
 
   get missingErrors(): IObject[] {
-    return this.session.instantiate(this.response._m);
+    return this.heldObjects(this.response._m);
+  }
+
+  // The server may report objects this session does not hold, such as removed role members.
+  private heldObjects(ids: number[]): IObject[] {
+    if (ids == null) {
+      return null;
+    }
+
+    return ids
+      .map((v) => (this.session as Session).getObject(v))
+      .filter((v) => v != null);
   }
 
   get derivationErrors(): IDatabaseDerivationError[] {

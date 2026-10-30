@@ -50,9 +50,9 @@ test('databasPullOtherSession', async () => {
 
   const c1a_1 = await fixture.pullC1(session1, name_c1A);
 
-  const c1a_2 = session2.instantiate(c1a_1);
-
-  expect(c1a_2).toBeNull();
+  expect(() => session2.instantiate(c1a_1)).toThrow(
+    `Object ${c1a_1.id} is not in this session. Pull it before instantiating it.`
+  );
 });
 
 test('databaseRoleToObjectPulledByOtherSession', async () => {
@@ -63,7 +63,9 @@ test('databaseRoleToObjectPulledByOtherSession', async () => {
   const c2c_1 = await fixture.pullC2(session1, name_c2C);
   const c1c_2 = await fixture.pullC1(session2, name_c1C);
 
-  expect(session2.instantiate(c2c_1.id)).toBeNull();
+  expect(() => session2.instantiate(c2c_1.id)).toThrow(
+    `Object ${c2c_1.id} is not in this session. Pull it before instantiating it.`
+  );
   expect(() => c1c_2.C1C2One2One).toThrow(
     `Object ${c2c_1.id} in role C1.C1C2One2One is not in this session. Include the role in the Pull, or pull the object, before reading it.`
   );
@@ -76,9 +78,9 @@ test('databasPullOtherSessionNonExistingId', async () => {
 
   await fixture.pullC1(session1, name_c1A);
 
-  const c1a_2 = session2.instantiate(Number.MAX_SAFE_INTEGER);
-
-  expect(c1a_2).toBeNull();
+  expect(() => session2.instantiate(Number.MAX_SAFE_INTEGER)).toThrow(
+    `Object ${Number.MAX_SAFE_INTEGER} is not in this session. Pull it before instantiating it.`
+  );
 });
 
 test('databaseStrategyHasChanges', async () => {

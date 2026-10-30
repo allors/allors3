@@ -64,7 +64,7 @@ no compatibility bridge to the previous protocol.
 Named collections preserve their order and repeated objects. An object absent from the final
 selection is absent from that result; its absence does not delete an existing session object.
 A session holds only the objects its own loads returned. Navigating a role to an object the session
-does not hold fails with an error that names the object and the role.
+does not hold, or instantiating one by ID, fails with an error that names the object.
 Versioned entries remain in memory for the connection's lifetime; eviction and persistence
 are not implemented.
 

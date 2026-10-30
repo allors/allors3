@@ -82,7 +82,8 @@ namespace Tests.Workspace
             var c2c = (await session1.PullAsync(new Pull { Extent = new Filter(this.M.C2) { Predicate = new Equals(this.M.C2.Name) { Value = c2C } } })).GetCollection<C2>()[0];
             var c1c = (await session2.PullAsync(new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = c1C } } })).GetCollection<C1>()[0];
 
-            Assert.Null(session2.Instantiate<C2>(c2c.Id));
+            var missing = Assert.Throws<InvalidOperationException>(() => session2.Instantiate<C2>(c2c.Id));
+            Assert.Equal($"Object {c2c.Id} is not in this session. Pull it before instantiating it.", missing.Message);
             var exception = Assert.Throws<Exception>(() => c1c.C1C2One2One);
             Assert.Equal($"Object {c2c.Id} in role C1.C1C2One2One is not in this session. Include the role in the Pull, or pull the object, before reading it.", exception.Message);
         }
