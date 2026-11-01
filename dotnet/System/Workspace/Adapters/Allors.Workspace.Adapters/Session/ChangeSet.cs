@@ -64,7 +64,10 @@ namespace Allors.Workspace.Adapters
 
         public void DiffUnit(Strategy association, IRelationType relationType, object current, object previous)
         {
-            if (!Equals(current, previous))
+            var same = current is byte[] currentBytes && previous is byte[] previousBytes
+                ? currentBytes.SequenceEqual(previousBytes)
+                : Equals(current, previous);
+            if (!same)
             {
                 this.AddAssociation(relationType, association);
             }

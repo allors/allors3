@@ -9,6 +9,7 @@
 namespace Tests.Workspace
 {
     using System.Linq;
+    using System.Threading.Tasks;
     using Allors.Workspace.Data;
     using Allors.Workspace.Domain;
     using Xunit;
@@ -520,6 +521,27 @@ namespace Tests.Workspace
 
             Assert.Single(changeSet.AssociationsByRoleType);
             Assert.Single(changeSet.RolesByAssociationType);
+        }
+
+        [Fact]
+        public async Task ChangeSetAfterSelfAssignedBinary()
+        {
+            await this.Login("administrator");
+
+            var session = this.Workspace.CreateSession();
+
+            var c1a = session.Create<C1>();
+            c1a.C1AllorsBinary = new byte[] { 1, 2, 3 };
+
+            Assert.False((await session.PushAsync()).HasErrors);
+            Assert.False((await session.PullAsync(new Pull { Object = c1a })).HasErrors);
+            session.Checkpoint();
+
+            c1a.C1AllorsBinary = c1a.C1AllorsBinary;
+
+            var changeSet = session.Checkpoint();
+
+            Assert.Empty(changeSet.AssociationsByRoleType);
         }
 
         [Fact]

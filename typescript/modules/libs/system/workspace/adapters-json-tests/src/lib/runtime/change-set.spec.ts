@@ -875,6 +875,27 @@ test('changeSetAfterPushMany2ManyRemove', async () => {
   ).toBe(c1b);
 });
 
+test('changeSetAfterSelfAssignedDateTime', async () => {
+  const { workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const c1a = session.create<C1>(m.C1);
+  c1a.C1AllorsDateTime = new Date(Date.UTC(2024, 0, 1));
+
+  await session.push();
+  await session.pull({ object: c1a });
+  session.checkpoint();
+
+  const dateTime = c1a.C1AllorsDateTime;
+  expect(c1a.C1AllorsDateTime).toBe(dateTime);
+
+  c1a.C1AllorsDateTime = dateTime;
+
+  const changeSet = session.checkpoint();
+
+  expect(changeSet.associationsByRoleType.size).toBe(0);
+});
+
 test('changeSetAfterPullInNewSessionButNoPush', async () => {
   const { workspace, m } = fixture;
   const session = workspace.createSession();

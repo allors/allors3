@@ -228,9 +228,9 @@ export class DatabaseRecord extends SystemDatabaseRecord {
     }
   }
 
+  // Values are returned as stored, so a role keeps one Date instance; callers must not mutate it.
   getRole(roleType: RoleType): unknown {
-    const value = this.roleByRelationType.get(roleType.relationType);
-    return value instanceof Date ? new Date(value.getTime()) : value;
+    return this.roleByRelationType.get(roleType.relationType);
   }
 
   samePayload(other: DatabaseRecord): boolean {
