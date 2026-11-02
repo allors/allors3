@@ -1,3 +1,74 @@
 # Allors3
 
 [![CI](https://github.com/allors/allors3/actions/workflows/ci.yml/badge.svg)](https://github.com/allors/allors3/actions/workflows/ci.yml)
+
+Allors3 is an actively developed platform for applications built with **domain inheritance**.
+An application declares its own domain that extends Core and inherits its model and behaviour.
+
+## The 3.2 line
+
+The 3.2 line starts from `0e907fea68`, the platform state of 8 May 2026 that a downstream
+application inlined and runs in production, and takes over that application's changes to System
+and Core. The scope is the platform: **System**, the database and workspace engines, adapters,
+protocols, metadata and generators; **Core**, the foundational domain behaviour, authorization,
+the JSON API and the server building blocks; the TypeScript system and core libraries; and the
+generator templates.
+
+**Base and Apps** are not part of the platform. Their code remains on the `v3.1` branch.
+Downstream applications own their business domains, screens, forms, tables, navigation and
+component libraries.
+
+The previous line of `main`, up to 27 October 2026, is kept on the archive branch
+`archive/main-2026-10`. It holds work that this line does not have yet: the fixes of June 2026
+that `v3.1` also carries, the security hardening of the server, the rename of Core's test domain
+to Test, the Identity and Entra authentication plug-ins, a domain that extends several domains,
+the workspace API changes and the documentation website. Fixes return first, from `v3.1`, one
+pull request at a time; features return when an application needs them.
+
+See [ARCHITECTURE.md](ARCHITECTURE.md) for the platform boundary and the inheritance rules.
+
+## Development and releases
+
+Pull requests are the default contribution workflow. The retained version branches are `main`,
+`v3.0` and `v3.1`.
+
+[version.json](version.json) specifies `3.2.0-alpha.{height}`: the development version of the
+line, not a completed release. Changes are recorded in [CHANGELOG.md](CHANGELOG.md). Agent
+instructions are in `AGENTS.md`.
+
+## Configuration
+
+A server, a command-line tool and a test project read `appsettings.json` from their own
+directory. A deployment adds `/config/core`, and below it `/config/core/<application>` for a
+server and `/config/core/commands` for the command-line tool. At every location the variants are
+read in this order, each one optional:
+
+```
+appsettings.json
+appsettings.{environment}.json              # Development, Staging, Production; servers only
+appsettings.{platform}.json                 # windows, linux, osx
+appsettings.{environment}.{platform}.json
+```
+
+Environment variables override every file, so secrets stay out of the tree:
+`ConnectionStrings__DefaultConnection=…`, `adapter=sqlclient` or `adapter=npgsql`.
+`config/sqlclient/core` and `config/npgsql/core` hold templates for `/config/core`.
+
+## Building and testing
+
+The build is [Nuke](https://nuke.build): `./build.sh <target>` on macOS and Linux,
+`build.cmd <target>` on Windows. A fresh clone does not compile until `./build.sh Generate` has
+run; generated files are not committed and are never edited by hand.
+
+The `Ci*` targets in `build/Build.ci.cs` are the suites that CI runs on Linux:
+
+| Suite | Needs |
+| --- | --- |
+| `CiDotnetSystemAdaptersTestMemory` | nothing |
+| `CiDotnetSystemAdaptersTestNpgsql` | PostgreSQL on `localhost:5432`, user `postgres`, password `root` |
+| `CiDotnetSystemAdaptersTestSqlClient`, `CiDotnetCore*Test`, `CiTypescriptWorkspace*Test` | SQL Server: the admin connection in `ALLORS_SQLCLIENT`, or LocalDB on Windows |
+
+The TypeScript workspace in `typescript/modules` is an nx workspace. After `npm install` there,
+`npm run system-workspace-meta:test`, `npm run system-workspace-meta-json:test` and
+`npm run system-workspace-adapters:test` run without a server;
+`system-workspace-adapters-json:test` needs the Core test server, which the Nuke target starts.
