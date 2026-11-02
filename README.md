@@ -1,5 +1,8 @@
 # Allors3
 
+> **Archived line.** This branch is `main` as it stood on 27 October 2026 and is not meant to be
+> merged. [ARCHIVE.md](ARCHIVE.md) says what it holds, why it was set aside and what returns from it.
+
 [![CI](https://github.com/allors/allors3/actions/workflows/ci.yml/badge.svg)](https://github.com/allors/allors3/actions/workflows/ci.yml)
 
 Allors3 is an actively developed platform for applications built with **domain inheritance**.
