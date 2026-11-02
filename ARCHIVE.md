@@ -2,6 +2,9 @@
 
 > **Status: Historical.** This branch is a frozen learning experiment of 8 and 9 October 2026.
 > It is not meant to be merged. The current platform is on `main`.
+>
+> **November 2026:** `main` has since restarted from `0e907fea68`. Every `main` this page refers to
+> is the line now kept on `archive/main-2026-10`, where #278 and #282 live.
 
 ## What this branch is
 
