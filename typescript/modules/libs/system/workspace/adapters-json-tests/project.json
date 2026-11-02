@@ -3,24 +3,20 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/system/workspace/adapters-json-tests/src",
   "projectType": "library",
+  "tags": [],
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": [
-          "libs/system/workspace/adapters-json-tests/**/*.ts"
-        ]
-      }
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/system/workspace/adapters-json-tests"],
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/system/workspace/adapters-json-tests"
+      ],
       "options": {
-        "jestConfig": "libs/system/workspace/adapters-json-tests/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/system/workspace/adapters-json-tests/jest.config.ts"
       }
     }
-  },
-  "tags": []
+  }
 }

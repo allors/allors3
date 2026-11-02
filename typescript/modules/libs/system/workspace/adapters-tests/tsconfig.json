@@ -61,6 +61,7 @@
       "@allors/system/workspace/meta-tests": [
         "libs/system/workspace/meta-tests/src/index.ts"
       ]
-    }
+    },
+    "ignoreDeprecations": "6.0"
   }
 }

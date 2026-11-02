@@ -61,6 +61,7 @@
       "@allors/default/workspace/domain": [
         "libs/core/workspace/domain/src/index.ts"
       ]
-    }
+    },
+    "ignoreDeprecations": "6.0"
   }
 }

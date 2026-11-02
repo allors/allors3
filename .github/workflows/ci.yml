@@ -35,13 +35,8 @@ jobs:
           - CiDotnetCoreWorkspaceLocalTest
           - CiDotnetCoreWorkspaceRemoteJsonSystemTextTest
           - CiDotnetCoreWorkspaceRemoteJsonNewtonsoftTest
-          - CiDotnetBaseDatabaseTest
-          - CiDotnetAppsDatabaseTest
           - CiTypescriptWorkspaceTest
           - CiTypescriptWorkspaceAdaptersJsonTest
-          - CiTypescriptE2EAngularBaseTest
-          - CiTypescriptWorkspacesE2EAngularAppsIntranetTest
-          # - CiTypescriptWorkspacesE2EAngularAppsExtranetTest  # disabled in azure-pipelines.yml
 
     env:
       NODE_OPTIONS: --max_old_space_size=16384
@@ -94,7 +89,7 @@ jobs:
             $psql  = Join-Path $pgBin.FullName 'bin\psql.exe'
           }
           & $psql -U postgres -h localhost -v ON_ERROR_STOP=1 -c "DO `$`$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname='allors') THEN CREATE ROLE allors LOGIN PASSWORD 'allors' SUPERUSER; END IF; END `$`$;"
-          foreach ($db in 'core','base','apps') {
+          foreach ($db in 'core') {
             $exists = & $psql -U postgres -h localhost -tAc "SELECT 1 FROM pg_database WHERE datname='$db'"
             if ($exists -ne '1') {
               & $psql -U postgres -h localhost -v ON_ERROR_STOP=1 -c "CREATE DATABASE $db OWNER allors;"

@@ -28,6 +28,7 @@
       "@allors/system/workspace/meta": [
         "libs/system/workspace/meta/src/index.ts"
       ]
-    }
+    },
+    "ignoreDeprecations": "6.0"
   }
 }

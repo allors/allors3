@@ -3,22 +3,18 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/system/workspace/domain/src",
   "projectType": "library",
+  "tags": [],
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["libs/system/workspace/domain/**/*.ts"]
-      }
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/system/workspace/domain"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/system/workspace/domain"],
       "options": {
-        "jestConfig": "libs/system/workspace/domain/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/system/workspace/domain/jest.config.ts"
       }
     }
-  },
-  "tags": []
+  }
 }
