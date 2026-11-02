@@ -22,121 +22,289 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
+env:
+  NODE_OPTIONS: --max_old_space_size=16384
+  CI: 'true'
+  DOTNET_NOLOGO: 'true'
+  DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+  # Clean incrementing versions (3.2.0-alpha.N) with no -g<commit> suffix in CI too.
+  PublicRelease: 'true'
+  # Default culture parity with the Windows 'Set-Culture nl-BE' of the earlier workflow (the locale is generated per job).
+  LANG: nl_BE.UTF-8
+  LC_ALL: nl_BE.UTF-8
+
 jobs:
-  test:
+  # Documentation-only changes skip the platform suites below. The `result` job at the end always
+  # runs and is the one status check that the main ruleset requires: a matrix job skipped by its
+  # `if` reports a single check under its unrendered name, so the suites themselves cannot be
+  # required, and a path filter on the workflow itself would leave every check pending.
+  changes:
+    name: Detect documentation-only changes
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      # The suite jobs generate the nl-BE locale that the workflow env selects; this job does not.
+      LANG: C.UTF-8
+      LC_ALL: C.UTF-8
+    outputs:
+      platform: ${{ steps.paths.outputs.platform }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          submodules: false
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Compare the changed paths with the documentation paths
+        id: paths
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+          HEAD_SHA: ${{ github.sha }}
+        run: |
+          platform=true
+          if [ "$EVENT_NAME" = "pull_request" ] || [ "$EVENT_NAME" = "push" ]; then
+            if git cat-file -e "$BASE_SHA^{commit}" 2>/dev/null; then
+              changed=$(git diff --name-only "$BASE_SHA" "$HEAD_SHA")
+              printf '%s\n' "$changed"
+              if [ -n "$changed" ] && ! printf '%s\n' "$changed" | grep -v -E '^(AGENTS|ARCHITECTURE|CHANGELOG|README)\.md$' | grep -q .; then
+                platform=false
+              fi
+            else
+              echo "Base commit '$BASE_SHA' is not available; running the platform suites."
+            fi
+          fi
+          echo "platform=$platform" >> "$GITHUB_OUTPUT"
+          echo "Run the platform suites: $platform"
+
+  # Suite without a database: the in-memory adapter, no provider.
+  memory:
     name: ${{ matrix.target }}
-    runs-on: windows-latest
-    timeout-minutes: 360
+    runs-on: ubuntu-latest
+    needs: changes
+    if: ${{ !cancelled() && needs.changes.outputs.platform != 'false' }}
+    timeout-minutes: 60
     strategy:
       fail-fast: false
       matrix:
         target:
           - CiDotnetSystemAdaptersTestMemory
-          - CiDotnetSystemAdaptersTestSqlClient
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          submodules: false
+          fetch-depth: 0      # nbgv needs full history for git-height versioning
+          fetch-tags: true
+      - name: Generate nl-BE locale
+        run: sudo locale-gen nl_BE.UTF-8 && sudo update-locale
+      - name: Setup .NET SDK (from global.json)
+        uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: global.json
+      - name: Restore .NET local tools
+        run: dotnet tool restore
+      - name: Compute version (nbgv)
+        run: dotnet nbgv cloud
+      - name: Run Nuke target ${{ matrix.target }}
+        run: ./build.sh -target ${{ matrix.target }}
+      - name: Upload TRX artifacts
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: trx-${{ matrix.target }}
+          path: artifacts/Tests/*.trx
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Publish test results
+        if: always()
+        uses: dorny/test-reporter@v3
+        with:
+          name: ${{ matrix.target }}
+          path: artifacts/Tests/*.trx
+          reporter: dotnet-trx
+          fail-on-error: false
+
+  # PostgreSQL provider: the adapter suite. Its fixtures connect to localhost:5432 as postgres/root
+  # and create their own databases.
+  npgsql:
+    name: ${{ matrix.target }} (npgsql)
+    runs-on: ubuntu-latest
+    needs: changes
+    if: ${{ !cancelled() && needs.changes.outputs.platform != 'false' }}
+    timeout-minutes: 240
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: root
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+    strategy:
+      fail-fast: false
+      matrix:
+        target:
+          # Postgres in CI covers the Npgsql adapter; the database, server and workspace suites run
+          # on SqlClient (the sqlclient job below).
           - CiDotnetSystemAdaptersTestNpgsql
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          submodules: false
+          fetch-depth: 0
+          fetch-tags: true
+      - name: Generate nl-BE locale
+        run: sudo locale-gen nl_BE.UTF-8 && sudo update-locale
+      - name: Setup .NET SDK (from global.json)
+        uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: global.json
+      - name: Restore .NET local tools
+        run: dotnet tool restore
+      - name: Compute version (nbgv)
+        run: dotnet nbgv cloud
+      - name: Run Nuke target ${{ matrix.target }}
+        run: ./build.sh -target ${{ matrix.target }}
+      - name: Upload TRX artifacts
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: trx-${{ matrix.target }}-npgsql
+          path: artifacts/Tests/*.trx
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Publish test results
+        if: always()
+        uses: dorny/test-reporter@v3
+        with:
+          name: ${{ matrix.target }} (npgsql)
+          path: artifacts/Tests/*.trx
+          reporter: dotnet-trx
+          fail-on-error: false
+
+  # SQL Server provider: the adapter suite and every provider-agnostic suite. The build's SqlLocalDB
+  # helper and the adapter fixtures take the admin connection from ALLORS_SQLCLIENT.
+  sqlclient:
+    name: ${{ matrix.target }} (sqlclient)
+    runs-on: ubuntu-latest
+    needs: changes
+    if: ${{ !cancelled() && needs.changes.outputs.platform != 'false' }}
+    timeout-minutes: 240
+    services:
+      sqlserver:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        env:
+          ACCEPT_EULA: 'Y'
+          MSSQL_SA_PASSWORD: 'Allors123!'
+        ports:
+          - 1433:1433
+        options: >-
+          --health-cmd "/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P 'Allors123!' -Q 'SELECT 1' -b -o /dev/null"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 20
+          --health-start-period 30s
+    env:
+      ALLORS_SQLCLIENT: 'Server=localhost,1433;Database=master;User Id=sa;Password=Allors123!;TrustServerCertificate=true'
+    strategy:
+      fail-fast: false
+      matrix:
+        target:
+          - CiDotnetSystemAdaptersTestSqlClient
           - CiDotnetCoreDatabaseTest
           - CiDotnetCoreWorkspaceLocalTest
           - CiDotnetCoreWorkspaceRemoteJsonSystemTextTest
           - CiDotnetCoreWorkspaceRemoteJsonNewtonsoftTest
           - CiTypescriptWorkspaceTest
           - CiTypescriptWorkspaceAdaptersJsonTest
-
-    env:
-      NODE_OPTIONS: --max_old_space_size=16384
-      CI: 'true'
-      DOTNET_NOLOGO: 'true'
-      DOTNET_CLI_TELEMETRY_OPTOUT: '1'
-      # Clean incrementing versions (3.1.0-alpha.N) with no -g<commit> suffix in CI too.
-      PublicRelease: 'true'
-
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           submodules: false
-          fetch-depth: 0      # nbgv needs full history for git-height versioning
+          fetch-depth: 0
           fetch-tags: true
-
-      - name: Set culture nl-BE
-        shell: pwsh
-        run: Set-Culture -CultureInfo nl-BE
-
+      - name: Generate nl-BE locale
+        run: sudo locale-gen nl_BE.UTF-8 && sudo update-locale
       - name: Setup .NET SDK (from global.json)
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           global-json-file: global.json
-
       - name: Restore .NET local tools
-        shell: pwsh
         run: dotnet tool restore
-
       - name: Compute version (nbgv)
-        shell: pwsh
         run: dotnet nbgv cloud
-
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: '18'
-
-      - name: Start PostgreSQL service
-        shell: pwsh
-        run: |
-          $pgService = Get-Service -Name 'postgresql*' | Select-Object -First 1
-          if ($pgService) {
-            Write-Host "Found PostgreSQL service: $($pgService.Name)"
-            Set-Service $pgService.Name -StartupType Manual
-            Start-Service $pgService.Name
-            Get-Service $pgService.Name
-          } else {
-            Write-Error "PostgreSQL service not found"
-            exit 1
-          }
-
-      - name: Bootstrap PostgreSQL role and databases
-        shell: pwsh
-        run: |
-          $env:PGPASSWORD = 'root'
-          $psql = (Get-Command psql -ErrorAction SilentlyContinue)?.Source
-          if (-not $psql) {
-            $pgBin = Get-ChildItem 'C:\Program Files\PostgreSQL' -Directory | Sort-Object Name -Descending | Select-Object -First 1
-            $psql  = Join-Path $pgBin.FullName 'bin\psql.exe'
-          }
-          & $psql -U postgres -h localhost -v ON_ERROR_STOP=1 -c "DO `$`$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname='allors') THEN CREATE ROLE allors LOGIN PASSWORD 'allors' SUPERUSER; END IF; END `$`$;"
-          foreach ($db in 'core') {
-            $exists = & $psql -U postgres -h localhost -tAc "SELECT 1 FROM pg_database WHERE datname='$db'"
-            if ($exists -ne '1') {
-              & $psql -U postgres -h localhost -v ON_ERROR_STOP=1 -c "CREATE DATABASE $db OWNER allors;"
-            }
-          }
-
-      - name: Setup SQL Server LocalDB
-        if: matrix.target == 'CiDotnetSystemAdaptersTestSqlClient'
-        shell: pwsh
-        run: |
-          choco install sqllocaldb -y --no-progress
-          $env:Path = [System.Environment]::GetEnvironmentVariable('Path','Machine') + ';' + [System.Environment]::GetEnvironmentVariable('Path','User')
-          sqllocaldb create MSSQLLocalDB -s
-          sqllocaldb info MSSQLLocalDB
-
+          node-version: '24'
       - name: Run Nuke target ${{ matrix.target }}
-        shell: pwsh
-        run: ./build.ps1 -target ${{ matrix.target }}
-
+        run: ./build.sh -target ${{ matrix.target }}
       - name: Upload TRX artifacts
-        if: always()
-        uses: actions/upload-artifact@v4
+        # Diagnostic download only (the report is published from disk by the next step), so upload
+        # just on failure and never let a transient artifact-service flake gate the job.
+        if: failure()
+        continue-on-error: true
+        uses: actions/upload-artifact@v7
         with:
-          name: trx-${{ matrix.target }}
+          name: trx-${{ matrix.target }}-sqlclient
           path: artifacts/Tests/*.trx
           if-no-files-found: warn
           retention-days: 14
-
       - name: Publish test results
         if: always()
-        uses: dorny/test-reporter@v1
+        uses: dorny/test-reporter@v3
         with:
-          name: ${{ matrix.target }}
+          name: ${{ matrix.target }} (sqlclient)
           path: artifacts/Tests/*.trx
           reporter: dotnet-trx
           fail-on-error: false
+
+  # The one required status check: the suites passed, or all were skipped for a documentation-only change.
+  result:
+    name: CI result
+    runs-on: ubuntu-latest
+    needs: [changes, memory, npgsql, sqlclient]
+    if: ${{ always() }}
+    timeout-minutes: 5
+    env:
+      # The suite jobs generate the nl-BE locale that the workflow env selects; this job does not.
+      LANG: C.UTF-8
+      LC_ALL: C.UTF-8
+    steps:
+      - name: Require the platform suites to have passed or to have been skipped for a documentation-only change
+        env:
+          CHANGES: ${{ needs.changes.result }}
+          PLATFORM: ${{ needs.changes.outputs.platform }}
+          MEMORY: ${{ needs.memory.result }}
+          NPGSQL: ${{ needs.npgsql.result }}
+          SQLCLIENT: ${{ needs.sqlclient.result }}
+        run: |
+          echo "changes=$CHANGES platform=$PLATFORM memory=$MEMORY npgsql=$NPGSQL sqlclient=$SQLCLIENT"
+          if [ "$CHANGES" != "success" ]; then
+            echo "The change detection did not succeed; every suite must have passed."
+            PLATFORM=true
+          fi
+          for suite in "$MEMORY" "$NPGSQL" "$SQLCLIENT"; do
+            case "$suite" in
+              success) ;;
+              skipped)
+                if [ "$PLATFORM" != "false" ]; then
+                  echo "A platform suite was skipped although the platform changed."
+                  exit 1
+                fi
+                ;;
+              *)
+                echo "A platform suite ended as '$suite'."
+                exit 1
+                ;;
+            esac
+          done
+          echo "The platform suites passed, or were all skipped for a documentation-only change."
