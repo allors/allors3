@@ -4,21 +4,47 @@ using Microsoft.Data.SqlClient;
 
 internal class SqlLocalDB : IDisposable
 {
+    private const string SqlClientEnvironmentVariable = "ALLORS_SQLCLIENT";
+    private const string LegacySqlClientEnvironmentVariable = "ALLORS_TEST_SQLCLIENT_CONNECTION";
+
     private ISqlLocalDbInstanceInfo dbInstance;
     private ISqlLocalDbInstanceManager manager;
     private SqlLocalDbApi sqlLocalDbApi;
+    private string adminConnectionString;
 
     public SqlLocalDB()
     {
-        sqlLocalDbApi = new SqlLocalDbApi();
-        dbInstance = sqlLocalDbApi.GetDefaultInstance();
-        manager = dbInstance.Manage();
-
-        if (!dbInstance.IsRunning)
+        if (OperatingSystem.IsWindows())
         {
-            Serilog.Log.Debug("SqlServer: Start");
-            manager.Start();
+            sqlLocalDbApi = new SqlLocalDbApi();
+            dbInstance = sqlLocalDbApi.GetDefaultInstance();
+            manager = dbInstance.Manage();
+
+            if (!dbInstance.IsRunning)
+            {
+                Serilog.Log.Debug("SqlServer: Start");
+                manager.Start();
+            }
+
+            return;
         }
+
+        var rawConnectionString = System.Environment.GetEnvironmentVariable(SqlClientEnvironmentVariable);
+        if (string.IsNullOrWhiteSpace(rawConnectionString))
+        {
+            rawConnectionString = System.Environment.GetEnvironmentVariable(LegacySqlClientEnvironmentVariable);
+        }
+
+        if (string.IsNullOrWhiteSpace(rawConnectionString))
+        {
+            throw new InvalidOperationException(
+                $"{SqlClientEnvironmentVariable} is not set. Point it at an admin SQL Server connection that can create databases.");
+        }
+
+        adminConnectionString = new SqlConnectionStringBuilder(rawConnectionString)
+        {
+            InitialCatalog = "master",
+        }.ConnectionString;
     }
 
     public void Dispose()
@@ -32,7 +58,12 @@ internal class SqlLocalDB : IDisposable
 
     public void Init(string database, string user = null, string password = null)
     {
-        ExecuteCommand($"DROP DATABASE IF EXISTS [{database}]");
+        ExecuteCommand($@"
+IF DB_ID('{database}') IS NOT NULL
+BEGIN
+    ALTER DATABASE [{database}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+    DROP DATABASE [{database}];
+END");
 
         ExecuteCommand($"CREATE DATABASE [{database}]");
 
@@ -53,11 +84,31 @@ END
 ALTER ROLE [db_owner] ADD MEMBER [{user}]
 ");
         }
+
+        if (!OperatingSystem.IsWindows())
+        {
+            var databaseConnectionString = new SqlConnectionStringBuilder(adminConnectionString)
+            {
+                InitialCatalog = database,
+            };
+
+            if (!string.IsNullOrWhiteSpace(user))
+            {
+                databaseConnectionString.IntegratedSecurity = false;
+                databaseConnectionString.UserID = user;
+                databaseConnectionString.Password = password;
+            }
+
+            System.Environment.SetEnvironmentVariable("adapter", "sqlclient");
+            System.Environment.SetEnvironmentVariable("ConnectionStrings__DefaultConnection", databaseConnectionString.ConnectionString);
+        }
     }
 
     public int ExecuteCommand(string commandText)
     {
-        using var connection = manager.CreateConnection();
+        using var connection = manager != null
+            ? manager.CreateConnection()
+            : new SqlConnection(adminConnectionString);
         connection.Open();
         using var command = new SqlCommand(commandText, connection);
         command.CommandTimeout = 5 * 60;

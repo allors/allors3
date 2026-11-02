@@ -13,7 +13,7 @@ export class ResponseContext {
 
   checkForMissingGrants(value: IRange<number>): IRange<number> {
     for (const id of this.database.ranges.enumerate(value)) {
-      if (!this.database.grantById.has(id)) {
+      if (!this.database.isGrantResolved(id)) {
         this.missingGrantIds.add(id);
       }
     }
@@ -23,7 +23,7 @@ export class ResponseContext {
 
   checkForMissingRevocations(value: IRange<number>): IRange<number> {
     for (const id of this.database.ranges.enumerate(value)) {
-      if (!this.database.permissions.has(id)) {
+      if (!this.database.isRevocationResolved(id)) {
         this.missingRevocationIds.add(id);
       }
     }

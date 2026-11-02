@@ -10,6 +10,7 @@ import {
 import {
   Grant,
   DatabaseConnection as SystemDatabaseConnection,
+  IRange,
   MapMap,
   Revocation,
 } from '@allors/system/workspace/adapters';
@@ -84,10 +85,48 @@ export class DatabaseConnection extends SystemDatabaseConnection {
             return true;
           }
 
+          // A concurrent pull may have synced the record while it still waits for the access
+          // response or the permissions; sync it again so that this pull requests them itself.
+          for (const grantId of this.ranges.enumerate(v.g)) {
+            if (!this.isGrantResolved(grantId)) {
+              return true;
+            }
+          }
+
+          for (const revocationId of this.ranges.enumerate(v.r)) {
+            if (!this.isRevocationResolved(revocationId)) {
+              return true;
+            }
+          }
+
           return false;
         })
         .map((v) => v.i),
     };
+  }
+
+  /** A grant is resolved once it is registered and every permission it lists is known. */
+  isGrantResolved(id: number): boolean {
+    const grant = this.grantById.get(id);
+    return grant != null && this.arePermissionsKnown(grant.permissionIds);
+  }
+
+  /** A revocation is resolved once it is registered and every permission it lists is known. */
+  isRevocationResolved(id: number): boolean {
+    const revocation = this.revocationById.get(id);
+    return (
+      revocation != null && this.arePermissionsKnown(revocation.permissionIds)
+    );
+  }
+
+  private arePermissionsKnown(permissionIds: IRange<number>): boolean {
+    for (const permissionId of this.ranges.enumerate(permissionIds)) {
+      if (!this.permissions.has(permissionId)) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   onSyncResponse(syncResponse: SyncResponse): AccessRequest | null {

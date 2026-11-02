@@ -21,6 +21,10 @@ namespace Allors.Database.Domain
         {
             var passwordService = @this.Transaction().Database.Services.Get<IPasswordHasher>();
             @this.UserPasswordHash = passwordService.HashPassword(@this.UserName, clearTextPassword);
+
+            // Identity validates its cookies against the stamp, so a new hash also ends the
+            // sessions issued under the old one.
+            @this.UserSecurityStamp = Guid.NewGuid().ToString();
             return @this;
         }
 

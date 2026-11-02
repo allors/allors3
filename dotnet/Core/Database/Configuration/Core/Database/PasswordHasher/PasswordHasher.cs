@@ -5,29 +5,23 @@
 
 namespace Allors.Database.Configuration
 {
-    using System.Collections.Generic;
     using System.Linq;
-    using System.Text.RegularExpressions;
     using Domain;
     using Microsoft.AspNetCore.Identity;
 
     public class PasswordHasher : IPasswordHasher
     {
-        private readonly PasswordHasher<string> passwordHasher;
-        private readonly IEnumerable<Regex> rules;
+        // The same bar as the customer portal's Identity policy (RequiredLength 12,
+        // RequiredUniqueChars 4, no composition rules): length over composition, per
+        // NIST 800-63B / OWASP ASVS. Replaces the 8-character regex set whose special-character
+        // class [!@#$%^&*?_~-£() ] had an unescaped ~-£ range and so accepted ¡¢£¥©®° and a
+        // plain space as "special".
+        private const int MinimumLength = 12;
+        private const int MinimumUniqueCharacters = 4;
 
-        public PasswordHasher()
-        {
-            this.passwordHasher = new PasswordHasher<string>();
-            this.rules = new[]
-              {
-                    ".{8,}",                        // eight or more characters long
-                    "\\d",                          // contains numbers
-                    "[a-z].*?[A-Z]|[A-Z].*?[a-z]",  // mixed case
-                    "[!@#$%^&*?_~-£() ]"            // special characters
-                }
-              .Select(rule => new Regex(rule));
-        }
+        private readonly PasswordHasher<string> passwordHasher;
+
+        public PasswordHasher() => this.passwordHasher = new PasswordHasher<string>();
 
         public string HashPassword(string user, string password) => this.passwordHasher.HashPassword(user, password);
 
@@ -37,11 +31,10 @@ namespace Allors.Database.Configuration
             return result != PasswordVerificationResult.Failed;
         }
 
-        public bool CheckStrength(string password)
-        {
-            var matches = this.rules.Select(regex => regex.Match(password));
-            return matches.All(m => m.Success);
-        }
+        public bool CheckStrength(string password) =>
+            password != null
+            && password.Length >= MinimumLength
+            && password.Distinct().Count() >= MinimumUniqueCharacters;
 
         public void Dispose()
         {
