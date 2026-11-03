@@ -42,6 +42,16 @@ partial class Build
             .SetProcessWorkingDirectory(Paths.TypescriptModules)
             .SetCommand("system-workspace-adapters:test")));
 
+    private Target TypescriptSystemWorkspaceDomain => _ => _
+        .After(TypescriptInstall)
+        .DependsOn(DotnetCoreGenerate)
+        .DependsOn(EnsureDirectories)
+        .Executes(() => NpmRun(s => s
+            .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
+            .AddProcessEnvironmentVariable("ALLORS_TRX_OUTPUT_FILE", Paths.ArtifactsTests / "SystemWorkspaceDomainTests.trx")
+            .SetProcessWorkingDirectory(Paths.TypescriptModules)
+            .SetCommand("system-workspace-domain:test")));
+
     private Target TypescriptSystemWorkspaceAdaptersJson => _ => _
         .After(TypescriptInstall)
         .DependsOn(EnsureDirectories)
@@ -65,7 +75,8 @@ partial class Build
          .After(TypescriptInstall)
          .DependsOn(TypescriptSystemWorkspaceMeta)
          .DependsOn(TypescriptSystemWorkspaceMetaJson)
-         .DependsOn(TypescriptSystemWorkspaceAdapters);
+         .DependsOn(TypescriptSystemWorkspaceAdapters)
+         .DependsOn(TypescriptSystemWorkspaceDomain);
 
     private Target TypescriptWorkspaceAdaptersJsonTest => _ => _
         .After(TypescriptInstall)

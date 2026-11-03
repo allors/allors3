@@ -27,6 +27,7 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   versions on `main` and the `v*` branches.
 - The TypeScript workspace runs on nx 23, jest 30 and TypeScript 6 and depends on cross-fetch and
   tslib only.
+- Dependabot keeps the GitHub Actions of the workflow current, in one grouped pull request a week.
 
 ### Fixed
 
@@ -57,6 +58,10 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   test share holders controller resolves the current user through `IUserService`; and the Core test
   suites drop a denied-permissions stub, a `SelectRef` stub and a vacuous sign-out test, and run the
   push test of a workspace object without a workspace.
+- The TypeScript workspace fixes released on `v3.1` in June 2026 (#84, #85): `nodeLeafs` returns the
+  leaf nodes of a tree, covered by the new `system-workspace-domain-tests` project in the TypeScript
+  workspace suite, and an object's `toJSON` serialises it through its strategy. The pull retry is
+  covered by the regression test of #276, which fails a pull's first SQL command.
 
 ### Security
 

@@ -1,0 +1,22 @@
+{
+  "name": "system-workspace-domain-tests",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/system/workspace/domain-tests/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/system/workspace/domain-tests"
+      ],
+      "options": {
+        "jestConfig": "libs/system/workspace/domain-tests/jest.config.ts"
+      }
+    }
+  }
+}

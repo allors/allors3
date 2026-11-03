@@ -108,7 +108,7 @@ function resolveLeafs(node: Node, results: Set<Node>): void {
       resolveLeafs(child, results);
     }
   } else {
-    results.add(this);
+    results.add(node);
   }
 }
 
