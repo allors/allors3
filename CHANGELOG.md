@@ -62,6 +62,8 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
 
 - A failed sign-in counts towards Identity's lockout, so repeated wrong passwords lock the account
   for the configured period (#58).
+- An Identity update is rejected when the user's security stamp changed since the user was loaded,
+  so recording a failed sign-in cannot undo an intervening password change.
 - A production error response carries a generic message instead of the exception's message; the
   development environment keeps the message and the stack trace (#60).
 
