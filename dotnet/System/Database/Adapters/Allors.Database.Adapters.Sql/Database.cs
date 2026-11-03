@@ -6,6 +6,7 @@
 namespace Allors.Database.Adapters.Sql
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
@@ -19,9 +20,9 @@ namespace Allors.Database.Adapters.Sql
     {
         public static readonly IsolationLevel DefaultIsolationLevel = System.Data.IsolationLevel.Snapshot;
 
-        private readonly Dictionary<IObjectType, HashSet<IObjectType>> concreteClassesByObjectType;
+        private readonly ConcurrentDictionary<IObjectType, HashSet<IObjectType>> concreteClassesByObjectType;
 
-        private readonly Dictionary<IObjectType, IRoleType[]> sortedUnitRolesByObjectType;
+        private readonly ConcurrentDictionary<IObjectType, IRoleType[]> sortedUnitRolesByObjectType;
 
         private ICacheFactory cacheFactory;
 
@@ -43,12 +44,12 @@ namespace Allors.Database.Adapters.Sql
 
             this.ConnectionString = configuration.ConnectionString;
 
-            this.concreteClassesByObjectType = new Dictionary<IObjectType, HashSet<IObjectType>>();
+            this.concreteClassesByObjectType = new ConcurrentDictionary<IObjectType, HashSet<IObjectType>>();
 
             this.CommandTimeout = configuration.CommandTimeout;
             this.IsolationLevel = configuration.IsolationLevel;
 
-            this.sortedUnitRolesByObjectType = new Dictionary<IObjectType, IRoleType[]>();
+            this.sortedUnitRolesByObjectType = new ConcurrentDictionary<IObjectType, IRoleType[]>();
 
             this.CacheFactory = configuration.CacheFactory;
             this.Cache = this.CacheFactory.CreateCache();
@@ -148,11 +149,9 @@ namespace Allors.Database.Adapters.Sql
                 return container.Equals(containee);
             }
 
-            if (!this.concreteClassesByObjectType.TryGetValue(container, out var concreteClasses))
-            {
-                concreteClasses = new HashSet<IObjectType>(((IInterface)container).DatabaseClasses);
-                this.concreteClassesByObjectType[container] = concreteClasses;
-            }
+            var concreteClasses = this.concreteClassesByObjectType.GetOrAdd(
+                container,
+                key => new HashSet<IObjectType>(((IInterface)key).DatabaseClasses));
 
             return concreteClasses.Contains(containee);
         }
@@ -160,17 +159,14 @@ namespace Allors.Database.Adapters.Sql
 
         internal Type GetDomainType(IObjectType objectType) => this.ObjectFactory.GetType(objectType);
 
-        public IRoleType[] GetSortedUnitRolesByObjectType(IObjectType objectType)
-        {
-            if (!this.sortedUnitRolesByObjectType.TryGetValue(objectType, out var sortedUnitRoles))
-            {
-                var sortedUnitRoleList = new List<IRoleType>(((IComposite)objectType).DatabaseRoleTypes.Where(r => r.ObjectType.IsUnit));
-                sortedUnitRoleList.Sort();
-                sortedUnitRoles = sortedUnitRoleList.ToArray();
-                this.sortedUnitRolesByObjectType[objectType] = sortedUnitRoles;
-            }
-
-            return sortedUnitRoles;
-        }
+        public IRoleType[] GetSortedUnitRolesByObjectType(IObjectType objectType) =>
+            this.sortedUnitRolesByObjectType.GetOrAdd(
+                objectType,
+                key =>
+                {
+                    var sortedUnitRoleList = new List<IRoleType>(((IComposite)key).DatabaseRoleTypes.Where(r => r.ObjectType.IsUnit));
+                    sortedUnitRoleList.Sort();
+                    return sortedUnitRoleList.ToArray();
+                });
     }
 }

@@ -106,7 +106,7 @@ namespace Allors.Database.Protocol.Json
         {
             if (value != null)
             {
-                this.valueByName.Add(name, value);
+                this.valueByName.Add(name, value is decimal ? this.unitConvert.ToJson(value) : value);
             }
         }
 

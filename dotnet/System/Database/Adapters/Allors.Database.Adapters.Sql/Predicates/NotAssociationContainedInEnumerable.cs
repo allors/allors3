@@ -44,7 +44,7 @@ namespace Allors.Database.Adapters.Sql
                 statement.Append(" NOT " + this.association.SingularFullName + "_A." + Mapping.ColumnNameForRole + " IN (\n");
                 statement.Append(" SELECT " + Mapping.ColumnNameForRole + " FROM " + schema.TableNameForRelationByRelationType[this.association.RelationType] + " WHERE " + Mapping.ColumnNameForAssociation + " IN (");
                 statement.Append(inStatement.ToString());
-                statement.Append(" ))\n");
+                statement.Append(" )))\n");
             }
             else if (this.association.RelationType.RoleType.IsMany)
             {

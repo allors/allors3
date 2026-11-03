@@ -49,7 +49,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal async Task<IPullResult> OnPull(PullResponse pullResponse)
         {
-            var pullResult = new PullResult(this, pullResponse);
+            var pullResult = new PullResult(this, pullResponse, this.DatabaseConnection.UnitConvert);
 
             if (pullResult.HasErrors)
             {

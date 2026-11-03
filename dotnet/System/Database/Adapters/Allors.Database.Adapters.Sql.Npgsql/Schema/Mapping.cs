@@ -475,7 +475,7 @@ CREATE FUNCTION {name}({this.ParamNameForClass} {SqlTypeForClass}, {this.ParamNa
     RETURNS SETOF {SqlTypeForObject}
     LANGUAGE plpgsql
 AS $$
-DECLARE ID integer;
+DECLARE ID {SqlTypeForObject};
 DECLARE COUNTER integer := 0;
 BEGIN
     WHILE COUNTER < {this.ParamNameForCount} LOOP

@@ -1,4 +1,4 @@
-// <copyright file="ServicesTest.cs" company="Allors bv">
+// <copyright file="LifeCycleTest.cs" company="Allors bv">
 // Copyright (c) Allors bv. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -16,7 +16,7 @@ namespace Allors.Database.Adapters
     using ClassWithoutRoles = Domain.ClassWithoutRoles;
     using ClassWithoutUnitRoles = Domain.ClassWithoutUnitRoles;
 
-    public abstract class ServicesTest : IDisposable
+    public abstract class LifeCycleTest : IDisposable
     {
         protected static readonly bool[] TrueFalse = { true, false };
 
@@ -3698,6 +3698,19 @@ namespace Allors.Database.Adapters
                         Assert.Equal(c1B, instantiatedObjects[1]);
                         Assert.Equal(c1C, instantiatedObjects[2]);
                         Assert.Equal(c1D, instantiatedObjects[3]);
+                    }
+
+                    using (var transaction2 = this.CreateTransaction())
+                    {
+                        transaction2.Instantiate(objectIds[2]);
+
+                        // Preserve duplicate cached ids and their order when another id is uncached.
+                        instantiatedObjects = transaction2.Instantiate(new[] { objectIds[2], objectIds[2], objectIds[0] });
+
+                        Assert.Equal(3, instantiatedObjects.Length);
+                        Assert.Equal(c1C, instantiatedObjects[0]);
+                        Assert.Equal(c1C, instantiatedObjects[1]);
+                        Assert.Equal(c1A, instantiatedObjects[2]);
                     }
                 }
             }

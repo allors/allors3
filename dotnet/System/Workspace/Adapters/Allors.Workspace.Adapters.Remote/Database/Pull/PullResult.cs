@@ -5,8 +5,10 @@
 
 namespace Allors.Workspace.Adapters.Remote
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Allors.Protocol.Json;
     using Allors.Protocol.Json.Api.Pull;
 
     public class PullResult : Result, IPullResultInternals
@@ -19,10 +21,13 @@ namespace Allors.Workspace.Adapters.Remote
 
         private readonly PullResponse pullResponse;
 
-        public PullResult(Adapters.Session session, PullResponse response) : base(session, response)
+        private readonly IUnitConvert unitConvert;
+
+        public PullResult(Adapters.Session session, PullResponse response, IUnitConvert unitConvert) : base(session, response)
         {
             this.Workspace = session.Workspace;
             this.pullResponse = response;
+            this.unitConvert = unitConvert;
         }
 
         private IWorkspace Workspace { get; }
@@ -53,6 +58,32 @@ namespace Allors.Workspace.Adapters.Remote
 
         public object GetValue(string key) => this.Values[key.ToUpperInvariant()];
 
-        public T GetValue<T>(string key) => (T)this.GetValue(key.ToUpperInvariant());
+        public T GetValue<T>(string key)
+        {
+            var value = this.GetValue(key.ToUpperInvariant());
+
+            return value switch
+            {
+                null => default,
+                T typed => typed,
+                _ => (T)this.unitConvert.UnitFromJson(UnitTagForType(typeof(T)), value),
+            };
+        }
+
+        private static string UnitTagForType(Type type)
+        {
+            type = Nullable.GetUnderlyingType(type) ?? type;
+
+            if (type == typeof(int)) return UnitTags.Integer;
+            if (type == typeof(string)) return UnitTags.String;
+            if (type == typeof(bool)) return UnitTags.Boolean;
+            if (type == typeof(decimal)) return UnitTags.Decimal;
+            if (type == typeof(double)) return UnitTags.Float;
+            if (type == typeof(DateTime)) return UnitTags.DateTime;
+            if (type == typeof(Guid)) return UnitTags.Unique;
+            if (type == typeof(byte[])) return UnitTags.Binary;
+
+            throw new ArgumentException($"Unit type not supported: {type}");
+        }
     }
 }
