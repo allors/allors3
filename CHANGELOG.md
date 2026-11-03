@@ -47,6 +47,23 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   untyped consumers of a pull response receive strings for decimal values.
 - The Core server's default SQL Server connection string disables the connect timeout, as the
   command and test configurations already did.
+- The Core fixes released on `v3.1` in June 2026 (#50 to #57, #61 to #64): a nested prefetch policy
+  is built on the nested builder; the resource `Merger` preserves the structure of a duplicate key's
+  data element and gets its own test project, `Merge.Tests`, in the Core database test suite;
+  `commands.sh` quotes the arguments it forwards; the UML template renders a many-valued role as an
+  array; a pull dependency with an unknown or mismatched meta tag is logged and ignored instead of
+  failing the pull; `Invoke` and `Push` are no longer retried on a database exception, since a
+  retry after an ambiguous commit would apply the unit twice, while `Pull` and `Sync` still are; the
+  test share holders controller resolves the current user through `IUserService`; and the Core test
+  suites drop a denied-permissions stub, a `SelectRef` stub and a vacuous sign-out test, and run the
+  push test of a workspace object without a workspace.
+
+### Security
+
+- A failed sign-in counts towards Identity's lockout, so repeated wrong passwords lock the account
+  for the configured period (#58).
+- A production error response carries a generic message instead of the exception's message; the
+  development environment keeps the message and the stack trace (#60).
 
 ### Removed
 
