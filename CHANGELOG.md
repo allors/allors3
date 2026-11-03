@@ -42,6 +42,9 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   shared `Database` lazy caches are thread-safe; `CreateObjects` holds object ids as `bigint`;
   `ContainedIn` by objects round-trips over JSON; the Remote adapter's `GetValue<T>` converts pulled
   JSON values; and `SetCompositeRoleMany2One` detaches the previous role.
+- A procedure's decimal output values travel as the protocol's invariant strings, like decimal
+  roles, so the Remote adapter's `GetValue<decimal>` keeps their precision on both JSON libraries;
+  untyped consumers of a pull response receive strings for decimal values.
 - The Core server's default SQL Server connection string disables the connect timeout, as the
   command and test configurations already did.
 
