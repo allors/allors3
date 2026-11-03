@@ -32,6 +32,18 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
 
 - The Local workspace adapter releases its database transaction after Pull, Push and Invoke, and
   Sync selects the roles of the connection's workspace only (#44, #45, #46, #259).
+- The System adapter fixes released on `v3.1` in June 2026 (#29, #32 to #36, #38, #39, #41 to #43,
+  #47 to #49): the `Union` of ranges keeps an element equal to `default(T)`; the Memory adapter's
+  `Like` follows SQL semantics and escapes metacharacters, and the SQL Server adapter's `Like`
+  follows ANSI semantics with `[` as a literal; a one2one change set reports the displaced
+  association; `NotAssociationContainedInEnumerable` emits balanced parentheses; `Instantiate`
+  tolerates duplicate object ids; prefetching uses an object's modified composites role; a converted
+  `Extent.CopyTo` honours the destination index; `Load` honours the configured schema name; the
+  shared `Database` lazy caches are thread-safe; `CreateObjects` holds object ids as `bigint`;
+  `ContainedIn` by objects round-trips over JSON; the Remote adapter's `GetValue<T>` converts pulled
+  JSON values; and `SetCompositeRoleMany2One` detaches the previous role.
+- The Core server's default SQL Server connection string disables the connect timeout, as the
+  command and test configurations already did.
 
 ### Removed
 
