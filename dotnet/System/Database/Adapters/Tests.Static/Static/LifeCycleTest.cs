@@ -3699,6 +3699,19 @@ namespace Allors.Database.Adapters
                         Assert.Equal(c1C, instantiatedObjects[2]);
                         Assert.Equal(c1D, instantiatedObjects[3]);
                     }
+
+                    using (var transaction2 = this.CreateTransaction())
+                    {
+                        transaction2.Instantiate(objectIds[2]);
+
+                        // Preserve duplicate cached ids and their order when another id is uncached.
+                        instantiatedObjects = transaction2.Instantiate(new[] { objectIds[2], objectIds[2], objectIds[0] });
+
+                        Assert.Equal(3, instantiatedObjects.Length);
+                        Assert.Equal(c1C, instantiatedObjects[0]);
+                        Assert.Equal(c1C, instantiatedObjects[1]);
+                        Assert.Equal(c1A, instantiatedObjects[2]);
+                    }
                 }
             }
         }

@@ -15,6 +15,8 @@ namespace Allors.Database.Domain
             output.AddValue("allorsBoolean", true);
             output.AddValue("allorsDateTime", new DateTime(1973, 3, 27, 0, 0, 0, DateTimeKind.Utc));
             output.AddValue("allorsDecimal", 12.34m);
+            output.AddValue("allorsDecimalPrecise", 123456789012345.67m);
+            output.AddValue("allorsDecimalMax", decimal.MaxValue);
             output.AddValue("allorsDouble", 123d);
             output.AddValue("allorsInteger", 1000);
             output.AddValue("allorsString", "a string");

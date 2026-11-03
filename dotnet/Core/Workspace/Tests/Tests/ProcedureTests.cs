@@ -96,6 +96,8 @@ namespace Tests.Workspace
             Assert.True(result.GetValue<bool>("allorsBoolean"));
             Assert.Equal(new DateTime(1973, 3, 27, 0, 0, 0, DateTimeKind.Utc), result.GetValue<DateTime>("allorsDateTime"));
             Assert.Equal(12.34m, result.GetValue<decimal>("allorsDecimal"));
+            Assert.Equal(123456789012345.67m, result.GetValue<decimal>("allorsDecimalPrecise"));
+            Assert.Equal(decimal.MaxValue, result.GetValue<decimal>("allorsDecimalMax"));
             Assert.Equal(123d, result.GetValue<double>("allorsDouble"));
             Assert.Equal(1000, result.GetValue<int>("allorsInteger"));
             Assert.Equal("a string", result.GetValue<string>("allorsString"));

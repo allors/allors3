@@ -16197,37 +16197,6 @@ namespace Allors.Database.Adapters
         }
 
         [Fact]
-        public void RoleStringLikeSqlSemantics()
-        {
-            foreach (var init in this.Inits)
-            {
-                init();
-                this.Populate();
-                var m = this.Transaction.Database.Context().M;
-
-                // '.' is a literal, not regex "any char" (else it would match "ᴀbra").
-                var extent = this.Transaction.Extent(m.C1);
-                extent.Filter.AddLike(m.C1.C1AllorsString, "ᴀbr.");
-                Assert.Empty(extent);
-
-                // '.*' is literal, not regex "any sequence" (else it would match every C1 with a string).
-                extent = this.Transaction.Extent(m.C1);
-                extent.Filter.AddLike(m.C1.C1AllorsString, ".*");
-                Assert.Empty(extent);
-
-                // '_' is a single-character wildcard (ANSI SQL LIKE): "ᴀbr_" matches the 4-char "ᴀbra".
-                extent = this.Transaction.Extent(m.C1);
-                extent.Filter.AddLike(m.C1.C1AllorsString, "ᴀbr_");
-                Assert.Single(extent);
-
-                // '%' (any sequence) still works after escaping.
-                extent = this.Transaction.Extent(m.C1);
-                extent.Filter.AddLike(m.C1.C1AllorsString, "ᴀbra%");
-                Assert.Equal(3, extent.Count);
-            }
-        }
-
-        [Fact]
         public void RoleStringLikeBracketIsLiteral()
         {
             foreach (var init in this.Inits)
@@ -16250,34 +16219,6 @@ namespace Allors.Database.Adapters
 
                 Assert.Single(extent);
                 Assert.Equal("[abc]", ((C1)extent[0]).C1AllorsString);
-            }
-        }
-
-        [Fact]
-        public void InstantiateDuplicateIds()
-        {
-            foreach (var init in this.Inits)
-            {
-                init();
-                var m = this.Transaction.Database.Context().M;
-
-                var c1 = (C1)this.Transaction.Create(m.C1);
-                var c2 = (C1)this.Transaction.Create(m.C1);
-                this.Transaction.Commit();
-                var id1 = c1.Id;
-                var id2 = c2.Id;
-
-                using (var transaction = this.CreateTransaction())
-                {
-                    transaction.Instantiate(id1); // cache id1 in this transaction
-
-                    // id1 (cached, listed twice) + id2 (uncached) makes the non-cached branch build a
-                    // Dictionary over references that already holds id1 twice -> duplicate-key throw.
-                    var objects = transaction.Instantiate(new[] { id1, id1, id2 });
-
-                    Assert.Contains(objects, o => o.Id == id1);
-                    Assert.Contains(objects, o => o.Id == id2);
-                }
             }
         }
 
@@ -16384,6 +16325,26 @@ namespace Allors.Database.Adapters
                 this.AssertC2(extent, false, false, false, false);
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
+
+                // '.' is a literal, not regex "any char" (else it would match "ᴀbra").
+                extent = this.Transaction.Extent(m.C1);
+                extent.Filter.AddLike(m.C1.C1AllorsString, "ᴀbr.");
+                Assert.Empty(extent);
+
+                // '.*' is literal, not regex "any sequence" (else it would match every C1 with a string).
+                extent = this.Transaction.Extent(m.C1);
+                extent.Filter.AddLike(m.C1.C1AllorsString, ".*");
+                Assert.Empty(extent);
+
+                // '_' is a single-character wildcard (ANSI SQL LIKE): "ᴀbr_" matches the 4-char "ᴀbra".
+                extent = this.Transaction.Extent(m.C1);
+                extent.Filter.AddLike(m.C1.C1AllorsString, "ᴀbr_");
+                Assert.Single(extent);
+
+                // '%' (any sequence) still works after escaping.
+                extent = this.Transaction.Extent(m.C1);
+                extent.Filter.AddLike(m.C1.C1AllorsString, "ᴀbra%");
+                Assert.Equal(3, extent.Count);
 
                 // Interface
 
