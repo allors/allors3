@@ -89,9 +89,12 @@ namespace Allors.Security
                         .Build();
 
                     transaction.Derive();
+                    var securityStamp = user.UserSecurityStamp;
                     transaction.Commit();
 
                     identityUser.Id = user.Id.ToString();
+                    identityUser.SecurityStamp = securityStamp;
+                    identityUser.ConcurrencyStamp = securityStamp;
 
                     return IdentityResult.Success;
                 }
@@ -111,6 +114,11 @@ namespace Allors.Security
                 {
                     var user = identityUser.User(transaction);
 
+                    if (user == null || !string.Equals(identityUser.ConcurrencyStamp, user.UserSecurityStamp, StringComparison.Ordinal))
+                    {
+                        return IdentityResult.Failed(new IdentityErrorDescriber().ConcurrencyFailure());
+                    }
+
                     user.UserName = identityUser.UserName;
                     user.UserPasswordHash = identityUser.PasswordHash;
                     user.UserEmail = identityUser.Email;
@@ -125,7 +133,11 @@ namespace Allors.Security
                     user.UserAccessFailedCount = identityUser.AccessFailedCount;
 
                     transaction.Derive();
+                    var securityStamp = user.UserSecurityStamp;
                     transaction.Commit();
+
+                    identityUser.SecurityStamp = securityStamp;
+                    identityUser.ConcurrencyStamp = securityStamp;
 
                     return IdentityResult.Success;
                 }

@@ -38,7 +38,7 @@ namespace Allors.Database.Protocol.Json
         [Authorize]
         [AllowAnonymous]
         public ActionResult<PullResponse> Post([FromBody] PullRequest request, CancellationToken cancellationToken) =>
-            this.PolicyService.InvokePolicy.Execute(
+            this.PolicyService.PullPolicy.Execute(
                 () =>
                 {
                     try

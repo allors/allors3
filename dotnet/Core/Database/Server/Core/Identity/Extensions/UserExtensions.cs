@@ -21,6 +21,8 @@ namespace Allors.Security
                 NormalizedEmail = @this.NormalizedUserEmail,
                 EmailConfirmed = @this.UserEmailConfirmed,
                 SecurityStamp = @this.UserSecurityStamp,
+                // Keep the original credential stamp while Identity changes SecurityStamp.
+                ConcurrencyStamp = @this.UserSecurityStamp,
                 PhoneNumber = @this.UserPhoneNumber,
                 PhoneNumberConfirmed = @this.UserPhoneNumberConfirmed,
                 TwoFactorEnabled = @this.UserTwoFactorEnabled,
