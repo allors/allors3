@@ -1,14 +1,10 @@
 /* eslint-disable */
 const trxFile = process.env.ALLORS_TRX_OUTPUT_FILE;
 
-export default {
+module.exports = {
   displayName: 'system-workspace-domain-tests',
   preset: '../../../../jest.preset.js',
-  globals: {
-    'ts-jest': {
-      tsconfig: '<rootDir>/tsconfig.spec.json',
-    },
-  },
+  globals: {},
   ...(trxFile
     ? {
         reporters: [
@@ -18,8 +14,14 @@ export default {
       }
     : {}),
   transform: {
-    '^.+\\.[tj]sx?$': 'ts-jest',
+    '^.+\\.[tj]sx?$': [
+      'ts-jest',
+      {
+        tsconfig: '<rootDir>/tsconfig.spec.json',
+      },
+    ],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../../../coverage/libs/system/workspace/domain-tests',
+  coverageDirectory:
+    '../../../../coverage/libs/system/workspace/domain-tests',
 };
