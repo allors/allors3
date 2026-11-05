@@ -3515,6 +3515,18 @@ namespace Allors.Database.Adapters
         }
 
         [Fact]
+        public void InstantiateNull()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+
+                IObject nullObject = null;
+                Assert.Null(this.Transaction.Instantiate(nullObject));
+            }
+        }
+
+        [Fact]
         public void InstantiateMany()
         {
             foreach (var init in this.Inits)

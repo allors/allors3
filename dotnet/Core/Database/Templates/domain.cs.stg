@@ -429,7 +429,7 @@ $endif$
 		/// <exclude/>
 		public $class.name$Builder With$roleType.SingularName$($objectType_NullableName(roleType.ObjectType)$ value)
         {
-		    if(this.$roleType.Name$!=null){throw new global::System.ArgumentException("One multicplicity");}
+		    if(this.$roleType.Name$!=null){throw new global::System.ArgumentException("One multiplicity");}
             this.$roleType.Name$ = value;
             return this;
         }
@@ -443,7 +443,7 @@ $if(roleType.IsOne)$
 		/// <exclude/>
 		public $class.name$Builder With$roleType.SingularName$($objectType_NullableName(roleType.ObjectType)$ value)
         {
-            if(this.$roleType.Name$!=null){throw new global::System.ArgumentException("One multicplicity");}
+            if(this.$roleType.Name$!=null){throw new global::System.ArgumentException("One multiplicity");}
 			this.$roleType.Name$ = value;
             return this;
         }

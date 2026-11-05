@@ -261,7 +261,7 @@ namespace Allors.Workspace.Adapters
         {
             this.AssertComposites(role);
 
-            var roleStrategies = this.Ranges.Load(role?.Select(v => (Strategy)v.Strategy));
+            var roleStrategies = this.Ranges.Import(role?.Select(v => (Strategy)v.Strategy));
 
             switch (roleType.Origin)
             {
