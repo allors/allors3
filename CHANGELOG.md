@@ -62,6 +62,15 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   leaf nodes of a tree, covered by the new `system-workspace-domain-tests` project in the TypeScript
   workspace suite, and an object's `toJSON` serialises it through its strategy. The pull retry is
   covered by the regression test of #276, which fails a pull's first SQL command.
+- The fixes of the archived line of `main` from August and September 2026 (#270 to #272, and the
+  platform part of #261): the .NET workspace sorts the collection a composites role is set from, so
+  lookups in the role no longer miss objects given in creation order; `ITransaction.Instantiate(IObject)`
+  returns null for null in the SQL adapters, as it does in the memory adapter; the generated lazy meta
+  of the .NET workspace compiles for a workspace without inheritance, covered by the new
+  `Generate.Tests` project in the Core database test suite, which generates and compiles the
+  workspace meta of every workspace of the test domain; `AllorsUserStore.CreateAsync` no longer fails
+  for a user created with a password hash, the store logs the exceptions it turns into failed
+  results, and the generated builder guard spells its message "One multiplicity".
 
 ### Security
 
