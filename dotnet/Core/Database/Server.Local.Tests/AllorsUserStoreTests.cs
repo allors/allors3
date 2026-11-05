@@ -5,6 +5,8 @@
 
 namespace Tests
 {
+    using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
     using Allors.Database.Domain;
     using Allors.Security;
@@ -92,6 +94,53 @@ namespace Tests
             Assert.Equal(identity.SecurityStamp, updated.UserSecurityStamp);
             Assert.Equal(1, updated.UserAccessFailedCount);
         }
+
+        [Fact]
+        public async Task CreateAsyncSucceedsForAUserWithAPasswordHash()
+        {
+            var store = this.CreateStore();
+            var identityUser = NewIdentityUser();
+
+            var result = await store.CreateAsync(identityUser, CancellationToken.None);
+
+            Assert.True(result.Succeeded, string.Join(", ", result.Errors.Select(v => v.Description)));
+        }
+
+        [Fact]
+        public async Task CreateAsyncStoresThePasswordHash()
+        {
+            var store = this.CreateStore();
+            var identityUser = NewIdentityUser();
+
+            await store.CreateAsync(identityUser, CancellationToken.None);
+            var created = await store.FindByIdAsync(identityUser.Id, CancellationToken.None);
+
+            Assert.Equal(identityUser.PasswordHash, created?.PasswordHash);
+        }
+
+        [Fact]
+        public async Task CreateAsyncSucceedsForAUserWithoutAPasswordHash()
+        {
+            var store = this.CreateStore();
+            var identityUser = NewIdentityUser();
+            identityUser.PasswordHash = null;
+
+            var result = await store.CreateAsync(identityUser, CancellationToken.None);
+
+            Assert.True(result.Succeeded, string.Join(", ", result.Errors.Select(v => v.Description)));
+        }
+
+        private static IdentityUser NewIdentityUser() =>
+            new IdentityUser
+            {
+                UserName = "jane@example.com",
+                PasswordHash = "a-hash",
+                Email = "jane@example.com",
+                EmailConfirmed = true,
+                SecurityStamp = "a-stamp",
+            };
+
+        private AllorsUserStore CreateStore() => new AllorsUserStore(new DatabaseService { Database = this.Transaction.Database });
 
         private ServiceProvider CreateIdentityServices()
         {
