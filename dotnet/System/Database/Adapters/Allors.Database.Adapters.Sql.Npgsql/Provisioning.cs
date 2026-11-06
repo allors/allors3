@@ -42,13 +42,56 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             new NpgsqlConnectionStringBuilder(connectionString).Database?.ToLowerInvariant();
 
         /// <summary>Drops <paramref name="database"/> if it exists and creates it fresh.</summary>
-        public static void DropCreate(string database)
+        public static void DropCreate(string database) => DropCreate(database, null);
+
+        /// <summary>
+        /// Drops and creates the database of a program's connection string from the admin connection and
+        /// makes the role that the connection string names the owner of the database. A role that the
+        /// server does not know is created with the password of the connection string; an existing role
+        /// is left as it is.
+        /// </summary>
+        public static void DropCreateFor(string connectionString)
         {
+            var program = new NpgsqlConnectionStringBuilder(connectionString);
+            if (string.IsNullOrWhiteSpace(program.Database))
+            {
+                throw new InvalidOperationException("The connection string names no database. Add 'Database=<name>' to it.");
+            }
+
+            var role = string.IsNullOrWhiteSpace(program.Username) ? null : program.Username;
+            if (role != null)
+            {
+                using var connection = new NpgsqlConnection(AdminConnectionString());
+                connection.Open();
+                using var command = connection.CreateCommand();
+                command.CommandText = "SELECT 1 FROM pg_roles WHERE rolname = @role";
+                command.Parameters.AddWithValue("role", role);
+                var exists = command.ExecuteScalar() != null;
+                command.Parameters.Clear();
+
+                if (!exists)
+                {
+                    var password = string.IsNullOrEmpty(program.Password) ? string.Empty : $" PASSWORD {Literal(program.Password)}";
+                    command.CommandText = $"CREATE ROLE {Identifier(role)} LOGIN{password}";
+                    command.ExecuteNonQuery();
+                }
+            }
+
+            DropCreate(program.Database, role);
+        }
+
+        // Quotes an identifier so that names that require it (e.g. 'allors-core' or a reserved word) are
+        // valid SQL; an embedded quote is doubled.
+        private static string Identifier(string name) => "\"" + name.Replace("\"", "\"\"") + "\"";
+
+        private static string Literal(string value) => "'" + value.Replace("'", "''") + "'";
+
+        private static void DropCreate(string database, string owner)
+        {
+            // The name is lower-cased to match the adapter's connect name.
             database = database.ToLowerInvariant();
 
-            // Quote the identifier so names that require it (e.g. 'allors-core' or a reserved word) are valid
-            // SQL; double any embedded quote. The name is lower-cased to match the adapter's connect name.
-            var quoted = "\"" + database.Replace("\"", "\"\"") + "\"";
+            var quoted = Identifier(database);
             var adminConnectionString = AdminConnectionString();
 
             int version;
@@ -76,7 +119,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             {
                 connection.Open();
                 using var command = connection.CreateCommand();
-                command.CommandText = $"CREATE DATABASE {quoted}";
+                command.CommandText = owner == null ? $"CREATE DATABASE {quoted}" : $"CREATE DATABASE {quoted} OWNER {Identifier(owner)}";
                 command.ExecuteNonQuery();
             }
         }

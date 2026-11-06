@@ -9,7 +9,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
     using Microsoft.Data.SqlClient;
 
     /// <summary>
-    /// Creates test databases from an admin SQL Server connection.
+    /// Creates databases from an admin SQL Server connection.
     /// </summary>
     public static class Provisioning
     {
@@ -21,6 +21,10 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             {
                 InitialCatalog = database,
             }.ConnectionString;
+
+        /// <summary>The database name contained in <paramref name="connectionString"/>.</summary>
+        public static string DatabaseName(string connectionString) =>
+            new SqlConnectionStringBuilder(connectionString).InitialCatalog;
 
         public static void DropCreate(string database)
         {
@@ -41,6 +45,51 @@ END";
             command.CommandText = $"CREATE DATABASE [{database}]";
             command.ExecuteNonQuery();
         }
+
+        /// <summary>
+        /// Drops and creates the database of a program's connection string from the admin connection and
+        /// makes the login that the connection string names the owner of the database. A login that the
+        /// server does not know is created with the password of the connection string, without the
+        /// password policy check so that a development password is accepted; an existing login is left
+        /// as it is. A connection string with integrated security names no login: the database is
+        /// created and nothing else.
+        /// </summary>
+        public static void DropCreateFor(string connectionString)
+        {
+            var program = new SqlConnectionStringBuilder(connectionString);
+            var database = program.InitialCatalog;
+            if (string.IsNullOrWhiteSpace(database))
+            {
+                throw new InvalidOperationException("The connection string names no database. Add 'Database=<name>' to it.");
+            }
+
+            DropCreate(database);
+
+            if (program.IntegratedSecurity || string.IsNullOrWhiteSpace(program.UserID))
+            {
+                return;
+            }
+
+            using var connection = new SqlConnection(new SqlConnectionStringBuilder(RawConnectionString())
+            {
+                InitialCatalog = "master",
+            }.ConnectionString);
+            connection.Open();
+            using var command = connection.CreateCommand();
+            command.CommandTimeout = 300;
+            command.CommandText = $@"
+IF SUSER_ID({Literal(program.UserID)}) IS NULL
+BEGIN
+    CREATE LOGIN {Identifier(program.UserID)} WITH PASSWORD = {Literal(program.Password)}, CHECK_POLICY = OFF;
+END";
+            command.ExecuteNonQuery();
+            command.CommandText = $"ALTER AUTHORIZATION ON DATABASE::{Identifier(database)} TO {Identifier(program.UserID)}";
+            command.ExecuteNonQuery();
+        }
+
+        private static string Identifier(string name) => "[" + name.Replace("]", "]]") + "]";
+
+        private static string Literal(string value) => "N'" + value.Replace("'", "''") + "'";
 
         private static string RawConnectionString()
         {
