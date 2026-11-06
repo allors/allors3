@@ -65,7 +65,7 @@ The `Ci*` targets in `build/Build.ci.cs` are the suites that CI runs on Linux:
 | Suite | Needs |
 | --- | --- |
 | `CiDotnetSystemAdaptersTestMemory` | nothing |
-| `CiDotnetSystemAdaptersTestNpgsql` | PostgreSQL on `localhost:5432`, user `postgres`, password `root` |
+| `CiDotnetSystemAdaptersTestNpgsql` | PostgreSQL: the admin connection in `ALLORS_NPGSQL` |
 | `CiDotnetSystemAdaptersTestSqlClient`, `CiDotnetCore*Test`, `CiTypescriptWorkspace*Test` | SQL Server: the admin connection in `ALLORS_SQLCLIENT`, or LocalDB on Windows |
 
 The TypeScript workspace in `typescript/modules` is an nx workspace. After `npm install` there,

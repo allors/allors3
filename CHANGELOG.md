@@ -28,6 +28,11 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
 - The TypeScript workspace runs on nx 23, jest 30 and TypeScript 6 and depends on cross-fetch and
   tslib only.
 - Dependabot keeps the GitHub Actions of the workflow current, in one grouped pull request a week.
+- The PostgreSQL adapter tests take their admin connection from `ALLORS_NPGSQL`, as the SQL Server
+  tests take theirs from `ALLORS_SQLCLIENT`, and create their databases through `Provisioning` in
+  `Allors.Database.Adapters.Sql.Npgsql` (#80, released on `v3.1` in June 2026);
+  `ALLORS_TEST_NPGSQL_CONNECTION` is accepted as an alias. The account `postgres` with the password
+  `root` on `localhost` is no longer built in, and CI's PostgreSQL service runs as the user `allors`.
 
 ### Fixed
 
@@ -75,6 +80,12 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   security hardening of the archived line of `main` (#255). It returned the inverse, so the account
   pages of ASP.NET Core Identity sent a user with a password to "set password" and a user without
   one to "change password".
+- The Npgsql adapter fixes of #80, released on `v3.1` in June 2026. The adapter sets
+  `Npgsql.EnableLegacyTimestampBehavior` and `Npgsql.EnableStoredProcedureCompatMode` itself, in a
+  module initializer; only the fixture of its tests set them, and without them its calls fail with
+  `42809: … is not a procedure`. The adapter connects to the lower-cased database name, the name
+  PostgreSQL gives a database created without quotes, so `Database=AllorsCore` reaches `allorscore`;
+  a database created under a quoted name with capitals has to be renamed.
 
 ### Security
 
