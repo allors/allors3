@@ -44,7 +44,7 @@ namespace Allors.Database.Adapters
                     return new Sql.Npgsql.Database(this.scope, new Sql.Configuration
                     {
                         ObjectFactory = this.objectFactory,
-                        ConnectionString = connectionString,
+                        ConnectionString = RequireConnectionString(connectionString),
                         IsolationLevel = this.isolationLevel,
                         CommandTimeout = this.commandTimeout,
                     });
@@ -54,14 +54,24 @@ namespace Allors.Database.Adapters
                     return new Sql.SqlClient.Database(this.scope, new Sql.Configuration
                     {
                         ObjectFactory = this.objectFactory,
-                        ConnectionString = connectionString,
+                        ConnectionString = RequireConnectionString(connectionString),
                         IsolationLevel = this.isolationLevel,
                         CommandTimeout = this.commandTimeout,
                     });
 
                 default:
-                    throw new ArgumentOutOfRangeException(adapter);
+                    throw UnknownAdapter(this.configuration["adapter"]);
             }
         }
+
+        internal static ArgumentOutOfRangeException UnknownAdapter(string adapter) =>
+            string.IsNullOrWhiteSpace(adapter)
+                ? new ArgumentOutOfRangeException(nameof(adapter), "The setting 'adapter' has no value. Set it to 'sqlclient' or 'npgsql'.")
+                : new ArgumentOutOfRangeException(nameof(adapter), $"The setting 'adapter' is '{adapter}'. Set it to 'sqlclient' or 'npgsql'.");
+
+        internal static string RequireConnectionString(string connectionString) =>
+            string.IsNullOrWhiteSpace(connectionString)
+                ? throw new InvalidOperationException("The setting 'ConnectionStrings:DefaultConnection' has no value. Set it to the connection string of the database.")
+                : connectionString;
     }
 }
