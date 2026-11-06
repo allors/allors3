@@ -125,7 +125,7 @@ jobs:
           reporter: dotnet-trx
           fail-on-error: false
 
-  # PostgreSQL provider: the adapter suite. Its fixtures connect to localhost:5432 as postgres/root
+  # PostgreSQL provider: the adapter suite. Its fixtures take the admin connection from ALLORS_NPGSQL
   # and create their own databases.
   npgsql:
     name: ${{ matrix.target }} (npgsql)
@@ -137,15 +137,17 @@ jobs:
       postgres:
         image: postgres:16
         env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: root
+          POSTGRES_USER: allors
+          POSTGRES_PASSWORD: allors
         ports:
           - 5432:5432
         options: >-
-          --health-cmd "pg_isready -U postgres"
+          --health-cmd "pg_isready -U allors"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 10
+    env:
+      ALLORS_NPGSQL: 'Server=localhost;Port=5432;User Id=allors;Password=allors'
     strategy:
       fail-fast: false
       matrix:
