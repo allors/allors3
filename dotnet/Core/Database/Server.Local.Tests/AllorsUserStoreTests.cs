@@ -130,6 +130,28 @@ namespace Tests
             Assert.True(result.Succeeded, string.Join(", ", result.Errors.Select(v => v.Description)));
         }
 
+        [Fact]
+        public async Task HasPasswordAsyncIsTrueWhenAPasswordHashIsSet()
+        {
+            var store = this.CreateStore();
+            var user = new IdentityUser { PasswordHash = "a-hash" };
+
+            var hasPassword = await store.HasPasswordAsync(user, CancellationToken.None);
+
+            Assert.True(hasPassword);
+        }
+
+        [Fact]
+        public async Task HasPasswordAsyncIsFalseWhenNoPasswordHashIsSet()
+        {
+            var store = this.CreateStore();
+            var user = new IdentityUser { PasswordHash = null };
+
+            var hasPassword = await store.HasPasswordAsync(user, CancellationToken.None);
+
+            Assert.False(hasPassword);
+        }
+
         private static IdentityUser NewIdentityUser() =>
             new IdentityUser
             {

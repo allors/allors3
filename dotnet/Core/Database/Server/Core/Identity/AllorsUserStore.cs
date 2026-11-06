@@ -221,7 +221,7 @@ namespace Allors.Security
         public async Task<bool> HasPasswordAsync(IdentityUser user, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            return string.IsNullOrWhiteSpace(user.PasswordHash);
+            return !string.IsNullOrWhiteSpace(user.PasswordHash);
         }
         #endregion
 
