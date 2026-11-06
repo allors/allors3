@@ -1,17 +1,16 @@
 namespace Allors.Server
 {
     using System;
-    using System.IO;
+    using System.Linq;
     using Database.Configuration;
     using Microsoft.AspNetCore.Hosting;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Hosting;
     using NLog;
     using NLog.Web;
 
     public class Program
     {
-        private const string ConfigPath = "/config/core";
-
         public static void Main(string[] args)
         {
             var logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
@@ -37,10 +36,16 @@ namespace Allors.Server
                     .UseStartup<Startup>()
                     .ConfigureAppConfiguration((hostingContext, configurationBuilder) =>
                     {
+                        // The settings come from the configuration root and from the environment only: the
+                        // default builder's appsettings files in the folder of the server and its user
+                        // secrets are not read.
+                        foreach (var source in configurationBuilder.Sources.OfType<FileConfigurationSource>().ToArray())
+                        {
+                            configurationBuilder.Sources.Remove(source);
+                        }
+
                         var environmentName = hostingContext.HostingEnvironment.EnvironmentName;
-                        configurationBuilder.AddCrossPlatform(".", environmentName, true);
-                        configurationBuilder.AddCrossPlatform(ConfigPath, environmentName);
-                        configurationBuilder.AddCrossPlatform(Path.Combine(ConfigPath, hostingContext.HostingEnvironment.ApplicationName), environmentName);
+                        configurationBuilder.AddAllorsConfiguration("core", hostingContext.HostingEnvironment.ApplicationName, environmentName);
                     })
                     .UseNLog());
     }

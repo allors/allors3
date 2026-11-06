@@ -83,9 +83,11 @@ This direction guides explicitly requested work; it does not authorize expanding
   documentation website. Nothing from it returns wholesale. Fixes come back first, from `v3.1`,
   each in a pull request of its own that the downstream application validates through a
   submodule update; features return when an application needs them.
-- Configuration follows the downstream application: `appsettings` files next to each server,
-  command-line tool and test project, with environment, platform and environment-platform
-  variants, and environment variables override every file. See the
+- Configuration comes from the configuration root that `ALLORS_CONFIG_ROOT` names and from
+  environment variables, which override every file; without the root only environment variables
+  are read, and a program stops when a setting that it needs has no value. No `appsettings` file
+  lives next to a project and nothing defaults the root: CI sets it per job to a template under
+  `config/`. `ALLORS_SQLCLIENT` and `ALLORS_NPGSQL` are for database management only. See the
   [README](README.md#configuration).
 - Public documentation, code comments, commit messages, and GitHub text must describe Allors3
   independently. Do not name or link private, unpublished projects.

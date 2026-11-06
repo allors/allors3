@@ -37,6 +37,8 @@ namespace Allors.Server
 
         public void ConfigureServices(IServiceCollection services)
         {
+            this.Configuration.Require("adapter", "ConnectionStrings:DefaultConnection", "JwtToken:Key");
+
             services.AddSingleton(this.Configuration);
 
             var workspaceConfig = new WorkspaceConfig(new Dictionary<HostString, string>
