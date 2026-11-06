@@ -38,10 +38,13 @@ instructions are in `AGENTS.md`.
 
 ## Configuration
 
-A server, a command-line tool and a test project read `appsettings.json` from their own
-directory. A deployment adds `/config/core`, and below it `/config/core/<application>` for a
-server and `/config/core/commands` for the command-line tool. At every location the variants are
-read in this order, each one optional:
+A server, the command-line tool and the API tests take their settings from the configuration
+root, the folder that `ALLORS_CONFIG_ROOT` names, and from environment variables. No `appsettings`
+file is read from the folder of a project, and nothing defaults the root.
+
+Below the root every domain has its folder; Core's is `core`. A server also reads
+`core/<application>`, and the command-line tool `core/commands`. At each of these locations the
+variants are read in this order, each one optional:
 
 ```
 appsettings.json
@@ -50,9 +53,27 @@ appsettings.{platform}.json                 # windows, linux, osx
 appsettings.{environment}.{platform}.json
 ```
 
-Environment variables override every file, so secrets stay out of the tree:
-`ConnectionStrings__DefaultConnection=…`, `adapter=sqlclient` or `adapter=npgsql`.
-`config/sqlclient/core` and `config/npgsql/core` hold templates for `/config/core`.
+Environment variables override every file: `adapter=sqlclient` or `adapter=npgsql`,
+`ConnectionStrings__DefaultConnection=…`, `JwtToken__Key=…`. Without `ALLORS_CONFIG_ROOT` they
+are the only source. A program stops when a setting that it needs has no value; the message names
+the setting, its environment variable and the folders that were read.
+
+`config/sqlclient`, `config/npgsql` and `config/localdb` are templates for a root: SQL Server and
+PostgreSQL on `localhost` with the login `allors`, and SQL Server LocalDB on Windows. Point
+`ALLORS_CONFIG_ROOT` at one of them, or at a copy that holds your own values.
+
+`ALLORS_SQLCLIENT` and `ALLORS_NPGSQL` hold an admin connection to the same server and serve
+database management only; no program runs on them. The `init` command of the command-line tool
+drops and creates the database of the configured connection and makes the login of that
+connection its owner, creating the login when the server does not know it. The adapter suites
+create and open their test databases with the admin connection. On Windows the admin connection
+for SQL Server defaults to LocalDB.
+
+```
+export ALLORS_CONFIG_ROOT="$PWD/config/sqlclient"
+export ALLORS_SQLCLIENT='Server=localhost;User Id=sa;Password=…;TrustServerCertificate=true'
+./build.sh DotnetCoreDatabaseTest
+```
 
 ## Building and testing
 
@@ -66,7 +87,8 @@ The `Ci*` targets in `build/Build.ci.cs` are the suites that CI runs on Linux:
 | --- | --- |
 | `CiDotnetSystemAdaptersTestMemory` | nothing |
 | `CiDotnetSystemAdaptersTestNpgsql` | PostgreSQL: the admin connection in `ALLORS_NPGSQL` |
-| `CiDotnetSystemAdaptersTestSqlClient`, `CiDotnetCore*Test`, `CiTypescriptWorkspace*Test` | SQL Server: the admin connection in `ALLORS_SQLCLIENT`, or LocalDB on Windows |
+| `CiDotnetSystemAdaptersTestSqlClient` | SQL Server: the admin connection in `ALLORS_SQLCLIENT`, or LocalDB on Windows |
+| `CiDotnetCore*Test`, `CiTypescriptWorkspace*Test` | a [configuration root](#configuration) and the admin connection of its adapter; CI runs them on SQL Server with `config/sqlclient` |
 
 The TypeScript workspace in `typescript/modules` is an nx workspace. After `npm install` there,
 `npm run system-workspace-meta:test`, `npm run system-workspace-meta-json:test` and
