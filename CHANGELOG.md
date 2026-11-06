@@ -71,6 +71,10 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   workspace meta of every workspace of the test domain; `AllorsUserStore.CreateAsync` no longer fails
   for a user created with a password hash, the store logs the exceptions it turns into failed
   results, and the generated builder guard spells its message "One multiplicity".
+- `AllorsUserStore.HasPasswordAsync` answers whether the user has a password hash, a fix from the
+  security hardening of the archived line of `main` (#255). It returned the inverse, so the account
+  pages of ASP.NET Core Identity sent a user with a password to "set password" and a user without
+  one to "change password".
 
 ### Security
 
