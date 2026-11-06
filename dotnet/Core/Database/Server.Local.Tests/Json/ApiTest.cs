@@ -10,7 +10,7 @@ namespace Tests
     using System.IO;
     using System.Reflection;
     using Allors.Database;
-    using Allors.Database.Adapters.Sql;
+    using Allors.Database.Adapters;
     using Allors.Database.Configuration;
     using Allors.Database.Configuration.Derivations.Default;
     using Allors.Database.Derivations;
@@ -20,7 +20,6 @@ namespace Tests
     using Allors.Database.Services;
     using Microsoft.Extensions.Configuration;
     using C1 = Allors.Database.Domain.C1;
-    using Database = Allors.Database.Adapters.Sql.SqlClient.Database;
 
     public class ApiTest : IDisposable
     {
@@ -28,24 +27,18 @@ namespace Tests
         {
             var configurationBuilder = new ConfigurationBuilder();
 
-            const string root = "/config/core";
-            configurationBuilder.AddCrossPlatform(".");
-            configurationBuilder.AddCrossPlatform(root);
-            configurationBuilder.AddCrossPlatform(Path.Combine(root, "commands"));
-            configurationBuilder.AddEnvironmentVariables();
+            configurationBuilder.AddAllorsConfiguration("core");
 
             var configuration = configurationBuilder.Build();
+            configuration.Require("adapter", "ConnectionStrings:DefaultConnection");
 
             var metaPopulation = new MetaBuilder().Build();
             var rules = Rules.Create(metaPopulation);
             var engine = new Engine(rules);
-            var database = new Database(
+            var database = new DatabaseBuilder(
                 new DefaultDatabaseServices(engine),
-                new Configuration
-                {
-                    ConnectionString = configuration["ConnectionStrings:DefaultConnection"],
-                    ObjectFactory = new ObjectFactory(metaPopulation, typeof(C1)),
-                });
+                configuration,
+                new ObjectFactory(metaPopulation, typeof(C1))).Build();
 
             this.M = metaPopulation;
 
