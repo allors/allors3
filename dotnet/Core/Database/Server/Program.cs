@@ -1,7 +1,6 @@
 namespace Allors.Server
 {
     using System;
-    using System.Linq;
     using Database.Configuration;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;
@@ -36,13 +35,12 @@ namespace Allors.Server
                     .UseStartup<Startup>()
                     .ConfigureAppConfiguration((hostingContext, configurationBuilder) =>
                     {
-                        // The settings come from the configuration root and from the environment only: the
-                        // default builder's appsettings files in the folder of the server and its user
-                        // secrets are not read.
-                        foreach (var source in configurationBuilder.Sources.OfType<FileConfigurationSource>().ToArray())
-                        {
-                            configurationBuilder.Sources.Remove(source);
-                        }
+                        // Remove the default application sources, including command-line settings in the
+                        // chained host configuration. The hosting environment and web host options have
+                        // already been read at this point.
+                        configurationBuilder.Sources.Clear();
+                        configurationBuilder.AddEnvironmentVariables("DOTNET_");
+                        configurationBuilder.AddEnvironmentVariables("ASPNETCORE_");
 
                         var environmentName = hostingContext.HostingEnvironment.EnvironmentName;
                         configurationBuilder.AddAllorsConfiguration("core", hostingContext.HostingEnvironment.ApplicationName, environmentName);

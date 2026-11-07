@@ -9,6 +9,7 @@ namespace Tests
     using System.IO;
     using Allors.Database.Configuration;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.Hosting;
     using Xunit;
 
     public class ConfigurationBuilderExtensionsTests : IDisposable
@@ -38,6 +39,55 @@ namespace Tests
 
             Assert.Equal("environment", configuration[Key]);
             Assert.DoesNotContain(configuration.Providers, v => v is FileConfigurationProvider);
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void ServerReadsApplicationSettingsOnlyFromTheConfigRootAndEnvironment(bool hasConfigRoot)
+        {
+            var httpPorts = Environment.GetEnvironmentVariable("HTTP_PORTS");
+            var aspNetCoreHttpPorts = Environment.GetEnvironmentVariable("ASPNETCORE_HTTP_PORTS");
+            IConfigurationRoot configuration = null;
+            var stop = new InvalidOperationException("Stop after reading the server configuration.");
+
+            try
+            {
+                this.Write("core/appsettings.json", @"{ ""ConfigurationBuilderExtensionsTests"": { ""Value"": ""domain"", ""Domain"": ""domain"" } }");
+                Environment.SetEnvironmentVariable(ConfigurationBuilderExtensions.ConfigRootVariable, hasConfigRoot ? this.directory : null);
+                Environment.SetEnvironmentVariable(Variable, "environment");
+                Environment.SetEnvironmentVariable("HTTP_PORTS", null);
+                Environment.SetEnvironmentVariable("ASPNETCORE_HTTP_PORTS", "18080");
+
+                var exception = Assert.Throws<InvalidOperationException>(() => Allors.Server.Program.CreateHostBuilder(new[]
+                    {
+                        $"--{Key}=command-line",
+                        "--ConfigurationBuilderExtensionsTests:CommandLine=command-line",
+                    })
+                    .UseEnvironment("ConfigurationTest")
+                    .UseContentRoot(this.directory)
+                    .ConfigureAppConfiguration((context, builder) =>
+                    {
+                        Assert.Equal("ConfigurationTest", context.HostingEnvironment.EnvironmentName);
+                        Assert.Equal(this.directory, context.HostingEnvironment.ContentRootPath);
+                        configuration = builder.Build();
+                        // Inspect the actual server configuration without starting services or a database.
+                        throw stop;
+                    })
+                    .Build());
+
+                Assert.Same(stop, exception);
+                Assert.Null(configuration["ConfigurationBuilderExtensionsTests:CommandLine"]);
+                Assert.Equal("environment", configuration[Key]);
+                Assert.Equal(hasConfigRoot ? "domain" : null, configuration["ConfigurationBuilderExtensionsTests:Domain"]);
+                Assert.Equal("18080", configuration["HTTP_PORTS"]);
+            }
+            finally
+            {
+                (configuration as IDisposable)?.Dispose();
+                Environment.SetEnvironmentVariable("HTTP_PORTS", httpPorts);
+                Environment.SetEnvironmentVariable("ASPNETCORE_HTTP_PORTS", aspNetCoreHttpPorts);
+            }
         }
 
         [Fact]
