@@ -36,13 +36,13 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             using var command = connection.CreateCommand();
             command.CommandTimeout = 300;
             command.CommandText = $@"
-IF DB_ID('{database}') IS NOT NULL
+IF DB_ID({Literal(database)}) IS NOT NULL
 BEGIN
-    ALTER DATABASE [{database}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
-    DROP DATABASE [{database}];
+    ALTER DATABASE {Identifier(database)} SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+    DROP DATABASE {Identifier(database)};
 END";
             command.ExecuteNonQuery();
-            command.CommandText = $"CREATE DATABASE [{database}]";
+            command.CommandText = $"CREATE DATABASE {Identifier(database)}";
             command.ExecuteNonQuery();
         }
 

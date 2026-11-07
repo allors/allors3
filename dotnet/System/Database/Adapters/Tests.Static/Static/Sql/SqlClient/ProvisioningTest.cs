@@ -13,10 +13,12 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         // A program connects with a login of its own, not with the admin connection. Provisioning creates
         // the database of the program's connection string and the login that the connection string names,
         // and makes that login the owner of the database.
-        [Fact]
-        public void DropCreateForCreatesTheDatabaseAndItsOwner()
+        [Theory]
+        [InlineData("ProvisioningTest")]
+        [InlineData("ProvisioningTest's")]
+        [InlineData("ProvisioningTest]")]
+        public void DropCreateForCreatesTheDatabaseAndItsOwner(string database)
         {
-            const string database = "ProvisioningTest";
             const string login = "ProvisioningTestOwner";
 
             var connectionString = new SqlConnectionStringBuilder(Provisioning.ConnectionString(database))
