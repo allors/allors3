@@ -191,8 +191,11 @@ jobs:
           reporter: dotnet-trx
           fail-on-error: false
 
-  # SQL Server provider: the adapter suite and every provider-agnostic suite. The build's SqlLocalDB
-  # helper and the adapter fixtures take the admin connection from ALLORS_SQLCLIENT.
+  # SQL Server provider: the adapter suite and every provider-agnostic suite. The adapter fixtures
+  # create and open their databases with the admin connection in ALLORS_SQLCLIENT. The Core server,
+  # the command-line tool and the API tests take their settings from the configuration root, here the
+  # template in config/sqlclient, and the build's `Commands init` creates their database and its login
+  # with the admin connection.
   sqlclient:
     name: ${{ matrix.target }} (sqlclient)
     runs-on: ubuntu-latest
@@ -247,6 +250,8 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: '24'
+      - name: Point the configuration root at the SQL Server template
+        run: echo "ALLORS_CONFIG_ROOT=$GITHUB_WORKSPACE/config/sqlclient" >> "$GITHUB_ENV"
       - name: Run Nuke target ${{ matrix.target }}
         run: ./build.sh -target ${{ matrix.target }}
       - name: Upload TRX artifacts

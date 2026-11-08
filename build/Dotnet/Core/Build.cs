@@ -6,12 +6,8 @@ using static Nuke.Common.Tools.DotNet.DotNetTasks;
 partial class Build
 {
     private Target DotnetCoreResetDatabase => _ => _
-        .Executes(() =>
-        {
-            var database = "Core";
-            using var sqlLocalDb = new SqlLocalDB();
-            sqlLocalDb.Init(database);
-        });
+        .DependsOn(DotnetCorePublishCommands)
+        .Executes(() => DotNet("Commands.dll Init", Paths.ArtifactsCoreCommands));
 
     private Target DotnetCoreMerge => _ => _
         .Executes(() => DotNetRun(s => s
@@ -60,6 +56,7 @@ partial class Build
 
     private Target DotnetCoreDatabaseTestServerLocal => _ => _
         .DependsOn(DotnetCoreGenerate)
+        .DependsOn(DotnetCoreResetDatabase)
         .Executes(() => DotNetTest(s => s
             .SetProjectFile(Paths.DotnetCoreDatabaseServerLocalTests)
             .AddLoggers("trx;LogFileName=CoreDatabaseApi.trx")
