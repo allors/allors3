@@ -1,6 +1,7 @@
 namespace Allors.Server
 {
     using System;
+    using System.Collections.Generic;
     using Database.Configuration;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;
@@ -44,6 +45,16 @@ namespace Allors.Server
 
                         var environmentName = hostingContext.HostingEnvironment.EnvironmentName;
                         configurationBuilder.AddAllorsConfiguration("core", hostingContext.HostingEnvironment.ApplicationName, environmentName);
+
+                        // Preserve the explicit hosting URL override without restoring application CLI settings.
+                        var urls = new ConfigurationBuilder().AddCommandLine(args).Build()[WebHostDefaults.ServerUrlsKey];
+                        if (urls != null)
+                        {
+                            configurationBuilder.AddInMemoryCollection(new Dictionary<string, string>
+                            {
+                                [WebHostDefaults.ServerUrlsKey] = urls,
+                            });
+                        }
                     })
                     .UseNLog());
     }

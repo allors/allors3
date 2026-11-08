@@ -6,8 +6,11 @@
 namespace Tests
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
     using Allors.Database.Configuration;
+    using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Hosting;
     using Xunit;
@@ -87,6 +90,67 @@ namespace Tests
                 (configuration as IDisposable)?.Dispose();
                 Environment.SetEnvironmentVariable("HTTP_PORTS", httpPorts);
                 Environment.SetEnvironmentVariable("ASPNETCORE_HTTP_PORTS", aspNetCoreHttpPorts);
+            }
+        }
+
+        // The generic web host reads `urls` from the application configuration before it falls back to
+        // the host options, so the URL of the command line must be in the application configuration to
+        // keep its precedence over ASPNETCORE_URLS; no other command-line value is read.
+        [Theory]
+        [InlineData(null)]
+        [InlineData("--urls")]
+        [InlineData("--urls=")]
+        public void ServerKeepsTheUrlsOfTheCommandLineOverTheEnvironment(string option)
+        {
+            const string environmentUrl = "http://127.0.0.1:18080";
+            const string commandLineUrl = "http://127.0.0.1:18081";
+            var variables = new[] { "URLS", "urls", "DOTNET_URLS", "ASPNETCORE_URLS" }.ToDictionary(v => v, Environment.GetEnvironmentVariable);
+            IConfigurationRoot configuration = null;
+            var stop = new InvalidOperationException("Stop after reading the server configuration.");
+
+            try
+            {
+                Environment.SetEnvironmentVariable(ConfigurationBuilderExtensions.ConfigRootVariable, null);
+                foreach (var name in variables.Keys)
+                {
+                    Environment.SetEnvironmentVariable(name, null);
+                }
+
+                Environment.SetEnvironmentVariable("ASPNETCORE_URLS", environmentUrl);
+
+                var arguments = new List<string> { "--ConfigurationBuilderExtensionsTests:CommandLine=command-line" };
+                if (option == "--urls")
+                {
+                    arguments.Add(option);
+                    arguments.Add(commandLineUrl);
+                }
+                else if (option != null)
+                {
+                    arguments.Add(option + commandLineUrl);
+                }
+
+                var exception = Assert.Throws<InvalidOperationException>(() => Allors.Server.Program.CreateHostBuilder(arguments.ToArray())
+                    .UseEnvironment("ConfigurationTest")
+                    .UseContentRoot(this.directory)
+                    .ConfigureAppConfiguration((context, builder) =>
+                    {
+                        configuration = builder.Build();
+                        // Inspect the actual server configuration without starting services or a database.
+                        throw stop;
+                    })
+                    .Build());
+
+                Assert.Same(stop, exception);
+                Assert.Equal(option == null ? environmentUrl : commandLineUrl, configuration[WebHostDefaults.ServerUrlsKey]);
+                Assert.Null(configuration["ConfigurationBuilderExtensionsTests:CommandLine"]);
+            }
+            finally
+            {
+                (configuration as IDisposable)?.Dispose();
+                foreach (var variable in variables)
+                {
+                    Environment.SetEnvironmentVariable(variable.Key, variable.Value);
+                }
             }
         }
 
