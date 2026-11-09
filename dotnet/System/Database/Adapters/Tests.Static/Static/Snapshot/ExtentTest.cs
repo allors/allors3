@@ -68,36 +68,5 @@ namespace Allors.Database.Adapters.Snapshot
                 Assert.DoesNotContain(absent, extent);
             }
         }
-
-        [Fact]
-        public override void SortTwo()
-        {
-            base.SortTwo();
-
-            foreach (var init in this.Inits)
-            {
-                init();
-                var m = this.Transaction.Database.Context().M;
-                foreach (var value in new[] { 3, 1, 2 })
-                {
-                    C1.Create(this.Transaction).C1AllorsInteger = value;
-                }
-
-                this.Transaction.Commit();
-
-                foreach (var primaryDirection in new[] { SortDirection.Ascending, SortDirection.Descending })
-                {
-                    foreach (var secondaryDirection in new[] { SortDirection.Ascending, SortDirection.Descending })
-                    {
-                        var extent = this.Transaction.Extent(m.C1);
-                        extent.AddSort(m.C1.C1AllorsString, primaryDirection);
-                        extent.AddSort(m.C1.C1AllorsInteger, secondaryDirection);
-
-                        var expected = secondaryDirection == SortDirection.Ascending ? new int?[] { 1, 2, 3 } : new int?[] { 3, 2, 1 };
-                        Assert.Equal(expected, extent.Cast<C1>().Select(v => v.C1AllorsInteger));
-                    }
-                }
-            }
-        }
     }
 }

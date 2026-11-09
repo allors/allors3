@@ -100,5 +100,47 @@ namespace Allors.Server.Controllers
                 return this.BadRequest(e.Message);
             }
         }
+
+        /// <summary>
+        /// Creates a user for a test: a person with the user name, with the password when one is given, and
+        /// with lockout enabled when asked. A remote test creates its users here instead of through a database
+        /// connection of its own, so it runs on whichever adapter the server runs on.
+        /// </summary>
+        [HttpPost]
+        [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult CreateUser(string userName, string password = null, bool lockoutEnabled = false)
+        {
+            if (string.IsNullOrWhiteSpace(userName))
+            {
+                return this.BadRequest("A user name is required.");
+            }
+
+            try
+            {
+                using (var transaction = this.Database.CreateTransaction())
+                {
+                    var person = new PersonBuilder(transaction).WithUserName(userName).Build();
+                    if (!string.IsNullOrEmpty(password))
+                    {
+                        person.SetPassword(password);
+                    }
+
+                    if (lockoutEnabled)
+                    {
+                        person.UserLockoutEnabled = true;
+                    }
+
+                    transaction.Derive();
+                    transaction.Commit();
+                }
+
+                return this.Ok();
+            }
+            catch (Exception e)
+            {
+                this.Logger.LogError(e, "Exception");
+                return this.BadRequest(e.Message);
+            }
+        }
     }
 }

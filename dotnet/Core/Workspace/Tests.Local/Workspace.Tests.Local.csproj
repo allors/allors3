@@ -13,8 +13,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\System\Database\Adapters\Allors.Database.Builder\Allors.Database.Builder.csproj" />
     <ProjectReference Include="..\..\..\System\Workspace\Adapters\Allors.Workspace.Adapters.Local\Allors.Workspace.Adapters.Local.csproj" />
     <ProjectReference Include="..\..\..\System\Workspace\Adapters\Allors.Workspace.Adapters\Allors.Workspace.Adapters.csproj" />
+    <ProjectReference Include="..\..\Database\Configuration.Tests\Configuration.Tests.csproj" />
     <ProjectReference Include="..\Tests\Workspace.Tests.csproj" />
   </ItemGroup>
 

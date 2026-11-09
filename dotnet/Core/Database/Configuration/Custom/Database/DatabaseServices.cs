@@ -59,6 +59,15 @@ namespace Allors.Database.Configuration
             this.Database = database;
             this.M = (MetaPopulation)this.Database.MetaPopulation;
             this.metaCache = new MetaCache(this.Database);
+
+            // The database starts over with another population, so forget everything that was cached about
+            // the objects of the previous one. A unique id, an object id or a strategy from before would
+            // otherwise name an object that no longer exists, or another object that took its id.
+            this.caches = null;
+            this.classById = null;
+            this.permissions = null;
+            this.security = null;
+            this.versionedIdByStrategy = null;
         }
 
         public MetaPopulation M { get; private set; }

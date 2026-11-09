@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\System\Database\Adapters\Allors.Database.Adapters.Tracing\Allors.Database.Adapters.Tracing.csproj" />
+    <ProjectReference Include="..\Configuration.Tests\Configuration.Tests.csproj" />
     <ProjectReference Include="..\Server\Server.csproj" />
   </ItemGroup>
 

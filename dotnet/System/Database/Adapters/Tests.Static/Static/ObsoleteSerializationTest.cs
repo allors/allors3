@@ -194,8 +194,6 @@ namespace Allors.Database.Adapters
                         }
 
                         var xml = stringWriter.ToString();
-                        File.WriteAllText(@"c:\temp\population.xml", xml);
-                        // Console.Out.WriteLine(xml);
                         var stringReader = new StringReader(xml);
                         using (var reader = XmlReader.Create(stringReader))
                         {
@@ -340,8 +338,6 @@ namespace Allors.Database.Adapters
                         population.Save(writer);
                     }
 
-                    Dump(population);
-
                     var stringReader = new StringReader(stringWriter.ToString());
                     var reader = XmlReader.Create(stringReader);
 
@@ -425,8 +421,6 @@ namespace Allors.Database.Adapters
                     {
                         population.Save(writer);
                     }
-
-                    Dump(population);
 
                     var xmlDocument = new XmlDocument();
                     xmlDocument.LoadXml(stringWriter.ToString());
@@ -1372,17 +1366,6 @@ namespace Allors.Database.Adapters
             }
 
             transaction.Commit();
-        }
-
-        private static void Dump(IDatabase population)
-        {
-            using (var stream = File.Create(@"population.xml"))
-            {
-                using (var writer = XmlWriter.Create(stream))
-                {
-                    population.Save(writer);
-                }
-            }
         }
 
         private IObject[] GetExtent(ITransaction transaction, IComposite objectType) => transaction.Extent(objectType);

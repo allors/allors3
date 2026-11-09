@@ -60,8 +60,10 @@ adapter remains for a single transaction over a population.
 The Core server, the command-line tool and the API tests take their settings from the
 configuration root that `ALLORS_CONFIG_ROOT` names and from environment variables, as the
 [README](README.md#configuration) describes; environment variables override every file, and no
-`appsettings` file is read from the folder of a project. The admin connections in
-`ALLORS_SQLCLIENT` and `ALLORS_NPGSQL` serve database management only.
+`appsettings` file is read from the folder of a project. A program stops without a setting that it
+needs; the test projects and the Nuke build default to the `config/snapshot` template instead, so a
+test run needs no database server. The admin connections in `ALLORS_SQLCLIENT` and `ALLORS_NPGSQL`
+serve database management only.
 
 Authentication lives in Core's server folder in this line: ASP.NET Core Identity user and role
 stores over Allors users, a JWT bearer scheme and the sign-in endpoint. Moving authentication into
