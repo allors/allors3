@@ -89,6 +89,7 @@ jobs:
       matrix:
         target:
           - CiDotnetSystemAdaptersTestMemory
+          - CiDotnetSystemAdaptersTestSnapshot
     steps:
       - name: Checkout
         uses: actions/checkout@v6

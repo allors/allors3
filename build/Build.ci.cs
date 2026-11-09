@@ -6,6 +6,10 @@ partial class Build
         .DependsOn(Reset)
         .DependsOn(DotnetSystemAdaptersTestMemory);
 
+    private Target CiDotnetSystemAdaptersTestSnapshot => _ => _
+        .DependsOn(Reset)
+        .DependsOn(DotnetSystemAdaptersTestSnapshot);
+
     private Target CiDotnetSystemAdaptersTestSqlClient => _ => _
         .DependsOn(Reset)
         .DependsOn(DotnetSystemAdaptersTestSqlClient);
