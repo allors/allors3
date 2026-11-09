@@ -85,7 +85,7 @@ The `Ci*` targets in `build/Build.ci.cs` are the suites that CI runs on Linux:
 
 | Suite | Needs |
 | --- | --- |
-| `CiDotnetSystemAdaptersTestMemory` | nothing |
+| `CiDotnetSystemAdaptersTestMemory`, `CiDotnetSystemAdaptersTestSnapshot` | nothing |
 | `CiDotnetSystemAdaptersTestNpgsql` | PostgreSQL: the admin connection in `ALLORS_NPGSQL` |
 | `CiDotnetSystemAdaptersTestSqlClient` | SQL Server: the admin connection in `ALLORS_SQLCLIENT`, or LocalDB on Windows |
 | `CiDotnetCore*Test`, `CiTypescriptWorkspace*Test` | a [configuration root](#configuration) and the admin connection of its adapter; CI runs them on SQL Server with `config/sqlclient` |
