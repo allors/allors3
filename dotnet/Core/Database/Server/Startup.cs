@@ -37,7 +37,11 @@ namespace Allors.Server
 
         public void ConfigureServices(IServiceCollection services)
         {
-            this.Configuration.Require("adapter", "ConnectionStrings:DefaultConnection", "JwtToken:Key");
+            this.Configuration.Require("adapter", "JwtToken:Key");
+            if (DatabaseBuilder.HasDatabaseServer(this.Configuration["adapter"]))
+            {
+                this.Configuration.Require("ConnectionStrings:DefaultConnection");
+            }
 
             services.AddSingleton(this.Configuration);
 

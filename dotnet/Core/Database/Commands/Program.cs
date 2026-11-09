@@ -58,7 +58,11 @@ namespace Commands
                     configurationBuilder.AddAllorsConfiguration("core", "commands");
 
                     var configuration = configurationBuilder.Build();
-                    configuration.Require("adapter", "ConnectionStrings:DefaultConnection");
+                    configuration.Require("adapter");
+                    if (DatabaseBuilder.HasDatabaseServer(configuration["adapter"]))
+                    {
+                        configuration.Require("ConnectionStrings:DefaultConnection");
+                    }
 
                     this.configuration = configuration;
                 }

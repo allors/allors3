@@ -25,6 +25,14 @@ partial class Build
             .AddLoggers("trx;LogFileName=AdaptersMemory.trx")
             .SetResultsDirectory(Paths.ArtifactsTests)));
 
+    private Target DotnetSystemAdaptersTestSnapshot => _ => _
+        .DependsOn(DotnetSystemAdaptersGenerate)
+        .Executes(() => DotNetTest(s => s
+            .SetProjectFile(Paths.DotnetSystemAdaptersStaticTests)
+            .SetFilter("FullyQualifiedName~Allors.Database.Adapters.Snapshot")
+            .AddLoggers("trx;LogFileName=AdaptersSnapshot.trx")
+            .SetResultsDirectory(Paths.ArtifactsTests)));
+
     private Target DotnetSystemAdaptersTestSqlClient => _ => _
         .DependsOn(DotnetSystemAdaptersGenerate)
         .Executes(() =>
@@ -50,6 +58,7 @@ partial class Build
     private Target DotnetSystemAdapters => _ => _
         .DependsOn(Clean)
         .DependsOn(DotnetSystemAdaptersTestMemory)
+        .DependsOn(DotnetSystemAdaptersTestSnapshot)
         .DependsOn(DotnetSystemAdaptersTestSqlClient)
         .DependsOn(DotnetSystemAdaptersTestNpgsql);
 }

@@ -40,7 +40,13 @@ namespace Allors.Server.Tests
             configurationBuilder.AddAllorsConfiguration("core");
 
             var configuration = configurationBuilder.Build();
-            configuration.Require("adapter", "ConnectionStrings:DefaultConnection");
+            configuration.Require("adapter");
+            if (!DatabaseBuilder.HasDatabaseServer(configuration["adapter"]))
+            {
+                throw new InvalidOperationException("The remote API tests change the population through a database connection of their own, which the server must share. Point ALLORS_CONFIG_ROOT at a SQL template.");
+            }
+
+            configuration.Require("ConnectionStrings:DefaultConnection");
 
             var metaPopulation = new MetaBuilder().Build();
             var rules = Rules.Create(metaPopulation);

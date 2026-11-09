@@ -53,14 +53,18 @@ appsettings.{platform}.json                 # windows, linux, osx
 appsettings.{environment}.{platform}.json
 ```
 
-Environment variables override every file: `adapter=sqlclient` or `adapter=npgsql`,
-`ConnectionStrings__DefaultConnection=…`, `JwtToken__Key=…`. Without `ALLORS_CONFIG_ROOT` they
-are the only source. A program stops when a setting that it needs has no value; the message names
-the setting, its environment variable and the folders that were read.
+Environment variables override every file: `adapter=snapshot`, `adapter=sqlclient` or
+`adapter=npgsql`, `ConnectionStrings__DefaultConnection=…`, `JwtToken__Key=…`. Without
+`ALLORS_CONFIG_ROOT` they are the only source. A program stops when a setting that it needs has no
+value; the message names the setting, its environment variable and the folders that were read.
 
-`config/sqlclient`, `config/npgsql` and `config/localdb` are templates for a root: SQL Server and
-PostgreSQL on `localhost` with the login `allors`, and SQL Server LocalDB on Windows. Point
-`ALLORS_CONFIG_ROOT` at one of them, or at a copy that holds your own values.
+`config/sqlclient`, `config/npgsql`, `config/localdb` and `config/snapshot` are templates for a
+root: SQL Server and PostgreSQL on `localhost` with the login `allors`, SQL Server LocalDB on
+Windows, and the Snapshot adapter, which keeps the population in memory and needs no connection
+string and no database server. Point `ALLORS_CONFIG_ROOT` at one of them, or at a copy that holds
+your own values. With the Snapshot adapter the `init` command has nothing to drop or create, and a
+population that the command-line tool builds ends with the process; the Core test server builds its
+own through `Test/Setup`.
 
 `ALLORS_SQLCLIENT` and `ALLORS_NPGSQL` hold an admin connection to the same server and serve
 database management only; no program runs on them. The `init` command of the command-line tool
@@ -85,10 +89,10 @@ The `Ci*` targets in `build/Build.ci.cs` are the suites that CI runs on Linux:
 
 | Suite | Needs |
 | --- | --- |
-| `CiDotnetSystemAdaptersTestMemory` | nothing |
+| `CiDotnetSystemAdaptersTestMemory`, `CiDotnetSystemAdaptersTestSnapshot` | nothing |
 | `CiDotnetSystemAdaptersTestNpgsql` | PostgreSQL: the admin connection in `ALLORS_NPGSQL` |
 | `CiDotnetSystemAdaptersTestSqlClient` | SQL Server: the admin connection in `ALLORS_SQLCLIENT`, or LocalDB on Windows |
-| `CiDotnetCore*Test`, `CiTypescriptWorkspace*Test` | a [configuration root](#configuration) and the admin connection of its adapter; CI runs them on SQL Server with `config/sqlclient` |
+| `CiDotnetCore*Test`, `CiTypescriptWorkspace*Test` | a [configuration root](#configuration): with `config/snapshot` nothing else, with a SQL template also the admin connection of its adapter. CI runs them on SQL Server with `config/sqlclient`, and in memory with `config/snapshot` except the remote API tests, which change the population through a database connection of their own that the server must share |
 
 The TypeScript workspace in `typescript/modules` is an nx workspace. After `npm install` there,
 `npm run system-workspace-meta:test`, `npm run system-workspace-meta-json:test` and

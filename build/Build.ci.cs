@@ -6,6 +6,10 @@ partial class Build
         .DependsOn(Reset)
         .DependsOn(DotnetSystemAdaptersTestMemory);
 
+    private Target CiDotnetSystemAdaptersTestSnapshot => _ => _
+        .DependsOn(Reset)
+        .DependsOn(DotnetSystemAdaptersTestSnapshot);
+
     private Target CiDotnetSystemAdaptersTestSqlClient => _ => _
         .DependsOn(Reset)
         .DependsOn(DotnetSystemAdaptersTestSqlClient);
@@ -17,6 +21,10 @@ partial class Build
     private Target CiDotnetCoreDatabaseTest => _ => _
         .DependsOn(Reset)
         .DependsOn(DotnetCoreDatabaseTest);
+
+    private Target CiDotnetCoreDatabaseTestServerLocal => _ => _
+        .DependsOn(Reset)
+        .DependsOn(DotnetCoreDatabaseTestServerLocal);
 
     private Target CiDotnetCoreWorkspaceLocalTest => _ => _
         .DependsOn(Reset)

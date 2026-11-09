@@ -42,6 +42,7 @@
   </Folder>
   <Folder Name="/System/Database/Adapters/">
     <Project Path="System/Database/Adapters/Allors.Database.Adapters.Memory/Allors.Database.Adapters.Memory.csproj" />
+    <Project Path="System/Database/Adapters/Allors.Database.Adapters.Snapshot/Allors.Database.Adapters.Snapshot.csproj" />
     <Project Path="System/Database/Adapters/Allors.Database.Adapters.Sql.Npgsql/Allors.Database.Adapters.Sql.Npgsql.csproj" />
     <Project Path="System/Database/Adapters/Allors.Database.Adapters.Sql.SqlClient/Allors.Database.Adapters.Sql.SqlClient.csproj" />
     <Project Path="System/Database/Adapters/Allors.Database.Adapters.Sql/Allors.Database.Adapters.Sql.csproj" />
