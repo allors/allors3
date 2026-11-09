@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Linq;
 using Nuke.Common;
@@ -5,8 +6,41 @@ using Nuke.Common.IO;
 
 partial class Build : NukeBuild
 {
+    private const string ConfigRootVariable = "ALLORS_CONFIG_ROOT";
+
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     private readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
+
+    [Parameter("The template under config/ that is the configuration root of the processes the build starts: snapshot, sqlclient, npgsql or localdb. Without it the build uses ALLORS_CONFIG_ROOT, or config/snapshot when that is not set")]
+    private readonly string Provider;
+
+    /// <summary>
+    /// Points <c>ALLORS_CONFIG_ROOT</c> at the chosen template for the tests, the command-line tool and
+    /// the server that the targets start. An explicit <c>--provider</c> wins over the variable; without
+    /// either, the Snapshot template keeps a run free of database servers.
+    /// </summary>
+    protected override void OnBuildInitialized()
+    {
+        base.OnBuildInitialized();
+
+        var current = System.Environment.GetEnvironmentVariable(ConfigRootVariable);
+        if (Provider == null && !string.IsNullOrWhiteSpace(current))
+        {
+            Serilog.Log.Information("Configuration root: {Root} ({Variable})", current, ConfigRootVariable);
+            return;
+        }
+
+        var provider = Provider ?? "snapshot";
+        var root = RootDirectory / "config" / provider;
+        if (!root.DirectoryExists())
+        {
+            var templates = string.Join(", ", (RootDirectory / "config").GetDirectories().Select(v => v.Name).OrderBy(v => v));
+            Assert.Fail($"There is no configuration template config/{provider}. Pass --provider with one of {templates}, or set {ConfigRootVariable} to a configuration root.");
+        }
+
+        System.Environment.SetEnvironmentVariable(ConfigRootVariable, root);
+        Serilog.Log.Information("Configuration root: {Root} ({Source})", root, Provider == null ? "the default, " + ConfigRootVariable + " is not set" : "--provider");
+    }
 
     private Target Clean => _ => _
         .Executes(() =>
