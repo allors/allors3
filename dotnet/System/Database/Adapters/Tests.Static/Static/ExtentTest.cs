@@ -16704,6 +16704,38 @@ namespace Allors.Database.Adapters
         }
 
         [Fact]
+        public virtual void SortTwoWithoutPrimaryValues()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+                var m = this.Transaction.Database.Context().M;
+
+                // Objects without a value for the first sort order are equal there; the second sort order decides.
+                foreach (var value in new[] { 3, 1, 2 })
+                {
+                    C1.Create(this.Transaction).C1AllorsInteger = value;
+                }
+
+                this.Transaction.Commit();
+
+                foreach (var primaryDirection in new[] { SortDirection.Ascending, SortDirection.Descending })
+                {
+                    foreach (var secondaryDirection in new[] { SortDirection.Ascending, SortDirection.Descending })
+                    {
+                        var extent = this.Transaction.Extent(m.C1);
+                        extent.AddSort(m.C1.C1AllorsString, primaryDirection);
+                        extent.AddSort(m.C1.C1AllorsInteger, secondaryDirection);
+
+                        var sortedObjects = (C1[])extent.ToArray(typeof(C1));
+                        var expected = secondaryDirection == SortDirection.Ascending ? new int?[] { 1, 2, 3 } : new int?[] { 3, 2, 1 };
+                        Assert.Equal(expected, sortedObjects.Select(v => v.C1AllorsInteger));
+                    }
+                }
+            }
+        }
+
+        [Fact]
         public virtual void SortDifferentTransaction()
         {
             foreach (var init in this.Inits)
