@@ -7,6 +7,7 @@ namespace Allors.Database.Adapters
 {
     using System;
     using System.Collections.Concurrent;
+    using System.Data.Common;
     using System.Linq;
     using System.Threading;
     using Domain;
@@ -109,6 +110,131 @@ namespace Allors.Database.Adapters
 
                 Assert.Equal("v2", c1.C1AllorsString);
                 Assert.Equal(version + 1, c1.Strategy.ObjectVersion);
+            }
+        }
+
+        [Fact]
+        public void TheSecondWriterOfTheSameObjectFails()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+
+                var c1 = C1.Create(this.Transaction);
+                c1.C1AllorsString = "v0";
+                this.Transaction.Commit();
+                var version0 = c1.Strategy.ObjectVersion;
+
+                using (var first = this.Population.CreateTransaction())
+                using (var second = this.Population.CreateTransaction())
+                {
+                    // Both transactions read the object before either of them commits.
+                    var c1First = (C1)first.Instantiate(c1);
+                    var c1Second = (C1)second.Instantiate(c1);
+                    Assert.Equal("v0", c1First.C1AllorsString);
+                    Assert.Equal("v0", c1Second.C1AllorsString);
+
+                    c1First.C1AllorsString = "first";
+                    c1Second.C1AllorsString = "second";
+
+                    first.Commit();
+                    Assert.Equal(version0 + 1, c1First.Strategy.ObjectVersion);
+
+                    // The database reports the conflict the way a database server does.
+                    Assert.ThrowsAny<DbException>(() => second.Commit());
+
+                    // After a rollback the second transaction sees the first one's work and can redo its own.
+                    second.Rollback();
+                    Assert.Equal("first", c1Second.C1AllorsString);
+                    c1Second.C1AllorsString = "second";
+                    second.Commit();
+                    Assert.Equal(version0 + 2, c1Second.Strategy.ObjectVersion);
+                }
+
+                this.Transaction.Rollback();
+
+                Assert.Equal("second", c1.C1AllorsString);
+                Assert.Equal(version0 + 2, c1.Strategy.ObjectVersion);
+            }
+        }
+
+        [Fact]
+        public void ChangingAnObjectAnotherTransactionDeletedFails()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+                var m = this.Transaction.Database.Context().M;
+
+                var deleted = C1.Create(this.Transaction);
+                deleted.C1AllorsString = "v0";
+                var other = C1.Create(this.Transaction);
+                this.Transaction.Commit();
+
+                using (var changer = this.Population.CreateTransaction())
+                {
+                    var deletedInChanger = (C1)changer.Instantiate(deleted);
+                    Assert.Equal("v0", deletedInChanger.C1AllorsString);
+                    deletedInChanger.C1AllorsString = "changed";
+                    ((C1)changer.Instantiate(other)).C1C1one2one = deletedInChanger;
+
+                    using (var deleter = this.Population.CreateTransaction())
+                    {
+                        deleter.Instantiate(deleted).Strategy.Delete();
+                        deleter.Commit();
+                    }
+
+                    Assert.ThrowsAny<DbException>(() => changer.Commit());
+                }
+
+                this.Transaction.Rollback();
+
+                Assert.Null(this.Transaction.Instantiate(deleted.Id));
+                Assert.Single(this.Transaction.Extent(m.C1));
+                Assert.False(other.ExistC1C1one2one);
+            }
+        }
+
+        [Fact]
+        public void DeletingAnObjectAnotherTransactionChangedFails()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+                var m = this.Transaction.Database.Context().M;
+
+                var c1 = C1.Create(this.Transaction);
+                c1.C1AllorsString = "v0";
+                this.Transaction.Commit();
+
+                using (var deleter = this.Population.CreateTransaction())
+                using (var changer = this.Population.CreateTransaction())
+                {
+                    // The deleter reads the object before the changer commits.
+                    var c1Deleter = (C1)deleter.Instantiate(c1);
+                    Assert.Equal("v0", c1Deleter.C1AllorsString);
+
+                    ((C1)changer.Instantiate(c1)).C1AllorsString = "changed";
+                    changer.Commit();
+
+                    // A database server refuses the deletion itself; the in-memory database refuses the commit.
+                    Assert.ThrowsAny<DbException>(() =>
+                    {
+                        c1Deleter.Strategy.Delete();
+                        deleter.Commit();
+                    });
+
+                    // After a rollback the deleter sees the change and can delete the object after all.
+                    deleter.Rollback();
+                    Assert.Equal("changed", ((C1)deleter.Instantiate(c1)).C1AllorsString);
+                    deleter.Instantiate(c1).Strategy.Delete();
+                    deleter.Commit();
+                }
+
+                this.Transaction.Rollback();
+
+                Assert.Null(this.Transaction.Instantiate(c1.Id));
+                Assert.Equal(0, this.Transaction.Extent(m.C1).Count);
             }
         }
 
