@@ -99,20 +99,12 @@ partial class Build
         });
 
     private Target DotnetCoreWorkspaceLocalTest => _ => _
-        .DependsOn(DotnetCorePublishServer)
-        .DependsOn(DotnetCorePublishCommands)
+        .DependsOn(DotnetCoreGenerate)
         .DependsOn(DotnetCoreResetDatabase)
-        .Executes(async () =>
-        {
-            DotNet("Commands.dll Populate", Paths.ArtifactsCoreCommands);
-
-            {
-                DotNetTest(s => s
-                    .SetProjectFile(Paths.DotnetCoreWorkspaceTestsLocal)
-                    .AddLoggers("trx;LogFileName=DotnetCoreWorkspaceTestsLocal.trx")
-                    .SetResultsDirectory(Paths.ArtifactsTests));
-            }
-        });
+        .Executes(() => DotNetTest(s => s
+            .SetProjectFile(Paths.DotnetCoreWorkspaceTestsLocal)
+            .AddLoggers("trx;LogFileName=DotnetCoreWorkspaceTestsLocal.trx")
+            .SetResultsDirectory(Paths.ArtifactsTests)));
 
     private Target DotnetCoreWorkspaceRemoteJsonSystemTextTest => _ => _
         .DependsOn(DotnetCorePublishServer)
