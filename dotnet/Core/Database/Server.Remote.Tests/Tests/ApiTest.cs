@@ -2,7 +2,6 @@
 // Copyright (c) Allors bv. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
-// <summary>Defines the DomainTest type.</summary>
 
 namespace Allors.Server.Tests
 {
@@ -14,48 +13,29 @@ namespace Allors.Server.Tests
     using System.Text;
     using System.Text.Json;
     using System.Threading.Tasks;
-    using Database;
-    using Database.Adapters;
-    using Database.Domain;
-    using Database.Configuration;
-    using Database.Configuration.Derivations.Default;
-    using Database.Meta;
-    using Microsoft.Extensions.Configuration;
     using Protocol.Json.Auth;
     using Xunit;
-    using C1 = Database.Domain.C1;
-    using ObjectFactory = Database.ObjectFactory;
-    using User = Database.Domain.User;
 
+    /// <summary>
+    /// A test against the Core test server over HTTP. The server owns the database: every test starts from
+    /// the full population through <c>Test/Setup</c> and creates the users it needs through
+    /// <c>Test/CreateUser</c>, so the tests run on whichever adapter the server runs on, the Snapshot
+    /// adapter included.
+    /// </summary>
     public abstract class ApiTest : IDisposable
     {
         public const string Url = "http://localhost:5000/allors/";
         public const string SetupUrl = "Test/Setup?population=full";
+        public const string CreateUserUrl = "Test/CreateUser";
         public const string LoginUrl = "TestAuthentication/Token";
+
+        /// <summary>
+        /// The user name of the administrator of the full population.
+        /// </summary>
+        public const string Administrator = "jane@example.com";
 
         protected ApiTest()
         {
-            var configurationBuilder = new ConfigurationBuilder();
-
-            configurationBuilder.AddAllorsConfiguration("core");
-
-            var configuration = configurationBuilder.Build();
-            configuration.Require("adapter");
-            if (!DatabaseBuilder.HasDatabaseServer(configuration["adapter"]))
-            {
-                throw new InvalidOperationException("The remote API tests change the population through a database connection of their own, which the server must share. Point ALLORS_CONFIG_ROOT at a SQL template.");
-            }
-
-            configuration.Require("ConnectionStrings:DefaultConnection");
-
-            var metaPopulation = new MetaBuilder().Build();
-            var rules = Rules.Create(metaPopulation);
-            var engine = new Engine(rules);
-            var database = new DatabaseBuilder(
-                new DefaultDatabaseServices(engine),
-                configuration,
-                new ObjectFactory(metaPopulation, typeof(C1))).Build();
-
             this.HttpClientHandler = new HttpClientHandler();
             this.HttpClient = new HttpClient(this.HttpClientHandler)
             {
@@ -67,36 +47,39 @@ namespace Allors.Server.Tests
             var response = this.HttpClient.GetAsync(SetupUrl).Result;
 
             Assert.True(response.IsSuccessStatusCode);
-
-            this.Transaction = database.CreateTransaction();
         }
-
-        public MetaPopulation M => this.Transaction.Database.Services.Get<Allors.Database.Meta.MetaPopulation>();
-
-        public IConfigurationRoot Configuration { get; set; }
-
-        protected ITransaction Transaction { get; private set; }
 
         protected HttpClient HttpClient { get; set; }
 
         protected HttpClientHandler HttpClientHandler { get; set; }
 
-        protected User Administrator => new Users(this.Transaction).FindBy(this.M.User.UserName, "jane@example.com");
-
         public void Dispose()
         {
-            this.Transaction.Rollback();
-            this.Transaction = null;
-
             this.HttpClient.Dispose();
             this.HttpClient = null;
         }
 
-        protected async Task SignIn(User user)
+        /// <summary>
+        /// Creates a user on the server: a person with the user name, with the password when one is given,
+        /// and with lockout enabled when asked.
+        /// </summary>
+        protected void CreateUser(string userName, string password = null, bool lockoutEnabled = false)
+        {
+            var query = $"{CreateUserUrl}?userName={Uri.EscapeDataString(userName)}&lockoutEnabled={lockoutEnabled}";
+            if (password != null)
+            {
+                query += $"&password={Uri.EscapeDataString(password)}";
+            }
+
+            var response = this.HttpClient.PostAsync(new Uri(query, UriKind.Relative), null).Result;
+            Assert.True(response.IsSuccessStatusCode, response.Content.ReadAsStringAsync().Result);
+        }
+
+        protected async Task SignIn(string userName)
         {
             var args = new AuthenticationTokenRequest
             {
-                l = user.UserName,
+                l = userName,
             };
 
             var uri = new Uri(LoginUrl, UriKind.Relative);

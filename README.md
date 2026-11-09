@@ -43,9 +43,7 @@ root, the folder that `ALLORS_CONFIG_ROOT` names, and from environment variables
 file is read from the folder of a project, and no program defaults the root. The test projects and
 the Nuke build do: when `ALLORS_CONFIG_ROOT` is not set they use the `config/snapshot` template, so
 a test run needs no database server unless the variable, or `--provider` for the build, names
-another template. The remote API tests are the exception: they change the population through a
-database connection of their own, which the server must share, so they need a SQL template, and so
-does `DotnetCoreDatabaseTest`, which includes them.
+another template.
 
 Below the root every domain has its folder; Core's is `core`. A server also reads
 `core/<application>`, and the command-line tool `core/commands`. At each of these locations the
@@ -79,7 +77,7 @@ create and open their test databases with the admin connection. On Windows the a
 for SQL Server defaults to LocalDB.
 
 ```
-./build.sh DotnetCoreDatabaseTestServerLocal             # Snapshot adapter, no database server
+./build.sh DotnetCoreDatabaseTest                        # Snapshot adapter, no database server
 export ALLORS_SQLCLIENT='Server=localhost;User Id=sa;Password=…;TrustServerCertificate=true'
 ./build.sh DotnetCoreDatabaseTest --provider sqlclient   # SQL Server through config/sqlclient
 ```
@@ -97,7 +95,7 @@ The `Ci*` targets in `build/Build.ci.cs` are the suites that CI runs on Linux:
 | `CiDotnetSystemAdaptersTestMemory`, `CiDotnetSystemAdaptersTestSnapshot` | nothing |
 | `CiDotnetSystemAdaptersTestNpgsql` | PostgreSQL: the admin connection in `ALLORS_NPGSQL` |
 | `CiDotnetSystemAdaptersTestSqlClient` | SQL Server: the admin connection in `ALLORS_SQLCLIENT`, or LocalDB on Windows |
-| `CiDotnetCore*Test`, `CiTypescriptWorkspace*Test` | a [configuration root](#configuration), `config/snapshot` unless `ALLORS_CONFIG_ROOT` or `--provider` names another template; with a SQL template also the admin connection of its adapter. CI runs them on SQL Server with `config/sqlclient`, and in memory with `config/snapshot` except the remote API tests, which change the population through a database connection of their own that the server must share |
+| `CiDotnetCore*Test`, `CiTypescriptWorkspace*Test` | a [configuration root](#configuration), `config/snapshot` unless `ALLORS_CONFIG_ROOT` or `--provider` names another template; with a SQL template also the admin connection of its adapter. CI runs them on SQL Server with `config/sqlclient`, and in memory with `config/snapshot` |
 
 The TypeScript workspace in `typescript/modules` is an nx workspace. After `npm install` there,
 `npm run system-workspace-meta:test`, `npm run system-workspace-meta-json:test` and

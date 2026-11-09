@@ -6,22 +6,13 @@
 namespace Allors.Server.Tests
 {
     using System;
-    using Database.Domain;
     using Protocol.Json.Auth;
     using Xunit;
 
     [Collection("Api")]
     public class LockoutTests : ApiTest
     {
-        public LockoutTests()
-        {
-            var jane = new PersonBuilder(this.Transaction).WithUserName("Jane").Build();
-            jane.UserLockoutEnabled = true;
-            jane.SetPassword("p@ssw0rd");
-
-            this.Transaction.Derive();
-            this.Transaction.Commit();
-        }
+        public LockoutTests() => this.CreateUser("Jane", "p@ssw0rd", lockoutEnabled: true);
 
         [Fact]
         public async void LockedOutAfterFailedAttempts()

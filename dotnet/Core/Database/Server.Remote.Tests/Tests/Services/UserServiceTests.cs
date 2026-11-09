@@ -14,7 +14,7 @@ namespace Allors.Server.Tests
         [Fact]
         public async void SignedIn()
         {
-            await this.SignIn(this.Administrator);
+            await this.SignIn(Administrator);
 
             var uri = new Uri("TestTransaction/UserName", UriKind.Relative);
             var response = await this.HttpClient.PostAsync(uri, null);
@@ -25,7 +25,7 @@ namespace Allors.Server.Tests
         [Fact]
         public async void SignedOut()
         {
-            await this.SignIn(this.Administrator);
+            await this.SignIn(Administrator);
 
             this.SignOut();
 
