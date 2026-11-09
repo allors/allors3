@@ -13,7 +13,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         // A program connects with a login of its own, not with the admin connection. Provisioning creates
         // the database of the program's connection string and the login that the connection string names,
         // and makes that login the owner of the database.
-        [Theory]
+        [SqlLoginTheory]
         [InlineData("ProvisioningTest")]
         [InlineData("ProvisioningTest's")]
         [InlineData("ProvisioningTest]")]
