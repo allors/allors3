@@ -21,7 +21,7 @@ test('databaseUnitDiff', async () => {
       predicate: {
         kind: 'Equals',
         propertyType: m.C1.Name,
-        value: 'C1A',
+        value: 'c1A',
       },
     },
   };
@@ -60,7 +60,7 @@ test('databaseUnitDiffAfterReset', async () => {
       predicate: {
         kind: 'Equals',
         propertyType: m.C1.Name,
-        value: 'C1A',
+        value: 'c1A',
       },
     },
   };
@@ -95,7 +95,7 @@ test('databaseUnitDiffAfterDoubleReset', async () => {
       predicate: {
         kind: 'Equals',
         propertyType: m.C1.Name,
-        value: 'C1A',
+        value: 'c1A',
       },
     },
   };
@@ -131,7 +131,7 @@ test('databaseMultipleUnitDiff', async () => {
       predicate: {
         kind: 'Equals',
         propertyType: m.C1.Name,
-        value: 'C1A',
+        value: 'c1A',
       },
     },
   };

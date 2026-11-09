@@ -22,7 +22,7 @@ test('databaseMergeError', async () => {
       predicate: {
         kind: 'Equals',
         propertyType: m.C1.Name,
-        value: 'C1A',
+        value: 'c1A',
       },
     },
   };
