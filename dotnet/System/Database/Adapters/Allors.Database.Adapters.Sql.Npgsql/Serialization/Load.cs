@@ -264,16 +264,18 @@ where c = '{@class.Id}'";
                                     unitRelationsByClass[@class] = unitRelations;
                                 }
 
+                                var isEmptyElement = reader.IsEmptyElement;
                                 var value = string.Empty;
-                                if (!reader.IsEmptyElement)
+                                if (!isEmptyElement)
                                 {
                                     value = reader.ReadElementContentAsString();
+                                    skip = reader.IsStartElement();
                                 }
 
                                 try
                                 {
                                     object unit = null;
-                                    if (reader.IsEmptyElement)
+                                    if (isEmptyElement)
                                     {
                                         var unitType = (IUnit)relationType.RoleType.ObjectType;
                                         switch (unitType.Tag)
@@ -300,8 +302,6 @@ where c = '{@class.Id}'";
                                 {
                                     this.OnRelationNotLoaded(relationType.Id, associationId, value);
                                 }
-
-                                skip = reader.IsStartElement();
                             }
                         }
 
