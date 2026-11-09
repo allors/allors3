@@ -97,15 +97,16 @@ The suites that CI runs are `Ci*` targets in `build/Build.ci.cs`:
 | `CiDotnetSystemAdaptersTestSqlClient` | SQL Server: the admin connection in `ALLORS_SQLCLIENT`, or LocalDB on Windows |
 | `CiDotnetCore*Test`, `CiTypescriptWorkspace*Test` | a [configuration root](#configuration), `config/snapshot` unless `ALLORS_CONFIG_ROOT` or `--provider` names another template; with a SQL template also the admin connection of its adapter |
 
-CI runs every suite as a job of its own. A pull request to `main` and a push to `main` run on Linux
-the four adapter suites, and the Core and TypeScript suites with `config/snapshot`, where the domain
-tests run on the Memory adapter. A push to `main` runs the Core and TypeScript suites with
-`config/sqlclient` and `config/npgsql` as well, the domain tests included. The nightly workflow runs
-every suite on Windows: the adapter suites, and the Core and TypeScript suites on the Snapshot
-adapter, on SQL Server LocalDB and on PostgreSQL. `gh workflow run nightly.yml` starts it on demand;
-`-f os=` takes `windows-latest`, `ubuntu-latest` or `both`, and `-f provider=` takes `all`,
-`snapshot`, `sqlclient` or `npgsql`. A branch runs through its pull request to `main`, and
-`gh workflow run ci.yml --ref <branch>` runs CI for a branch that has none.
+CI runs every suite as a job of its own. A pull request, whatever its base branch, and a push to
+`main` run on Linux the four adapter suites, and the Core and TypeScript suites with
+`config/snapshot`, where the domain tests run on the Memory adapter. A push to `main` runs the Core
+and TypeScript suites with `config/sqlclient` and `config/npgsql` as well, the domain tests
+included. The nightly workflow runs every suite on Windows: the adapter suites, and the Core and
+TypeScript suites on the Snapshot adapter, on SQL Server LocalDB and on PostgreSQL.
+`gh workflow run nightly.yml` starts it on demand; `-f os=` takes `windows-latest`, `ubuntu-latest`
+or `both`, and `-f provider=` takes `all`, `snapshot`, `sqlclient` or `npgsql`. A branch runs
+through its pull request, and `gh workflow run ci.yml --ref <branch>` runs CI for a branch that has
+none.
 
 The TypeScript workspace in `typescript/modules` is an nx workspace. After `npm install` there,
 `npm run system-workspace-meta:test`, `npm run system-workspace-meta-json:test` and

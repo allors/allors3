@@ -50,16 +50,16 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   (#320).
 - The SqlClient adapter suite skips its provisioning theory, which creates a SQL Server login, when
   the admin connection names LocalDB, which accepts Windows authentication only (#320).
-- CI runs every suite as a job of its own, in tiers (#320). A pull request to `main` and a push to
-  `main` run on Linux the adapter suites, those of SQL Server and PostgreSQL against service
-  containers, and the Core database, Core workspace and TypeScript suites on the Snapshot adapter. A
-  push to `main` runs those Core and TypeScript suites on SQL Server and PostgreSQL as well. A
-  nightly workflow, which also starts on demand, runs every suite on Windows: the adapter suites,
-  and the Core and TypeScript suites on the Snapshot adapter, on SQL Server LocalDB and on
-  PostgreSQL. The aggregate check `CI result` stands for the suites of a pull request and of a push;
-  a change to the four Markdown files at the root skips them. A push to a `feature/` or `issue/`
-  branch no longer starts a run of its own: a branch runs through its pull request to `main`, or on
-  demand.
+- CI runs every suite as a job of its own, in tiers (#320). A pull request, whatever its base branch
+  (#321), and a push to `main` run on Linux the adapter suites, those of SQL Server and PostgreSQL
+  against service containers, and the Core database, Core workspace and TypeScript suites on the
+  Snapshot adapter. A push to `main` runs those Core and TypeScript suites on SQL Server and
+  PostgreSQL as well. A nightly workflow, which also starts on demand, runs every suite on Windows:
+  the adapter suites, and the Core and TypeScript suites on the Snapshot adapter, on SQL Server
+  LocalDB and on PostgreSQL. The aggregate check `CI result` stands for the suites of a pull request
+  and of a push; a change to the four Markdown files at the root skips them. A push to a `feature/`
+  or `issue/` branch no longer starts a run of its own: a branch runs through its pull request, or
+  on demand.
 - Nerdbank.GitVersioning versions the line as `3.2.0-alpha.{height}`, with public-release
   versions on `main` and the `v*` branches.
 - The TypeScript workspace runs on nx 23, jest 30 and TypeScript 6 and depends on cross-fetch and
@@ -115,7 +115,7 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   push test of a workspace object without a workspace.
 - The TypeScript workspace fixes released on `v3.1` in June 2026 (#84, #85): `nodeLeafs` returns the
   leaf nodes of a tree, covered by the new `system-workspace-domain-tests` project in the TypeScript
-  workspace suite, and an object's `toJSON` serialises it through its strategy. The pull retry is
+  workspace suite, and an object's `toJSON` serializes it through its strategy. The pull retry is
   covered by the regression test of #276, which fails a pull's first SQL command.
 - The fixes of the archived line of `main` from August and September 2026 (#270 to #272, and the
   platform part of #261): the .NET workspace sorts the collection a composites role is set from, so
