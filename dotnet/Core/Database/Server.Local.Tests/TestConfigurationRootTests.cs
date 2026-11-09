@@ -7,6 +7,7 @@ namespace Tests
 {
     using System;
     using System.IO;
+    using System.Text.Json;
     using Allors.Database.Configuration;
     using Microsoft.Extensions.Configuration;
     using Xunit;
@@ -28,8 +29,14 @@ namespace Tests
             Assert.Equal(TestConfigurationRoot.DefaultTemplate, Path.GetFileName(root));
             Assert.Equal("config", Path.GetFileName(Path.GetDirectoryName(root)));
 
+            // The configuration now reads files from that root. The effective adapter is not asserted: an
+            // adapter variable in the environment overrides the template, as it should, so the template is
+            // checked directly.
             var configuration = new ConfigurationBuilder().AddAllorsConfiguration("core").Build();
-            Assert.Equal("snapshot", configuration["adapter"]);
+            Assert.Contains(configuration.Providers, v => v is FileConfigurationProvider);
+
+            using var template = JsonDocument.Parse(File.ReadAllBytes(Path.Combine(root, "core", "appsettings.json")));
+            Assert.Equal("snapshot", template.RootElement.GetProperty("adapter").GetString());
         }
 
         [Fact]
