@@ -207,6 +207,24 @@ namespace Allors.Database.Adapters.Snapshot
                     }
 
                     var record = kvp.Value;
+                    var isCreated = created.Contains(objectId);
+
+                    if (!isCreated)
+                    {
+                        if (!recordById.TryGetValue(objectId, out var committed))
+                        {
+                            // Another transaction deleted the object since this one started; the deletion stands.
+                            continue;
+                        }
+
+                        // When the later of two transactions that changed the same object wins, its version still
+                        // moves past the version the earlier one committed.
+                        if (committed.Version > record.Version)
+                        {
+                            record.Version = committed.Version;
+                        }
+                    }
+
                     if (bumpVersions && roleChanged.Contains(objectId))
                     {
                         record.Version++;
@@ -214,7 +232,7 @@ namespace Allors.Database.Adapters.Snapshot
 
                     recordById[objectId] = record;
 
-                    if (created.Contains(objectId))
+                    if (isCreated)
                     {
                         AddObjectId(objectIdsByClass, record.Class, objectId);
                     }
