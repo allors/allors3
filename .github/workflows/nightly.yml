@@ -8,10 +8,6 @@ name: Nightly
 on:
   schedule:
     - cron: '0 3 * * *'
-  # Temporary, while this workflow is developed on its branch: a push runs every leg on both systems.
-  push:
-    branches:
-      - 'feature/ci-matrix'
   workflow_dispatch:
     inputs:
       os:
@@ -60,7 +56,7 @@ jobs:
       targets: '["CiDotnetSystemAdaptersTestNpgsql", "CiDotnetCoreDatabaseTest", "CiDotnetCoreWorkspaceLocalTest", "CiDotnetCoreWorkspaceRemoteJsonSystemTextTest", "CiDotnetCoreWorkspaceRemoteJsonNewtonsoftTest", "CiTypescriptWorkspaceTest", "CiTypescriptWorkspaceAdaptersJsonTest"]'
 
   linux-snapshot:
-    if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.os != 'windows-latest' && (inputs.provider == 'all' || inputs.provider == 'snapshot')) }}
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.os != 'windows-latest' && (inputs.provider == 'all' || inputs.provider == 'snapshot') }}
     uses: ./.github/workflows/tests.yml
     with:
       os: ubuntu-latest
@@ -68,7 +64,7 @@ jobs:
       targets: '["CiDotnetSystemAdaptersTestMemory", "CiDotnetSystemAdaptersTestSnapshot", "CiDotnetCoreDatabaseTest", "CiDotnetCoreWorkspaceLocalTest", "CiDotnetCoreWorkspaceRemoteJsonSystemTextTest", "CiDotnetCoreWorkspaceRemoteJsonNewtonsoftTest", "CiTypescriptWorkspaceTest", "CiTypescriptWorkspaceAdaptersJsonTest"]'
 
   linux-sqlclient:
-    if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.os != 'windows-latest' && (inputs.provider == 'all' || inputs.provider == 'sqlclient')) }}
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.os != 'windows-latest' && (inputs.provider == 'all' || inputs.provider == 'sqlclient') }}
     uses: ./.github/workflows/tests.yml
     with:
       os: ubuntu-latest
@@ -76,7 +72,7 @@ jobs:
       targets: '["CiDotnetSystemAdaptersTestSqlClient", "CiDotnetCoreDatabaseTest", "CiDotnetCoreWorkspaceLocalTest", "CiDotnetCoreWorkspaceRemoteJsonSystemTextTest", "CiDotnetCoreWorkspaceRemoteJsonNewtonsoftTest", "CiTypescriptWorkspaceTest", "CiTypescriptWorkspaceAdaptersJsonTest"]'
 
   linux-npgsql:
-    if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.os != 'windows-latest' && (inputs.provider == 'all' || inputs.provider == 'npgsql')) }}
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.os != 'windows-latest' && (inputs.provider == 'all' || inputs.provider == 'npgsql') }}
     uses: ./.github/workflows/tests.yml
     with:
       os: ubuntu-latest
