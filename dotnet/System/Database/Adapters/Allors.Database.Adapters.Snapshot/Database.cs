@@ -126,6 +126,41 @@ namespace Allors.Database.Adapters.Snapshot
         }
 
         /// <summary>
+        /// Takes a restore point: the committed state of this database and the position of its id sequence.
+        /// Taking one costs no more than a reference, because the committed state is immutable.
+        /// </summary>
+        public RestorePoint TakeRestorePoint()
+        {
+            lock (this.commitLock)
+            {
+                return new RestorePoint(this, this.snapshot, Volatile.Read(ref this.nextId));
+            }
+        }
+
+        /// <summary>
+        /// Brings the database back to a restore point taken from it, in constant time. Like <see cref="Init"/>
+        /// this starts a new epoch, so a transaction that started earlier can not commit any more, and objects
+        /// created afterwards take the ids that were free when the restore point was taken, so every restore
+        /// leads to the same ids.
+        /// </summary>
+        public void Restore(RestorePoint restorePoint)
+        {
+            if (restorePoint == null)
+            {
+                throw new ArgumentNullException(nameof(restorePoint));
+            }
+
+            if (restorePoint.Database != this)
+            {
+                throw new ArgumentException("The restore point was taken from another database. Take one from this database, or use CreateClone to start a database from the state of another one.", nameof(restorePoint));
+            }
+
+            this.Replace(restorePoint.Snapshot.RecordById, restorePoint.Snapshot.ObjectIdsByClass, restorePoint.NextId);
+
+            this.Services.OnInit(this);
+        }
+
+        /// <summary>
         /// Creates a database that starts from the committed state of this database. The two databases
         /// share that immutable state and go their own way from there; the clone continues the id
         /// sequence of this database.
@@ -182,7 +217,7 @@ namespace Allors.Database.Adapters.Snapshot
                 var current = this.snapshot;
                 if (current.Epoch != baseSnapshot.Epoch)
                 {
-                    throw new InvalidOperationException("The database was initialised or loaded after this transaction started, so its changes can not be committed. Roll back and redo the work in a new transaction.");
+                    throw new InvalidOperationException("The database was initialised, loaded or restored after this transaction started, so its changes can not be committed. Roll back and redo the work in a new transaction.");
                 }
 
                 var recordById = current.RecordById.ToBuilder();

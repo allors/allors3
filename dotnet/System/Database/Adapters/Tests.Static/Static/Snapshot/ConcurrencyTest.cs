@@ -34,7 +34,7 @@ namespace Allors.Database.Adapters.Snapshot
                 this.Population.Init();
 
                 var exception = Assert.Throws<InvalidOperationException>(() => transaction.Commit());
-                Assert.Contains("initialised or loaded", exception.Message, StringComparison.Ordinal);
+                Assert.Contains("initialised, loaded or restored", exception.Message, StringComparison.Ordinal);
 
                 // After a rollback the transaction works on the fresh population.
                 transaction.Rollback();
@@ -55,7 +55,7 @@ namespace Allors.Database.Adapters.Snapshot
                 }
 
                 exception = Assert.Throws<InvalidOperationException>(() => transaction.Commit());
-                Assert.Contains("initialised or loaded", exception.Message, StringComparison.Ordinal);
+                Assert.Contains("initialised, loaded or restored", exception.Message, StringComparison.Ordinal);
 
                 transaction.Rollback();
 
