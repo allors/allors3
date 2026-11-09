@@ -43,9 +43,7 @@ root, the folder that `ALLORS_CONFIG_ROOT` names, and from environment variables
 file is read from the folder of a project, and no program defaults the root. The test projects and
 the Nuke build do: when `ALLORS_CONFIG_ROOT` is not set they use the `config/snapshot` template, so
 a test run needs no database server unless the variable, or `--provider` for the build, names
-another template. The remote API tests are the exception: they change the population through a
-database connection of their own, which the server must share, so they need a SQL template, and so
-does `DotnetCoreDatabaseTest`, which includes them.
+another template.
 
 Below the root every domain has its folder; Core's is `core`. A server also reads
 `core/<application>`, and the command-line tool `core/commands`. At each of these locations the
@@ -79,7 +77,7 @@ create and open their test databases with the admin connection. On Windows the a
 for SQL Server defaults to LocalDB.
 
 ```
-./build.sh DotnetCoreDatabaseTestServerLocal             # Snapshot adapter, no database server
+./build.sh DotnetCoreDatabaseTest                        # Snapshot adapter, no database server
 export ALLORS_SQLCLIENT='Server=localhost;User Id=sa;Password=…;TrustServerCertificate=true'
 ./build.sh DotnetCoreDatabaseTest --provider sqlclient   # SQL Server through config/sqlclient
 ```
