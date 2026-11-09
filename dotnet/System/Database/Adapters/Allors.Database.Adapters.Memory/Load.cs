@@ -495,8 +495,11 @@ namespace Allors.Database.Adapters.Memory
 
         private void CantLoadUnitRole(Guid relationTypeId)
         {
-            while (this.reader.Read())
+            var skip = false;
+            while (skip || this.reader.Read())
             {
+                skip = false;
+
                 switch (this.reader.NodeType)
                 {
                     case XmlNodeType.Element:
@@ -508,6 +511,12 @@ namespace Allors.Database.Adapters.Memory
                             if (!this.reader.IsEmptyElement)
                             {
                                 value = this.reader.ReadElementContentAsString();
+
+                                // Reading the content moved the reader to the next record or to the end of the
+                                // relation type, which must not be read past.
+                                skip = this.reader.IsStartElement() ||
+                                       (this.reader.NodeType == XmlNodeType.EndElement &&
+                                       this.reader.Name.Equals(Serialization.RelationTypeUnit));
                             }
 
                             this.transaction.Database.OnRelationNotLoaded(relationTypeId, long.Parse(a), value);
@@ -523,8 +532,11 @@ namespace Allors.Database.Adapters.Memory
 
         private void CantLoadCompositeRole(Guid relationTypeId)
         {
-            while (this.reader.Read())
+            var skip = false;
+            while (skip || this.reader.Read())
             {
+                skip = false;
+
                 switch (this.reader.NodeType)
                 {
                     case XmlNodeType.Element:
@@ -544,6 +556,13 @@ namespace Allors.Database.Adapters.Memory
                             else
                             {
                                 var value = this.reader.ReadElementContentAsString();
+
+                                // Reading the content moved the reader to the next record or to the end of the
+                                // relation type, which must not be read past.
+                                skip = this.reader.IsStartElement() ||
+                                       (this.reader.NodeType == XmlNodeType.EndElement &&
+                                       this.reader.Name.Equals(Serialization.RelationTypeComposite));
+
                                 foreach (var r in value.Split(Serialization.ObjectsSplitterCharArray))
                                 {
                                     this.transaction.Database.OnRelationNotLoaded(relationTypeId, associationId, r);
