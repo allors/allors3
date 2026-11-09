@@ -1072,6 +1072,62 @@ namespace Allors.Database.Adapters
         }
 
         [Fact]
+        public void CantLoadAdjacentRoles()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+
+                // The relations of an unknown relation type follow each other without whitespace, as Save
+                // writes them. Every one of them is reported, and the known relations after them load.
+                var xml =
+@"<?xml version=""1.0"" encoding=""utf-16""?>
+<allors>
+  <population version=""1"">
+    <objects>
+      <database>
+        <ot i=""7041c691d89646288f501c24f5d03414"">1:0,2:0,3:0,4:0</ot>
+      </database>
+    </objects>
+    <relations>
+      <database>
+        <rtu i=""30000000000000000000000000000001""><r a=""1"">x</r><r a=""2"">y</r><r a=""3"">z</r><r a=""4""/></rtu>
+        <rtc i=""30000000000000000000000000000002""><r a=""1"">2</r><r a=""2"">3,4</r><r a=""3"">4</r><r a=""4""/></rtc>
+        <rtc i=""ab6d11ccec86482888752e9a779ba627"">
+          <r a=""1"">4</r>
+        </rtc>
+      </database>
+    </relations>
+  </population>
+</allors>";
+
+                var notLoadedEventArgs = new List<RelationNotLoadedEventArgs>();
+                this.Population.RelationNotLoaded += (o, args) => notLoadedEventArgs.Add(args);
+
+                DoLoad(this.Population, xml);
+
+                var unitEvents = notLoadedEventArgs.Where(v => v.RelationTypeId == new Guid("30000000000000000000000000000001")).ToArray();
+                Assert.Equal(new long[] { 1, 2, 3, 4 }, unitEvents.Select(v => v.AssociationId).ToArray());
+                Assert.Equal(new[] { "x", "y", "z", string.Empty }, unitEvents.Select(v => v.RoleContents).ToArray());
+
+                var compositeEvents = notLoadedEventArgs.Where(v => v.RelationTypeId == new Guid("30000000000000000000000000000002")).ToArray();
+                Assert.Equal(new long[] { 1, 2, 2, 3, 4 }, compositeEvents.Select(v => v.AssociationId).ToArray());
+                Assert.Equal(new[] { "2", "3", "4", "4", null }, compositeEvents.Select(v => v.RoleContents).ToArray());
+
+                Assert.Equal(unitEvents.Length + compositeEvents.Length, notLoadedEventArgs.Count);
+
+                using (var transaction = this.Population.CreateTransaction())
+                {
+                    var c1A = (C1)transaction.Instantiate(1);
+                    var c1D = (C1)transaction.Instantiate(4);
+
+                    Assert.Single(c1A.C1C1one2manies);
+                    Assert.Contains(c1D, c1A.C1C1one2manies);
+                }
+            }
+        }
+
+        [Fact]
         public void LoadUnitBeforeEmptyElement()
         {
             foreach (var init in this.Inits)

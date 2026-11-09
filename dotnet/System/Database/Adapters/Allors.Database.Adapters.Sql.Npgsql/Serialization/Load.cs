@@ -366,8 +366,11 @@ where c = '{@class.Id}'";
 
         private void CantLoadUnitRole(XmlReader reader, Guid relationTypeId)
         {
-            while (reader.Read())
+            var skip = false;
+            while (skip || reader.Read())
             {
+                skip = false;
+
                 if (reader.IsStartElement() && reader.Name.Equals(Serialization.Relation))
                 {
                     var a = reader.GetAttribute(Serialization.Association);
@@ -376,6 +379,9 @@ where c = '{@class.Id}'";
                     if (!reader.IsEmptyElement)
                     {
                         value = reader.ReadElementContentAsString();
+
+                        // Reading the content moved the reader to the next record, which must not be read past.
+                        skip = reader.IsStartElement();
                     }
 
                     this.OnRelationNotLoaded(relationTypeId, long.Parse(a), value);
@@ -385,8 +391,11 @@ where c = '{@class.Id}'";
 
         private void CantLoadCompositeRole(XmlReader reader, Guid relationTypeId)
         {
-            while (reader.Read())
+            var skip = false;
+            while (skip || reader.Read())
             {
+                skip = false;
+
                 if (reader.IsStartElement() && reader.Name.Equals(Serialization.Relation))
                 {
                     var associationIdString = reader.GetAttribute(Serialization.Association);
@@ -403,6 +412,10 @@ where c = '{@class.Id}'";
                     else
                     {
                         var value = reader.ReadElementContentAsString();
+
+                        // Reading the content moved the reader to the next record, which must not be read past.
+                        skip = reader.IsStartElement();
+
                         foreach (var r in value.Split(Serialization.ObjectsSplitterCharArray))
                         {
                             this.OnRelationNotLoaded(relationTypeId, associationId, r);
