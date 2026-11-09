@@ -115,7 +115,7 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   push test of a workspace object without a workspace.
 - The TypeScript workspace fixes released on `v3.1` in June 2026 (#84, #85): `nodeLeafs` returns the
   leaf nodes of a tree, covered by the new `system-workspace-domain-tests` project in the TypeScript
-  workspace suite, and an object's `toJSON` serialises it through its strategy. The pull retry is
+  workspace suite, and an object's `toJSON` serializes it through its strategy. The pull retry is
   covered by the regression test of #276, which fails a pull's first SQL command.
 - The fixes of the archived line of `main` from August and September 2026 (#270 to #272, and the
   platform part of #261): the .NET workspace sorts the collection a composites role is set from, so
