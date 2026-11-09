@@ -9,7 +9,7 @@ namespace Tests.Workspace.Local
     using System.Linq;
     using System.Threading.Tasks;
     using Allors.Database;
-    using Allors.Database.Adapters.Memory;
+    using Allors.Database.Adapters.Snapshot;
     using Allors.Database.Configuration;
     using Allors.Database.Domain;
     using Allors.Database.Services;
@@ -56,7 +56,7 @@ namespace Tests.Workspace.Local
 
             this.Database = new Database(
                 new DefaultDatabaseServices(fixture.Engine),
-                new Allors.Database.Adapters.Memory.Configuration
+                new Allors.Database.Adapters.Snapshot.Configuration
                 {
                     ObjectFactory = new ObjectFactory(fixture.M, typeof(Allors.Database.Domain.Person)),
                 });

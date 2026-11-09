@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\System\Database\Adapters\Allors.Database.Adapters.Memory\Allors.Database.Adapters.Memory.csproj" />
+    <ProjectReference Include="..\..\..\System\Database\Adapters\Allors.Database.Adapters.Snapshot\Allors.Database.Adapters.Snapshot.csproj" />
     <ProjectReference Include="..\..\..\System\Database\Adapters\Allors.Database.Adapters.Sql.SqlClient\Allors.Database.Adapters.Sql.SqlClient.csproj" />
     <ProjectReference Include="..\..\Database\Configuration\Configuration.csproj" />
     <ProjectReference Include="..\Configuration\Workspace.Configuration.csproj" />
