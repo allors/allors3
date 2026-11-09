@@ -7,7 +7,6 @@ namespace Allors.Server.Tests
 {
     using System;
 
-    using Database.Domain;
     using Protocol.Json.Auth;
     using Xunit;
 
@@ -17,10 +16,8 @@ namespace Allors.Server.Tests
     {
         public SignInTests()
         {
-            new PersonBuilder(this.Transaction).WithUserName("John").Build();
-            new PersonBuilder(this.Transaction).WithUserName("Jane").Build().SetPassword("p@ssw0rd");
-            this.Transaction.Derive();
-            this.Transaction.Commit();
+            this.CreateUser("John");
+            this.CreateUser("Jane", "p@ssw0rd");
         }
 
         [Fact]

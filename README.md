@@ -92,7 +92,7 @@ The `Ci*` targets in `build/Build.ci.cs` are the suites that CI runs on Linux:
 | `CiDotnetSystemAdaptersTestMemory`, `CiDotnetSystemAdaptersTestSnapshot` | nothing |
 | `CiDotnetSystemAdaptersTestNpgsql` | PostgreSQL: the admin connection in `ALLORS_NPGSQL` |
 | `CiDotnetSystemAdaptersTestSqlClient` | SQL Server: the admin connection in `ALLORS_SQLCLIENT`, or LocalDB on Windows |
-| `CiDotnetCore*Test`, `CiTypescriptWorkspace*Test` | a [configuration root](#configuration): with `config/snapshot` nothing else, with a SQL template also the admin connection of its adapter. CI runs them on SQL Server with `config/sqlclient`, and in memory with `config/snapshot` except the remote API tests, which change the population through a database connection of their own that the server must share |
+| `CiDotnetCore*Test`, `CiTypescriptWorkspace*Test` | a [configuration root](#configuration): with `config/snapshot` nothing else, with a SQL template also the admin connection of its adapter. CI runs them on SQL Server with `config/sqlclient`, and in memory with `config/snapshot` |
 
 The TypeScript workspace in `typescript/modules` is an nx workspace. After `npm install` there,
 `npm run system-workspace-meta:test`, `npm run system-workspace-meta-json:test` and
