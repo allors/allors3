@@ -14,6 +14,7 @@ namespace Allors.Database.Domain.Tests
     using Database.Derivations;
     using Database.Security;
     using Meta;
+    using Microsoft.Extensions.Configuration;
     using Moq;
     using User = Domain.User;
 
@@ -21,14 +22,19 @@ namespace Allors.Database.Domain.Tests
     {
         public DomainTest(Fixture fixture, bool populate = true)
         {
-            var database = new Database(
-                new TestDatabaseServices(fixture.Engine),
-                new Configuration
-                {
-                    ObjectFactory = new ObjectFactory(fixture.MetaPopulation, typeof(User)),
-                });
+            var services = new TestDatabaseServices(fixture.Engine);
+            var objectFactory = new ObjectFactory(fixture.MetaPopulation, typeof(User));
 
-            this.M = ((IDatabase)database).Services.Get<MetaPopulation>();
+            // The domain tests run on the Memory adapter, the adapter for one transaction over a population,
+            // unless the configuration root names a database server: then SQL Server or PostgreSQL takes its
+            // place, as it does when CI runs the Core suites on them.
+            var configuration = new ConfigurationBuilder().AddAllorsConfiguration("core").Build();
+            var adapter = configuration["adapter"];
+            var database = adapter != null && Adapters.DatabaseBuilder.HasDatabaseServer(adapter)
+                ? new Adapters.DatabaseBuilder(services, configuration, objectFactory).Build()
+                : new Database(services, new Configuration { ObjectFactory = objectFactory });
+
+            this.M = database.Services.Get<MetaPopulation>();
 
             this.Setup(database, populate);
         }
