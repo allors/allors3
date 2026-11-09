@@ -1,5 +1,10 @@
 name: CI
 
+# Pull requests and pushes run on Linux: one job per adapter suite, and the Core and TypeScript suites on
+# the Snapshot adapter, where the domain tests run on Memory. A push to main also runs the Core and
+# TypeScript suites on SQL Server and PostgreSQL, the domain tests included. The Windows legs run in
+# nightly.yml. Every leg is one call of tests.yml.
+
 on:
   push:
     branches:
@@ -22,28 +27,16 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
-env:
-  NODE_OPTIONS: --max_old_space_size=16384
-  CI: 'true'
-  DOTNET_NOLOGO: 'true'
-  DOTNET_CLI_TELEMETRY_OPTOUT: '1'
-  # Clean incrementing versions (3.2.0-alpha.N) with no -g<commit> suffix in CI too.
-  PublicRelease: 'true'
-  # Default culture parity with the Windows 'Set-Culture nl-BE' of the earlier workflow (the locale is generated per job).
-  LANG: nl_BE.UTF-8
-  LC_ALL: nl_BE.UTF-8
-
 jobs:
-  # Documentation-only changes skip the platform suites below. The `result` job at the end always
-  # runs and is the one status check that the main ruleset requires: a matrix job skipped by its
-  # `if` reports a single check under its unrendered name, so the suites themselves cannot be
-  # required, and a path filter on the workflow itself would leave every check pending.
+  # Documentation-only changes skip the suites below. The `result` job at the end always runs and is
+  # the one status check that the main ruleset requires: a job skipped by its `if` reports a single
+  # check under its unrendered name, so the suites themselves cannot be required, and a path filter
+  # on the workflow itself would leave every check pending.
   changes:
     name: Detect documentation-only changes
     runs-on: ubuntu-latest
     timeout-minutes: 5
     env:
-      # The suite jobs generate the nl-BE locale that the workflow env selects; this job does not.
       LANG: C.UTF-8
       LC_ALL: C.UTF-8
     outputs:
@@ -77,309 +70,131 @@ jobs:
           echo "platform=$platform" >> "$GITHUB_OUTPUT"
           echo "Run the platform suites: $platform"
 
-  # Suite without a database: the in-memory adapter, no provider.
-  memory:
-    name: ${{ matrix.target }}
-    runs-on: ubuntu-latest
+  # The adapter suites, one job per adapter. The SQL Server and PostgreSQL suites create their own
+  # databases with the admin connection of their service container.
+  adapters-memory:
     needs: changes
     if: ${{ !cancelled() && needs.changes.outputs.platform != 'false' }}
-    timeout-minutes: 60
-    strategy:
-      fail-fast: false
-      matrix:
-        target:
-          - CiDotnetSystemAdaptersTestMemory
-          - CiDotnetSystemAdaptersTestSnapshot
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-        with:
-          submodules: false
-          fetch-depth: 0      # nbgv needs full history for git-height versioning
-          fetch-tags: true
-      - name: Generate nl-BE locale
-        run: sudo locale-gen nl_BE.UTF-8 && sudo update-locale
-      - name: Setup .NET SDK (from global.json)
-        uses: actions/setup-dotnet@v5
-        with:
-          global-json-file: global.json
-      - name: Restore .NET local tools
-        run: dotnet tool restore
-      - name: Compute version (nbgv)
-        run: dotnet nbgv cloud
-      - name: Run Nuke target ${{ matrix.target }}
-        run: ./build.sh -target ${{ matrix.target }}
-      - name: Upload TRX artifacts
-        if: always()
-        uses: actions/upload-artifact@v7
-        with:
-          name: trx-${{ matrix.target }}
-          path: artifacts/Tests/*.trx
-          if-no-files-found: warn
-          retention-days: 14
-      - name: Publish test results
-        if: always()
-        uses: dorny/test-reporter@v3
-        with:
-          name: ${{ matrix.target }}
-          path: artifacts/Tests/*.trx
-          reporter: dotnet-trx
-          fail-on-error: false
+    uses: ./.github/workflows/tests.yml
+    with:
+      os: ubuntu-latest
+      provider: memory
+      targets: '["CiDotnetSystemAdaptersTestMemory"]'
 
-  # PostgreSQL provider: the adapter suite. Its fixtures take the admin connection from ALLORS_NPGSQL
-  # and create their own databases.
-  npgsql:
-    name: ${{ matrix.target }} (npgsql)
-    runs-on: ubuntu-latest
+  adapters-snapshot:
     needs: changes
     if: ${{ !cancelled() && needs.changes.outputs.platform != 'false' }}
-    timeout-minutes: 240
-    services:
-      postgres:
-        image: postgres:16
-        env:
-          POSTGRES_USER: allors
-          POSTGRES_PASSWORD: allors
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U allors"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 10
-    env:
-      ALLORS_NPGSQL: 'Server=localhost;Port=5432;User Id=allors;Password=allors'
-    strategy:
-      fail-fast: false
-      matrix:
-        target:
-          # Postgres in CI covers the Npgsql adapter; the database, server and workspace suites run
-          # on SqlClient (the sqlclient job below).
-          - CiDotnetSystemAdaptersTestNpgsql
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-        with:
-          submodules: false
-          fetch-depth: 0
-          fetch-tags: true
-      - name: Generate nl-BE locale
-        run: sudo locale-gen nl_BE.UTF-8 && sudo update-locale
-      - name: Setup .NET SDK (from global.json)
-        uses: actions/setup-dotnet@v5
-        with:
-          global-json-file: global.json
-      - name: Restore .NET local tools
-        run: dotnet tool restore
-      - name: Compute version (nbgv)
-        run: dotnet nbgv cloud
-      - name: Run Nuke target ${{ matrix.target }}
-        run: ./build.sh -target ${{ matrix.target }}
-      - name: Upload TRX artifacts
-        if: always()
-        uses: actions/upload-artifact@v7
-        with:
-          name: trx-${{ matrix.target }}-npgsql
-          path: artifacts/Tests/*.trx
-          if-no-files-found: warn
-          retention-days: 14
-      - name: Publish test results
-        if: always()
-        uses: dorny/test-reporter@v3
-        with:
-          name: ${{ matrix.target }} (npgsql)
-          path: artifacts/Tests/*.trx
-          reporter: dotnet-trx
-          fail-on-error: false
+    uses: ./.github/workflows/tests.yml
+    with:
+      os: ubuntu-latest
+      provider: snapshot
+      targets: '["CiDotnetSystemAdaptersTestSnapshot"]'
 
-  # SQL Server provider: the adapter suite and every provider-agnostic suite. The adapter fixtures
-  # create and open their databases with the admin connection in ALLORS_SQLCLIENT. The Core server,
-  # the command-line tool and the API tests take their settings from the configuration root, here the
-  # template in config/sqlclient, and the build's `Commands init` creates their database and its login
-  # with the admin connection.
-  sqlclient:
-    name: ${{ matrix.target }} (sqlclient)
-    runs-on: ubuntu-latest
+  adapters-sqlclient:
     needs: changes
     if: ${{ !cancelled() && needs.changes.outputs.platform != 'false' }}
-    timeout-minutes: 240
-    services:
-      sqlserver:
-        image: mcr.microsoft.com/mssql/server:2022-latest
-        env:
-          ACCEPT_EULA: 'Y'
-          MSSQL_SA_PASSWORD: 'Allors123!'
-        ports:
-          - 1433:1433
-        options: >-
-          --health-cmd "/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P 'Allors123!' -Q 'SELECT 1' -b -o /dev/null"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 20
-          --health-start-period 30s
-    env:
-      ALLORS_SQLCLIENT: 'Server=localhost,1433;Database=master;User Id=sa;Password=Allors123!;TrustServerCertificate=true'
-    strategy:
-      fail-fast: false
-      matrix:
-        target:
-          - CiDotnetSystemAdaptersTestSqlClient
-          - CiDotnetCoreDatabaseTest
-          - CiDotnetCoreWorkspaceLocalTest
-          - CiDotnetCoreWorkspaceRemoteJsonSystemTextTest
-          - CiDotnetCoreWorkspaceRemoteJsonNewtonsoftTest
-          - CiTypescriptWorkspaceTest
-          - CiTypescriptWorkspaceAdaptersJsonTest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-        with:
-          submodules: false
-          fetch-depth: 0
-          fetch-tags: true
-      - name: Generate nl-BE locale
-        run: sudo locale-gen nl_BE.UTF-8 && sudo update-locale
-      - name: Setup .NET SDK (from global.json)
-        uses: actions/setup-dotnet@v5
-        with:
-          global-json-file: global.json
-      - name: Restore .NET local tools
-        run: dotnet tool restore
-      - name: Compute version (nbgv)
-        run: dotnet nbgv cloud
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: '24'
-      - name: Point the configuration root at the SQL Server template
-        run: echo "ALLORS_CONFIG_ROOT=$GITHUB_WORKSPACE/config/sqlclient" >> "$GITHUB_ENV"
-      - name: Run Nuke target ${{ matrix.target }}
-        run: ./build.sh -target ${{ matrix.target }}
-      - name: Upload TRX artifacts
-        # Diagnostic download only (the report is published from disk by the next step), so upload
-        # just on failure and never let a transient artifact-service flake gate the job.
-        if: failure()
-        continue-on-error: true
-        uses: actions/upload-artifact@v7
-        with:
-          name: trx-${{ matrix.target }}-sqlclient
-          path: artifacts/Tests/*.trx
-          if-no-files-found: warn
-          retention-days: 14
-      - name: Publish test results
-        if: always()
-        uses: dorny/test-reporter@v3
-        with:
-          name: ${{ matrix.target }} (sqlclient)
-          path: artifacts/Tests/*.trx
-          reporter: dotnet-trx
-          fail-on-error: false
+    uses: ./.github/workflows/tests.yml
+    with:
+      os: ubuntu-latest
+      provider: sqlclient
+      targets: '["CiDotnetSystemAdaptersTestSqlClient"]'
 
-  # Snapshot adapter: every provider-agnostic suite on the in-memory adapter, the configuration root on
-  # the template in config/snapshot. No database server is involved: the build's `Commands init` has
-  # nothing to create, and the Core test server builds its population through Test/Setup.
-  snapshot:
-    name: ${{ matrix.target }} (snapshot)
-    runs-on: ubuntu-latest
+  adapters-npgsql:
     needs: changes
     if: ${{ !cancelled() && needs.changes.outputs.platform != 'false' }}
-    timeout-minutes: 120
-    strategy:
-      fail-fast: false
-      matrix:
-        target:
-          # Not CiDotnetCoreDatabaseTest: the remote API tests change the population through a database
-          # connection of their own, which an in-memory adapter cannot share with the server.
-          - CiDotnetCoreDatabaseTestServerLocal
-          - CiDotnetCoreWorkspaceLocalTest
-          - CiDotnetCoreWorkspaceRemoteJsonSystemTextTest
-          - CiDotnetCoreWorkspaceRemoteJsonNewtonsoftTest
-          - CiTypescriptWorkspaceTest
-          - CiTypescriptWorkspaceAdaptersJsonTest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-        with:
-          submodules: false
-          fetch-depth: 0
-          fetch-tags: true
-      - name: Generate nl-BE locale
-        run: sudo locale-gen nl_BE.UTF-8 && sudo update-locale
-      - name: Setup .NET SDK (from global.json)
-        uses: actions/setup-dotnet@v5
-        with:
-          global-json-file: global.json
-      - name: Restore .NET local tools
-        run: dotnet tool restore
-      - name: Compute version (nbgv)
-        run: dotnet nbgv cloud
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: '24'
-      - name: Point the configuration root at the Snapshot template
-        run: echo "ALLORS_CONFIG_ROOT=$GITHUB_WORKSPACE/config/snapshot" >> "$GITHUB_ENV"
-      - name: Run Nuke target ${{ matrix.target }}
-        run: ./build.sh -target ${{ matrix.target }}
-      - name: Upload TRX artifacts
-        # Diagnostic download only (the report is published from disk by the next step), so upload
-        # just on failure and never let a transient artifact-service flake gate the job.
-        if: failure()
-        continue-on-error: true
-        uses: actions/upload-artifact@v7
-        with:
-          name: trx-${{ matrix.target }}-snapshot
-          path: artifacts/Tests/*.trx
-          if-no-files-found: warn
-          retention-days: 14
-      - name: Publish test results
-        if: always()
-        uses: dorny/test-reporter@v3
-        with:
-          name: ${{ matrix.target }} (snapshot)
-          path: artifacts/Tests/*.trx
-          reporter: dotnet-trx
-          fail-on-error: false
+    uses: ./.github/workflows/tests.yml
+    with:
+      os: ubuntu-latest
+      provider: npgsql
+      targets: '["CiDotnetSystemAdaptersTestNpgsql"]'
 
-  # The one required status check: the suites passed, or all were skipped for a documentation-only change.
+  # The Core and TypeScript suites on the Snapshot adapter, the configuration root on config/snapshot:
+  # no database server, the build's `Commands init` has nothing to create, the Core test server builds
+  # its population through Test/Setup, and the domain tests run on Memory.
+  core-snapshot:
+    needs: changes
+    if: ${{ !cancelled() && needs.changes.outputs.platform != 'false' }}
+    uses: ./.github/workflows/tests.yml
+    with:
+      os: ubuntu-latest
+      provider: snapshot
+      targets: '["CiDotnetCoreDatabaseTest", "CiDotnetCoreWorkspaceLocalTest", "CiDotnetCoreWorkspaceRemoteJsonSystemTextTest", "CiDotnetCoreWorkspaceRemoteJsonNewtonsoftTest", "CiTypescriptWorkspaceTest", "CiTypescriptWorkspaceAdaptersJsonTest"]'
+
+  # On a push to main the same suites run on SQL Server and PostgreSQL as well, the domain tests
+  # included: `--provider` points the configuration root at config/sqlclient or config/npgsql, and the
+  # build's `Commands init` creates the database and its login with the admin connection.
+  core-sqlclient:
+    needs: changes
+    if: ${{ !cancelled() && needs.changes.outputs.platform != 'false' && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    uses: ./.github/workflows/tests.yml
+    with:
+      os: ubuntu-latest
+      provider: sqlclient
+      targets: '["CiDotnetCoreDatabaseTest", "CiDotnetCoreWorkspaceLocalTest", "CiDotnetCoreWorkspaceRemoteJsonSystemTextTest", "CiDotnetCoreWorkspaceRemoteJsonNewtonsoftTest", "CiTypescriptWorkspaceTest", "CiTypescriptWorkspaceAdaptersJsonTest"]'
+
+  core-npgsql:
+    needs: changes
+    if: ${{ !cancelled() && needs.changes.outputs.platform != 'false' && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    uses: ./.github/workflows/tests.yml
+    with:
+      os: ubuntu-latest
+      provider: npgsql
+      targets: '["CiDotnetCoreDatabaseTest", "CiDotnetCoreWorkspaceLocalTest", "CiDotnetCoreWorkspaceRemoteJsonSystemTextTest", "CiDotnetCoreWorkspaceRemoteJsonNewtonsoftTest", "CiTypescriptWorkspaceTest", "CiTypescriptWorkspaceAdaptersJsonTest"]'
+
+  # The one required status check: the legs of this run passed, or all were skipped for a
+  # documentation-only change. The SQL Server and PostgreSQL Core legs count on a push to main.
   result:
     name: CI result
     runs-on: ubuntu-latest
-    needs: [changes, memory, npgsql, sqlclient, snapshot]
+    needs: [changes, adapters-memory, adapters-snapshot, adapters-sqlclient, adapters-npgsql, core-snapshot, core-sqlclient, core-npgsql]
     if: ${{ always() }}
     timeout-minutes: 5
     env:
-      # The suite jobs generate the nl-BE locale that the workflow env selects; this job does not.
       LANG: C.UTF-8
       LC_ALL: C.UTF-8
     steps:
-      - name: Require the platform suites to have passed or to have been skipped for a documentation-only change
+      - name: Require the legs of this run to have passed or to have been skipped for a documentation-only change
         env:
           CHANGES: ${{ needs.changes.result }}
           PLATFORM: ${{ needs.changes.outputs.platform }}
-          MEMORY: ${{ needs.memory.result }}
-          NPGSQL: ${{ needs.npgsql.result }}
-          SQLCLIENT: ${{ needs.sqlclient.result }}
-          SNAPSHOT: ${{ needs.snapshot.result }}
+          MAIN: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+          ADAPTERS_MEMORY: ${{ needs.adapters-memory.result }}
+          ADAPTERS_SNAPSHOT: ${{ needs.adapters-snapshot.result }}
+          ADAPTERS_SQLCLIENT: ${{ needs.adapters-sqlclient.result }}
+          ADAPTERS_NPGSQL: ${{ needs.adapters-npgsql.result }}
+          CORE_SNAPSHOT: ${{ needs.core-snapshot.result }}
+          CORE_SQLCLIENT: ${{ needs.core-sqlclient.result }}
+          CORE_NPGSQL: ${{ needs.core-npgsql.result }}
         run: |
-          echo "changes=$CHANGES platform=$PLATFORM memory=$MEMORY npgsql=$NPGSQL sqlclient=$SQLCLIENT snapshot=$SNAPSHOT"
+          echo "changes=$CHANGES platform=$PLATFORM main=$MAIN"
+          echo "adapters: memory=$ADAPTERS_MEMORY snapshot=$ADAPTERS_SNAPSHOT sqlclient=$ADAPTERS_SQLCLIENT npgsql=$ADAPTERS_NPGSQL"
+          echo "core: snapshot=$CORE_SNAPSHOT sqlclient=$CORE_SQLCLIENT npgsql=$CORE_NPGSQL"
           if [ "$CHANGES" != "success" ]; then
-            echo "The change detection did not succeed; every suite must have passed."
+            echo "The change detection did not succeed; every leg must have passed."
             PLATFORM=true
           fi
-          for suite in "$MEMORY" "$NPGSQL" "$SQLCLIENT" "$SNAPSHOT"; do
-            case "$suite" in
+          check() {
+            case "$2" in
               success) ;;
               skipped)
                 if [ "$PLATFORM" != "false" ]; then
-                  echo "A platform suite was skipped although the platform changed."
+                  echo "The leg $1 was skipped although the platform changed."
                   exit 1
                 fi
                 ;;
               *)
-                echo "A platform suite ended as '$suite'."
+                echo "The leg $1 ended as '$2'."
                 exit 1
                 ;;
             esac
-          done
-          echo "The platform suites passed, or were all skipped for a documentation-only change."
+          }
+          check adapters-memory "$ADAPTERS_MEMORY"
+          check adapters-snapshot "$ADAPTERS_SNAPSHOT"
+          check adapters-sqlclient "$ADAPTERS_SQLCLIENT"
+          check adapters-npgsql "$ADAPTERS_NPGSQL"
+          check core-snapshot "$CORE_SNAPSHOT"
+          if [ "$MAIN" = "true" ]; then
+            check core-sqlclient "$CORE_SQLCLIENT"
+            check core-npgsql "$CORE_NPGSQL"
+          fi
+          echo "The legs of this run passed, or were all skipped for a documentation-only change."

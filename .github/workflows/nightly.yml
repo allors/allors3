@@ -1,0 +1,104 @@
+name: Nightly
+
+# The Windows legs, nightly on main and on demand: for each adapter its adapter suite and the Core and
+# TypeScript suites, SQL Server through LocalDB and PostgreSQL through the service that the runner image
+# ships. A run on demand can take the Linux legs as well, to check the legs that ci.yml runs on a push
+# to main before a merge. Every leg is one call of tests.yml.
+
+on:
+  schedule:
+    - cron: '0 3 * * *'
+  # Temporary, while this workflow is developed on its branch: a push runs every leg on both systems.
+  push:
+    branches:
+      - 'feature/ci-matrix'
+  workflow_dispatch:
+    inputs:
+      os:
+        description: The runner images.
+        type: choice
+        options: [windows-latest, ubuntu-latest, both]
+        default: windows-latest
+      provider:
+        description: The adapters.
+        type: choice
+        options: [all, snapshot, sqlclient, npgsql]
+        default: all
+
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+
+concurrency:
+  group: nightly-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  windows-snapshot:
+    if: ${{ (github.event_name != 'workflow_dispatch' || inputs.os != 'ubuntu-latest') && (github.event_name != 'workflow_dispatch' || inputs.provider == 'all' || inputs.provider == 'snapshot') }}
+    uses: ./.github/workflows/tests.yml
+    with:
+      os: windows-latest
+      provider: snapshot
+      targets: '["CiDotnetSystemAdaptersTestMemory", "CiDotnetSystemAdaptersTestSnapshot", "CiDotnetCoreDatabaseTest", "CiDotnetCoreWorkspaceLocalTest", "CiDotnetCoreWorkspaceRemoteJsonSystemTextTest", "CiDotnetCoreWorkspaceRemoteJsonNewtonsoftTest", "CiTypescriptWorkspaceTest", "CiTypescriptWorkspaceAdaptersJsonTest"]'
+
+  windows-sqlclient:
+    if: ${{ (github.event_name != 'workflow_dispatch' || inputs.os != 'ubuntu-latest') && (github.event_name != 'workflow_dispatch' || inputs.provider == 'all' || inputs.provider == 'sqlclient') }}
+    uses: ./.github/workflows/tests.yml
+    with:
+      os: windows-latest
+      provider: sqlclient
+      targets: '["CiDotnetSystemAdaptersTestSqlClient", "CiDotnetCoreDatabaseTest", "CiDotnetCoreWorkspaceLocalTest", "CiDotnetCoreWorkspaceRemoteJsonSystemTextTest", "CiDotnetCoreWorkspaceRemoteJsonNewtonsoftTest", "CiTypescriptWorkspaceTest", "CiTypescriptWorkspaceAdaptersJsonTest"]'
+
+  windows-npgsql:
+    if: ${{ (github.event_name != 'workflow_dispatch' || inputs.os != 'ubuntu-latest') && (github.event_name != 'workflow_dispatch' || inputs.provider == 'all' || inputs.provider == 'npgsql') }}
+    uses: ./.github/workflows/tests.yml
+    with:
+      os: windows-latest
+      provider: npgsql
+      targets: '["CiDotnetSystemAdaptersTestNpgsql", "CiDotnetCoreDatabaseTest", "CiDotnetCoreWorkspaceLocalTest", "CiDotnetCoreWorkspaceRemoteJsonSystemTextTest", "CiDotnetCoreWorkspaceRemoteJsonNewtonsoftTest", "CiTypescriptWorkspaceTest", "CiTypescriptWorkspaceAdaptersJsonTest"]'
+
+  linux-snapshot:
+    if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.os != 'windows-latest' && (inputs.provider == 'all' || inputs.provider == 'snapshot')) }}
+    uses: ./.github/workflows/tests.yml
+    with:
+      os: ubuntu-latest
+      provider: snapshot
+      targets: '["CiDotnetSystemAdaptersTestMemory", "CiDotnetSystemAdaptersTestSnapshot", "CiDotnetCoreDatabaseTest", "CiDotnetCoreWorkspaceLocalTest", "CiDotnetCoreWorkspaceRemoteJsonSystemTextTest", "CiDotnetCoreWorkspaceRemoteJsonNewtonsoftTest", "CiTypescriptWorkspaceTest", "CiTypescriptWorkspaceAdaptersJsonTest"]'
+
+  linux-sqlclient:
+    if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.os != 'windows-latest' && (inputs.provider == 'all' || inputs.provider == 'sqlclient')) }}
+    uses: ./.github/workflows/tests.yml
+    with:
+      os: ubuntu-latest
+      provider: sqlclient
+      targets: '["CiDotnetSystemAdaptersTestSqlClient", "CiDotnetCoreDatabaseTest", "CiDotnetCoreWorkspaceLocalTest", "CiDotnetCoreWorkspaceRemoteJsonSystemTextTest", "CiDotnetCoreWorkspaceRemoteJsonNewtonsoftTest", "CiTypescriptWorkspaceTest", "CiTypescriptWorkspaceAdaptersJsonTest"]'
+
+  linux-npgsql:
+    if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.os != 'windows-latest' && (inputs.provider == 'all' || inputs.provider == 'npgsql')) }}
+    uses: ./.github/workflows/tests.yml
+    with:
+      os: ubuntu-latest
+      provider: npgsql
+      targets: '["CiDotnetSystemAdaptersTestNpgsql", "CiDotnetCoreDatabaseTest", "CiDotnetCoreWorkspaceLocalTest", "CiDotnetCoreWorkspaceRemoteJsonSystemTextTest", "CiDotnetCoreWorkspaceRemoteJsonNewtonsoftTest", "CiTypescriptWorkspaceTest", "CiTypescriptWorkspaceAdaptersJsonTest"]'
+
+  # The legs that ran passed; legs left out by the inputs are skipped and do not count.
+  result:
+    name: Nightly result
+    runs-on: ubuntu-latest
+    needs: [windows-snapshot, windows-sqlclient, windows-npgsql, linux-snapshot, linux-sqlclient, linux-npgsql]
+    if: ${{ always() }}
+    timeout-minutes: 5
+    env:
+      RESULTS: ${{ toJSON(needs) }}
+    steps:
+      - name: Require every leg that ran to have passed
+        run: |
+          echo "$RESULTS"
+          failed=$(echo "$RESULTS" | grep -oE '"result": *"(failure|cancelled)"' | wc -l)
+          if [ "$failed" -ne 0 ]; then
+            echo "A leg failed or was cancelled."
+            exit 1
+          fi
+          echo "Every leg that ran passed."
