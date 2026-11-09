@@ -1,17 +1,18 @@
 name: CI
 
-# Pull requests and pushes run on Linux: one job per adapter suite, and the Core and TypeScript suites on
-# the Snapshot adapter, where the domain tests run on Memory. A push to main also runs the Core and
-# TypeScript suites on SQL Server and PostgreSQL, the domain tests included. The Windows legs run in
-# nightly.yml. Every leg is one call of tests.yml.
+# Pull requests and pushes to main and the version branches run on Linux: one job per adapter suite, and
+# the Core and TypeScript suites on the Snapshot adapter, where the domain tests run on Memory. A push to
+# main also runs the Core and TypeScript suites on SQL Server and PostgreSQL, the domain tests included.
+# The Windows legs run in nightly.yml. Every leg is one call of tests.yml.
 
+# A branch runs through its pull request. A push trigger for branches would run every leg twice for a
+# branch that has a pull request, once for each event. Before the pull request exists, a run can be
+# started on demand.
 on:
   push:
     branches:
       - main
       - 'v[0-9]*'
-      - 'feature/**'
-      - 'issue/**'
   pull_request:
     branches:
       - main
