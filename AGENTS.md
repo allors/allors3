@@ -86,7 +86,8 @@ This direction guides explicitly requested work; it does not authorize expanding
 - Configuration comes from the configuration root that `ALLORS_CONFIG_ROOT` names and from
   environment variables, which override every file; without the root only environment variables
   are read, and a program stops when a setting that it needs has no value. No `appsettings` file
-  lives next to a project and nothing defaults the root: CI sets it per job to a template under
+  lives next to a project and no program defaults the root. The test projects and the Nuke build
+  default to the `config/snapshot` template, and CI sets the root per job to a template under
   `config/`. `ALLORS_SQLCLIENT` and `ALLORS_NPGSQL` are for database management only. See the
   [README](README.md#configuration).
 - Public documentation, code comments, commit messages, and GitHub text must describe Allors3
