@@ -23,9 +23,10 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   `config/snapshot` is a configuration root template for it, and CI runs the API tests of the Core
   test server, the .NET workspace suites and the TypeScript suites on it as well as on SQL Server.
   The shared adapter tests gain `ConcurrencyTest`, which the Snapshot, SqlClient and Npgsql
-  adapters pass alike, and the Core domain tests and the local workspace tests build their database
-  on the Snapshot adapter instead of the Memory adapter (#312). The Memory adapter remains the
-  adapter for a single transaction over a population.
+  adapters pass alike. The test projects and the Nuke build default to the `config/snapshot`
+  template when `ALLORS_CONFIG_ROOT` is not set (#314), and the local workspace tests build their
+  database from that root instead of constructing a Memory database (#315). The Core domain tests
+  stay on the Memory adapter, the adapter for a single transaction over a population.
 
 ### Changed
 
