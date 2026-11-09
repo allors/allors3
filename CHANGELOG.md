@@ -7,6 +7,25 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
 
 ## [Unreleased]
 
+### Added
+
+- The Snapshot adapter, `Allors.Database.Adapters.Snapshot`: an in-memory database that many
+  transactions share, also on different threads, for test runs without a database server (#307).
+  A transaction reads the immutable snapshot that was current when it started or when it last
+  committed or rolled back, writes to a private overlay and publishes a new snapshot when it
+  commits; commits are serialized by one lock. A commit fails with `ConcurrencyException`, a
+  `DbException`, when another transaction changed or deleted an object that this transaction
+  changed or deleted after it read it, as a database server does under snapshot isolation; a
+  change to the other end of a relation is reconciled instead (#311). The adapter saves and loads
+  the population format of the other adapters, and `TakeRestorePoint` and `Restore` put a
+  population back without reloading it, so a test suite resets its database in memory.
+  `DatabaseBuilder` accepts the adapter name `snapshot` without a connection string, and
+  `config/snapshot` is a configuration root template for it. The shared adapter tests gain
+  `ConcurrencyTest`, which the Snapshot, SqlClient and Npgsql adapters pass alike.
+- The Nuke build takes `--provider` with `snapshot`, `sqlclient`, `npgsql` or `localdb`: the
+  template under `config/` that is the configuration root of the tests, the command-line tool and
+  the server that its targets start. It wins over `ALLORS_CONFIG_ROOT` (#314).
+
 ### Changed
 
 - `main` restarts from `0e907fea68`, the platform state of 8 May 2026 that a downstream
@@ -19,15 +38,33 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   The previous line of `main`, up to 27 October 2026, is kept on `archive/main-2026-10`. The
   fixes released on `v3.1` after 8 May 2026 and the archived work are to be ported in later pull
   requests.
-- CI runs on Linux: the in-memory adapter suite without a database, the Npgsql adapter suite
-  against a PostgreSQL service container, and the SQL Server adapter, Core database, Core
-  workspace and TypeScript suites against a SQL Server service container. The aggregate check
-  `CI result` stands for the suites; a change to the four Markdown files at the root skips them.
+- The Core and TypeScript suites default to the Snapshot adapter and need no database server: the
+  test projects and the Nuke build use the `config/snapshot` template when `ALLORS_CONFIG_ROOT` is
+  not set (#314). The local workspace tests build their database from the configuration root instead
+  of constructing a Memory database (#317), the remote API tests create their users through the
+  test-only `Test/CreateUser` of the Core test server instead of a database connection of their own
+  (#316), and the shared pull tests compare the objects of a pull without sorting regardless of
+  their order (#318). Every Core and TypeScript suite now runs on the Snapshot adapter, on SQL
+  Server and on PostgreSQL. The Core domain tests run on the Memory adapter, the adapter for a
+  single transaction over a population, unless the configuration root names SQL Server or PostgreSQL
+  (#320).
+- The SqlClient adapter suite skips its provisioning theory, which creates a SQL Server login, when
+  the admin connection names LocalDB, which accepts Windows authentication only (#320).
+- CI runs every suite as a job of its own, in tiers (#320). A pull request to `main` and a push to
+  `main` run on Linux the adapter suites, those of SQL Server and PostgreSQL against service
+  containers, and the Core database, Core workspace and TypeScript suites on the Snapshot adapter. A
+  push to `main` runs those Core and TypeScript suites on SQL Server and PostgreSQL as well. A
+  nightly workflow, which also starts on demand, runs every suite on Windows: the adapter suites,
+  and the Core and TypeScript suites on the Snapshot adapter, on SQL Server LocalDB and on
+  PostgreSQL. The aggregate check `CI result` stands for the suites of a pull request and of a push;
+  a change to the four Markdown files at the root skips them. A push to a `feature/` or `issue/`
+  branch no longer starts a run of its own: a branch runs through its pull request to `main`, or on
+  demand.
 - Nerdbank.GitVersioning versions the line as `3.2.0-alpha.{height}`, with public-release
   versions on `main` and the `v*` branches.
 - The TypeScript workspace runs on nx 23, jest 30 and TypeScript 6 and depends on cross-fetch and
   tslib only.
-- Dependabot keeps the GitHub Actions of the workflow current, in one grouped pull request a week.
+- Dependabot keeps the GitHub Actions of the workflows current, in one grouped pull request a week.
 - The PostgreSQL adapter tests take their admin connection from `ALLORS_NPGSQL`, as the SQL Server
   tests take theirs from `ALLORS_SQLCLIENT`, and create their databases through `Provisioning` in
   `Allors.Database.Adapters.Sql.Npgsql` (#80, released on `v3.1` in June 2026);
@@ -38,6 +75,19 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
 
 - The Local workspace adapter releases its database transaction after Pull, Push and Invoke, and
   Sync selects the roles of the connection's workspace only (#44, #45, #46, #259).
+- Loading a population in the Memory, SqlClient and Npgsql adapters keeps a unit value that
+  precedes a self-closing relation element; the loaders replaced it with an empty value (#306).
+- Loading a population reports every relation of a relation type that the meta population no
+  longer knows; the reporters stepped into the next relation, so the Memory adapter failed such a
+  load and the SQL adapters reported every second relation only (#308).
+- The Memory adapter's extent sort treats two objects without a value for a sort order as equal
+  and lets the next sort order decide; the comparer contradicted itself, so short lists kept an
+  arbitrary order and longer ones could fail the sort (#309).
+- Initializing a database again in the same process forgets the objects of the previous
+  population: Core's database services kept their caches of unique ids, classes, permissions,
+  security and versioned ids across `Init`, `Load` and `Restore`. On PostgreSQL, where the object
+  ids continue after `Init`, the second `Test/Setup` of the Core test server failed; the Snapshot
+  adapter and SQL Server reuse the ids, which hid the stale entries (#319).
 - The System adapter fixes released on `v3.1` in June 2026 (#29, #32 to #36, #38, #39, #41 to #43,
   #47 to #49): the `Union` of ranges keeps an element equal to `default(T)`; the Memory adapter's
   `Like` follows SQL semantics and escapes metacharacters, and the SQL Server adapter's `Like`
