@@ -50,16 +50,16 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   (#320).
 - The SqlClient adapter suite skips its provisioning theory, which creates a SQL Server login, when
   the admin connection names LocalDB, which accepts Windows authentication only (#320).
-- CI runs every suite as a job of its own, in tiers (#320). A pull request to `main` and a push to
-  `main` run on Linux the adapter suites, those of SQL Server and PostgreSQL against service
-  containers, and the Core database, Core workspace and TypeScript suites on the Snapshot adapter. A
-  push to `main` runs those Core and TypeScript suites on SQL Server and PostgreSQL as well. A
-  nightly workflow, which also starts on demand, runs every suite on Windows: the adapter suites,
-  and the Core and TypeScript suites on the Snapshot adapter, on SQL Server LocalDB and on
-  PostgreSQL. The aggregate check `CI result` stands for the suites of a pull request and of a push;
-  a change to the four Markdown files at the root skips them. A push to a `feature/` or `issue/`
-  branch no longer starts a run of its own: a branch runs through its pull request to `main`, or on
-  demand.
+- CI runs every suite as a job of its own, in tiers (#320). A pull request, whatever its base branch
+  (#321), and a push to `main` run on Linux the adapter suites, those of SQL Server and PostgreSQL
+  against service containers, and the Core database, Core workspace and TypeScript suites on the
+  Snapshot adapter. A push to `main` runs those Core and TypeScript suites on SQL Server and
+  PostgreSQL as well. A nightly workflow, which also starts on demand, runs every suite on Windows:
+  the adapter suites, and the Core and TypeScript suites on the Snapshot adapter, on SQL Server
+  LocalDB and on PostgreSQL. The aggregate check `CI result` stands for the suites of a pull request
+  and of a push; a change to the four Markdown files at the root skips them. A push to a `feature/`
+  or `issue/` branch no longer starts a run of its own: a branch runs through its pull request, or
+  on demand.
 - Nerdbank.GitVersioning versions the line as `3.2.0-alpha.{height}`, with public-release
   versions on `main` and the `v*` branches.
 - The TypeScript workspace runs on nx 23, jest 30 and TypeScript 6 and depends on cross-fetch and
