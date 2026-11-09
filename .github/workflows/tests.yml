@@ -1,0 +1,150 @@
+name: Tests
+
+# One leg of the test matrix: the Nuke targets in `targets`, run on `os` with the adapter `provider`.
+# ci.yml calls it for the pull-request and main legs on Linux, nightly.yml for the Windows legs and
+# for runs on demand. A Linux leg gets its database server as a service container; a Windows leg uses
+# the LocalDB and the PostgreSQL that the runner image ships.
+
+on:
+  workflow_call:
+    inputs:
+      os:
+        description: The runner image, ubuntu-latest or windows-latest.
+        required: true
+        type: string
+      provider:
+        description: The adapter of the leg, memory, snapshot, sqlclient or npgsql. It selects the database server and the configuration template.
+        required: true
+        type: string
+      targets:
+        description: The Nuke targets of the leg, as a JSON array.
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+
+env:
+  NODE_OPTIONS: --max_old_space_size=16384
+  CI: 'true'
+  DOTNET_NOLOGO: 'true'
+  DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+  # Clean incrementing versions (3.2.0-alpha.N) with no -g<commit> suffix in CI too.
+  PublicRelease: 'true'
+  # The nx daemon would keep a job alive after the tests.
+  NX_DAEMON: 'false'
+  # Default culture nl-BE: a Linux leg generates the locale, a Windows leg sets the culture.
+  LANG: nl_BE.UTF-8
+  LC_ALL: nl_BE.UTF-8
+
+jobs:
+  run:
+    name: ${{ matrix.target }}
+    runs-on: ${{ inputs.os }}
+    timeout-minutes: 240
+    strategy:
+      fail-fast: false
+      matrix:
+        target: ${{ fromJSON(inputs.targets) }}
+    # A service container runs on Linux only; an empty image leaves the service out.
+    services:
+      sqlserver:
+        image: ${{ inputs.provider == 'sqlclient' && startsWith(inputs.os, 'ubuntu') && 'mcr.microsoft.com/mssql/server:2022-latest' || '' }}
+        env:
+          ACCEPT_EULA: 'Y'
+          MSSQL_SA_PASSWORD: 'Allors123!'
+        ports:
+          - 1433:1433
+        options: >-
+          --health-cmd "/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P 'Allors123!' -Q 'SELECT 1' -b -o /dev/null"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 20
+          --health-start-period 30s
+      postgres:
+        image: ${{ inputs.provider == 'npgsql' && startsWith(inputs.os, 'ubuntu') && 'postgres:16' || '' }}
+        env:
+          POSTGRES_USER: allors
+          POSTGRES_PASSWORD: allors
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U allors"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      # The admin connections: the service containers on Linux; on Windows LocalDB, the default of the
+      # SQL Server admin connection, and the PostgreSQL that the runner image ships.
+      ALLORS_SQLCLIENT: ${{ inputs.provider == 'sqlclient' && startsWith(inputs.os, 'ubuntu') && 'Server=localhost,1433;Database=master;User Id=sa;Password=Allors123!;TrustServerCertificate=true' || '' }}
+      ALLORS_NPGSQL: ${{ inputs.provider == 'npgsql' && (startsWith(inputs.os, 'windows') && 'Server=localhost;Port=5432;User Id=postgres;Password=root' || 'Server=localhost;Port=5432;User Id=allors;Password=allors') || '' }}
+      # The configuration template of the Core suites: the provider's, config/localdb for SQL Server on
+      # Windows, and config/snapshot for the Memory adapter suite, which reads no configuration.
+      PROVIDER: ${{ inputs.provider == 'memory' && 'snapshot' || (inputs.provider == 'sqlclient' && startsWith(inputs.os, 'windows') && 'localdb') || inputs.provider }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          submodules: false
+          fetch-depth: 0      # nbgv needs full history for git-height versioning
+          fetch-tags: true
+      - name: Generate nl-BE locale
+        if: runner.os == 'Linux'
+        run: sudo locale-gen nl_BE.UTF-8 && sudo update-locale
+      - name: Set the culture to nl-BE
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: Set-Culture nl-BE
+      - name: Start LocalDB
+        if: runner.os == 'Windows' && inputs.provider == 'sqlclient'
+        shell: pwsh
+        run: sqllocaldb start MSSQLLocalDB
+      - name: Start PostgreSQL
+        if: runner.os == 'Windows' && inputs.provider == 'npgsql'
+        shell: pwsh
+        run: |
+          $service = Get-Service -Name 'postgresql*' | Select-Object -First 1
+          if (-not $service) { throw 'The runner image has no PostgreSQL service.' }
+          Set-Service -Name $service.Name -StartupType Manual
+          Start-Service -Name $service.Name
+          Write-Host "Started $($service.Name)"
+      - name: Setup .NET SDK (from global.json)
+        uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: global.json
+      - name: Restore .NET local tools
+        run: dotnet tool restore
+      - name: Compute version (nbgv)
+        run: dotnet nbgv cloud
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - name: Run Nuke target ${{ matrix.target }}
+        if: runner.os == 'Linux'
+        run: ./build.sh -target ${{ matrix.target }} --provider ${{ env.PROVIDER }}
+      - name: Run Nuke target ${{ matrix.target }} on Windows
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: ./build.ps1 ${{ matrix.target }} --provider ${{ env.PROVIDER }}
+      - name: Upload TRX artifacts
+        # Diagnostic download only (the report is published from disk by the next step), so upload
+        # just on failure and never let a transient artifact-service flake gate the job.
+        if: failure()
+        continue-on-error: true
+        uses: actions/upload-artifact@v7
+        with:
+          name: trx-${{ matrix.target }}-${{ inputs.provider }}-${{ inputs.os }}
+          path: artifacts/Tests/*.trx
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Publish test results
+        if: always()
+        uses: dorny/test-reporter@v3
+        with:
+          name: ${{ matrix.target }} (${{ inputs.provider }}, ${{ inputs.os }})
+          path: artifacts/Tests/*.trx
+          reporter: dotnet-trx
+          fail-on-error: false

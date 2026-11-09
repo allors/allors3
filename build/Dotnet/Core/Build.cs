@@ -49,6 +49,7 @@ partial class Build
 
     private Target DotnetCoreDatabaseTestDomain => _ => _
         .DependsOn(DotnetCoreGenerate)
+        .DependsOn(DotnetCoreResetDatabase)
         .Executes(() => DotNetTest(s => s
             .SetProjectFile(Paths.DotnetCoreDatabaseDomainTests)
             .AddLoggers("trx;LogFileName=CoreDatabaseDomain.trx")
