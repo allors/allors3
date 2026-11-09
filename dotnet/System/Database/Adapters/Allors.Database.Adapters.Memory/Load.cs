@@ -314,8 +314,12 @@ namespace Allors.Database.Adapters.Memory
                             var associationId = long.Parse(associationIdString);
                             var strategy = this.LoadInstantiateStrategy(associationId);
 
+                            // Reading the content moves the reader to the next record, so whether this
+                            // record is an empty element has to be known before the content is read.
+                            var isEmptyElement = this.reader.IsEmptyElement;
+
                             var value = string.Empty;
-                            if (!this.reader.IsEmptyElement)
+                            if (!isEmptyElement)
                             {
                                 value = this.reader.ReadElementContentAsString();
 
@@ -333,7 +337,7 @@ namespace Allors.Database.Adapters.Memory
                                 try
                                 {
                                     this.transaction.Database.UnitRoleChecks(strategy, relationType.RoleType);
-                                    if (this.reader.IsEmptyElement)
+                                    if (isEmptyElement)
                                     {
                                         var unitType = (IUnit)relationType.RoleType.ObjectType;
                                         switch (unitType.Tag)
