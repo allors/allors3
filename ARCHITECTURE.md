@@ -49,6 +49,12 @@ Test coverage must continue to exercise inheritance, relations, permissions, gen
 and workspace synchronization. Reusable libraries must not carry test routes, test hooks or other
 scaffolding; dedicated test projects are the exception.
 
+Tests run without a database server on the Snapshot adapter, an in-memory database that
+transactions share, when `ALLORS_CONFIG_ROOT` names `config/snapshot`; it reports a write conflict
+as a database server does, so a suite that passes on it does not hide one. The SQL Server and
+PostgreSQL adapters remain the production path, and CI runs the suites on them as well. The Memory
+adapter remains for a single transaction over a population.
+
 ## Configuration and hosting
 
 The Core server, the command-line tool and the API tests take their settings from the

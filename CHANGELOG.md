@@ -7,6 +7,26 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
 
 ## [Unreleased]
 
+### Added
+
+- The Snapshot adapter, `Allors.Database.Adapters.Snapshot`: an in-memory database that many
+  transactions share, also on different threads, for test runs without a database server (#307).
+  A transaction reads the immutable snapshot that was current when it started or when it last
+  committed or rolled back, writes to a private overlay and publishes a new snapshot when it
+  commits; commits are serialised by one lock. A commit fails with `ConcurrencyException`, a
+  `DbException`, when another transaction changed or deleted an object that this transaction
+  changed or deleted after it read it, as a database server does under snapshot isolation; a
+  change to the other end of a relation is reconciled instead (#311). The adapter saves and loads
+  the population format of the other adapters, and `TakeRestorePoint` and `Restore` put a
+  population back without reloading it, so a test suite resets its database in memory.
+  `DatabaseBuilder` accepts the adapter name `snapshot` without a connection string,
+  `config/snapshot` is a configuration root template for it, and CI runs the API tests of the Core
+  test server, the .NET workspace suites and the TypeScript suites on it as well as on SQL Server.
+  The shared adapter tests gain `ConcurrencyTest`, which the Snapshot, SqlClient and Npgsql
+  adapters pass alike, and the Core domain tests and the local workspace tests build their database
+  on the Snapshot adapter instead of the Memory adapter (#312). The Memory adapter remains the
+  adapter for a single transaction over a population.
+
 ### Changed
 
 - `main` restarts from `0e907fea68`, the platform state of 8 May 2026 that a downstream
@@ -38,6 +58,14 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
 
 - The Local workspace adapter releases its database transaction after Pull, Push and Invoke, and
   Sync selects the roles of the connection's workspace only (#44, #45, #46, #259).
+- Loading a population in the Memory, SqlClient and Npgsql adapters keeps a unit value that
+  precedes a self-closing relation element; the loaders replaced it with an empty value (#306).
+- Loading a population reports every relation of a relation type that the meta population no
+  longer knows; the reporters stepped into the next relation, so the Memory adapter failed such a
+  load and the SQL adapters reported every second relation only (#308).
+- The Memory adapter's extent sort treats two objects without a value for a sort order as equal
+  and lets the next sort order decide; the comparer contradicted itself, so short lists kept an
+  arbitrary order and longer ones could fail the sort (#309).
 - The System adapter fixes released on `v3.1` in June 2026 (#29, #32 to #36, #38, #39, #41 to #43,
   #47 to #49): the `Union` of ranges keeps an element equal to `default(T)`; the Memory adapter's
   `Like` follows SQL semantics and escapes metacharacters, and the SQL Server adapter's `Like`
