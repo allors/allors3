@@ -17,8 +17,10 @@ namespace Allors.Database.Adapters.Snapshot
     /// An in-memory database that many transactions, also on different threads, share. The committed
     /// state is an immutable <see cref="Snapshot"/>: a transaction reads the snapshot that was current
     /// when it started or when it last committed or rolled back, writes to a private overlay, and
-    /// publishes a new snapshot when it commits. Commits are serialised by one lock, and when two
-    /// transactions change the same object the last one to commit wins.
+    /// publishes a new snapshot when it commits. Commits are serialised by one lock. A transaction that
+    /// changes or deletes an object which another transaction changed or deleted after this transaction
+    /// read it fails on commit with a <see cref="ConcurrencyException"/>, as it would on a database server;
+    /// a change to the other end of a relation is reconciled instead.
     /// </summary>
     public class Database : IDatabase
     {
@@ -220,6 +222,8 @@ namespace Allors.Database.Adapters.Snapshot
                     throw new InvalidOperationException("The database was initialised, loaded or restored after this transaction started, so its changes can not be committed. Roll back and redo the work in a new transaction.");
                 }
 
+                AssertNoWriteConflicts(baseSnapshot, current, created, roleChanged, deleted);
+
                 var recordById = current.RecordById.ToBuilder();
                 var objectIdsByClass = current.ObjectIdsByClass.ToBuilder();
                 var writable = new Dictionary<long, Record>();
@@ -387,13 +391,9 @@ namespace Allors.Database.Adapters.Snapshot
                     }
                     else
                     {
-                        if (!recordById.TryGetValue(objectId, out var committed))
-                        {
-                            // Another transaction deleted the object since this one started; the deletion stands.
-                            continue;
-                        }
-
-                        ForWrite(objectId).Version = Math.Max(committed.Version, record.Version);
+                        // The conflict check guarantees that the object still exists at the version this
+                        // transaction read.
+                        ForWrite(objectId);
                     }
 
                     replacements.Add(record);
@@ -523,6 +523,42 @@ namespace Allors.Database.Adapters.Snapshot
             else
             {
                 throw new Exception("RelationType not loaded: " + args);
+            }
+        }
+
+        /// <summary>
+        /// A transaction may commit a change to or the deletion of an object only when the object still has
+        /// the version this transaction read. Changes to the other end of a relation are not writes to that
+        /// end; they are reconciled against the current state.
+        /// </summary>
+        private static void AssertNoWriteConflicts(Snapshot baseSnapshot, Snapshot current, HashSet<long> created, HashSet<long> roleChanged, HashSet<long> deleted)
+        {
+            void Check(long objectId)
+            {
+                if (created.Contains(objectId) || !baseSnapshot.RecordById.TryGetValue(objectId, out var read))
+                {
+                    return;
+                }
+
+                if (!current.RecordById.TryGetValue(objectId, out var committed))
+                {
+                    throw new ConcurrencyException($"Object {objectId} of class {read.Class.Name} was deleted by another transaction after this transaction read it. Roll back and redo the work.");
+                }
+
+                if (committed.Version != read.Version)
+                {
+                    throw new ConcurrencyException($"Object {objectId} of class {read.Class.Name} was changed by another transaction after this transaction read it (version {read.Version} then, {committed.Version} now). Roll back and redo the work.");
+                }
+            }
+
+            foreach (var objectId in roleChanged)
+            {
+                Check(objectId);
+            }
+
+            foreach (var objectId in deleted)
+            {
+                Check(objectId);
             }
         }
 

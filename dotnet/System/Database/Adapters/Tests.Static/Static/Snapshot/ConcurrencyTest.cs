@@ -6,6 +6,7 @@
 namespace Allors.Database.Adapters.Snapshot
 {
     using System;
+    using System.Data.Common;
     using System.IO;
     using System.Xml;
     using Adapters;
@@ -67,45 +68,79 @@ namespace Allors.Database.Adapters.Snapshot
         }
 
         [Fact]
-        public void TheLaterCommitOfTheSameObjectWins()
+        public void AWriteConflictNamesTheObjectAndTheCause()
         {
             foreach (var init in this.Inits)
             {
                 init();
 
-                var c1 = C1.Create(this.Transaction);
-                c1.C1AllorsString = "v0";
+                var changed = C1.Create(this.Transaction);
+                var deleted = C1.Create(this.Transaction);
                 this.Transaction.Commit();
-                var version0 = c1.Strategy.ObjectVersion;
+                var version = changed.Strategy.ObjectVersion;
 
-                using (var first = this.Population.CreateTransaction())
-                using (var second = this.Population.CreateTransaction())
+                using (var transaction = this.Population.CreateTransaction())
                 {
-                    var c1First = (C1)first.Instantiate(c1);
-                    var c1Second = (C1)second.Instantiate(c1);
+                    ((C1)transaction.Instantiate(changed)).C1AllorsString = "mine";
 
-                    c1First.C1AllorsString = "first";
-                    c1Second.C1AllorsString = "second";
+                    using (var other = this.Population.CreateTransaction())
+                    {
+                        ((C1)other.Instantiate(changed)).C1AllorsString = "theirs";
+                        other.Commit();
+                    }
 
-                    first.Commit();
-                    Assert.Equal(version0 + 1, c1First.Strategy.ObjectVersion);
+                    var exception = Assert.Throws<ConcurrencyException>(() => transaction.Commit());
+                    Assert.IsAssignableFrom<DbException>(exception);
+                    Assert.Equal($"Object {changed.Id} of class C1 was changed by another transaction after this transaction read it (version {version} then, {version + 1} now). Roll back and redo the work.", exception.Message);
 
-                    second.Commit();
-                    Assert.Equal("second", c1Second.C1AllorsString);
-                    Assert.Equal(version0 + 2, c1Second.Strategy.ObjectVersion);
+                    transaction.Rollback();
+                    ((C1)transaction.Instantiate(deleted)).C1AllorsString = "mine";
+
+                    using (var other = this.Population.CreateTransaction())
+                    {
+                        other.Instantiate(deleted).Strategy.Delete();
+                        other.Commit();
+                    }
+
+                    exception = Assert.Throws<ConcurrencyException>(() => transaction.Commit());
+                    Assert.Equal($"Object {deleted.Id} of class C1 was deleted by another transaction after this transaction read it. Roll back and redo the work.", exception.Message);
                 }
-
-                this.Transaction.Rollback();
-
-                Assert.Equal("second", c1.C1AllorsString);
-                Assert.Equal(version0 + 2, c1.Strategy.ObjectVersion);
             }
         }
 
-        [Theory]
-        [InlineData(false)]
-        [InlineData(true)]
-        public void ConcurrentOneToOneAssignmentsRemainBidirectional(bool sameRole)
+        [Fact]
+        public void ConcurrentOneToOneAssignmentsOfTheSameRoleRemainBidirectional()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+                var association = C1.Create(this.Transaction);
+                var firstRole = C1.Create(this.Transaction);
+                var secondRole = C1.Create(this.Transaction);
+                this.Transaction.Commit();
+                var version = association.Strategy.ObjectVersion;
+
+                // Each transaction writes its own association; the role's inverse is reconciled, not written.
+                using (var first = this.Population.CreateTransaction())
+                using (var second = this.Population.CreateTransaction())
+                {
+                    ((C1)first.Instantiate(association)).C1C1one2one = (C1)first.Instantiate(firstRole);
+                    ((C1)second.Instantiate(secondRole)).C1C1one2one = (C1)second.Instantiate(firstRole);
+
+                    first.Commit();
+                    second.Commit();
+                }
+
+                this.Transaction.Rollback();
+                Assert.Null(association.C1C1one2one);
+                Assert.Equal(firstRole, secondRole.C1C1one2one);
+                Assert.Equal(secondRole, firstRole.C1WhereC1C1one2one);
+                Assert.Equal(version + 2, association.Strategy.ObjectVersion);
+            }
+        }
+
+        [Fact]
+        public void ConcurrentOneToOneAssignmentsOnTheSameAssociationFailTheSecondWriter()
         {
             foreach (var init in this.Inits)
             {
@@ -120,34 +155,17 @@ namespace Allors.Database.Adapters.Snapshot
                 using (var second = this.Population.CreateTransaction())
                 {
                     ((C1)first.Instantiate(association)).C1C1one2one = (C1)first.Instantiate(firstRole);
-                    if (sameRole)
-                    {
-                        ((C1)second.Instantiate(secondRole)).C1C1one2one = (C1)second.Instantiate(firstRole);
-                    }
-                    else
-                    {
-                        ((C1)second.Instantiate(association)).C1C1one2one = (C1)second.Instantiate(secondRole);
-                    }
+                    ((C1)second.Instantiate(association)).C1C1one2one = (C1)second.Instantiate(secondRole);
 
                     first.Commit();
-                    second.Commit();
+                    Assert.Throws<ConcurrencyException>(() => second.Commit());
                 }
 
                 this.Transaction.Rollback();
-                if (sameRole)
-                {
-                    Assert.Null(association.C1C1one2one);
-                    Assert.Equal(firstRole, secondRole.C1C1one2one);
-                    Assert.Equal(secondRole, firstRole.C1WhereC1C1one2one);
-                }
-                else
-                {
-                    Assert.Equal(secondRole, association.C1C1one2one);
-                    Assert.Null(firstRole.C1WhereC1C1one2one);
-                    Assert.Equal(association, secondRole.C1WhereC1C1one2one);
-                }
-
-                Assert.Equal(version + 2, association.Strategy.ObjectVersion);
+                Assert.Equal(firstRole, association.C1C1one2one);
+                Assert.Equal(association, firstRole.C1WhereC1C1one2one);
+                Assert.Null(secondRole.C1WhereC1C1one2one);
+                Assert.Equal(version + 1, association.Strategy.ObjectVersion);
             }
         }
 
@@ -230,42 +248,6 @@ namespace Allors.Database.Adapters.Snapshot
                 Assert.Null(this.Transaction.Instantiate(role.Id));
                 Assert.False(association.ExistC1C1many2manies);
                 Assert.Empty(association.C1C1many2manies);
-            }
-        }
-
-        [Fact]
-        public void ACommitDoesNotRestoreAnObjectAnotherTransactionDeleted()
-        {
-            foreach (var init in this.Inits)
-            {
-                init();
-                var m = this.Transaction.Database.Context().M;
-
-                var deleted = C1.Create(this.Transaction);
-                var other = C1.Create(this.Transaction);
-                this.Transaction.Commit();
-
-                using (var changer = this.Population.CreateTransaction())
-                {
-                    var deletedInChanger = (C1)changer.Instantiate(deleted);
-                    deletedInChanger.C1AllorsString = "changed";
-                    ((C1)changer.Instantiate(other)).C1C1one2one = deletedInChanger;
-
-                    using (var deleter = this.Population.CreateTransaction())
-                    {
-                        deleter.Instantiate(deleted).Strategy.Delete();
-                        deleter.Commit();
-                    }
-
-                    changer.Commit();
-                }
-
-                this.Transaction.Rollback();
-
-                Assert.Null(this.Transaction.Instantiate(deleted.Id));
-                Assert.Single(this.Transaction.Extent(m.C1));
-                Assert.False(other.ExistC1C1one2one);
-                Assert.Null(other.C1C1one2one);
             }
         }
     }
