@@ -29,8 +29,13 @@ namespace Tests
         [Fact]
         public void PullRetriesOnDbException()
         {
+            // The failure under test is a SQL command's.
+            if (this.Transaction.Database is not SqlDatabase database)
+            {
+                return;
+            }
+
             var sink = new Sink();
-            var database = (SqlDatabase)this.Transaction.Database;
             database.Sink = sink;
 
             this.Transaction = database.CreateTransaction();

@@ -30,7 +30,11 @@ namespace Tests
             configurationBuilder.AddAllorsConfiguration("core");
 
             var configuration = configurationBuilder.Build();
-            configuration.Require("adapter", "ConnectionStrings:DefaultConnection");
+            configuration.Require("adapter");
+            if (DatabaseBuilder.HasDatabaseServer(configuration["adapter"]))
+            {
+                configuration.Require("ConnectionStrings:DefaultConnection");
+            }
 
             var metaPopulation = new MetaBuilder().Build();
             var rules = Rules.Create(metaPopulation);

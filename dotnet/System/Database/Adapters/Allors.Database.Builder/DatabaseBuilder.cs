@@ -39,6 +39,13 @@ namespace Allors.Database.Adapters
                 case "MEMORY":
                     throw new NotImplementedException();
 
+                case "SNAPSHOT":
+
+                    return new Snapshot.Database(this.scope, new Snapshot.Configuration
+                    {
+                        ObjectFactory = this.objectFactory,
+                    });
+
                 case "NPGSQL":
 
                     return new Sql.Npgsql.Database(this.scope, new Sql.Configuration
@@ -64,10 +71,32 @@ namespace Allors.Database.Adapters
             }
         }
 
+        /// <summary>
+        /// Whether the adapter that <paramref name="adapter"/> names keeps its data in a database server, which
+        /// a program reaches through <c>ConnectionStrings:DefaultConnection</c> and manages through
+        /// <see cref="DatabaseProvisioning"/>. The <c>snapshot</c> adapter keeps its data in memory and needs
+        /// neither.
+        /// </summary>
+        public static bool HasDatabaseServer(string adapter)
+        {
+            switch (adapter?.Trim().ToUpperInvariant())
+            {
+                case "SNAPSHOT":
+                    return false;
+
+                case "NPGSQL":
+                case "SQLCLIENT":
+                    return true;
+
+                default:
+                    throw UnknownAdapter(adapter);
+            }
+        }
+
         internal static ArgumentOutOfRangeException UnknownAdapter(string adapter) =>
             string.IsNullOrWhiteSpace(adapter)
-                ? new ArgumentOutOfRangeException(nameof(adapter), "The setting 'adapter' has no value. Set it to 'sqlclient' or 'npgsql'.")
-                : new ArgumentOutOfRangeException(nameof(adapter), $"The setting 'adapter' is '{adapter}'. Set it to 'sqlclient' or 'npgsql'.");
+                ? new ArgumentOutOfRangeException(nameof(adapter), "The setting 'adapter' has no value. Set it to 'snapshot', 'sqlclient' or 'npgsql'.")
+                : new ArgumentOutOfRangeException(nameof(adapter), $"The setting 'adapter' is '{adapter}'. Set it to 'snapshot', 'sqlclient' or 'npgsql'.");
 
         internal static string RequireConnectionString(string connectionString) =>
             string.IsNullOrWhiteSpace(connectionString)

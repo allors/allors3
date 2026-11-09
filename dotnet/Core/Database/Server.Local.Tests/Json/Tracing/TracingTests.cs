@@ -31,10 +31,15 @@ namespace Tests
         [Fact]
         public void PullManyObjects()
         {
+            // The events under test are those of the SQL adapters.
+            if (this.Transaction.Database is not Database database)
+            {
+                return;
+            }
+
             this.Populate();
 
             var sink = new Sink();
-            var database = (Database)this.Transaction.Database;
             database.Sink = sink;
 
             this.Transaction = database.CreateTransaction();
@@ -83,10 +88,15 @@ namespace Tests
         [Fact]
         public void PullInclude()
         {
+            // The events under test are those of the SQL adapters.
+            if (this.Transaction.Database is not Database database)
+            {
+                return;
+            }
+
             this.Populate();
 
             var sink = new Sink();
-            var database = (Database)this.Transaction.Database;
             database.Sink = sink;
 
             this.Transaction = database.CreateTransaction();
@@ -148,10 +158,15 @@ namespace Tests
         [Fact]
         public void Sync()
         {
+            // The events under test are those of the SQL adapters.
+            if (this.Transaction.Database is not Database database)
+            {
+                return;
+            }
+
             this.Populate();
 
             var sink = new Sink();
-            var database = (Database)this.Transaction.Database;
             database.Sink = sink;
 
             this.Transaction = database.CreateTransaction();

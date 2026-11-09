@@ -22,10 +22,18 @@ namespace Commands
 
             var configuration = this.Parent.Configuration;
             var adapter = configuration["adapter"];
-            var connectionString = configuration["ConnectionStrings:DefaultConnection"];
 
-            this.Logger.Info("Dropping and creating the database {database} ({adapter})", DatabaseProvisioning.DatabaseName(adapter, connectionString), adapter);
-            DatabaseProvisioning.DropCreate(adapter, connectionString);
+            if (!DatabaseBuilder.HasDatabaseServer(adapter))
+            {
+                this.Logger.Info("The {adapter} adapter keeps its data in memory; there is no database to drop or create", adapter);
+            }
+            else
+            {
+                var connectionString = configuration["ConnectionStrings:DefaultConnection"];
+
+                this.Logger.Info("Dropping and creating the database {database} ({adapter})", DatabaseProvisioning.DatabaseName(adapter, connectionString), adapter);
+                DatabaseProvisioning.DropCreate(adapter, connectionString);
+            }
 
             this.Logger.Info("End");
 
