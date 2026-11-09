@@ -1071,6 +1071,82 @@ namespace Allors.Database.Adapters
             }
         }
 
+        [Fact]
+        public void LoadUnitBeforeEmptyElement()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+
+                long firstId;
+                long emptyId;
+                long lastId;
+                string xml;
+
+                var otherPopulation = this.CreatePopulation();
+                using (var otherTransaction = otherPopulation.CreateTransaction())
+                {
+                    var first = C1.Create(otherTransaction);
+                    var empty = C1.Create(otherTransaction);
+                    var last = C1.Create(otherTransaction);
+
+                    first.C1AllorsString = "first";
+                    empty.C1AllorsString = string.Empty;
+                    last.C1AllorsString = "last";
+
+                    first.C1AllorsBinary = new byte[] { 1 };
+                    empty.C1AllorsBinary = Array.Empty<byte>();
+                    last.C1AllorsBinary = new byte[] { 3 };
+
+                    otherTransaction.Commit();
+
+                    firstId = first.Id;
+                    emptyId = empty.Id;
+                    lastId = last.Id;
+
+                    xml = DoSave(otherPopulation);
+                }
+
+                // A writer may render an empty value as a self-closing element.
+                var xmlDocument = new XmlDocument();
+                xmlDocument.LoadXml(xml);
+                foreach (XmlElement relation in xmlDocument.SelectNodes("//" + Serialization.Relation))
+                {
+                    if (!relation.HasChildNodes)
+                    {
+                        relation.IsEmpty = true;
+                    }
+                }
+
+                xml = xmlDocument.OuterXml;
+                Assert.Contains("/>", xml);
+
+                DoLoad(this.Population, xml);
+
+                using (var transaction = this.Population.CreateTransaction())
+                {
+                    var first = (C1)transaction.Instantiate(firstId);
+                    var empty = (C1)transaction.Instantiate(emptyId);
+                    var last = (C1)transaction.Instantiate(lastId);
+
+                    Assert.Equal("first", first.C1AllorsString);
+                    Assert.Equal("last", last.C1AllorsString);
+                    if (this.EmptyStringIsNull)
+                    {
+                        Assert.False(empty.ExistC1AllorsString);
+                    }
+                    else
+                    {
+                        Assert.Equal(string.Empty, empty.C1AllorsString);
+                    }
+
+                    Assert.Equal(new byte[] { 1 }, first.C1AllorsBinary);
+                    Assert.Equal(Array.Empty<byte>(), empty.C1AllorsBinary);
+                    Assert.Equal(new byte[] { 3 }, last.C1AllorsBinary);
+                }
+            }
+        }
+
         protected abstract IDatabase CreatePopulation();
 
         private static string DoSave(IDatabase otherPopulation)
