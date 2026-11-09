@@ -102,6 +102,137 @@ namespace Allors.Database.Adapters.Snapshot
             }
         }
 
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void ConcurrentOneToOneAssignmentsRemainBidirectional(bool sameRole)
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+                var association = C1.Create(this.Transaction);
+                var firstRole = C1.Create(this.Transaction);
+                var secondRole = C1.Create(this.Transaction);
+                this.Transaction.Commit();
+                var version = association.Strategy.ObjectVersion;
+
+                using (var first = this.Population.CreateTransaction())
+                using (var second = this.Population.CreateTransaction())
+                {
+                    ((C1)first.Instantiate(association)).C1C1one2one = (C1)first.Instantiate(firstRole);
+                    if (sameRole)
+                    {
+                        ((C1)second.Instantiate(secondRole)).C1C1one2one = (C1)second.Instantiate(firstRole);
+                    }
+                    else
+                    {
+                        ((C1)second.Instantiate(association)).C1C1one2one = (C1)second.Instantiate(secondRole);
+                    }
+
+                    first.Commit();
+                    second.Commit();
+                }
+
+                this.Transaction.Rollback();
+                if (sameRole)
+                {
+                    Assert.Null(association.C1C1one2one);
+                    Assert.Equal(firstRole, secondRole.C1C1one2one);
+                    Assert.Equal(secondRole, firstRole.C1WhereC1C1one2one);
+                }
+                else
+                {
+                    Assert.Equal(secondRole, association.C1C1one2one);
+                    Assert.Null(firstRole.C1WhereC1C1one2one);
+                    Assert.Equal(association, secondRole.C1WhereC1C1one2one);
+                }
+
+                Assert.Equal(version + 2, association.Strategy.ObjectVersion);
+            }
+        }
+
+        [Fact]
+        public void ConcurrentManyToOneAssignmentsKeepBothAssociations()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+                var firstAssociation = C1.Create(this.Transaction);
+                var secondAssociation = C1.Create(this.Transaction);
+                var role = C1.Create(this.Transaction);
+                this.Transaction.Commit();
+
+                using (var first = this.Population.CreateTransaction())
+                using (var second = this.Population.CreateTransaction())
+                {
+                    ((C1)first.Instantiate(firstAssociation)).C1C1many2one = (C1)first.Instantiate(role);
+                    ((C1)second.Instantiate(secondAssociation)).C1C1many2one = (C1)second.Instantiate(role);
+                    first.Commit();
+                    second.Commit();
+                }
+
+                this.Transaction.Rollback();
+                Assert.Equal(role, firstAssociation.C1C1many2one);
+                Assert.Equal(role, secondAssociation.C1C1many2one);
+                Assert.Contains(firstAssociation, role.C1sWhereC1C1many2one);
+                Assert.Contains(secondAssociation, role.C1sWhereC1C1many2one);
+            }
+        }
+
+        [Fact]
+        public void ConcurrentAssociationChangePreservesCommittedRoles()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+                var association = C1.Create(this.Transaction);
+                var role = C1.Create(this.Transaction);
+                role.C1AllorsString = "before";
+                this.Transaction.Commit();
+                var version = role.Strategy.ObjectVersion;
+
+                using (var first = this.Population.CreateTransaction())
+                using (var second = this.Population.CreateTransaction())
+                {
+                    ((C1)first.Instantiate(role)).C1AllorsString = "after";
+                    ((C1)second.Instantiate(association)).C1C1many2one = (C1)second.Instantiate(role);
+                    first.Commit();
+                    second.Commit();
+                }
+
+                this.Transaction.Rollback();
+                Assert.Equal("after", role.C1AllorsString);
+                Assert.Equal(version + 1, role.Strategy.ObjectVersion);
+                Assert.Equal(association, Assert.Single(role.C1sWhereC1C1many2one));
+            }
+        }
+
+        [Fact]
+        public void DeletionRemovesRelationsCommittedAfterTheTransactionStarted()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+                var association = C1.Create(this.Transaction);
+                var role = C1.Create(this.Transaction);
+                this.Transaction.Commit();
+
+                using (var deleter = this.Population.CreateTransaction())
+                using (var changer = this.Population.CreateTransaction())
+                {
+                    ((C1)changer.Instantiate(association)).AddC1C1many2many((C1)changer.Instantiate(role));
+                    changer.Commit();
+                    deleter.Instantiate(role).Strategy.Delete();
+                    deleter.Commit();
+                }
+
+                this.Transaction.Rollback();
+                Assert.Null(this.Transaction.Instantiate(role.Id));
+                Assert.False(association.ExistC1C1many2manies);
+                Assert.Empty(association.C1C1many2manies);
+            }
+        }
+
         [Fact]
         public void ACommitDoesNotRestoreAnObjectAnotherTransactionDeleted()
         {

@@ -47,33 +47,34 @@ namespace Allors.Database.Adapters.Snapshot
 
         public void Commit()
         {
-            if (this.overlay.Count > 0 || this.deleted.Count > 0)
-            {
-                this.baseSnapshot = this.Database.Commit(this.baseSnapshot, this.overlay, this.created, this.roleChanged, this.deleted);
-            }
-            else
-            {
-                this.baseSnapshot = this.Database.CurrentSnapshot;
-            }
+            var snapshot = this.overlay.Count > 0 || this.deleted.Count > 0
+                ? this.Database.Commit(this.baseSnapshot, this.overlay, this.created, this.roleChanged, this.deleted)
+                : this.Database.CurrentSnapshot;
 
             foreach (var objectId in this.deleted)
             {
-                this.strategyByObjectId.Remove(objectId);
+                if (this.strategyByObjectId.Remove(objectId, out var strategy))
+                {
+                    strategy.Invalidate();
+                }
             }
 
-            this.Reset();
+            this.Reset(snapshot);
         }
 
         public void Rollback()
         {
-            this.baseSnapshot = this.Database.CurrentSnapshot;
+            var snapshot = this.Database.CurrentSnapshot;
 
             foreach (var objectId in this.created)
             {
-                this.strategyByObjectId.Remove(objectId);
+                if (this.strategyByObjectId.Remove(objectId, out var strategy))
+                {
+                    strategy.Invalidate();
+                }
             }
 
-            this.Reset();
+            this.Reset(snapshot);
         }
 
         public void Dispose() => this.Rollback();
@@ -342,8 +343,21 @@ namespace Allors.Database.Adapters.Snapshot
             }
         }
 
-        private void Reset()
+        private void Reset(Snapshot snapshot)
         {
+            if (this.baseSnapshot.Epoch != snapshot.Epoch)
+            {
+                foreach (var kvp in this.strategyByObjectId.ToArray())
+                {
+                    if (!snapshot.RecordById.TryGetValue(kvp.Key, out var record) || kvp.Value.UncheckedObjectType != record.Class)
+                    {
+                        kvp.Value.Invalidate();
+                        this.strategyByObjectId.Remove(kvp.Key);
+                    }
+                }
+            }
+
+            this.baseSnapshot = snapshot;
             this.overlay = new Dictionary<long, Record>();
             this.created = new HashSet<long>();
             this.roleChanged = new HashSet<long>();

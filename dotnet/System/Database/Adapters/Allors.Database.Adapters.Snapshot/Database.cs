@@ -222,29 +222,170 @@ namespace Allors.Database.Adapters.Snapshot
 
                 var recordById = current.RecordById.ToBuilder();
                 var objectIdsByClass = current.ObjectIdsByClass.ToBuilder();
+                var writable = new Dictionary<long, Record>();
+                var changedRoles = new HashSet<long>();
+
+                Record ForWrite(long objectId)
+                {
+                    if (!writable.TryGetValue(objectId, out var record))
+                    {
+                        record = recordById[objectId].Clone();
+                        writable[objectId] = record;
+                        recordById[objectId] = record;
+                    }
+
+                    return record;
+                }
+
+                void RemoveRelation(IRoleType roleType, long associationId, long roleId)
+                {
+                    if (recordById.TryGetValue(associationId, out var association))
+                    {
+                        if (roleType.IsOne)
+                        {
+                            if (association.GetCompositeRole(roleType) == roleId)
+                            {
+                                ForWrite(associationId).SetCompositeRole(roleType, 0);
+                                changedRoles.Add(associationId);
+                            }
+                        }
+                        else if (association.GetCompositesRole(roleType).Contains(roleId))
+                        {
+                            ForWrite(associationId).RemoveCompositesRole(roleType, roleId);
+                            changedRoles.Add(associationId);
+                        }
+                    }
+
+                    if (recordById.TryGetValue(roleId, out var role))
+                    {
+                        var associationType = roleType.AssociationType;
+                        if (associationType.IsOne)
+                        {
+                            if (role.GetCompositeAssociation(associationType) == associationId)
+                            {
+                                ForWrite(roleId).SetCompositeAssociation(associationType, 0);
+                            }
+                        }
+                        else if (role.GetCompositesAssociation(associationType).Contains(associationId))
+                        {
+                            ForWrite(roleId).RemoveCompositesAssociation(associationType, associationId);
+                        }
+                    }
+                }
+
+                void AddRelation(IRoleType roleType, long associationId, long roleId)
+                {
+                    // A deletion committed since this transaction started still wins.
+                    if (!recordById.TryGetValue(associationId, out var association) ||
+                        !recordById.TryGetValue(roleId, out var role))
+                    {
+                        return;
+                    }
+
+                    var associationType = roleType.AssociationType;
+                    if (associationType.IsOne)
+                    {
+                        var previousAssociationId = role.GetCompositeAssociation(associationType);
+                        if (previousAssociationId != 0 && previousAssociationId != associationId)
+                        {
+                            RemoveRelation(roleType, previousAssociationId, roleId);
+                        }
+                    }
+
+                    if (roleType.IsOne)
+                    {
+                        var previousRoleId = association.GetCompositeRole(roleType);
+                        if (previousRoleId != roleId)
+                        {
+                            if (previousRoleId != 0)
+                            {
+                                RemoveRelation(roleType, associationId, previousRoleId);
+                            }
+
+                            ForWrite(associationId).SetCompositeRole(roleType, roleId);
+                            changedRoles.Add(associationId);
+                        }
+                    }
+                    else if (!association.GetCompositesRole(roleType).Contains(roleId))
+                    {
+                        ForWrite(associationId).AddCompositesRole(roleType, roleId);
+                        changedRoles.Add(associationId);
+                    }
+
+                    if (associationType.IsOne)
+                    {
+                        if (role.GetCompositeAssociation(associationType) != associationId)
+                        {
+                            ForWrite(roleId).SetCompositeAssociation(associationType, associationId);
+                        }
+                    }
+                    else if (!role.GetCompositesAssociation(associationType).Contains(associationId))
+                    {
+                        ForWrite(roleId).AddCompositesAssociation(associationType, associationId);
+                    }
+                }
 
                 foreach (var objectId in deleted)
                 {
                     if (recordById.TryGetValue(objectId, out var record))
                     {
+                        // Use the current relations, including those committed after the deleter started.
+                        foreach (var relation in record.CompositeRoles())
+                        {
+                            RemoveRelation(relation.Key, objectId, relation.Value);
+                        }
+
+                        foreach (var relation in record.CompositesRoles())
+                        {
+                            foreach (var roleId in relation.Value)
+                            {
+                                RemoveRelation(relation.Key, objectId, roleId);
+                            }
+                        }
+
+                        foreach (var associationType in record.Layout.CompositeAssociationTypes)
+                        {
+                            var associationId = record.GetCompositeAssociation(associationType);
+                            if (associationId != 0)
+                            {
+                                RemoveRelation(associationType.RoleType, associationId, objectId);
+                            }
+                        }
+
+                        foreach (var associationType in record.Layout.CompositesAssociationTypes)
+                        {
+                            foreach (var associationId in record.GetCompositesAssociation(associationType))
+                            {
+                                RemoveRelation(associationType.RoleType, associationId, objectId);
+                            }
+                        }
+
                         recordById.Remove(objectId);
+                        writable.Remove(objectId);
                         RemoveObjectId(objectIdsByClass, record.Class, objectId);
                     }
                 }
 
-                var bumpVersions = !this.IsLoading;
+                var replacements = new List<Record>();
                 foreach (var kvp in overlay)
                 {
                     var objectId = kvp.Key;
-                    if (deleted.Contains(objectId))
+                    var isCreated = created.Contains(objectId);
+                    if (deleted.Contains(objectId) || (!isCreated && !roleChanged.Contains(objectId)))
                     {
                         continue;
                     }
 
                     var record = kvp.Value;
-                    var isCreated = created.Contains(objectId);
-
-                    if (!isCreated)
+                    if (isCreated)
+                    {
+                        // Install every new object before resolving relations between new objects.
+                        var added = new Record(record.Layout, objectId, record.Version);
+                        recordById[objectId] = added;
+                        writable[objectId] = added;
+                        AddObjectId(objectIdsByClass, record.Class, objectId);
+                    }
+                    else
                     {
                         if (!recordById.TryGetValue(objectId, out var committed))
                         {
@@ -252,24 +393,69 @@ namespace Allors.Database.Adapters.Snapshot
                             continue;
                         }
 
-                        // When the later of two transactions that changed the same object wins, its version still
-                        // moves past the version the earlier one committed.
-                        if (committed.Version > record.Version)
+                        ForWrite(objectId).Version = Math.Max(committed.Version, record.Version);
+                    }
+
+                    replacements.Add(record);
+                    if (roleChanged.Contains(objectId))
+                    {
+                        changedRoles.Add(objectId);
+                    }
+                }
+
+                // Forward roles are authoritative. Keep current inverse associations and reconcile both
+                // ends, rather than publishing the inverse arrays captured by a stale transaction.
+                foreach (var replacement in replacements)
+                {
+                    var objectId = replacement.ObjectId;
+                    var record = ForWrite(objectId);
+                    record.CopyUnitRolesFrom(replacement);
+
+                    foreach (var relation in record.CompositeRoles())
+                    {
+                        if (replacement.GetCompositeRole(relation.Key) != relation.Value || !recordById.ContainsKey(relation.Value))
                         {
-                            record.Version = committed.Version;
+                            RemoveRelation(relation.Key, objectId, relation.Value);
                         }
                     }
 
-                    if (bumpVersions && roleChanged.Contains(objectId))
+                    foreach (var relation in record.CompositesRoles())
                     {
-                        record.Version++;
+                        var desired = replacement.GetCompositesRole(relation.Key);
+                        foreach (var roleId in relation.Value)
+                        {
+                            if (!desired.Contains(roleId) || !recordById.ContainsKey(roleId))
+                            {
+                                RemoveRelation(relation.Key, objectId, roleId);
+                            }
+                        }
+                    }
+                }
+
+                foreach (var replacement in replacements)
+                {
+                    foreach (var relation in replacement.CompositeRoles())
+                    {
+                        AddRelation(relation.Key, replacement.ObjectId, relation.Value);
                     }
 
-                    recordById[objectId] = record;
-
-                    if (isCreated)
+                    foreach (var relation in replacement.CompositesRoles())
                     {
-                        AddObjectId(objectIdsByClass, record.Class, objectId);
+                        foreach (var roleId in relation.Value)
+                        {
+                            AddRelation(relation.Key, replacement.ObjectId, roleId);
+                        }
+                    }
+                }
+
+                if (!this.IsLoading)
+                {
+                    foreach (var objectId in changedRoles)
+                    {
+                        if (recordById.ContainsKey(objectId))
+                        {
+                            ForWrite(objectId).Version++;
+                        }
                     }
                 }
 

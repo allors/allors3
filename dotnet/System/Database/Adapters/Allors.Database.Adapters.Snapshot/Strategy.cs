@@ -21,6 +21,7 @@ namespace Allors.Database.Adapters.Snapshot
         private readonly long objectId;
         private IClass @class;
         private IObject allorsObject;
+        private bool invalidated;
 
         internal Strategy(Transaction transaction, long objectId)
         {
@@ -53,7 +54,7 @@ namespace Allors.Database.Adapters.Snapshot
 
         private ChangeLog ChangeLog => this.Transaction.ChangeLog;
 
-        private Record Record => this.Transaction.ResolveRecord(this.objectId);
+        private Record Record => this.invalidated ? null : this.Transaction.ResolveRecord(this.objectId);
 
         public override string ToString() => (this.UncheckedObjectType?.Name ?? "?") + " " + this.objectId;
 
@@ -108,7 +109,8 @@ namespace Allors.Database.Adapters.Snapshot
         public object GetUnitRole(IRoleType roleType)
         {
             this.AssertNotDeleted();
-            return this.GetInternalizedUnitRole(roleType);
+            var value = this.GetInternalizedUnitRole(roleType);
+            return value is byte[] binary ? (byte[])binary.Clone() : value;
         }
 
         public void SetUnitRole(IRoleType roleType, object role)
@@ -119,14 +121,14 @@ namespace Allors.Database.Adapters.Snapshot
             var previousRole = this.GetInternalizedUnitRole(roleType);
             role = roleType.Normalize(role);
 
-            if (Equals(role, previousRole))
+            if (UnitEquals(role, previousRole))
             {
                 return;
             }
 
             this.ChangeLog.OnChangingUnitRole(this, roleType, previousRole);
 
-            this.WritableRecordForRole().SetUnitRole(roleType, role);
+            this.WritableRecordForRole().SetUnitRole(roleType, role is byte[] binary ? (byte[])binary.Clone() : role);
         }
 
         public void RemoveUnitRole(IRoleType roleType) => this.SetUnitRole(roleType, null);
@@ -414,6 +416,8 @@ namespace Allors.Database.Adapters.Snapshot
 
         internal object GetInternalizedUnitRole(IRoleType roleType) => this.Record?.GetUnitRole(roleType);
 
+        internal void Invalidate() => this.invalidated = true;
+
         internal void SetCompositeRoleOne2One(IRoleType roleType, Strategy @new)
         {
             this.AssertNotDeleted();
@@ -550,7 +554,7 @@ namespace Allors.Database.Adapters.Snapshot
             }
         }
 
-        internal bool ShouldTrim(IRoleType roleType, object originalRole) => Equals(this.GetInternalizedUnitRole(roleType), originalRole);
+        internal bool ShouldTrim(IRoleType roleType, object originalRole) => UnitEquals(this.GetInternalizedUnitRole(roleType), originalRole);
 
         internal bool ShouldTrim(IRoleType roleType, Strategy originalRole) => (this.Record?.GetCompositeRole(roleType) ?? 0) == (originalRole?.objectId ?? 0);
 
@@ -559,6 +563,11 @@ namespace Allors.Database.Adapters.Snapshot
         internal bool ShouldTrim(IAssociationType associationType, Strategy originalAssociation) => (this.Record?.GetCompositeAssociation(associationType) ?? 0) == (originalAssociation?.objectId ?? 0);
 
         internal bool ShouldTrim(IAssociationType associationType, Strategy[] originalAssociation) => SetEquals(this.Record?.GetCompositesAssociation(associationType), originalAssociation);
+
+        private static bool UnitEquals(object first, object second) =>
+            first is byte[] firstBinary && second is byte[] secondBinary
+                ? firstBinary.SequenceEqual(secondBinary)
+                : Equals(first, second);
 
         private static bool SetEquals(ImmutableSortedSet<long> objectIds, Strategy[] strategies)
         {

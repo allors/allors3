@@ -24,8 +24,14 @@ namespace Allors.Database.Adapters.Snapshot
         public int Compare(Strategy thisStrategy, Strategy thatStrategy)
         {
             var thisValue = thisStrategy.GetInternalizedUnitRole(this.roleType) as IComparable;
+            var thatValue = thatStrategy.GetInternalizedUnitRole(this.roleType) as IComparable;
 
-            if (thisValue == null || !(thatStrategy.GetInternalizedUnitRole(this.roleType) is IComparable thatValue))
+            if (thisValue == null && thatValue == null)
+            {
+                return this.subSorter?.Compare(thisStrategy, thatStrategy) ?? 0;
+            }
+
+            if (thisValue == null || thatValue == null)
             {
                 // Ascending
                 if (this.direction == SortDirection.Ascending)

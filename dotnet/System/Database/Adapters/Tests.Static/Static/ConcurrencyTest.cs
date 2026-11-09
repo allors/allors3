@@ -209,7 +209,7 @@ namespace Allors.Database.Adapters
                 this.Transaction.Commit();
 
                 var exceptions = new ConcurrentBag<Exception>();
-                var committed = 0;
+                var writerCompleted = false;
 
                 var writer = new Thread(() =>
                 {
@@ -230,13 +230,15 @@ namespace Allors.Database.Adapters
 
                                 transaction.Commit();
                             }
-
-                            Interlocked.Increment(ref committed);
                         }
                     }
                     catch (Exception e)
                     {
                         exceptions.Add(e);
+                    }
+                    finally
+                    {
+                        Volatile.Write(ref writerCompleted, true);
                     }
                 });
 
@@ -259,7 +261,7 @@ namespace Allors.Database.Adapters
                                 }
                             }
                         }
-                        while (Volatile.Read(ref committed) < commitCount);
+                        while (!Volatile.Read(ref writerCompleted));
                     }
                     catch (Exception e)
                     {

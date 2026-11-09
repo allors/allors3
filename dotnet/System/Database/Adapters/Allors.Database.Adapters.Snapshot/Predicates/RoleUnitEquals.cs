@@ -65,7 +65,11 @@ namespace Allors.Database.Adapters.Snapshot
                 return ThreeValuedLogic.False;
             }
 
-            return value.Equals(equalsValue)
+            var valuesEqual = value is byte[] binary && equalsValue is byte[] otherBinary
+                ? binary.AsSpan().SequenceEqual(otherBinary)
+                : value.Equals(equalsValue);
+
+            return valuesEqual
                        ? ThreeValuedLogic.True
                        : ThreeValuedLogic.False;
         }

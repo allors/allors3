@@ -8,6 +8,7 @@ namespace Allors.Database.Adapters.Snapshot
     using System;
     using Xunit;
     using C1 = Domain.C1;
+    using C2 = Domain.C2;
 
     public class RestorePointTest : IDisposable
     {
@@ -60,6 +61,32 @@ namespace Allors.Database.Adapters.Snapshot
                 Assert.Equal(first.Id, second.Id);
                 Assert.Equal("kept", kept.C1AllorsString);
                 Assert.Equal(2, transaction.Extent(m.C1).Count);
+
+                database.Restore(restorePoint);
+                transaction.Rollback();
+                using (var writer = database.CreateTransaction())
+                {
+                    var replacement = C2.Create(writer);
+                    Assert.Equal(first.Id, replacement.Id);
+                    writer.Commit();
+                }
+
+                transaction.Rollback();
+                Assert.IsType<C2>(transaction.Instantiate(first.Id));
+                Assert.Single(transaction.Extent(m.C2).ToArray());
+                Assert.True(second.Strategy.IsDeleted);
+
+                database.Restore(restorePoint);
+                using (var writer = database.CreateTransaction())
+                {
+                    Assert.Equal(first.Id, C1.Create(writer).Id);
+                    writer.Commit();
+                }
+
+                transaction.Commit();
+                Assert.IsType<C1>(transaction.Instantiate(first.Id));
+                Assert.Empty(transaction.Extent(m.C2));
+                Assert.Equal("kept", kept.C1AllorsString);
             }
         }
 

@@ -52,6 +52,8 @@ namespace Allors.Database.Adapters.Snapshot
 
         internal Record Clone() => new Record(this);
 
+        internal void CopyUnitRolesFrom(Record source) => this.unitRoles = (object[])source.unitRoles?.Clone();
+
         internal object GetUnitRole(IRoleType roleType) =>
             this.unitRoles != null && this.Layout.TryGetUnitRoleOrdinal(roleType, out var ordinal) ? this.unitRoles[ordinal] : null;
 
