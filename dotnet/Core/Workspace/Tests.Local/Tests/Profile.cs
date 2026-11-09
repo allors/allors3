@@ -9,7 +9,7 @@ namespace Tests.Workspace.Local
     using System.Linq;
     using System.Threading.Tasks;
     using Allors.Database;
-    using Allors.Database.Adapters.Memory;
+    using Allors.Database.Adapters;
     using Allors.Database.Configuration;
     using Allors.Database.Domain;
     using Allors.Database.Services;
@@ -20,6 +20,7 @@ namespace Tests.Workspace.Local
     using Allors.Workspace.Domain;
     using Allors.Workspace.Meta;
     using Allors.Workspace.Meta.Lazy;
+    using Microsoft.Extensions.Configuration;
     using Configuration = Allors.Workspace.Adapters.Local.Configuration;
     using DatabaseConnection = Allors.Workspace.Adapters.Local.DatabaseConnection;
     using IWorkspaceServices = Allors.Workspace.IWorkspaceServices;
@@ -34,7 +35,7 @@ namespace Tests.Workspace.Local
 
         private User user;
 
-        public Database Database { get; }
+        public IDatabase Database { get; }
 
         public DatabaseConnection DatabaseConnection { get; private set; }
 
@@ -54,12 +55,18 @@ namespace Tests.Workspace.Local
             var rules = new IRule[] { new PersonSessionFullNameRule(metaPopulation) };
             this.configuration = new Configuration("Default", metaPopulation, objectFactory, rules);
 
-            this.Database = new Database(
+            // The adapter comes from the configuration root, config/snapshot unless ALLORS_CONFIG_ROOT says otherwise.
+            var databaseConfiguration = new ConfigurationBuilder().AddAllorsConfiguration("core").Build();
+            databaseConfiguration.Require("adapter");
+            if (DatabaseBuilder.HasDatabaseServer(databaseConfiguration["adapter"]))
+            {
+                databaseConfiguration.Require("ConnectionStrings:DefaultConnection");
+            }
+
+            this.Database = new DatabaseBuilder(
                 new DefaultDatabaseServices(fixture.Engine),
-                new Allors.Database.Adapters.Memory.Configuration
-                {
-                    ObjectFactory = new ObjectFactory(fixture.M, typeof(Allors.Database.Domain.Person)),
-                });
+                databaseConfiguration,
+                new ObjectFactory(fixture.M, typeof(Allors.Database.Domain.Person))).Build();
 
             this.Database.Init();
 
