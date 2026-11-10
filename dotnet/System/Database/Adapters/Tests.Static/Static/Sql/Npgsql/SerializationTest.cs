@@ -3,14 +3,16 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Database.Adapters.Snapshot
+namespace Allors.Database.Adapters.Sql.Npgsql
 {
-    using System;
+    using Xunit;
     using Adapters;
 
-    public class ObsoleteSerializationTest : Adapters.ObsoleteSerializationTest, IDisposable
+    public class SerializationTest : Adapters.SerializationTest, IClassFixture<Fixture<SerializationTest>>
     {
-        private readonly Profile profile = new Profile();
+        private readonly Profile profile;
+
+        public SerializationTest() => this.profile = new Profile(this.GetType().Name);
 
         protected override IProfile Profile => this.profile;
 

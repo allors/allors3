@@ -3,16 +3,14 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Database.Adapters.Sql.SqlClient
+namespace Allors.Database.Adapters.Memory
 {
+    using System;
     using Adapters;
-    using Xunit;
 
-    public class ObsoleteSerializationTest : Adapters.ObsoleteSerializationTest, IClassFixture<Fixture<ObsoleteSerializationTest>>
+    public class SerializationTest : Adapters.SerializationTest, IDisposable
     {
-        private readonly Profile profile;
-
-        public ObsoleteSerializationTest() => this.profile = new Profile(this.GetType().Name);
+        private readonly Profile profile = new Profile();
 
         protected override IProfile Profile => this.profile;
 
