@@ -345,6 +345,7 @@ where c = '{@class.Id}'";
             catch
             {
                 con.Rollback();
+                throw;
             }
         }
 
@@ -376,6 +377,7 @@ where c = '{@class.Id}'";
             catch
             {
                 con.Rollback();
+                throw;
             }
         }
 

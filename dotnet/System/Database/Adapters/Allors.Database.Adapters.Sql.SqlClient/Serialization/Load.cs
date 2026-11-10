@@ -307,6 +307,14 @@ where c = '{@class.Id}'";
                 {
                     var @class = kvp.Key;
                     var unitRelations = kvp.Value;
+
+                    // Every relation of the class was reported as not loaded. SQL Server does not accept a
+                    // table-valued parameter without rows.
+                    if (unitRelations.Count == 0)
+                    {
+                        continue;
+                    }
+
                     var sql = this.database.Mapping.ProcedureNameForSetUnitRoleByRelationTypeByClass[@class][relationType];
                     var command = con.CreateCommand();
                     command.CommandText = sql;
@@ -320,6 +328,7 @@ where c = '{@class.Id}'";
             catch
             {
                 con.Rollback();
+                throw;
             }
         }
 
@@ -340,18 +349,38 @@ where c = '{@class.Id}'";
                               this.database.Mapping.ProcedureNameForSetRoleByRelationType[relationType] :
                               this.database.Mapping.ProcedureNameForAddRoleByRelationType[relationType];
 
-                var command = con.CreateCommand();
-                command.CommandText = sql;
-                command.CommandType = CommandType.StoredProcedure;
-                command.AddCompositeRoleTableParameter(relations);
-                command.ExecuteNonQuery();
+                // The relations are read while they are written. SQL Server does not accept a table-valued
+                // parameter without rows, so nothing is written for a relation type without a relation to load:
+                // it has none, or every one of them was reported as not loaded.
+                using (var enumerator = relations.GetEnumerator())
+                {
+                    if (enumerator.MoveNext())
+                    {
+                        var command = con.CreateCommand();
+                        command.CommandText = sql;
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.AddCompositeRoleTableParameter(Remaining(enumerator));
+                        command.ExecuteNonQuery();
+                    }
+                }
 
                 con.Commit();
             }
             catch
             {
                 con.Rollback();
+                throw;
             }
+        }
+
+        // The relation that the enumerator stands on and the relations after it.
+        private static IEnumerable<CompositeRelation> Remaining(IEnumerator<CompositeRelation> enumerator)
+        {
+            do
+            {
+                yield return enumerator.Current;
+            }
+            while (enumerator.MoveNext());
         }
 
         private void CantLoadUnitRole(XmlReader reader, Guid relationTypeId)
