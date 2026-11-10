@@ -10,6 +10,8 @@ namespace Allors.Database.Adapters
     using System.Globalization;
     using System.IO;
     using System.Linq;
+    using System.Security.Cryptography;
+    using System.Text;
     using System.Xml;
     using Meta;
     using Xunit;
@@ -24,6 +26,31 @@ namespace Allors.Database.Adapters
     {
         protected static readonly bool[] TrueFalse = { true, false };
         private static readonly string GuidString = Guid.NewGuid().ToString();
+
+        // The forms in which the XML of a saved population can reach Load. Every form holds the same population.
+        private static readonly (string Name, Action<XmlDocument, IMetaPopulation> Change)[] Forms =
+        {
+            ("as saved", null),
+            ("self-closing elements", SelfClosingElements),
+            ("self-closing relation types without relations", (document, meta) => RelationTypesWithoutRelations(document, meta, true)),
+            ("relation types without relations", (document, meta) => RelationTypesWithoutRelations(document, meta, false)),
+            ("comments between elements", CommentsBetweenElements),
+            ("comments inside values", CommentsInsideValues),
+            ("type ids with hyphens", (document, meta) => TypeIds(document, "D", false)),
+            ("type ids in upper case", (document, meta) => TypeIds(document, "N", true)),
+            ("values in CDATA sections", ValuesInCDataSections),
+            (
+                "all forms together",
+                (document, meta) =>
+                {
+                    RelationTypesWithoutRelations(document, meta, true);
+                    ValuesInCDataSections(document, meta);
+                    SelfClosingElements(document, meta);
+                    TypeIds(document, "D", true);
+                    CommentsBetweenElements(document, meta);
+                }
+            ),
+        };
 
         #region population
         private C1 c1A;
@@ -173,6 +200,9 @@ namespace Allors.Database.Adapters
         [Fact]
         public void Load()
         {
+            // Every form is loaded, so that one run names every form that an adapter does not load.
+            var failures = new List<string>();
+
             foreach (var indentation in TrueFalse)
             {
                 foreach (var init in this.Inits)
@@ -193,22 +223,72 @@ namespace Allors.Database.Adapters
                             otherPopulation.Save(writer);
                         }
 
-                        var xml = stringWriter.ToString();
-                        var stringReader = new StringReader(xml);
-                        using (var reader = XmlReader.Create(stringReader))
-                        {
-                            this.Population.Load(reader);
-                        }
+                        var saved = Digest(otherPopulation);
 
-                        using (var transaction = this.Population.CreateTransaction())
+                        foreach (var form in Forms)
                         {
-                            var x = (C1)transaction.Instantiate(1);
-                            var str = x.C1AllorsString;
+                            try
+                            {
+                                var xml = ChangeForm(stringWriter.ToString(), otherPopulation.MetaPopulation, form.Change);
+                                var stringReader = new StringReader(xml);
+                                using (var reader = XmlReader.Create(stringReader))
+                                {
+                                    this.Population.Load(reader);
+                                }
 
-                            this.AssertPopulation(transaction);
+                                using (var transaction = this.Population.CreateTransaction())
+                                {
+                                    var x = (C1)transaction.Instantiate(1);
+                                    var str = x.C1AllorsString;
+
+                                    this.AssertPopulation(transaction);
+                                }
+
+                                var difference = Difference(saved, Digest(this.Population));
+                                Assert.True(difference == null, difference);
+                            }
+                            catch (Exception e)
+                            {
+                                failures.Add($"{form.Name}, {(indentation ? "indented" : "not indented")}: {Summary(e)}");
+                            }
                         }
                     }
                 }
+            }
+
+            Assert.True(failures.Count == 0, string.Join(Environment.NewLine, failures.Distinct()));
+        }
+
+        [Fact]
+        public void RoundTrip()
+        {
+            foreach (var init in this.Inits)
+            {
+                var failures = new List<string>();
+
+                // The adapter under test saves; the in-memory adapters and the adapter under test load.
+                init();
+                PopulateEveryRelationType(this.Population);
+                var saved = Digest(this.Population);
+                var xml = DoSave(this.Population);
+
+                foreach (var (name, create) in this.Counterparts)
+                {
+                    CheckLoad($"saved by the adapter under test, loaded by {name}", saved, xml, create(), failures);
+                }
+
+                CheckLoad("saved and loaded by the adapter under test", saved, xml, this.Population, failures);
+
+                // The in-memory adapters save; the adapter under test loads.
+                foreach (var (name, create) in this.Counterparts)
+                {
+                    init();
+                    var counterpart = create();
+                    PopulateEveryRelationType(counterpart);
+                    CheckLoad($"saved by {name}, loaded by the adapter under test", Digest(counterpart), DoSave(counterpart), this.Population, failures);
+                }
+
+                Assert.True(failures.Count == 0, string.Join(Environment.NewLine, failures));
             }
         }
 
@@ -1217,6 +1297,381 @@ namespace Allors.Database.Adapters
             {
                 database.Load(reader);
             }
+        }
+
+        // The in-memory adapters that every adapter exchanges populations with.
+        private (string Name, Func<IDatabase> Create)[] Counterparts =>
+            new (string, Func<IDatabase>)[]
+            {
+                ("Memory", this.CreatePopulation),
+                ("Snapshot", () => ((Profile)this.Profile).CreateSnapshotDatabase()),
+            };
+
+        private static void CheckLoad(string exchange, string saved, string xml, IDatabase database, List<string> failures)
+        {
+            try
+            {
+                DoLoad(database, xml);
+
+                var difference = Difference(saved, Digest(database));
+                if (difference != null)
+                {
+                    failures.Add($"{exchange}: {difference}");
+                }
+            }
+            catch (Exception e)
+            {
+                failures.Add($"{exchange}: {Summary(e)}");
+            }
+        }
+
+        private static string Summary(Exception e)
+        {
+            var message = e.Message.Replace("\r", string.Empty).Replace("\n", " ");
+            return e.GetType().Name + ": " + (message.Length > 400 ? message.Substring(0, 400) + "..." : message);
+        }
+
+        private static string ChangeForm(string xml, IMetaPopulation meta, Action<XmlDocument, IMetaPopulation> change)
+        {
+            if (change == null)
+            {
+                return xml;
+            }
+
+            // Whitespace is kept, so that an indented file stays indented.
+            var document = new XmlDocument { PreserveWhitespace = true };
+            document.LoadXml(xml);
+            change(document, meta);
+            return document.OuterXml;
+        }
+
+        private static void SelfClosingElements(XmlDocument document, IMetaPopulation meta)
+        {
+            foreach (XmlElement element in document.SelectNodes("//*"))
+            {
+                if (!element.HasChildNodes)
+                {
+                    element.IsEmpty = true;
+                }
+            }
+        }
+
+        private static void RelationTypesWithoutRelations(XmlDocument document, IMetaPopulation meta, bool selfClosing)
+        {
+            var present = TypeIdsIn(document);
+            var relationTypes = meta.DatabaseRelationTypes.Where(v => !present.Contains(v.Id)).OrderBy(v => v.Id).ToArray();
+            var database = (XmlElement)document.SelectSingleNode("//" + Serialization.Relations + "/" + Serialization.Database);
+
+            AddWithoutContent(database, Serialization.RelationTypeUnit, relationTypes.Where(v => v.RoleType.ObjectType.IsUnit).Select(v => v.Id).Take(3).ToArray(), selfClosing);
+            AddWithoutContent(database, Serialization.RelationTypeComposite, relationTypes.Where(v => v.RoleType.ObjectType.IsComposite).Select(v => v.Id).Take(3).ToArray(), selfClosing);
+        }
+
+        // Adds three elements without content: before the first element, after it and after the last element,
+        // with no whitespace between them and the element next to them.
+        private static void AddWithoutContent(XmlElement parent, string name, Guid[] ids, bool selfClosing)
+        {
+            XmlElement Create(Guid id)
+            {
+                var element = parent.OwnerDocument.CreateElement(name);
+                element.SetAttribute(Serialization.Id, id.ToString("N"));
+                element.IsEmpty = selfClosing;
+                return element;
+            }
+
+            var first = parent.ChildNodes.OfType<XmlElement>().First();
+            parent.InsertBefore(Create(ids[0]), first);
+            parent.InsertAfter(Create(ids[1]), first);
+            parent.InsertAfter(Create(ids[2]), parent.ChildNodes.OfType<XmlElement>().Last());
+        }
+
+        private static HashSet<Guid> TypeIdsIn(XmlDocument document) =>
+            new HashSet<Guid>(document.SelectNodes("//@" + Serialization.Id).Cast<XmlAttribute>().Select(v => Guid.Parse(v.Value)));
+
+        private static void CommentsBetweenElements(XmlDocument document, IMetaPopulation meta)
+        {
+            foreach (var element in document.SelectNodes("//*").Cast<XmlElement>().ToArray())
+            {
+                if (element.ParentNode is XmlElement parent)
+                {
+                    parent.InsertBefore(document.CreateComment(" before "), element);
+                    parent.InsertAfter(document.CreateComment(" after "), element);
+                }
+            }
+        }
+
+        private static void CommentsInsideValues(XmlDocument document, IMetaPopulation meta)
+        {
+            foreach (var text in Values(document))
+            {
+                if (text.Length > 1)
+                {
+                    var tail = text.SplitText(text.Length / 2);
+                    tail.ParentNode.InsertBefore(document.CreateComment(" inside "), tail);
+                }
+            }
+        }
+
+        private static void ValuesInCDataSections(XmlDocument document, IMetaPopulation meta)
+        {
+            foreach (var text in Values(document))
+            {
+                text.ParentNode.ReplaceChild(document.CreateCDataSection(text.Value), text);
+            }
+        }
+
+        // The text of the object types and of the relations.
+        private static XmlText[] Values(XmlDocument document) =>
+            document.SelectNodes("//" + Serialization.ObjectType + "/text()|//" + Serialization.Relation + "/text()").OfType<XmlText>().ToArray();
+
+        private static void TypeIds(XmlDocument document, string format, bool upperCase)
+        {
+            foreach (XmlAttribute attribute in document.SelectNodes("//@" + Serialization.Id))
+            {
+                var id = Guid.Parse(attribute.Value).ToString(format);
+                attribute.Value = upperCase ? id.ToUpperInvariant() : id;
+            }
+        }
+
+        // A population in which every relation type of the domain occurs for every class that can have it. The unit
+        // roles take the values at the limits of their type and of their size, precision and scale.
+        private static void PopulateEveryRelationType(IDatabase database)
+        {
+            // Eight objects of every class take the unit values, the ninth has no unit role at all.
+            const int WithUnits = 8;
+            const int Count = WithUnits + 1;
+
+            using (var transaction = database.CreateTransaction())
+            {
+                var meta = database.MetaPopulation;
+                var objectsByClass = meta.DatabaseClasses.ToDictionary(v => v, v => transaction.Create(v, Count));
+
+                var relationTypes = meta.DatabaseRelationTypes.OrderBy(v => v.Id).ToArray();
+                for (var r = 0; r < relationTypes.Length; r++)
+                {
+                    var relationType = relationTypes[r];
+                    var roleType = relationType.RoleType;
+                    var associationClasses = relationType.AssociationType.ObjectType.DatabaseClasses.OrderBy(v => v.Id).ToArray();
+
+                    if (roleType.ObjectType.IsUnit)
+                    {
+                        var values = UnitValues(roleType);
+                        foreach (var associationClass in associationClasses)
+                        {
+                            var associations = objectsByClass[associationClass];
+                            for (var k = 0; k < WithUnits; k++)
+                            {
+                                associations[k].Strategy.SetUnitRole(roleType, values[(k + r) % values.Length]);
+                            }
+                        }
+
+                        continue;
+                    }
+
+                    var roleClasses = ((IComposite)roleType.ObjectType).DatabaseClasses.OrderBy(v => v.Id).ToArray();
+                    for (var i = 0; i < associationClasses.Length; i++)
+                    {
+                        var associations = objectsByClass[associationClasses[i]];
+
+                        if (relationType.IsOneToOne)
+                        {
+                            // An association has one role and a role has one association.
+                            for (var j = 0; j < roleClasses.Length; j++)
+                            {
+                                associations[j].Strategy.SetCompositeRole(roleType, objectsByClass[roleClasses[j]][i]);
+                            }
+                        }
+                        else if (relationType.IsManyToOne)
+                        {
+                            // Every association has a role, so that associations share a role.
+                            for (var k = 0; k < associations.Length; k++)
+                            {
+                                associations[k].Strategy.SetCompositeRole(roleType, objectsByClass[roleClasses[k % roleClasses.Length]][i]);
+                            }
+                        }
+                        else if (relationType.IsOneToMany)
+                        {
+                            // A role has one association: this association class takes every role whose position is
+                            // its own position plus a multiple of the number of association classes.
+                            for (var j = 0; j < roleClasses.Length; j++)
+                            {
+                                var roles = objectsByClass[roleClasses[j]];
+                                for (var k = i; k < roles.Length; k += associationClasses.Length)
+                                {
+                                    associations[j].Strategy.AddCompositesRole(roleType, roles[k]);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            for (var k = 0; k < associations.Length; k++)
+                            {
+                                var roles = objectsByClass[roleClasses[k % roleClasses.Length]];
+                                for (var n = 0; n < 3; n++)
+                                {
+                                    associations[k].Strategy.AddCompositesRole(roleType, roles[(i + k + n) % roles.Length]);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                transaction.Commit();
+            }
+        }
+
+        private static object[] UnitValues(IRoleType roleType)
+        {
+            var unit = (IUnit)roleType.ObjectType;
+            switch (unit.Tag)
+            {
+                case UnitTags.String:
+                    var maximumLength = roleType.Size > -1 ? roleType.Size.Value : 5000;
+                    return new object[]
+                    {
+                        string.Empty,
+                        "a",
+                        " leading and trailing ",
+                        "<>&'\"]]>",
+                        "line\r\nfeed\ttab",
+                        "é中\U0001F600",
+                        new string('é', maximumLength),
+                        "NULL",
+                    };
+
+                case UnitTags.Integer:
+                    return new object[] { 0, 1, -1, int.MinValue, int.MaxValue };
+
+                case UnitTags.Decimal:
+                    var step = 1m;
+                    for (var i = 0; i < roleType.Scale.Value; i++)
+                    {
+                        step /= 10m;
+                    }
+
+                    var maximum = 1m;
+                    for (var i = 0; i < roleType.Precision.Value - roleType.Scale.Value; i++)
+                    {
+                        maximum *= 10m;
+                    }
+
+                    maximum -= step;
+                    return new object[] { 0m, 1m, -1m, step, -step, maximum, -maximum, 1 + (5 * step) };
+
+                case UnitTags.Float:
+                    return new object[] { 0d, 1.1d, -1.1d, 1d / 3d, Math.PI, double.MaxValue, double.MinValue, 2.2250738585072014E-308 };
+
+                case UnitTags.Boolean:
+                    return new object[] { true, false };
+
+                case UnitTags.DateTime:
+                    return new object[]
+                    {
+                        new DateTime(1, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                        new DateTime(9999, 12, 31, 23, 59, 59, 999, DateTimeKind.Utc),
+                        new DateTime(1973, 3, 27, 12, 1, 2, 3, DateTimeKind.Utc),
+                        new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                        new DateTime(2000, 2, 29, 23, 59, 59, 999, DateTimeKind.Utc),
+                    };
+
+                case UnitTags.Unique:
+                    return new object[] { Guid.Empty, new Guid("537f6823-d22c-4b3b-ab3c-e15a6b61b9d6"), new Guid("ffffffff-ffff-ffff-ffff-ffffffffffff") };
+
+                case UnitTags.Binary:
+                    var everyByte = Enumerable.Range(0, 256).Select(v => (byte)v).ToArray();
+                    var large = Enumerable.Range(0, 10000).Select(v => (byte)(v % 251)).ToArray();
+                    return new object[] { Array.Empty<byte>(), new byte[] { 0 }, new byte[] { 255 }, Fit(everyByte, roleType), Fit(large, roleType) };
+
+                default:
+                    throw new ArgumentException("Unknown unit tag: " + unit.Tag);
+            }
+        }
+
+        private static byte[] Fit(byte[] binary, IRoleType roleType) =>
+            roleType.Size > -1 && binary.Length > roleType.Size ? binary.Take(roleType.Size.Value).ToArray() : binary;
+
+        // Everything that a population holds, read through the API: every object with its version and every role.
+        private static string Digest(IDatabase database)
+        {
+            var digest = new StringBuilder();
+
+            using (var transaction = database.CreateTransaction())
+            {
+                foreach (var @class in database.MetaPopulation.DatabaseClasses.OrderBy(v => v.Id))
+                {
+                    var roleTypes = @class.DatabaseRoleTypes.OrderBy(v => v.RelationType.Id).ToArray();
+
+                    IObject[] objects = transaction.Extent(@class);
+                    foreach (var @object in objects.OrderBy(v => v.Id))
+                    {
+                        var strategy = @object.Strategy;
+                        var name = @class.Name + " " + strategy.ObjectId.ToString(CultureInfo.InvariantCulture);
+
+                        digest.Append(name).Append(" version ").Append(strategy.ObjectVersion.ToString(CultureInfo.InvariantCulture)).Append('\n');
+
+                        foreach (var roleType in roleTypes)
+                        {
+                            if (!strategy.ExistRole(roleType))
+                            {
+                                continue;
+                            }
+
+                            digest.Append(name).Append(' ').Append(roleType.Name).Append(" = ");
+
+                            if (roleType.ObjectType.IsUnit)
+                            {
+                                digest.Append(Format(strategy.GetUnitRole(roleType)));
+                            }
+                            else if (roleType.IsOne)
+                            {
+                                digest.Append(strategy.GetCompositeRole(roleType).Id.ToString(CultureInfo.InvariantCulture));
+                            }
+                            else
+                            {
+                                digest.Append(string.Join(",", strategy.GetCompositesRole<IObject>(roleType).Select(v => v.Id).OrderBy(v => v).Select(v => v.ToString(CultureInfo.InvariantCulture))));
+                            }
+
+                            digest.Append('\n');
+                        }
+                    }
+                }
+            }
+
+            return digest.ToString();
+        }
+
+        private static string Format(object unit) =>
+            unit switch
+            {
+                string value when value.Length <= 64 => "\"" + string.Concat(value.Select(v => v < 0x20 || v > 0x7e ? "\\u" + ((int)v).ToString("x4", CultureInfo.InvariantCulture) : v.ToString())) + "\"",
+                string value => "string of " + value.Length.ToString(CultureInfo.InvariantCulture) + " characters " + Hash(Encoding.Unicode.GetBytes(value)),
+                byte[] value when value.Length <= 32 => "0x" + Convert.ToHexString(value),
+                byte[] value => "binary of " + value.Length.ToString(CultureInfo.InvariantCulture) + " bytes " + Hash(value),
+                decimal value => value.ToString("G29", CultureInfo.InvariantCulture),
+                double value => value.ToString("R", CultureInfo.InvariantCulture),
+                DateTime value => value.Ticks.ToString(CultureInfo.InvariantCulture) + " ticks",
+                Guid value => value.ToString("D"),
+                int value => value.ToString(CultureInfo.InvariantCulture),
+                bool value => value ? "true" : "false",
+                _ => throw new ArgumentException("Unknown unit: " + unit),
+            };
+
+        private static string Hash(byte[] bytes) => Convert.ToHexString(SHA256.HashData(bytes), 0, 8);
+
+        // The lines by which the digest of a loaded population differs from the digest of the saved one, or null.
+        private static string Difference(string saved, string loaded)
+        {
+            if (saved == loaded)
+            {
+                return null;
+            }
+
+            var savedLines = saved.Split('\n');
+            var loadedLines = loaded.Split('\n');
+            var lost = savedLines.Except(loadedLines).ToArray();
+            var added = loadedLines.Except(savedLines).ToArray();
+
+            return $"{lost.Length} of {savedLines.Length} saved lines are not loaded, {added.Length} loaded lines were not saved; "
+                   + $"not loaded: [{string.Join(" | ", lost.Take(4))}]; not saved: [{string.Join(" | ", added.Take(4))}]";
         }
 
         private void AssertPopulation(ITransaction transaction)
