@@ -8,6 +8,7 @@ namespace Allors.Database.Adapters
 {
     using System;
     using System.Xml;
+    using Meta;
 
     /// <summary>
     /// Xml tag definitions and utility methods for Xml Serialization.
@@ -151,6 +152,32 @@ namespace Allors.Database.Adapters
         }
 
         /// <summary>
+        /// Reads the unit of a role from its XML value, for a load.
+        /// </summary>
+        /// <param name="roleType">The role type.</param>
+        /// <param name="value">The XML value.</param>
+        /// <returns>The unit.</returns>
+        /// <exception cref="ArgumentException">
+        /// The role type cannot hold the unit as it is: a string that is longer than its size, or a decimal with more
+        /// digits than its precision or more decimals than its scale.
+        /// </exception>
+        public static object ReadUnit(IRoleType roleType, string value)
+        {
+            var unit = ReadString(value, ((IUnit)roleType.ObjectType).Tag);
+
+            switch (unit)
+            {
+                case string @string when roleType.Size > -1 && @string.Length > roleType.Size:
+                    throw new ArgumentException($"The string of {@string.Length} characters is longer than the size {roleType.Size} of {roleType}.");
+
+                case decimal @decimal when !Fits(@decimal, roleType.Precision, roleType.Scale):
+                    throw new ArgumentException($"The decimal {XmlConvert.ToString(@decimal)} has more digits than the precision {roleType.Precision} or more decimals than the scale {roleType.Scale} of {roleType}.");
+            }
+
+            return unit;
+        }
+
+        /// <summary>
         /// <see cref="XmlConvert"/> from the xml unit value.
         /// </summary>
         /// <param name="value">The XML value.</param>
@@ -194,6 +221,32 @@ namespace Allors.Database.Adapters
         {
             var databaseInitial = (long)global::Allors.Version.DatabaseInitial;
             return version < databaseInitial ? databaseInitial : version;
+        }
+
+        // A decimal fits when rounding it to the scale leaves it as it is, and its digits before the decimal point are
+        // not more than the precision leaves for them.
+        private static bool Fits(decimal value, int? precision, int? scale)
+        {
+            const int MaximumScale = 28;
+
+            if (scale >= 0 && scale <= MaximumScale && decimal.Round(value, scale.Value) != value)
+            {
+                return false;
+            }
+
+            var digits = precision - (scale ?? 0);
+            if (digits >= 0 && digits <= MaximumScale)
+            {
+                var limit = 1m;
+                for (var i = 0; i < digits; i++)
+                {
+                    limit *= 10m;
+                }
+
+                return Math.Abs(value) < limit;
+            }
+
+            return true;
         }
     }
 }
