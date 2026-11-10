@@ -44,6 +44,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                     case XmlNodeType.Element:
                         if (this.reader.Name.Equals(Serialization.ObjectType))
                         {
+                            // A self-closing element holds no objects, and the next Read moves past it.
                             if (!this.reader.IsEmptyElement)
                             {
                                 var objectTypeIdString = this.reader.GetAttribute(Serialization.Id);
@@ -56,7 +57,13 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                                 var objectType = this.database.ObjectFactory.GetObjectType(objectTypeId);
 
                                 var objectIdsString = this.reader.ReadElementContentAsString();
-                                foreach (var objectIdString in objectIdsString.Split(Serialization.ObjectsSplitterCharArray))
+
+                                // An element with an end tag and no content holds no objects, as a self-closing element does.
+                                var objectIdStrings = objectIdsString.Length > 0
+                                    ? objectIdsString.Split(Serialization.ObjectsSplitterCharArray)
+                                    : Array.Empty<string>();
+
+                                foreach (var objectIdString in objectIdStrings)
                                 {
                                     var objectArray = objectIdString.Split(Serialization.ObjectSplitterCharArray);
 
@@ -77,10 +84,6 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                                 }
 
                                 skip = this.reader.IsStartElement();
-                            }
-                            else
-                            {
-                                this.reader.Skip();
                             }
                         }
 

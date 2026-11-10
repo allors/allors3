@@ -32,6 +32,8 @@ namespace Allors.Database.Adapters
         {
             ("as saved", null),
             ("self-closing elements", SelfClosingElements),
+            ("self-closing object types without objects", (document, meta) => ObjectTypesWithoutObjects(document, meta, true)),
+            ("object types without objects", (document, meta) => ObjectTypesWithoutObjects(document, meta, false)),
             ("self-closing relation types without relations", (document, meta) => RelationTypesWithoutRelations(document, meta, true)),
             ("relation types without relations", (document, meta) => RelationTypesWithoutRelations(document, meta, false)),
             ("comments between elements", CommentsBetweenElements),
@@ -43,6 +45,7 @@ namespace Allors.Database.Adapters
                 "all forms together",
                 (document, meta) =>
                 {
+                    ObjectTypesWithoutObjects(document, meta, true);
                     RelationTypesWithoutRelations(document, meta, true);
                     ValuesInCDataSections(document, meta);
                     SelfClosingElements(document, meta);
@@ -1354,6 +1357,15 @@ namespace Allors.Database.Adapters
                     element.IsEmpty = true;
                 }
             }
+        }
+
+        private static void ObjectTypesWithoutObjects(XmlDocument document, IMetaPopulation meta, bool selfClosing)
+        {
+            var present = TypeIdsIn(document);
+            var classes = meta.DatabaseClasses.Where(v => !present.Contains(v.Id)).OrderBy(v => v.Id);
+            var database = (XmlElement)document.SelectSingleNode("//" + Serialization.Objects + "/" + Serialization.Database);
+
+            AddWithoutContent(database, Serialization.ObjectType, classes.Select(v => v.Id).Take(3).ToArray(), selfClosing);
         }
 
         private static void RelationTypesWithoutRelations(XmlDocument document, IMetaPopulation meta, bool selfClosing)

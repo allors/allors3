@@ -155,7 +155,13 @@ namespace Allors.Database.Adapters.Snapshot
                                 var objectType = this.Database.ObjectFactory.GetObjectType(objectTypeId);
 
                                 var objectIdsString = this.reader.ReadElementContentAsString();
-                                foreach (var objectIdString in objectIdsString.Split(Serialization.ObjectsSplitterCharArray))
+
+                                // An element with an end tag and no content holds no objects, as a self-closing element does.
+                                var objectIdStrings = objectIdsString.Length > 0
+                                    ? objectIdsString.Split(Serialization.ObjectsSplitterCharArray)
+                                    : Array.Empty<string>();
+
+                                foreach (var objectIdString in objectIdStrings)
                                 {
                                     var objectArray = objectIdString.Split(Serialization.ObjectSplitterCharArray);
 
