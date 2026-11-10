@@ -80,6 +80,10 @@ namespace Allors.Database.Adapters.Memory
             {
                 this.IsLoading = false;
             }
+
+            // The import transaction can cache the empty population. Reinitialise services against the loaded objects.
+            this.Services.OnInit(this);
+            this.Transaction.Services.OnInit(this.Transaction);
         }
 
         public void Save(XmlWriter writer) => this.Transaction.Save(writer);
