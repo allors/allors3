@@ -1268,6 +1268,72 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
         }
 
         [Fact]
+        public void SchemaChanges()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+                var m = this.Transaction.Database.Context().M;
+
+                // Every change is loaded, so that one run names every change that an adapter does not handle.
+                var failures = new List<string>();
+
+                foreach (var schemaChange in SchemaChangesOf(m))
+                {
+                    // With handlers, what the schema no longer allows is reported and everything else is loaded.
+                    try
+                    {
+                        var notLoaded = new List<string>();
+                        ObjectNotLoadedEventHandler objectNotLoaded = (sender, args) => notLoaded.Add(NotLoaded(m, args.ObjectTypeId, args.ObjectId));
+                        RelationNotLoadedEventHandler relationNotLoaded = (sender, args) => notLoaded.Add(NotLoaded(m, args.RelationTypeId, args.AssociationId, args.RoleContents));
+
+                        this.Population.ObjectNotLoaded += objectNotLoaded;
+                        this.Population.RelationNotLoaded += relationNotLoaded;
+                        try
+                        {
+                            DoLoad(this.Population, schemaChange.File);
+                        }
+                        finally
+                        {
+                            this.Population.ObjectNotLoaded -= objectNotLoaded;
+                            this.Population.RelationNotLoaded -= relationNotLoaded;
+                        }
+
+                        var difference = this.SchemaChangeDifference(schemaChange.Loaded, schemaChange.NotLoaded, notLoaded);
+                        if (difference != null)
+                        {
+                            failures.Add($"{schemaChange.Name}, with handlers: {difference}");
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        failures.Add($"{schemaChange.Name}, with handlers: {Summary(e)}");
+                    }
+
+                    // Without a handler the load fails.
+                    var failed = false;
+                    try
+                    {
+                        DoLoad(this.Population, schemaChange.File);
+                    }
+                    catch (Exception)
+                    {
+                        failed = true;
+                    }
+
+                    if (!failed)
+                    {
+                        // The failure says what else the load left out.
+                        var difference = Difference(this.ExpectedDigest(schemaChange.Loaded), Digest(this.Population));
+                        failures.Add($"{schemaChange.Name}, without a handler: the load did not fail" + (difference != null ? "; " + difference : string.Empty));
+                    }
+                }
+
+                Assert.True(failures.Count == 0, string.Join(Environment.NewLine, failures));
+            }
+        }
+
+        [Fact]
         public void LoadUnitBeforeEmptyElement()
         {
             foreach (var init in this.Inits)
@@ -1747,6 +1813,198 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
 
             return $"{lost.Length} of {savedLines.Length} saved lines are not loaded, {added.Length} loaded lines were not saved; "
                    + $"not loaded: [{string.Join(" | ", lost.Take(4))}]; not saved: [{string.Join(" | ", added.Take(4))}]";
+        }
+
+        // Files as an earlier schema saved them. Each comes with the population that a load has to load from it, as
+        // a file, and with what the load has to report as not loaded.
+        private static (string Name, string File, string Loaded, string[] NotLoaded)[] SchemaChangesOf(MetaPopulation m)
+        {
+            var unknownClass = new Guid("71000000000000000000000000000000");
+            var unknownUnitRelationType = new Guid("72000000000000000000000000000000");
+            var unknownCompositeRelationType = new Guid("73000000000000000000000000000000");
+
+            static Guid Id(IRoleType roleType) => roleType.RelationType.Id;
+
+            string Relation(IRoleType roleType, long association, string role) => NotLoaded(m, Id(roleType), association, role);
+
+            // Four objects of C1 and four of C2. Both classes implement I12.
+            var objects = ObjectsOf(m.C1.Id, 1, 2, 3, 4) + ObjectsOf(m.C2.Id, 5, 6, 7, 8);
+
+            // Relations before and after the ones that the schema no longer allows. They are loaded.
+            var before = CompositesOf(Id(m.C1.C1C2one2one), (1, "5"));
+            var after = CompositesOf(Id(m.C1.C1C2many2one), (4, "8")) + UnitsOf(Id(m.C1.C1StringEquals), (2, Base64("after")));
+
+            (string Name, string File, string Loaded, string[] NotLoaded) Change(string name, string objectsNotLoaded, string relations, string relationsLoaded, params string[] notLoaded) =>
+                (
+                    name,
+                    PopulationOf(objects + objectsNotLoaded, before + relations + after),
+                    PopulationOf(objects, before + relationsLoaded + after),
+                    notLoaded
+                );
+
+            var x = Base64("x");
+            var kept = Base64("kept");
+            var unique = "537f6823-d22c-4b3b-ab3c-e15a6b61b9d6";
+
+            return new[]
+            {
+                Change(
+                    "a class that no longer exists",
+                    ObjectsOf(unknownClass, 9, 10),
+                    UnitsOf(Id(m.I12.I12AllorsString), (9, x), (1, kept))
+                    + CompositesOf(Id(m.I12.I12C2one2one), (9, "5"), (2, "6"))
+                    + CompositesOf(Id(m.C1.C1I12many2one), (2, "10"), (3, "4"))
+                    + CompositesOf(Id(m.C1.C1I12many2manies), (3, "4,10")),
+                    UnitsOf(Id(m.I12.I12AllorsString), (1, kept))
+                    + CompositesOf(Id(m.I12.I12C2one2one), (2, "6"))
+                    + CompositesOf(Id(m.C1.C1I12many2one), (3, "4"))
+                    + CompositesOf(Id(m.C1.C1I12many2manies), (3, "4")),
+                    NotLoaded(m, unknownClass, 9),
+                    NotLoaded(m, unknownClass, 10),
+                    Relation(m.I12.I12AllorsString, 9, x),
+                    Relation(m.I12.I12C2one2one, 9, "5"),
+                    Relation(m.C1.C1I12many2one, 2, "10"),
+                    Relation(m.C1.C1I12many2manies, 3, "10")),
+                Change(
+                    "a class that became an interface",
+                    ObjectsOf(m.I1.Id, 9),
+                    string.Empty,
+                    string.Empty,
+                    NotLoaded(m, m.I1.Id, 9)),
+                Change(
+                    "unit relation types that no longer exist or became composite",
+                    string.Empty,
+                    UnitsOf(unknownUnitRelationType, (1, "x"), (2, "y")) + UnitsOf(Id(m.C1.C1C1one2one), (1, "x")),
+                    string.Empty,
+                    NotLoaded(m, unknownUnitRelationType, 1, "x"),
+                    NotLoaded(m, unknownUnitRelationType, 2, "y"),
+                    Relation(m.C1.C1C1one2one, 1, "x")),
+                Change(
+                    "composite relation types that no longer exist or became unit",
+                    string.Empty,
+                    CompositesOf(unknownCompositeRelationType, (1, "2"), (2, "3,4")) + CompositesOf(Id(m.C1.C1AllorsInteger), (1, "2,3")),
+                    string.Empty,
+                    NotLoaded(m, unknownCompositeRelationType, 1, "2"),
+                    NotLoaded(m, unknownCompositeRelationType, 2, "3"),
+                    NotLoaded(m, unknownCompositeRelationType, 2, "4"),
+                    Relation(m.C1.C1AllorsInteger, 1, "2"),
+                    Relation(m.C1.C1AllorsInteger, 1, "3")),
+                Change(
+                    "a unit role of a class that no longer has it",
+                    string.Empty,
+                    UnitsOf(Id(m.C1.C1AllorsString), (5, x), (1, kept)),
+                    UnitsOf(Id(m.C1.C1AllorsString), (1, kept)),
+                    Relation(m.C1.C1AllorsString, 5, x)),
+                Change(
+                    "values that their unit type cannot read",
+                    string.Empty,
+                    UnitsOf(Id(m.C1.C1AllorsInteger), (1, "abc"), (2, "7"))
+                    + UnitsOf(Id(m.C1.C1AllorsDecimal), (1, "abc"), (2, "1.5"))
+                    + UnitsOf(Id(m.C1.C1AllorsDouble), (1, "abc"), (2, "1.5"))
+                    + UnitsOf(Id(m.C1.C1AllorsBoolean), (1, "abc"), (2, "true"))
+                    + UnitsOf(Id(m.C1.C1AllorsDateTime), (1, "abc"), (2, "2000-01-01T00:00:00Z"))
+                    + UnitsOf(Id(m.C1.C1AllorsUnique), (1, "abc"), (2, unique))
+                    + UnitsOf(Id(m.C1.C1AllorsString), (1, "!"), (2, kept))
+                    + UnitsOf(Id(m.C1.C1AllorsBinary), (1, "!"), (2, "AQID")),
+                    UnitsOf(Id(m.C1.C1AllorsInteger), (2, "7"))
+                    + UnitsOf(Id(m.C1.C1AllorsDecimal), (2, "1.5"))
+                    + UnitsOf(Id(m.C1.C1AllorsDouble), (2, "1.5"))
+                    + UnitsOf(Id(m.C1.C1AllorsBoolean), (2, "true"))
+                    + UnitsOf(Id(m.C1.C1AllorsDateTime), (2, "2000-01-01T00:00:00Z"))
+                    + UnitsOf(Id(m.C1.C1AllorsUnique), (2, unique))
+                    + UnitsOf(Id(m.C1.C1AllorsString), (2, kept))
+                    + UnitsOf(Id(m.C1.C1AllorsBinary), (2, "AQID")),
+                    Relation(m.C1.C1AllorsInteger, 1, "abc"),
+                    Relation(m.C1.C1AllorsDecimal, 1, "abc"),
+                    Relation(m.C1.C1AllorsDouble, 1, "abc"),
+                    Relation(m.C1.C1AllorsBoolean, 1, "abc"),
+                    Relation(m.C1.C1AllorsDateTime, 1, "abc"),
+                    Relation(m.C1.C1AllorsUnique, 1, "abc"),
+                    Relation(m.C1.C1AllorsString, 1, "!"),
+                    Relation(m.C1.C1AllorsBinary, 1, "!")),
+            };
+        }
+
+        private static string PopulationOf(string objects, string relations) =>
+$@"<?xml version=""1.0"" encoding=""utf-16""?>
+<allors>
+  <population version=""1"">
+    <objects>
+      <database>{objects}</database>
+    </objects>
+    <relations>
+      <database>{relations}</database>
+    </relations>
+  </population>
+</allors>";
+
+        private static string ObjectsOf(Guid objectTypeId, params long[] ids) =>
+            $@"<ot i=""{objectTypeId:N}"">{string.Join(",", ids.Select(v => v.ToString(CultureInfo.InvariantCulture) + ":0"))}</ot>";
+
+        private static string UnitsOf(Guid relationTypeId, params (long Association, string Value)[] relations) =>
+            $@"<rtu i=""{relationTypeId:N}"">{string.Concat(relations.Select(v => $@"<r a=""{v.Association.ToString(CultureInfo.InvariantCulture)}"">{v.Value}</r>"))}</rtu>";
+
+        private static string CompositesOf(Guid relationTypeId, params (long Association, string Roles)[] relations) =>
+            $@"<rtc i=""{relationTypeId:N}"">{string.Concat(relations.Select(v => $@"<r a=""{v.Association.ToString(CultureInfo.InvariantCulture)}"">{v.Roles}</r>"))}</rtc>";
+
+        private static string Base64(string value) => Convert.ToBase64String(Encoding.UTF8.GetBytes(value));
+
+        private static string NotLoaded(IMetaPopulation meta, Guid objectTypeId, long objectId) =>
+            $"object {objectId.ToString(CultureInfo.InvariantCulture)} of {TypeName(meta, objectTypeId)}";
+
+        private static string NotLoaded(IMetaPopulation meta, Guid relationTypeId, long associationId, string roleContents) =>
+            $"{TypeName(meta, relationTypeId)} of object {associationId.ToString(CultureInfo.InvariantCulture)}: {roleContents}";
+
+        // The name of a type of the schema, or its id when the schema does not have it.
+        private static string TypeName(IMetaPopulation meta, Guid id) =>
+            meta.FindById(id) switch
+            {
+                IRelationType relationType => relationType.RoleType.Name,
+                IObjectType objectType => objectType.Name,
+                _ => id.ToString("N"),
+            };
+
+        // What a load with handlers did differently from what a schema change requires, or null: what it reported
+        // as not loaded, and the population that it loaded.
+        private string SchemaChangeDifference(string loaded, string[] notLoaded, List<string> reported)
+        {
+            static string Short(string value) => value.Length > 100 ? value.Substring(0, 100) + "..." : value;
+
+            var notReported = notLoaded.ToList();
+            foreach (var item in reported)
+            {
+                notReported.Remove(item);
+            }
+
+            var withoutReason = reported.ToList();
+            foreach (var item in notLoaded)
+            {
+                withoutReason.Remove(item);
+            }
+
+            var differences = new List<string>();
+
+            if (notReported.Count > 0 || withoutReason.Count > 0)
+            {
+                differences.Add($"not reported: [{string.Join(" | ", notReported.Select(Short))}]; reported without a reason: [{string.Join(" | ", withoutReason.Select(Short))}]");
+            }
+
+            var population = Difference(this.ExpectedDigest(loaded), Digest(this.Population));
+            if (population != null)
+            {
+                differences.Add(population);
+            }
+
+            return differences.Count > 0 ? string.Join("; ", differences) : null;
+        }
+
+        // The digest of the population that a file holds, as the Memory adapter loads it.
+        private string ExpectedDigest(string file)
+        {
+            var expected = this.CreatePopulation();
+            DoLoad(expected, file);
+
+            return Digest(expected);
         }
 
         private void AssertPopulation(ITransaction transaction)
