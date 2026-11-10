@@ -20,7 +20,7 @@ namespace Allors.Database.Adapters
     using DateTime = System.DateTime;
     using S1234 = Domain.S1234;
 
-    public abstract class ObsoleteSerializationTest : IDisposable
+    public abstract class SerializationTest : IDisposable
     {
         protected static readonly bool[] TrueFalse = { true, false };
         private static readonly string GuidString = Guid.NewGuid().ToString();

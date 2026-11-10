@@ -3,12 +3,12 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Database.Adapters.Memory
+namespace Allors.Database.Adapters.Snapshot
 {
     using System;
     using Adapters;
 
-    public class ObsoleteSerializationTest : Adapters.ObsoleteSerializationTest, IDisposable
+    public class SerializationTest : Adapters.SerializationTest, IDisposable
     {
         private readonly Profile profile = new Profile();
 
