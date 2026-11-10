@@ -361,7 +361,7 @@ namespace Allors.Database.Adapters.Snapshot
                                     }
                                     else
                                     {
-                                        var unit = Serialization.ReadString(value, unitType.Tag);
+                                        var unit = Serialization.ReadUnit(relationType.RoleType, value);
                                         strategy.SetUnitRole(relationType.RoleType, unit);
                                     }
                                 }
