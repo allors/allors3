@@ -478,14 +478,14 @@ namespace Allors.Database.Adapters.Snapshot
             // Update association of previous role
             if (previousRole != null)
             {
-                this.ChangeLog.OnChangingCompositesAssociation(previousRole, associationType, previousRole.CompositesAssociationStrategies(associationType));
+                this.ChangeLog.OnChangingCompositesAssociation(previousRole, associationType, previousRole.OriginalCompositesAssociation(associationType));
 
                 previousRole.WritableRecordForAssociation().RemoveCompositesAssociation(associationType, this.objectId);
             }
 
             this.WritableRecordForRole().SetCompositeRole(roleType, @new.objectId);
 
-            this.ChangeLog.OnChangingCompositesAssociation(@new, associationType, @new.CompositesAssociationStrategies(associationType));
+            this.ChangeLog.OnChangingCompositesAssociation(@new, associationType, @new.OriginalCompositesAssociation(associationType));
 
             @new.WritableRecordForAssociation().AddCompositesAssociation(associationType, this.objectId);
         }
@@ -628,6 +628,17 @@ namespace Allors.Database.Adapters.Snapshot
             return strategies.Count > 0 ? strategies.ToArray() : null;
         }
 
+        // The change log keeps the roles and associations from before the first change in a checkpoint and
+        // enumerates them only then: a change to a large role does not read all of its objects again.
+        private IEnumerable<Strategy> OriginalCompositesRole(IRoleType roleType) => this.OriginalStrategies(this.Record?.GetCompositesRole(roleType));
+
+        private IEnumerable<Strategy> OriginalCompositesAssociation(IAssociationType associationType) => this.OriginalStrategies(this.Record?.GetCompositesAssociation(associationType));
+
+        private IEnumerable<Strategy> OriginalStrategies(ImmutableSortedSet<long> objectIds) =>
+            objectIds == null || objectIds.IsEmpty
+                ? null
+                : objectIds.Select(v => this.Transaction.GetStrategy(v)).Where(v => v != null);
+
         private void RemoveCompositeRoleOne2One(IRoleType roleType)
         {
             this.AssertNotDeleted();
@@ -673,7 +684,7 @@ namespace Allors.Database.Adapters.Snapshot
 
             if (previousRole != null)
             {
-                this.ChangeLog.OnChangingCompositesAssociation(previousRole, associationType, previousRole.CompositesAssociationStrategies(associationType));
+                this.ChangeLog.OnChangingCompositesAssociation(previousRole, associationType, previousRole.OriginalCompositesAssociation(associationType));
 
                 previousRole.WritableRecordForAssociation().RemoveCompositesAssociation(associationType, this.objectId);
             }
@@ -690,7 +701,7 @@ namespace Allors.Database.Adapters.Snapshot
                 return;
             }
 
-            this.ChangeLog.OnChangingCompositesRole(this, roleType, add, this.Strategies(roleIds));
+            this.ChangeLog.OnChangingCompositesRole(this, roleType, add, this.OriginalStrategies(roleIds));
 
             // Add the new role
             this.WritableRecordForRole().AddCompositesRole(roleType, add.objectId);
@@ -698,7 +709,7 @@ namespace Allors.Database.Adapters.Snapshot
             // Add the new association
             var associationType = roleType.AssociationType;
 
-            this.ChangeLog.OnChangingCompositesAssociation(add, associationType, add.CompositesAssociationStrategies(associationType));
+            this.ChangeLog.OnChangingCompositesAssociation(add, associationType, add.OriginalCompositesAssociation(associationType));
 
             add.WritableRecordForAssociation().AddCompositesAssociation(associationType, this.objectId);
         }
@@ -711,7 +722,7 @@ namespace Allors.Database.Adapters.Snapshot
                 return;
             }
 
-            this.ChangeLog.OnChangingCompositesRole(this, roleType, add, this.Strategies(roleIds));
+            this.ChangeLog.OnChangingCompositesRole(this, roleType, add, this.OriginalStrategies(roleIds));
 
             var associationType = roleType.AssociationType;
 
@@ -722,7 +733,7 @@ namespace Allors.Database.Adapters.Snapshot
 
             if (addPreviousAssociation != null)
             {
-                this.ChangeLog.OnChangingCompositesRole(addPreviousAssociation, roleType, null, addPreviousAssociation.CompositesRoleStrategies(roleType));
+                this.ChangeLog.OnChangingCompositesRole(addPreviousAssociation, roleType, null, addPreviousAssociation.OriginalCompositesRole(roleType));
 
                 // Remove obsolete role
                 addPreviousAssociation.WritableRecordForRole().RemoveCompositesRole(roleType, add.objectId);
@@ -743,7 +754,7 @@ namespace Allors.Database.Adapters.Snapshot
                 return;
             }
 
-            this.ChangeLog.OnChangingCompositesRole(this, roleType, remove, this.Strategies(roleIds));
+            this.ChangeLog.OnChangingCompositesRole(this, roleType, remove, this.OriginalStrategies(roleIds));
 
             // Remove role
             this.WritableRecordForRole().RemoveCompositesRole(roleType, remove.objectId);
@@ -751,7 +762,7 @@ namespace Allors.Database.Adapters.Snapshot
             // Remove association
             var associationType = roleType.AssociationType;
 
-            this.ChangeLog.OnChangingCompositesAssociation(remove, associationType, remove.CompositesAssociationStrategies(associationType));
+            this.ChangeLog.OnChangingCompositesAssociation(remove, associationType, remove.OriginalCompositesAssociation(associationType));
 
             remove.WritableRecordForAssociation().RemoveCompositesAssociation(associationType, this.objectId);
         }
@@ -764,7 +775,7 @@ namespace Allors.Database.Adapters.Snapshot
                 return;
             }
 
-            this.ChangeLog.OnChangingCompositesRole(this, roleType, roleToRemove, this.Strategies(roleIds));
+            this.ChangeLog.OnChangingCompositesRole(this, roleType, roleToRemove, this.OriginalStrategies(roleIds));
 
             // Remove role
             this.WritableRecordForRole().RemoveCompositesRole(roleType, roleToRemove.objectId);
