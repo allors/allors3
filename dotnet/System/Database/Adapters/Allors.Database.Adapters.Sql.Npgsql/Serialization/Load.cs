@@ -130,15 +130,16 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             }
 
             // The objects are copied with the ids of the file, which the sequence of the object ids does not follow.
-            // Move the sequence past the highest id, and never back, so that a new object does not get the id of
-            // a loaded object.
+            // Init started the sequence again, so move it to the highest loaded id: a new object gets the next id.
+            // Without objects the sequence stays at its start.
             using (var command = this.connection.CreateCommand())
             {
                 command.CommandTimeout = 0;
                 command.CommandType = CommandType.Text;
                 command.CommandText = $@"
-select setval(ids.sequence_name, greatest(nextval(ids.sequence_name), (select max({Sql.Mapping.ColumnNameForObject}) from {mapping.TableNameForObjects}) + 1), false)
-from (select pg_get_serial_sequence('{mapping.TableNameForObjects}', '{Sql.Mapping.ColumnNameForObject}')::regclass as sequence_name) as ids";
+select setval(pg_get_serial_sequence('{mapping.TableNameForObjects}', '{Sql.Mapping.ColumnNameForObject}')::regclass, max({Sql.Mapping.ColumnNameForObject}))
+from {mapping.TableNameForObjects}
+having max({Sql.Mapping.ColumnNameForObject}) is not null";
 
                 command.ExecuteNonQuery();
             }

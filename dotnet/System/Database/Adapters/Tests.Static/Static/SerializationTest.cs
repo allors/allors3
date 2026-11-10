@@ -759,41 +759,58 @@ namespace Allors.Database.Adapters
                 init();
                 var m = this.Transaction.Database.Context().M;
 
-                // The ids that the database hands out next, whether a load restarts its numbering or continues it.
-                long next;
-                using (var transaction = this.Population.CreateTransaction())
+                string Xml(params long[] ids)
                 {
-                    next = transaction.Create<C1>().Id + 1;
-                    transaction.Commit();
-                }
+                    var objectType = ids.Length > 0
+                        ? $@"<ot i=""{m.C1.Id:N}"">{string.Join(",", ids.Select(v => v.ToString(CultureInfo.InvariantCulture) + ":0"))}</ot>"
+                        : string.Empty;
 
-                var loaded = new[] { 1, 2, 3, next, next + 1, next + 2 }.Distinct().ToArray();
-                var xml =
+                    return
 $@"<?xml version=""1.0"" encoding=""utf-16""?>
 <allors>
   <population version=""1"">
     <objects>
       <database>
-        <ot i=""{m.C1.Id:N}"">{string.Join(",", loaded.Select(v => v.ToString(CultureInfo.InvariantCulture) + ":0"))}</ot>
+        {objectType}
       </database>
     </objects>
   </population>
 </allors>";
-
-                DoLoad(this.Population, xml);
-
-                using (var transaction = this.Population.CreateTransaction())
-                {
-                    var created = transaction.Create<C1>(3);
-                    transaction.Commit();
-
-                    foreach (var c1 in created)
-                    {
-                        Assert.DoesNotContain(c1.Id, loaded);
-                    }
-
-                    Assert.Equal(loaded.Length + created.Length, this.GetExtent(transaction, m.C1).Length);
                 }
+
+                long[] Create(int count)
+                {
+                    using (var transaction = this.Population.CreateTransaction())
+                    {
+                        var created = transaction.Create<C1>(count);
+                        transaction.Commit();
+
+                        return created.Select(v => v.Id).OrderBy(v => v).ToArray();
+                    }
+                }
+
+                int Count()
+                {
+                    using (var transaction = this.Population.CreateTransaction())
+                    {
+                        return this.GetExtent(transaction, m.C1).Length;
+                    }
+                }
+
+                // New objects are numbered after the highest loaded id, wherever it stands in the file.
+                DoLoad(this.Population, Xml(7, 1, 2, 3));
+                Assert.Equal(new long[] { 8, 9, 10 }, Create(3));
+                Assert.Equal(7, Count());
+
+                // A load starts the numbering again: the objects that it replaces do not count.
+                DoLoad(this.Population, Xml(1, 2, 3));
+                Assert.Equal(new long[] { 4, 5, 6 }, Create(3));
+                Assert.Equal(6, Count());
+
+                // So does a load without objects.
+                DoLoad(this.Population, Xml());
+                Assert.Equal(new long[] { 1, 2, 3 }, Create(3));
+                Assert.Equal(3, Count());
             }
         }
 
