@@ -552,29 +552,46 @@ namespace Allors.Database.Adapters
                     }
 
                     {
-                        // Minimum
+                        // Minimum: the smallest decimal that the precision and the scale of the role type hold
                         var values = C1.Create(this.Transaction);
-                        values.C1AllorsDecimal = decimal.MinValue;
-                        values.I1AllorsDecimal = decimal.MinValue;
-                        values.S1AllorsDecimal = decimal.MinValue;
+                        values.C1AllorsDecimal = -LargestDecimal(m.C1.C1AllorsDecimal);
+                        values.I1AllorsDecimal = -LargestDecimal(m.I1.I1AllorsDecimal);
+                        values.S1AllorsDecimal = -LargestDecimal(m.S1.S1AllorsDecimal);
 
                         mark();
-                        Assert.Equal(decimal.MinValue, values.C1AllorsDecimal);
-                        Assert.Equal(decimal.MinValue, values.I1AllorsDecimal);
-                        Assert.Equal(decimal.MinValue, values.S1AllorsDecimal);
+                        Assert.Equal(-LargestDecimal(m.C1.C1AllorsDecimal), values.C1AllorsDecimal);
+                        Assert.Equal(-LargestDecimal(m.I1.I1AllorsDecimal), values.I1AllorsDecimal);
+                        Assert.Equal(-LargestDecimal(m.S1.S1AllorsDecimal), values.S1AllorsDecimal);
                     }
 
                     {
-                        // Maximum
+                        // Maximum: the largest decimal that the precision and the scale of the role type hold
                         var values = C1.Create(this.Transaction);
-                        values.C1AllorsDecimal = decimal.MaxValue;
-                        values.I1AllorsDecimal = decimal.MaxValue;
-                        values.S1AllorsDecimal = decimal.MaxValue;
+                        values.C1AllorsDecimal = LargestDecimal(m.C1.C1AllorsDecimal);
+                        values.I1AllorsDecimal = LargestDecimal(m.I1.I1AllorsDecimal);
+                        values.S1AllorsDecimal = LargestDecimal(m.S1.S1AllorsDecimal);
 
                         mark();
-                        Assert.Equal(decimal.MaxValue, values.C1AllorsDecimal);
-                        Assert.Equal(decimal.MaxValue, values.I1AllorsDecimal);
-                        Assert.Equal(decimal.MaxValue, values.S1AllorsDecimal);
+                        Assert.Equal(LargestDecimal(m.C1.C1AllorsDecimal), values.C1AllorsDecimal);
+                        Assert.Equal(LargestDecimal(m.I1.I1AllorsDecimal), values.I1AllorsDecimal);
+                        Assert.Equal(LargestDecimal(m.S1.S1AllorsDecimal), values.S1AllorsDecimal);
+                    }
+
+                    {
+                        // Too large for the precision: refused when the role is set, also when rounding makes it too large
+                        var values = C1.Create(this.Transaction);
+                        var largest = LargestDecimal(m.C1.C1AllorsDecimal);
+
+                        Assert.Throws<ArgumentException>(() => values.C1AllorsDecimal = largest + 0.01m);
+                        Assert.Throws<ArgumentException>(() => values.C1AllorsDecimal = -largest - 0.01m);
+                        Assert.Throws<ArgumentException>(() => values.C1AllorsDecimal = largest + 0.005m);
+                        Assert.Throws<ArgumentException>(() => values.I1AllorsDecimal = decimal.MaxValue);
+                        Assert.Throws<ArgumentException>(() => values.S1AllorsDecimal = decimal.MinValue);
+
+                        mark();
+                        Assert.False(values.ExistC1AllorsDecimal);
+                        Assert.False(values.ExistI1AllorsDecimal);
+                        Assert.False(values.ExistS1AllorsDecimal);
                     }
 
                     {
@@ -2204,6 +2221,24 @@ namespace Allors.Database.Adapters
                     Assert.True(exceptionThrown);
                 }
             }
+        }
+
+        // The largest decimal that the precision and the scale of a role type hold.
+        protected static decimal LargestDecimal(Meta.IRoleType roleType)
+        {
+            var step = 1m;
+            for (var i = 0; i < roleType.Scale; i++)
+            {
+                step /= 10m;
+            }
+
+            var limit = 1m;
+            for (var i = 0; i < roleType.Precision - roleType.Scale; i++)
+            {
+                limit *= 10m;
+            }
+
+            return limit - step;
         }
 
         protected DateTime StripNanoSeconds(DateTime dateTime) => new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, dateTime.Second, dateTime.Millisecond, dateTime.Kind);

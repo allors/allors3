@@ -170,7 +170,7 @@ namespace Allors.Database.Adapters
                 case string @string when roleType.Size > -1 && @string.Length > roleType.Size:
                     throw new ArgumentException($"The string of {@string.Length} characters is longer than the size {roleType.Size} of {roleType}.");
 
-                case decimal @decimal when !Fits(@decimal, roleType.Precision, roleType.Scale):
+                case decimal @decimal when !roleType.Fits(@decimal):
                     throw new ArgumentException($"The decimal {XmlConvert.ToString(@decimal)} has more digits than the precision {roleType.Precision} or more decimals than the scale {roleType.Scale} of {roleType}.");
             }
 
@@ -221,64 +221,6 @@ namespace Allors.Database.Adapters
         {
             var databaseInitial = (long)global::Allors.Version.DatabaseInitial;
             return version < databaseInitial ? databaseInitial : version;
-        }
-
-        // A decimal fits when the scale preserves its value and its magnitude is less than 10^(precision - scale).
-        private static bool Fits(decimal value, int? precision, int? scale)
-        {
-            const int MaximumScale = 28;
-
-            if (value == 0)
-            {
-                return true;
-            }
-
-            if (scale < 0)
-            {
-                if (scale < -MaximumScale)
-                {
-                    return false;
-                }
-
-                var step = 1m;
-                for (var i = 0; i > scale; i--)
-                {
-                    step *= 10m;
-                }
-
-                if (value % step != 0)
-                {
-                    return false;
-                }
-            }
-            else if (scale <= MaximumScale && decimal.Round(value, scale.Value) != value)
-            {
-                return false;
-            }
-
-            var digits = (long?)precision - (scale ?? 0);
-            if (digits <= -MaximumScale)
-            {
-                return false;
-            }
-
-            if (digits <= MaximumScale)
-            {
-                var limit = 1m;
-                for (var i = 0; i < digits; i++)
-                {
-                    limit *= 10m;
-                }
-
-                for (var i = 0; i > digits; i--)
-                {
-                    limit /= 10m;
-                }
-
-                return Math.Abs(value) < limit;
-            }
-
-            return true;
         }
     }
 }

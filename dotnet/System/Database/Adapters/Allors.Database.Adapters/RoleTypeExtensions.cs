@@ -133,8 +133,36 @@ namespace Allors.Database.Adapters
         }
 
         /// <summary>
+        /// Normalizes a unit that is set as a role, the same way on every adapter: the unit is normalized, and a
+        /// decimal is rounded to the scale of the role type and refused when it is then too large for its precision.
+        /// </summary>
+        /// <param name="roleType">
+        ///     The role type.
+        /// </param>
+        /// <param name="unit">
+        ///     The unit that is set.
+        /// </param>
+        /// <returns>
+        /// The unit as the role holds it.
+        /// </returns>
+        /// <exception cref="ArgumentException">
+        /// The unit is not compatible with the role type, or the rounded decimal is too large for its precision.
+        /// </exception>
+        public static object NormalizeRole(this IRoleType roleType, object unit)
+        {
+            var role = roleType.RoundToScale(roleType.Normalize(unit));
+
+            if (role is decimal @decimal && !roleType.Fits(@decimal))
+            {
+                throw new ArgumentException($"The decimal {@decimal.ToString(System.Globalization.CultureInfo.InvariantCulture)} is too large for the precision {roleType.Precision} and the scale {roleType.Scale} of {roleType}.");
+            }
+
+            return role;
+        }
+
+        /// <summary>
         /// Rounds a decimal to the scale of the role type, half away from zero, as SQL Server and PostgreSQL do when
-        /// they store it. An adapter that keeps its units in memory calls this, so that it holds what a database holds.
+        /// they store it.
         /// </summary>
         /// <param name="roleType">
         ///     The role type.
@@ -189,6 +217,79 @@ namespace Allors.Database.Adapters
             }
 
             return unit;
+        }
+
+        /// <summary>
+        /// Whether the role type can hold a decimal as it is: the scale preserves its value and its magnitude is less
+        /// than 10^(precision - scale).
+        /// </summary>
+        /// <param name="roleType">
+        ///     The role type.
+        /// </param>
+        /// <param name="value">
+        ///     The decimal.
+        /// </param>
+        /// <returns>
+        /// True when the decimal fits.
+        /// </returns>
+        public static bool Fits(this IRoleType roleType, decimal value)
+        {
+            const int MaximumScale = 28;
+
+            var precision = roleType.Precision;
+            var scale = roleType.Scale;
+
+            if (value == 0)
+            {
+                return true;
+            }
+
+            if (scale < 0)
+            {
+                if (scale < -MaximumScale)
+                {
+                    return false;
+                }
+
+                var step = 1m;
+                for (var i = 0; i > scale; i--)
+                {
+                    step *= 10m;
+                }
+
+                if (value % step != 0)
+                {
+                    return false;
+                }
+            }
+            else if (scale <= MaximumScale && decimal.Round(value, scale.Value) != value)
+            {
+                return false;
+            }
+
+            var digits = (long?)precision - (scale ?? 0);
+            if (digits <= -MaximumScale)
+            {
+                return false;
+            }
+
+            if (digits <= MaximumScale)
+            {
+                var limit = 1m;
+                for (var i = 0; i < digits; i++)
+                {
+                    limit *= 10m;
+                }
+
+                for (var i = 0; i > digits; i--)
+                {
+                    limit /= 10m;
+                }
+
+                return Math.Abs(value) < limit;
+            }
+
+            return true;
         }
     }
 }

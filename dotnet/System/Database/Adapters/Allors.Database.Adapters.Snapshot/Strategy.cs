@@ -119,7 +119,7 @@ namespace Allors.Database.Adapters.Snapshot
             this.Transaction.Database.UnitRoleChecks(this, roleType);
 
             var previousRole = this.GetInternalizedUnitRole(roleType);
-            role = roleType.RoundToScale(roleType.Normalize(role));
+            role = roleType.NormalizeRole(role);
 
             if (UnitEquals(role, previousRole))
             {
