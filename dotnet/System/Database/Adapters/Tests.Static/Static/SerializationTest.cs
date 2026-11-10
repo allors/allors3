@@ -752,6 +752,52 @@ namespace Allors.Database.Adapters
         }
 
         [Fact]
+        public void CreateAfterLoad()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+                var m = this.Transaction.Database.Context().M;
+
+                // The ids that the database hands out next, whether a load restarts its numbering or continues it.
+                long next;
+                using (var transaction = this.Population.CreateTransaction())
+                {
+                    next = transaction.Create<C1>().Id + 1;
+                    transaction.Commit();
+                }
+
+                var loaded = new[] { 1, 2, 3, next, next + 1, next + 2 }.Distinct().ToArray();
+                var xml =
+$@"<?xml version=""1.0"" encoding=""utf-16""?>
+<allors>
+  <population version=""1"">
+    <objects>
+      <database>
+        <ot i=""{m.C1.Id:N}"">{string.Join(",", loaded.Select(v => v.ToString(CultureInfo.InvariantCulture) + ":0"))}</ot>
+      </database>
+    </objects>
+  </population>
+</allors>";
+
+                DoLoad(this.Population, xml);
+
+                using (var transaction = this.Population.CreateTransaction())
+                {
+                    var created = transaction.Create<C1>(3);
+                    transaction.Commit();
+
+                    foreach (var c1 in created)
+                    {
+                        Assert.DoesNotContain(c1.Id, loaded);
+                    }
+
+                    Assert.Equal(loaded.Length + created.Length, this.GetExtent(transaction, m.C1).Length);
+                }
+            }
+        }
+
+        [Fact]
         public void CantLoadObjects()
         {
             foreach (var init in this.Inits)
