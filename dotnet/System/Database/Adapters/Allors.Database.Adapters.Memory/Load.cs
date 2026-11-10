@@ -359,10 +359,7 @@ namespace Allors.Database.Adapters.Memory
                                     }
                                     else
                                     {
-                                        var unitType = (IUnit)relationType.RoleType.ObjectType;
-                                        var unitTypeTag = unitType.Tag;
-
-                                        var unit = Serialization.ReadString(value, unitTypeTag);
+                                        var unit = Serialization.ReadUnit(relationType.RoleType, value);
                                         strategy.SetUnitRole(relationType.RoleType, unit);
                                     }
                                 }

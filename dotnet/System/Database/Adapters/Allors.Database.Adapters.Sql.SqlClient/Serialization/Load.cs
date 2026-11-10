@@ -282,9 +282,7 @@ where c = '{@class.Id}'";
                                     }
                                     else
                                     {
-                                        var unitType = (IUnit)relationType.RoleType.ObjectType;
-                                        var unitTypeTag = unitType.Tag;
-                                        unit = Serialization.ReadString(value, unitTypeTag);
+                                        unit = Serialization.ReadUnit(relationType.RoleType, value);
                                     }
 
                                     unitRelations.Add(new UnitRelation(associationId, unit));

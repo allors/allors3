@@ -1334,6 +1334,52 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
         }
 
         [Fact]
+        public void ReadDecimal()
+        {
+            var m = new MetaBuilder().Build();
+            var roleType = m.C1.C1AllorsDecimal;
+            var cases = new (int Precision, int Scale, string Value, bool Fits)[]
+            {
+                (3, 5, "0.00999", true),
+                (3, 5, "-0.00999", true),
+                (3, 5, "0.01", false),
+                (3, 5, "-0.01", false),
+                (3, 5, "0.1", false),
+                (3, 5, "0.001230", true),
+                (3, 5, "0.001234", false),
+                (3, -2, "12300", true),
+                (3, -2, "12345", false),
+                (3, -2, "-12345", false),
+                (3, -2, "99900", true),
+                (3, -2, "-99900", true),
+                (3, -2, "100000", false),
+                (3, -2, "-100000", false),
+                (3, -29, "0", true),
+                (3, -29, "1", false),
+                (3, -28, "10000000000000000000000000000", true),
+                (3, -28, XmlConvert.ToString(decimal.MaxValue), false),
+                (1, 29, "0", true),
+                (1, 29, "0.0000000000000000000000000001", false),
+                (2, 29, "0.0000000000000000000000000001", true),
+            };
+
+            foreach (var (precision, scale, value, fits) in cases)
+            {
+                roleType.Precision = precision;
+                roleType.Scale = scale;
+
+                if (fits)
+                {
+                    Assert.Equal(XmlConvert.ToDecimal(value), Serialization.ReadUnit(roleType, value));
+                }
+                else
+                {
+                    Assert.Throws<ArgumentException>(() => Serialization.ReadUnit(roleType, value));
+                }
+            }
+        }
+
+        [Fact]
         public void HandlerFailure()
         {
             foreach (var init in this.Inits)
@@ -1887,6 +1933,20 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
             var kept = Base64("kept");
             var unique = "537f6823-d22c-4b3b-ab3c-e15a6b61b9d6";
 
+            // The longest string that the size of the role type allows, and a string that is one character longer.
+            var size = m.C1.C1AllorsString.Size.Value;
+            var longest = Base64(new string('x', size));
+            var tooLong = Base64(new string('x', size + 1));
+
+            // The decimals with the most digits and the most decimals that the precision and the scale of the role
+            // type allow, and decimals with one digit and one decimal more.
+            var scale = m.C1.C1AllorsDecimal.Scale.Value;
+            var digits = m.C1.C1AllorsDecimal.Precision.Value - scale;
+            var mostDigits = new string('9', digits) + "." + new string('9', scale);
+            var tooManyDigits = "1" + new string('0', digits);
+            var mostDecimals = "1." + new string('0', scale - 1) + "5";
+            var tooManyDecimals = "1." + new string('0', scale) + "5";
+
             return new[]
             {
                 Change(
@@ -2002,6 +2062,28 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
                     Relation(m.C1.C1AllorsUnique, 1, "abc"),
                     Relation(m.C1.C1AllorsString, 1, "!"),
                     Relation(m.C1.C1AllorsBinary, 1, "!")),
+                Change(
+                    "a string that is longer than its role type allows",
+                    string.Empty,
+                    UnitsOf(Id(m.C1.C1AllorsString), (1, tooLong), (2, longest)),
+                    UnitsOf(Id(m.C1.C1AllorsString), (2, longest)),
+                    Relation(m.C1.C1AllorsString, 1, tooLong)),
+                Change(
+                    "decimals with more digits than their role type allows",
+                    string.Empty,
+                    UnitsOf(Id(m.C1.C1AllorsDecimal), (1, tooManyDigits), (2, mostDigits), (3, "-" + tooManyDigits), (4, "-" + mostDigits)),
+                    UnitsOf(Id(m.C1.C1AllorsDecimal), (2, mostDigits), (4, "-" + mostDigits)),
+                    Relation(m.C1.C1AllorsDecimal, 1, tooManyDigits),
+                    Relation(m.C1.C1AllorsDecimal, 3, "-" + tooManyDigits)),
+
+                // A decimal that is written with more decimals than the scale fits when the extra decimals are zero.
+                Change(
+                    "decimals with more decimals than their role type allows",
+                    string.Empty,
+                    UnitsOf(Id(m.C1.C1AllorsDecimal), (1, tooManyDecimals), (2, mostDecimals), (3, "-" + tooManyDecimals), (4, mostDecimals + "0")),
+                    UnitsOf(Id(m.C1.C1AllorsDecimal), (2, mostDecimals), (4, mostDecimals + "0")),
+                    Relation(m.C1.C1AllorsDecimal, 1, tooManyDecimals),
+                    Relation(m.C1.C1AllorsDecimal, 3, "-" + tooManyDecimals)),
             };
         }
 
