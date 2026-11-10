@@ -1334,6 +1334,47 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
         }
 
         [Fact]
+        public void HandlerFailure()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+                var m = this.Transaction.Database.Context().M;
+
+                var objects = ObjectsOf(m.C1.Id, 1, 2, 3, 4) + ObjectsOf(m.C2.Id, 5, 6, 7, 8);
+
+                // An object, a unit relation and a composite relation that the schema does not allow.
+                var files = new[]
+                {
+                    PopulationOf(objects + ObjectsOf(new Guid("71000000000000000000000000000000"), 9), string.Empty),
+                    PopulationOf(objects, UnitsOf(m.C1.C1AllorsString.RelationType.Id, (5, Base64("x")))),
+                    PopulationOf(objects, CompositesOf(m.C1.C1C1one2one.RelationType.Id, (1, "5"))),
+                };
+
+                foreach (var file in files)
+                {
+                    // The exception of a handler stops the load, and it is the exception that the caller gets.
+                    var failure = new InvalidOperationException("The handler fails.");
+                    ObjectNotLoadedEventHandler objectNotLoaded = (sender, args) => throw failure;
+                    RelationNotLoadedEventHandler relationNotLoaded = (sender, args) => throw failure;
+
+                    this.Population.ObjectNotLoaded += objectNotLoaded;
+                    this.Population.RelationNotLoaded += relationNotLoaded;
+                    try
+                    {
+                        var exception = Assert.ThrowsAny<Exception>(() => DoLoad(this.Population, file));
+                        Assert.Same(failure, exception);
+                    }
+                    finally
+                    {
+                        this.Population.ObjectNotLoaded -= objectNotLoaded;
+                        this.Population.RelationNotLoaded -= relationNotLoaded;
+                    }
+                }
+            }
+        }
+
+        [Fact]
         public void LoadUnitBeforeEmptyElement()
         {
             foreach (var init in this.Inits)
@@ -1895,6 +1936,45 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
                     UnitsOf(Id(m.C1.C1AllorsString), (5, x), (1, kept)),
                     UnitsOf(Id(m.C1.C1AllorsString), (1, kept)),
                     Relation(m.C1.C1AllorsString, 5, x)),
+                Change(
+                    "a role of a class that no longer has it",
+                    string.Empty,
+                    CompositesOf(Id(m.C1.C1C1one2one), (5, "2"), (3, "4")),
+                    CompositesOf(Id(m.C1.C1C1one2one), (3, "4")),
+                    Relation(m.C1.C1C1one2one, 5, "2")),
+                Change(
+                    "several roles of a class that no longer has them",
+                    string.Empty,
+                    CompositesOf(Id(m.C1.C1C1many2manies), (5, "1,2"), (3, "4")),
+                    CompositesOf(Id(m.C1.C1C1many2manies), (3, "4")),
+                    Relation(m.C1.C1C1many2manies, 5, "1"),
+                    Relation(m.C1.C1C1many2manies, 5, "2")),
+                Change(
+                    "a role of a class that its role type no longer allows",
+                    string.Empty,
+                    CompositesOf(Id(m.C1.C1C1one2one), (1, "5"), (3, "4")),
+                    CompositesOf(Id(m.C1.C1C1one2one), (3, "4")),
+                    Relation(m.C1.C1C1one2one, 1, "5")),
+                Change(
+                    "one of several roles of a class that its role type no longer allows",
+                    string.Empty,
+                    CompositesOf(Id(m.C1.C1C1many2manies), (2, "3,5,4")),
+                    CompositesOf(Id(m.C1.C1C1many2manies), (2, "3,4")),
+                    Relation(m.C1.C1C1many2manies, 2, "5")),
+                Change(
+                    "several roles where a one to one role type allows one",
+                    string.Empty,
+                    CompositesOf(Id(m.C1.C1C1one2one), (1, "2,3"), (3, "4")),
+                    CompositesOf(Id(m.C1.C1C1one2one), (3, "4")),
+                    Relation(m.C1.C1C1one2one, 1, "2"),
+                    Relation(m.C1.C1C1one2one, 1, "3")),
+                Change(
+                    "several roles where a many to one role type allows one",
+                    string.Empty,
+                    CompositesOf(Id(m.C1.C1C1many2one), (1, "2,3"), (4, "2")),
+                    CompositesOf(Id(m.C1.C1C1many2one), (4, "2")),
+                    Relation(m.C1.C1C1many2one, 1, "2"),
+                    Relation(m.C1.C1C1many2one, 1, "3")),
                 Change(
                     "values that their unit type cannot read",
                     string.Empty,
