@@ -61,6 +61,16 @@ namespace Allors.Database.Adapters
             });
         }
 
+        public IDatabase CreateSnapshotDatabase()
+        {
+            var metaPopulation = new MetaBuilder().Build();
+            var scope = new DefaultDomainDatabaseServices();
+            return new Snapshot.Database(scope, new Snapshot.Configuration
+            {
+                ObjectFactory = new ObjectFactory(metaPopulation, typeof(C1)),
+            });
+        }
+
         public abstract IDatabase CreateDatabase();
 
         internal ITransaction CreateTransaction() => this.Database.CreateTransaction();
