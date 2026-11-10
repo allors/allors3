@@ -223,24 +223,56 @@ namespace Allors.Database.Adapters
             return version < databaseInitial ? databaseInitial : version;
         }
 
-        // A decimal fits when rounding it to the scale leaves it as it is, and its digits before the decimal point are
-        // not more than the precision leaves for them.
+        // A decimal fits when the scale preserves its value and its magnitude is less than 10^(precision - scale).
         private static bool Fits(decimal value, int? precision, int? scale)
         {
             const int MaximumScale = 28;
 
-            if (scale >= 0 && scale <= MaximumScale && decimal.Round(value, scale.Value) != value)
+            if (value == 0)
+            {
+                return true;
+            }
+
+            if (scale < 0)
+            {
+                if (scale < -MaximumScale)
+                {
+                    return false;
+                }
+
+                var step = 1m;
+                for (var i = 0; i > scale; i--)
+                {
+                    step *= 10m;
+                }
+
+                if (value % step != 0)
+                {
+                    return false;
+                }
+            }
+            else if (scale <= MaximumScale && decimal.Round(value, scale.Value) != value)
             {
                 return false;
             }
 
-            var digits = precision - (scale ?? 0);
-            if (digits >= 0 && digits <= MaximumScale)
+            var digits = (long?)precision - (scale ?? 0);
+            if (digits <= -MaximumScale)
+            {
+                return false;
+            }
+
+            if (digits <= MaximumScale)
             {
                 var limit = 1m;
                 for (var i = 0; i < digits; i++)
                 {
                     limit *= 10m;
+                }
+
+                for (var i = 0; i > digits; i--)
+                {
+                    limit /= 10m;
                 }
 
                 return Math.Abs(value) < limit;

@@ -1334,6 +1334,52 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
         }
 
         [Fact]
+        public void ReadDecimal()
+        {
+            var m = new MetaBuilder().Build();
+            var roleType = m.C1.C1AllorsDecimal;
+            var cases = new (int Precision, int Scale, string Value, bool Fits)[]
+            {
+                (3, 5, "0.00999", true),
+                (3, 5, "-0.00999", true),
+                (3, 5, "0.01", false),
+                (3, 5, "-0.01", false),
+                (3, 5, "0.1", false),
+                (3, 5, "0.001230", true),
+                (3, 5, "0.001234", false),
+                (3, -2, "12300", true),
+                (3, -2, "12345", false),
+                (3, -2, "-12345", false),
+                (3, -2, "99900", true),
+                (3, -2, "-99900", true),
+                (3, -2, "100000", false),
+                (3, -2, "-100000", false),
+                (3, -29, "0", true),
+                (3, -29, "1", false),
+                (3, -28, "10000000000000000000000000000", true),
+                (3, -28, XmlConvert.ToString(decimal.MaxValue), false),
+                (1, 29, "0", true),
+                (1, 29, "0.0000000000000000000000000001", false),
+                (2, 29, "0.0000000000000000000000000001", true),
+            };
+
+            foreach (var (precision, scale, value, fits) in cases)
+            {
+                roleType.Precision = precision;
+                roleType.Scale = scale;
+
+                if (fits)
+                {
+                    Assert.Equal(XmlConvert.ToDecimal(value), Serialization.ReadUnit(roleType, value));
+                }
+                else
+                {
+                    Assert.Throws<ArgumentException>(() => Serialization.ReadUnit(roleType, value));
+                }
+            }
+        }
+
+        [Fact]
         public void HandlerFailure()
         {
             foreach (var init in this.Inits)
