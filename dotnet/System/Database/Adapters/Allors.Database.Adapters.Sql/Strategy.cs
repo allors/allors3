@@ -211,7 +211,7 @@ namespace Allors.Database.Adapters.Sql
         {
             this.AssertExist();
             roleType.UnitRoleChecks(this);
-            role = roleType.Normalize(role);
+            role = roleType.NormalizeRole(role);
 
             this.SetUnitRoleInternal(roleType, role);
         }

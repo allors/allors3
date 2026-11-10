@@ -74,6 +74,58 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                     Assert.Equal(0m, values.S1AllorsDecimal);
                 }
 
+                // More decimals than the scale: rounded half away from zero when the role is set
+                {
+                    var values = C1.Create(this.Transaction);
+                    values.C1AllorsDecimal = 1.025m;
+                    values.I1AllorsDecimal = -1.025m;
+                    values.S1AllorsDecimal = 1.004m;
+
+                    Assert.Equal(1.03m, values.C1AllorsDecimal);
+                    Assert.Equal(-1.03m, values.I1AllorsDecimal);
+                    Assert.Equal(1.00m, values.S1AllorsDecimal);
+
+                    this.Transaction.Commit();
+
+                    Assert.Equal(1.03m, values.C1AllorsDecimal);
+                    Assert.Equal(-1.03m, values.I1AllorsDecimal);
+                    Assert.Equal(1.00m, values.S1AllorsDecimal);
+                }
+
+                // Minimum and maximum: the smallest and the largest decimal that the precision and the scale hold
+                {
+                    var m = this.Transaction.Database.Context().M;
+                    var values = C1.Create(this.Transaction);
+                    values.C1AllorsDecimal = -LargestDecimal(m.C1.C1AllorsDecimal);
+                    values.I1AllorsDecimal = LargestDecimal(m.I1.I1AllorsDecimal);
+                    values.S1AllorsDecimal = LargestDecimal(m.S1.S1AllorsDecimal);
+
+                    this.Transaction.Commit();
+
+                    Assert.Equal(-LargestDecimal(m.C1.C1AllorsDecimal), values.C1AllorsDecimal);
+                    Assert.Equal(LargestDecimal(m.I1.I1AllorsDecimal), values.I1AllorsDecimal);
+                    Assert.Equal(LargestDecimal(m.S1.S1AllorsDecimal), values.S1AllorsDecimal);
+                }
+
+                // Too large for the precision: refused when the role is set, also when rounding makes it too large
+                {
+                    var m = this.Transaction.Database.Context().M;
+                    var values = C1.Create(this.Transaction);
+                    var largest = LargestDecimal(m.C1.C1AllorsDecimal);
+
+                    Assert.Throws<System.ArgumentException>(() => values.C1AllorsDecimal = largest + 0.01m);
+                    Assert.Throws<System.ArgumentException>(() => values.C1AllorsDecimal = -largest - 0.01m);
+                    Assert.Throws<System.ArgumentException>(() => values.C1AllorsDecimal = largest + 0.005m);
+                    Assert.Throws<System.ArgumentException>(() => values.I1AllorsDecimal = decimal.MaxValue);
+                    Assert.Throws<System.ArgumentException>(() => values.S1AllorsDecimal = decimal.MinValue);
+
+                    this.Transaction.Commit();
+
+                    Assert.False(values.ExistC1AllorsDecimal);
+                    Assert.False(values.ExistI1AllorsDecimal);
+                    Assert.False(values.ExistS1AllorsDecimal);
+                }
+
                 // initial empty
                 {
                     var values = C1.Create(this.Transaction);
