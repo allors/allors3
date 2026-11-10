@@ -119,6 +119,9 @@ namespace Allors.Database.Adapters.Snapshot
             {
                 this.IsLoading = false;
             }
+
+            // Discard services populated by the import transaction before another transaction reads the loaded objects.
+            this.Services.OnInit(this);
         }
 
         public void Save(XmlWriter writer)

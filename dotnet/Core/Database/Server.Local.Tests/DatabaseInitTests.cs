@@ -5,6 +5,8 @@
 
 namespace Tests
 {
+    using System.IO;
+    using System.Xml;
     using Allors.Database;
     using Allors.Database.Adapters;
     using Allors.Database.Configuration;
@@ -14,6 +16,7 @@ namespace Tests
     using Microsoft.Extensions.Configuration;
     using Xunit;
     using C1 = Allors.Database.Domain.C1;
+    using Person = Allors.Database.Domain.Person;
 
     /// <summary>
     /// A database that lives longer than its population, as the Core test server's does: Init replaces the
@@ -55,6 +58,56 @@ namespace Tests
                 var administrators = new UserGroups(transaction).Administrators;
                 Assert.Equal(UserGroups.AdministratorsId, administrators.UniqueId);
                 Assert.Equal(administrators, Assert.Single(new Grants(transaction).Administrator.SubjectGroups));
+            }
+        }
+
+        [Theory]
+        [InlineData("memory")]
+        [InlineData("snapshot")]
+        public void LoadPreservesAdministratorAccess(string adapter)
+        {
+            var metaPopulation = new MetaBuilder().Build();
+            var engine = new Engine(Rules.Create(metaPopulation));
+            var services = new DefaultDatabaseServices(engine);
+            var objectFactory = new ObjectFactory(metaPopulation, typeof(C1));
+            IDatabase database = adapter == "memory"
+                ? new Allors.Database.Adapters.Memory.Database(services, new Allors.Database.Adapters.Memory.Configuration { ObjectFactory = objectFactory })
+                : new Allors.Database.Adapters.Snapshot.Database(services, new Allors.Database.Adapters.Snapshot.Configuration { ObjectFactory = objectFactory });
+
+            database.Init();
+            new Setup(database, new Config()).Apply();
+
+            long administratorId;
+            using (var transaction = database.CreateTransaction())
+            {
+                var administrator = new Users(transaction).FindBy(metaPopulation.User.UserName, "jane@example.com");
+                administratorId = administrator.Id;
+
+                Assert.Equal(UserGroups.AdministratorsId, new UserGroups(transaction).Administrators.UniqueId);
+                var accessControl = new DatabaseAccessControl(database.Services.Get<ISecurity>(), administrator);
+                Assert.True(accessControl[administrator].CanRead(metaPopulation.Person.FirstName));
+            }
+
+            using var population = new MemoryStream();
+            using (var writer = XmlWriter.Create(population, new XmlWriterSettings { CloseOutput = false }))
+            {
+                database.Save(writer);
+            }
+
+            population.Position = 0;
+            using (var reader = XmlReader.Create(population))
+            {
+                database.Load(reader);
+            }
+
+            using (var transaction = database.CreateTransaction())
+            {
+                var administrator = Assert.IsType<Person>(transaction.Instantiate(administratorId));
+                Assert.Equal("Jane", administrator.FirstName);
+                Assert.Equal(UserGroups.AdministratorsId, new UserGroups(transaction).Administrators.UniqueId);
+
+                var accessControl = new DatabaseAccessControl(database.Services.Get<ISecurity>(), administrator);
+                Assert.True(accessControl[administrator].CanRead(metaPopulation.Person.FirstName));
             }
         }
     }
