@@ -67,6 +67,20 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                     Assert.Equal(0m, values.S1AllorsDecimal);
                 }
 
+                // More decimals than the scale: rounded half away from zero
+                {
+                    var values = C1.Create(this.Transaction);
+                    values.C1AllorsDecimal = 1.025m;
+                    values.I1AllorsDecimal = -1.025m;
+                    values.S1AllorsDecimal = 1.004m;
+
+                    this.Transaction.Commit();
+
+                    Assert.Equal(1.03m, values.C1AllorsDecimal);
+                    Assert.Equal(-1.03m, values.I1AllorsDecimal);
+                    Assert.Equal(1.00m, values.S1AllorsDecimal);
+                }
+
                 // initial empty
                 {
                     var values = C1.Create(this.Transaction);

@@ -131,5 +131,30 @@ namespace Allors.Database.Adapters
 
             return normalizedUnit;
         }
+
+        /// <summary>
+        /// Rounds a decimal to the scale of the role type, half away from zero, as SQL Server and PostgreSQL do when
+        /// they store it. An adapter that keeps its units in memory calls this, so that it holds what a database holds.
+        /// </summary>
+        /// <param name="roleType">
+        ///     The role type.
+        /// </param>
+        /// <param name="unit">
+        ///     The normalized unit.
+        /// </param>
+        /// <returns>
+        /// The rounded decimal, or the unit itself when it is not a decimal.
+        /// </returns>
+        public static object RoundToScale(this IRoleType roleType, object unit)
+        {
+            const int MaximumScale = 28;
+
+            if (unit is decimal @decimal && roleType.Scale >= 0 && roleType.Scale <= MaximumScale)
+            {
+                return decimal.Round(@decimal, roleType.Scale.Value, MidpointRounding.AwayFromZero);
+            }
+
+            return unit;
+        }
     }
 }

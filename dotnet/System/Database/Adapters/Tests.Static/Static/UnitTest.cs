@@ -539,6 +539,19 @@ namespace Allors.Database.Adapters
                     }
 
                     {
+                        // More decimals than the scale: rounded half away from zero, as a database stores them
+                        var values = C1.Create(this.Transaction);
+                        values.C1AllorsDecimal = 1.025m;
+                        values.I1AllorsDecimal = -1.025m;
+                        values.S1AllorsDecimal = 1.004m;
+
+                        mark();
+                        Assert.Equal(1.03m, values.C1AllorsDecimal);
+                        Assert.Equal(-1.03m, values.I1AllorsDecimal);
+                        Assert.Equal(1.00m, values.S1AllorsDecimal);
+                    }
+
+                    {
                         // Minimum
                         var values = C1.Create(this.Transaction);
                         values.C1AllorsDecimal = decimal.MinValue;
