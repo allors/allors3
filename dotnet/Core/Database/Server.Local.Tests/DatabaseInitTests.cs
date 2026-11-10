@@ -62,17 +62,19 @@ namespace Tests
         }
 
         [Theory]
-        [InlineData("memory")]
-        [InlineData("snapshot")]
-        public void LoadPreservesAdministratorAccess(string adapter)
+        [InlineData(true)]
+        [InlineData(false)]
+        public void LoadPreservesAdministratorAccess(bool memory)
         {
             var metaPopulation = new MetaBuilder().Build();
             var engine = new Engine(Rules.Create(metaPopulation));
             var services = new DefaultDatabaseServices(engine);
             var objectFactory = new ObjectFactory(metaPopulation, typeof(C1));
-            IDatabase database = adapter == "memory"
+            // The configured adapter is Snapshot by default, and SQL Server or PostgreSQL in their CI legs.
+            var configuration = new ConfigurationBuilder().AddAllorsConfiguration("core").Build();
+            IDatabase database = memory
                 ? new Allors.Database.Adapters.Memory.Database(services, new Allors.Database.Adapters.Memory.Configuration { ObjectFactory = objectFactory })
-                : new Allors.Database.Adapters.Snapshot.Database(services, new Allors.Database.Adapters.Snapshot.Configuration { ObjectFactory = objectFactory });
+                : new DatabaseBuilder(services, configuration, objectFactory).Build();
 
             database.Init();
             new Setup(database, new Config()).Apply();
