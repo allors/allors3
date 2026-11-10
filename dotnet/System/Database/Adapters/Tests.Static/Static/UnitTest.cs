@@ -680,6 +680,53 @@ namespace Allors.Database.Adapters
         }
 
         [Fact]
+        public void RoundDecimal()
+        {
+            var m = new Meta.MetaBuilder().Build();
+            var roleType = m.C1.C1AllorsDecimal;
+            var cases = new (int Scale, decimal Value, decimal Expected)[]
+            {
+                (-2, 12345m, 12300m),
+                (-2, 12550m, 12600m),
+                (-2, -12550m, -12600m),
+                (-2, 12300m, 12300m),
+                (-2, 0m, 0m),
+                (-1, 4.9999999999999999999999999999m, 0m),
+                (-1, -4.9999999999999999999999999999m, 0m),
+                (-1, 5m, 10m),
+                (-1, -5m, -10m),
+                (-28, 5000000000000000000000000000m, 10000000000000000000000000000m),
+                (-28, -5000000000000000000000000000m, -10000000000000000000000000000m),
+                (-29, 49999999999999999999999999999m, 0m),
+                (-29, -49999999999999999999999999999m, 0m),
+                (-30, decimal.MaxValue, 0m),
+                (-30, decimal.MinValue, 0m),
+                (-1000, decimal.MaxValue, 0m),
+            };
+
+            foreach (var (scale, value, expected) in cases)
+            {
+                roleType.Scale = scale;
+                Assert.Equal(expected, roleType.RoundToScale(value));
+            }
+
+            // The closest multiple can lie outside the range of decimal.
+            foreach (var (scale, value) in new (int Scale, decimal Value)[]
+            {
+                (-1, decimal.MaxValue),
+                (-1, decimal.MinValue),
+                (-28, decimal.MaxValue),
+                (-28, decimal.MinValue),
+                (-29, 50000000000000000000000000000m),
+                (-29, -50000000000000000000000000000m),
+            })
+            {
+                roleType.Scale = scale;
+                Assert.Throws<OverflowException>(() => roleType.RoundToScale(value));
+            }
+        }
+
+        [Fact]
         public virtual void AllorsDecimalWeakReference()
         {
             foreach (var init in this.Inits)

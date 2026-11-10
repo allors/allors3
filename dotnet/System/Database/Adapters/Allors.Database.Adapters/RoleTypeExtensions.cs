@@ -145,13 +145,47 @@ namespace Allors.Database.Adapters
         /// <returns>
         /// The rounded decimal, or the unit itself when it is not a decimal.
         /// </returns>
+        /// <exception cref="OverflowException">The rounded value is outside the range of decimal.</exception>
         public static object RoundToScale(this IRoleType roleType, object unit)
         {
             const int MaximumScale = 28;
 
-            if (unit is decimal @decimal && roleType.Scale >= 0 && roleType.Scale <= MaximumScale)
+            if (unit is decimal @decimal && roleType.Scale is int scale)
             {
-                return decimal.Round(@decimal, roleType.Scale.Value, MidpointRounding.AwayFromZero);
+                if (scale >= 0 && scale <= MaximumScale)
+                {
+                    return decimal.Round(@decimal, scale, MidpointRounding.AwayFromZero);
+                }
+
+                if (scale < 0)
+                {
+                    if (scale < -MaximumScale)
+                    {
+                        // A step of 10^29 exceeds decimal's range, but its midpoint is representable.
+                        if (scale == -29 && Math.Abs(@decimal) >= 5e28m)
+                        {
+                            throw new OverflowException($"Rounding to scale {scale} exceeds the range of decimal.");
+                        }
+
+                        return 0m;
+                    }
+
+                    var step = 1m;
+                    for (var i = 0; i > scale; i--)
+                    {
+                        step *= 10m;
+                    }
+
+                    // Dividing before rounding can turn a value just below a midpoint into the midpoint.
+                    var remainder = @decimal % step;
+                    var rounded = @decimal - remainder;
+                    if (Math.Abs(remainder) >= step / 2m)
+                    {
+                        rounded += @decimal < 0 ? -step : step;
+                    }
+
+                    return rounded;
+                }
             }
 
             return unit;
