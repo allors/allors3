@@ -1421,6 +1421,104 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
         }
 
         [Fact]
+        public void CantLoadSharedRole()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+                var m = this.Transaction.Database.Context().M;
+
+                static Guid Id(IRoleType roleType) => roleType.RelationType.Id;
+
+                // Four objects of C1 and four of C2, and the same with an id that is far beyond the number of objects.
+                var dense = ObjectsOf(m.C1.Id, 1, 2, 3, 4) + ObjectsOf(m.C2.Id, 5, 6, 7, 8);
+                var sparse = ObjectsOf(m.C1.Id, 1, 2, 3, 1000000000000) + ObjectsOf(m.C2.Id, 5, 6, 7, 8);
+
+                // A role type whose roles have one association cannot hold a role twice. A file with such a role is
+                // what a schema change leaves behind that brings the associations of a role down to one. A load does
+                // not support it: it fails, with handlers and without.
+                var files = new (string Name, string File)[]
+                {
+                    ("one to one", PopulationOf(dense, CompositesOf(Id(m.C1.C1C1one2one), (1, "3"), (2, "3")))),
+                    ("one to many", PopulationOf(dense, CompositesOf(Id(m.C1.C1C1one2manies), (1, "3,4"), (2, "3")))),
+                    ("one to one, a role type with several classes", PopulationOf(dense, CompositesOf(Id(m.C1.C1I12one2one), (1, "5"), (2, "5")))),
+                    ("one to many, a role type with several classes", PopulationOf(dense, CompositesOf(Id(m.C1.C1I12one2manies), (1, "3,5"), (2, "5")))),
+                    ("one to many, twice for one association", PopulationOf(dense, CompositesOf(Id(m.C1.C1C1one2manies), (1, "3,3")))),
+                    ("one to one, the same relation twice", PopulationOf(dense, CompositesOf(Id(m.C1.C1C1one2one), (1, "3"), (1, "3")))),
+                    ("one to many, ids far beyond the number of objects", PopulationOf(sparse, CompositesOf(Id(m.C1.C1C1one2manies), (1, "3,1000000000000"), (2, "1000000000000")))),
+                };
+
+                var failures = new List<string>();
+
+                // Every file is loaded with handlers, and the first one without a handler as well.
+                foreach (var (name, file, handlers) in files.Select(v => (v.Name, v.File, true)).Prepend((files[0].Name, files[0].File, false)))
+                {
+                    ObjectNotLoadedEventHandler objectNotLoaded = (sender, args) => { };
+                    RelationNotLoadedEventHandler relationNotLoaded = (sender, args) => { };
+
+                    if (handlers)
+                    {
+                        this.Population.ObjectNotLoaded += objectNotLoaded;
+                        this.Population.RelationNotLoaded += relationNotLoaded;
+                    }
+
+                    try
+                    {
+                        DoLoad(this.Population, file);
+                        failures.Add($"{name}, {(handlers ? "with handlers" : "without a handler")}: the load did not fail");
+                    }
+                    catch (NotSupportedException)
+                    {
+                    }
+                    catch (Exception e)
+                    {
+                        failures.Add($"{name}, {(handlers ? "with handlers" : "without a handler")}: {Summary(e)}");
+                    }
+                    finally
+                    {
+                        if (handlers)
+                        {
+                            this.Population.ObjectNotLoaded -= objectNotLoaded;
+                            this.Population.RelationNotLoaded -= relationNotLoaded;
+                        }
+                    }
+                }
+
+                // What the role types allow is loaded: a role with several associations where the role type allows
+                // several, and an object that is the role of one association in more than one relation type.
+                foreach (var objects in new[] { dense, sparse })
+                {
+                    var last = objects == dense ? "4" : "1000000000000";
+                    var allowed = PopulationOf(
+                        objects,
+                        CompositesOf(Id(m.C1.C1C1many2one), (1, "3"), (2, "3"))
+                        + CompositesOf(Id(m.C1.C1C1many2manies), (1, "3," + last), (2, "3"))
+                        + CompositesOf(Id(m.C1.C1C1one2one), (1, "3"), (2, last))
+                        + CompositesOf(Id(m.C1.C1C1one2manies), (3, "1," + last), (2, "3"))
+                        + CompositesOf(Id(m.C1.C1I12one2one), (1, "3"), (2, "5"))
+                        + CompositesOf(Id(m.C1.C1I12one2manies), (1, "3,5"), (2, last)));
+
+                    try
+                    {
+                        DoLoad(this.Population, allowed);
+
+                        var difference = Difference(this.ExpectedDigest(allowed), Digest(this.Population));
+                        if (difference != null)
+                        {
+                            failures.Add($"what the role types allow, {(objects == dense ? "dense ids" : "ids far beyond the number of objects")}: {difference}");
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        failures.Add($"what the role types allow, {(objects == dense ? "dense ids" : "ids far beyond the number of objects")}: {Summary(e)}");
+                    }
+                }
+
+                Assert.True(failures.Count == 0, string.Join(Environment.NewLine, failures));
+            }
+        }
+
+        [Fact]
         public void LoadUnitBeforeEmptyElement()
         {
             foreach (var init in this.Inits)

@@ -439,6 +439,12 @@ namespace Allors.Database.Adapters.Snapshot
                                     }
                                     else
                                     {
+                                        // A role has one association here, so it cannot occur a second time.
+                                        if (roleStrategy.ExistCompositeAssociation(relationType.AssociationType))
+                                        {
+                                            throw Serialization.RoleWithSeveralAssociations(relationType, associationId, roleStrategy.ObjectId);
+                                        }
+
                                         association.SetCompositeRoleOne2One(relationType.RoleType, roleStrategy);
                                     }
                                 }
@@ -456,7 +462,13 @@ namespace Allors.Database.Adapters.Snapshot
                                         }
                                         else
                                         {
-                                            roleStrategies.Add(role);
+                                            var added = roleStrategies.Add(role);
+
+                                            // Where a role has one association, it cannot occur a second time.
+                                            if (relationType.AssociationType.IsOne && (!added || role.ExistCompositeAssociation(relationType.AssociationType)))
+                                            {
+                                                throw Serialization.RoleWithSeveralAssociations(relationType, associationId, roleId);
+                                            }
                                         }
                                     }
 

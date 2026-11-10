@@ -24,6 +24,10 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         private readonly Dictionary<long, IClass> classByObjectId;
 
+        // The check on the roles of a relation type whose roles have one association. It is made when the first such
+        // relation type is loaded, after the objects.
+        private RolesWithOneAssociation rolesWithOneAssociation;
+
         public Load(Database database, SqlConnection connection, ObjectNotLoadedEventHandler objectNotLoaded, RelationNotLoadedEventHandler relationNotLoaded)
         {
             this.database = database;
@@ -335,13 +339,20 @@ where c = '{@class.Id}'";
             var con = this.database.ConnectionFactory.Create();
             try
             {
-                var relations = new LoadCompositeRelations(
+                IEnumerable<CompositeRelation> relations = new LoadCompositeRelations(
                     this.database,
                     relationType,
                     this.CantLoadCompositeRole,
                     this.OnRelationNotLoaded,
                     this.classByObjectId,
                     reader);
+
+                // A role type whose roles have one association cannot hold a role twice.
+                if (relationType.AssociationType.IsOne)
+                {
+                    this.rolesWithOneAssociation ??= new RolesWithOneAssociation(this.classByObjectId.Keys);
+                    relations = this.rolesWithOneAssociation.Check(relationType, relations);
+                }
 
                 var sql = relationType.RoleType.IsOne ?
                               this.database.Mapping.ProcedureNameForSetRoleByRelationType[relationType] :

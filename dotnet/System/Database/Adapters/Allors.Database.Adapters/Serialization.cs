@@ -152,6 +152,17 @@ namespace Allors.Database.Adapters
         }
 
         /// <summary>
+        /// The exception for a file that holds an object more than once as a role of a relation type whose roles have
+        /// one association. A load does not support such a file.
+        /// </summary>
+        /// <param name="relationType">The relation type.</param>
+        /// <param name="associationId">An association of the role.</param>
+        /// <param name="roleId">The role.</param>
+        /// <returns>The exception.</returns>
+        public static NotSupportedException RoleWithSeveralAssociations(IRelationType relationType, long associationId, long roleId) =>
+            new NotSupportedException($"Object {roleId} occurs more than once as a role of {relationType.RoleType}, where a role has one association. Object {associationId} is one of its associations. A load does not support this: make the population fit the schema before it is saved.");
+
+        /// <summary>
         /// Reads the unit of a role from its XML value, for a load.
         /// </summary>
         /// <param name="roleType">The role type.</param>
