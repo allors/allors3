@@ -129,6 +129,21 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                 writer.Complete();
             }
 
+            // The objects are copied with the ids of the file, which the sequence of the object ids does not follow.
+            // Init started the sequence again, so move it to the highest loaded id: a new object gets the next id.
+            // Without objects the sequence stays at its start.
+            using (var command = this.connection.CreateCommand())
+            {
+                command.CommandTimeout = 0;
+                command.CommandType = CommandType.Text;
+                command.CommandText = $@"
+select setval(pg_get_serial_sequence('{mapping.TableNameForObjects}', '{Sql.Mapping.ColumnNameForObject}')::regclass, max({Sql.Mapping.ColumnNameForObject}))
+from {mapping.TableNameForObjects}
+having max({Sql.Mapping.ColumnNameForObject}) is not null";
+
+                command.ExecuteNonQuery();
+            }
+
             // TODO: move this to a stored procedure
             // insert from _o table into class tables
             using (var transaction = this.connection.BeginTransaction())

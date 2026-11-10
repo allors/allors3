@@ -101,7 +101,9 @@ CREATE SCHEMA " + this.database.SchemaName;
                 connection.Open();
                 try
                 {
-                    this.TruncateTable(connection, this.mapping.TableNameForObjects);
+                    // The object table numbers the objects. The numbering starts again, as it does when the
+                    // table is created.
+                    this.TruncateTable(connection, this.mapping.TableNameForObjects, restartIdentity: true);
 
                     foreach (var @class in this.mapping.Database.MetaPopulation.DatabaseClasses)
                     {
@@ -378,9 +380,9 @@ $@"CREATE TABLE {tableName}(
             }
         }
 
-        private void TruncateTable(NpgsqlConnection connection, string tableName)
+        private void TruncateTable(NpgsqlConnection connection, string tableName, bool restartIdentity = false)
         {
-            var cmdText = @"TRUNCATE TABLE " + tableName + @";";
+            var cmdText = @"TRUNCATE TABLE " + tableName + (restartIdentity ? " RESTART IDENTITY" : string.Empty) + @";";
             using (var command = new NpgsqlCommand(cmdText, connection))
             {
                 command.ExecuteNonQuery();

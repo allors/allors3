@@ -42,6 +42,9 @@ namespace Allors.Database.Adapters
                 var strategy = c1.Strategy;
                 var id = long.Parse(strategy.ObjectId.ToString());
 
+                // Init starts the numbering of the objects again.
+                Assert.Equal(1, id);
+
                 var nextId = long.Parse(this.Transaction.Create<C1>().Strategy.ObjectId.ToString());
 
                 Assert.Equal(id + 1, nextId);
