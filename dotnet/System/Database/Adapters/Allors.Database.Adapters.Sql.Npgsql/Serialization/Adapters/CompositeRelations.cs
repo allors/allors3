@@ -70,7 +70,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                                 this.CheckReported(associationId, associationId);
                             }
 
-                            if (associationClass == null || !allowedAssociationClasses.Contains(associationClass))
+                            if (associationClass == null)
                             {
                                 this.cantLoadCompositeRole(this.reader.ReadSubtree(), this.relationType.Id);
                             }
@@ -84,8 +84,23 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                                     var roleIdsString = value;
                                     var roleIdStringArray = roleIdsString.Split(Serialization.ObjectsSplitterCharArray);
 
-                                    if (this.relationType.RoleType.IsOne && roleIdStringArray.Length != 1)
+                                    if (!allowedAssociationClasses.Contains(associationClass)
+                                        || (this.relationType.RoleType.IsOne && roleIdStringArray.Length != 1))
                                     {
+                                        // A schema change can explain why the relation cannot be loaded, but all its
+                                        // objects must be accounted for before any part of it is reported.
+                                        if (value.Length > 0)
+                                        {
+                                            foreach (var roleIdString in roleIdStringArray)
+                                            {
+                                                var roleId = long.Parse(roleIdString);
+                                                if (!this.classByObjectId.ContainsKey(roleId))
+                                                {
+                                                    this.CheckReported(associationId, roleId);
+                                                }
+                                            }
+                                        }
+
                                         foreach (var roleId in roleIdStringArray)
                                         {
                                             this.onRelationNotLoaded(this.relationType.Id, associationId, roleId);
@@ -136,6 +151,10 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                                     }
 
                                     skip = this.reader.IsStartElement();
+                                }
+                                else if (!allowedAssociationClasses.Contains(associationClass))
+                                {
+                                    this.onRelationNotLoaded(this.relationType.Id, associationId, null);
                                 }
                             }
                         }

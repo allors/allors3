@@ -2170,6 +2170,10 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
                 Relations("a composite relation of an object that the file does not hold", CompositesOf(one, (1, "2"), (99, "3"))),
                 Relations("a role that the file does not hold", CompositesOf(one, (1, "2"), (3, "99"))),
                 Relations("one of several roles that the file does not hold", CompositesOf(many, (1, "2"), (3, "4,99"))),
+                Relations("a missing role where a one to one role type allows only one", CompositesOf(Id(m.C1.C1C1one2one), (1, "2"), (3, "4,99"))),
+                Relations("a missing role where a many to one role type allows only one", CompositesOf(one, (1, "2"), (3, "4,99"))),
+                Relations("a missing role of a class that no longer has it", CompositesOf(one, (1, "2"), (5, "99"))),
+                Relations("a missing role among several of a class that no longer has them", CompositesOf(many, (1, "2"), (5, "4,99"))),
                 ("relations before the objects", $@"<?xml version=""1.0"" encoding=""utf-16""?><allors><population version=""1""><relations><database>{UnitsOf(unit, (1, x))}</database></relations><objects><database>{objects}</database></objects></population></allors>"),
             };
         }

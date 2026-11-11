@@ -441,6 +441,19 @@ namespace Allors.Database.Adapters.Snapshot
                                     !this.Database.ContainsClass(relationType.AssociationType.ObjectType, association.UncheckedObjectType) ||
                                     (relationType.RoleType.IsOne && roleIdStringArray.Length != 1))
                                 {
+                                    // Check every referenced role before reporting any schema mismatch.
+                                    if (association != null && value.Length != 0)
+                                    {
+                                        foreach (var roleIdString in roleIdStringArray)
+                                        {
+                                            var roleId = long.Parse(roleIdString);
+                                            if (this.LoadInstantiateStrategy(roleId) == null)
+                                            {
+                                                this.CheckReported(relationType, associationId, roleId);
+                                            }
+                                        }
+                                    }
+
                                     foreach (var roleId in roleIdStringArray)
                                     {
                                         this.Database.OnRelationNotLoaded(relationType.Id, associationId, roleId);
