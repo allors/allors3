@@ -175,10 +175,27 @@ namespace Allors.Database.Adapters
         /// <param name="objectId">The id of the object that the file does not hold: the association or a role.</param>
         /// <returns>The exception.</returns>
         public static ArgumentException NoObject(IRelationType relationType, long associationId, long objectId) =>
+            NoObject(relationType.RoleType.ToString(), associationId, objectId);
+
+        /// <summary>
+        /// The exception of a load for a relation of an object that the file does not hold, where the relation is of a
+        /// relation type that the schema may no longer know.
+        /// </summary>
+        /// <param name="metaPopulation">The schema.</param>
+        /// <param name="relationTypeId">The id of the relation type.</param>
+        /// <param name="associationId">The id of the association of the relation.</param>
+        /// <param name="objectId">The id of the object that the file does not hold: the association or a role.</param>
+        /// <returns>The exception.</returns>
+        public static ArgumentException NoObject(IMetaPopulation metaPopulation, Guid relationTypeId, long associationId, long objectId) =>
+            metaPopulation.FindById(relationTypeId) is IRelationType relationType
+                ? NoObject(relationType, associationId, objectId)
+                : NoObject("the relation type " + relationTypeId, associationId, objectId);
+
+        private static ArgumentException NoObject(string relationType, long associationId, long objectId) =>
             new ArgumentException(
                 associationId == objectId
-                    ? "The file holds a relation of " + relationType.RoleType + " for the object " + XmlConvert.ToString(objectId) + ", which is not among its objects."
-                    : "The file holds a relation of " + relationType.RoleType + " from the object " + XmlConvert.ToString(associationId) + " to the object " + XmlConvert.ToString(objectId) + ", which is not among its objects.");
+                    ? "The file holds a relation of " + relationType + " for the object " + XmlConvert.ToString(objectId) + ", which is not among its objects."
+                    : "The file holds a relation of " + relationType + " from the object " + XmlConvert.ToString(associationId) + " to the object " + XmlConvert.ToString(objectId) + ", which is not among its objects.");
 
         /// <summary>
         /// Reads the unit of a role from its XML value, for a load.

@@ -427,6 +427,16 @@ where c = '{@class.Id}'";
             while (enumerator.MoveNext());
         }
 
+        // The objects of a relation that is reported as not loaded are accounted for as well: each of them is loaded
+        // or was reported as not loaded, or the file does not hold it, which stops the load.
+        private void CheckObject(Guid relationTypeId, long associationId, long objectId)
+        {
+            if (!this.classByObjectId.ContainsKey(objectId) && !this.objectsNotLoaded.Contains(objectId))
+            {
+                throw Serialization.NoObject(this.database.MetaPopulation, relationTypeId, associationId, objectId);
+            }
+        }
+
         private void CantLoadUnitRole(XmlReader reader, Guid relationTypeId)
         {
             var skip = false;
@@ -447,7 +457,10 @@ where c = '{@class.Id}'";
                         skip = reader.IsStartElement();
                     }
 
-                    this.OnRelationNotLoaded(relationTypeId, long.Parse(a), value);
+                    var associationId = long.Parse(a);
+                    this.CheckObject(relationTypeId, associationId, associationId);
+
+                    this.OnRelationNotLoaded(relationTypeId, associationId, value);
                 }
             }
         }
@@ -468,6 +481,8 @@ where c = '{@class.Id}'";
                         throw new Exception("Association id is missing");
                     }
 
+                    this.CheckObject(relationTypeId, associationId, associationId);
+
                     if (reader.IsEmptyElement)
                     {
                         this.OnRelationNotLoaded(relationTypeId, associationId, null);
@@ -479,7 +494,18 @@ where c = '{@class.Id}'";
                         // Reading the content moved the reader to the next record, which must not be read past.
                         skip = reader.IsStartElement();
 
-                        foreach (var r in value.Split(Serialization.ObjectsSplitterCharArray))
+                        var roles = value.Split(Serialization.ObjectsSplitterCharArray);
+
+                        // Every role is looked at before any of them is reported.
+                        if (value.Length > 0)
+                        {
+                            foreach (var r in roles)
+                            {
+                                this.CheckObject(relationTypeId, associationId, long.Parse(r));
+                            }
+                        }
+
+                        foreach (var r in roles)
                         {
                             this.OnRelationNotLoaded(relationTypeId, associationId, r);
                         }

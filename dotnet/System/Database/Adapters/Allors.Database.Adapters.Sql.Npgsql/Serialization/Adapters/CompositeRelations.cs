@@ -128,6 +128,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                                     }
                                     else
                                     {
+                                        List<long> rolesNotLoaded = null;
                                         foreach (var roleIdString in roleIdStringArray)
                                         {
                                             var roleId = long.Parse(roleIdString);
@@ -141,11 +142,22 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 
                                             if (roleClass == null || !allowedRoleClasses.Contains(roleClass))
                                             {
-                                                this.onRelationNotLoaded(this.relationType.Id, associationId, roleId.ToString());
+                                                (rolesNotLoaded ??= new List<long>()).Add(roleId);
                                             }
                                             else
                                             {
                                                 yield return new CompositeRelation(associationId, roleId);
+                                            }
+                                        }
+
+                                        // Every role of the relation is accounted for. The roles that are not loaded
+                                        // are reported now, so that a handler hears nothing of a relation that stops
+                                        // the load.
+                                        if (rolesNotLoaded != null)
+                                        {
+                                            foreach (var roleId in rolesNotLoaded)
+                                            {
+                                                this.onRelationNotLoaded(this.relationType.Id, associationId, roleId.ToString());
                                             }
                                         }
                                     }

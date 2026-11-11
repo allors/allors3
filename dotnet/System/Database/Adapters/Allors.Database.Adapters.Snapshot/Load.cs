@@ -442,7 +442,7 @@ namespace Allors.Database.Adapters.Snapshot
                                     (relationType.RoleType.IsOne && roleIdStringArray.Length != 1))
                                 {
                                     // Check every referenced role before reporting any schema mismatch.
-                                    if (association != null && value.Length != 0)
+                                    if (value.Length != 0)
                                     {
                                         foreach (var roleIdString in roleIdStringArray)
                                         {
@@ -484,6 +484,7 @@ namespace Allors.Database.Adapters.Snapshot
                                 else
                                 {
                                     var roleStrategies = new HashSet<Strategy>();
+                                    List<long> rolesNotLoaded = null;
                                     foreach (var roleIdString in roleIdStringArray)
                                     {
                                         var roleId = long.Parse(roleIdString);
@@ -496,11 +497,21 @@ namespace Allors.Database.Adapters.Snapshot
                                         if (role == null ||
                                             !this.Database.ContainsClass((IComposite)relationType.RoleType.ObjectType, role.UncheckedObjectType))
                                         {
-                                            this.Database.OnRelationNotLoaded(relationType.Id, associationId, roleId.ToString());
+                                            (rolesNotLoaded ??= new List<long>()).Add(roleId);
                                         }
                                         else
                                         {
                                             roleStrategies.Add(role);
+                                        }
+                                    }
+
+                                    // Every role of the relation is accounted for. The roles that are not loaded are
+                                    // reported now, so that a handler hears nothing of a relation that stops the load.
+                                    if (rolesNotLoaded != null)
+                                    {
+                                        foreach (var roleId in rolesNotLoaded)
+                                        {
+                                            this.Database.OnRelationNotLoaded(relationType.Id, associationId, roleId.ToString());
                                         }
                                     }
 
@@ -547,6 +558,16 @@ namespace Allors.Database.Adapters.Snapshot
             }
         }
 
+        // The objects of a relation that is reported as not loaded are accounted for as well: each of them is loaded
+        // or was reported as not loaded, or the file does not hold it, which stops the load.
+        private void CheckObject(Guid relationTypeId, long associationId, long objectId)
+        {
+            if (this.LoadInstantiateStrategy(objectId) == null && (this.objectsNotLoaded == null || !this.objectsNotLoaded.Contains(objectId)))
+            {
+                throw Serialization.NoObject(this.Database.MetaPopulation, relationTypeId, associationId, objectId);
+            }
+        }
+
         private void CantLoadUnitRole(Guid relationTypeId)
         {
             var skip = false;
@@ -573,7 +594,10 @@ namespace Allors.Database.Adapters.Snapshot
                                        this.reader.Name.Equals(Serialization.RelationTypeUnit));
                             }
 
-                            this.Database.OnRelationNotLoaded(relationTypeId, long.Parse(a), value);
+                            var associationId = long.Parse(a);
+                            this.CheckObject(relationTypeId, associationId, associationId);
+
+                            this.Database.OnRelationNotLoaded(relationTypeId, associationId, value);
                         }
 
                         break;
@@ -604,6 +628,8 @@ namespace Allors.Database.Adapters.Snapshot
 
                             var associationId = long.Parse(associationIdString);
 
+                            this.CheckObject(relationTypeId, associationId, associationId);
+
                             if (this.reader.IsEmptyElement)
                             {
                                 this.Database.OnRelationNotLoaded(relationTypeId, associationId, null);
@@ -618,7 +644,18 @@ namespace Allors.Database.Adapters.Snapshot
                                        (this.reader.NodeType == XmlNodeType.EndElement &&
                                        this.reader.Name.Equals(Serialization.RelationTypeComposite));
 
-                                foreach (var r in value.Split(Serialization.ObjectsSplitterCharArray))
+                                var roles = value.Split(Serialization.ObjectsSplitterCharArray);
+
+                                // Every role is looked at before any of them is reported.
+                                if (value.Length > 0)
+                                {
+                                    foreach (var r in roles)
+                                    {
+                                        this.CheckObject(relationTypeId, associationId, long.Parse(r));
+                                    }
+                                }
+
+                                foreach (var r in roles)
                                 {
                                     this.Database.OnRelationNotLoaded(relationTypeId, associationId, r);
                                 }
