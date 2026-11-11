@@ -196,6 +196,11 @@ namespace Allors.Database.Adapters
                     }
 
                     Assert.True(exceptionThrown);
+
+                    populationElement.RemoveAttribute("version");
+                    xml = xmlDocument.OuterXml;
+
+                    Assert.Throws<ArgumentException>(() => DoLoad(this.Population, xml));
                 }
             }
         }
@@ -1421,6 +1426,58 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
         }
 
         [Fact]
+        public void CorruptFiles()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+                var m = this.Transaction.Database.Context().M;
+
+                // Every file is loaded, so that one run names every file that an adapter does not refuse.
+                var failures = new List<string>();
+
+                foreach (var (name, file) in CorruptFilesOf(m))
+                {
+                    // Handlers recover what a schema change explains. A corrupt file stops the load with the
+                    // handlers attached as well, and they hear nothing of it.
+                    var notLoaded = new List<string>();
+                    ObjectNotLoadedEventHandler objectNotLoaded = (sender, args) => notLoaded.Add(NotLoaded(m, args.ObjectTypeId, args.ObjectId));
+                    RelationNotLoadedEventHandler relationNotLoaded = (sender, args) => notLoaded.Add(NotLoaded(m, args.RelationTypeId, args.AssociationId, args.RoleContents));
+
+                    this.Population.ObjectNotLoaded += objectNotLoaded;
+                    this.Population.RelationNotLoaded += relationNotLoaded;
+
+                    var failed = false;
+                    try
+                    {
+                        DoLoad(this.Population, file);
+                    }
+                    catch (Exception)
+                    {
+                        failed = true;
+                    }
+                    finally
+                    {
+                        this.Population.ObjectNotLoaded -= objectNotLoaded;
+                        this.Population.RelationNotLoaded -= relationNotLoaded;
+                    }
+
+                    if (!failed)
+                    {
+                        failures.Add($"{name}: the load did not fail");
+                    }
+
+                    if (notLoaded.Count > 0)
+                    {
+                        failures.Add($"{name}: reported as not loaded: [{string.Join(" | ", notLoaded)}]");
+                    }
+                }
+
+                Assert.True(failures.Count == 0, string.Join(Environment.NewLine, failures));
+            }
+        }
+
+        [Fact]
         public void LoadUnitBeforeEmptyElement()
         {
             foreach (var init in this.Inits)
@@ -2084,6 +2141,58 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
                     UnitsOf(Id(m.C1.C1AllorsDecimal), (2, mostDecimals), (4, mostDecimals + "0")),
                     Relation(m.C1.C1AllorsDecimal, 1, tooManyDecimals),
                     Relation(m.C1.C1AllorsDecimal, 3, "-" + tooManyDecimals)),
+            };
+        }
+
+        // Files that no save writes and that no schema change explains. A load has to refuse each of them.
+        private static (string Name, string File)[] CorruptFilesOf(MetaPopulation m)
+        {
+            static Guid Id(IRoleType roleType) => roleType.RelationType.Id;
+
+            var c1 = m.C1.Id;
+            var c2 = m.C2.Id;
+            var unit = Id(m.C1.C1AllorsString);
+            var one = Id(m.C1.C1C1many2one);
+            var many = Id(m.C1.C1C1many2manies);
+            var x = Base64("x");
+
+            // Four objects of C1 and four of C2, with a unit relation and a composite relation.
+            var objects = ObjectsOf(c1, 1, 2, 3, 4) + ObjectsOf(c2, 5, 6, 7, 8);
+            var file = PopulationOf(objects, UnitsOf(unit, (1, x)) + CompositesOf(one, (1, "2")));
+
+            (string Name, string File) Objects(string name, string objectTypes) => (name, PopulationOf(objectTypes, string.Empty));
+
+            (string Name, string File) Relations(string name, string relationTypes) => (name, PopulationOf(objects, relationTypes));
+
+            // Where an element allows it, what is wrong follows an object or a relation that a load accepts, so that
+            // the load has started on the element when it meets it.
+            return new[]
+            {
+                ("a file that ends in the objects", file.Substring(0, file.IndexOf("</ot>", StringComparison.Ordinal))),
+                ("a file that ends in the relations", file.Substring(0, file.IndexOf("</rtc>", StringComparison.Ordinal))),
+                ("workspace objects", file.Replace("<objects>", "<objects><workspace/>")),
+                ("workspace relations", file.Replace("<relations>", "<relations><workspace/>")),
+                Objects("an object type without an id", "<ot>1:0</ot>"),
+                Objects("an object type whose id is not an id", @"<ot i=""x"">1:0</ot>"),
+                Objects("an object id that is not a number", $@"<ot i=""{c1:N}"">1:0,x:0</ot>"),
+                Objects("an object id that is too large", $@"<ot i=""{c1:N}"">1:0,9223372036854775808:0</ot>"),
+                Objects("an object version that is not a number", $@"<ot i=""{c1:N}"">1:0,2:x</ot>"),
+                Objects("an empty item among the objects", $@"<ot i=""{c1:N}"">1:0,,2:0</ot>"),
+                Objects("an element among the objects", $@"<ot i=""{c1:N}"">1:0<x/></ot>"),
+                Objects("an object twice in an object type", ObjectsOf(c1, 1, 2, 1)),
+                Objects("an object in two object types", ObjectsOf(c1, 1, 2) + ObjectsOf(c2, 2, 3)),
+                Relations("a unit relation type without an id", $@"<rtu><r a=""1"">{x}</r></rtu>"),
+                Relations("a composite relation type without an id", @"<rtc><r a=""1"">2</r></rtc>"),
+                Relations("a relation type whose id is not an id", $@"<rtu i=""x""><r a=""1"">{x}</r></rtu>"),
+                Relations("a unit relation without an association", $@"<rtu i=""{unit:N}""><r a=""1"">{x}</r><r>{x}</r></rtu>"),
+                Relations("a unit relation whose association is not a number", $@"<rtu i=""{unit:N}""><r a=""1"">{x}</r><r a=""x"">{x}</r></rtu>"),
+                Relations("an element in a unit relation", $@"<rtu i=""{unit:N}""><r a=""1"">{x}</r><r a=""2"">{x}<x/></r></rtu>"),
+                Relations("a composite relation without an association", $@"<rtc i=""{one:N}""><r a=""1"">2</r><r>4</r></rtc>"),
+                Relations("a composite relation whose association is not a number", $@"<rtc i=""{one:N}""><r a=""1"">2</r><r a=""x"">4</r></rtc>"),
+                Relations("an element in a composite relation", $@"<rtc i=""{one:N}""><r a=""1"">2</r><r a=""3"">4<x/></r></rtc>"),
+                Relations("a role that is not a number", CompositesOf(one, (1, "2"), (3, "x"))),
+                Relations("one of several roles that is not a number", CompositesOf(many, (1, "2"), (3, "4,x"))),
+                Relations("an empty item among the roles", CompositesOf(many, (1, "2"), (3, "4,,1"))),
             };
         }
 
