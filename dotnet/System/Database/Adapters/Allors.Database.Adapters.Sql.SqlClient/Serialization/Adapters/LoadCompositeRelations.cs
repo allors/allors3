@@ -42,6 +42,10 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             var allowedAssociationClasses = new HashSet<IClass>(this.relationType.AssociationType.ObjectType.DatabaseClasses);
             var allowedRoleClasses = new HashSet<IClass>(((IComposite)this.relationType.RoleType.ObjectType).DatabaseClasses);
 
+            // The reader holds the relation type element and what is in it: move to the element, so that the loop
+            // reads its children.
+            this.reader.MoveToContent();
+
             var skip = false;
             while (skip || this.reader.Read())
             {
@@ -116,6 +120,10 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                                     skip = this.reader.IsStartElement();
                                 }
                             }
+                        }
+                        else
+                        {
+                            throw new Exception("Unknown child element <" + this.reader.Name + "> in parent element <" + Serialization.RelationTypeComposite + ">");
                         }
 
                         break;

@@ -34,6 +34,10 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         public IEnumerator<object[]> GetEnumerator()
         {
+            // The reader holds the database element and what is in it: move to the element, so that the loop
+            // reads its children.
+            this.reader.MoveToContent();
+
             var skip = false;
             while (skip || this.reader.Read())
             {
@@ -86,6 +90,10 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
                                 skip = this.reader.IsStartElement();
                             }
+                        }
+                        else
+                        {
+                            throw new Exception("Unknown child element <" + this.reader.Name + "> in parent element <" + Serialization.Database + ">");
                         }
 
                         break;

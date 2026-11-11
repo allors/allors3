@@ -80,6 +80,10 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                                 this.LoadRelations(reader.ReadSubtree());
                             }
                         }
+                        else
+                        {
+                            throw new Exception("Unknown child element <" + reader.Name + "> in parent element <" + Serialization.Population + ">");
+                        }
 
                         break;
                 }
@@ -105,6 +109,10 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                         else if (reader.Name.Equals(Serialization.Workspace))
                         {
                             throw new Exception("Can not load workspace objects in a database.");
+                        }
+                        else
+                        {
+                            throw new Exception("Unknown child element <" + reader.Name + "> in parent element <" + Serialization.Objects + ">");
                         }
 
                         break;
@@ -172,6 +180,8 @@ where c = '{@class.Id}'";
 
         private void LoadRelations(XmlReader reader)
         {
+            reader.MoveToContent();
+
             while (reader.Read())
             {
                 switch (reader.NodeType)
@@ -188,6 +198,10 @@ where c = '{@class.Id}'";
                         {
                             throw new Exception("Can not load workspace relations in a database.");
                         }
+                        else
+                        {
+                            throw new Exception("Unknown child element <" + reader.Name + "> in parent element <" + Serialization.Relations + ">");
+                        }
 
                         break;
                 }
@@ -202,10 +216,11 @@ where c = '{@class.Id}'";
                 {
                     // eat everything but elements
                     case XmlNodeType.Element:
-                        if (!reader.IsEmptyElement)
+                        if (reader.Name.Equals(Serialization.RelationTypeUnit)
+                            || reader.Name.Equals(Serialization.RelationTypeComposite))
                         {
-                            if (reader.Name.Equals(Serialization.RelationTypeUnit)
-                                || reader.Name.Equals(Serialization.RelationTypeComposite))
+                            // A self-closing element holds no relations.
+                            if (!reader.IsEmptyElement)
                             {
                                 var relationTypeIdString = reader.GetAttribute(Serialization.Id);
                                 if (string.IsNullOrEmpty(relationTypeIdString))
@@ -240,8 +255,16 @@ where c = '{@class.Id}'";
                                 }
                             }
                         }
+                        else
+                        {
+                            throw new Exception("Unknown child element <" + reader.Name + "> in parent element <" + Serialization.Database + ">");
+                        }
 
                         break;
+
+                    case XmlNodeType.EndElement:
+                        // The end of the database element. What follows it belongs to the relations element.
+                        return;
                 }
             }
         }
@@ -250,6 +273,10 @@ where c = '{@class.Id}'";
         {
             var allowedClasses = new HashSet<IClass>(relationType.AssociationType.ObjectType.DatabaseClasses);
             var unitRelationsByClass = new Dictionary<IClass, List<UnitRelation>>();
+
+            // The reader holds the relation type element and what is in it: move to the element, so that the loop
+            // reads its children.
+            reader.MoveToContent();
 
             var skip = false;
             while (skip || reader.Read())
@@ -316,6 +343,10 @@ where c = '{@class.Id}'";
                                     this.OnRelationNotLoaded(relationType.Id, associationId, value);
                                 }
                             }
+                        }
+                        else
+                        {
+                            throw new Exception("Unknown child element <" + reader.Name + "> in parent element <" + Serialization.RelationTypeUnit + ">");
                         }
 
                         break;

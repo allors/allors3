@@ -245,10 +245,11 @@ namespace Allors.Database.Adapters.Memory
                 {
                     // eat everything but elements
                     case XmlNodeType.Element:
-                        if (!this.reader.IsEmptyElement)
+                        if (this.reader.Name.Equals(Serialization.RelationTypeUnit)
+                            || this.reader.Name.Equals(Serialization.RelationTypeComposite))
                         {
-                            if (this.reader.Name.Equals(Serialization.RelationTypeUnit)
-                                || this.reader.Name.Equals(Serialization.RelationTypeComposite))
+                            // A self-closing element holds no relations.
+                            if (!this.reader.IsEmptyElement)
                             {
                                 var relationTypeIdString = this.reader.GetAttribute(Serialization.Id);
                                 if (string.IsNullOrEmpty(relationTypeIdString))
@@ -282,12 +283,12 @@ namespace Allors.Database.Adapters.Memory
                                     }
                                 }
                             }
-                            else
-                            {
-                                throw new Exception(
-                                    "Unknown child element <" + this.reader.Name + "> in parent element <"
-                                    + Serialization.Database + ">");
-                            }
+                        }
+                        else
+                        {
+                            throw new Exception(
+                                "Unknown child element <" + this.reader.Name + "> in parent element <"
+                                + Serialization.Database + ">");
                         }
 
                         break;
