@@ -159,6 +159,15 @@ namespace Allors.Database.Adapters
             new ArgumentException("The file is not a saved population: it has no <" + Population + "> element.");
 
         /// <summary>
+        /// The exception of a load for an object whose id is not the id of a database object: 0, which denotes no
+        /// object, or a negative id, which is the id of a workspace object.
+        /// </summary>
+        /// <param name="objectId">The object id.</param>
+        /// <returns>The exception.</returns>
+        public static ArgumentException NoObjectId(long objectId) =>
+            new ArgumentException("The file holds an object with the id " + XmlConvert.ToString(objectId) + ": the id of a database object is 1 or higher.");
+
+        /// <summary>
         /// Reads the unit of a role from its XML value, for a load.
         /// </summary>
         /// <param name="roleType">The role type.</param>

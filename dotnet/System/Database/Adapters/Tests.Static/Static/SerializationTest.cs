@@ -2184,6 +2184,8 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
                 Objects("an object type whose id is not an id", @"<ot i=""x"">1:0</ot>"),
                 Objects("an object id that is not a number", $@"<ot i=""{c1:N}"">1:0,x:0</ot>"),
                 Objects("an object id that is too large", $@"<ot i=""{c1:N}"">1:0,9223372036854775808:0</ot>"),
+                Objects("an object with the id 0", ObjectsOf(c1, 1, 0)),
+                Objects("an object with a negative id", ObjectsOf(c1, 1, -1)),
                 Objects("an object version that is not a number", $@"<ot i=""{c1:N}"">1:0,2:x</ot>"),
                 Objects("an empty item among the objects", $@"<ot i=""{c1:N}"">1:0,,2:0</ot>"),
                 Objects("an element among the objects", $@"<ot i=""{c1:N}"">1:0<x/></ot>"),
