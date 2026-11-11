@@ -53,9 +53,11 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                         this.LoadPopulation(reader);
                     }
 
-                    break;
+                    return;
                 }
             }
+
+            throw Serialization.NoPopulation();
         }
 
         private void LoadPopulation(XmlReader reader)

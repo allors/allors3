@@ -2168,6 +2168,7 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
             // the load has started on the element when it meets it.
             return new[]
             {
+                ("a file without a population", @"<?xml version=""1.0"" encoding=""utf-16""?><allors></allors>"),
                 ("a file that ends in the objects", file.Substring(0, file.IndexOf("</ot>", StringComparison.Ordinal))),
                 ("a file that ends in the relations", file.Substring(0, file.IndexOf("</rtc>", StringComparison.Ordinal))),
                 ("workspace objects", file.Replace("<objects>", "<objects><workspace/>")),

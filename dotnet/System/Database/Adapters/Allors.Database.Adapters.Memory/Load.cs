@@ -47,9 +47,11 @@ namespace Allors.Database.Adapters.Memory
                         this.LoadPopulation();
                     }
 
-                    break;
+                    return;
                 }
             }
+
+            throw Serialization.NoPopulation();
         }
 
         private void LoadPopulation()

@@ -152,6 +152,13 @@ namespace Allors.Database.Adapters
         }
 
         /// <summary>
+        /// The exception of a load for a file without a <see cref="Population"/> element.
+        /// </summary>
+        /// <returns>The exception.</returns>
+        public static ArgumentException NoPopulation() =>
+            new ArgumentException("The file is not a saved population: it has no <" + Population + "> element.");
+
+        /// <summary>
         /// Reads the unit of a role from its XML value, for a load.
         /// </summary>
         /// <param name="roleType">The role type.</param>
