@@ -73,6 +73,11 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                                     var objectArray = objectIdString.Split(Serialization.ObjectSplitterCharArray);
 
                                     var objectId = long.Parse(objectArray[0]);
+                                    if (objectId <= 0)
+                                    {
+                                        throw Serialization.NoObjectId(objectId);
+                                    }
+
                                     var objectVersion = objectArray.Length > 1
                                         ? Serialization.EnsureVersion(long.Parse(objectArray[1]))
                                         : (long)Version.DatabaseInitial;

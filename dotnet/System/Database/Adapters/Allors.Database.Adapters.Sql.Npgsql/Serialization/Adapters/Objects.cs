@@ -72,6 +72,11 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                                     var objectArray = objectIdString.Split(Serialization.ObjectSplitterCharArray);
 
                                     var objectId = long.Parse(objectArray[0]);
+                                    if (objectId <= 0)
+                                    {
+                                        throw Serialization.NoObjectId(objectId);
+                                    }
+
                                     var objectVersion = objectArray.Length > 1
                                         ? long.Parse(objectArray[1])
                                         : (long) Allors.Version.DatabaseInitial;
