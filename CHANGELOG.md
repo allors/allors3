@@ -103,6 +103,27 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   then too large for the precision. The Memory and Snapshot adapters kept the decimal as it was
   set; the SqlClient and Npgsql adapters rounded it at the commit, and failed the commit for a
   decimal that was too large (#331).
+- Loading a population on the SqlClient and Npgsql adapters stops at an element that the loader
+  does not know, as it does on the Memory and Snapshot adapters, with the same error:
+  `Unknown child element <…> in parent element <…>`. The SQL loaders skipped such an element with
+  everything in it and returned normally, so a file with `objects`, `relations`, a `database`
+  element, an object type, a relation type or a relation under another name or in another place
+  loaded as an empty database, or without those objects or relations. A self-closing element under
+  an unknown name among the relation types, which every adapter skipped, stops the load too (#335).
+- Loading a file without a `population` element fails with an `ArgumentException`. Every adapter
+  returned normally and left an empty database, for `<allors/>` as for any other XML document. A
+  population without content still loads as a population without objects (#336).
+- Loading a population refuses an object with an id of 0 or below, with an `ArgumentException`: the
+  id of a database object is 1 or higher. Every adapter loaded such an object, under an id that the
+  platform reads as no object or as a workspace object that is not saved yet (#337).
+- Loading a population stops at a relation of an object that the file does not hold, as its
+  association or as a role, with an `ArgumentException` that names the relation type and the
+  objects. With a `RelationNotLoaded` handler attached every adapter reported such a relation and
+  went on, as if a schema change explained it, and a file with its relations before its objects
+  loaded without any relation. A relation that a schema change explains is still reported, but only
+  when the file holds all its objects; a role that is not a number in such a relation stops the
+  load, where it was reported with its text. A handler can no longer let a relation of a missing
+  object pass: such a file has to be repaired before it loads (#338).
 - The Memory adapter's extent sort treats two objects without a value for a sort order as equal
   and lets the next sort order decide; the comparer contradicted itself, so short lists kept an
   arbitrary order and longer ones could fail the sort (#309).
