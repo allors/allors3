@@ -80,14 +80,37 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
 - Loading a population reports every relation of a relation type that the meta population no
   longer knows; the reporters stepped into the next relation, so the Memory adapter failed such a
   load and the SQL adapters reported every second relation only (#308).
+- Loading a population reads an object type element without objects, self-closing or with an end
+  tag, as an element that holds no objects. The form with an end tag failed the load on every
+  adapter, and on the SqlClient and Npgsql adapters a self-closing element made the loader skip the
+  object type element that followed it directly, so its objects were not loaded (#325).
+- On PostgreSQL, `Init` starts the numbering of the objects again and `Load` continues it after the
+  highest loaded id, as the Memory, Snapshot and SqlClient adapters do. The Npgsql adapter left the
+  sequence of the object ids where it was, so an object created after a load could get the id of a
+  loaded object and fail its transaction with a duplicate key: after a load into a new database,
+  and after `Init` had created the tables again for a changed schema (#326).
+- On the SqlClient and Npgsql adapters a failure while a load reads or writes relations stops the
+  load. The loaders rolled back the relation type that failed and went on, so the load returned
+  normally without any relation of that relation type. That happened for a composite relation that
+  the schema does not allow when no `RelationNotLoaded` handler is attached, for an exception
+  thrown by such a handler, and for an error of the database (#329).
+- Loading a population reports a value that its role type cannot hold as it is, as it reports a
+  value that the unit type cannot read: a string that is longer than the size, and a decimal that
+  the precision and the scale cannot hold exactly. The adapters cut, rounded or kept such a value,
+  or the database failed the load (#330).
+- Setting a decimal on a role gives the same result on every adapter: the decimal is rounded to the
+  scale of its role type, half away from zero, and refused with an `ArgumentException` when it is
+  then too large for the precision. The Memory and Snapshot adapters kept the decimal as it was
+  set; the SqlClient and Npgsql adapters rounded it at the commit, and failed the commit for a
+  decimal that was too large (#331).
 - The Memory adapter's extent sort treats two objects without a value for a sort order as equal
   and lets the next sort order decide; the comparer contradicted itself, so short lists kept an
   arbitrary order and longer ones could fail the sort (#309).
 - Initializing a database again in the same process forgets the objects of the previous
   population: Core's database services kept their caches of unique ids, classes, permissions,
   security and versioned ids across `Init`, `Load` and `Restore`. On PostgreSQL, where the object
-  ids continue after `Init`, the second `Test/Setup` of the Core test server failed; the Snapshot
-  adapter and SQL Server reuse the ids, which hid the stale entries (#319).
+  ids continued after `Init` until #326, the second `Test/Setup` of the Core test server failed;
+  the Snapshot adapter and SQL Server reuse the ids, which hid the stale entries (#319).
 - The System adapter fixes released on `v3.1` in June 2026 (#29, #32 to #36, #38, #39, #41 to #43,
   #47 to #49): the `Union` of ranges keeps an element equal to `default(T)`; the Memory adapter's
   `Like` follows SQL semantics and escapes metacharacters, and the SQL Server adapter's `Like`
