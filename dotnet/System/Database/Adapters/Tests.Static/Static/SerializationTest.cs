@@ -1055,26 +1055,10 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
                 this.Population.RelationNotLoaded += (o, args) =>
                     notLoadedEventArgs.Add(args);
 
-                var stringReader = new StringReader(xml);
-                using (var reader = XmlReader.Create(stringReader))
-                {
-                    this.Population.Load(reader);
-                }
+                // The file does not hold the object 99, so its relation stops the load and no handler hears of it.
+                Assert.Throws<ArgumentException>(() => DoLoad(this.Population, xml));
 
-                Assert.Single(notLoadedEventArgs);
-                var notLoadedEventArg = notLoadedEventArgs.First();
-                Assert.Equal(99, notLoadedEventArg.AssociationId);
-                Assert.Equal(new Guid("87eb0d1973a74aaeaeed66dc9163233c"), notLoadedEventArg.RelationTypeId);
-                Assert.Equal("1.1", notLoadedEventArg.RoleContents);
-
-                using (var transaction = this.Population.CreateTransaction())
-                {
-                    this.c1A = (C1)transaction.Instantiate(1);
-
-                    Assert.Equal("A String", this.c1A.C1AllorsString);
-                    Assert.Equal(true, this.c1A.C1AllorsBoolean);
-                    Assert.Equal(new Guid("537f6823-d22c-4b3b-ab3c-e15a6b61b9d6"), this.c1A.C1AllorsUnique);
-                }
+                Assert.Empty(notLoadedEventArgs);
             }
         }
 
@@ -1188,31 +1172,10 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
                 this.Population.RelationNotLoaded += (o, args) =>
                     notLoadedEventArgs.Add(args);
 
-                var stringReader = new StringReader(xml);
-                using (var reader = XmlReader.Create(stringReader))
-                {
-                    this.Population.Load(reader);
-                }
+                // The file does not hold the object 99, so its relation stops the load and no handler hears of it.
+                Assert.Throws<ArgumentException>(() => DoLoad(this.Population, xml));
 
-                Assert.Single(notLoadedEventArgs);
-                var notLoadedEventArg = notLoadedEventArgs.First();
-                Assert.Equal(99, notLoadedEventArg.AssociationId);
-                Assert.Equal(new Guid("2cd8b843-f1f5-413d-9d6d-0d2b9b3c5cf6"), notLoadedEventArg.RelationTypeId);
-                Assert.Equal("3", notLoadedEventArg.RoleContents);
-
-                using (var transaction = this.Population.CreateTransaction())
-                {
-                    this.c1A = (C1)transaction.Instantiate(1);
-                    this.c1B = (C1)transaction.Instantiate(2);
-                    this.c1C = (C1)transaction.Instantiate(3);
-                    this.c1D = (C1)transaction.Instantiate(4);
-
-                    Assert.Single(this.c1A.C1C1many2manies);
-                    Assert.Contains(this.c1B, this.c1A.C1C1many2manies);
-                    Assert.Equal(this.c1D, this.c1C.C1C1one2one);
-                    Assert.Single(this.c1A.C1C1one2manies);
-                    Assert.Contains(this.c1D, this.c1A.C1C1one2manies);
-                }
+                Assert.Empty(notLoadedEventArgs);
             }
         }
 
@@ -1436,10 +1399,11 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
                 // Every file is loaded, so that one run names every file that an adapter does not refuse.
                 var failures = new List<string>();
 
-                foreach (var (name, file) in CorruptFilesOf(m))
+                foreach (var (name, file, reported) in CorruptFilesOf(m))
                 {
                     // Handlers recover what a schema change explains. A corrupt file stops the load with the
-                    // handlers attached as well, and they hear nothing of it.
+                    // handlers attached as well, and they hear nothing of what is wrong with it: only of what a
+                    // schema change explains, where the file holds that before it.
                     var notLoaded = new List<string>();
                     ObjectNotLoadedEventHandler objectNotLoaded = (sender, args) => notLoaded.Add(NotLoaded(m, args.ObjectTypeId, args.ObjectId));
                     RelationNotLoadedEventHandler relationNotLoaded = (sender, args) => notLoaded.Add(NotLoaded(m, args.RelationTypeId, args.AssociationId, args.RoleContents));
@@ -1467,7 +1431,7 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
                         failures.Add($"{name}: the load did not fail");
                     }
 
-                    if (notLoaded.Count > 0)
+                    if (!notLoaded.SequenceEqual(reported))
                     {
                         failures.Add($"{name}: reported as not loaded: [{string.Join(" | ", notLoaded)}]");
                     }
@@ -2144,9 +2108,14 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
             };
         }
 
-        // Files that no save writes and that no schema change explains. A load has to refuse each of them.
-        private static (string Name, string File)[] CorruptFilesOf(MetaPopulation m)
+        // Files that no save writes and that no schema change explains. A load has to refuse each of them. A file that
+        // also holds what a schema change does explain comes with what the load reports before it stops.
+        private static (string Name, string File, string[] Reported)[] CorruptFilesOf(MetaPopulation m)
         {
+            var unknownClass = new Guid("71000000000000000000000000000000");
+            var unknownUnitRelationType = new Guid("72000000000000000000000000000000");
+            var unknownCompositeRelationType = new Guid("73000000000000000000000000000000");
+
             static Guid Id(IRoleType roleType) => roleType.RelationType.Id;
 
             var c1 = m.C1.Id;
@@ -2160,22 +2129,24 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
             var objects = ObjectsOf(c1, 1, 2, 3, 4) + ObjectsOf(c2, 5, 6, 7, 8);
             var file = PopulationOf(objects, UnitsOf(unit, (1, x)) + CompositesOf(one, (1, "2")));
 
-            (string Name, string File) Objects(string name, string objectTypes) => (name, PopulationOf(objectTypes, string.Empty));
+            (string Name, string File, string[] Reported) Corrupt(string name, string corruptFile, params string[] reported) => (name, corruptFile, reported);
 
-            (string Name, string File) Relations(string name, string relationTypes) => (name, PopulationOf(objects, relationTypes));
+            (string Name, string File, string[] Reported) Objects(string name, string objectTypes) => Corrupt(name, PopulationOf(objectTypes, string.Empty));
+
+            (string Name, string File, string[] Reported) Relations(string name, string relationTypes) => Corrupt(name, PopulationOf(objects, relationTypes));
 
             // Where an element allows it, what is wrong follows an object or a relation that a load accepts, so that
             // the load has started on the element when it meets it.
             return new[]
             {
-                ("a file without a population", @"<?xml version=""1.0"" encoding=""utf-16""?><allors></allors>"),
-                ("a file that ends in the objects", file.Substring(0, file.IndexOf("</ot>", StringComparison.Ordinal))),
-                ("a file that ends in the relations", file.Substring(0, file.IndexOf("</rtc>", StringComparison.Ordinal))),
-                ("workspace objects", file.Replace("<objects>", "<objects><workspace/>")),
-                ("workspace relations", file.Replace("<relations>", "<relations><workspace/>")),
-                ("an unknown element in the population", file.Replace("<relations>", "<x/><relations>")),
-                ("an unknown element in the objects", file.Replace("<objects>", "<objects><x/>")),
-                ("an unknown element in the relations", file.Replace("<relations>", "<relations><x/>")),
+                Corrupt("a file without a population", @"<?xml version=""1.0"" encoding=""utf-16""?><allors></allors>"),
+                Corrupt("a file that ends in the objects", file.Substring(0, file.IndexOf("</ot>", StringComparison.Ordinal))),
+                Corrupt("a file that ends in the relations", file.Substring(0, file.IndexOf("</rtc>", StringComparison.Ordinal))),
+                Corrupt("workspace objects", file.Replace("<objects>", "<objects><workspace/>")),
+                Corrupt("workspace relations", file.Replace("<relations>", "<relations><workspace/>")),
+                Corrupt("an unknown element in the population", file.Replace("<relations>", "<x/><relations>")),
+                Corrupt("an unknown element in the objects", file.Replace("<objects>", "<objects><x/>")),
+                Corrupt("an unknown element in the relations", file.Replace("<relations>", "<relations><x/>")),
                 Objects("an unknown element among the object types", ObjectsOf(c1, 1, 2) + "<x/>"),
                 Relations("an unknown element among the relation types", UnitsOf(unit, (1, x)) + "<x/>"),
                 Relations("an unknown element in a unit relation type", $@"<rtu i=""{unit:N}""><r a=""1"">{x}</r><x/></rtu>"),
@@ -2203,6 +2174,23 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
                 Relations("a role that is not a number", CompositesOf(one, (1, "2"), (3, "x"))),
                 Relations("one of several roles that is not a number", CompositesOf(many, (1, "2"), (3, "4,x"))),
                 Relations("an empty item among the roles", CompositesOf(many, (1, "2"), (3, "4,,1"))),
+                Relations("a unit relation of an object that the file does not hold", UnitsOf(unit, (1, x), (99, x))),
+                Relations("a composite relation of an object that the file does not hold", CompositesOf(one, (1, "2"), (99, "3"))),
+                Relations("a role that the file does not hold", CompositesOf(one, (1, "2"), (3, "99"))),
+                Relations("one of several roles that the file does not hold", CompositesOf(many, (1, "2"), (3, "4,99"))),
+                Relations("a missing role where a one to one role type allows only one", CompositesOf(Id(m.C1.C1C1one2one), (1, "2"), (3, "4,99"))),
+                Relations("a missing role where a many to one role type allows only one", CompositesOf(one, (1, "2"), (3, "4,99"))),
+                Relations("a missing role of a class that no longer has it", CompositesOf(one, (1, "2"), (5, "99"))),
+                Relations("a missing role among several of a class that no longer has them", CompositesOf(many, (1, "2"), (5, "4,99"))),
+                Relations("a missing role after a role of a class that the role type no longer allows", CompositesOf(many, (1, "2"), (2, "5,99"))),
+                Corrupt(
+                    "a missing role of an object of a class that no longer exists",
+                    PopulationOf(objects + ObjectsOf(unknownClass, 9), CompositesOf(Id(m.I12.I12C2one2one), (1, "5"), (9, "99"))),
+                    NotLoaded(m, unknownClass, 9)),
+                Relations("a missing object in a unit relation type that no longer exists", UnitsOf(unknownUnitRelationType, (99, x))),
+                Relations("a missing object in a composite relation type that no longer exists", CompositesOf(unknownCompositeRelationType, (99, "2"))),
+                Relations("a missing role in a composite relation type that no longer exists", CompositesOf(unknownCompositeRelationType, (1, "2,99"))),
+                Corrupt("relations before the objects", $@"<?xml version=""1.0"" encoding=""utf-16""?><allors><population version=""1""><relations><database>{UnitsOf(unit, (1, x))}</database></relations><objects><database>{objects}</database></objects></population></allors>"),
             };
         }
 

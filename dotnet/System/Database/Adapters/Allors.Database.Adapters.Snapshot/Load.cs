@@ -21,6 +21,10 @@ namespace Allors.Database.Adapters.Snapshot
         private readonly Transaction transaction;
         private readonly XmlReader reader;
 
+        // The ids of the objects that were reported as not loaded. Their relations are reported as not loaded as
+        // well. A relation of any other object that is not loaded stops the load: the file does not hold it.
+        private HashSet<long> objectsNotLoaded;
+
         internal Load(Transaction transaction, XmlReader reader)
         {
             this.transaction = transaction;
@@ -184,6 +188,7 @@ namespace Allors.Database.Adapters.Snapshot
                                     else
                                     {
                                         this.Database.OnObjectNotLoaded(objectTypeId, objectId);
+                                        (this.objectsNotLoaded ??= new HashSet<long>()).Add(objectId);
                                     }
                                 }
 
@@ -329,6 +334,10 @@ namespace Allors.Database.Adapters.Snapshot
                             var associationIdString = this.reader.GetAttribute(Serialization.Association);
                             var associationId = long.Parse(associationIdString);
                             var strategy = this.LoadInstantiateStrategy(associationId);
+                            if (strategy == null)
+                            {
+                                this.CheckReported(relationType, associationId, associationId);
+                            }
 
                             // Reading the content moves the reader to the next record, so whether this
                             // record is an empty element has to be known before the content is read.
@@ -413,6 +422,10 @@ namespace Allors.Database.Adapters.Snapshot
                         {
                             var associationId = long.Parse(this.reader.GetAttribute(Serialization.Association));
                             var association = this.LoadInstantiateStrategy(associationId);
+                            if (association == null)
+                            {
+                                this.CheckReported(relationType, associationId, associationId);
+                            }
 
                             if (!this.reader.IsEmptyElement)
                             {
@@ -428,6 +441,19 @@ namespace Allors.Database.Adapters.Snapshot
                                     !this.Database.ContainsClass(relationType.AssociationType.ObjectType, association.UncheckedObjectType) ||
                                     (relationType.RoleType.IsOne && roleIdStringArray.Length != 1))
                                 {
+                                    // Check every referenced role before reporting any schema mismatch.
+                                    if (value.Length != 0)
+                                    {
+                                        foreach (var roleIdString in roleIdStringArray)
+                                        {
+                                            var roleId = long.Parse(roleIdString);
+                                            if (this.LoadInstantiateStrategy(roleId) == null)
+                                            {
+                                                this.CheckReported(relationType, associationId, roleId);
+                                            }
+                                        }
+                                    }
+
                                     foreach (var roleId in roleIdStringArray)
                                     {
                                         this.Database.OnRelationNotLoaded(relationType.Id, associationId, roleId);
@@ -437,6 +463,11 @@ namespace Allors.Database.Adapters.Snapshot
                                 {
                                     var roleId = long.Parse(roleIdStringArray[0]);
                                     var roleStrategy = this.LoadInstantiateStrategy(roleId);
+                                    if (roleStrategy == null)
+                                    {
+                                        this.CheckReported(relationType, associationId, roleId);
+                                    }
+
                                     if (roleStrategy == null || !this.Database.ContainsClass((IComposite)relationType.RoleType.ObjectType, roleStrategy.UncheckedObjectType))
                                     {
                                         this.Database.OnRelationNotLoaded(relationType.Id, associationId, roleIdStringArray[0]);
@@ -453,18 +484,34 @@ namespace Allors.Database.Adapters.Snapshot
                                 else
                                 {
                                     var roleStrategies = new HashSet<Strategy>();
+                                    List<long> rolesNotLoaded = null;
                                     foreach (var roleIdString in roleIdStringArray)
                                     {
                                         var roleId = long.Parse(roleIdString);
                                         var role = this.LoadInstantiateStrategy(roleId);
+                                        if (role == null)
+                                        {
+                                            this.CheckReported(relationType, associationId, roleId);
+                                        }
+
                                         if (role == null ||
                                             !this.Database.ContainsClass((IComposite)relationType.RoleType.ObjectType, role.UncheckedObjectType))
                                         {
-                                            this.Database.OnRelationNotLoaded(relationType.Id, associationId, roleId.ToString());
+                                            (rolesNotLoaded ??= new List<long>()).Add(roleId);
                                         }
                                         else
                                         {
                                             roleStrategies.Add(role);
+                                        }
+                                    }
+
+                                    // Every role of the relation is accounted for. The roles that are not loaded are
+                                    // reported now, so that a handler hears nothing of a relation that stops the load.
+                                    if (rolesNotLoaded != null)
+                                    {
+                                        foreach (var roleId in rolesNotLoaded)
+                                        {
+                                            this.Database.OnRelationNotLoaded(relationType.Id, associationId, roleId.ToString());
                                         }
                                     }
 
@@ -501,6 +548,26 @@ namespace Allors.Database.Adapters.Snapshot
 
         private Strategy LoadInstantiateStrategy(long id) => this.transaction.GetStrategy(id);
 
+        // An object that is not loaded was reported as not loaded, and then its relations are reported as well, or the
+        // file does not hold it, which stops the load.
+        private void CheckReported(IRelationType relationType, long associationId, long objectId)
+        {
+            if (this.objectsNotLoaded == null || !this.objectsNotLoaded.Contains(objectId))
+            {
+                throw Serialization.NoObject(relationType, associationId, objectId);
+            }
+        }
+
+        // The objects of a relation that is reported as not loaded are accounted for as well: each of them is loaded
+        // or was reported as not loaded, or the file does not hold it, which stops the load.
+        private void CheckObject(Guid relationTypeId, long associationId, long objectId)
+        {
+            if (this.LoadInstantiateStrategy(objectId) == null && (this.objectsNotLoaded == null || !this.objectsNotLoaded.Contains(objectId)))
+            {
+                throw Serialization.NoObject(this.Database.MetaPopulation, relationTypeId, associationId, objectId);
+            }
+        }
+
         private void CantLoadUnitRole(Guid relationTypeId)
         {
             var skip = false;
@@ -527,7 +594,10 @@ namespace Allors.Database.Adapters.Snapshot
                                        this.reader.Name.Equals(Serialization.RelationTypeUnit));
                             }
 
-                            this.Database.OnRelationNotLoaded(relationTypeId, long.Parse(a), value);
+                            var associationId = long.Parse(a);
+                            this.CheckObject(relationTypeId, associationId, associationId);
+
+                            this.Database.OnRelationNotLoaded(relationTypeId, associationId, value);
                         }
 
                         break;
@@ -558,6 +628,8 @@ namespace Allors.Database.Adapters.Snapshot
 
                             var associationId = long.Parse(associationIdString);
 
+                            this.CheckObject(relationTypeId, associationId, associationId);
+
                             if (this.reader.IsEmptyElement)
                             {
                                 this.Database.OnRelationNotLoaded(relationTypeId, associationId, null);
@@ -572,7 +644,18 @@ namespace Allors.Database.Adapters.Snapshot
                                        (this.reader.NodeType == XmlNodeType.EndElement &&
                                        this.reader.Name.Equals(Serialization.RelationTypeComposite));
 
-                                foreach (var r in value.Split(Serialization.ObjectsSplitterCharArray))
+                                var roles = value.Split(Serialization.ObjectsSplitterCharArray);
+
+                                // Every role is looked at before any of them is reported.
+                                if (value.Length > 0)
+                                {
+                                    foreach (var r in roles)
+                                    {
+                                        this.CheckObject(relationTypeId, associationId, long.Parse(r));
+                                    }
+                                }
+
+                                foreach (var r in roles)
                                 {
                                     this.Database.OnRelationNotLoaded(relationTypeId, associationId, r);
                                 }
