@@ -49,9 +49,11 @@ namespace Allors.Database.Adapters.Snapshot
                         this.LoadPopulation();
                     }
 
-                    break;
+                    return;
                 }
             }
+
+            throw Serialization.NoPopulation();
         }
 
         private void LoadPopulation()
