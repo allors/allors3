@@ -24,6 +24,10 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         private readonly Dictionary<long, IClass> classByObjectId;
 
+        // The ids of the objects that were reported as not loaded. Their relations are reported as not loaded as
+        // well. A relation of any other object that is not loaded stops the load: the file does not hold it.
+        private readonly HashSet<long> objectsNotLoaded;
+
         public Load(Database database, SqlConnection connection, ObjectNotLoadedEventHandler objectNotLoaded, RelationNotLoadedEventHandler relationNotLoaded)
         {
             this.database = database;
@@ -32,6 +36,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             this.relationNotLoaded = relationNotLoaded;
 
             this.classByObjectId = new Dictionary<long, IClass>();
+            this.objectsNotLoaded = new HashSet<long>();
         }
 
         public void Execute(XmlReader reader)
@@ -276,6 +281,13 @@ where c = '{@class.Id}'";
 
                             this.classByObjectId.TryGetValue(associationId, out var @class);
 
+                            // An object that is not loaded was reported as not loaded, and then its relations are
+                            // reported as well, or the file does not hold it, which stops the load.
+                            if (@class == null && !this.objectsNotLoaded.Contains(associationId))
+                            {
+                                throw Serialization.NoObject(relationType, associationId, associationId);
+                            }
+
                             if (@class == null || !allowedClasses.Contains(@class))
                             {
                                 this.CantLoadUnitRole(reader.ReadSubtree(), relationType.Id);
@@ -374,6 +386,7 @@ where c = '{@class.Id}'";
                     this.CantLoadCompositeRole,
                     this.OnRelationNotLoaded,
                     this.classByObjectId,
+                    this.objectsNotLoaded,
                     reader);
 
                 var sql = relationType.RoleType.IsOne ?
@@ -482,6 +495,7 @@ where c = '{@class.Id}'";
             if (this.objectNotLoaded != null)
             {
                 this.objectNotLoaded(this, new ObjectNotLoadedEventArgs(objectTypeId, allorsObjectId));
+                this.objectsNotLoaded.Add(allorsObjectId);
             }
             else
             {

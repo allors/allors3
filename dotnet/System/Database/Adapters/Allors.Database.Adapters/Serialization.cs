@@ -168,6 +168,19 @@ namespace Allors.Database.Adapters
             new ArgumentException("The file holds an object with the id " + XmlConvert.ToString(objectId) + ": the id of a database object is 1 or higher.");
 
         /// <summary>
+        /// The exception of a load for a relation of an object that the file does not hold.
+        /// </summary>
+        /// <param name="relationType">The relation type.</param>
+        /// <param name="associationId">The id of the association of the relation.</param>
+        /// <param name="objectId">The id of the object that the file does not hold: the association or a role.</param>
+        /// <returns>The exception.</returns>
+        public static ArgumentException NoObject(IRelationType relationType, long associationId, long objectId) =>
+            new ArgumentException(
+                associationId == objectId
+                    ? "The file holds a relation of " + relationType.RoleType + " for the object " + XmlConvert.ToString(objectId) + ", which is not among its objects."
+                    : "The file holds a relation of " + relationType.RoleType + " from the object " + XmlConvert.ToString(associationId) + " to the object " + XmlConvert.ToString(objectId) + ", which is not among its objects.");
+
+        /// <summary>
         /// Reads the unit of a role from its XML value, for a load.
         /// </summary>
         /// <param name="roleType">The role type.</param>

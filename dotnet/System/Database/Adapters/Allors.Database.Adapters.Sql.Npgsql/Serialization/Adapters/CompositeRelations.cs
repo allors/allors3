@@ -18,6 +18,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
         private readonly IRelationType relationType;
         private readonly Action<Guid, long, string> onRelationNotLoaded;
         private readonly Dictionary<long, IClass> classByObjectId;
+        private readonly HashSet<long> objectsNotLoaded;
         private readonly XmlReader reader;
         private readonly Action<XmlReader, Guid> cantLoadCompositeRole;
 
@@ -27,6 +28,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             Action<XmlReader, Guid> cantLoadCompositeRole,
             Action<Guid, long, string> onRelationNotLoaded,
             Dictionary<long, IClass> classByObjectId,
+            HashSet<long> objectsNotLoaded,
             XmlReader reader)
         {
             this.database = database;
@@ -34,6 +36,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             this.cantLoadCompositeRole = cantLoadCompositeRole;
             this.onRelationNotLoaded = onRelationNotLoaded;
             this.classByObjectId = classByObjectId;
+            this.objectsNotLoaded = objectsNotLoaded;
             this.reader = reader;
         }
 
@@ -62,6 +65,11 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 
                             this.classByObjectId.TryGetValue(associationId, out var associationClass);
 
+                            if (associationClass == null)
+                            {
+                                this.CheckReported(associationId, associationId);
+                            }
+
                             if (associationClass == null || !allowedAssociationClasses.Contains(associationClass))
                             {
                                 this.cantLoadCompositeRole(this.reader.ReadSubtree(), this.relationType.Id);
@@ -89,6 +97,11 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 
                                         this.classByObjectId.TryGetValue(roleId, out var roleClass);
 
+                                        if (roleClass == null)
+                                        {
+                                            this.CheckReported(associationId, roleId);
+                                        }
+
                                         if (roleClass == null || !allowedRoleClasses.Contains(roleClass))
                                         {
                                             this.onRelationNotLoaded(this.relationType.Id, associationId, roleIdStringArray[0]);
@@ -105,6 +118,11 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                                             var roleId = long.Parse(roleIdString);
 
                                             this.classByObjectId.TryGetValue(roleId, out var roleClass);
+
+                                            if (roleClass == null)
+                                            {
+                                                this.CheckReported(associationId, roleId);
+                                            }
 
                                             if (roleClass == null || !allowedRoleClasses.Contains(roleClass))
                                             {
@@ -132,5 +150,15 @@ namespace Allors.Database.Adapters.Sql.Npgsql
         }
 
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+
+        // An object that is not loaded was reported as not loaded, and then its relations are reported as well, or the
+        // file does not hold it, which stops the load.
+        private void CheckReported(long associationId, long objectId)
+        {
+            if (!this.objectsNotLoaded.Contains(objectId))
+            {
+                throw Serialization.NoObject(this.relationType, associationId, objectId);
+            }
+        }
     }
 }

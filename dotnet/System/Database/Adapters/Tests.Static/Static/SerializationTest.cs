@@ -1055,26 +1055,10 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
                 this.Population.RelationNotLoaded += (o, args) =>
                     notLoadedEventArgs.Add(args);
 
-                var stringReader = new StringReader(xml);
-                using (var reader = XmlReader.Create(stringReader))
-                {
-                    this.Population.Load(reader);
-                }
+                // The file does not hold the object 99, so its relation stops the load and no handler hears of it.
+                Assert.Throws<ArgumentException>(() => DoLoad(this.Population, xml));
 
-                Assert.Single(notLoadedEventArgs);
-                var notLoadedEventArg = notLoadedEventArgs.First();
-                Assert.Equal(99, notLoadedEventArg.AssociationId);
-                Assert.Equal(new Guid("87eb0d1973a74aaeaeed66dc9163233c"), notLoadedEventArg.RelationTypeId);
-                Assert.Equal("1.1", notLoadedEventArg.RoleContents);
-
-                using (var transaction = this.Population.CreateTransaction())
-                {
-                    this.c1A = (C1)transaction.Instantiate(1);
-
-                    Assert.Equal("A String", this.c1A.C1AllorsString);
-                    Assert.Equal(true, this.c1A.C1AllorsBoolean);
-                    Assert.Equal(new Guid("537f6823-d22c-4b3b-ab3c-e15a6b61b9d6"), this.c1A.C1AllorsUnique);
-                }
+                Assert.Empty(notLoadedEventArgs);
             }
         }
 
@@ -1188,31 +1172,10 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
                 this.Population.RelationNotLoaded += (o, args) =>
                     notLoadedEventArgs.Add(args);
 
-                var stringReader = new StringReader(xml);
-                using (var reader = XmlReader.Create(stringReader))
-                {
-                    this.Population.Load(reader);
-                }
+                // The file does not hold the object 99, so its relation stops the load and no handler hears of it.
+                Assert.Throws<ArgumentException>(() => DoLoad(this.Population, xml));
 
-                Assert.Single(notLoadedEventArgs);
-                var notLoadedEventArg = notLoadedEventArgs.First();
-                Assert.Equal(99, notLoadedEventArg.AssociationId);
-                Assert.Equal(new Guid("2cd8b843-f1f5-413d-9d6d-0d2b9b3c5cf6"), notLoadedEventArg.RelationTypeId);
-                Assert.Equal("3", notLoadedEventArg.RoleContents);
-
-                using (var transaction = this.Population.CreateTransaction())
-                {
-                    this.c1A = (C1)transaction.Instantiate(1);
-                    this.c1B = (C1)transaction.Instantiate(2);
-                    this.c1C = (C1)transaction.Instantiate(3);
-                    this.c1D = (C1)transaction.Instantiate(4);
-
-                    Assert.Single(this.c1A.C1C1many2manies);
-                    Assert.Contains(this.c1B, this.c1A.C1C1many2manies);
-                    Assert.Equal(this.c1D, this.c1C.C1C1one2one);
-                    Assert.Single(this.c1A.C1C1one2manies);
-                    Assert.Contains(this.c1D, this.c1A.C1C1one2manies);
-                }
+                Assert.Empty(notLoadedEventArgs);
             }
         }
 
@@ -2203,6 +2166,11 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
                 Relations("a role that is not a number", CompositesOf(one, (1, "2"), (3, "x"))),
                 Relations("one of several roles that is not a number", CompositesOf(many, (1, "2"), (3, "4,x"))),
                 Relations("an empty item among the roles", CompositesOf(many, (1, "2"), (3, "4,,1"))),
+                Relations("a unit relation of an object that the file does not hold", UnitsOf(unit, (1, x), (99, x))),
+                Relations("a composite relation of an object that the file does not hold", CompositesOf(one, (1, "2"), (99, "3"))),
+                Relations("a role that the file does not hold", CompositesOf(one, (1, "2"), (3, "99"))),
+                Relations("one of several roles that the file does not hold", CompositesOf(many, (1, "2"), (3, "4,99"))),
+                ("relations before the objects", $@"<?xml version=""1.0"" encoding=""utf-16""?><allors><population version=""1""><relations><database>{UnitsOf(unit, (1, x))}</database></relations><objects><database>{objects}</database></objects></population></allors>"),
             };
         }
 
