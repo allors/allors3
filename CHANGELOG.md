@@ -108,10 +108,8 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   `Unknown child element <…> in parent element <…>`. The SQL loaders skipped such an element with
   everything in it and returned normally, so a file with `objects`, `relations`, a `database`
   element, an object type, a relation type or a relation under another name or in another place
-  loaded as an empty database, or without those objects or relations. The SQL loaders read to the
-  end of the file and refuse an element that follows the population as well; the Memory and
-  Snapshot loaders stop reading at the end of the population. A self-closing element under an
-  unknown name among the relation types, which every adapter skipped, stops the load too (#335).
+  loaded as an empty database, or without those objects or relations. A self-closing element under
+  an unknown name among the relation types, which every adapter skipped, stops the load too (#335).
 - Loading a file without a `population` element fails with an `ArgumentException`. Every adapter
   returned normally and left an empty database, for `<allors/>` as for any other XML document. A
   population without content still loads as a population without objects (#336).
