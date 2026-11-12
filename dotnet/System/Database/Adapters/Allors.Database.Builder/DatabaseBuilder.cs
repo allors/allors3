@@ -9,7 +9,6 @@
 namespace Allors.Database.Adapters
 {
     using System;
-    using System.Data;
     using Microsoft.Extensions.Configuration;
 
     public class DatabaseBuilder
@@ -17,15 +16,13 @@ namespace Allors.Database.Adapters
         private readonly IDatabaseServices scope;
         private readonly IConfiguration configuration;
         private readonly ObjectFactory objectFactory;
-        private readonly IsolationLevel? isolationLevel;
         private readonly int? commandTimeout;
 
-        public DatabaseBuilder(IDatabaseServices scope, IConfiguration configuration, ObjectFactory objectFactory, IsolationLevel? isolationLevel = null, int? commandTimeout = null)
+        public DatabaseBuilder(IDatabaseServices scope, IConfiguration configuration, ObjectFactory objectFactory, int? commandTimeout = null)
         {
             this.scope = scope;
             this.configuration = configuration;
             this.objectFactory = objectFactory;
-            this.isolationLevel = isolationLevel;
             this.commandTimeout = commandTimeout;
         }
 
@@ -52,7 +49,6 @@ namespace Allors.Database.Adapters
                     {
                         ObjectFactory = this.objectFactory,
                         ConnectionString = RequireConnectionString(connectionString),
-                        IsolationLevel = this.isolationLevel,
                         CommandTimeout = this.commandTimeout,
                     });
 
@@ -62,7 +58,6 @@ namespace Allors.Database.Adapters
                     {
                         ObjectFactory = this.objectFactory,
                         ConnectionString = RequireConnectionString(connectionString),
-                        IsolationLevel = this.isolationLevel,
                         CommandTimeout = this.commandTimeout,
                     });
 
