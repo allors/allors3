@@ -854,6 +854,20 @@ namespace Allors.Database.Adapters
                     }
 
                     {
+                        // Not a finite number: refused when the role is set
+                        var values = C1.Create(this.Transaction);
+
+                        Assert.Throws<ArgumentException>(() => values.C1AllorsDouble = double.NaN);
+                        Assert.Throws<ArgumentException>(() => values.I1AllorsDouble = double.PositiveInfinity);
+                        Assert.Throws<ArgumentException>(() => values.S1AllorsDouble = double.NegativeInfinity);
+
+                        mark();
+                        Assert.False(values.ExistC1AllorsDouble);
+                        Assert.False(values.ExistI1AllorsDouble);
+                        Assert.False(values.ExistS1AllorsDouble);
+                    }
+
+                    {
                         // initial empty
                         var values = C1.Create(this.Transaction);
 
@@ -1411,6 +1425,22 @@ namespace Allors.Database.Adapters
                     }
 
                     {
+                        // Longer than the size of the role type: refused when the role is set
+                        var values = C1.Create(this.Transaction);
+                        var size = m.C1.C1BinarySized.Size.Value;
+
+                        Assert.Throws<ArgumentException>(() => values.C1BinarySized = new byte[size + 1]);
+
+                        mark();
+                        Assert.False(values.ExistC1BinarySized);
+
+                        values.C1BinarySized = new byte[size];
+
+                        mark();
+                        Assert.Equal(new byte[size], values.C1BinarySized);
+                    }
+
+                    {
                         // initial empty
                         var values = C1.Create(this.Transaction);
 
@@ -1608,6 +1638,29 @@ namespace Allors.Database.Adapters
                         Assert.Equal("b", values.I1AllorsString);
                         Assert.Equal("c", values.S1AllorsString);
                         Assert.Equal("c", values.S1AllorsString);
+                    }
+
+                    {
+                        // The character U+0000 and a lone surrogate: refused when the role is set
+                        var values = C1.Create(this.Transaction);
+
+                        Assert.Throws<ArgumentException>(() => values.C1AllorsString = "a\0b");
+                        Assert.Throws<ArgumentException>(() => values.C1AllorsString = "\0");
+                        Assert.Throws<ArgumentException>(() => values.I1AllorsString = "a\uD83D");
+                        Assert.Throws<ArgumentException>(() => values.I1AllorsString = "\uDE00b");
+                        Assert.Throws<ArgumentException>(() => values.S1AllorsString = "\uDE00\uD83D");
+                        Assert.Throws<ArgumentException>(() => values.S1AllorsString = "\uD83D\uD83D\uDE00");
+
+                        mark();
+                        Assert.False(values.ExistC1AllorsString);
+                        Assert.False(values.ExistI1AllorsString);
+                        Assert.False(values.ExistS1AllorsString);
+
+                        // A surrogate pair is one character of a string value
+                        values.C1AllorsString = "a\uD83D\uDE00b";
+
+                        mark();
+                        Assert.Equal("a\uD83D\uDE00b", values.C1AllorsString);
                     }
 
                     {

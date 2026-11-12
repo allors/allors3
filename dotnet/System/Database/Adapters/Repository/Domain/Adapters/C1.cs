@@ -318,6 +318,12 @@ namespace Allors.Repository
         public double C1FloatBetweenA { get; set; }
 
         #region Allors
+        [Id("2fbecfa1-293f-47c6-849f-c6da02718075")]
+        [Size(256)]
+        #endregion
+        public byte[] C1BinarySized { get; set; }
+
+        #region Allors
         [Id("2fc66f19-7fd4-4dc1-95ef-7931864ad083")]
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
