@@ -26,6 +26,12 @@ namespace Allors.Database.Adapters.Snapshot
         private HashSet<long> roleChanged = new HashSet<long>();
         private HashSet<long> deleted = new HashSet<long>();
 
+        // The created objects in the order of their creation and, for every class, the positions of its
+        // objects in that order: an extent finds the created objects of its classes without going through
+        // all of them.
+        private List<long> createdInOrder = new List<long>();
+        private Dictionary<IClass, List<int>> createdPositionsByClass = new Dictionary<IClass, List<int>>();
+
         internal Transaction(Database database, Snapshot snapshot)
         {
             this.Database = database;
@@ -122,7 +128,7 @@ namespace Allors.Database.Adapters.Snapshot
 
             var record = new Record(layout, objectId, Version.DatabaseInitial);
             this.overlay[objectId] = record;
-            this.created.Add(objectId);
+            this.AddCreated(objectType, objectId);
 
             var strategy = new Strategy(this, objectId);
             this.strategyByObjectId[objectId] = strategy;
@@ -300,7 +306,7 @@ namespace Allors.Database.Adapters.Snapshot
 
             var record = new Record(this.Database.GetLayout(objectType), objectId, objectVersion);
             this.overlay[objectId] = record;
-            this.created.Add(objectId);
+            this.AddCreated(objectType, objectId);
 
             var strategy = new Strategy(this, objectId);
             this.strategyByObjectId[objectId] = strategy;
@@ -312,7 +318,9 @@ namespace Allors.Database.Adapters.Snapshot
 
         internal IEnumerable<Strategy> GetStrategiesForExtent(IComposite objectType)
         {
-            foreach (var concreteClass in this.Database.GetConcreteClasses(objectType))
+            var concreteClasses = this.Database.GetConcreteClasses(objectType);
+
+            foreach (var concreteClass in concreteClasses)
             {
                 if (this.baseSnapshot.ObjectIdsByClass.TryGetValue(concreteClass, out var objectIds))
                 {
@@ -329,18 +337,78 @@ namespace Allors.Database.Adapters.Snapshot
 
             if (this.created.Count > 0)
             {
-                foreach (var objectId in this.created.ToArray())
+                foreach (var objectId in this.CreatedObjectIds(concreteClasses))
                 {
-                    if (!this.deleted.Contains(objectId) && this.Database.ContainsClass(objectType, this.overlay[objectId].Class))
+                    var strategy = this.GetStrategy(objectId);
+                    if (strategy != null)
                     {
-                        var strategy = this.GetStrategy(objectId);
-                        if (strategy != null)
-                        {
-                            yield return strategy;
-                        }
+                        yield return strategy;
                     }
                 }
             }
+        }
+
+        private void AddCreated(IClass @class, long objectId)
+        {
+            this.created.Add(objectId);
+
+            if (!this.createdPositionsByClass.TryGetValue(@class, out var positions))
+            {
+                positions = new List<int>();
+                this.createdPositionsByClass.Add(@class, positions);
+            }
+
+            positions.Add(this.createdInOrder.Count);
+            this.createdInOrder.Add(objectId);
+        }
+
+        /// <summary>
+        /// The ids of the objects of these classes that this transaction created, in the order of their
+        /// creation.
+        /// </summary>
+        private long[] CreatedObjectIds(IClass[] classes)
+        {
+            List<int> positions = null;
+            var merged = false;
+
+            foreach (var @class in classes)
+            {
+                if (this.createdPositionsByClass.TryGetValue(@class, out var positionsOfClass))
+                {
+                    if (positions == null)
+                    {
+                        positions = positionsOfClass;
+                    }
+                    else
+                    {
+                        if (!merged)
+                        {
+                            positions = new List<int>(positions);
+                            merged = true;
+                        }
+
+                        positions.AddRange(positionsOfClass);
+                    }
+                }
+            }
+
+            if (positions == null)
+            {
+                return Array.Empty<long>();
+            }
+
+            if (merged)
+            {
+                positions.Sort();
+            }
+
+            var objectIds = new long[positions.Count];
+            for (var i = 0; i < objectIds.Length; i++)
+            {
+                objectIds[i] = this.createdInOrder[positions[i]];
+            }
+
+            return objectIds;
         }
 
         private void Reset(Snapshot snapshot)
@@ -362,6 +430,8 @@ namespace Allors.Database.Adapters.Snapshot
             this.created = new HashSet<long>();
             this.roleChanged = new HashSet<long>();
             this.deleted = new HashSet<long>();
+            this.createdInOrder = new List<long>();
+            this.createdPositionsByClass = new Dictionary<IClass, List<int>>();
             this.ChangeLog = new ChangeLog();
         }
     }
