@@ -8,7 +8,6 @@ namespace Allors.Database.Adapters.Sql
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
-    using System.Data;
     using System.Linq;
     using System.Xml;
     using Allors.Database.Tracing;
@@ -18,8 +17,6 @@ namespace Allors.Database.Adapters.Sql
 
     public abstract class Database : IDatabase
     {
-        public static readonly IsolationLevel DefaultIsolationLevel = System.Data.IsolationLevel.Snapshot;
-
         private readonly ConcurrentDictionary<IObjectType, HashSet<IObjectType>> concreteClassesByObjectType;
 
         private readonly ConcurrentDictionary<IObjectType, IRoleType[]> sortedUnitRolesByObjectType;
@@ -47,7 +44,6 @@ namespace Allors.Database.Adapters.Sql
             this.concreteClassesByObjectType = new ConcurrentDictionary<IObjectType, HashSet<IObjectType>>();
 
             this.CommandTimeout = configuration.CommandTimeout;
-            this.IsolationLevel = configuration.IsolationLevel;
 
             this.sortedUnitRolesByObjectType = new ConcurrentDictionary<IObjectType, IRoleType[]>();
 
@@ -102,8 +98,6 @@ namespace Allors.Database.Adapters.Sql
         protected internal ICache Cache { get; }
 
         public int? CommandTimeout { get; }
-
-        public IsolationLevel? IsolationLevel { get; }
 
         public abstract Mapping Mapping
         {

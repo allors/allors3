@@ -5,7 +5,6 @@
 
 namespace Allors.Database.Adapters.Sql
 {
-    using System.Data;
     using Caching;
 
     public class Configuration : Adapters.Configuration
@@ -19,8 +18,6 @@ namespace Allors.Database.Adapters.Sql
         public string ConnectionString { get; set; }
 
         public int? CommandTimeout { get; set; }
-
-        public IsolationLevel? IsolationLevel { get; set; }
 
         public string SchemaName { get; set; }
     }
