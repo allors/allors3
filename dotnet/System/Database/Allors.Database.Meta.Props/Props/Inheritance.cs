@@ -73,7 +73,7 @@ namespace Allors.Database.Meta
             }
         }
 
-        public override bool Equals(object other) => this.Subtype.Id.Equals((other as Inheritance)?.Subtype.Id) && this.Supertype.Id.Equals((other as Inheritance)?.Supertype.Id);
+        public override bool Equals(object other) => other is Inheritance that && this.Subtype.Id.Equals(that.Subtype.Id) && this.Supertype.Id.Equals(that.Supertype.Id);
 
         public override int GetHashCode() => this.Subtype.Id.GetHashCode() ^ this.Supertype.Id.GetHashCode();
 
