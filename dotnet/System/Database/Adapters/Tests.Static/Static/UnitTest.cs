@@ -539,16 +539,30 @@ namespace Allors.Database.Adapters
                     }
 
                     {
-                        // More decimals than the scale: rounded half away from zero, as a database stores them
+                        // More decimals than the scale: refused when the role is set, a decimal is not rounded
                         var values = C1.Create(this.Transaction);
-                        values.C1AllorsDecimal = 1.025m;
-                        values.I1AllorsDecimal = -1.025m;
-                        values.S1AllorsDecimal = 1.004m;
+
+                        Assert.Throws<ArgumentException>(() => values.C1AllorsDecimal = 1.025m);
+                        Assert.Throws<ArgumentException>(() => values.I1AllorsDecimal = -1.025m);
+                        Assert.Throws<ArgumentException>(() => values.S1AllorsDecimal = 1.004m);
 
                         mark();
-                        Assert.Equal(1.03m, values.C1AllorsDecimal);
-                        Assert.Equal(-1.03m, values.I1AllorsDecimal);
-                        Assert.Equal(1.00m, values.S1AllorsDecimal);
+                        Assert.False(values.ExistC1AllorsDecimal);
+                        Assert.False(values.ExistI1AllorsDecimal);
+                        Assert.False(values.ExistS1AllorsDecimal);
+                    }
+
+                    {
+                        // More decimals than the scale that are zeros: the decimal fits
+                        var values = C1.Create(this.Transaction);
+                        values.C1AllorsDecimal = 1.500m;
+                        values.I1AllorsDecimal = -1.500m;
+                        values.S1AllorsDecimal = 1.000m;
+
+                        mark();
+                        Assert.Equal(1.5m, values.C1AllorsDecimal);
+                        Assert.Equal(-1.5m, values.I1AllorsDecimal);
+                        Assert.Equal(1m, values.S1AllorsDecimal);
                     }
 
                     {
@@ -578,7 +592,7 @@ namespace Allors.Database.Adapters
                     }
 
                     {
-                        // Too large for the precision: refused when the role is set, also when rounding makes it too large
+                        // Beyond the largest decimal that the precision and the scale hold: refused when the role is set
                         var values = C1.Create(this.Transaction);
                         var largest = LargestDecimal(m.C1.C1AllorsDecimal);
 
@@ -693,53 +707,6 @@ namespace Allors.Database.Adapters
                         Assert.False(values.ExistS1AllorsDecimal);
                     }
                 }
-            }
-        }
-
-        [Fact]
-        public void RoundDecimal()
-        {
-            var m = new Meta.MetaBuilder().Build();
-            var roleType = m.C1.C1AllorsDecimal;
-            var cases = new (int Scale, decimal Value, decimal Expected)[]
-            {
-                (-2, 12345m, 12300m),
-                (-2, 12550m, 12600m),
-                (-2, -12550m, -12600m),
-                (-2, 12300m, 12300m),
-                (-2, 0m, 0m),
-                (-1, 4.9999999999999999999999999999m, 0m),
-                (-1, -4.9999999999999999999999999999m, 0m),
-                (-1, 5m, 10m),
-                (-1, -5m, -10m),
-                (-28, 5000000000000000000000000000m, 10000000000000000000000000000m),
-                (-28, -5000000000000000000000000000m, -10000000000000000000000000000m),
-                (-29, 49999999999999999999999999999m, 0m),
-                (-29, -49999999999999999999999999999m, 0m),
-                (-30, decimal.MaxValue, 0m),
-                (-30, decimal.MinValue, 0m),
-                (-1000, decimal.MaxValue, 0m),
-            };
-
-            foreach (var (scale, value, expected) in cases)
-            {
-                roleType.Scale = scale;
-                Assert.Equal(expected, roleType.RoundToScale(value));
-            }
-
-            // The closest multiple can lie outside the range of decimal.
-            foreach (var (scale, value) in new (int Scale, decimal Value)[]
-            {
-                (-1, decimal.MaxValue),
-                (-1, decimal.MinValue),
-                (-28, decimal.MaxValue),
-                (-28, decimal.MinValue),
-                (-29, 50000000000000000000000000000m),
-                (-29, -50000000000000000000000000000m),
-            })
-            {
-                roleType.Scale = scale;
-                Assert.Throws<OverflowException>(() => roleType.RoundToScale(value));
             }
         }
 

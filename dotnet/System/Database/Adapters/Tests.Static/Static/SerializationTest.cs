@@ -1331,18 +1331,23 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
                 (2, 29, "0.0000000000000000000000000001", true),
             };
 
+            // One rule decides for a load and for a role that is set: a decimal that does not fit is not rounded.
             foreach (var (precision, scale, value, fits) in cases)
             {
                 roleType.Precision = precision;
                 roleType.Scale = scale;
 
+                var @decimal = XmlConvert.ToDecimal(value);
+
                 if (fits)
                 {
-                    Assert.Equal(XmlConvert.ToDecimal(value), Serialization.ReadUnit(roleType, value));
+                    Assert.Equal(@decimal, Serialization.ReadUnit(roleType, value));
+                    Assert.Equal(@decimal, roleType.NormalizeRole(@decimal));
                 }
                 else
                 {
                     Assert.Throws<ArgumentException>(() => Serialization.ReadUnit(roleType, value));
+                    Assert.Throws<ArgumentException>(() => roleType.NormalizeRole(@decimal));
                 }
             }
         }
