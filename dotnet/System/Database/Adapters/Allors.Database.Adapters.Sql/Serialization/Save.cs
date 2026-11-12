@@ -15,10 +15,16 @@ namespace Allors.Database.Adapters.Sql
         private readonly Database database;
         private readonly XmlWriter writer;
 
+        // The ids of the objects that this save has written. A transaction can commit a relation to an object that
+        // another transaction deleted in the meantime. Such a relation is not part of the population and is not
+        // written: a load refuses a relation of an object that the file does not hold.
+        private readonly HashSet<long> objectIds;
+
         public Save(Database database, XmlWriter writer)
         {
             this.database = database;
             this.writer = writer;
+            this.objectIds = new HashSet<long>();
         }
 
         public virtual void Execute(ManagementTransaction transaction)
@@ -94,6 +100,7 @@ namespace Allors.Database.Adapters.Sql
                             var objectId = long.Parse(reader[0].ToString());
                             var version = reader[1].ToString();
 
+                            this.objectIds.Add(objectId);
                             this.writer.WriteString(objectId + Serialization.ObjectSplitter + version);
                         }
                     }
@@ -193,7 +200,11 @@ namespace Allors.Database.Adapters.Sql
                                     {
                                         var a = long.Parse(reader[0].ToString());
                                         var r = long.Parse(reader[1].ToString());
-                                        relationTypeManyXmlWriter.Write(a, r);
+
+                                        if (this.objectIds.Contains(a) && this.objectIds.Contains(r))
+                                        {
+                                            relationTypeManyXmlWriter.Write(a, r);
+                                        }
                                     }
                                 }
                             }
@@ -214,8 +225,12 @@ namespace Allors.Database.Adapters.Sql
                                         }
                                         else
                                         {
-                                            var r = reader[1];
-                                            relationTypeOneXmlWriter.Write(a, XmlConvert.ToString(long.Parse(r.ToString())));
+                                            var r = long.Parse(reader[1].ToString());
+
+                                            if (this.objectIds.Contains(a) && this.objectIds.Contains(r))
+                                            {
+                                                relationTypeOneXmlWriter.Write(a, XmlConvert.ToString(r));
+                                            }
                                         }
                                     }
                                 }

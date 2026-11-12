@@ -8,8 +8,10 @@ namespace Allors.Database.Adapters
     using System;
     using System.Collections.Concurrent;
     using System.Data.Common;
+    using System.IO;
     using System.Linq;
     using System.Threading;
+    using System.Xml;
     using Domain;
     using Xunit;
 
@@ -235,6 +237,61 @@ namespace Allors.Database.Adapters
 
                 Assert.Null(this.Transaction.Instantiate(c1.Id));
                 Assert.Equal(0, this.Transaction.Extent(m.C1).Count);
+            }
+        }
+
+        [Fact]
+        public void SaveLeavesOutARelationToAnObjectAnotherTransactionDeleted()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+
+                var association = C1.Create(this.Transaction);
+                var deleted = C1.Create(this.Transaction);
+                deleted.C1AllorsString = "deleted";
+                var kept = C1.Create(this.Transaction);
+                this.Transaction.Commit();
+
+                using (var setter = this.Population.CreateTransaction())
+                {
+                    // The setter takes its view of the database before the deleter commits.
+                    var deletedInSetter = (C1)setter.Instantiate(deleted);
+                    Assert.Equal("deleted", deletedInSetter.C1AllorsString);
+
+                    using (var deleter = this.Population.CreateTransaction())
+                    {
+                        deleter.Instantiate(deleted).Strategy.Delete();
+                        deleter.Commit();
+                    }
+
+                    var associationInSetter = (C1)setter.Instantiate(association);
+                    associationInSetter.C1C1many2one = deletedInSetter;
+                    associationInSetter.AddC1C1many2many(deletedInSetter);
+                    associationInSetter.AddC1C1many2many((C1)setter.Instantiate(kept));
+                    setter.Commit();
+                }
+
+                var stringWriter = new StringWriter();
+                using (var writer = XmlWriter.Create(stringWriter))
+                {
+                    this.Population.Save(writer);
+                }
+
+                // A load refuses a relation to an object that the file does not hold.
+                using (var reader = XmlReader.Create(new StringReader(stringWriter.ToString())))
+                {
+                    this.Population.Load(reader);
+                }
+
+                using (var transaction = this.Population.CreateTransaction())
+                {
+                    Assert.Null(transaction.Instantiate(deleted.Id));
+
+                    var loaded = (C1)transaction.Instantiate(association.Id);
+                    Assert.False(loaded.ExistC1C1many2one);
+                    Assert.Equal(new[] { kept.Id }, loaded.C1C1many2manies.Select(v => v.Id).ToArray());
+                }
             }
         }
 
