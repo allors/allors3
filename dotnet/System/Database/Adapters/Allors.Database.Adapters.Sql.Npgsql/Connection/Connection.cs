@@ -23,7 +23,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             {
                 this.NpgsqlConnection = new NpgsqlConnection(this.Database.ConnectionString);
                 this.NpgsqlConnection.Open();
-                this.NpgsqlTransaction = this.NpgsqlConnection.BeginTransaction(this.Database.IsolationLevel ?? Database.DefaultIsolationLevel);
+                this.NpgsqlTransaction = this.NpgsqlConnection.BeginTransaction(System.Data.IsolationLevel.Snapshot);
             }
 
             var sqlCommand = this.NpgsqlConnection.CreateCommand();
