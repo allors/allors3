@@ -17,14 +17,14 @@ namespace Commands
 
         public Logger Logger => LogManager.GetCurrentClassLogger();
 
-        [Option("-f", Description = "File to save")]
-        public string FileName { get; set; } = "population.xml";
+        [Option("-f", Description = "File to save (default is population.xml)")]
+        public string FileName { get; set; }
 
         public int OnExecute(CommandLineApplication app)
         {
             this.Logger.Info("Begin");
 
-            var fileName = this.FileName ?? this.Parent.Configuration["populationFile"];
+            var fileName = this.FileName ?? this.Parent.Configuration["populationFile"] ?? "population.xml";
             var fileInfo = new FileInfo(fileName);
 
             using (var stream = File.Create(fileInfo.FullName))
