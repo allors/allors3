@@ -10,6 +10,8 @@ namespace Allors.Database.Adapters.Snapshot
     using Adapters;
     using Xunit;
     using C1 = Domain.C1;
+    using C2 = Domain.C2;
+    using C3 = Domain.C3;
 
     public class ExtentTest : Adapters.ExtentTest
     {
@@ -66,6 +68,62 @@ namespace Allors.Database.Adapters.Snapshot
                 Assert.Contains(matching, extent);
                 Assert.Contains(different, extent);
                 Assert.DoesNotContain(absent, extent);
+            }
+        }
+
+        // An extent finds the objects of its type among those that the transaction created. Going through
+        // every created object for that takes time and memory in proportion to their number for each
+        // extent: a copy of 32 KB of ids for an extent of one object beside 4,000 objects of another class.
+        [Fact]
+        public void AnExtentDoesNotGoThroughEveryObjectCreatedInTheTransaction()
+        {
+            const int Count = 4000;
+            const int Extents = 100;
+            const long Limit = Extents * 4 * 1024L;
+
+            foreach (var init in this.Inits)
+            {
+                init();
+                var m = this.Transaction.Database.Context().M;
+
+                var c1 = C1.Create(this.Transaction);
+                C2.Create(this.Transaction, Count);
+
+                var before = GC.GetAllocatedBytesForCurrentThread();
+
+                for (var i = 0; i < Extents; i++)
+                {
+                    Assert.Equal(c1, Assert.Single(this.Transaction.Extent(m.C1).Cast<C1>()));
+                }
+
+                Assert.InRange(GC.GetAllocatedBytesForCurrentThread() - before, 0, Limit);
+            }
+        }
+
+        // The objects that the transaction created follow the committed ones in the order of their
+        // creation, whatever their class.
+        [Fact]
+        public void AnExtentHoldsTheObjectsCreatedInTheTransactionInTheOrderOfTheirCreation()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+                var m = this.Transaction.Database.Context().M;
+
+                var committed = C2.Create(this.Transaction);
+                this.Transaction.Commit();
+
+                var first = C2.Create(this.Transaction);
+                var second = C1.Create(this.Transaction);
+                C3.Create(this.Transaction);
+                var deleted = C1.Create(this.Transaction);
+                var third = C2.Create(this.Transaction);
+                var fourth = C1.Create(this.Transaction);
+                deleted.Strategy.Delete();
+
+                Assert.Equal(new IObject[] { committed, first, second, third, fourth }, this.Transaction.Extent(m.I12).Cast<IObject>().ToArray());
+                Assert.Equal(new IObject[] { second, fourth }, this.Transaction.Extent(m.C1).Cast<IObject>().ToArray());
+                Assert.Equal(new IObject[] { committed, first, third }, this.Transaction.Extent(m.C2).Cast<IObject>().ToArray());
             }
         }
     }
