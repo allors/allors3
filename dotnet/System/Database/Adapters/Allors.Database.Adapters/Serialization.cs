@@ -204,8 +204,9 @@ namespace Allors.Database.Adapters
         /// <param name="value">The XML value.</param>
         /// <returns>The unit.</returns>
         /// <exception cref="ArgumentException">
-        /// The role type cannot hold the unit as it is: a string that is longer than its size, or a decimal with more
-        /// digits than its precision or more decimals than its scale.
+        /// The role type cannot hold the unit as it is: a string or a binary that is longer than its size, a decimal
+        /// with more digits than its precision or more decimals than its scale, a float that is NaN or an infinity,
+        /// or a string with the character U+0000.
         /// </exception>
         public static object ReadUnit(IRoleType roleType, string value)
         {
@@ -219,6 +220,8 @@ namespace Allors.Database.Adapters
                 case decimal @decimal when !roleType.Fits(@decimal):
                     throw new ArgumentException($"The decimal {XmlConvert.ToString(@decimal)} has more digits than the precision {roleType.Precision} or more decimals than the scale {roleType.Scale} of {roleType}.");
             }
+
+            roleType.AssertValue(unit);
 
             return unit;
         }

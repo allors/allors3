@@ -133,8 +133,9 @@ namespace Allors.Database.Adapters
         }
 
         /// <summary>
-        /// Normalizes a unit that is set as a role, the same way on every adapter: the unit is normalized, and a
-        /// decimal is rounded to the scale of the role type and refused when it is then too large for its precision.
+        /// Normalizes a unit that is set as a role, the same way on every adapter: the unit is normalized, a decimal
+        /// is rounded to the scale of the role type and refused when it is then too large for its precision, and a
+        /// unit that is not a value on every adapter is refused.
         /// </summary>
         /// <param name="roleType">
         ///     The role type.
@@ -146,7 +147,8 @@ namespace Allors.Database.Adapters
         /// The unit as the role holds it.
         /// </returns>
         /// <exception cref="ArgumentException">
-        /// The unit is not compatible with the role type, or the rounded decimal is too large for its precision.
+        /// The unit is not compatible with the role type, the rounded decimal is too large for its precision, or the
+        /// unit is not a value on every adapter.
         /// </exception>
         public static object NormalizeRole(this IRoleType roleType, object unit)
         {
@@ -157,7 +159,36 @@ namespace Allors.Database.Adapters
                 throw new ArgumentException($"The decimal {@decimal.ToString(System.Globalization.CultureInfo.InvariantCulture)} is too large for the precision {roleType.Precision} and the scale {roleType.Scale} of {roleType}.");
             }
 
+            roleType.AssertValue(role);
+
             return role;
+        }
+
+        /// <summary>
+        /// Refuses a unit that is not a value on every adapter: a float that is NaN or an infinity, a string with the
+        /// character U+0000 or with a lone surrogate, and a binary that is longer than the size of the role type.
+        /// </summary>
+        /// <param name="roleType">
+        ///     The role type.
+        /// </param>
+        /// <param name="unit">
+        ///     The unit, of the type that the role type holds.
+        /// </param>
+        /// <exception cref="ArgumentException">The unit is not a value on every adapter.</exception>
+        public static void AssertValue(this IRoleType roleType, object unit)
+        {
+            switch (unit)
+            {
+                case double @double when !double.IsFinite(@double):
+                    throw new ArgumentException($"The float {@double.ToString(System.Globalization.CultureInfo.InvariantCulture)} is not a value of {roleType}: a float role holds a finite number.");
+
+                case string @string:
+                    AssertString(roleType, @string);
+                    break;
+
+                case byte[] binary when roleType.Size > -1 && binary.Length > roleType.Size:
+                    throw new ArgumentException($"The binary of {binary.Length} bytes is longer than the size {roleType.Size} of {roleType}.");
+            }
         }
 
         /// <summary>
@@ -291,5 +322,42 @@ namespace Allors.Database.Adapters
 
             return true;
         }
+
+        private static void AssertString(IRoleType roleType, string value)
+        {
+            const char FirstSurrogate = (char)0xD800;
+            const char LastSurrogate = (char)0xDFFF;
+
+            var index = value.IndexOf((char)0);
+            if (index >= 0)
+            {
+                throw new ArgumentException($"The string for {roleType} holds the character U+0000 at index {index}, which is not part of a string value.");
+            }
+
+            // A lone surrogate is not part of a string value: a surrogate counts in a pair only, a high surrogate that
+            // a low surrogate follows.
+            var characters = value.AsSpan();
+            index = 0;
+            while (true)
+            {
+                var offset = characters.Slice(index).IndexOfAnyInRange(FirstSurrogate, LastSurrogate);
+                if (offset < 0)
+                {
+                    return;
+                }
+
+                // Pairs often follow one another, so that the pairs of a run are checked without a new search.
+                for (index += offset; index < characters.Length && char.IsSurrogate(characters[index]); index += 2)
+                {
+                    if (!char.IsHighSurrogate(characters[index]) || index + 1 == characters.Length || !char.IsLowSurrogate(characters[index + 1]))
+                    {
+                        throw LoneSurrogate(roleType, characters[index], index);
+                    }
+                }
+            }
+        }
+
+        private static ArgumentException LoneSurrogate(IRoleType roleType, char surrogate, int index) =>
+            new ArgumentException($"The string for {roleType} holds the lone surrogate U+{(int)surrogate:X4} at index {index}, which is not part of a string value.");
     }
 }

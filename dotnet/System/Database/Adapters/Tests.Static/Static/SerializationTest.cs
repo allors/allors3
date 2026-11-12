@@ -1959,6 +1959,14 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
             var longest = Base64(new string('x', size));
             var tooLong = Base64(new string('x', size + 1));
 
+            // A string with the character U+0000, which is not part of a string value.
+            var withNull = Base64("a\0b");
+
+            // The longest binary that the size of the role type allows, and a binary that is one byte longer.
+            var binarySize = m.C1.C1BinarySized.Size.Value;
+            var longestBinary = Convert.ToBase64String(new byte[binarySize]);
+            var tooLongBinary = Convert.ToBase64String(new byte[binarySize + 1]);
+
             // The decimals with the most digits and the most decimals that the precision and the scale of the role
             // type allow, and decimals with one digit and one decimal more.
             var scale = m.C1.C1AllorsDecimal.Scale.Value;
@@ -2089,6 +2097,26 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
                     UnitsOf(Id(m.C1.C1AllorsString), (1, tooLong), (2, longest)),
                     UnitsOf(Id(m.C1.C1AllorsString), (2, longest)),
                     Relation(m.C1.C1AllorsString, 1, tooLong)),
+                Change(
+                    "a string with the character U+0000",
+                    string.Empty,
+                    UnitsOf(Id(m.C1.C1AllorsString), (1, withNull), (2, kept)),
+                    UnitsOf(Id(m.C1.C1AllorsString), (2, kept)),
+                    Relation(m.C1.C1AllorsString, 1, withNull)),
+                Change(
+                    "a binary that is longer than its role type allows",
+                    string.Empty,
+                    UnitsOf(Id(m.C1.C1BinarySized), (1, tooLongBinary), (2, longestBinary)),
+                    UnitsOf(Id(m.C1.C1BinarySized), (2, longestBinary)),
+                    Relation(m.C1.C1BinarySized, 1, tooLongBinary)),
+                Change(
+                    "floats that are not a finite number",
+                    string.Empty,
+                    UnitsOf(Id(m.C1.C1AllorsDouble), (1, "NaN"), (2, "1.5"), (3, "INF"), (4, "-INF")),
+                    UnitsOf(Id(m.C1.C1AllorsDouble), (2, "1.5")),
+                    Relation(m.C1.C1AllorsDouble, 1, "NaN"),
+                    Relation(m.C1.C1AllorsDouble, 3, "INF"),
+                    Relation(m.C1.C1AllorsDouble, 4, "-INF")),
                 Change(
                     "decimals with more digits than their role type allows",
                     string.Empty,
