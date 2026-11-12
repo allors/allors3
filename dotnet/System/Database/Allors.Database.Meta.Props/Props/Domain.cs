@@ -83,7 +83,7 @@ namespace Allors.Database.Meta
             this.directSuperdomains.Add(superdomain);
         }
 
-        public override bool Equals(object other) => this.Id.Equals((other as Domain)?.Id);
+        public override bool Equals(object other) => other is Domain that && this.Id.Equals(that.Id);
 
         public override int GetHashCode() => this.Id.GetHashCode();
 

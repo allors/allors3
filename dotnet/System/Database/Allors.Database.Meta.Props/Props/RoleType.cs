@@ -269,7 +269,7 @@ namespace Allors.Database.Meta
         /// </param>
         public void Set(IStrategy strategy, object value) => strategy.SetRole(this, value);
 
-        public override bool Equals(object other) => this.RelationType.Id.Equals((other as RoleType)?.RelationType.Id);
+        public override bool Equals(object other) => other is RoleType that && this.RelationType.Id.Equals(that.RelationType.Id);
 
         public override int GetHashCode() => this.RelationType.Id.GetHashCode();
 

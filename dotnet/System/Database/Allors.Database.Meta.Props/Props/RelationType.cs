@@ -206,7 +206,7 @@ namespace Allors.Database.Meta
         /// <value>The validation name.</value>
         public string ValidationName => "relation type" + this.Name;
 
-        public override bool Equals(object other) => this.Id.Equals((other as RelationType)?.Id);
+        public override bool Equals(object other) => other is RelationType that && this.Id.Equals(that.Id);
 
         public override int GetHashCode() => this.Id.GetHashCode();
 

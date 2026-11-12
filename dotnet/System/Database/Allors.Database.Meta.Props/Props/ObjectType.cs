@@ -91,7 +91,7 @@ namespace Allors.Database.Meta
             }
         }
 
-        public override bool Equals(object other) => this.Id.Equals((other as ObjectType)?.Id);
+        public override bool Equals(object other) => other is ObjectType that && this.Id.Equals(that.Id);
 
         public override int GetHashCode() => this.Id.GetHashCode();
 
