@@ -33,6 +33,13 @@ partial class Build
             .AddLoggers("trx;LogFileName=CoreDatabaseMerge.trx")
             .SetResultsDirectory(Paths.ArtifactsTests)));
 
+    private Target DotnetCoreDatabaseTestCommands => _ => _
+        .DependsOn(DotnetCoreGenerate)
+        .Executes(() => DotNetTest(s => s
+            .SetProjectFile(Paths.DotnetCoreDatabaseCommandsTests)
+            .AddLoggers("trx;LogFileName=CoreDatabaseCommands.trx")
+            .SetResultsDirectory(Paths.ArtifactsTests)));
+
     private Target DotnetCoreDatabaseTestGenerate => _ => _
         .DependsOn(DotnetCoreGenerate)
         .Executes(() => DotNetTest(s => s
@@ -148,6 +155,7 @@ partial class Build
 
     private Target DotnetCoreDatabaseTest => _ => _
         .DependsOn(DotnetCoreDatabaseTestMerge)
+        .DependsOn(DotnetCoreDatabaseTestCommands)
         .DependsOn(DotnetCoreDatabaseTestGenerate)
         .DependsOn(DotnetCoreDatabaseTestMeta)
         .DependsOn(DotnetCoreDatabaseTestDomain)

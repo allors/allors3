@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/Core/" />
   <Folder Name="/Core/Database/">
+    <Project Path="Core/Database/Commands.Tests/Commands.Tests.csproj" />
     <Project Path="Core/Database/Commands/Commands.csproj" />
     <Project Path="Core/Database/Configuration.Tests/Configuration.Tests.csproj" />
     <Project Path="Core/Database/Configuration/Configuration.csproj" />
