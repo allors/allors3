@@ -124,6 +124,9 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   when the file holds all its objects; a role that is not a number in such a relation stops the
   load, where it was reported with its text. A handler can no longer let a relation of a missing
   object pass: such a file has to be repaired before it loads (#338).
+- `Save` on SQL Server and PostgreSQL wrote a relation to an object that another transaction had
+  deleted, and a load refuses such a file. `Save` now leaves out a composite relation whose
+  association or role is not among the objects that it writes (#343).
 - The Memory adapter's extent sort treats two objects without a value for a sort order as equal
   and lets the next sort order decide; the comparer contradicted itself, so short lists kept an
   arbitrary order and longer ones could fail the sort (#309).
@@ -203,3 +206,8 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   under `typescript/e2e`, the Angular workspace script, their configuration templates, build
   targets, solution folders and CI jobs, and the Angular toolchain of the TypeScript workspace.
   Base and Apps continue on the `v3.1` branch.
+- The isolation level setting of the SQL adapters: `Configuration.IsolationLevel`,
+  `Database.IsolationLevel` and `Database.DefaultIsolationLevel` of `Allors.Database.Adapters.Sql`,
+  the `isolationLevel` argument of `DatabaseBuilder` and the `-i` option of the Core commands. The
+  SQL Server and PostgreSQL adapters begin every transaction at the isolation level Snapshot, which
+  was the default (#342).
