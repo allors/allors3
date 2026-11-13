@@ -1352,8 +1352,9 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
                 }
             }
 
-            // A role holds a decimal that fits with the decimals of the scale, and with none for a scale below zero.
-            // Where decimal has no room for the zeros that this takes, the decimal keeps the decimals that it has.
+            // A role holds a decimal that fits with the decimals of the scale, and a zero without a sign. Where decimal
+            // has no room for the zeros that this takes, and at a scale below zero or above 28, the decimal keeps the
+            // decimals that it has.
             foreach (var (precision, scale, value, expected) in new (int Precision, int Scale, string Value, string Expected)[]
             {
                 (19, 2, "1.5", "1.50"),
@@ -1370,10 +1371,9 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
                 (38, 2, "1000000000000000000000000000", "1000000000000000000000000000"),
                 (38, 2, XmlConvert.ToString(decimal.MaxValue), "79228162514264337593543950335"),
                 (30, 29, "1.5", "1.5"),
-                (19, -2, "12300.00", "12300"),
-                (19, -2, "0.0", "0"),
-                (19, -2, "-0.0", "0"),
-                (3, -29, "0.00", "0"),
+                (30, 29, "-0.0", "0.0"),
+                (19, -2, "12300.00", "12300.00"),
+                (19, -2, "-0.0", "0.0"),
             })
             {
                 roleType.Precision = precision;
