@@ -75,6 +75,11 @@ namespace Allors.Database.Adapters
 
                             normalizedUnit = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, dateTime.Second, dateTime.Millisecond, DateTimeKind.Utc);
                         }
+                        else
+                        {
+                            // The minimum and the maximum keep their ticks and have the kind Utc, as every date has.
+                            normalizedUnit = DateTime.SpecifyKind(dateTime, DateTimeKind.Utc);
+                        }
                     }
                     else if (!(unit is DateTime))
                     {
@@ -134,9 +139,9 @@ namespace Allors.Database.Adapters
 
         /// <summary>
         /// Normalizes a unit that is set as a role, the same way on every adapter: the unit is normalized, a decimal
-        /// that does not fit the precision and the scale of the role type is refused, and a unit that is not a value
-        /// on every adapter is refused. A decimal is not rounded: the rule that reports a decimal on a load refuses
-        /// it here.
+        /// that does not fit the precision and the scale of the role type is refused and one that fits has the
+        /// decimals of the scale, and a unit that is not a value on every adapter is refused. A decimal is not
+        /// rounded: the rule that reports a decimal on a load refuses it here.
         /// </summary>
         /// <param name="roleType">
         ///     The role type.
@@ -162,11 +167,7 @@ namespace Allors.Database.Adapters
                     throw new ArgumentException($"The decimal {@decimal.ToString(System.Globalization.CultureInfo.InvariantCulture)} has more digits than the precision {roleType.Precision} or more decimals than the scale {roleType.Scale} of {roleType}: a decimal is not rounded when a role is set.");
                 }
 
-                // A decimal that fits has only zeros beyond the scale, and those go.
-                if (roleType.Scale is int scale && scale >= 0 && @decimal.Scale > scale)
-                {
-                    role = decimal.Round(@decimal, scale);
-                }
+                role = WithDecimalsOfScale(roleType, role, @decimal);
             }
 
             roleType.AssertValue(role);
@@ -272,6 +273,43 @@ namespace Allors.Database.Adapters
             }
 
             return true;
+        }
+
+        // Gives a decimal that fits its role type the decimals of the scale, as SQL Server and PostgreSQL return it:
+        // 1.5 is 1.50 at the scale 2. A scale below zero leaves no decimals, and a zero has no sign. Where decimal
+        // has no room for the zeros of the scale, the decimal keeps the decimals that it has, and a scale above 28,
+        // the most decimals that decimal has, leaves the decimal as it is. A decimal that has its form already is
+        // returned as the object that it is.
+        private static object WithDecimalsOfScale(IRoleType roleType, object role, decimal value)
+        {
+            const int MaximumScale = 28;
+
+            if (!(roleType.Scale is int scale) || scale > MaximumScale)
+            {
+                return role;
+            }
+
+            var decimals = Math.Max(scale, 0);
+
+            if (value.Scale == decimals)
+            {
+                return decimal.IsNegative(value) && value == 0 ? new decimal(0, 0, 0, false, (byte)decimals) : role;
+            }
+
+            if (value == 0)
+            {
+                return new decimal(0, 0, 0, false, (byte)decimals);
+            }
+
+            if (value.Scale > decimals)
+            {
+                // A decimal that fits has only zeros beyond the scale, and those go.
+                return decimal.Round(value, decimals);
+            }
+
+            // The sum has the decimals of the zero when decimal has room for them, and fewer when it has not.
+            var sum = value + new decimal(0, 0, 0, false, (byte)decimals);
+            return sum.Scale == decimals ? sum : role;
         }
 
         private static void AssertString(IRoleType roleType, string value)

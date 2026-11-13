@@ -41,6 +41,7 @@ namespace Allors.Database.Adapters
             ("type ids with hyphens", (document, meta) => TypeIds(document, "D", false)),
             ("type ids in upper case", (document, meta) => TypeIds(document, "N", true)),
             ("values in CDATA sections", ValuesInCDataSections),
+            ("decimals without the zeros of their scale", DecimalsWithoutZeros),
             (
                 "all forms together",
                 (document, meta) =>
@@ -1350,6 +1351,39 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
                     Assert.Throws<ArgumentException>(() => roleType.NormalizeRole(@decimal));
                 }
             }
+
+            // A role holds a decimal that fits with the decimals of the scale, and with none for a scale below zero.
+            // Where decimal has no room for the zeros that this takes, the decimal keeps the decimals that it has.
+            foreach (var (precision, scale, value, expected) in new (int Precision, int Scale, string Value, string Expected)[]
+            {
+                (19, 2, "1.5", "1.50"),
+                (19, 2, "1", "1.00"),
+                (19, 2, "-1", "-1.00"),
+                (19, 2, "0", "0.00"),
+                (19, 2, "-0.0", "0.00"),
+                (19, 2, "1.500", "1.50"),
+                (19, 0, "1.0", "1"),
+                (30, 28, "7", "7.0000000000000000000000000000"),
+                (30, 28, "8", "8"),
+                (38, 2, "792281625142643375935439503.3", "792281625142643375935439503.30"),
+                (38, 2, "792281625142643375935439503.4", "792281625142643375935439503.4"),
+                (38, 2, "1000000000000000000000000000", "1000000000000000000000000000"),
+                (38, 2, XmlConvert.ToString(decimal.MaxValue), "79228162514264337593543950335"),
+                (30, 29, "1.5", "1.5"),
+                (19, -2, "12300.00", "12300"),
+                (19, -2, "0.0", "0"),
+                (19, -2, "-0.0", "0"),
+                (3, -29, "0.00", "0"),
+            })
+            {
+                roleType.Precision = precision;
+                roleType.Scale = scale;
+
+                var role = (decimal)roleType.NormalizeRole(XmlConvert.ToDecimal(value));
+
+                Assert.Equal(expected, role.ToString(CultureInfo.InvariantCulture));
+                Assert.False(role == 0 && decimal.IsNegative(role));
+            }
         }
 
         [Fact]
@@ -1673,6 +1707,28 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
             }
         }
 
+        // A decimal as the Memory and Snapshot adapters saved it when a role kept the decimals in which it was set:
+        // 1.5 where a role with the scale 2 has 1.50.
+        private static void DecimalsWithoutZeros(XmlDocument document, IMetaPopulation meta)
+        {
+            foreach (XmlElement relationType in document.SelectNodes("//" + Serialization.RelationTypeUnit))
+            {
+                var roleType = ((IRelationType)meta.FindById(Guid.Parse(relationType.GetAttribute(Serialization.Id)))).RoleType;
+                if (((IUnit)roleType.ObjectType).Tag != UnitTags.Decimal)
+                {
+                    continue;
+                }
+
+                foreach (var text in relationType.SelectNodes(Serialization.Relation + "/text()").OfType<XmlText>())
+                {
+                    if (text.Value.Contains('.'))
+                    {
+                        text.Value = text.Value.TrimEnd('0').TrimEnd('.');
+                    }
+                }
+            }
+        }
+
         // The text of the object types and of the relations.
         private static XmlText[] Values(XmlDocument document) =>
             document.SelectNodes("//" + Serialization.ObjectType + "/text()|//" + Serialization.Relation + "/text()").OfType<XmlText>().ToArray();
@@ -1825,6 +1881,8 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
                         new DateTime(1973, 3, 27, 12, 1, 2, 3, DateTimeKind.Utc),
                         new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc),
                         new DateTime(2000, 2, 29, 23, 59, 59, 999, DateTimeKind.Utc),
+                        DateTime.MinValue,
+                        DateTime.MaxValue,
                     };
 
                 case UnitTags.Unique:
@@ -1893,6 +1951,8 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
             return digest.ToString();
         }
 
+        // A unit as a caller sees it: two units are the same when nothing that a caller can observe tells them apart,
+        // so a decimal is taken by its text, with its decimals, and a date by its ticks and its kind.
         private static string Format(object unit) =>
             unit switch
             {
@@ -1900,9 +1960,9 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
                 string value => "string of " + value.Length.ToString(CultureInfo.InvariantCulture) + " characters " + Hash(Encoding.Unicode.GetBytes(value)),
                 byte[] value when value.Length <= 32 => "0x" + Convert.ToHexString(value),
                 byte[] value => "binary of " + value.Length.ToString(CultureInfo.InvariantCulture) + " bytes " + Hash(value),
-                decimal value => value.ToString("G29", CultureInfo.InvariantCulture),
+                decimal value => value.ToString(CultureInfo.InvariantCulture),
                 double value => value.ToString("R", CultureInfo.InvariantCulture),
-                DateTime value => value.Ticks.ToString(CultureInfo.InvariantCulture) + " ticks",
+                DateTime value => value.Ticks.ToString(CultureInfo.InvariantCulture) + " ticks " + value.Kind.ToString(),
                 Guid value => value.ToString("D"),
                 int value => value.ToString(CultureInfo.InvariantCulture),
                 bool value => value ? "true" : "false",

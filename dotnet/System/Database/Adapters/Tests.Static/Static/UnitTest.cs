@@ -7,6 +7,7 @@ namespace Allors.Database.Adapters
 {
     using System;
     using System.Collections;
+    using System.Globalization;
     using System.Text;
     using Domain;
     using Xunit;
@@ -246,6 +247,10 @@ namespace Allors.Database.Adapters
                         Assert.Equal(DateTime.MinValue, values.C1AllorsDateTime);
                         Assert.Equal(DateTime.MinValue, values.I1AllorsDateTime);
                         Assert.Equal(DateTime.MinValue, values.S1AllorsDateTime);
+
+                        Assert.Equal(DateTimeKind.Utc, values.C1AllorsDateTime.Value.Kind);
+                        Assert.Equal(DateTimeKind.Utc, values.I1AllorsDateTime.Value.Kind);
+                        Assert.Equal(DateTimeKind.Utc, values.S1AllorsDateTime.Value.Kind);
                     }
 
                     {
@@ -260,7 +265,34 @@ namespace Allors.Database.Adapters
                         Assert.Equal(DateTime.MaxValue.ToLongTimeString(), values.C1AllorsDateTime?.ToLongTimeString());
                         Assert.Equal(DateTime.MaxValue.ToLongTimeString(), values.I1AllorsDateTime?.ToLongTimeString());
                         Assert.Equal(DateTime.MaxValue.ToLongTimeString(), values.S1AllorsDateTime?.ToLongTimeString());
+
+                        Assert.Equal(DateTime.MaxValue.Ticks, values.C1AllorsDateTime.Value.Ticks);
+                        Assert.Equal(DateTime.MaxValue.Ticks, values.I1AllorsDateTime.Value.Ticks);
+                        Assert.Equal(DateTime.MaxValue.Ticks, values.S1AllorsDateTime.Value.Ticks);
+
+                        Assert.Equal(DateTimeKind.Utc, values.C1AllorsDateTime.Value.Kind);
+                        Assert.Equal(DateTimeKind.Utc, values.I1AllorsDateTime.Value.Kind);
+                        Assert.Equal(DateTimeKind.Utc, values.S1AllorsDateTime.Value.Kind);
                     }
+                }
+
+                {
+                    // Minimum and maximum that a prefetch reads after a commit
+                    var values = C1.Create(this.Transaction);
+                    values.C1AllorsDateTime = DateTime.MinValue;
+                    values.I1AllorsDateTime = DateTime.MaxValue;
+                    values.S1AllorsDateTime = DateTime.MaxValue;
+
+                    this.Transaction.Commit();
+                    this.Transaction.Prefetch(new Meta.IPropertyType[] { m.C1.C1AllorsDateTime }, new[] { values.Strategy.ObjectId });
+
+                    Assert.Equal(DateTime.MinValue.Ticks, values.C1AllorsDateTime.Value.Ticks);
+                    Assert.Equal(DateTime.MaxValue.Ticks, values.I1AllorsDateTime.Value.Ticks);
+                    Assert.Equal(DateTime.MaxValue.Ticks, values.S1AllorsDateTime.Value.Ticks);
+
+                    Assert.Equal(DateTimeKind.Utc, values.C1AllorsDateTime.Value.Kind);
+                    Assert.Equal(DateTimeKind.Utc, values.I1AllorsDateTime.Value.Kind);
+                    Assert.Equal(DateTimeKind.Utc, values.S1AllorsDateTime.Value.Kind);
                 }
             }
         }
@@ -301,6 +333,23 @@ namespace Allors.Database.Adapters
                         Assert.Equal(nowUniversal, values.C1AllorsDateTime);
                         Assert.Equal(nowUniversal, values.I1AllorsDateTime);
                         Assert.Equal(nowUniversal, values.S1AllorsDateTime);
+                    }
+
+                    {
+                        // Minimum and maximum: their ticks are kept and their kind is Utc
+                        var values = C1.Create(this.Transaction);
+                        values.C1AllorsDateTime = DateTime.SpecifyKind(DateTime.MinValue, DateTimeKind.Local);
+                        values.I1AllorsDateTime = DateTime.SpecifyKind(DateTime.MaxValue, DateTimeKind.Local);
+                        values.S1AllorsDateTime = DateTime.SpecifyKind(DateTime.MaxValue, DateTimeKind.Local);
+
+                        mark();
+                        Assert.Equal(DateTime.MinValue.Ticks, values.C1AllorsDateTime.Value.Ticks);
+                        Assert.Equal(DateTime.MaxValue.Ticks, values.I1AllorsDateTime.Value.Ticks);
+                        Assert.Equal(DateTime.MaxValue.Ticks, values.S1AllorsDateTime.Value.Ticks);
+
+                        Assert.Equal(DateTimeKind.Utc, values.C1AllorsDateTime.Value.Kind);
+                        Assert.Equal(DateTimeKind.Utc, values.I1AllorsDateTime.Value.Kind);
+                        Assert.Equal(DateTimeKind.Utc, values.S1AllorsDateTime.Value.Kind);
                     }
 
                     {
@@ -563,6 +612,20 @@ namespace Allors.Database.Adapters
                         Assert.Equal(1.5m, values.C1AllorsDecimal);
                         Assert.Equal(-1.5m, values.I1AllorsDecimal);
                         Assert.Equal(1m, values.S1AllorsDecimal);
+                    }
+
+                    {
+                        // Fewer decimals than the scale: the role has the decimals of the scale, as a database returns them
+                        var values = C1.Create(this.Transaction);
+                        values.C1AllorsDecimal = 1.5m;
+                        values.I1AllorsDecimal = -1m;
+                        values.S1AllorsDecimal = -0.0m;
+
+                        mark();
+                        Assert.Equal("1.50", TextOf(values.C1AllorsDecimal));
+                        Assert.Equal("-1.00", TextOf(values.I1AllorsDecimal));
+                        Assert.Equal("0.00", TextOf(values.S1AllorsDecimal));
+                        Assert.False(decimal.IsNegative(values.S1AllorsDecimal.Value));
                     }
 
                     {
@@ -2260,6 +2323,9 @@ namespace Allors.Database.Adapters
 
             return limit - step;
         }
+
+        // The text of a decimal, which shows its decimals.
+        protected static string TextOf(decimal? value) => value?.ToString(CultureInfo.InvariantCulture);
 
         protected DateTime StripNanoSeconds(DateTime dateTime) => new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, dateTime.Second, dateTime.Millisecond, dateTime.Kind);
     }
