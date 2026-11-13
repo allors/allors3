@@ -74,22 +74,37 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                     Assert.Equal(0m, values.S1AllorsDecimal);
                 }
 
-                // More decimals than the scale: rounded half away from zero when the role is set
+                // More decimals than the scale: refused when the role is set, a decimal is not rounded
                 {
                     var values = C1.Create(this.Transaction);
-                    values.C1AllorsDecimal = 1.025m;
-                    values.I1AllorsDecimal = -1.025m;
-                    values.S1AllorsDecimal = 1.004m;
 
-                    Assert.Equal(1.03m, values.C1AllorsDecimal);
-                    Assert.Equal(-1.03m, values.I1AllorsDecimal);
-                    Assert.Equal(1.00m, values.S1AllorsDecimal);
+                    Assert.Throws<System.ArgumentException>(() => values.C1AllorsDecimal = 1.025m);
+                    Assert.Throws<System.ArgumentException>(() => values.I1AllorsDecimal = -1.025m);
+                    Assert.Throws<System.ArgumentException>(() => values.S1AllorsDecimal = 1.004m);
 
                     this.Transaction.Commit();
 
-                    Assert.Equal(1.03m, values.C1AllorsDecimal);
-                    Assert.Equal(-1.03m, values.I1AllorsDecimal);
-                    Assert.Equal(1.00m, values.S1AllorsDecimal);
+                    Assert.False(values.ExistC1AllorsDecimal);
+                    Assert.False(values.ExistI1AllorsDecimal);
+                    Assert.False(values.ExistS1AllorsDecimal);
+                }
+
+                // More decimals than the scale that are zeros: the decimal fits
+                {
+                    var values = C1.Create(this.Transaction);
+                    values.C1AllorsDecimal = 1.500m;
+                    values.I1AllorsDecimal = -1.500m;
+                    values.S1AllorsDecimal = 1.000m;
+
+                    Assert.Equal(1.5m, values.C1AllorsDecimal);
+                    Assert.Equal(-1.5m, values.I1AllorsDecimal);
+                    Assert.Equal(1m, values.S1AllorsDecimal);
+
+                    this.Transaction.Commit();
+
+                    Assert.Equal(1.5m, values.C1AllorsDecimal);
+                    Assert.Equal(-1.5m, values.I1AllorsDecimal);
+                    Assert.Equal(1m, values.S1AllorsDecimal);
                 }
 
                 // Minimum and maximum: the smallest and the largest decimal that the precision and the scale hold
@@ -107,7 +122,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                     Assert.Equal(LargestDecimal(m.S1.S1AllorsDecimal), values.S1AllorsDecimal);
                 }
 
-                // Too large for the precision: refused when the role is set, also when rounding makes it too large
+                // Beyond the largest decimal that the precision and the scale hold: refused when the role is set
                 {
                     var m = this.Transaction.Database.Context().M;
                     var values = C1.Create(this.Transaction);

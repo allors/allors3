@@ -98,11 +98,11 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   value that the unit type cannot read: a string that is longer than the size, and a decimal that
   the precision and the scale cannot hold exactly. The adapters cut, rounded or kept such a value,
   or the database failed the load (#330).
-- Setting a decimal on a role gives the same result on every adapter: the decimal is rounded to the
-  scale of its role type, half away from zero, and refused with an `ArgumentException` when it is
-  then too large for the precision. The Memory and Snapshot adapters kept the decimal as it was
-  set; the SqlClient and Npgsql adapters rounded it at the commit, and failed the commit for a
-  decimal that was too large (#331).
+- Setting a decimal on a role gives the same result on every adapter: a decimal that the precision
+  and the scale of its role type cannot hold exactly is refused with an `ArgumentException`, and
+  none is rounded. The Memory and Snapshot adapters kept the decimal as it was set; the SqlClient
+  and Npgsql adapters rounded it to the scale at the commit, and failed the commit for a decimal
+  that was too large (#331, #349).
 - Loading a population on the SqlClient and Npgsql adapters stops at an element that the loader
   does not know, as it does on the Memory and Snapshot adapters, with the same error:
   `Unknown child element <…> in parent element <…>`. The SQL loaders skipped such an element with
