@@ -146,7 +146,7 @@ namespace Allors.Database.Adapters.Sql
                                     var dateTime = reader.GetDateTime(i);
                                     if (dateTime == DateTime.MaxValue || dateTime == DateTime.MinValue)
                                     {
-                                        unit = dateTime;
+                                        unit = DateTime.SpecifyKind(dateTime, DateTimeKind.Utc);
                                     }
                                     else
                                     {

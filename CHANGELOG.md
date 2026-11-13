@@ -127,6 +127,15 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
 - `Save` on SQL Server and PostgreSQL wrote a relation to an object that another transaction had
   deleted, and a load refuses such a file. `Save` now leaves out a composite relation whose
   association or role is not among the objects that it writes (#343).
+- A date and a decimal that a role returns have one form on every adapter, whenever they are read.
+  Every date has the kind `Utc`: `DateTime.MinValue` and `DateTime.MaxValue` kept the kind in which
+  they were set, and the SqlClient and Npgsql adapters returned them with the kind `Unspecified`
+  once they came from the database. A decimal has the decimals of the scale of its role type, for a
+  scale from 0 to 28 and as far as `decimal` has room for them, so that 1.5 is 1.50 at the scale 2:
+  the Memory and Snapshot adapters kept the decimals with which it was set or loaded, in a saved
+  file as well, and the SqlClient and Npgsql adapters did so until the commit. A zero has no sign:
+  a negative zero, such as -0.004 rounded to two decimals, stayed a negative zero on the Memory and
+  Snapshot adapters, and on the SqlClient and Npgsql adapters until the commit (#350).
 - The Memory adapter's extent sort treats two objects without a value for a sort order as equal
   and lets the next sort order decide; the comparer contradicted itself, so short lists kept an
   arbitrary order and longer ones could fail the sort (#309).

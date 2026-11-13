@@ -100,6 +100,26 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                     Assert.Equal(1m, values.S1AllorsDecimal);
                 }
 
+                // Fewer decimals than the scale: the role has the decimals of the scale when it is set
+                {
+                    var values = C1.Create(this.Transaction);
+                    values.C1AllorsDecimal = 1.5m;
+                    values.I1AllorsDecimal = -1m;
+                    values.S1AllorsDecimal = -0.0m;
+
+                    Assert.Equal("1.50", TextOf(values.C1AllorsDecimal));
+                    Assert.Equal("-1.00", TextOf(values.I1AllorsDecimal));
+                    Assert.Equal("0.00", TextOf(values.S1AllorsDecimal));
+                    Assert.False(decimal.IsNegative(values.S1AllorsDecimal.Value));
+
+                    this.Transaction.Commit();
+
+                    Assert.Equal("1.50", TextOf(values.C1AllorsDecimal));
+                    Assert.Equal("-1.00", TextOf(values.I1AllorsDecimal));
+                    Assert.Equal("0.00", TextOf(values.S1AllorsDecimal));
+                    Assert.False(decimal.IsNegative(values.S1AllorsDecimal.Value));
+                }
+
                 // Minimum and maximum: the smallest and the largest decimal that the precision and the scale hold
                 {
                     var m = this.Transaction.Database.Context().M;
