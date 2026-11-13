@@ -217,92 +217,45 @@ namespace Allors.Database.Adapters
         /// </returns>
         public static bool Fits(this IRoleType roleType, decimal value)
         {
-            const int MaximumScale = 28;
-
-            var precision = roleType.Precision;
-            var scale = roleType.Scale;
+            // A decimal role type has a precision from 1 to 28 and a scale from 0 to its precision.
+            var precision = roleType.Precision.Value;
+            var scale = roleType.Scale.Value;
 
             if (value == 0)
             {
                 return true;
             }
 
-            if (scale < 0)
-            {
-                if (scale < -MaximumScale)
-                {
-                    return false;
-                }
-
-                var step = 1m;
-                for (var i = 0; i > scale; i--)
-                {
-                    step *= 10m;
-                }
-
-                if (value % step != 0)
-                {
-                    return false;
-                }
-            }
-            else if (scale <= MaximumScale && decimal.Round(value, scale.Value) != value)
+            if (decimal.Round(value, scale) != value)
             {
                 return false;
             }
 
-            var digits = (long?)precision - (scale ?? 0);
-            if (digits <= -MaximumScale)
+            var limit = 1m;
+            for (var i = scale; i < precision; i++)
             {
-                return false;
+                limit *= 10m;
             }
 
-            if (digits <= MaximumScale)
-            {
-                var limit = 1m;
-                for (var i = 0; i < digits; i++)
-                {
-                    limit *= 10m;
-                }
-
-                for (var i = 0; i > digits; i--)
-                {
-                    limit /= 10m;
-                }
-
-                return Math.Abs(value) < limit;
-            }
-
-            return true;
+            return Math.Abs(value) < limit;
         }
 
         // Gives a decimal that fits its role type the form in which SQL Server and PostgreSQL return it: a zero has
-        // no sign, and the decimal has the decimals of the scale, so that 1.5 is 1.50 at the scale 2. Where decimal
-        // has no room for the zeros of the scale, the decimal keeps the decimals that it has, and so it does at a
-        // scale below zero or above 28, the most decimals that decimal has. A decimal that has its form already is
-        // returned as the object that it is.
+        // no sign, and the decimal has the decimals of the scale, so that 1.5 is 1.50 at the scale 2. Decimal has
+        // room for those decimals: with them a decimal that fits has at most the digits of the precision, which is
+        // 28 at most. A decimal that has its form already is returned as the object that it is.
         private static object WithDecimalsOfScale(IRoleType roleType, object role, decimal value)
         {
-            const int MaximumScale = 28;
+            var scale = roleType.Scale.Value;
 
-            if (decimal.IsNegative(value) && value == 0)
+            if (value == 0)
             {
-                value = new decimal(0, 0, 0, false, value.Scale);
-                role = value;
-            }
-
-            if (!(roleType.Scale is int scale) || scale < 0 || scale > MaximumScale)
-            {
-                return role;
+                return value.Scale == scale && !decimal.IsNegative(value) ? role : new decimal(0, 0, 0, false, (byte)scale);
             }
 
             if (value.Scale == scale)
             {
                 return role;
-            }
-
-            if (value == 0)
-            {
-                return new decimal(0, 0, 0, false, (byte)scale);
             }
 
             if (value.Scale > scale)
@@ -311,9 +264,8 @@ namespace Allors.Database.Adapters
                 return decimal.Round(value, scale);
             }
 
-            // The sum has the decimals of the zero when decimal has room for them, and fewer when it has not.
-            var sum = value + new decimal(0, 0, 0, false, (byte)scale);
-            return sum.Scale == scale ? sum : role;
+            // The sum has the decimals of the zero.
+            return value + new decimal(0, 0, 0, false, (byte)scale);
         }
 
         private static void AssertString(IRoleType roleType, string value)

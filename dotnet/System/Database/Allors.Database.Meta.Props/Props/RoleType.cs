@@ -18,6 +18,15 @@ namespace Allors.Database.Meta
         /// </summary>
         public const int MaximumSize = -1;
 
+        // The precision and the scale of a decimal role type without one.
+        private const int DefaultPrecision = 19;
+        private const int DefaultScale = 2;
+
+        // The smallest and the largest precision of a decimal role type: decimal holds every number of up to 28
+        // digits, wherever its decimal point is.
+        private const int MinimumPrecision = 1;
+        private const int MaximumPrecision = 28;
+
         private readonly IMetaPopulationBase metaPopulation;
         private IObjectTypeBase objectType;
 
@@ -326,12 +335,12 @@ namespace Allors.Database.Meta
                     case UnitTags.Decimal:
                         if (!this.Precision.HasValue)
                         {
-                            this.Precision = 19;
+                            this.Precision = DefaultPrecision;
                         }
 
                         if (!this.Scale.HasValue)
                         {
-                            this.Scale = 2;
+                            this.Scale = DefaultScale;
                         }
 
                         this.Size = null;
@@ -376,6 +385,21 @@ namespace Allors.Database.Meta
             {
                 var message = this.ValidationName + " should have an assigned plural role name with at least 2 characters";
                 validationLog.AddError(message, this, ValidationKind.MinimumLength, "RoleType.PluralName");
+            }
+
+            if (this.ObjectType is IUnit { Tag: UnitTags.Decimal })
+            {
+                // The fields are read, with the defaults that the derivation gives them: the properties derive the
+                // meta population, and that fails on some of the errors that the validation is to report, such as
+                // two classes with one name.
+                var precision = this.precision ?? DefaultPrecision;
+                var scale = this.scale ?? DefaultScale;
+
+                if (precision < MinimumPrecision || precision > MaximumPrecision || scale < 0 || scale > precision)
+                {
+                    var message = FormattableString.Invariant($"{this.ValidationName} has the precision {precision} and the scale {scale}, but a decimal role type has a precision from {MinimumPrecision} to {MaximumPrecision} ({DefaultPrecision} by default) and a scale from 0 to its precision ({DefaultScale} by default)");
+                    validationLog.AddError(message, this, ValidationKind.Format, "RoleType.Precision", "RoleType.Scale");
+                }
             }
         }
     }

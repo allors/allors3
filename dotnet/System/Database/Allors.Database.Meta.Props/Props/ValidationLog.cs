@@ -108,6 +108,12 @@ namespace Allors.Database.Meta
         }
 
         /// <summary>
+        /// Returns the messages of the errors, one on a line.
+        /// </summary>
+        /// <returns>The messages of the errors.</returns>
+        public override string ToString() => string.Join(Environment.NewLine, this.Messages);
+
+        /// <summary>
         /// Adds an id.
         /// </summary>
         /// <param name="id">The id   .</param>
