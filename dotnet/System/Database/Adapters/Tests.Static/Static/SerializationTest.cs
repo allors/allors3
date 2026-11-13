@@ -1303,33 +1303,129 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
         }
 
         [Fact]
+        public void DecimalRoleType()
+        {
+            // A decimal role type has a precision from 1 to 28 and a scale from 0 to its precision, which every
+            // adapter holds. Without a precision it has the precision 19, and without a scale the scale 2.
+            var cases = new (int? Precision, int? Scale, bool Valid)[]
+            {
+                (null, null, true),
+                (19, 2, true),
+                (10, 2, true),
+                (1, 0, true),
+                (1, 1, true),
+                (2, null, true),
+                (null, 19, true),
+                (3, 3, true),
+                (28, 0, true),
+                (28, 28, true),
+                (19, -1, false),
+                (19, -2, false),
+                (3, 5, false),
+                (1, 2, false),
+                (1, null, false),
+                (null, 20, false),
+                (28, 29, false),
+                (29, 0, false),
+                (29, 2, false),
+                (30, 29, false),
+                (38, 2, false),
+                (39, 2, false),
+                (0, 0, false),
+                (0, null, false),
+                (-1, -1, false),
+            };
+
+            // Every role type is validated, so that one run names every role type that is not handled.
+            var failures = new List<string>();
+
+            foreach (var (precision, scale, valid) in cases)
+            {
+                var m = new MetaBuilder().Build();
+                m.C1.C1AllorsDecimal.Precision = precision;
+                m.C1.C1AllorsDecimal.Scale = scale;
+
+                // The validation names the role type that it refuses and says what a decimal role type has.
+                var expected = valid ? string.Empty : DecimalRoleTypeError("C1C1AllorsDecimal", precision ?? 19, scale ?? 2);
+                var name = $"precision {precision?.ToString(CultureInfo.InvariantCulture) ?? "none"}, scale {scale?.ToString(CultureInfo.InvariantCulture) ?? "none"}";
+
+                var validation = string.Join(" | ", m.Validate().Messages);
+                if (validation != expected)
+                {
+                    failures.Add($"{name}: the validation says [{validation}]");
+                }
+
+                // Every database is configured with an object factory, which refuses the meta population that the
+                // validation refuses, and says why.
+                var refusal = string.Empty;
+                try
+                {
+                    _ = new ObjectFactory(m, typeof(C1));
+                }
+                catch (Exception e)
+                {
+                    refusal = e.Message;
+                }
+
+                if (refusal != expected)
+                {
+                    failures.Add($"{name}: the object factory says [{refusal}]");
+                }
+            }
+
+            Assert.True(failures.Count == 0, string.Join(Environment.NewLine, failures));
+
+            // The object factory has the error of every role type that is refused, one on a line.
+            var several = new MetaBuilder().Build();
+            several.C1.C1AllorsDecimal.Precision = 3;
+            several.C1.C1AllorsDecimal.Scale = 5;
+            several.C2.C2AllorsDecimal.Precision = 0;
+            several.C2.C2AllorsDecimal.Scale = 0;
+
+            var errors = several.Validate().Messages;
+            Assert.Equal(2, errors.Length);
+            Assert.Contains(DecimalRoleTypeError("C1C1AllorsDecimal", 3, 5), errors);
+            Assert.Contains(DecimalRoleTypeError("C2C2AllorsDecimal", 0, 0), errors);
+
+            var exception = Assert.Throws<Exception>(() => new ObjectFactory(several, typeof(C1)));
+            Assert.Equal(string.Join(Environment.NewLine, errors), exception.Message);
+
+            // Only a decimal has a precision and a scale: for a role type of another type they do not count.
+            var other = new MetaBuilder().Build();
+            other.C1.C1AllorsString.Precision = 0;
+            other.C1.C1AllorsString.Scale = -1;
+
+            Assert.Empty(other.Validate().Messages);
+            _ = new ObjectFactory(other, typeof(C1));
+        }
+
+        [Fact]
         public void ReadDecimal()
         {
             var m = new MetaBuilder().Build();
             var roleType = m.C1.C1AllorsDecimal;
             var cases = new (int Precision, int Scale, string Value, bool Fits)[]
             {
-                (3, 5, "0.00999", true),
-                (3, 5, "-0.00999", true),
-                (3, 5, "0.01", false),
-                (3, 5, "-0.01", false),
-                (3, 5, "0.1", false),
-                (3, 5, "0.001230", true),
-                (3, 5, "0.001234", false),
-                (3, -2, "12300", true),
-                (3, -2, "12345", false),
-                (3, -2, "-12345", false),
-                (3, -2, "99900", true),
-                (3, -2, "-99900", true),
-                (3, -2, "100000", false),
-                (3, -2, "-100000", false),
-                (3, -29, "0", true),
-                (3, -29, "1", false),
-                (3, -28, "10000000000000000000000000000", true),
-                (3, -28, XmlConvert.ToString(decimal.MaxValue), false),
-                (1, 29, "0", true),
-                (1, 29, "0.0000000000000000000000000001", false),
-                (2, 29, "0.0000000000000000000000000001", true),
+                (3, 3, "0.999", true),
+                (3, 3, "-0.999", true),
+                (3, 3, "0.9990", true),
+                (3, 3, "0.9999", false),
+                (3, 3, "1", false),
+                (3, 3, "-1", false),
+                (1, 0, "9", true),
+                (1, 0, "9.0", true),
+                (1, 0, "10", false),
+                (1, 0, "0.5", false),
+                (1, 1, "0.9", true),
+                (1, 1, "1", false),
+                (28, 0, new string('9', 28), true),
+                (28, 0, "-" + new string('9', 28), true),
+                (28, 0, "1" + new string('0', 28), false),
+                (28, 0, XmlConvert.ToString(decimal.MaxValue), false),
+                (28, 28, "0." + new string('9', 28), true),
+                (28, 28, "-0." + new string('9', 28), true),
+                (28, 28, "0." + new string('0', 27) + "1", true),
+                (28, 28, "1", false),
             };
 
             // One rule decides for a load and for a role that is set: a decimal that does not fit is not rounded.
@@ -1337,6 +1433,7 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
             {
                 roleType.Precision = precision;
                 roleType.Scale = scale;
+                Assert.True(m.IsValid);
 
                 var @decimal = XmlConvert.ToDecimal(value);
 
@@ -1352,9 +1449,8 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
                 }
             }
 
-            // A role holds a decimal that fits with the decimals of the scale, and a zero without a sign. Where decimal
-            // has no room for the zeros that this takes, and at a scale below zero or above 28, the decimal keeps the
-            // decimals that it has.
+            // A role holds a decimal that fits with the decimals of the scale, and a zero without a sign. Decimal has
+            // room for those decimals, also for the largest decimals of a role type with the precision 28.
             foreach (var (precision, scale, value, expected) in new (int Precision, int Scale, string Value, string Expected)[]
             {
                 (19, 2, "1.5", "1.50"),
@@ -1364,20 +1460,16 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
                 (19, 2, "-0.0", "0.00"),
                 (19, 2, "1.500", "1.50"),
                 (19, 0, "1.0", "1"),
-                (30, 28, "7", "7.0000000000000000000000000000"),
-                (30, 28, "8", "8"),
-                (38, 2, "792281625142643375935439503.3", "792281625142643375935439503.30"),
-                (38, 2, "792281625142643375935439503.4", "792281625142643375935439503.4"),
-                (38, 2, "1000000000000000000000000000", "1000000000000000000000000000"),
-                (38, 2, XmlConvert.ToString(decimal.MaxValue), "79228162514264337593543950335"),
-                (30, 29, "1.5", "1.5"),
-                (30, 29, "-0.0", "0.0"),
-                (19, -2, "12300.00", "12300.00"),
-                (19, -2, "-0.0", "0.0"),
+                (28, 0, new string('9', 28), new string('9', 28)),
+                (28, 2, new string('9', 26), new string('9', 26) + ".00"),
+                (28, 27, "9", "9." + new string('0', 27)),
+                (28, 28, "0.1", "0.1" + new string('0', 27)),
+                (28, 28, "-0.0", "0." + new string('0', 28)),
             })
             {
                 roleType.Precision = precision;
                 roleType.Scale = scale;
+                Assert.True(m.IsValid);
 
                 var role = (decimal)roleType.NormalizeRole(XmlConvert.ToDecimal(value));
 
@@ -1609,6 +1701,10 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
             var message = e.Message.Replace("\r", string.Empty).Replace("\n", " ");
             return e.GetType().Name + ": " + (message.Length > 400 ? message.Substring(0, 400) + "..." : message);
         }
+
+        // The error of the validation for a decimal role type with a precision or a scale that it refuses.
+        private static string DecimalRoleTypeError(string relationType, int precision, int scale) =>
+            string.Create(CultureInfo.InvariantCulture, $"RoleType: {relationType} has the precision {precision} and the scale {scale}, but a decimal role type has a precision from 1 to 28 (19 by default) and a scale from 0 to its precision (2 by default)");
 
         private static string ChangeForm(string xml, IMetaPopulation meta, Action<XmlDocument, IMetaPopulation> change)
         {
