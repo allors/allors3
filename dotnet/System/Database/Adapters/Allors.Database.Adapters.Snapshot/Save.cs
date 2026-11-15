@@ -78,7 +78,7 @@ namespace Allors.Database.Adapters.Snapshot
                 }
 
                 this.writer.WriteStartElement(Serialization.ObjectType);
-                this.writer.WriteAttributeString(Serialization.Id, objectType.Id.ToString("N").ToLowerInvariant());
+                this.writer.WriteAttributeString(Serialization.Id, objectType.Id.ToString());
 
                 var first = true;
                 foreach (var objectId in objectIds)
@@ -158,7 +158,7 @@ namespace Allors.Database.Adapters.Snapshot
                                              ? Serialization.RelationTypeUnit
                                              : Serialization.RelationTypeComposite);
 
-                this.writer.WriteAttributeString(Serialization.Id, relationType.Id.ToString("N").ToLowerInvariant());
+                this.writer.WriteAttributeString(Serialization.Id, relationType.Id.ToString());
 
                 if (unitType != null)
                 {

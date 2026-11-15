@@ -843,17 +843,26 @@ namespace Allors.Database.Adapters.Memory
             writer.WriteStartElement(Serialization.Relation);
             writer.WriteAttributeString(Serialization.Association, this.ObjectId.ToString());
 
-            var roleStragies = this.compositesRoleByRoleType[roleType];
+            // The roles are written in the order of their ids, as every adapter writes them. The collection holds
+            // them in the order in which they were added and removed.
+            var roleStrategies = this.compositesRoleByRoleType[roleType];
+            var roleIds = new long[roleStrategies.Count];
             var i = 0;
-            foreach (var roleStrategy in roleStragies)
+            foreach (var roleStrategy in roleStrategies)
+            {
+                roleIds[i++] = roleStrategy.ObjectId;
+            }
+
+            Array.Sort(roleIds);
+
+            for (i = 0; i < roleIds.Length; i++)
             {
                 if (i > 0)
                 {
                     writer.WriteString(Serialization.ObjectsSplitter);
                 }
 
-                writer.WriteString(roleStrategy.ObjectId.ToString());
-                ++i;
+                writer.WriteString(roleIds[i].ToString());
             }
 
             writer.WriteEndElement();

@@ -27,7 +27,10 @@ namespace Allors.Database.Adapters
         protected static readonly bool[] TrueFalse = { true, false };
         private static readonly string GuidString = Guid.NewGuid().ToString();
 
-        // The forms in which the XML of a saved population can reach Load. Every form holds the same population.
+        // The forms in which the XML of a saved population can reach Load. Every form holds the same population. Three
+        // of them are the forms in which an adapter saved before every adapter wrote the same file: type ids without
+        // hyphens, decimals without the zeros of their scale, and the roles of a to-many relation in another order
+        // than the order of their ids.
         private static readonly (string Name, Action<XmlDocument, IMetaPopulation> Change)[] Forms =
         {
             ("as saved", null),
@@ -38,10 +41,11 @@ namespace Allors.Database.Adapters
             ("relation types without relations", (document, meta) => RelationTypesWithoutRelations(document, meta, false)),
             ("comments between elements", CommentsBetweenElements),
             ("comments inside values", CommentsInsideValues),
-            ("type ids with hyphens", (document, meta) => TypeIds(document, "D", false)),
+            ("type ids without hyphens", (document, meta) => TypeIds(document, "N", false)),
             ("type ids in upper case", (document, meta) => TypeIds(document, "N", true)),
             ("values in CDATA sections", ValuesInCDataSections),
             ("decimals without the zeros of their scale", DecimalsWithoutZeros),
+            ("roles of a to-many relation in another order", RolesInAnotherOrder),
             (
                 "all forms together",
                 (document, meta) =>
@@ -233,6 +237,7 @@ namespace Allors.Database.Adapters
                         }
 
                         var saved = Digest(otherPopulation);
+                        var file = FileOf(otherPopulation);
 
                         foreach (var form in Forms)
                         {
@@ -254,6 +259,10 @@ namespace Allors.Database.Adapters
                                 }
 
                                 var difference = Difference(saved, Digest(this.Population));
+                                Assert.True(difference == null, difference);
+
+                                // A save then writes the one file of the population, whatever the form that was loaded.
+                                difference = FileDifference(file, DoSave(this.Population));
                                 Assert.True(difference == null, difference);
                             }
                             catch (Exception e)
@@ -277,9 +286,11 @@ namespace Allors.Database.Adapters
 
                 // The adapter under test saves; the in-memory adapters and the adapter under test load.
                 init();
+                CheckSave("an empty population, saved by the adapter under test", this.Population, DoSave(this.Population), failures);
                 PopulateEveryRelationType(this.Population);
                 var saved = Digest(this.Population);
                 var xml = DoSave(this.Population);
+                CheckSave("saved by the adapter under test", this.Population, xml, failures);
 
                 foreach (var (name, create) in this.Counterparts)
                 {
@@ -294,7 +305,9 @@ namespace Allors.Database.Adapters
                     init();
                     var counterpart = create();
                     PopulateEveryRelationType(counterpart);
-                    CheckLoad($"saved by {name}, loaded by the adapter under test", Digest(counterpart), DoSave(counterpart), this.Population, failures);
+                    var counterpartXml = DoSave(counterpart);
+                    CheckSave($"saved by {name}", counterpart, counterpartXml, failures);
+                    CheckLoad($"saved by {name}, loaded by the adapter under test", Digest(counterpart), counterpartXml, this.Population, failures);
                 }
 
                 Assert.True(failures.Count == 0, string.Join(Environment.NewLine, failures));
@@ -1983,6 +1996,16 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
             }
         }
 
+        // A save writes one file for a population, on every adapter: the file that FileOf gives for it.
+        private static void CheckSave(string save, IDatabase database, string xml, List<string> failures)
+        {
+            var difference = FileDifference(FileOf(database), xml);
+            if (difference != null)
+            {
+                failures.Add($"{save}: {difference}");
+            }
+        }
+
         private static string Summary(Exception e)
         {
             var message = e.Message.Replace("\r", string.Empty).Replace("\n", " ");
@@ -2109,6 +2132,16 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
                         text.Value = text.Value.TrimEnd('0').TrimEnd('.');
                     }
                 }
+            }
+        }
+
+        // The roles of a to-many relation as the Memory adapter saved them: in the order of its collection, which is
+        // not the order of their ids. Here they are descending by id.
+        private static void RolesInAnotherOrder(XmlDocument document, IMetaPopulation meta)
+        {
+            foreach (var text in document.SelectNodes("//" + Serialization.RelationTypeComposite + "/" + Serialization.Relation + "/text()").OfType<XmlText>())
+            {
+                text.Value = string.Join(Serialization.ObjectsSplitter, text.Value.Split(Serialization.ObjectsSplitterCharArray).Reverse());
             }
         }
 
@@ -2369,6 +2402,106 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
 
             return $"{lost.Length} of {savedLines.Length} saved lines are not loaded, {added.Length} loaded lines were not saved; "
                    + $"not loaded: [{string.Join(" | ", lost.Take(4))}]; not saved: [{string.Join(" | ", added.Take(4))}]";
+        }
+
+        // The file that a save has to write for a population: the population as the API shows it, in the one form in
+        // which every adapter writes it. The object types and the relation types are in the order of their id and
+        // have it with hyphens; the objects, the relations of a relation type and the roles of a relation are
+        // ascending by id; a unit has the text of Serialization.WriteString, which ReadValues holds. No adapter
+        // gives this file: it is the expectation.
+        private static string FileOf(IDatabase database)
+        {
+            static string Number(long value) => value.ToString(CultureInfo.InvariantCulture);
+
+            var objectTypes = new StringBuilder();
+            var relationsByRelationType = new Dictionary<IRelationType, List<(long Association, string Role)>>();
+
+            using (var transaction = database.CreateTransaction())
+            {
+                foreach (var @class in database.MetaPopulation.DatabaseClasses.OrderBy(v => v.Id))
+                {
+                    IObject[] extent = transaction.Extent(@class);
+                    if (extent.Length == 0)
+                    {
+                        continue;
+                    }
+
+                    var objects = extent.OrderBy(v => v.Id).ToArray();
+
+                    objectTypes
+                        .Append("<ot i=\"").Append(@class.Id.ToString("D")).Append("\">")
+                        .AppendJoin(',', objects.Select(v => Number(v.Id) + ":" + Number(v.Strategy.ObjectVersion)))
+                        .Append("</ot>");
+
+                    foreach (var @object in objects)
+                    {
+                        var strategy = @object.Strategy;
+
+                        foreach (var roleType in @class.DatabaseRoleTypes)
+                        {
+                            if (!strategy.ExistRole(roleType))
+                            {
+                                continue;
+                            }
+
+                            var role = roleType.ObjectType is IUnit unit
+                                ? Serialization.WriteString(unit.Tag, strategy.GetUnitRole(roleType))
+                                : roleType.IsOne
+                                    ? Number(strategy.GetCompositeRole(roleType).Id)
+                                    : string.Join(",", strategy.GetCompositesRole<IObject>(roleType).Select(v => v.Id).OrderBy(v => v).Select(Number));
+
+                            if (!relationsByRelationType.TryGetValue(roleType.RelationType, out var relations))
+                            {
+                                relations = new List<(long Association, string Role)>();
+                                relationsByRelationType.Add(roleType.RelationType, relations);
+                            }
+
+                            relations.Add((@object.Id, role));
+                        }
+                    }
+                }
+            }
+
+            var relationTypes = new StringBuilder();
+            foreach (var (relationType, relations) in relationsByRelationType.OrderBy(v => v.Key.Id))
+            {
+                var element = relationType.RoleType.ObjectType.IsUnit ? "rtu" : "rtc";
+
+                relationTypes.Append('<').Append(element).Append(" i=\"").Append(relationType.Id.ToString("D")).Append("\">");
+                foreach (var (association, role) in relations.OrderBy(v => v.Association))
+                {
+                    relationTypes.Append("<r a=\"").Append(Number(association)).Append("\">").Append(role).Append("</r>");
+                }
+
+                relationTypes.Append("</").Append(element).Append('>');
+            }
+
+            static string Database(StringBuilder content) => content.Length > 0 ? "<database>" + content + "</database>" : "<database />";
+
+            return "<?xml version=\"1.0\" encoding=\"utf-16\"?><allors><population version=\"1\"><objects>" + Database(objectTypes) + "</objects><relations>" + Database(relationTypes) + "</relations></population></allors>";
+        }
+
+        // Where a saved file differs from the file that a save has to write, or null.
+        private static string FileDifference(string file, string saved)
+        {
+            if (saved == file)
+            {
+                return null;
+            }
+
+            static string Around(string text, int index)
+            {
+                var start = Math.Max(0, index - 40);
+                return text.Substring(start, Math.Min(text.Length, index + 40) - start);
+            }
+
+            var index = 0;
+            while (index < file.Length && index < saved.Length && file[index] == saved[index])
+            {
+                index++;
+            }
+
+            return $"the saved file of {saved.Length} characters differs from the file of {file.Length} characters that a save has to write, from character {index}: saved: [{Around(saved, index)}]; to save: [{Around(file, index)}]";
         }
 
         // Files as an earlier schema saved them. Each comes with the population that a load has to load from it, as
