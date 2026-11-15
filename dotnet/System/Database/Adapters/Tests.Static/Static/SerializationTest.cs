@@ -1545,7 +1545,8 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
                 (UnitTags.Boolean, true, "true"),
                 (UnitTags.Boolean, false, "false"),
 
-                // A date is written in UTC, with the fraction of its second when it has one.
+                // A date is written in UTC, with the fraction of its second when it has one. A date with more than
+                // milliseconds is written, and is not a value of a role unless it is the largest date.
                 (UnitTags.DateTime, new DateTime(1, 1, 1, 0, 0, 0, DateTimeKind.Utc), "0001-01-01T00:00:00Z"),
                 (UnitTags.DateTime, DateTime.SpecifyKind(DateTime.MaxValue, DateTimeKind.Utc), "9999-12-31T23:59:59.9999999Z"),
                 (UnitTags.DateTime, new DateTime(999, 12, 31, 23, 59, 59, DateTimeKind.Utc), "0999-12-31T23:59:59Z"),
@@ -2638,6 +2639,18 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
                     UnitsOf(Id(m.C1.C1AllorsDecimal), (2, mostDecimals), (4, mostDecimals + "0")),
                     Relation(m.C1.C1AllorsDecimal, 1, tooManyDecimals),
                     Relation(m.C1.C1AllorsDecimal, 3, "-" + tooManyDecimals)),
+
+                // A role holds a date to the millisecond, to which a date is cut when it is set. The largest date is
+                // the only date with more.
+                Change(
+                    "dates with more than milliseconds",
+                    string.Empty,
+                    UnitsOf(Id(m.C1.C1AllorsDateTime), (1, "2000-01-01T00:00:00.1234567Z"), (2, "2000-01-01T00:00:00.123Z"), (3, "2000-01-01T00:00:00.1234Z"), (4, "9999-12-31T23:59:59.9999999Z"))
+                    + UnitsOf(Id(m.I1.I1AllorsDateTime), (1, "9999-12-31T23:59:59.9999998Z")),
+                    UnitsOf(Id(m.C1.C1AllorsDateTime), (2, "2000-01-01T00:00:00.123Z"), (4, "9999-12-31T23:59:59.9999999Z")),
+                    Relation(m.C1.C1AllorsDateTime, 1, "2000-01-01T00:00:00.1234567Z"),
+                    Relation(m.C1.C1AllorsDateTime, 3, "2000-01-01T00:00:00.1234Z"),
+                    Relation(m.I1.I1AllorsDateTime, 1, "9999-12-31T23:59:59.9999998Z")),
             };
         }
 
