@@ -146,6 +146,20 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   has no room, and then failed to read it and to save the population. The exception of
   `ObjectFactory` for a meta population that is not valid has the errors of the validation as its
   message, which was the name of the class `ValidationLog` (#351).
+- Loading a population reads a value only from the text that a save writes for it, and reports any
+  other text as it reports a value that the unit type cannot read. The adapters read what
+  `XmlConvert`, `Guid.Parse` and `Convert.FromBase64String` take as well: white space around a value
+  and in base64; a plus sign and zeros before the digits of a number; `1` and `0` as a boolean; a
+  date without a zone or with an offset, and a day, a time, a month or a year as a date, so that the
+  integer `2000` loaded as 1 January 2000 and a time as that time on the day of the load; a GUID in
+  upper case, without hyphens or in braces, and one with a sign in place of a digit as another GUID;
+  a decimal with more than 28 decimals, rounded; and in a string bytes that are not UTF-8, as
+  U+FFFD. A float is read by the form of its text, so that a file with the digits that the .NET
+  Framework wrote for a float still loads. A date with a fraction of a second beyond milliseconds is
+  reported as well, unless it is the largest date: every adapter returned it cut to milliseconds,
+  and a later save wrote it cut to milliseconds on the Memory and Snapshot adapters, cut to
+  microseconds on the Npgsql adapter and as it was on the SqlClient adapter.
+  `Serialization.ReadString` refuses a text that no save writes with a `FormatException` (#352).
 - The Memory adapter's extent sort treats two objects without a value for a sort order as equal
   and lets the next sort order decide; the comparer contradicted itself, so short lists kept an
   arbitrary order and longer ones could fail the sort (#309).

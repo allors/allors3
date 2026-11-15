@@ -1479,6 +1479,293 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
         }
 
         [Fact]
+        public void ReadValues()
+        {
+            var unique = "537f6823-d22c-4b3b-ab3c-e15a6b61b9d6";
+
+            var names = new MetaBuilder().Build().Units.ToDictionary(v => v.Tag, v => v.Name);
+            var second = new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+            // The text that a save writes for a unit. A load reads that text as the unit.
+            var saved = new (string Tag, object Unit, string Text)[]
+            {
+                (UnitTags.Integer, 0, "0"),
+                (UnitTags.Integer, 7, "7"),
+                (UnitTags.Integer, -1, "-1"),
+                (UnitTags.Integer, 1000, "1000"),
+                (UnitTags.Integer, int.MaxValue, "2147483647"),
+                (UnitTags.Integer, int.MinValue, "-2147483648"),
+
+                // A decimal is written with the decimals that it has, which were not always the decimals of the
+                // scale of its role type, and a zero is written without a sign.
+                (UnitTags.Decimal, 0m, "0"),
+                (UnitTags.Decimal, 0.00m, "0.00"),
+                (UnitTags.Decimal, -0.0m, "0.0"),
+                (UnitTags.Decimal, 1m, "1"),
+                (UnitTags.Decimal, 1.5m, "1.5"),
+                (UnitTags.Decimal, 1.50m, "1.50"),
+                (UnitTags.Decimal, 1.500m, "1.500"),
+                (UnitTags.Decimal, -1.50m, "-1.50"),
+                (UnitTags.Decimal, 0.05m, "0.05"),
+                (UnitTags.Decimal, -0.5m, "-0.5"),
+                (UnitTags.Decimal, 100.00m, "100.00"),
+                (UnitTags.Decimal, 12345678901234567.89m, "12345678901234567.89"),
+                (UnitTags.Decimal, decimal.MaxValue, "79228162514264337593543950335"),
+                (UnitTags.Decimal, decimal.MinValue, "-79228162514264337593543950335"),
+                (UnitTags.Decimal, 7.9228162514264337593543950335m, "7.9228162514264337593543950335"),
+                (UnitTags.Decimal, 0.0000000000000000000000000001m, "0.0000000000000000000000000001"),
+                (UnitTags.Decimal, 1.0000000000000000000000000000m, "1.0000000000000000000000000000"),
+                (UnitTags.Decimal, 0.0000000000000000000000000000m, "0.0000000000000000000000000000"),
+
+                // A float is written with the fewest digits that give it back, and with an exponent when it is large
+                // or small. NaN and the infinities are written, and are not a value of a role.
+                (UnitTags.Float, 0d, "0"),
+                (UnitTags.Float, -0d, "-0"),
+                (UnitTags.Float, 1d, "1"),
+                (UnitTags.Float, -1.5d, "-1.5"),
+                (UnitTags.Float, 0.1d, "0.1"),
+                (UnitTags.Float, 100d, "100"),
+                (UnitTags.Float, 1d / 3d, "0.3333333333333333"),
+                (UnitTags.Float, Math.PI, "3.141592653589793"),
+                (UnitTags.Float, 0.1d + 0.7d, "0.7999999999999999"),
+                (UnitTags.Float, 0.0001d, "0.0001"),
+                (UnitTags.Float, 0.00001d, "1E-05"),
+                (UnitTags.Float, 1.2345E-05d, "1.2345E-05"),
+                (UnitTags.Float, 1E+16d, "10000000000000000"),
+                (UnitTags.Float, 1E+17d, "1E+17"),
+                (UnitTags.Float, 1.2345678901234568E+20d, "1.2345678901234568E+20"),
+                (UnitTags.Float, 1E-100d, "1E-100"),
+                (UnitTags.Float, double.MaxValue, "1.7976931348623157E+308"),
+                (UnitTags.Float, double.MinValue, "-1.7976931348623157E+308"),
+                (UnitTags.Float, double.Epsilon, "5E-324"),
+                (UnitTags.Float, double.NaN, "NaN"),
+                (UnitTags.Float, double.PositiveInfinity, "INF"),
+                (UnitTags.Float, double.NegativeInfinity, "-INF"),
+
+                (UnitTags.Boolean, true, "true"),
+                (UnitTags.Boolean, false, "false"),
+
+                // A date is written in UTC, with the fraction of its second when it has one. A date with more than
+                // milliseconds is written, and is not a value of a role unless it is the largest date.
+                (UnitTags.DateTime, new DateTime(1, 1, 1, 0, 0, 0, DateTimeKind.Utc), "0001-01-01T00:00:00Z"),
+                (UnitTags.DateTime, DateTime.SpecifyKind(DateTime.MaxValue, DateTimeKind.Utc), "9999-12-31T23:59:59.9999999Z"),
+                (UnitTags.DateTime, new DateTime(999, 12, 31, 23, 59, 59, DateTimeKind.Utc), "0999-12-31T23:59:59Z"),
+                (UnitTags.DateTime, new DateTime(1973, 3, 27, 12, 1, 2, 3, DateTimeKind.Utc), "1973-03-27T12:01:02.003Z"),
+                (UnitTags.DateTime, new DateTime(2000, 2, 29, 23, 59, 59, 999, DateTimeKind.Utc), "2000-02-29T23:59:59.999Z"),
+                (UnitTags.DateTime, second, "2000-01-01T00:00:00Z"),
+                (UnitTags.DateTime, second.AddMilliseconds(100), "2000-01-01T00:00:00.1Z"),
+                (UnitTags.DateTime, second.AddMilliseconds(120), "2000-01-01T00:00:00.12Z"),
+                (UnitTags.DateTime, second.AddMilliseconds(123), "2000-01-01T00:00:00.123Z"),
+                (UnitTags.DateTime, second.AddTicks(1234500), "2000-01-01T00:00:00.12345Z"),
+                (UnitTags.DateTime, second.AddTicks(1234567), "2000-01-01T00:00:00.1234567Z"),
+                (UnitTags.DateTime, second.AddTicks(1), "2000-01-01T00:00:00.0000001Z"),
+
+                (UnitTags.Unique, Guid.Empty, "00000000-0000-0000-0000-000000000000"),
+                (UnitTags.Unique, new Guid(unique), unique),
+                (UnitTags.Unique, new Guid("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"), "ffffffff-ffff-ffff-ffff-ffffffffffff"),
+
+                // A binary is written as base64, in four characters for every three bytes.
+                (UnitTags.Binary, Array.Empty<byte>(), string.Empty),
+                (UnitTags.Binary, new byte[] { 0 }, "AA=="),
+                (UnitTags.Binary, new byte[] { 255 }, "/w=="),
+                (UnitTags.Binary, new byte[] { 1, 2 }, "AQI="),
+                (UnitTags.Binary, new byte[] { 1, 2, 3 }, "AQID"),
+                (UnitTags.Binary, new byte[] { 0xfb, 0xff, 0xbf }, "+/+/"),
+                (UnitTags.Binary, Enumerable.Range(0, 16).Select(v => (byte)v).ToArray(), "AAECAwQFBgcICQoLDA0ODw=="),
+
+                // A string is written as the base64 of its UTF-8.
+                (UnitTags.String, string.Empty, string.Empty),
+                (UnitTags.String, "a", "YQ=="),
+                (UnitTags.String, " ", "IA=="),
+                (UnitTags.String, "line\r\nfeed\ttab", "bGluZQ0KZmVlZAl0YWI="),
+                (UnitTags.String, "\u00e9\u4e2d" + char.ConvertFromUtf32(0x1F600), "w6nkuK3wn5iA"),
+                (UnitTags.String, "\ufeffa", "77u/YQ=="),
+            };
+
+            // The text that the .NET Framework wrote for a float where .NET writes another text: more digits than
+            // the float needs, and an exponent where .NET writes every digit.
+            var savedByFramework = new (double Unit, string Text)[]
+            {
+                (1d / 3d, "0.33333333333333331"),
+                (Math.PI, "3.1415926535897931"),
+                (0.1d + 0.7d, "0.79999999999999993"),
+                (1E+15d, "1E+15"),
+                (1E+16d, "1E+16"),
+                (double.Epsilon, "4.94065645841247E-324"),
+            };
+
+            // Texts that no save writes. XML Schema, .NET or base64 reads many of them as a unit.
+            var notSaved = new (string Tag, string[] Texts)[]
+            {
+                (UnitTags.Integer, new[]
+                {
+                    // White space, a plus sign, zeros before the digits and a zero with a sign.
+                    " 7", "7 ", " 7 ", "\t7", "7\n", "+7", "07", "007", "00", "-0", "-07",
+
+                    // An integer that is too large or too small, and what is not an integer.
+                    "2147483648", "-2147483649", "99999999999999999999", string.Empty, "-", "--7", "- 7", "7-", "(7)", "7.0", "7.", "1e2", "1E2",
+                    "0x10", "1,000", "\u0667", "\uff17", "\u22127", "7\0", "abc", "true",
+                }),
+                (UnitTags.Decimal, new[]
+                {
+                    // White space, a plus sign, zeros before the digits, a zero with a sign and a point without a
+                    // digit before it or after it.
+                    " 1.5", "1.5 ", "+1.5", "01.5", "00", "-0", "-0.0", "-0.00", ".5", "-.5", "5.", "1.",
+
+                    // More decimals or more digits than a decimal has: they are not rounded.
+                    "0.00000000000000000000000000001", "1.00000000000000000000000000001", "0.12345678901234567890123456789",
+                    "79228162514264337593543950335.0", "79228162514264337593543950336",
+
+                    // What is not a decimal.
+                    string.Empty, "-", "--1", "1-", "(1)", "$1", "1,5", "1.000,5", "1,000.5", "1 000", "1..5", "1.5.0", "1e2", "1E2", "1.5E+0",
+                    "0x10", "1.5m", "\u0661\u066b\u0665", "1.5\0", "NaN", "INF", "abc", "true",
+                }),
+                (UnitTags.Float, new[]
+                {
+                    // White space, a plus sign, zeros before the digits, a point without a digit before it or after
+                    // it, and decimals that end in a zero.
+                    " 1.5", "1.5 ", "+1.5", "01.5", "00", "007", ".5", "-.5", "5.", "1.0", "1.50", "0.0", "-0.0",
+
+                    // An exponent in another form than E, a sign and two or three digits, after one digit that is
+                    // not a zero and its decimals.
+                    "1e2", "1e+02", "1E2", "1E02", "1E+2", "1E+002", "1E+0002", "1E+1000", "12E+05", "0.5E+10", "0E+00", "1.E+10", "1.0E+10",
+                    "E+10", "1E", "1E+", "1E+02 ", "1E+02x",
+
+                    // A float that is too large or too small: it is not read as an infinity or as zero.
+                    "1E+400", "1.8E+308", "-1.8E+308", "1E-400", "-1E-400",
+
+                    // Other names for what is not a number, and what is not a float.
+                    "Infinity", "-Infinity", "+Infinity", "infinity", "+INF", "inf", "nan", "NAN", "-NaN", "+NaN", "\u221e", string.Empty, "-",
+                    "--1", "1,5", "0x10", "1d", "1f", "1.5\0", "abc", "true",
+                }),
+                (UnitTags.Boolean, new[]
+                {
+                    "1", "0", " true", "true ", "TRUE", "True", "False", "yes", "no", "t", "f", "tru", "truee", "true\0", string.Empty, "abc",
+                }),
+                (UnitTags.DateTime, new[]
+                {
+                    // Without the Z of UTC: no zone, an offset, a z in lower case.
+                    "2000-01-01T00:00:00", "2000-01-01T00:00:00+00:00", "2000-01-01T00:00:00+02:00", "2000-01-01T00:00:00-05:00", "2000-01-01T00:00:00z",
+
+                    // The other dates and times of XML Schema: a day, a time, a month, a year, and a day or a month
+                    // of any year.
+                    "2000-01-01", "2000-01-01Z", "12:00:00", "12:00:00Z", "2000-01", "2000", "2000Z", "1000", "--01-01", "---01", "--01",
+
+                    // White space, and a fraction of a second without a digit, with a zero at its end, with more than
+                    // seven digits or after a comma.
+                    " 2000-01-01T00:00:00Z", "2000-01-01T00:00:00Z ", "2000-01-01T00:00:00.Z", "2000-01-01T00:00:00.0Z", "2000-01-01T00:00:00.000Z",
+                    "2000-01-01T00:00:00.120Z", "2000-01-01T00:00:00.1230000Z", "2000-01-01T00:00:00.12345678Z", "2000-01-01T00:00:00,123Z",
+                    "2000-01-01T00:00:00.12xZ",
+
+                    // What is not a day or a time of day.
+                    "2000-01-01T24:00:00Z", "2000-01-01T23:60:00Z", "2000-01-01T23:59:60Z", "2000-13-01T00:00:00Z", "2000-00-01T00:00:00Z",
+                    "2000-01-32T00:00:00Z", "2000-01-00T00:00:00Z", "2001-02-29T00:00:00Z", "2000-02-30T00:00:00Z", "0000-01-01T00:00:00Z",
+
+                    // What is not a date.
+                    "10000-01-01T00:00:00Z", "-0001-01-01T00:00:00Z", "200-01-01T00:00:00Z", "2000-1-1T0:0:0Z", "20000101T000000Z",
+                    "2000/01/01T00:00:00Z", "2000-01-01 00:00:00Z", "2000-01-01t00:00:00Z", "2000-01-01T00.00.00Z", "2000-01-01T00:00Z",
+                    "2000-01-01T00Z", "01/02/2000", "\uff12000-01-01T00:00:00Z", "20x0-01-01T00:00:00Z", string.Empty, "5", "abc", "true",
+                }),
+                (UnitTags.Unique, new[]
+                {
+                    // Upper case, the other forms of a GUID, and white space.
+                    unique.ToUpperInvariant(), "537f6823-D22c-4b3b-ab3c-e15a6b61b9d6", unique.Replace("-", string.Empty), "{" + unique + "}", "(" + unique + ")",
+                    "{0x537f6823,0xd22c,0x4b3b,{0xab,0x3c,0xe1,0x5a,0x6b,0x61,0xb9,0xd6}}", " " + unique, unique + " ",
+
+                    // A sign or a prefix in place of digits, which .NET reads as another GUID.
+                    "+37f6823-d22c-4b3b-ab3c-e15a6b61b9d6", "0x7f6823-d22c-4b3b-ab3c-e15a6b61b9d6",
+
+                    // What is not a GUID.
+                    "537f6823-d22c-4b3b-ab3c-e15a6b61b9d", unique + "a", "537f6823-d22c-4b3b-ab3c-e15a6b61b9dg", "537f6823_d22c_4b3b_ab3c_e15a6b61b9d6",
+                    unique + "\0", string.Empty, "5", "abc",
+                }),
+                (UnitTags.Binary, new[]
+                {
+                    // White space: around the text, in it, and where the text keeps a multiple of four characters.
+                    " ", " AQID", "AQID ", "AQID\n", "AQ ID", "AQ\r\nID", "A Q I D ", "AQID    ", "    AQ==",
+
+                    // Bits that a save leaves zero, in the character before the padding.
+                    "AB==", "AQJ=",
+
+                    // Not a multiple of four characters, padding where it does not belong, and characters that are
+                    // not base64.
+                    "A", "AQ", "AQI", "AQ=", "AQI==", "AQID=", "A===", "====", "=", "=AQI", "AQ=D", "A=ID", "AQ==AQID", "AQID====", "!!!!", "AQI-",
+                    "AQI_", "AQI\u00e9", "AQI\0", "abc",
+                }),
+                (UnitTags.String, new[]
+                {
+                    // What is not the base64 of a save.
+                    " ", " YQ==", "YQ==\n", "YQ ==", "YR==", "YQ", "YQ=", "!!!!", "abc",
+
+                    // Bytes that are not UTF-8: a byte that no character has, a character in more bytes than it
+                    // needs, a surrogate, a pair of surrogates, a character beyond the last one, a character that is
+                    // cut off, a byte that continues no character, and a lead byte of five bytes.
+                    "/w==", "wIA=", "7aCA", "7aCA7bCA", "9JCAgA==", "4oI=", "YcM=", "gA==", "+AAAAA==",
+
+                    // The text of another unit type that happens to be base64: a boolean and integers.
+                    "true", "1234", "2024",
+                }),
+            };
+
+            // Every text is read, so that one run names every text that is not handled.
+            var failures = new List<string>();
+
+            void Read(string tag, object unit, string text)
+            {
+                try
+                {
+                    var read = Serialization.ReadString(text, tag);
+                    if (Format(read) != Format(unit))
+                    {
+                        failures.Add($"{names[tag]} {Format(text)}: read as {Format(read)}, not as {Format(unit)}");
+                    }
+                }
+                catch (Exception e)
+                {
+                    failures.Add($"{names[tag]} {Format(text)}: not read, {e.GetType().Name}");
+                }
+            }
+
+            foreach (var (tag, unit, text) in saved)
+            {
+                var written = Serialization.WriteString(tag, unit);
+                if (written != text)
+                {
+                    failures.Add($"{names[tag]} {Format(unit)}: saved as {Format(written)}, not as {Format(text)}");
+                }
+
+                Read(tag, unit, text);
+            }
+
+            foreach (var (unit, text) in savedByFramework)
+            {
+                Read(UnitTags.Float, unit, text);
+            }
+
+            // A text that no save writes is refused as a text in another format, whatever is wrong with it.
+            foreach (var (tag, texts) in notSaved)
+            {
+                foreach (var text in texts)
+                {
+                    try
+                    {
+                        var read = Serialization.ReadString(text, tag);
+                        failures.Add($"{names[tag]} {Format(text)}: read as {Format(read)}");
+                    }
+                    catch (FormatException)
+                    {
+                    }
+                    catch (Exception e)
+                    {
+                        failures.Add($"{names[tag]} {Format(text)}: refused with {e.GetType().Name}");
+                    }
+                }
+            }
+
+            Assert.True(failures.Count == 0, string.Join(Environment.NewLine, failures));
+        }
+
+        [Fact]
         public void HandlerFailure()
         {
             foreach (var init in this.Inits)
@@ -2114,6 +2401,7 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
             var x = Base64("x");
             var kept = Base64("kept");
             var unique = "537f6823-d22c-4b3b-ab3c-e15a6b61b9d6";
+            var uniqueWithoutHyphens = unique.Replace("-", string.Empty);
 
             // The longest string that the size of the role type allows, and a string that is one character longer.
             var size = m.C1.C1AllorsString.Size.Value;
@@ -2252,6 +2540,63 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
                     Relation(m.C1.C1AllorsUnique, 1, "abc"),
                     Relation(m.C1.C1AllorsString, 1, "!"),
                     Relation(m.C1.C1AllorsBinary, 1, "!")),
+
+                // A unit is read from the text that a save writes for it. XML Schema, .NET and base64 take more: the
+                // text of an integer role that became a boolean role or a date role, for one.
+                Change(
+                    "values in a form that no save writes",
+                    string.Empty,
+                    UnitsOf(Id(m.C1.C1AllorsInteger), (1, "+7"), (2, "7"), (3, "07"), (4, " 7"))
+                    + UnitsOf(Id(m.C1.C1AllorsDecimal), (1, "+1.5"), (2, "1.5"), (3, ".5"), (4, "5."))
+                    + UnitsOf(Id(m.C1.C1AllorsDouble), (1, "+1.5"), (2, "1.5"), (3, "1e2"), (4, "1.50"))
+                    + UnitsOf(Id(m.C1.C1AllorsBoolean), (1, "1"), (2, "true"), (3, "0"), (4, " true "))
+                    + UnitsOf(Id(m.C1.C1AllorsDateTime), (1, "2000"), (2, "2000-01-01T00:00:00Z"), (3, "12:00:00"), (4, "2000-01-01T00:00:00"))
+                    + UnitsOf(Id(m.C1.C1AllorsUnique), (1, uniqueWithoutHyphens), (2, unique), (3, unique.ToUpperInvariant()), (4, "{" + unique + "}"))
+                    + UnitsOf(Id(m.C1.C1AllorsString), (1, " " + kept), (2, kept), (3, kept + "\n"), (4, "YR=="))
+                    + UnitsOf(Id(m.C1.C1AllorsBinary), (1, "AQ ID"), (2, "AQID"), (3, "AQID\n"), (4, "AB==")),
+                    UnitsOf(Id(m.C1.C1AllorsInteger), (2, "7"))
+                    + UnitsOf(Id(m.C1.C1AllorsDecimal), (2, "1.5"))
+                    + UnitsOf(Id(m.C1.C1AllorsDouble), (2, "1.5"))
+                    + UnitsOf(Id(m.C1.C1AllorsBoolean), (2, "true"))
+                    + UnitsOf(Id(m.C1.C1AllorsDateTime), (2, "2000-01-01T00:00:00Z"))
+                    + UnitsOf(Id(m.C1.C1AllorsUnique), (2, unique))
+                    + UnitsOf(Id(m.C1.C1AllorsString), (2, kept))
+                    + UnitsOf(Id(m.C1.C1AllorsBinary), (2, "AQID")),
+                    Relation(m.C1.C1AllorsInteger, 1, "+7"),
+                    Relation(m.C1.C1AllorsInteger, 3, "07"),
+                    Relation(m.C1.C1AllorsInteger, 4, " 7"),
+                    Relation(m.C1.C1AllorsDecimal, 1, "+1.5"),
+                    Relation(m.C1.C1AllorsDecimal, 3, ".5"),
+                    Relation(m.C1.C1AllorsDecimal, 4, "5."),
+                    Relation(m.C1.C1AllorsDouble, 1, "+1.5"),
+                    Relation(m.C1.C1AllorsDouble, 3, "1e2"),
+                    Relation(m.C1.C1AllorsDouble, 4, "1.50"),
+                    Relation(m.C1.C1AllorsBoolean, 1, "1"),
+                    Relation(m.C1.C1AllorsBoolean, 3, "0"),
+                    Relation(m.C1.C1AllorsBoolean, 4, " true "),
+                    Relation(m.C1.C1AllorsDateTime, 1, "2000"),
+                    Relation(m.C1.C1AllorsDateTime, 3, "12:00:00"),
+                    Relation(m.C1.C1AllorsDateTime, 4, "2000-01-01T00:00:00"),
+                    Relation(m.C1.C1AllorsUnique, 1, uniqueWithoutHyphens),
+                    Relation(m.C1.C1AllorsUnique, 3, unique.ToUpperInvariant()),
+                    Relation(m.C1.C1AllorsUnique, 4, "{" + unique + "}"),
+                    Relation(m.C1.C1AllorsString, 1, " " + kept),
+                    Relation(m.C1.C1AllorsString, 3, kept + "\n"),
+                    Relation(m.C1.C1AllorsString, 4, "YR=="),
+                    Relation(m.C1.C1AllorsBinary, 1, "AQ ID"),
+                    Relation(m.C1.C1AllorsBinary, 3, "AQID\n"),
+                    Relation(m.C1.C1AllorsBinary, 4, "AB==")),
+
+                // The bytes of a string are UTF-8: a byte that no character has, a character in more bytes than it
+                // needs and a surrogate are not.
+                Change(
+                    "a string whose bytes are not UTF-8",
+                    string.Empty,
+                    UnitsOf(Id(m.C1.C1AllorsString), (1, "/w=="), (2, kept), (3, "wIA="), (4, "7aCA")),
+                    UnitsOf(Id(m.C1.C1AllorsString), (2, kept)),
+                    Relation(m.C1.C1AllorsString, 1, "/w=="),
+                    Relation(m.C1.C1AllorsString, 3, "wIA="),
+                    Relation(m.C1.C1AllorsString, 4, "7aCA")),
                 Change(
                     "a string that is longer than its role type allows",
                     string.Empty,
@@ -2294,6 +2639,18 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
                     UnitsOf(Id(m.C1.C1AllorsDecimal), (2, mostDecimals), (4, mostDecimals + "0")),
                     Relation(m.C1.C1AllorsDecimal, 1, tooManyDecimals),
                     Relation(m.C1.C1AllorsDecimal, 3, "-" + tooManyDecimals)),
+
+                // A role holds a date to the millisecond, to which a date is cut when it is set. The largest date is
+                // the only date with more.
+                Change(
+                    "dates with more than milliseconds",
+                    string.Empty,
+                    UnitsOf(Id(m.C1.C1AllorsDateTime), (1, "2000-01-01T00:00:00.1234567Z"), (2, "2000-01-01T00:00:00.123Z"), (3, "2000-01-01T00:00:00.1234Z"), (4, "9999-12-31T23:59:59.9999999Z"))
+                    + UnitsOf(Id(m.I1.I1AllorsDateTime), (1, "9999-12-31T23:59:59.9999998Z")),
+                    UnitsOf(Id(m.C1.C1AllorsDateTime), (2, "2000-01-01T00:00:00.123Z"), (4, "9999-12-31T23:59:59.9999999Z")),
+                    Relation(m.C1.C1AllorsDateTime, 1, "2000-01-01T00:00:00.1234567Z"),
+                    Relation(m.C1.C1AllorsDateTime, 3, "2000-01-01T00:00:00.1234Z"),
+                    Relation(m.I1.I1AllorsDateTime, 1, "9999-12-31T23:59:59.9999998Z")),
             };
         }
 
