@@ -160,6 +160,16 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   and a later save wrote it cut to milliseconds on the Memory and Snapshot adapters, cut to
   microseconds on the Npgsql adapter and as it was on the SqlClient adapter.
   `Serialization.ReadString` refuses a text that no save writes with a `FormatException` (#352).
+- `Save` writes the same file for one population on every adapter: the file of the population as its
+  roles return it. The Memory and Snapshot adapters wrote the id of an object type and of a relation
+  type without hyphens, where the SqlClient and Npgsql adapters write it with hyphens, and the
+  Memory adapter wrote the roles of a to-many relation in the order of its collection, which
+  followed the order in which they were added and removed and, after a load, the order of the file.
+  Both now write the ids with hyphens, and the Memory adapter writes the roles ascending by id. The
+  SqlClient and Npgsql adapters wrote a date as the database holds it, also a date with a fraction
+  of a second beyond milliseconds, which a role does not write. They now write a date as a role
+  returns it, cut to milliseconds unless it is the largest date, so that a load of the file does
+  not report it. A load reads the earlier forms as before (#353).
 - The Memory adapter's extent sort treats two objects without a value for a sort order as equal
   and lets the next sort order decide; the comparer contradicted itself, so short lists kept an
   arbitrary order and longer ones could fail the sort (#309).

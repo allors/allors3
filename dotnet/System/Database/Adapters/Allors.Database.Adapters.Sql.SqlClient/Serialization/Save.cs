@@ -5,6 +5,7 @@
 
 namespace Allors.Database.Adapters.Sql.SqlClient
 {
+    using System;
     using System.Collections.Generic;
     using System.Xml;
     using Adapters;
@@ -229,6 +230,15 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                                         {
                                             var unitTypeTag = ((IUnit)roleType.ObjectType).Tag;
                                             var r = command.GetValue(reader, unitTypeTag, 1);
+
+                                            // A date is written as a role returns it: cut to milliseconds, unless it
+                                            // is the smallest or the largest date. The database can hold a date with
+                                            // more, which a role does not write.
+                                            if (r is DateTime dateTime)
+                                            {
+                                                r = roleType.Normalize(DateTime.SpecifyKind(dateTime, DateTimeKind.Utc));
+                                            }
+
                                             var content = Serialization.WriteString(unitTypeTag, r);
                                             relationTypeOneXmlWriter.Write(a, content);
                                         }

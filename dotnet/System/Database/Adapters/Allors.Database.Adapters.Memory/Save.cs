@@ -69,7 +69,7 @@ namespace Allors.Database.Adapters.Memory
                 if (sortedNonDeletedStrategies.Count > 0)
                 {
                     this.writer.WriteStartElement(Serialization.ObjectType);
-                    this.writer.WriteAttributeString(Serialization.Id, objectType.Id.ToString("N").ToLowerInvariant());
+                    this.writer.WriteAttributeString(Serialization.Id, objectType.Id.ToString());
 
                     for (var i = 0; i < sortedNonDeletedStrategies.Count; i++)
                     {
@@ -125,7 +125,7 @@ namespace Allors.Database.Adapters.Memory
                                                  ? Serialization.RelationTypeUnit
                                                  : Serialization.RelationTypeComposite);
 
-                    this.writer.WriteAttributeString(Serialization.Id, relationType.Id.ToString("N").ToLowerInvariant());
+                    this.writer.WriteAttributeString(Serialization.Id, relationType.Id.ToString());
 
                     if (roleType.ObjectType is IUnit)
                     {
