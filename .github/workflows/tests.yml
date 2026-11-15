@@ -85,7 +85,7 @@ jobs:
       PROVIDER: ${{ inputs.provider == 'memory' && 'snapshot' || (inputs.provider == 'sqlclient' && startsWith(inputs.os, 'windows') && 'localdb') || inputs.provider }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           submodules: false
           fetch-depth: 0      # nbgv needs full history for git-height versioning
@@ -111,7 +111,7 @@ jobs:
           Start-Service -Name $service.Name
           Write-Host "Started $($service.Name)"
       - name: Setup .NET SDK (from global.json)
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v6
         with:
           global-json-file: global.json
       - name: Restore .NET local tools
@@ -119,7 +119,7 @@ jobs:
       - name: Compute version (nbgv)
         run: dotnet nbgv cloud
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: '24'
       - name: Run Nuke target ${{ matrix.target }}
