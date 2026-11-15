@@ -18,6 +18,9 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 
         public override void Dispose() => this.profile.Dispose();
 
+        [Fact]
+        public void SaveDatesWithMoreThanMilliseconds() => this.CheckSaveOfDates(this.profile.ExecuteScalar);
+
         protected override IDatabase CreatePopulation() => this.profile.CreateMemoryDatabase();
     }
 }

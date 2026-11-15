@@ -56,6 +56,19 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             });
         }
 
+        public object ExecuteScalar(string sql)
+        {
+            using (var connection = this.CreateConnection())
+            {
+                connection.Open();
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = sql;
+                    return command.ExecuteScalar();
+                }
+            }
+        }
+
         public void DropTable(string tableName)
         {
             using (var connection = this.CreateConnection())

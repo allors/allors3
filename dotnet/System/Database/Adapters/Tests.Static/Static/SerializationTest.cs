@@ -1950,6 +1950,62 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
 
         protected abstract IDatabase CreatePopulation();
 
+        // A database server can hold a date with a fraction of a second beyond milliseconds, which a role does not
+        // write: a role cuts a date to milliseconds when it is set. A role returns such a date cut to milliseconds,
+        // and a save writes the date that a role returns: the file is the file of the population as the API shows
+        // it, and a load of it reports nothing.
+        protected void CheckSaveOfDates(Func<string, object> executeScalar)
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+
+                var database = (Sql.Database)this.Population;
+                var m = database.Context().M;
+                var roleType = m.C1.C1AllorsDateTime;
+
+                long[] ids;
+                using (var transaction = database.CreateTransaction())
+                {
+                    var objects = transaction.Create(m.C1, 4);
+                    foreach (var @object in objects)
+                    {
+                        @object.Strategy.SetUnitRole(roleType, new DateTime(2000, 1, 1, 0, 0, 0, 123, DateTimeKind.Utc));
+                    }
+
+                    transaction.Commit();
+
+                    ids = objects.Select(v => v.Id).ToArray();
+                }
+
+                // SQL gives the dates of three objects a fraction beyond milliseconds. The fourth keeps its date.
+                var table = database.Mapping.TableNameForObjectByClass[m.C1];
+                var column = database.Mapping.ColumnNameByRelationType[roleType.RelationType];
+                var fractions = new[] { "1234567", "1234564", "123456" };
+                for (var i = 0; i < fractions.Length; i++)
+                {
+                    executeScalar($"UPDATE {table} SET {column} = '2000-01-01 00:00:00.{fractions[i]}' WHERE {Sql.Mapping.ColumnNameForObject} = {ids[i].ToString(CultureInfo.InvariantCulture)}");
+                }
+
+                // The database holds them: SQL Server to a tenth of a microsecond, PostgreSQL to the microsecond.
+                var held = executeScalar($"SELECT COUNT(*) FROM {table} WHERE {column} > '2000-01-01 00:00:00.123' AND {column} < '2000-01-01 00:00:00.124'");
+                Assert.Equal(fractions.Length, Convert.ToInt32(held, CultureInfo.InvariantCulture));
+
+                // A database object that has read nothing shows the population as the roles return it.
+                var population = this.Profile.CreateDatabase();
+                var saved = Digest(population);
+                var xml = DoSave(database);
+
+                var difference = FileDifference(FileOf(population), xml);
+                Assert.True(difference == null, difference);
+
+                DoLoad(database, xml);
+
+                difference = Difference(saved, Digest(database));
+                Assert.True(difference == null, difference);
+            }
+        }
+
         private static string DoSave(IDatabase otherPopulation)
         {
             var stringWriter = new StringWriter();

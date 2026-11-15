@@ -74,6 +74,19 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             });
         }
 
+        public object ExecuteScalar(string sql)
+        {
+            using (var connection = new SqlConnection(this.ConnectionString))
+            {
+                connection.Open();
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = sql;
+                    return command.ExecuteScalar();
+                }
+            }
+        }
+
         protected bool Match(ColumnTypes columnType, string dataType)
         {
             dataType = dataType.Trim().ToLowerInvariant();
