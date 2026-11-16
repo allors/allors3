@@ -1671,6 +1671,22 @@ namespace Allors.Database.Adapters
                     }
 
                     {
+                        // One character longer than the size of the role type: refused when the role is set
+                        var values = C1.Create(this.Transaction);
+                        var size = m.C1.C1AllorsString.Size.Value;
+
+                        Assert.Throws<ArgumentException>(() => values.C1AllorsString = new string('a', size + 1));
+
+                        mark();
+                        Assert.False(values.ExistC1AllorsString);
+
+                        values.C1AllorsString = new string('a', size);
+
+                        mark();
+                        Assert.Equal(new string('a', size), values.C1AllorsString);
+                    }
+
+                    {
                         // The character U+0000 and a lone surrogate: refused when the role is set
                         var values = C1.Create(this.Transaction);
 
