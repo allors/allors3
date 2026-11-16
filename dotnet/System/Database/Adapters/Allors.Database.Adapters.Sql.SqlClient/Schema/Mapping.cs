@@ -145,6 +145,22 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         private const string ProcedurePrefixForGetAssociation = "ga_";
         private const string ProcedurePrefixForPrefetchAssociation = "pa_";
 
+        private const string TenRows = "(VALUES (0),(0),(0),(0),(0),(0),(0),(0),(0),(0))";
+
+        // A source of rows to take a count from: ten lists of ten rows in every combination, which is more rows
+        // than a count can ask for.
+        private const string RowsForCount =
+            TenRows + " AS d1 (n)\nCROSS JOIN " +
+            TenRows + " AS d2 (n)\nCROSS JOIN " +
+            TenRows + " AS d3 (n)\nCROSS JOIN " +
+            TenRows + " AS d4 (n)\nCROSS JOIN " +
+            TenRows + " AS d5 (n)\nCROSS JOIN " +
+            TenRows + " AS d6 (n)\nCROSS JOIN " +
+            TenRows + " AS d7 (n)\nCROSS JOIN " +
+            TenRows + " AS d8 (n)\nCROSS JOIN " +
+            TenRows + " AS d9 (n)\nCROSS JOIN " +
+            TenRows + " AS d10 (n)";
+
         private readonly IDictionary<IRelationType, string> tableNameForRelationByRelationType;
         private readonly IDictionary<IRelationType, string> commandTextForPrefetchAssociationByRelationType;
         private readonly IDictionary<IRelationType, string> commandTextForPrefetchRoleByRelationType;
@@ -697,35 +713,45 @@ END";
             var name = $"{this.Database.SchemaName}.{ProcedurePrefixForCreateObjects}{@class.Name.ToLowerInvariant()}";
 
             // CreateObjects
-            var sql = $@"DECLARE @IDS TABLE (id {SqlTypeForObject});
-DECLARE @COUNTER INT
-
-SET @COUNTER = 0
-WHILE @COUNTER < {this.ParamNameForCount}
-    BEGIN
-
-    INSERT INTO {this.TableNameForObjects} ({ColumnNameForClass}, {ColumnNameForVersion})
-    VALUES ({this.ParamNameForClass}, {(long)Allors.Version.DatabaseInitial} );
-
-    INSERT INTO @IDS(id)
-    VALUES (SCOPE_IDENTITY());
-
-    SET @COUNTER = @COUNTER+1;
-    END
-
-INSERT INTO {table} ({ColumnNameForObject},{ColumnNameForClass})
-SELECT ID, {this.ParamNameForClass} FROM @IDS;
-
-SELECT id FROM @IDS;";
+            // One statement creates the objects. The rows go into the objects table, the first OUTPUT gives their
+            // ids to the table of the class and the second gives them to the caller. The rows are taken from
+            // RowsForCount. A count below zero creates nothing, as in the procedure.
+            var sql = $@"INSERT INTO {this.TableNameForObjects} ({ColumnNameForClass}, {ColumnNameForVersion})
+OUTPUT inserted.{ColumnNameForObject}, inserted.{ColumnNameForClass} INTO {table} ({ColumnNameForObject}, {ColumnNameForClass})
+OUTPUT inserted.{ColumnNameForObject}
+SELECT TOP (CASE WHEN {this.ParamNameForCount} > 0 THEN {this.ParamNameForCount} ELSE 0 END) {this.ParamNameForClass}, {(long)Allors.Version.DatabaseInitial}
+FROM {RowsForCount};";
             this.commandTextForCreateObjectsByClass.Add(@class, sql);
 
+            // The procedure creates the objects one by one and keeps their ids in a table variable. Its body is not
+            // the statement: the server keeps the table variable of a procedure between calls, and creates the one
+            // of a statement anew for every execution.
             var definition = $@"
 CREATE PROCEDURE {name}
     {this.ParamNameForClass} {SqlTypeForClass},
     {this.ParamNameForCount} {"int"}
 AS
 BEGIN
-{sql}
+    DECLARE @IDS TABLE (id {SqlTypeForObject});
+    DECLARE @COUNTER INT
+
+    SET @COUNTER = 0
+    WHILE @COUNTER < {this.ParamNameForCount}
+        BEGIN
+
+        INSERT INTO {this.TableNameForObjects} ({ColumnNameForClass}, {ColumnNameForVersion})
+        VALUES ({this.ParamNameForClass}, {(long)Allors.Version.DatabaseInitial} );
+
+        INSERT INTO @IDS(id)
+        VALUES (SCOPE_IDENTITY());
+
+        SET @COUNTER = @COUNTER+1;
+        END
+
+    INSERT INTO {table} ({ColumnNameForObject},{ColumnNameForClass})
+    SELECT ID, {this.ParamNameForClass} FROM @IDS;
+
+    SELECT id FROM @IDS;
 END";
 
             this.ProcedureDefinitionByName.Add(name, definition);
