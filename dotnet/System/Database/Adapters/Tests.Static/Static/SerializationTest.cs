@@ -315,6 +315,91 @@ namespace Allors.Database.Adapters
         }
 
         [Fact]
+        public void Cultures()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+                var m = this.Transaction.Database.Context().M;
+
+                // Every culture is run, so that one run names every culture under which a save or a load differs.
+                var failures = new List<string>();
+
+                // The population is populated and read under the invariant culture, so that this fact is the same on
+                // every machine. Only a save and a load run under another culture.
+                using (new UnderCulture(CultureInfo.InvariantCulture))
+                {
+                    PopulateEveryRelationType(this.Population);
+                    var saved = Digest(this.Population);
+                    var file = FileOf(this.Population);
+
+                    foreach (var (name, culture) in OtherCultures)
+                    {
+                        try
+                        {
+                            // A load under the culture reads the one file of the population as that population, and
+                            // a save under the culture writes that file. So a file that is saved under one culture
+                            // is loaded under any other.
+                            using (new UnderCulture(culture))
+                            {
+                                DoLoad(this.Population, file);
+                            }
+
+                            var difference = Difference(saved, Digest(this.Population));
+                            if (difference != null)
+                            {
+                                failures.Add($"{name}, loaded: {difference}");
+                            }
+
+                            string xml;
+                            using (new UnderCulture(culture))
+                            {
+                                xml = DoSave(this.Population);
+                            }
+
+                            difference = FileDifference(file, xml);
+                            if (difference != null)
+                            {
+                                failures.Add($"{name}, saved: {difference}");
+                            }
+
+                            // Where the culture itself gives a unit another text than a save writes, a load under
+                            // the culture does not read that text: it reports the relation and loads the rest.
+                            var ownTexts = OwnTextsOf(m, culture);
+                            var reported = new List<string>();
+                            RelationNotLoadedEventHandler relationNotLoaded = (sender, args) => reported.Add(NotLoaded(m, args.RelationTypeId, args.AssociationId, args.RoleContents));
+
+                            this.Population.RelationNotLoaded += relationNotLoaded;
+                            try
+                            {
+                                using (new UnderCulture(culture))
+                                {
+                                    DoLoad(this.Population, ownTexts.File);
+                                }
+                            }
+                            finally
+                            {
+                                this.Population.RelationNotLoaded -= relationNotLoaded;
+                            }
+
+                            difference = this.SchemaChangeDifference(ownTexts.Loaded, ownTexts.NotLoaded, reported);
+                            if (difference != null)
+                            {
+                                failures.Add($"{name}, units in its own text: {difference}");
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            failures.Add($"{name}: {Summary(e)}");
+                        }
+                    }
+                }
+
+                Assert.True(failures.Count == 0, string.Join(Environment.NewLine, failures));
+            }
+        }
+
+        [Fact]
         public void LoadVersions()
         {
             foreach (var init in this.Inits)
@@ -414,136 +499,6 @@ namespace Allors.Database.Adapters
 
                         this.AssertPopulation(transaction);
                     }
-                }
-            }
-        }
-
-        [Fact]
-        public void LoadDifferentMode()
-        {
-            foreach (var init in this.Inits)
-            {
-                init();
-                var m = this.Transaction.Database.Context().M;
-
-                var population = this.CreatePopulation();
-                var transaction = population.CreateTransaction();
-
-                try
-                {
-                    this.Populate(transaction);
-                    transaction.Commit();
-
-                    var stringWriter = new StringWriter();
-                    using (var writer = XmlWriter.Create(stringWriter))
-                    {
-                        population.Save(writer);
-                    }
-
-                    var stringReader = new StringReader(stringWriter.ToString());
-                    var reader = XmlReader.Create(stringReader);
-
-                    try
-                    {
-                        this.Population.Load(reader);
-                        Assert.True(false); // Fail
-                    }
-                    catch
-                    {
-                    }
-                }
-                finally
-                {
-                    transaction.Commit();
-                }
-            }
-        }
-
-        [Fact]
-        public void LoadDifferentCultureInfos()
-        {
-            foreach (var init in this.Inits)
-            {
-                init();
-                var m = this.Transaction.Database.Context().M;
-
-                var writeCultureInfo = new CultureInfo("en-US");
-                var readCultureInfo = new CultureInfo("en-GB");
-
-                CultureInfo.CurrentCulture = writeCultureInfo;
-                CultureInfo.CurrentUICulture = writeCultureInfo;
-
-                var loadPopulation = this.CreatePopulation();
-                var loadTransaction = loadPopulation.CreateTransaction();
-                this.Populate(loadTransaction);
-
-                var stringWriter = new StringWriter();
-                using (var writer = XmlWriter.Create(stringWriter))
-                {
-                    loadTransaction.Database.Save(writer);
-                }
-
-                CultureInfo.CurrentCulture = readCultureInfo;
-                CultureInfo.CurrentUICulture = readCultureInfo;
-
-                var xml = stringWriter.ToString();
-                var stringReader = new StringReader(xml);
-                using (var reader = XmlReader.Create(stringReader))
-                {
-                    this.Population.Load(reader);
-                }
-
-                using (var transaction = this.Population.CreateTransaction())
-                {
-                    this.AssertPopulation(transaction);
-                }
-
-                loadTransaction.Rollback();
-            }
-        }
-
-        [Fact]
-        public void LoadDifferentVersion()
-        {
-            foreach (var init in this.Inits)
-            {
-                init();
-                var m = this.Transaction.Database.Context().M;
-
-                var population = this.CreatePopulation();
-                var transaction = population.CreateTransaction();
-
-                try
-                {
-                    this.Populate(transaction);
-                    transaction.Commit();
-
-                    var stringWriter = new StringWriter();
-                    using (var writer = XmlWriter.Create(stringWriter))
-                    {
-                        population.Save(writer);
-                    }
-
-                    var xmlDocument = new XmlDocument();
-                    xmlDocument.LoadXml(stringWriter.ToString());
-                    var allorsElement = (XmlElement)xmlDocument.SelectSingleNode("/allors");
-                    allorsElement.SetAttribute("version", "0.9");
-
-                    var stringReader = new StringReader(xmlDocument.InnerText);
-                    var reader = XmlReader.Create(stringReader);
-
-                    try
-                    {
-                        this.Population.Load(reader);
-                        Assert.True(false); // Fail
-                    }
-                    catch
-                    {
-                    }
-                }
-                finally
-                {
-                    transaction.Commit();
                 }
             }
         }
@@ -713,49 +668,6 @@ namespace Allors.Database.Adapters
                         Assert.Equal(c1.Strategy.ObjectVersion, otherC1.Strategy.ObjectVersion);
                         Assert.NotEqual(initialObjectVersion, otherC1.Strategy.ObjectVersion);
                         Assert.NotEqual(changedObjectVersion, otherC1.Strategy.ObjectVersion);
-                    }
-                }
-            }
-        }
-
-        [Fact]
-        public void SaveDifferentCultureInfos()
-        {
-            foreach (var init in this.Inits)
-            {
-                init();
-                var m = this.Transaction.Database.Context().M;
-
-                var writeCultureInfo = new CultureInfo("en-US");
-                var readCultureInfo = new CultureInfo("en-GB");
-
-                CultureInfo.CurrentCulture = writeCultureInfo;
-                CultureInfo.CurrentUICulture = writeCultureInfo;
-
-                using (var transaction = this.CreatePopulation().CreateTransaction())
-                {
-                    this.Populate(transaction);
-
-                    var stringWriter = new StringWriter();
-                    using (var writer = XmlWriter.Create(stringWriter))
-                    {
-                        transaction.Database.Save(writer);
-                    }
-
-                    CultureInfo.CurrentCulture = readCultureInfo;
-                    CultureInfo.CurrentUICulture = readCultureInfo;
-
-                    var stringReader = new StringReader(stringWriter.ToString());
-                    using (var reader = XmlReader.Create(stringReader))
-                    {
-                        var savePopulation = this.CreatePopulation();
-                        savePopulation.Load(reader);
-
-                        var saveTransaction = savePopulation.CreateTransaction();
-
-                        this.AssertPopulation(saveTransaction);
-
-                        saveTransaction.Rollback();
                     }
                 }
             }
@@ -2034,6 +1946,45 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
                 ("Snapshot", () => ((Profile)this.Profile).CreateSnapshotDatabase()),
             };
 
+        // The cultures under which a population is saved and loaded, each for what it changes. They are the cultures
+        // of the system without the settings of a user. What a system knows of a culture differs between systems, so
+        // the last culture is made here, and is the same on every system.
+        private static (string Name, CultureInfo Culture)[] OtherCultures
+        {
+            get
+            {
+                // No sign and no separator of a number or of a date is the one that a save writes, the point stands
+                // between groups of digits, and a date has its parts in another order.
+                var signsAndSeparators = (CultureInfo)CultureInfo.InvariantCulture.Clone();
+                signsAndSeparators.NumberFormat.NegativeSign = "~";
+                signsAndSeparators.NumberFormat.PositiveSign = "!";
+                signsAndSeparators.NumberFormat.NumberDecimalSeparator = "'";
+                signsAndSeparators.NumberFormat.NumberGroupSeparator = ".";
+                signsAndSeparators.DateTimeFormat.DateSeparator = "|";
+                signsAndSeparators.DateTimeFormat.TimeSeparator = "h";
+                signsAndSeparators.DateTimeFormat.ShortDatePattern = "yy/d/M";
+                signsAndSeparators.DateTimeFormat.LongTimePattern = "s:m:H";
+
+                return new[]
+                {
+                    // A decimal comma, and a point between groups of digits: the culture reads 1.50 as 150.
+                    ("nl-BE", CultureInfo.GetCultureInfo("nl-BE")),
+
+                    // An I that lowers to an i without a dot, and an i that raises to an I with a dot.
+                    ("tr-TR", CultureInfo.GetCultureInfo("tr-TR")),
+
+                    // The Buddhist calendar: the year 1973 is the year 2516.
+                    ("th-TH", CultureInfo.GetCultureInfo("th-TH")),
+
+                    // The Um Al Qura calendar, which runs from the year 1900 to the year 2077, signs that come with
+                    // a mark for the direction of the text, and a decimal separator of its own.
+                    ("ar-SA", CultureInfo.GetCultureInfo("ar-SA")),
+
+                    ("a culture with other signs and separators", signsAndSeparators),
+                };
+            }
+        }
+
         private static void CheckLoad(string exchange, string saved, string xml, IDatabase database, List<string> failures)
         {
             try
@@ -2929,6 +2880,47 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
             };
         }
 
+        // A file in which the object 1 has units in the text that a culture itself gives them, and the object 2 has
+        // the same units in the text that a save writes. Where the culture gives a unit another text than a save
+        // does, a load reports the relation of the object 1. The file comes with the population that a load has to
+        // load from it, as a file, and with what the load has to report as not loaded.
+        private static (string File, string Loaded, string[] NotLoaded) OwnTextsOf(MetaPopulation m, CultureInfo culture)
+        {
+            var units = new (IRoleType RoleType, object Unit)[]
+            {
+                (m.C1.C1AllorsInteger, -7),
+                (m.C1.C1AllorsDecimal, -1234.5m),
+                (m.C1.C1AllorsDouble, -1234.5d),
+                (m.C1.C1AllorsDateTime, new DateTime(1973, 3, 27, 12, 1, 2, DateTimeKind.Utc)),
+            };
+
+            var objects = ObjectsOf(m.C1.Id, 1, 2);
+            var relations = new StringBuilder();
+            var relationsLoaded = new StringBuilder();
+            var notLoaded = new List<string>();
+
+            foreach (var (roleType, unit) in units)
+            {
+                var relationTypeId = roleType.RelationType.Id;
+                var saved = Serialization.WriteString(((IUnit)roleType.ObjectType).Tag, unit);
+                var own = Convert.ToString(unit, culture);
+
+                relations.Append(UnitsOf(relationTypeId, (1, own), (2, saved)));
+
+                if (own == saved)
+                {
+                    relationsLoaded.Append(UnitsOf(relationTypeId, (1, saved), (2, saved)));
+                }
+                else
+                {
+                    relationsLoaded.Append(UnitsOf(relationTypeId, (2, saved)));
+                    notLoaded.Add(NotLoaded(m, relationTypeId, 1, own));
+                }
+            }
+
+            return (PopulationOf(objects, relations.ToString()), PopulationOf(objects, relationsLoaded.ToString()), notLoaded.ToArray());
+        }
+
         private static string PopulationOf(string objects, string relations) =>
 $@"<?xml version=""1.0"" encoding=""utf-16""?>
 <allors>
@@ -3161,5 +3153,27 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
         }
 
         private IObject[] GetExtent(ITransaction transaction, IComposite objectType) => transaction.Extent(objectType);
+
+        // The culture of the thread until it is disposed: the thread then has the culture again that it had before.
+        private sealed class UnderCulture : IDisposable
+        {
+            private readonly CultureInfo culture;
+            private readonly CultureInfo uiCulture;
+
+            public UnderCulture(CultureInfo culture)
+            {
+                this.culture = CultureInfo.CurrentCulture;
+                this.uiCulture = CultureInfo.CurrentUICulture;
+
+                CultureInfo.CurrentCulture = culture;
+                CultureInfo.CurrentUICulture = culture;
+            }
+
+            public void Dispose()
+            {
+                CultureInfo.CurrentCulture = this.culture;
+                CultureInfo.CurrentUICulture = this.uiCulture;
+            }
+        }
     }
 }
