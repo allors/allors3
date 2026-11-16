@@ -189,6 +189,21 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   of a second beyond milliseconds, which a role does not write. They now write a date as a role
   returns it, cut to milliseconds unless it is the largest date, so that a load of the file does
   not report it. A load reads the earlier forms as before (#353).
+- Setting a unique role or a binary role to a unit of another type is refused with a message that
+  names the unit: `RoleType is not a Unique.` and `RoleType is not a Binary.` Both said
+  `RoleType is not a Boolean.` (#358).
+- A load that fails leaves a database as `Init` leaves it, on every adapter: without objects, and
+  with the first id for a new object. The Memory adapter kept what it had loaded before the failure,
+  uncommitted in its one transaction, so that a later commit committed it and a save wrote it. The
+  Memory and Snapshot adapters gave the next new object the id after the highest id that the failed
+  load had read (#362).
+- When a load fails on the SqlClient and Npgsql adapters, its exception reaches the caller with the
+  stack trace of where it was thrown. The adapters rethrew it after they had initialized the
+  database again, and the stack trace then started at `Database.Load` (#363).
+- When the stream of a save fails on the SqlClient and Npgsql adapters, the caller gets the
+  exception of the stream, as on the Memory and Snapshot adapters. The SQL adapters gave
+  `InvalidOperationException: The Writer is closed or in error state.` in its place: their relation
+  writers wrote an end element to the writer that had just failed (#364).
 - The Memory adapter's extent sort treats two objects without a value for a sort order as equal
   and lets the next sort order decide; the comparer contradicted itself, so short lists kept an
   arbitrary order and longer ones could fail the sort (#309).
