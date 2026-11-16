@@ -782,8 +782,6 @@ namespace Allors.Database.Adapters
 
         protected abstract void DropTable(string schema, string tableName);
 
-        protected abstract void DropProcedure(string schema, string procedure);
-
         protected abstract bool ExistTable(string schema, string table);
 
         protected abstract int ColumnCount(string schema, string table);
@@ -793,8 +791,6 @@ namespace Allors.Database.Adapters
         protected abstract bool ExistPrimaryKey(string schema, string table, string column);
 
         protected abstract bool ExistIndex(string schema, string table, string column);
-
-        protected abstract bool ExistProcedure(string schema, string procedure);
 
         protected bool CreateTransactionThrowsException(IDatabase database)
         {

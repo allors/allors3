@@ -71,16 +71,14 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   `ALLORS_TEST_NPGSQL_CONNECTION` is accepted as an alias. The account `postgres` with the password
   `root` on `localhost` is no longer built in, and CI's PostgreSQL service runs as the user `allors`.
 - The SqlClient adapter sends its statements itself. The 27 commands that called a stored procedure
-  send a statement with the same parameters: the statement that their procedure holds, except for
-  the creation of several objects in one call, `ITransaction.Create(class, count)`, which sends one
-  `INSERT` with two `OUTPUT` clauses where its procedure fills a table variable in a loop. SQL
+  send a statement with the same parameters: the statement that their procedure held, except for the
+  creation of several objects in one call, `ITransaction.Create(class, count)`, which sends one
+  `INSERT` with two `OUTPUT` clauses where its procedure filled a table variable in a loop. SQL
   Server accepts that statement only when the table of the class has no enabled trigger, foreign key
   or check constraint and the objects table no enabled insert trigger; the adapter creates none of
-  these. `Init` still creates the procedures and a transaction still validates them, so a database
-  that was initialized before this change stays valid. The members `ProcedureNameFor…` of `Mapping`
-  in `Allors.Database.Adapters.Sql` are named `CommandTextFor…`: they hold a statement on SQL Server
-  and the name of a function on PostgreSQL, and the new member `Mapping.CommandType` says which
-  (#366).
+  these. The members `ProcedureNameFor…` of `Mapping` in `Allors.Database.Adapters.Sql` are named
+  `CommandTextFor…`: they hold a statement on SQL Server and the name of a function on PostgreSQL,
+  and the new member `Mapping.CommandType` says which (#366).
 
 ### Fixed
 
@@ -299,3 +297,16 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   the `isolationLevel` argument of `DatabaseBuilder` and the `-i` option of the Core commands. The
   SQL Server and PostgreSQL adapters begin every transaction at the isolation level Snapshot, which
   was the default (#342).
+- The stored procedures of the SqlClient adapter, and its table types `_ti_…`, which nothing used.
+  `Init` creates the tables, their indexes and the table types that the statements of the adapter
+  use, and a transaction no longer compares the procedures of a schema with those of the mapping.
+  With them go `SchemaProcedure`, `Schema.ProcedureByName`, `Schema.GetProcedure`,
+  `Validation.MissingProcedureNames`, `Validation.InvalidProcedures`,
+  `Mapping.ProcedureDefinitionByName` and `Mapping.GetTableTypeNameForIn` of
+  `Allors.Database.Adapters.Sql.SqlClient`. A database that is initialized after this change holds
+  no procedures, so an earlier version does not accept it. A database that was initialized before
+  this change keeps its procedures and stays valid, and an `Init` that only empties its tables
+  works. `Init` no longer drops the procedures, though, and SQL Server does not drop a table type
+  that a procedure uses: an `Init` that has to recreate the schema of such a database fails, before
+  it has touched a table. Drop and create the database between the save and the load of an upgrade,
+  which `DatabaseProvisioning.DropCreate` of `Allors.Database.Builder` does (#368).

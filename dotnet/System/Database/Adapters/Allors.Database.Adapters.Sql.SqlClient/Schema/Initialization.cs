@@ -5,7 +5,6 @@
 
 namespace Allors.Database.Adapters.Sql.SqlClient
 {
-    using System;
     using Microsoft.Data.SqlClient;
     using System.Text;
 
@@ -47,17 +46,15 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             {
                 this.CreateSchema();
 
-                this.DropProcedures();
+                // The table types go first. SQL Server does not drop a table type that another object of the
+                // schema uses, and then Init stops before it has touched a table.
+                this.DropTableTypes();
 
                 this.DropTables();
 
                 this.CreateTables();
 
-                this.DropTableTypes();
-
                 this.CreateTableTypes();
-
-                this.CreateProcedures();
 
                 this.CreateIndeces();
             }
@@ -100,24 +97,6 @@ CREATE SCHEMA {this.database.SchemaName}";
                 {
                     connection.Close();
                 }
-            }
-        }
-
-        private void DropProcedures()
-        {
-            using var connection = new SqlConnection(this.ConnectionString);
-            connection.Open();
-            try
-            {
-                foreach (var name in this.validation.Schema.ProcedureByName.Keys)
-                {
-                    using var command = new SqlCommand($"DROP PROCEDURE {name}", connection);
-                    command.ExecuteNonQuery();
-                }
-            }
-            finally
-            {
-                connection.Close();
             }
         }
 
@@ -310,32 +289,6 @@ CREATE SCHEMA {this.database.SchemaName}";
 
                         using var command = new SqlCommand(sql, connection);
                         command.ExecuteNonQuery();
-                    }
-                }
-            }
-            finally
-            {
-                connection.Close();
-            }
-        }
-
-        private void CreateProcedures()
-        {
-            using var connection = new SqlConnection(this.ConnectionString);
-            connection.Open();
-            try
-            {
-                foreach (var dictionaryEntry in this.mapping.ProcedureDefinitionByName)
-                {
-                    var definition = dictionaryEntry.Value;
-                    using var command = new SqlCommand(definition, connection);
-                    try
-                    {
-                        command.ExecuteNonQuery();
-                    }
-                    catch (Exception e)
-                    {
-                        throw;
                     }
                 }
             }

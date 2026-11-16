@@ -9,7 +9,6 @@ namespace Allors.Database.Adapters.Sql.SqlClient
     using System.Collections.Generic;
     using System.Data;
     using Microsoft.Data.SqlClient;
-    using System.Text;
     using Adapters;
     using Caching;
     using Meta;
@@ -105,58 +104,6 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 ColumnTypes.Unique => dataType.Equals("uniqueidentifier"),
                 _ => throw new Exception("Unsupported columntype " + columnType)
             };
-        }
-
-        public void DropProcedure(string procedure)
-        {
-            using (var connection = new SqlConnection(this.ConnectionString))
-            {
-                connection.Open();
-                using (var command = connection.CreateCommand())
-                {
-                    var sql = new StringBuilder();
-                    sql.Append("DROP PROCEDURE " + procedure);
-
-                    command.CommandText = sql.ToString();
-                    command.ExecuteNonQuery();
-                }
-            }
-        }
-
-        public void DropProcedures(string schema)
-        {
-            using (var connection = new SqlConnection(this.ConnectionString))
-            {
-                connection.Open();
-
-                var procedures = new List<string>();
-                using (var command = connection.CreateCommand())
-                {
-                    command.CommandText = @"
-SELECT routine_name
-FROM INFORMATION_SCHEMA.ROUTINES
-WHERE routine_schema = @routineSchema
-AND routine_type = 'PROCEDURE'";
-                    command.Parameters.Add("@routineSchema", SqlDbType.NVarChar).Value = schema;
-
-                    using (var reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            procedures.Add(reader.GetString(0));
-                        }
-                    }
-                }
-
-                foreach (var procedure in procedures)
-                {
-                    using (var command = connection.CreateCommand())
-                    {
-                        command.CommandText = $"DROP PROCEDURE [{schema}].[{procedure}]";
-                        command.ExecuteNonQuery();
-                    }
-                }
-            }
         }
 
         public void DropTable(string schema, string table)
@@ -267,28 +214,6 @@ and col_name(idx.object_id,idxcol.column_id) = @columnName";
                     command.Parameters.Add("@tableName", SqlDbType.NVarChar).Value = table;
                     command.Parameters.Add("@tableSchema", SqlDbType.NVarChar).Value = schema;
                     command.Parameters.Add("@columnName", SqlDbType.NVarChar).Value = column;
-
-                    var count = (int)command.ExecuteScalar();
-
-                    return count != 0;
-                }
-            }
-        }
-
-        public bool ExistProcedure(string schema, string procedure)
-        {
-            using (var connection = new SqlConnection(this.ConnectionString))
-            {
-                connection.Open();
-                using (var command = connection.CreateCommand())
-                {
-                    command.CommandText = @"
-SELECT count(*)
-FROM INFORMATION_SCHEMA.ROUTINES
-WHERE routine_schema = @routineSchema
-AND routine_name=@routineName";
-                    command.Parameters.Add("@routineSchema", SqlDbType.NVarChar).Value = schema;
-                    command.Parameters.Add("@routineName", SqlDbType.NVarChar).Value = procedure;
 
                     var count = (int)command.ExecuteScalar();
 
