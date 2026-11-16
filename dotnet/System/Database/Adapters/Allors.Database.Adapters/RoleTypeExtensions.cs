@@ -119,14 +119,14 @@ namespace Allors.Database.Adapters
                 case UnitTags.Unique:
                     if (!(unit is Guid))
                     {
-                        throw new ArgumentException("RoleType is not a Boolean.");
+                        throw new ArgumentException("RoleType is not a Unique.");
                     }
 
                     break;
                 case UnitTags.Binary:
                     if (!(unit is byte[]))
                     {
-                        throw new ArgumentException("RoleType is not a Boolean.");
+                        throw new ArgumentException("RoleType is not a Binary.");
                     }
 
                     break;
