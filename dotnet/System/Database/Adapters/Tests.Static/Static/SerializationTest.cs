@@ -1778,6 +1778,26 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
                     {
                         failures.Add($"{name}: reported as not loaded: [{string.Join(" | ", notLoaded)}]");
                     }
+
+                    if (failed)
+                    {
+                        // A load that fails leaves the database as Init leaves it: without objects, and with the first
+                        // id for a new object.
+                        var held = Digest(this.Population);
+                        if (held.Length > 0)
+                        {
+                            failures.Add($"{name}: after the load the database holds: {held}");
+                        }
+
+                        using (var transaction = this.Population.CreateTransaction())
+                        {
+                            var id = transaction.Create(m.C1).Id;
+                            if (id != 1)
+                            {
+                                failures.Add($"{name}: after the load a new object gets the id {id.ToString(CultureInfo.InvariantCulture)}");
+                            }
+                        }
+                    }
                 }
 
                 Assert.True(failures.Count == 0, string.Join(Environment.NewLine, failures));
