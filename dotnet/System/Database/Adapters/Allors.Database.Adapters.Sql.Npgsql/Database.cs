@@ -6,6 +6,7 @@
 namespace Allors.Database.Adapters.Sql.Npgsql
 {
     using System;
+    using System.Runtime.ExceptionServices;
     using System.Xml;
     using global::Npgsql;
     using NpgsqlTypes;
@@ -155,7 +156,9 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                         finally
                         {
                             this.Init();
-                            throw e;
+
+                            // The exception of the load keeps the stack trace of where it was thrown.
+                            ExceptionDispatchInfo.Capture(e).Throw();
                         }
                     }
                 }
