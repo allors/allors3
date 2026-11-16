@@ -375,7 +375,7 @@ where c = '{@class.Id}'";
                     var @class = kvp.Key;
                     var unitRelations = kvp.Value;
 
-                    var sql = this.database.Mapping.ProcedureNameForSetUnitRoleByRelationTypeByClass[@class][relationType];
+                    var sql = this.database.Mapping.CommandTextForSetUnitRoleByRelationTypeByClass[@class][relationType];
                     var command = con.CreateCommand();
                     command.CommandText = sql;
                     command.CommandType = CommandType.StoredProcedure;
@@ -407,8 +407,8 @@ where c = '{@class.Id}'";
                     reader);
 
                 var sql = relationType.RoleType.IsOne ?
-                              this.database.Mapping.ProcedureNameForSetRoleByRelationType[relationType] :
-                              this.database.Mapping.ProcedureNameForAddRoleByRelationType[relationType];
+                              this.database.Mapping.CommandTextForSetRoleByRelationType[relationType] :
+                              this.database.Mapping.CommandTextForAddRoleByRelationType[relationType];
 
                 var command = con.CreateCommand();
                 command.CommandText = sql;

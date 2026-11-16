@@ -7,6 +7,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 {
     using System;
     using System.Collections.Generic;
+    using System.Data;
     using System.Linq;
     using Meta;
     using NpgsqlTypes;
@@ -43,28 +44,30 @@ namespace Allors.Database.Adapters.Sql.Npgsql
         public override IDictionary<IRelationType, string> ColumnNameByRelationType => this.columnNameByRelationType;
         public override IDictionary<IRelationType, string> TableNameForRelationByRelationType => this.tableNameForRelationByRelationType;
 
-        public override IDictionary<IClass, string> ProcedureNameForCreateObjectByClass => this.procedureNameForCreateObjectByClass;
-        public override IDictionary<IClass, string> ProcedureNameForCreateObjectsByClass => this.procedureNameForCreateObjectsByClass;
-        public override IDictionary<IClass, string> ProcedureNameForDeleteObjectByClass => this.procedureNameForDeleteObjectByClass;
-        public override IDictionary<IClass, string> ProcedureNameForGetUnitRolesByClass => this.procedureNameForGetUnitRolesByClass;
-        public override IDictionary<IClass, string> ProcedureNameForPrefetchUnitRolesByClass => this.procedureNameForPrefetchUnitRolesByClass;
-        public override IDictionary<IClass, IDictionary<IRelationType, string>> ProcedureNameForSetUnitRoleByRelationTypeByClass => this.procedureNameForSetUnitRoleByRelationTypeByClass;
-        public override IDictionary<IRelationType, string> ProcedureNameForGetRoleByRelationType => this.procedureNameForGetRoleByRelationType;
-        public override IDictionary<IRelationType, string> ProcedureNameForPrefetchRoleByRelationType => this.procedureNameForPrefetchRoleByRelationType;
-        public override IDictionary<IRelationType, string> ProcedureNameForSetRoleByRelationType => this.procedureNameForSetRoleByRelationType;
-        public override IDictionary<IRelationType, string> ProcedureNameForAddRoleByRelationType => this.procedureNameForAddRoleByRelationType;
-        public override IDictionary<IRelationType, string> ProcedureNameForRemoveRoleByRelationType => this.procedureNameForRemoveRoleByRelationType;
-        public override IDictionary<IRelationType, string> ProcedureNameForClearRoleByRelationType => this.procedureNameForClearRoleByRelationType;
-        public override IDictionary<IRelationType, string> ProcedureNameForGetAssociationByRelationType => this.procedureNameForGetAssociationByRelationType;
-        public override IDictionary<IRelationType, string> ProcedureNameForPrefetchAssociationByRelationType => this.procedureNameForPrefetchAssociationByRelationType;
+        public override CommandType CommandType => CommandType.StoredProcedure;
+
+        public override IDictionary<IClass, string> CommandTextForCreateObjectByClass => this.procedureNameForCreateObjectByClass;
+        public override IDictionary<IClass, string> CommandTextForCreateObjectsByClass => this.procedureNameForCreateObjectsByClass;
+        public override IDictionary<IClass, string> CommandTextForDeleteObjectByClass => this.procedureNameForDeleteObjectByClass;
+        public override IDictionary<IClass, string> CommandTextForGetUnitRolesByClass => this.procedureNameForGetUnitRolesByClass;
+        public override IDictionary<IClass, string> CommandTextForPrefetchUnitRolesByClass => this.procedureNameForPrefetchUnitRolesByClass;
+        public override IDictionary<IClass, IDictionary<IRelationType, string>> CommandTextForSetUnitRoleByRelationTypeByClass => this.procedureNameForSetUnitRoleByRelationTypeByClass;
+        public override IDictionary<IRelationType, string> CommandTextForGetRoleByRelationType => this.procedureNameForGetRoleByRelationType;
+        public override IDictionary<IRelationType, string> CommandTextForPrefetchRoleByRelationType => this.procedureNameForPrefetchRoleByRelationType;
+        public override IDictionary<IRelationType, string> CommandTextForSetRoleByRelationType => this.procedureNameForSetRoleByRelationType;
+        public override IDictionary<IRelationType, string> CommandTextForAddRoleByRelationType => this.procedureNameForAddRoleByRelationType;
+        public override IDictionary<IRelationType, string> CommandTextForRemoveRoleByRelationType => this.procedureNameForRemoveRoleByRelationType;
+        public override IDictionary<IRelationType, string> CommandTextForClearRoleByRelationType => this.procedureNameForClearRoleByRelationType;
+        public override IDictionary<IRelationType, string> CommandTextForGetAssociationByRelationType => this.procedureNameForGetAssociationByRelationType;
+        public override IDictionary<IRelationType, string> CommandTextForPrefetchAssociationByRelationType => this.procedureNameForPrefetchAssociationByRelationType;
 
         public override string StringCollation => string.Empty;
         public override string Ascending => "ASC NULLS FIRST";
         public override string Descending => "DESC NULLS LAST";
 
-        public override string ProcedureNameForInstantiate { get; }
-        public override string ProcedureNameForGetVersion { get; }
-        public override string ProcedureNameForUpdateVersion { get; }
+        public override string CommandTextForInstantiate { get; }
+        public override string CommandTextForGetVersion { get; }
+        public override string CommandTextForUpdateVersion { get; }
 
         internal const string SqlTypeForClass = "uuid";
         internal const string SqlTypeForObject = "bigint";
@@ -125,9 +128,9 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             this.ParamInvocationNameForObject = string.Format(ParameterInvocationFormat, ColumnNameForObject);
             this.ParamInvocationNameForClass = string.Format(ParameterInvocationFormat, ColumnNameForClass);
 
-            this.ProcedureNameForInstantiate = this.Database.SchemaName + "." + ProcedurePrefixForInstantiate;
-            this.ProcedureNameForGetVersion = this.Database.SchemaName + "." + ProcedurePrefixForGetVersion;
-            this.ProcedureNameForUpdateVersion = this.Database.SchemaName + "." + ProcedurePrefixForUpdateVersion;
+            this.CommandTextForInstantiate = this.Database.SchemaName + "." + ProcedurePrefixForInstantiate;
+            this.CommandTextForGetVersion = this.Database.SchemaName + "." + ProcedurePrefixForGetVersion;
+            this.CommandTextForUpdateVersion = this.Database.SchemaName + "." + ProcedurePrefixForUpdateVersion;
 
             this.ParamNameForAssociation = string.Format(ParameterFormat, ColumnNameForAssociation);
             this.ParamNameForCompositeRole = string.Format(ParameterFormat, ColumnNameForRole);
@@ -1384,8 +1387,8 @@ $$;";
         {
             // Update Version Ids
             var definition = $@"
-DROP FUNCTION IF EXISTS {this.ProcedureNameForUpdateVersion}({this.ObjectArrayParam.TypeName});
-CREATE FUNCTION {this.ProcedureNameForUpdateVersion}({this.ObjectArrayParam} {this.ObjectArrayParam.TypeName})
+DROP FUNCTION IF EXISTS {this.CommandTextForUpdateVersion}({this.ObjectArrayParam.TypeName});
+CREATE FUNCTION {this.CommandTextForUpdateVersion}({this.ObjectArrayParam} {this.ObjectArrayParam.TypeName})
     RETURNS void
     LANGUAGE sql
 AS $$
@@ -1394,7 +1397,7 @@ AS $$
     WHERE {ColumnNameForObject} IN (SELECT {ColumnNameForObject} FROM unnest({this.ObjectArrayParam}) as t({ColumnNameForObject}));
 $$;";
 
-            this.ProcedureDefinitionByName.Add(this.ProcedureNameForUpdateVersion, definition);
+            this.ProcedureDefinitionByName.Add(this.CommandTextForUpdateVersion, definition);
         }
 
         private void GetVersionIds()
@@ -1404,8 +1407,8 @@ $$;";
 
             // Get Version Ids
             var definition =
-$@"DROP FUNCTION IF EXISTS {this.ProcedureNameForGetVersion}({objectsType});
-CREATE FUNCTION {this.ProcedureNameForGetVersion}({objects} {objectsType})
+$@"DROP FUNCTION IF EXISTS {this.CommandTextForGetVersion}({objectsType});
+CREATE FUNCTION {this.CommandTextForGetVersion}({objects} {objectsType})
     RETURNS TABLE
     (
          {ColumnNameForObject} {SqlTypeForObject},
@@ -1419,7 +1422,7 @@ AS $$
     FROM {this.TableNameForObjects}
     WHERE {this.TableNameForObjects}.{ColumnNameForObject} IN (SELECT {ColumnNameForObject} FROM objects);
 $$;";
-            this.ProcedureDefinitionByName.Add(this.ProcedureNameForGetVersion, definition);
+            this.ProcedureDefinitionByName.Add(this.CommandTextForGetVersion, definition);
         }
 
         private void Instantiate()
@@ -1429,8 +1432,8 @@ $$;";
 
             // Instantiate
             var definition = $@"
-DROP FUNCTION IF EXISTS {this.ProcedureNameForInstantiate}({objectsType});
-CREATE FUNCTION {this.ProcedureNameForInstantiate}({objects} {objectsType})
+DROP FUNCTION IF EXISTS {this.CommandTextForInstantiate}({objectsType});
+CREATE FUNCTION {this.CommandTextForInstantiate}({objects} {objectsType})
     RETURNS TABLE
     (
          {ColumnNameForObject} {SqlTypeForObject},
@@ -1446,7 +1449,7 @@ AS $$
     WHERE {this.TableNameForObjects}.{ColumnNameForObject} IN (SELECT {ColumnNameForObject} FROM objects);
 $$;";
 
-            this.ProcedureDefinitionByName.Add(this.ProcedureNameForInstantiate, definition);
+            this.ProcedureDefinitionByName.Add(this.CommandTextForInstantiate, definition);
         }
     }
 }

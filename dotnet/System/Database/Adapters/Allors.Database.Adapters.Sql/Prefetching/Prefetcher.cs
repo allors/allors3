@@ -7,7 +7,6 @@ namespace Allors.Database.Adapters.Sql
 {
     using System;
     using System.Collections.Generic;
-    using System.Data;
     using System.Linq;
 
     using Meta;
@@ -87,10 +86,10 @@ namespace Allors.Database.Adapters.Sql
 
             if (!this.PrefetchUnitRolesByClass.TryGetValue(@class, out var command))
             {
-                var sql = this.Database.Mapping.ProcedureNameForPrefetchUnitRolesByClass[@class];
+                var sql = this.Database.Mapping.CommandTextForPrefetchUnitRolesByClass[@class];
                 command = this.Transaction.Connection.CreateCommand();
                 command.CommandText = sql;
-                command.CommandType = CommandType.StoredProcedure;
+                command.CommandType = this.Database.Mapping.CommandType;
                 this.prefetchUnitRolesByClass[@class] = command;
             }
 
@@ -187,8 +186,8 @@ namespace Allors.Database.Adapters.Sql
             if (!this.PrefetchCompositeRoleByRoleType.TryGetValue(roleType, out var command))
             {
                 command = this.Transaction.Connection.CreateCommand();
-                command.CommandText = this.Database.Mapping.ProcedureNameForPrefetchRoleByRelationType[roleType.RelationType];
-                command.CommandType = CommandType.StoredProcedure;
+                command.CommandText = this.Database.Mapping.CommandTextForPrefetchRoleByRelationType[roleType.RelationType];
+                command.CommandType = this.Database.Mapping.CommandType;
                 this.prefetchCompositeRoleByRoleType[roleType] = command;
             }
 
@@ -250,10 +249,10 @@ namespace Allors.Database.Adapters.Sql
 
             if (!this.PrefetchCompositeRoleByRoleType.TryGetValue(roleType, out var command))
             {
-                var sql = this.Database.Mapping.ProcedureNameForPrefetchRoleByRelationType[roleType.RelationType];
+                var sql = this.Database.Mapping.CommandTextForPrefetchRoleByRelationType[roleType.RelationType];
                 command = this.Transaction.Connection.CreateCommand();
                 command.CommandText = sql;
-                command.CommandType = CommandType.StoredProcedure;
+                command.CommandType = this.Database.Mapping.CommandType;
                 this.prefetchCompositeRoleByRoleType[roleType] = command;
             }
 
@@ -302,10 +301,10 @@ namespace Allors.Database.Adapters.Sql
 
             if (!this.PrefetchCompositesRoleByRoleType.TryGetValue(roleType, out var command))
             {
-                var sql = this.Database.Mapping.ProcedureNameForPrefetchRoleByRelationType[roleType.RelationType];
+                var sql = this.Database.Mapping.CommandTextForPrefetchRoleByRelationType[roleType.RelationType];
                 command = this.Transaction.Connection.CreateCommand();
                 command.CommandText = sql;
-                command.CommandType = CommandType.StoredProcedure;
+                command.CommandType = this.Database.Mapping.CommandType;
                 this.prefetchCompositesRoleByRoleType[roleType] = command;
             }
 
@@ -368,10 +367,10 @@ namespace Allors.Database.Adapters.Sql
 
             if (!this.PrefetchCompositesRoleByRoleType.TryGetValue(roleType, out var command))
             {
-                var sql = this.Database.Mapping.ProcedureNameForPrefetchRoleByRelationType[roleType.RelationType];
+                var sql = this.Database.Mapping.CommandTextForPrefetchRoleByRelationType[roleType.RelationType];
                 command = this.Transaction.Connection.CreateCommand();
                 command.CommandText = sql;
-                command.CommandType = CommandType.StoredProcedure;
+                command.CommandType = this.Database.Mapping.CommandType;
                 this.prefetchCompositesRoleByRoleType[roleType] = command;
             }
 
@@ -435,10 +434,10 @@ namespace Allors.Database.Adapters.Sql
             if (!this.PrefetchCompositeAssociationByAssociationType.TryGetValue(associationType, out var command))
             {
                 var roleType = associationType.RoleType;
-                var sql = this.Database.Mapping.ProcedureNameForPrefetchAssociationByRelationType[roleType.RelationType];
+                var sql = this.Database.Mapping.CommandTextForPrefetchAssociationByRelationType[roleType.RelationType];
                 command = this.Transaction.Connection.CreateCommand();
                 command.CommandText = sql;
-                command.CommandType = CommandType.StoredProcedure;
+                command.CommandType = this.Database.Mapping.CommandType;
                 this.prefetchCompositeAssociationByAssociationType[associationType] = command;
             }
 
@@ -489,10 +488,10 @@ namespace Allors.Database.Adapters.Sql
             if (!this.PrefetchCompositeAssociationByAssociationType.TryGetValue(associationType, out var command))
             {
                 var roleType = associationType.RoleType;
-                var sql = this.Database.Mapping.ProcedureNameForPrefetchAssociationByRelationType[roleType.RelationType];
+                var sql = this.Database.Mapping.CommandTextForPrefetchAssociationByRelationType[roleType.RelationType];
                 command = this.Transaction.Connection.CreateCommand();
                 command.CommandText = sql;
-                command.CommandType = CommandType.StoredProcedure;
+                command.CommandType = this.Database.Mapping.CommandType;
                 this.prefetchCompositeAssociationByAssociationType[associationType] = command;
             }
 
@@ -548,10 +547,10 @@ namespace Allors.Database.Adapters.Sql
             if (!this.PrefetchCompositeAssociationByAssociationType.TryGetValue(associationType, out var command))
             {
                 var roleType = associationType.RoleType;
-                var sql = this.Database.Mapping.ProcedureNameForPrefetchAssociationByRelationType[roleType.RelationType];
+                var sql = this.Database.Mapping.CommandTextForPrefetchAssociationByRelationType[roleType.RelationType];
                 command = this.Transaction.Connection.CreateCommand();
                 command.CommandText = sql;
-                command.CommandType = CommandType.StoredProcedure;
+                command.CommandType = this.Database.Mapping.CommandType;
                 this.prefetchCompositeAssociationByAssociationType[associationType] = command;
             }
 
@@ -625,10 +624,10 @@ namespace Allors.Database.Adapters.Sql
             if (!this.PrefetchCompositeAssociationByAssociationType.TryGetValue(associationType, out var command))
             {
                 var roleType = associationType.RoleType;
-                var sql = this.Database.Mapping.ProcedureNameForPrefetchAssociationByRelationType[roleType.RelationType];
+                var sql = this.Database.Mapping.CommandTextForPrefetchAssociationByRelationType[roleType.RelationType];
                 command = this.Transaction.Connection.CreateCommand();
                 command.CommandText = sql;
-                command.CommandType = CommandType.StoredProcedure;
+                command.CommandType = this.Database.Mapping.CommandType;
                 this.prefetchCompositeAssociationByAssociationType[associationType] = command;
             }
 
