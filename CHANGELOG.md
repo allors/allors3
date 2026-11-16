@@ -80,6 +80,10 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
 - Loading a population reports every relation of a relation type that the meta population no
   longer knows; the reporters stepped into the next relation, so the Memory adapter failed such a
   load and the SQL adapters reported every second relation only (#308).
+- After a load, the Memory and Snapshot adapters initialize the database services again, so that
+  the services read the loaded objects. The services kept what they had read while the population
+  was still empty: with Core's services the loaded permissions were present without their metadata,
+  and constructing security failed with a `KeyNotFoundException` (#323).
 - Loading a population reads an object type element without objects, self-closing or with an end
   tag, as an element that holds no objects. The form with an end tag failed the load on every
   adapter, and on the SqlClient and Npgsql adapters a self-closing element made the loader skip the
@@ -127,6 +131,11 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
 - `Save` on SQL Server and PostgreSQL wrote a relation to an object that another transaction had
   deleted, and a load refuses such a file. `Save` now leaves out a composite relation whose
   association or role is not among the objects that it writes (#343).
+- The `save` command of Core finds its file as `load` does: the `-f` option, then the
+  `populationFile` setting, then `population.xml`. The option had the default `population.xml`, so
+  that with the setting a `save` without `-f` wrote `population.xml` in the working directory,
+  another file than the one that a `load` without `-f` reads. The new `Commands.Tests` project in
+  the Core database test suite covers it (#345).
 - A unit value that the four adapters do not hold alike is refused on every adapter: a float that is
   NaN or an infinity, a string with the character U+0000 or with a lone surrogate, and a binary that
   is longer than the size of its role type. Setting a role to one throws an `ArgumentException`, and
