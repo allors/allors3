@@ -2157,6 +2157,15 @@ namespace Allors.Database.Adapters
 
                     Assert.True(exceptionThrown);
 
+                    // The message names the unit of the role type
+                    mark();
+                    var exception = Assert.Throws<ArgumentException>(() => c1A.Strategy.SetUnitRole(m.C1.C1AllorsUnique, "Oops"));
+                    Assert.Contains("Unique", exception.Message, StringComparison.OrdinalIgnoreCase);
+
+                    mark();
+                    exception = Assert.Throws<ArgumentException>(() => c1A.Strategy.SetUnitRole(m.C1.C1AllorsBinary, "Oops"));
+                    Assert.Contains("Binary", exception.Message, StringComparison.OrdinalIgnoreCase);
+
                     // Illegal objects
                     exceptionThrown = false;
                     try
