@@ -70,6 +70,17 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   `Allors.Database.Adapters.Sql.Npgsql` (#80, released on `v3.1` in June 2026);
   `ALLORS_TEST_NPGSQL_CONNECTION` is accepted as an alias. The account `postgres` with the password
   `root` on `localhost` is no longer built in, and CI's PostgreSQL service runs as the user `allors`.
+- The SqlClient adapter sends its statements itself. The 27 commands that called a stored procedure
+  send a statement with the same parameters: the statement that their procedure holds, except for
+  the creation of several objects in one call, `ITransaction.Create(class, count)`, which sends one
+  `INSERT` with two `OUTPUT` clauses where its procedure fills a table variable in a loop. SQL
+  Server accepts that statement only when the table of the class has no enabled trigger, foreign key
+  or check constraint and the objects table no enabled insert trigger; the adapter creates none of
+  these. `Init` still creates the procedures and a transaction still validates them, so a database
+  that was initialized before this change stays valid. The members `ProcedureNameFor…` of `Mapping`
+  in `Allors.Database.Adapters.Sql` are named `CommandTextFor…`: they hold a statement on SQL Server
+  and the name of a function on PostgreSQL, and the new member `Mapping.CommandType` says which
+  (#366).
 
 ### Fixed
 
