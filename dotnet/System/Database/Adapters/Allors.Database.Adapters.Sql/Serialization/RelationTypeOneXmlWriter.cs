@@ -65,7 +65,8 @@ namespace Allors.Database.Adapters.Sql
             {
                 this.isClosed = true;
 
-                if (this.isInUse)
+                // A writer that has failed takes nothing more: its exception is the one that the caller needs.
+                if (this.isInUse && this.xmlWriter.WriteState != WriteState.Error)
                 {
                     this.xmlWriter.WriteEndElement();
                 }
