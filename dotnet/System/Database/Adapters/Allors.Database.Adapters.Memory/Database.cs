@@ -76,6 +76,13 @@ namespace Allors.Database.Adapters.Memory
 
                 this.Transaction.Commit();
             }
+            catch
+            {
+                // A load that fails leaves the database as Init leaves it, without what it loaded before it failed.
+                this.IsLoading = false;
+                this.Init();
+                throw;
+            }
             finally
             {
                 this.IsLoading = false;

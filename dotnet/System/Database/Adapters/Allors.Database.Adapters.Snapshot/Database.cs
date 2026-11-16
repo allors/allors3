@@ -115,6 +115,14 @@ namespace Allors.Database.Adapters.Snapshot
                     transaction.Commit();
                 }
             }
+            catch
+            {
+                // A load that fails leaves the database as Init leaves it: its numbering of objects starts again, and
+                // its services forget what they read while it loaded.
+                this.IsLoading = false;
+                this.Init();
+                throw;
+            }
             finally
             {
                 this.IsLoading = false;
