@@ -127,6 +127,16 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
 - `Save` on SQL Server and PostgreSQL wrote a relation to an object that another transaction had
   deleted, and a load refuses such a file. `Save` now leaves out a composite relation whose
   association or role is not among the objects that it writes (#343).
+- A unit value that the four adapters do not hold alike is refused on every adapter: a float that is
+  NaN or an infinity, a string with the character U+0000 or with a lone surrogate, and a binary that
+  is longer than the size of its role type. Setting a role to one throws an `ArgumentException`, and
+  loading a population reports such a float, a string with U+0000 and such a binary as it reports a
+  value that its role type cannot hold. Every adapter accepted these values when a role was set. The
+  Memory and Snapshot adapters held them, and saved U+FFFD in the place of a lone surrogate. On SQL
+  Server the commit failed for the float, stored U+FFFD in the place of a lone surrogate and kept
+  the bytes of the binary up to the size without an error; a load stopped at the float and loaded
+  the binary cut to the size without a report. On PostgreSQL the commit failed for both strings,
+  and a load stopped at the string with U+0000 (#347).
 - A date and a decimal that a role returns have one form on every adapter, whenever they are read.
   Every date has the kind `Utc`: `DateTime.MinValue` and `DateTime.MaxValue` kept the kind in which
   they were set, and the SqlClient and Npgsql adapters returned them with the kind `Unspecified`
