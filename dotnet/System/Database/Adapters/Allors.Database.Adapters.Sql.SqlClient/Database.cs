@@ -6,6 +6,7 @@
 namespace Allors.Database.Adapters.Sql.SqlClient
 {
     using System;
+    using System.Runtime.ExceptionServices;
     using System.Xml;
     using Microsoft.Data.SqlClient;
 
@@ -144,7 +145,9 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                         finally
                         {
                             this.Init();
-                            throw e;
+
+                            // The exception of the load keeps the stack trace of where it was thrown.
+                            ExceptionDispatchInfo.Capture(e).Throw();
                         }
                     }
                 }

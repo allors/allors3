@@ -1721,6 +1721,9 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
                     {
                         var exception = Assert.ThrowsAny<Exception>(() => DoLoad(this.Population, file));
                         Assert.Same(failure, exception);
+
+                        // It keeps the stack trace of where it was thrown, which runs through the loader.
+                        Assert.Contains(".Load.", exception.StackTrace, StringComparison.Ordinal);
                     }
                     finally
                     {
