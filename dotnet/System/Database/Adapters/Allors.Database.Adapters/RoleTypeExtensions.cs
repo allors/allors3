@@ -11,6 +11,10 @@ namespace Allors.Database.Adapters
 
     public static class RoleTypeExtensions
     {
+        // The limit of a decimal role type by the digits that it has before the point, its precision less its scale:
+        // 10^0 to 10^28. A decimal role type has a precision from 1 to 28 and a scale from 0 to its precision.
+        private static readonly decimal[] Limits = CreateLimits();
+
         /// <summary>
         /// Assert that the unit is compatible with the IObjectType of the RoleType.
         /// </summary>
@@ -231,13 +235,19 @@ namespace Allors.Database.Adapters
                 return false;
             }
 
-            var limit = 1m;
-            for (var i = scale; i < precision; i++)
+            return Math.Abs(value) < Limits[precision - scale];
+        }
+
+        private static decimal[] CreateLimits()
+        {
+            var limits = new decimal[29];
+            limits[0] = 1m;
+            for (var i = 1; i < limits.Length; i++)
             {
-                limit *= 10m;
+                limits[i] = limits[i - 1] * 10m;
             }
 
-            return Math.Abs(value) < limit;
+            return limits;
         }
 
         // Gives a decimal that fits its role type the form in which SQL Server and PostgreSQL return it: a zero has
