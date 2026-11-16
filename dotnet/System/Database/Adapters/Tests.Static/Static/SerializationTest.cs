@@ -1735,6 +1735,46 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
         }
 
         [Fact]
+        public void SaveFailure()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+                var m = this.Transaction.Database.Context().M;
+
+                // The relations of a unit relation type and of a to-many relation type, each longer than the buffer of a
+                // writer, so that a stream can fail in the middle of either.
+                using (var transaction = this.Population.CreateTransaction())
+                {
+                    var objects = transaction.Create(m.C1, 80);
+                    foreach (var @object in objects)
+                    {
+                        @object.Strategy.SetUnitRole(m.C1.C1AllorsString, new string('x', 200));
+                        @object.Strategy.SetCompositesRole(m.C1.C1C1many2manies, objects);
+                    }
+
+                    transaction.Commit();
+                }
+
+                var saved = DoSave(this.Population);
+
+                foreach (var element in new[] { Serialization.RelationTypeUnit, Serialization.RelationTypeComposite })
+                {
+                    // The exception of the stream stops the save, and it is the exception that the caller gets. The
+                    // writer is left as it is: closing it writes to the stream again.
+                    var failure = new IOException("The stream fails.");
+                    var writer = XmlWriter.Create(new FailingStream("<" + element + " ", failure));
+
+                    var exception = Assert.ThrowsAny<Exception>(() => this.Population.Save(writer));
+                    Assert.Same(failure, exception);
+                }
+
+                // The population is as it was.
+                Assert.Equal(saved, DoSave(this.Population));
+            }
+        }
+
+        [Fact]
         public void CorruptFiles()
         {
             foreach (var init in this.Inits)
@@ -3196,6 +3236,54 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
             {
                 CultureInfo.CurrentCulture = this.culture;
                 CultureInfo.CurrentUICulture = this.uiCulture;
+            }
+        }
+
+        // A stream that fails at the write that carries a text, and at every write after it.
+        private sealed class FailingStream : Stream
+        {
+            private readonly byte[] text;
+            private readonly Exception failure;
+            private readonly List<byte> written = new List<byte>();
+
+            public FailingStream(string text, Exception failure)
+            {
+                this.text = Encoding.UTF8.GetBytes(text);
+                this.failure = failure;
+            }
+
+            public override bool CanRead => false;
+
+            public override bool CanSeek => false;
+
+            public override bool CanWrite => true;
+
+            public override long Length => this.written.Count;
+
+            public override long Position
+            {
+                get => this.written.Count;
+                set => throw new NotSupportedException();
+            }
+
+            public override void Flush()
+            {
+            }
+
+            public override int Read(byte[] buffer, int offset, int count) => throw new NotSupportedException();
+
+            public override long Seek(long offset, SeekOrigin origin) => throw new NotSupportedException();
+
+            public override void SetLength(long value) => throw new NotSupportedException();
+
+            public override void Write(byte[] buffer, int offset, int count)
+            {
+                this.written.AddRange(new ArraySegment<byte>(buffer, offset, count));
+
+                if (System.Runtime.InteropServices.CollectionsMarshal.AsSpan(this.written).IndexOf(this.text) >= 0)
+                {
+                    throw this.failure;
+                }
             }
         }
     }
