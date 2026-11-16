@@ -123,6 +123,42 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             }
         }
 
+        public void DropProcedures(string schema)
+        {
+            using (var connection = new SqlConnection(this.ConnectionString))
+            {
+                connection.Open();
+
+                var procedures = new List<string>();
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = @"
+SELECT routine_name
+FROM INFORMATION_SCHEMA.ROUTINES
+WHERE routine_schema = @routineSchema
+AND routine_type = 'PROCEDURE'";
+                    command.Parameters.Add("@routineSchema", SqlDbType.NVarChar).Value = schema;
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            procedures.Add(reader.GetString(0));
+                        }
+                    }
+                }
+
+                foreach (var procedure in procedures)
+                {
+                    using (var command = connection.CreateCommand())
+                    {
+                        command.CommandText = $"DROP PROCEDURE [{schema}].[{procedure}]";
+                        command.ExecuteNonQuery();
+                    }
+                }
+            }
+        }
+
         public void DropTable(string schema, string table)
         {
             using (var connection = new SqlConnection(this.ConnectionString))

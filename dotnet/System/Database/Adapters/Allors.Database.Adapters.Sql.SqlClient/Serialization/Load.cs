@@ -358,10 +358,9 @@ where c = '{@class.Id}'";
                         continue;
                     }
 
-                    var sql = this.database.Mapping.ProcedureNameForSetUnitRoleByRelationTypeByClass[@class][relationType];
+                    var sql = this.database.Mapping.CommandTextForSetUnitRoleByRelationTypeByClass[@class][relationType];
                     var command = con.CreateCommand();
                     command.CommandText = sql;
-                    command.CommandType = CommandType.StoredProcedure;
                     command.UnitTableParameter(relationType.RoleType, unitRelations);
                     command.ExecuteNonQuery();
                 }
@@ -390,8 +389,8 @@ where c = '{@class.Id}'";
                     reader);
 
                 var sql = relationType.RoleType.IsOne ?
-                              this.database.Mapping.ProcedureNameForSetRoleByRelationType[relationType] :
-                              this.database.Mapping.ProcedureNameForAddRoleByRelationType[relationType];
+                              this.database.Mapping.CommandTextForSetRoleByRelationType[relationType] :
+                              this.database.Mapping.CommandTextForAddRoleByRelationType[relationType];
 
                 // The relations are read while they are written. SQL Server does not accept a table-valued
                 // parameter without rows, so nothing is written for a relation type without a relation to load:
@@ -402,7 +401,6 @@ where c = '{@class.Id}'";
                     {
                         var command = con.CreateCommand();
                         command.CommandText = sql;
-                        command.CommandType = CommandType.StoredProcedure;
                         command.AddCompositeRoleTableParameter(Remaining(enumerator));
                         command.ExecuteNonQuery();
                     }

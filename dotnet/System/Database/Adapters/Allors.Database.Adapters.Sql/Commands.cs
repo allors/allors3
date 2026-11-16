@@ -7,7 +7,6 @@ namespace Allors.Database.Adapters.Sql
 {
     using System;
     using System.Collections.Generic;
-    using System.Data;
     using System.Linq;
     using System.Text;
 
@@ -82,10 +81,10 @@ namespace Allors.Database.Adapters.Sql
 
             if (!this.deleteObjectByClass.TryGetValue(@class, out var command))
             {
-                var sql = this.Database.Mapping.ProcedureNameForDeleteObjectByClass[@class];
+                var sql = this.Database.Mapping.CommandTextForDeleteObjectByClass[@class];
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
-                command.CommandType = CommandType.StoredProcedure;
+                command.CommandType = this.Database.Mapping.CommandType;
                 this.deleteObjectByClass[@class] = command;
             }
 
@@ -102,10 +101,10 @@ namespace Allors.Database.Adapters.Sql
 
             if (!this.getUnitRolesByClass.TryGetValue(@class, out var command))
             {
-                var sql = this.Database.Mapping.ProcedureNameForGetUnitRolesByClass[@class];
+                var sql = this.Database.Mapping.CommandTextForGetUnitRolesByClass[@class];
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
-                command.CommandType = CommandType.StoredProcedure;
+                command.CommandType = this.Database.Mapping.CommandType;
                 this.getUnitRolesByClass[@class] = command;
             }
 
@@ -190,10 +189,10 @@ namespace Allors.Database.Adapters.Sql
 
             if (!commandByRoleType.TryGetValue(roleType, out var command))
             {
-                var sql = this.Database.Mapping.ProcedureNameForSetUnitRoleByRelationTypeByClass[exclusiveRootClass][roleType.RelationType];
+                var sql = this.Database.Mapping.CommandTextForSetUnitRoleByRelationTypeByClass[exclusiveRootClass][roleType.RelationType];
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
-                command.CommandType = CommandType.StoredProcedure;
+                command.CommandType = this.Database.Mapping.CommandType;
             }
 
             command.UnitTableParameter(roleType, relations);
@@ -267,10 +266,10 @@ namespace Allors.Database.Adapters.Sql
 
             if (!this.getCompositeRoleByRoleType.TryGetValue(roleType, out var command))
             {
-                var sql = this.Database.Mapping.ProcedureNameForGetRoleByRelationType[roleType.RelationType];
+                var sql = this.Database.Mapping.CommandTextForGetRoleByRelationType[roleType.RelationType];
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
-                command.CommandType = CommandType.StoredProcedure;
+                command.CommandType = this.Database.Mapping.CommandType;
                 this.getCompositeRoleByRoleType[roleType] = command;
             }
 
@@ -295,11 +294,11 @@ namespace Allors.Database.Adapters.Sql
 
             if (!this.setCompositeRoleByRoleType.TryGetValue(roleType, out var command))
             {
-                var sql = this.Database.Mapping.ProcedureNameForSetRoleByRelationType[roleType.RelationType];
+                var sql = this.Database.Mapping.CommandTextForSetRoleByRelationType[roleType.RelationType];
 
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
-                command.CommandType = CommandType.StoredProcedure;
+                command.CommandType = this.Database.Mapping.CommandType;
                 this.setCompositeRoleByRoleType[roleType] = command;
             }
 
@@ -321,16 +320,16 @@ namespace Allors.Database.Adapters.Sql
                 string sql;
                 if (associationType.IsMany || !roleType.RelationType.ExistExclusiveDatabaseClasses)
                 {
-                    sql = this.Database.Mapping.ProcedureNameForGetRoleByRelationType[roleType.RelationType];
+                    sql = this.Database.Mapping.CommandTextForGetRoleByRelationType[roleType.RelationType];
                 }
                 else
                 {
-                    sql = this.Database.Mapping.ProcedureNameForGetRoleByRelationType[roleType.RelationType];
+                    sql = this.Database.Mapping.CommandTextForGetRoleByRelationType[roleType.RelationType];
                 }
 
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
-                command.CommandType = CommandType.StoredProcedure;
+                command.CommandType = this.Database.Mapping.CommandType;
                 this.getCompositesRoleByRoleType[roleType] = command;
             }
 
@@ -355,10 +354,10 @@ namespace Allors.Database.Adapters.Sql
 
             if (!this.addCompositeRoleByRoleType.TryGetValue(roleType, out var command))
             {
-                var sql = this.Database.Mapping.ProcedureNameForAddRoleByRelationType[roleType.RelationType];
+                var sql = this.Database.Mapping.CommandTextForAddRoleByRelationType[roleType.RelationType];
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
-                command.CommandType = CommandType.StoredProcedure;
+                command.CommandType = this.Database.Mapping.CommandType;
                 this.addCompositeRoleByRoleType[roleType] = command;
             }
 
@@ -373,10 +372,10 @@ namespace Allors.Database.Adapters.Sql
 
             if (!this.removeCompositeRoleByRoleType.TryGetValue(roleType, out var command))
             {
-                var sql = this.Database.Mapping.ProcedureNameForRemoveRoleByRelationType[roleType.RelationType];
+                var sql = this.Database.Mapping.CommandTextForRemoveRoleByRelationType[roleType.RelationType];
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
-                command.CommandType = CommandType.StoredProcedure;
+                command.CommandType = this.Database.Mapping.CommandType;
                 this.removeCompositeRoleByRoleType[roleType] = command;
             }
 
@@ -389,13 +388,13 @@ namespace Allors.Database.Adapters.Sql
         {
             this.clearCompositeAndCompositesRoleByRoleType ??= new Dictionary<IRoleType, ICommand>();
 
-            var sql = this.Database.Mapping.ProcedureNameForClearRoleByRelationType[roleType.RelationType];
+            var sql = this.Database.Mapping.CommandTextForClearRoleByRelationType[roleType.RelationType];
 
             if (!this.clearCompositeAndCompositesRoleByRoleType.TryGetValue(roleType, out var command))
             {
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
-                command.CommandType = CommandType.StoredProcedure;
+                command.CommandType = this.Database.Mapping.CommandType;
                 this.clearCompositeAndCompositesRoleByRoleType[roleType] = command;
             }
 
@@ -413,10 +412,10 @@ namespace Allors.Database.Adapters.Sql
             if (!this.getCompositeAssociationByAssociationType.TryGetValue(associationType, out var command))
             {
                 var roleType = associationType.RoleType;
-                var sql = this.Database.Mapping.ProcedureNameForGetAssociationByRelationType[roleType.RelationType];
+                var sql = this.Database.Mapping.CommandTextForGetAssociationByRelationType[roleType.RelationType];
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
-                command.CommandType = CommandType.StoredProcedure;
+                command.CommandType = this.Database.Mapping.CommandType;
                 this.getCompositeAssociationByAssociationType[associationType] = command;
             }
 
@@ -443,10 +442,10 @@ namespace Allors.Database.Adapters.Sql
             if (!this.getCompositesAssociationByAssociationType.TryGetValue(associationType, out var command))
             {
                 var roleType = associationType.RoleType;
-                var sql = this.Database.Mapping.ProcedureNameForGetAssociationByRelationType[roleType.RelationType];
+                var sql = this.Database.Mapping.CommandTextForGetAssociationByRelationType[roleType.RelationType];
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
-                command.CommandType = CommandType.StoredProcedure;
+                command.CommandType = this.Database.Mapping.CommandType;
                 this.getCompositesAssociationByAssociationType[associationType] = command;
             }
 
@@ -471,10 +470,10 @@ namespace Allors.Database.Adapters.Sql
 
             if (!this.createObjectByClass.TryGetValue(@class, out var command))
             {
-                var sql = this.Database.Mapping.ProcedureNameForCreateObjectByClass[@class];
+                var sql = this.Database.Mapping.CommandTextForCreateObjectByClass[@class];
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
-                command.CommandType = CommandType.StoredProcedure;
+                command.CommandType = this.Database.Mapping.CommandType;
                 this.createObjectByClass[@class] = command;
             }
 
@@ -491,11 +490,10 @@ namespace Allors.Database.Adapters.Sql
 
             if (!this.createObjectsByClass.TryGetValue(@class, out var command))
             {
-                var sql = this.Database.Mapping.ProcedureNameForCreateObjectsByClass[@class];
+                var sql = this.Database.Mapping.CommandTextForCreateObjectsByClass[@class];
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
-                command.CommandType = CommandType.StoredProcedure;
-                command.CommandType = CommandType.StoredProcedure;
+                command.CommandType = this.Database.Mapping.CommandType;
                 this.createObjectsByClass[@class] = command;
             }
 
@@ -562,10 +560,10 @@ WHERE {Mapping.ColumnNameForObject}={this.Database.Mapping.ParamInvocationNameFo
             var command = this.instantiateObjects;
             if (command == null)
             {
-                var sql = this.Database.Mapping.ProcedureNameForInstantiate;
+                var sql = this.Database.Mapping.CommandTextForInstantiate;
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
-                command.CommandType = CommandType.StoredProcedure;
+                command.CommandType = this.Database.Mapping.CommandType;
                 this.instantiateObjects = command;
             }
 
@@ -593,10 +591,10 @@ WHERE {Mapping.ColumnNameForObject}={this.Database.Mapping.ParamInvocationNameFo
 
             if (command == null)
             {
-                var sql = this.Database.Mapping.ProcedureNameForGetVersion;
+                var sql = this.Database.Mapping.CommandTextForGetVersion;
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
-                command.CommandType = CommandType.StoredProcedure;
+                command.CommandType = this.Database.Mapping.CommandType;
                 this.getVersion = command;
             }
 
@@ -623,10 +621,10 @@ WHERE {Mapping.ColumnNameForObject}={this.Database.Mapping.ParamInvocationNameFo
             var command = this.updateVersions;
             if (command == null)
             {
-                var sql = this.Database.Mapping.ProcedureNameForUpdateVersion;
+                var sql = this.Database.Mapping.CommandTextForUpdateVersion;
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
-                command.CommandType = CommandType.StoredProcedure;
+                command.CommandType = this.Database.Mapping.CommandType;
                 this.updateVersions = command;
             }
 

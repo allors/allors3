@@ -6,6 +6,7 @@
 namespace Allors.Database.Adapters.Sql
 {
     using System.Collections.Generic;
+    using System.Data;
     using Meta;
 
     public abstract class Mapping
@@ -26,23 +27,29 @@ namespace Allors.Database.Adapters.Sql
         public abstract string ParamInvocationFormat { get; }
         public abstract IDictionary<IRoleType, string> ParamInvocationNameByRoleType { get; }
 
-        public abstract IDictionary<IClass, string> ProcedureNameForDeleteObjectByClass { get; }
-        public abstract IDictionary<IClass, string> ProcedureNameForCreateObjectsByClass { get; }
-        public abstract IDictionary<IClass, string> ProcedureNameForGetUnitRolesByClass { get; }
-        public abstract IDictionary<IClass, IDictionary<IRelationType, string>> ProcedureNameForSetUnitRoleByRelationTypeByClass { get; }
-        public abstract IDictionary<IRelationType, string> ProcedureNameForGetRoleByRelationType { get; }
-        public abstract IDictionary<IRelationType, string> ProcedureNameForSetRoleByRelationType { get; }
-        public abstract IDictionary<IRelationType, string> ProcedureNameForAddRoleByRelationType { get; }
-        public abstract IDictionary<IRelationType, string> ProcedureNameForRemoveRoleByRelationType { get; }
-        public abstract IDictionary<IRelationType, string> ProcedureNameForClearRoleByRelationType { get; }
-        public abstract IDictionary<IRelationType, string> ProcedureNameForGetAssociationByRelationType { get; }
-        public abstract IDictionary<IClass, string> ProcedureNameForCreateObjectByClass { get; }
-        public abstract string ProcedureNameForInstantiate { get; }
-        public abstract string ProcedureNameForGetVersion { get; }
-        public abstract string ProcedureNameForUpdateVersion { get; }
-        public abstract IDictionary<IClass, string> ProcedureNameForPrefetchUnitRolesByClass { get; }
-        public abstract IDictionary<IRelationType, string> ProcedureNameForPrefetchRoleByRelationType { get; }
-        public abstract IDictionary<IRelationType, string> ProcedureNameForPrefetchAssociationByRelationType { get; }
+        /// <summary>
+        /// The type of the commands whose text this mapping holds: <see cref="CommandType.Text"/> when the
+        /// text is a statement, <see cref="CommandType.StoredProcedure"/> when it is the name of a procedure.
+        /// </summary>
+        public abstract CommandType CommandType { get; }
+
+        public abstract IDictionary<IClass, string> CommandTextForDeleteObjectByClass { get; }
+        public abstract IDictionary<IClass, string> CommandTextForCreateObjectsByClass { get; }
+        public abstract IDictionary<IClass, string> CommandTextForGetUnitRolesByClass { get; }
+        public abstract IDictionary<IClass, IDictionary<IRelationType, string>> CommandTextForSetUnitRoleByRelationTypeByClass { get; }
+        public abstract IDictionary<IRelationType, string> CommandTextForGetRoleByRelationType { get; }
+        public abstract IDictionary<IRelationType, string> CommandTextForSetRoleByRelationType { get; }
+        public abstract IDictionary<IRelationType, string> CommandTextForAddRoleByRelationType { get; }
+        public abstract IDictionary<IRelationType, string> CommandTextForRemoveRoleByRelationType { get; }
+        public abstract IDictionary<IRelationType, string> CommandTextForClearRoleByRelationType { get; }
+        public abstract IDictionary<IRelationType, string> CommandTextForGetAssociationByRelationType { get; }
+        public abstract IDictionary<IClass, string> CommandTextForCreateObjectByClass { get; }
+        public abstract string CommandTextForInstantiate { get; }
+        public abstract string CommandTextForGetVersion { get; }
+        public abstract string CommandTextForUpdateVersion { get; }
+        public abstract IDictionary<IClass, string> CommandTextForPrefetchUnitRolesByClass { get; }
+        public abstract IDictionary<IRelationType, string> CommandTextForPrefetchRoleByRelationType { get; }
+        public abstract IDictionary<IRelationType, string> CommandTextForPrefetchAssociationByRelationType { get; }
 
         public abstract string StringCollation { get; }
         public abstract string Ascending { get; }

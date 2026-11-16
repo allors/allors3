@@ -59,7 +59,7 @@ namespace Allors.Database.Adapters
                 init();
                 var m = this.Transaction.Database.Context().M;
 
-                int[] runs = { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048 };
+                int[] runs = { 0, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048 };
 
                 var total = 0;
                 foreach (var run in runs)
@@ -94,6 +94,10 @@ namespace Allors.Database.Adapters
                     var c2s = (C2[])this.Transaction.Create(m.C2, run);
                     Assert.Equal(run, c2s.Length);
                 }
+
+                // A count below zero is refused, and nothing is created.
+                Assert.Throws<ArgumentOutOfRangeException>(() => this.Transaction.Create(m.C1, -1));
+                Assert.Equal(total, this.GetExtent(m.C1).Length);
             }
         }
 
