@@ -14,7 +14,7 @@ namespace Allors.Database.Adapters.Sql
         /// <summary>
         /// Asks for a prepared command, so that the server parses and plans its statement once for a connection
         /// instead of at every execution. A command may be prepared when it is first executed, with its parameters.
-        /// A prepared statement stays on its connection, so this is for a command whose text is one of a fixed set.
+        /// A prepared statement stays on its connection for as long as the connection lives.
         /// </summary>
         void Prepare();
 

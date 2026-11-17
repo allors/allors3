@@ -243,9 +243,10 @@ namespace Allors.Database.Adapters.Sql
 
                 sql.Append("\nWHERE ").Append(Mapping.ColumnNameForObject).Append('=').Append(this.Database.Mapping.ParamInvocationNameForObject).Append('\n');
 
-                // Not prepared: this statement differs with every combination of unit roles that changed together
-                // on one object, and a prepared statement stays on its connection.
+                // Every combination of unit roles that changed together on one object is a statement of its own, and
+                // each of them stays prepared on its connection.
                 command.CommandText = sql.ToString();
+                command.Prepare();
                 command.ExecuteNonQuery();
 
                 setUnitRoleByRoleType.Add(sortedRoleTypes, command);

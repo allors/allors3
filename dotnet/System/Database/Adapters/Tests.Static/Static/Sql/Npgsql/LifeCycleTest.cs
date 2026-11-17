@@ -27,10 +27,9 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 
         protected override ITransaction CreateTransaction() => this.profile.CreateTransaction();
 
-        // The adapter prepares the commands whose statement the mapping fixes: after a transaction has read an
-        // object, its connection holds prepared statements. The update of the unit roles that changed together on
-        // one object is not prepared: its statement differs with every combination of roles, and a prepared
-        // statement stays on its connection.
+        // The adapter prepares its commands: after a transaction has read an object, its connection holds
+        // prepared statements, and after it has flushed two unit roles of the object, the update of those two
+        // roles is among them.
         [Fact]
         public void TransactionPreparesItsCommands()
         {
@@ -53,7 +52,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                     transaction.State.Flush();
 
                     Assert.Equal(1L, Count(transaction, "SELECT COUNT(*) FROM allors.c1 WHERE c1allorsstring = 'a' AND c1allorsinteger = 1"));
-                    Assert.Equal(0L, Count(transaction, "SELECT COUNT(*) FROM pg_prepared_statements WHERE statement LIKE 'UPDATE%c1allorsstring%' AND statement LIKE 'UPDATE%c1allorsinteger%'"));
+                    Assert.NotEqual(0L, Count(transaction, "SELECT COUNT(*) FROM pg_prepared_statements WHERE statement LIKE 'UPDATE%c1allorsstring%' AND statement LIKE 'UPDATE%c1allorsinteger%'"));
                 }
             }
         }
