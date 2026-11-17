@@ -234,6 +234,13 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   from the removal of the role or, for a one-to-many relation type, from an earlier prefetch of the
   association. It threw a `NullReferenceException`, for a one-to-one or one-to-many relation type
   that the adapters keep in a column of a class table (#372, #374).
+- On the SqlClient and Npgsql adapters a prefetch uses what its transaction already knows of a
+  to-many association, and of a to-one association of a relation type that the adapters keep in a
+  relation table. It applies a nested policy to such an association when the transaction knows it,
+  and it does not fetch a to-many association again that the transaction knows for every object of
+  the prefetch. The policy was applied only to an association that the prefetch fetched, so that
+  reading a role that the policy names still went to the database, and a to-many association was
+  fetched at every prefetch (#375).
 - The Memory adapter's extent sort treats two objects without a value for a sort order as equal
   and lets the next sort order decide; the comparer contradicted itself, so short lists kept an
   arbitrary order and longer ones could fail the sort (#309).
