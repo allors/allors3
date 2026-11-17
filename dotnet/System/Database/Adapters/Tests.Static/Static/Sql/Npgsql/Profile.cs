@@ -20,6 +20,8 @@ namespace Allors.Database.Adapters.Sql.Npgsql
         private readonly IConnectionFactory connectionFactory;
         private readonly ICacheFactory cacheFactory;
 
+        private readonly Prefetchers prefetchers = new Prefetchers();
+
         public Profile(string database, IConnectionFactory connectionFactory = null, ICacheFactory cacheFactory = null)
         {
             this.database = database.ToLowerInvariant();
@@ -36,6 +38,19 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                     () => { },
                     () => this.Transaction.Commit(),
                 };
+
+                if (Settings.ExtraMarkers)
+                {
+                    markers.Add(
+                        () =>
+                        {
+                            foreach (var @class in this.Transaction.Database.MetaPopulation.DatabaseClasses)
+                            {
+                                var prefetchPolicy = this.prefetchers[@class];
+                                this.Transaction.Prefetch(prefetchPolicy, this.Transaction.Extent(@class).ToArray());
+                            }
+                        });
+                }
 
                 return markers.ToArray();
             }
