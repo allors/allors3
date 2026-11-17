@@ -187,6 +187,33 @@ namespace Allors.Database.Adapters.Sql
                 setup.Commit();
             }
 
+            // An existence check knows the association IDs without instantiating their objects.
+            // A fresh database cache ensures that a flat prefetch must load those references.
+            for (var i = 0; i < associationTypes.Length; i++)
+            {
+                var associationType = associationTypes[i];
+                if (!associationType.IsMany)
+                {
+                    continue;
+                }
+
+                var flatDatabase = (Database)this.CreateDatabase();
+                var flatSink = new Sink();
+                flatDatabase.Sink = flatSink;
+                using var flatTransaction = (Transaction)flatDatabase.CreateTransaction();
+                var c2 = (C2)flatTransaction.Instantiate(c2Ids[i]);
+                Assert.True(c2.Strategy.ExistCompositesAssociation(associationType));
+
+                var prefetchPolicy = new PrefetchPolicyBuilder().WithRule(associationType).Build();
+                flatTransaction.Prefetch(prefetchPolicy, c2);
+
+                var transactionSink = flatSink.TreeByTransaction[flatTransaction];
+                transactionSink.Clear();
+
+                Assert.Single(c2.Strategy.GetCompositesAssociation<C1>(associationType));
+                Assert.Empty(transactionSink.Nodes);
+            }
+
             var sink = new Sink();
             database.Sink = sink;
 
