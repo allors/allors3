@@ -79,6 +79,18 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   these. The members `ProcedureNameFor…` of `Mapping` in `Allors.Database.Adapters.Sql` are named
   `CommandTextFor…`: they hold a statement on SQL Server and the name of a function on PostgreSQL,
   and the new member `Mapping.CommandType` says which (#366).
+- The Npgsql adapter prepares its commands. A transaction has 27 commands that are not extents: they
+  create, instantiate and delete objects, read and write roles, read associations, read and update
+  versions, and prefetch. The mapping fixes the statement of 26 of them, and each of those is
+  prepared when it is first executed, so that PostgreSQL parses and plans it once for a connection
+  instead of at every execution. Npgsql keeps a prepared statement for as long as its physical
+  connection lives: a later transaction that gets the connection from the pool finds the statement
+  there, and the server holds it for that long as well. Not prepared are the statements of an
+  extent, of a load and of a save, and the `UPDATE` for the unit roles that changed together on one
+  object, whose text differs with every combination of roles. `ICommand` of
+  `Allors.Database.Adapters.Sql` has the new member `Prepare()`, which `Commands` and `Prefetcher`
+  call for the commands that they prepare, and which another implementation of `ICommand` has to
+  add. The SqlClient adapter does nothing in it (#370).
 
 ### Fixed
 
@@ -213,6 +225,8 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   exception of the stream, as on the Memory and Snapshot adapters. The SQL adapters gave
   `InvalidOperationException: The Writer is closed or in error state.` in its place: their relation
   writers wrote an end element to the writer that had just failed (#364).
+- A transaction on the SqlClient and Npgsql adapters keeps the command that sets a unit role, as it
+  keeps its other commands. It created that command again for every flush that set the role (#370).
 - The Memory adapter's extent sort treats two objects without a value for a sort order as equal
   and lets the next sort order decide; the comparer contradicted itself, so short lists kept an
   arbitrary order and longer ones could fail the sort (#309).
