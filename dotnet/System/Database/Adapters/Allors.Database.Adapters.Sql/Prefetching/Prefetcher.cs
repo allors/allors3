@@ -90,6 +90,7 @@ namespace Allors.Database.Adapters.Sql
                 command = this.Transaction.Connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = this.Database.Mapping.CommandType;
+                command.Prepare();
                 this.prefetchUnitRolesByClass[@class] = command;
             }
 
@@ -188,6 +189,7 @@ namespace Allors.Database.Adapters.Sql
                 command = this.Transaction.Connection.CreateCommand();
                 command.CommandText = this.Database.Mapping.CommandTextForPrefetchRoleByRelationType[roleType.RelationType];
                 command.CommandType = this.Database.Mapping.CommandType;
+                command.Prepare();
                 this.prefetchCompositeRoleByRoleType[roleType] = command;
             }
 
@@ -253,6 +255,7 @@ namespace Allors.Database.Adapters.Sql
                 command = this.Transaction.Connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = this.Database.Mapping.CommandType;
+                command.Prepare();
                 this.prefetchCompositeRoleByRoleType[roleType] = command;
             }
 
@@ -305,6 +308,7 @@ namespace Allors.Database.Adapters.Sql
                 command = this.Transaction.Connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = this.Database.Mapping.CommandType;
+                command.Prepare();
                 this.prefetchCompositesRoleByRoleType[roleType] = command;
             }
 
@@ -371,6 +375,7 @@ namespace Allors.Database.Adapters.Sql
                 command = this.Transaction.Connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = this.Database.Mapping.CommandType;
+                command.Prepare();
                 this.prefetchCompositesRoleByRoleType[roleType] = command;
             }
 
@@ -438,6 +443,7 @@ namespace Allors.Database.Adapters.Sql
                 command = this.Transaction.Connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = this.Database.Mapping.CommandType;
+                command.Prepare();
                 this.prefetchCompositeAssociationByAssociationType[associationType] = command;
             }
 
@@ -492,6 +498,7 @@ namespace Allors.Database.Adapters.Sql
                 command = this.Transaction.Connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = this.Database.Mapping.CommandType;
+                command.Prepare();
                 this.prefetchCompositeAssociationByAssociationType[associationType] = command;
             }
 
@@ -551,6 +558,7 @@ namespace Allors.Database.Adapters.Sql
                 command = this.Transaction.Connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = this.Database.Mapping.CommandType;
+                command.Prepare();
                 this.prefetchCompositeAssociationByAssociationType[associationType] = command;
             }
 
@@ -628,6 +636,7 @@ namespace Allors.Database.Adapters.Sql
                 command = this.Transaction.Connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = this.Database.Mapping.CommandType;
+                command.Prepare();
                 this.prefetchCompositeAssociationByAssociationType[associationType] = command;
             }
 

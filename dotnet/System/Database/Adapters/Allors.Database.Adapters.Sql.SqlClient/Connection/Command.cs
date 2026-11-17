@@ -39,6 +39,12 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         public void Dispose() => this.command.Dispose();
 
+        // SQL Server keeps the plan of a statement with parameters in a cache that every connection shares, so
+        // this adapter has nothing to prepare.
+        public void Prepare()
+        {
+        }
+
         public void AddInParameter(string parameterName, object value)
         {
             var parameter = this.command.Parameters.Contains(parameterName) ? this.command.Parameters[parameterName] : null;
