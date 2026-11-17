@@ -196,6 +196,7 @@ namespace Allors.Database.Adapters.Sql
                 command.CommandText = sql;
                 command.CommandType = this.Database.Mapping.CommandType;
                 command.Prepare();
+                commandByRoleType[roleType] = command;
             }
 
             command.UnitTableParameter(roleType, relations);
