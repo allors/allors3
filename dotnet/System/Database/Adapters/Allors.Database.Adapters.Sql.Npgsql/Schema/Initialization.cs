@@ -33,17 +33,28 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             }
             else
             {
-                this.CreateSchema();
+                try
+                {
+                    this.CreateSchema();
 
-                this.DropProcedures();
+                    this.DropProcedures();
 
-                this.DropTables();
+                    this.DropTables();
 
-                this.CreateTables();
+                    this.CreateTables();
 
-                this.CreateProcedures();
+                    this.CreateProcedures();
 
-                this.CreateIndeces();
+                    this.CreateIndeces();
+                }
+                finally
+                {
+                    // A rebuild can change the result types of prepared statements, even if it fails part way through.
+                    using (var connection = new NpgsqlConnection(this.database.ConnectionString))
+                    {
+                        NpgsqlConnection.ClearPool(connection);
+                    }
+                }
             }
         }
 
