@@ -85,6 +85,7 @@ namespace Allors.Database.Adapters.Sql
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = this.Database.Mapping.CommandType;
+                command.Prepare();
                 this.deleteObjectByClass[@class] = command;
             }
 
@@ -105,6 +106,7 @@ namespace Allors.Database.Adapters.Sql
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = this.Database.Mapping.CommandType;
+                command.Prepare();
                 this.getUnitRolesByClass[@class] = command;
             }
 
@@ -193,6 +195,8 @@ namespace Allors.Database.Adapters.Sql
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = this.Database.Mapping.CommandType;
+                command.Prepare();
+                commandByRoleType[roleType] = command;
             }
 
             command.UnitTableParameter(roleType, relations);
@@ -239,7 +243,10 @@ namespace Allors.Database.Adapters.Sql
 
                 sql.Append("\nWHERE ").Append(Mapping.ColumnNameForObject).Append('=').Append(this.Database.Mapping.ParamInvocationNameForObject).Append('\n');
 
+                // Every combination of unit roles that changed together on one object is a statement of its own, and
+                // each of them stays prepared on its connection.
                 command.CommandText = sql.ToString();
+                command.Prepare();
                 command.ExecuteNonQuery();
 
                 setUnitRoleByRoleType.Add(sortedRoleTypes, command);
@@ -270,6 +277,7 @@ namespace Allors.Database.Adapters.Sql
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = this.Database.Mapping.CommandType;
+                command.Prepare();
                 this.getCompositeRoleByRoleType[roleType] = command;
             }
 
@@ -299,6 +307,7 @@ namespace Allors.Database.Adapters.Sql
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = this.Database.Mapping.CommandType;
+                command.Prepare();
                 this.setCompositeRoleByRoleType[roleType] = command;
             }
 
@@ -330,6 +339,7 @@ namespace Allors.Database.Adapters.Sql
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = this.Database.Mapping.CommandType;
+                command.Prepare();
                 this.getCompositesRoleByRoleType[roleType] = command;
             }
 
@@ -358,6 +368,7 @@ namespace Allors.Database.Adapters.Sql
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = this.Database.Mapping.CommandType;
+                command.Prepare();
                 this.addCompositeRoleByRoleType[roleType] = command;
             }
 
@@ -376,6 +387,7 @@ namespace Allors.Database.Adapters.Sql
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = this.Database.Mapping.CommandType;
+                command.Prepare();
                 this.removeCompositeRoleByRoleType[roleType] = command;
             }
 
@@ -395,6 +407,7 @@ namespace Allors.Database.Adapters.Sql
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = this.Database.Mapping.CommandType;
+                command.Prepare();
                 this.clearCompositeAndCompositesRoleByRoleType[roleType] = command;
             }
 
@@ -416,6 +429,7 @@ namespace Allors.Database.Adapters.Sql
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = this.Database.Mapping.CommandType;
+                command.Prepare();
                 this.getCompositeAssociationByAssociationType[associationType] = command;
             }
 
@@ -446,6 +460,7 @@ namespace Allors.Database.Adapters.Sql
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = this.Database.Mapping.CommandType;
+                command.Prepare();
                 this.getCompositesAssociationByAssociationType[associationType] = command;
             }
 
@@ -474,6 +489,7 @@ namespace Allors.Database.Adapters.Sql
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = this.Database.Mapping.CommandType;
+                command.Prepare();
                 this.createObjectByClass[@class] = command;
             }
 
@@ -494,6 +510,7 @@ namespace Allors.Database.Adapters.Sql
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = this.Database.Mapping.CommandType;
+                command.Prepare();
                 this.createObjectsByClass[@class] = command;
             }
 
@@ -535,6 +552,7 @@ WHERE {Mapping.ColumnNameForObject}={this.Database.Mapping.ParamInvocationNameFo
 
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
+                command.Prepare();
                 this.instantiateObject = command;
             }
 
@@ -564,6 +582,7 @@ WHERE {Mapping.ColumnNameForObject}={this.Database.Mapping.ParamInvocationNameFo
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = this.Database.Mapping.CommandType;
+                command.Prepare();
                 this.instantiateObjects = command;
             }
 
@@ -595,6 +614,7 @@ WHERE {Mapping.ColumnNameForObject}={this.Database.Mapping.ParamInvocationNameFo
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = this.Database.Mapping.CommandType;
+                command.Prepare();
                 this.getVersion = command;
             }
 
@@ -625,6 +645,7 @@ WHERE {Mapping.ColumnNameForObject}={this.Database.Mapping.ParamInvocationNameFo
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = this.Database.Mapping.CommandType;
+                command.Prepare();
                 this.updateVersions = command;
             }
 

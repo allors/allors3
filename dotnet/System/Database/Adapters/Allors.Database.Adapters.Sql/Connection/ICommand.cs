@@ -11,6 +11,13 @@ namespace Allors.Database.Adapters.Sql
 
         string CommandText { get; set; }
 
+        /// <summary>
+        /// Asks for a prepared command, so that the server parses and plans its statement once for a connection
+        /// instead of at every execution. A command may be prepared when it is first executed, with its parameters.
+        /// A prepared statement stays on its connection for as long as the connection lives.
+        /// </summary>
+        void Prepare();
+
         void AddInParameter(string parameterName, object value);
 
         void ObjectParameter(long objectId);

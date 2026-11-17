@@ -19,6 +19,8 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 
         private readonly NpgsqlCommand command;
 
+        private bool prepare;
+
         public Command(Mapping mapping, NpgsqlCommand command)
         {
             this.mapping = mapping;
@@ -38,6 +40,8 @@ namespace Allors.Database.Adapters.Sql.Npgsql
         }
 
         public void Dispose() => this.command.Dispose();
+
+        public void Prepare() => this.prepare = true;
 
         public void AddInParameter(string parameterName, object value)
         {
@@ -109,9 +113,17 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             roleParameter.Value = compositeRelations.Select(v => v.Role).ToArray();
         }
 
-        public object ExecuteScalar() => this.command.ExecuteScalar();
+        public object ExecuteScalar()
+        {
+            this.PrepareBeforeExecution();
+            return this.command.ExecuteScalar();
+        }
 
-        public void ExecuteNonQuery() => this.command.ExecuteNonQuery();
+        public void ExecuteNonQuery()
+        {
+            this.PrepareBeforeExecution();
+            this.command.ExecuteNonQuery();
+        }
 
         public object GetValue(IReader reader, string tag, int i) =>
             tag switch
@@ -127,7 +139,22 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                 _ => throw new ArgumentException("Unknown Unit Tag: " + tag),
             };
 
-        public IReader ExecuteReader() => new Reader(this.command.ExecuteReader());
+        public IReader ExecuteReader()
+        {
+            this.PrepareBeforeExecution();
+            return new Reader(this.command.ExecuteReader());
+        }
+
+        // Npgsql prepares a statement for the types of its parameters, and a command gets its parameters after its
+        // text: so a command is prepared when it is first executed. Npgsql keeps a prepared statement for the
+        // lifetime of its physical connection, so a later command with the same text finds it there.
+        private void PrepareBeforeExecution()
+        {
+            if (this.prepare && !this.command.IsPrepared)
+            {
+                this.command.Prepare();
+            }
+        }
 
         private NpgsqlParameter GetOrCreateParameter(string parameterName, NpgsqlDbType dbType)
         {
