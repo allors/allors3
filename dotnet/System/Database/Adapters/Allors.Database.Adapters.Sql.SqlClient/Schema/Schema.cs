@@ -20,7 +20,6 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
             this.TableByName = new Dictionary<string, SchemaTable>();
             this.TableTypeByName = new Dictionary<string, SchemaTableType>();
-            this.ProcedureByName = new Dictionary<string, SchemaProcedure>();
             this.IndexByIndexNameByTableName = new Dictionary<string, Dictionary<string, SchemaIndex>>();
 
             using (var connection = new SqlConnection(database.ConnectionString))
@@ -144,32 +143,6 @@ where tt.schema_id = SCHEMA_ID(@domainSchema)";
                         }
                     }
 
-                    // Procedures
-                    cmdText = @"
-SELECT o.name as routine_name, m.definition as routine_definition
-    FROM sys.objects AS o
-	INNER JOIN sys.schemas AS s ON o.[schema_id] = s.[schema_id]
-	INNER JOIN sys.sql_modules AS m ON o.[object_id] = m.[object_id]
-    WHERE OBJECT_SCHEMA_NAME(o.[object_id]) = @routineSchema
-    AND o.[type] IN ('P')";
-
-                    using (var command = new SqlCommand(cmdText, connection))
-                    {
-                        command.Parameters.Add("@routineSchema", SqlDbType.NVarChar).Value = database.SchemaName;
-                        command.CommandTimeout = 60 * 5;
-                        using (var reader = command.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                var routineName = (string)reader["routine_name"];
-                                var routineDefinition = (string)reader["routine_definition"];
-                                var lowercaseRoutineName = routineName.Trim().ToLowerInvariant();
-                                var fullyQualifiedName = $"{database.SchemaName}.{lowercaseRoutineName}";
-                                this.ProcedureByName[fullyQualifiedName] = new SchemaProcedure(this, routineName, routineDefinition);
-                            }
-                        }
-                    }
-
                     // Indeces
                     cmdText = @"
 SELECT	o.name AS table_name,
@@ -226,8 +199,6 @@ WHERE
 
         public Dictionary<string, SchemaTableType> TableTypeByName { get; }
 
-        public Dictionary<string, SchemaProcedure> ProcedureByName { get; }
-
         public Dictionary<string, Dictionary<string, SchemaIndex>> IndexByIndexNameByTableName { get; }
 
         public SchemaTable GetTable(string tableName)
@@ -240,12 +211,6 @@ WHERE
         {
             this.TableTypeByName.TryGetValue(tableTypeName, out var tableType);
             return tableType;
-        }
-
-        public SchemaProcedure GetProcedure(string procedureName)
-        {
-            this.ProcedureByName.TryGetValue(procedureName, out var procedure);
-            return procedure;
         }
 
         public SchemaIndex GetIndex(string tableName, string indexName)
