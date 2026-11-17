@@ -4473,6 +4473,55 @@ namespace Allors.Database.Adapters
                     this.Transaction.Rollback();
 
                     Assert.Equal(c2A, c1A.C1C2one2one);
+
+                    // RelationType from I12 to C2, which the SQL adapters store in a relation table.
+                    // The prefetch after the commit comes before the first read: the SQL adapters cache a role
+                    // that was read, and a prefetch does not fetch a cached role again.
+                    c1A.I12C2one2one = c2A;
+
+                    this.Transaction.Prefetch(new IPropertyType[] { m.C1.I12C2one2one }, new[] { c1A.Strategy.ObjectId });
+                    if (twice)
+                    {
+                        this.Transaction.Prefetch(new IPropertyType[] { m.C1.I12C2one2one }, new[] { c1A.Strategy.ObjectId });
+                    }
+
+                    Assert.Equal(c2A, c1A.I12C2one2one);
+
+                    this.Transaction.Commit();
+
+                    this.Transaction.Prefetch(new IPropertyType[] { m.C1.I12C2one2one }, new[] { c1A.Strategy.ObjectId });
+                    if (twice)
+                    {
+                        this.Transaction.Prefetch(new IPropertyType[] { m.C1.I12C2one2one }, new[] { c1A.Strategy.ObjectId });
+                    }
+
+                    Assert.Equal(c2A, c1A.I12C2one2one);
+
+                    this.Transaction.Commit();
+
+                    c1A.I12C2one2one = c2b;
+
+                    this.Transaction.Prefetch(new IPropertyType[] { m.C1.I12C2one2one }, new[] { c1A.Strategy.ObjectId });
+                    if (twice)
+                    {
+                        this.Transaction.Prefetch(new IPropertyType[] { m.C1.I12C2one2one }, new[] { c1A.Strategy.ObjectId });
+                    }
+
+                    Assert.Equal(c2b, c1A.I12C2one2one);
+
+                    this.Transaction.Rollback();
+
+                    this.Transaction.Prefetch(new IPropertyType[] { m.C1.I12C2one2one }, new[] { c1A.Strategy.ObjectId });
+                    if (twice)
+                    {
+                        this.Transaction.Prefetch(new IPropertyType[] { m.C1.I12C2one2one }, new[] { c1A.Strategy.ObjectId });
+                    }
+
+                    Assert.Equal(c2A, c1A.I12C2one2one);
+
+                    this.Transaction.Rollback();
+
+                    Assert.Equal(c2A, c1A.I12C2one2one);
                 }
             }
         }
@@ -4543,6 +4592,55 @@ namespace Allors.Database.Adapters
                     this.Transaction.Rollback();
 
                     Assert.Equal(c2a, c1a.C1C2one2one);
+
+                    // RelationType from I12 to C2, which the SQL adapters store in a relation table.
+                    // The prefetch after the commit comes before the first read: the SQL adapters cache a role
+                    // that was read, and a prefetch does not fetch a cached role again.
+                    prefetchPolicy = new PrefetchPolicyBuilder()
+                        .WithRule(m.C1.I12C2one2one, new IPropertyType[] { m.C2.C2AllorsString })
+                        .Build();
+
+                    c1a.I12C2one2one = c2a;
+
+                    this.Transaction.Prefetch(prefetchPolicy, c1a);
+                    if (twice)
+                    {
+                        this.Transaction.Prefetch(prefetchPolicy, c1a);
+                    }
+
+                    Assert.Equal(c2a, c1a.I12C2one2one);
+
+                    this.Transaction.Commit();
+
+                    this.Transaction.Prefetch(prefetchPolicy, c1a);
+                    if (twice)
+                    {
+                        this.Transaction.Prefetch(prefetchPolicy, c1a);
+                    }
+
+                    Assert.Equal(c2a, c1a.I12C2one2one);
+
+                    this.Transaction.Commit();
+
+                    c1a.I12C2one2one = c2b;
+
+                    this.Transaction.Prefetch(prefetchPolicy, c1a);
+
+                    Assert.Equal(c2b, c1a.I12C2one2one);
+
+                    this.Transaction.Rollback();
+
+                    this.Transaction.Prefetch(prefetchPolicy, c1a);
+                    if (twice)
+                    {
+                        this.Transaction.Prefetch(prefetchPolicy, c1a);
+                    }
+
+                    Assert.Equal(c2a, c1a.I12C2one2one);
+
+                    this.Transaction.Rollback();
+
+                    Assert.Equal(c2a, c1a.I12C2one2one);
                 }
             }
         }
@@ -4582,6 +4680,29 @@ namespace Allors.Database.Adapters
                     }
 
                     Assert.Empty(c1A.C1C2one2manies);
+
+                    // RelationType from I12 to C2, which the SQL adapters store in a relation table.
+                    prefetchPolicy = new PrefetchPolicyBuilder()
+                        .WithRule(m.C1.I12C2one2one, new IPropertyType[] { m.C2.C2AllorsString })
+                        .Build();
+
+                    this.Transaction.Prefetch(prefetchPolicy, c1A);
+                    if (twice)
+                    {
+                        this.Transaction.Prefetch(prefetchPolicy, c1A);
+                    }
+
+                    Assert.Null(c1A.I12C2one2one);
+
+                    this.Transaction.Commit();
+
+                    this.Transaction.Prefetch(prefetchPolicy, c1A);
+                    if (twice)
+                    {
+                        this.Transaction.Prefetch(prefetchPolicy, c1A);
+                    }
+
+                    Assert.Null(c1A.I12C2one2one);
                 }
             }
         }
@@ -4921,6 +5042,53 @@ namespace Allors.Database.Adapters
                     this.Transaction.Rollback();
 
                     Assert.Equal(c1a, c2a.C1WhereC1C2one2one);
+
+                    // RelationType from I12 to C2, which the SQL adapters store in a relation table.
+                    c1a.I12C2one2one = c2a;
+
+                    this.Transaction.Prefetch(new IPropertyType[] { m.C2.I12WhereI12C2one2one }, new[] { c2a.Strategy.ObjectId });
+
+                    Assert.Equal(c1a, c2a.I12WhereI12C2one2one);
+
+                    this.Transaction.Commit();
+
+                    Assert.Equal(c1a, c2a.I12WhereI12C2one2one);
+
+                    this.Transaction.Commit();
+
+                    this.Transaction.Prefetch(new IPropertyType[] { m.C2.I12WhereI12C2one2one }, new[] { c2a.Strategy.ObjectId });
+                    if (twice)
+                    {
+                        this.Transaction.Prefetch(new IPropertyType[] { m.C2.I12WhereI12C2one2one }, new[] { c2a.Strategy.ObjectId });
+                    }
+
+                    Assert.Equal(c1a, c2a.I12WhereI12C2one2one);
+
+                    this.Transaction.Commit();
+
+                    c1b.I12C2one2one = c2a;
+
+                    this.Transaction.Prefetch(new IPropertyType[] { m.C2.I12WhereI12C2one2one }, new[] { c2a.Strategy.ObjectId });
+                    if (twice)
+                    {
+                        this.Transaction.Prefetch(new IPropertyType[] { m.C2.I12WhereI12C2one2one }, new[] { c2a.Strategy.ObjectId });
+                    }
+
+                    Assert.Equal(c1b, c2a.I12WhereI12C2one2one);
+
+                    this.Transaction.Rollback();
+
+                    this.Transaction.Prefetch(new IPropertyType[] { m.C2.I12WhereI12C2one2one }, new[] { c2a.Strategy.ObjectId });
+                    if (twice)
+                    {
+                        this.Transaction.Prefetch(new IPropertyType[] { m.C2.I12WhereI12C2one2one }, new[] { c2a.Strategy.ObjectId });
+                    }
+
+                    Assert.Equal(c1a, c2a.I12WhereI12C2one2one);
+
+                    this.Transaction.Rollback();
+
+                    Assert.Equal(c1a, c2a.I12WhereI12C2one2one);
                 }
             }
         }
@@ -4956,6 +5124,25 @@ namespace Allors.Database.Adapters
                     }
 
                     Assert.Empty(c2A.C1sWhereC1C2many2many);
+
+                    // RelationType from I12 to C2, which the SQL adapters store in a relation table.
+                    this.Transaction.Prefetch(new IPropertyType[] { m.C2.I12WhereI12C2one2one }, c2A);
+                    if (twice)
+                    {
+                        this.Transaction.Prefetch(new IPropertyType[] { m.C2.I12WhereI12C2one2one }, c2A);
+                    }
+
+                    Assert.Null(c2A.I12WhereI12C2one2one);
+
+                    this.Transaction.Commit();
+
+                    this.Transaction.Prefetch(new IPropertyType[] { m.C2.I12WhereI12C2one2one }, c2A);
+                    if (twice)
+                    {
+                        this.Transaction.Prefetch(new IPropertyType[] { m.C2.I12WhereI12C2one2one }, c2A);
+                    }
+
+                    Assert.Null(c2A.I12WhereI12C2one2one);
                 }
             }
         }
@@ -4993,6 +5180,27 @@ namespace Allors.Database.Adapters
                     }
 
                     Assert.Empty(c2A.C1sWhereC1C2many2many);
+
+                    // RelationType from I12 to C2, which the SQL adapters store in a relation table.
+                    prefetchPolicy = new PrefetchPolicyBuilder().WithRule(m.C2.I12WhereI12C2one2one, new IPropertyType[] { m.I12.I12AllorsString }).Build();
+
+                    this.Transaction.Prefetch(prefetchPolicy, c2A);
+                    if (twice)
+                    {
+                        this.Transaction.Prefetch(prefetchPolicy, c2A);
+                    }
+
+                    Assert.Null(c2A.I12WhereI12C2one2one);
+
+                    this.Transaction.Commit();
+
+                    this.Transaction.Prefetch(prefetchPolicy, c2A);
+                    if (twice)
+                    {
+                        this.Transaction.Prefetch(prefetchPolicy, c2A);
+                    }
+
+                    Assert.Null(c2A.I12WhereI12C2one2one);
                 }
             }
         }
