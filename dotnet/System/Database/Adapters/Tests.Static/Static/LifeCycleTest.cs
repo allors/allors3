@@ -5201,6 +5201,76 @@ namespace Allors.Database.Adapters
                     }
 
                     Assert.Null(c2A.I12WhereI12C2one2one);
+
+                    // The association type of the RelationType from C1 to C2, with a nested rule. The transaction
+                    // knows that there is no association once it has read it, and once it has removed the role.
+                    prefetchPolicy = new PrefetchPolicyBuilder().WithRule(m.C2.C1WhereC1C2one2one, new IPropertyType[] { m.C1.C1AllorsString }).Build();
+
+                    this.Transaction.Prefetch(prefetchPolicy, c2A);
+                    if (twice)
+                    {
+                        this.Transaction.Prefetch(prefetchPolicy, c2A);
+                    }
+
+                    Assert.Null(c2A.C1WhereC1C2one2one);
+
+                    this.Transaction.Prefetch(prefetchPolicy, c2A);
+
+                    Assert.Null(c2A.C1WhereC1C2one2one);
+
+                    var c1A = C1.Create(this.Transaction);
+                    c1A.C1C2one2one = c2A;
+
+                    this.Transaction.Commit();
+
+                    c1A.RemoveC1C2one2one();
+
+                    this.Transaction.Prefetch(prefetchPolicy, c2A);
+                    if (twice)
+                    {
+                        this.Transaction.Prefetch(prefetchPolicy, c2A);
+                    }
+
+                    Assert.Null(c2A.C1WhereC1C2one2one);
+                }
+            }
+        }
+
+        [Fact]
+        public void PrefetchAssociationOne2ManyEmptyAndUnit()
+        {
+            foreach (var twice in TrueFalse)
+            {
+                foreach (var init in this.Inits)
+                {
+                    init();
+                    var m = this.Transaction.Database.Context().M;
+
+                    var prefetchPolicy = new PrefetchPolicyBuilder()
+                        .WithRule(m.C2.C1WhereC1C2one2many, new IPropertyType[] { m.C1.C1AllorsString })
+                        .Build();
+
+                    var c2A = C2.Create(this.Transaction);
+
+                    this.Transaction.Commit();
+
+                    this.Transaction.Prefetch(prefetchPolicy, c2A);
+                    if (twice)
+                    {
+                        this.Transaction.Prefetch(prefetchPolicy, c2A);
+                    }
+
+                    Assert.Null(c2A.C1WhereC1C2one2many);
+
+                    this.Transaction.Commit();
+
+                    this.Transaction.Prefetch(prefetchPolicy, c2A);
+                    if (twice)
+                    {
+                        this.Transaction.Prefetch(prefetchPolicy, c2A);
+                    }
+
+                    Assert.Null(c2A.C1WhereC1C2one2many);
                 }
             }
         }

@@ -826,7 +826,12 @@ namespace Allors.Database.Adapters.Sql
             {
                 if (associationByRole.TryGetValue(role, out var association))
                 {
-                    nestedObjectIds.Add(association.ObjectId);
+                    // The transaction holds null for a role of which it knows that it has no association.
+                    if (association != null)
+                    {
+                        nestedObjectIds.Add(association.ObjectId);
+                    }
+
                     continue;
                 }
 
