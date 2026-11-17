@@ -39,7 +39,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 init();
 
                 Assert.Equal(0, (int)this.profile.ExecuteScalar("SELECT COUNT(*) FROM INFORMATION_SCHEMA.ROUTINES WHERE routine_schema = 'allors'"));
-                Assert.Equal(0, (int)this.profile.ExecuteScalar("SELECT COUNT(*) FROM sys.table_types WHERE schema_id = SCHEMA_ID('allors') AND name LIKE '[_]ti[_]%'"));
+                Assert.Equal(0, (int)this.profile.ExecuteScalar("SELECT COUNT(*) FROM sys.table_types WHERE schema_id = SCHEMA_ID('allors') AND (name LIKE '[_]ti[_]%' OR name = '_t_vo')"));
             }
         }
     }

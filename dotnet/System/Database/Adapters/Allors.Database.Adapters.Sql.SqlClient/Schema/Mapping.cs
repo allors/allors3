@@ -88,10 +88,8 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         internal IDictionary<IRoleType, string> ParamNameByRoleType { get; }
 
         internal string TableTypeNameForObject { get; }
-        private string TableTypeNameForVersionedObject { get; }
 
         internal string TableTypeColumnNameForObject { get; }
-        private string TableTypeColumnNameForVersion { get; }
 
         internal string TableTypeNameForCompositeRelation { get; }
 
@@ -171,7 +169,6 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             // TableTypes
             // ----------
             this.TableTypeNameForObject = $"{database.SchemaName}._t_o";
-            this.TableTypeNameForVersionedObject = $"{database.SchemaName}._t_vo";
             this.TableTypeNameForCompositeRelation = $"{database.SchemaName}._t_c";
 
             this.TableTypeNameForStringRelation = $"{database.SchemaName}._t_s";
@@ -184,7 +181,6 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             this.TableTypeNamePrefixForDecimalRelation = $"{database.SchemaName}._t_de";
 
             this.TableTypeColumnNameForObject = "_o";
-            this.TableTypeColumnNameForVersion = "_c";
             this.TableTypeColumnNameForAssociation = "_a";
             this.TableTypeColumnNameForRole = "_r";
 
@@ -221,10 +217,6 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                  {
                      this.TableTypeNameForObject,
                      $"CREATE TYPE {this.TableTypeNameForObject} AS TABLE ({this.TableTypeColumnNameForObject} {SqlTypeForObject})"
-                 },
-                 {
-                     this.TableTypeNameForVersionedObject,
-                     $"CREATE TYPE {this.TableTypeNameForVersionedObject} AS TABLE ({this.TableTypeColumnNameForObject} {SqlTypeForObject}, {this.TableTypeColumnNameForVersion} {SqlTypeForVersion})"
                  },
                  {
                      this.TableTypeNameForCompositeRelation,

@@ -310,3 +310,6 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   that a procedure uses: an `Init` that has to recreate the schema of such a database fails, before
   it has touched a table. Drop and create the database between the save and the load of an upgrade,
   which `DatabaseProvisioning.DropCreate` of `Allors.Database.Builder` does (#368).
+- The table type `_t_vo` of the SqlClient adapter and its class `VersionedObjectDataRecord`, which
+  nothing used. A database that was initialized before this change keeps the table type and stays
+  valid (#369).
