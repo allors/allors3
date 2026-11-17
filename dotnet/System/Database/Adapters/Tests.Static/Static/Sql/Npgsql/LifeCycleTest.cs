@@ -57,6 +57,9 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             }
         }
 
+        // An Init that recreates the schema closes the pooled connections: a statement that was prepared for the
+        // earlier schema fails once the type of its result has changed. An Init of a valid schema, which only
+        // empties the tables, keeps the connections and what they have prepared.
         [Fact]
         public void InitRecreatesPreparedCommands()
         {

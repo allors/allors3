@@ -81,15 +81,17 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   and the new member `Mapping.CommandType` says which (#366).
 - The Npgsql adapter prepares its commands. A transaction has 27 commands that are not extents: they
   create, instantiate and delete objects, read and write roles, read associations, read and update
-  versions, and prefetch. The mapping fixes the statement of 26 of them, and each of those is
-  prepared when it is first executed, so that PostgreSQL parses and plans it once for a connection
-  instead of at every execution. Npgsql keeps a prepared statement for as long as its physical
-  connection lives: a later transaction that gets the connection from the pool finds the statement
-  there, and the server holds it for that long as well. Not prepared are the statements of an
-  extent, of a load and of a save, and the `UPDATE` for the unit roles that changed together on one
-  object, whose text differs with every combination of roles. `ICommand` of
+  versions, and prefetch. Each of them is prepared when it is first executed, so that PostgreSQL
+  parses and plans it once for a connection instead of at every execution. Npgsql keeps a prepared
+  statement for as long as its physical connection lives: a later transaction that gets the
+  connection from the pool finds the statement there, and the server holds it for that long as
+  well. That includes the `UPDATE` for the unit roles that changed together on one object, which is
+  a statement of its own for every combination of those roles. The statements of an extent, of a
+  load and of a save are not prepared. `Init` closes the pooled connections of its connection
+  string after it has recreated the schema, because a statement that was prepared for the earlier
+  schema fails once the type of its result has changed. `ICommand` of
   `Allors.Database.Adapters.Sql` has the new member `Prepare()`, which `Commands` and `Prefetcher`
-  call for the commands that they prepare, and which another implementation of `ICommand` has to
+  call for every command that they create, and which another implementation of `ICommand` has to
   add. The SqlClient adapter does nothing in it (#370).
 
 ### Fixed
