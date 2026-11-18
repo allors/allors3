@@ -5,6 +5,7 @@
 
 namespace Allors.Database.Adapters.Sql.Npgsql
 {
+    using System.Linq;
     using Adapters;
     using global::Npgsql;
     using Meta;
@@ -54,6 +55,148 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 
                     Assert.Equal(1L, Count(transaction, "SELECT COUNT(*) FROM allors.c1 WHERE c1allorsstring = 'a' AND c1allorsinteger = 1"));
                     Assert.NotEqual(0L, Count(transaction, "SELECT COUNT(*) FROM pg_prepared_statements WHERE statement LIKE 'UPDATE%c1allorsstring%' AND statement LIKE 'UPDATE%c1allorsinteger%'"));
+                }
+            }
+        }
+
+        // The adapter sends statements and calls no function of the schema: with the functions gone, transactions
+        // create, read, prefetch, change and delete objects as before.
+        [Fact]
+        public void TransactionCallsNoFunction()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+                var m = this.Transaction.Database.Context().M;
+
+                // The database checked its schema for its first transaction, and does not check it again.
+                const string Functions = "SELECT COUNT(*) FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace WHERE n.nspname = 'allors'";
+                Assert.NotEqual(0L, this.profile.ExecuteScalar(Functions));
+                this.profile.ExecuteScalar(@"
+DO $$
+DECLARE routine regprocedure;
+BEGIN
+    FOR routine IN SELECT p.oid FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace WHERE n.nspname = 'allors' LOOP
+        EXECUTE 'DROP FUNCTION ' || routine;
+    END LOOP;
+END
+$$");
+                Assert.Equal(0L, this.profile.ExecuteScalar(Functions));
+
+                // Two objects with a role in each of the five ways in which the adapter stores a composite role, and
+                // with unit roles: the first is read and changed role by role, the second is prefetched.
+                var c1Ids = new long[2];
+                var c2Ids = new long[4];
+                using (var transaction = this.CreateTransaction())
+                {
+                    // An object by itself, and objects by their count.
+                    var c1s = new[] { C1.Create(transaction), C1.Create(transaction) };
+                    var c2s = (C2[])transaction.Create(m.C2, c2Ids.Length);
+
+                    for (var i = 0; i < c1s.Length; i++)
+                    {
+                        var c1 = c1s[i];
+                        var first = c2s[2 * i];
+                        var second = c2s[(2 * i) + 1];
+
+                        c1.C1AllorsString = "a";
+                        c1.C1C2one2one = first;
+                        c1.C1C2many2one = first;
+                        c1.AddC1C2one2many(first);
+                        c1.AddC1C2one2many(second);
+                        c1.AddC1C2many2many(first);
+                        c1.AddC1C2many2many(second);
+                        c1.I12C2one2one = first;
+
+                        c1Ids[i] = c1.Id;
+                        c2Ids[2 * i] = first.Id;
+                        c2Ids[(2 * i) + 1] = second.Id;
+                    }
+
+                    transaction.Commit();
+                }
+
+                using (var transaction = this.CreateTransaction())
+                {
+                    // An object by its id, and objects by their ids.
+                    var c1 = (C1)transaction.Instantiate(c1Ids[0]);
+                    var c2s = transaction.Instantiate(c2Ids).Cast<C2>().ToArray();
+
+                    // The roles and the associations of the first object, each with a command of its own.
+                    Assert.Equal("a", c1.C1AllorsString);
+                    Assert.Equal(c2s[0], c1.C1C2one2one);
+                    Assert.Equal(c2s[0], c1.C1C2many2one);
+                    Assert.Equal(2, c1.C1C2one2manies.Count());
+                    Assert.Equal(2, c1.C1C2many2manies.Count());
+                    Assert.Equal(c2s[0], c1.I12C2one2one);
+                    Assert.Equal(c1, c2s[0].C1WhereC1C2one2one);
+                    Assert.Equal(c1, c2s[0].C1sWhereC1C2many2one.Single());
+                    Assert.Equal(c1, c2s[0].C1WhereC1C2one2many);
+                    Assert.Equal(c1, c2s[0].C1sWhereC1C2many2many.Single());
+                    Assert.Equal(c1, c2s[0].I12WhereI12C2one2one);
+
+                    // The roles and the associations of the second object, prefetched.
+                    var prefetched = (C1)transaction.Instantiate(c1Ids[1]);
+                    transaction.Prefetch(
+                        new PrefetchPolicyBuilder()
+                            .WithRule(m.C1.C1AllorsString)
+                            .WithRule(m.C1.C1C2one2one)
+                            .WithRule(m.C1.C1C2many2one)
+                            .WithRule(m.C1.C1C2one2manies)
+                            .WithRule(m.C1.C1C2many2manies)
+                            .WithRule(m.C1.I12C2one2one)
+                            .Build(),
+                        prefetched);
+                    transaction.Prefetch(
+                        new PrefetchPolicyBuilder()
+                            .WithRule(m.C2.C1WhereC1C2one2one)
+                            .WithRule(m.C2.C1sWhereC1C2many2one)
+                            .WithRule(m.C2.C1WhereC1C2one2many)
+                            .WithRule(m.C2.C1sWhereC1C2many2many)
+                            .WithRule(m.C2.I12WhereI12C2one2one)
+                            .Build(),
+                        c2s[2]);
+                    Assert.Equal("a", prefetched.C1AllorsString);
+                    Assert.Equal(c2s[2], prefetched.C1C2one2one);
+                    Assert.Equal(2, prefetched.C1C2many2manies.Count());
+                    Assert.Equal(prefetched, c2s[2].C1WhereC1C2one2many);
+                    Assert.Equal(prefetched, c2s[2].I12WhereI12C2one2one);
+
+                    // One unit role and two, and a to-many role that loses one of its two objects.
+                    c1.C1AllorsString = "b";
+                    prefetched.C1AllorsString = "c";
+                    prefetched.C1AllorsInteger = 1;
+                    c1.RemoveC1C2one2many(c2s[1]);
+                    c1.RemoveC1C2many2many(c2s[1]);
+                    transaction.Commit();
+
+                    // After a commit the transaction asks for the version of an object again.
+                    Assert.Equal("b", c1.C1AllorsString);
+                    Assert.Equal(c2s[0], c1.C1C2one2manies.Single());
+                    Assert.Equal(c2s[0], c1.C1C2many2manies.Single());
+                    Assert.Equal(1, prefetched.C1AllorsInteger);
+
+                    // Every role of the first object goes.
+                    c1.RemoveC1C2one2one();
+                    c1.RemoveC1C2many2one();
+                    c1.RemoveC1C2one2manies();
+                    c1.RemoveC1C2many2manies();
+                    c1.RemoveI12C2one2one();
+                    transaction.Commit();
+
+                    Assert.Null(c1.C1C2one2one);
+                    Assert.Null(c1.C1C2many2one);
+                    Assert.Empty(c1.C1C2one2manies);
+                    Assert.Empty(c1.C1C2many2manies);
+                    Assert.Null(c1.I12C2one2one);
+
+                    c1.Strategy.Delete();
+                    c2s[0].Strategy.Delete();
+                    transaction.Commit();
+
+                    Assert.Null(transaction.Instantiate(c1Ids[0]));
+                    Assert.Null(transaction.Instantiate(c2Ids[0]));
+                    Assert.Equal(c2s[2], ((C1)transaction.Instantiate(c1Ids[1])).C1C2many2one);
                 }
             }
         }
