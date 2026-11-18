@@ -178,7 +178,7 @@ namespace Allors.Database.Adapters.Sql
 
         internal virtual void PrefetchCompositeRoleObjectTable(HashSet<Reference> associations, IRoleType roleType, HashSet<long> nestedObjectIds, HashSet<long> leafs)
         {
-            var references = nestedObjectIds == null ? this.FilterForPrefetchRoles(associations, roleType) : this.FilterForPrefetchCompositeRoles(associations, roleType, nestedObjectIds);
+            var references = this.FilterForPrefetchCompositeRoles(associations, roleType, nestedObjectIds ?? leafs);
             if (references.Count == 0)
             {
                 return;
@@ -243,7 +243,7 @@ namespace Allors.Database.Adapters.Sql
 
         internal virtual void PrefetchCompositeRoleRelationTable(HashSet<Reference> associations, IRoleType roleType, HashSet<long> nestedObjectIds, HashSet<long> leafs)
         {
-            var references = nestedObjectIds == null ? this.FilterForPrefetchRoles(associations, roleType) : this.FilterForPrefetchCompositeRoles(associations, roleType, nestedObjectIds);
+            var references = this.FilterForPrefetchCompositeRoles(associations, roleType, nestedObjectIds ?? leafs);
             if (references.Count == 0)
             {
                 return;
@@ -296,7 +296,7 @@ namespace Allors.Database.Adapters.Sql
 
         internal virtual void PrefetchCompositesRoleObjectTable(HashSet<Reference> associations, IRoleType roleType, HashSet<long> nestedObjectIds, HashSet<long> leafs)
         {
-            var references = nestedObjectIds == null ? this.FilterForPrefetchRoles(associations, roleType) : this.FilterForPrefetchCompositesRoles(associations, roleType, nestedObjectIds);
+            var references = this.FilterForPrefetchCompositesRoles(associations, roleType, nestedObjectIds ?? leafs);
             if (references.Count == 0)
             {
                 return;
@@ -363,7 +363,7 @@ namespace Allors.Database.Adapters.Sql
 
         internal virtual void PrefetchCompositesRoleRelationTable(HashSet<Reference> associations, IRoleType roleType, HashSet<long> nestedObjectIds, HashSet<long> leafs)
         {
-            var references = nestedObjectIds == null ? this.FilterForPrefetchRoles(associations, roleType) : this.FilterForPrefetchCompositesRoles(associations, roleType, nestedObjectIds);
+            var references = this.FilterForPrefetchCompositesRoles(associations, roleType, nestedObjectIds ?? leafs);
             if (references.Count == 0)
             {
                 return;
