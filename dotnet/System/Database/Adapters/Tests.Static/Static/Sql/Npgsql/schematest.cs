@@ -51,19 +51,9 @@ namespace Allors.Database.Adapters.Sql.Npgsql
     //        return this.profile.ExistPrimaryKey(schema, table, column);
     //    }
 
-    // protected override bool ExistProcedure(string schema, string procedure)
-    //    {
-    //        return this.profile.ExistProcedure(schema, procedure);
-    //    }
-
     // protected override bool ExistIndex(string schema, string table, string column)
     //    {
     //        return this.profile.ExistIndex(schema, table, column);
-    //    }
-
-    // protected override void DropProcedure(string schema, string procedure)
-    //    {
-    //        this.profile.DropProcedure(procedure);
     //    }
     // }
 }

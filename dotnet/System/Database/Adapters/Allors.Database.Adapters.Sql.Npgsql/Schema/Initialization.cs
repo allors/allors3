@@ -5,7 +5,6 @@
 
 namespace Allors.Database.Adapters.Sql.Npgsql
 {
-    using System;
     using System.Text;
     using Meta;
     using global::Npgsql;
@@ -37,13 +36,9 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                 {
                     this.CreateSchema();
 
-                    this.DropProcedures();
-
                     this.DropTables();
 
                     this.CreateTables();
-
-                    this.CreateProcedures();
 
                     this.CreateIndeces();
                 }
@@ -79,28 +74,6 @@ CREATE SCHEMA " + this.database.SchemaName;
                     {
                         connection.Close();
                     }
-                }
-            }
-        }
-
-        private void DropProcedures()
-        {
-            using (var connection = new NpgsqlConnection(this.database.ConnectionString))
-            {
-                connection.Open();
-                try
-                {
-                    foreach (var name in this.validation.Schema.ProcedureByName.Keys)
-                    {
-                        using (var command = new NpgsqlCommand("DROP FUNCTION " + name, connection))
-                        {
-                            command.ExecuteNonQuery();
-                        }
-                    }
-                }
-                finally
-                {
-                    connection.Close();
                 }
             }
         }
@@ -265,36 +238,6 @@ $@"CREATE TABLE {tableName}(
                             using (var command = new NpgsqlCommand(sql, connection))
                             {
                                 command.ExecuteNonQuery();
-                            }
-                        }
-                    }
-                }
-                finally
-                {
-                    connection.Close();
-                }
-            }
-        }
-
-        private void CreateProcedures()
-        {
-            using (var connection = new NpgsqlConnection(this.database.ConnectionString))
-            {
-                connection.Open();
-                try
-                {
-                    foreach (var dictionaryEntry in this.mapping.ProcedureDefinitionByName)
-                    {
-                        var definition = dictionaryEntry.Value;
-                        using (var command = new NpgsqlCommand(definition, connection))
-                        {
-                            try
-                            {
-                                command.ExecuteNonQuery();
-                            }
-                            catch (Exception e)
-                            {
-                                throw;
                             }
                         }
                     }

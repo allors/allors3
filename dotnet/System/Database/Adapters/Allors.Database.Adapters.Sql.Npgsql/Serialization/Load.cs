@@ -159,7 +159,6 @@ having max({Sql.Mapping.ColumnNameForObject}) is not null";
                 command.ExecuteNonQuery();
             }
 
-            // TODO: move this to a stored procedure
             // insert from _o table into class tables
             using (var transaction = this.connection.BeginTransaction())
             {

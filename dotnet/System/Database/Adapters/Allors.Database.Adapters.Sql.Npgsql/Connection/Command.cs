@@ -96,7 +96,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
         public void UnitTableParameter(IRoleType roleType, IEnumerable<UnitRelation> relations)
         {
             var objectParameter = this.GetOrCreateTableParameter(this.mapping.ObjectArrayParam.InvocationName, Mapping.NpgsqlDbTypeForObject);
-            var roleParameter = this.GetOrCreateTableParameter(this.mapping.StringRoleArrayParam.InvocationName, this.mapping.GetNpgsqlDbType(roleType));
+            var roleParameter = this.GetOrCreateTableParameter(this.mapping.RoleArrayParam.InvocationName, this.mapping.GetNpgsqlDbType(roleType));
 
             var unitRelations = relations as ICollection<UnitRelation> ?? relations.ToArray();
             objectParameter.Value = unitRelations.Select(v => v.Association).ToArray();
@@ -106,7 +106,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
         public void AddCompositeRoleTableParameter(IEnumerable<CompositeRelation> relations)
         {
             var objectParameter = this.GetOrCreateTableParameter(this.mapping.ObjectArrayParam.InvocationName, Mapping.NpgsqlDbTypeForObject);
-            var roleParameter = this.GetOrCreateTableParameter(this.mapping.StringRoleArrayParam.InvocationName, Mapping.NpgsqlDbTypeForObject);
+            var roleParameter = this.GetOrCreateTableParameter(this.mapping.RoleArrayParam.InvocationName, Mapping.NpgsqlDbTypeForObject);
 
             var compositeRelations = relations as ICollection<CompositeRelation> ?? relations.ToArray();
             objectParameter.Value = compositeRelations.Select(v => v.Association).ToArray();

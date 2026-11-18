@@ -94,17 +94,15 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   call for every command that they create, and which another implementation of `ICommand` has to
   add. The SqlClient adapter does nothing in it (#370).
 - The Npgsql adapter sends its statements itself and calls no function of the schema. The 25
-  commands of a transaction that called a function send the statement that their function holds,
+  commands of a transaction that called a function send the statement that their function held,
   with the same parameters and with an array behind a sub-select, `UNNEST((SELECT :p_arr_o))`, so
   that PostgreSQL plans the statement without the values of the array. The lookup of a to-one role
   or association sends the `SELECT` of its function. The creation of an object, the creation of
   several objects in one call, `ITransaction.Create(class, count)`, and the deletion of an object,
-  whose functions hold more than one statement, each send one statement with a data-modifying
+  whose functions held more than one statement, each send one statement with a data-modifying
   `WITH`. A load sends the statements for its relations with their arrays as they are: each of
   them runs once, with all the relations that it sets. `Mapping.CommandType` of the Npgsql adapter
-  is `Text` and its `CommandTextFor…` members hold statements, as in the SqlClient adapter. `Init`
-  still creates the functions and the validation of the schema still asks for them, with the
-  definitions that they had, so a database stays valid (#378).
+  is `Text` and its `CommandTextFor…` members hold statements, as in the SqlClient adapter (#378).
 
 ### Fixed
 
@@ -308,11 +306,10 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   pages of ASP.NET Core Identity sent a user with a password to "set password" and a user without
   one to "change password".
 - The Npgsql adapter fixes of #80, released on `v3.1` in June 2026. The adapter sets
-  `Npgsql.EnableLegacyTimestampBehavior` and `Npgsql.EnableStoredProcedureCompatMode` itself, in a
-  module initializer; only the fixture of its tests set them, and without them its calls fail with
-  `42809: … is not a procedure`. The adapter connects to the lower-cased database name, the name
-  PostgreSQL gives a database created without quotes, so `Database=AllorsCore` reaches `allorscore`;
-  a database created under a quoted name with capitals has to be renamed.
+  `Npgsql.EnableLegacyTimestampBehavior` itself, in a module initializer; only the fixture of its
+  tests set it. The adapter connects to the lower-cased database name, the name PostgreSQL gives a
+  database created without quotes, so `Database=AllorsCore` reaches `allorscore`; a database created
+  under a quoted name with capitals has to be renamed.
 - The PostgreSQL adapter tests pool their connections, a fix of the archived line of `main` from
   September 2026 (#273). Their connection string set `Pooling=false`, so every transaction opened
   and closed a connection, and every close left a port in `TIME_WAIT`. Against a PostgreSQL in a
@@ -357,3 +354,20 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
 - The table type `_t_vo` of the SqlClient adapter and its class `VersionedObjectDataRecord`, which
   nothing used. A database that was initialized before this change keeps the table type and stays
   valid (#369).
+- The functions of the Npgsql adapter. `Init` creates the tables and their indexes, and a
+  transaction no longer compares the functions of a schema with those of the mapping. With them go
+  `SchemaProcedure`, `Schema.ProcedureByName`, `Schema.GetProcedure`,
+  `Validation.MissingProcedureNames` and `Validation.InvalidProcedures` of
+  `Allors.Database.Adapters.Sql.Npgsql`, and what only the signatures of the functions used: the
+  fields `ElementType`, `TypeName` and `Name` of `MappingArrayParameter`, whose constructor now
+  takes the mapping and the name. A database that is initialized after this change holds no
+  functions, so an earlier version does not accept it. A database that was initialized before this
+  change keeps its functions and stays valid. `Init` no longer drops them, and PostgreSQL drops a
+  table while a function still names it: an `Init` that has to recreate the schema of such a
+  database works, and leaves the functions, which nothing calls. Drop and create the database
+  between the save and the load of an upgrade, which `DatabaseProvisioning.DropCreate` of
+  `Allors.Database.Builder` does, and it holds none. The adapter no longer sets the process-wide
+  switch `Npgsql.EnableStoredProcedureCompatMode`, with which Npgsql calls a function for a command
+  of the type `StoredProcedure`. Such a command of an application in the same process now calls a
+  procedure, as Npgsql does without the switch, and fails for a function with `42809: … is not a
+  procedure` unless the application sets the switch itself (#379).

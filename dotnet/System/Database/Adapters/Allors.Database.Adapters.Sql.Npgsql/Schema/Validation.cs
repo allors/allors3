@@ -17,9 +17,6 @@ namespace Allors.Database.Adapters.Sql.Npgsql
         public HashSet<string> MissingTableTypeNames { get; }
         public HashSet<SchemaTableType> InvalidTableTypes { get; }
 
-        public HashSet<string> MissingProcedureNames { get; }
-        public HashSet<SchemaProcedure> InvalidProcedures { get; }
-
         private readonly Mapping mapping;
 
         public Validation(Database database)
@@ -34,18 +31,13 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             this.MissingTableTypeNames = new HashSet<string>();
             this.InvalidTableTypes = new HashSet<SchemaTableType>();
 
-            this.MissingProcedureNames = new HashSet<string>();
-            this.InvalidProcedures = new HashSet<SchemaProcedure>();
-
             this.Validate();
 
             this.IsValid =
                 this.MissingTableNames.Count == 0 &&
                 this.InvalidTables.Count == 0 &&
                 this.MissingTableTypeNames.Count == 0 &&
-                this.InvalidTableTypes.Count == 0 &&
-                this.MissingProcedureNames.Count == 0 &&
-                this.InvalidProcedures.Count == 0;
+                this.InvalidTableTypes.Count == 0;
         }
 
         public bool IsValid { get; }
@@ -93,24 +85,6 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                     foreach (var invalidTableType in this.InvalidTableTypes)
                     {
                         message.Append("- " + invalidTableType.Name + ":\n");
-                    }
-                }
-
-                if (this.MissingProcedureNames.Count > 0)
-                {
-                    message.Append("Missing Procedures:\n");
-                    foreach (var missingProcedure in this.MissingProcedureNames)
-                    {
-                        message.Append("- " + missingProcedure + ":\n");
-                    }
-                }
-
-                if (this.InvalidProcedures.Count > 0)
-                {
-                    message.Append("Invalid Procedures:\n");
-                    foreach (var invalidProcedure in this.InvalidProcedures)
-                    {
-                        message.Append("- " + invalidProcedure.Name + ":\n");
                     }
                 }
 
@@ -217,24 +191,6 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                         var roleSqlType = relationType.RoleType.ObjectType.IsComposite ? SqlTypeForObject : this.mapping.GetSqlType(relationType.RoleType);
                         this.ValidateColumn(table, Sql.Mapping.ColumnNameForRole, roleSqlType);
                     }
-                }
-            }
-
-            // Procedures Tables
-            foreach (var dictionaryEntry in this.mapping.ProcedureDefinitionByName)
-            {
-                var procedureName = dictionaryEntry.Key;
-                var procedureDefinition = dictionaryEntry.Value;
-
-                var procedure = this.Schema.GetProcedure(procedureName);
-
-                if (procedure == null)
-                {
-                    this.MissingProcedureNames.Add(procedureName);
-                }
-                else if (!procedure.IsDefinitionCompatible(procedureDefinition))
-                {
-                    this.InvalidProcedures.Add(procedure);
                 }
             }
 
