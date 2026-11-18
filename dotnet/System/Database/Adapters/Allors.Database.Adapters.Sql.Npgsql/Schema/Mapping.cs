@@ -332,8 +332,9 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 
         internal Dictionary<string, string> ProcedureDefinitionByName { get; }
 
-        // A load sends a statement once, with every relation of a relation type in its arrays. Its statements take the
-        // arrays as they are, not behind a sub-select, so that PostgreSQL plans a statement for the arrays that it gets.
+        // A load sends each of its statements once, with all the relations that the statement sets in its arrays. Its
+        // statements take the arrays as they are, not behind a sub-select, so that PostgreSQL plans a statement for the
+        // arrays that it gets.
         internal Dictionary<IClass, Dictionary<IRelationType, string>> CommandTextForLoadSetUnitRoleByRelationTypeByClass { get; }
 
         internal Dictionary<IRelationType, string> CommandTextForLoadSetRoleByRelationType { get; }
