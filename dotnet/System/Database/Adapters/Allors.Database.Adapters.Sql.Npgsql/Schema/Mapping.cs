@@ -228,6 +228,10 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             this.commandTextForGetAssociationByRelationType = new Dictionary<IRelationType, string>();
             this.commandTextForPrefetchAssociationByRelationType = new Dictionary<IRelationType, string>();
 
+            this.CommandTextForLoadSetUnitRoleByRelationTypeByClass = new Dictionary<IClass, Dictionary<IRelationType, string>>();
+            this.CommandTextForLoadSetRoleByRelationType = new Dictionary<IRelationType, string>();
+            this.CommandTextForLoadAddRoleByRelationType = new Dictionary<IRelationType, string>();
+
             this.Instantiate();
             this.GetVersionIds();
             this.UpdateVersionIds();
@@ -327,6 +331,14 @@ namespace Allors.Database.Adapters.Sql.Npgsql
         }
 
         internal Dictionary<string, string> ProcedureDefinitionByName { get; }
+
+        // A load sends a statement once, with every relation of a relation type in its arrays. Its statements take the
+        // arrays as they are, not behind a sub-select, so that PostgreSQL plans a statement for the arrays that it gets.
+        internal Dictionary<IClass, Dictionary<IRelationType, string>> CommandTextForLoadSetUnitRoleByRelationTypeByClass { get; }
+
+        internal Dictionary<IRelationType, string> CommandTextForLoadSetRoleByRelationType { get; }
+
+        internal Dictionary<IRelationType, string> CommandTextForLoadAddRoleByRelationType { get; }
 
         protected internal Database Database { get; }
 
@@ -753,6 +765,7 @@ $$;";
     WHERE {table}.{ColumnNameForObject} = relations.{ColumnNameForRole}";
 
             this.commandTextForAddRoleByRelationType.Add(relationType, Sql(SubSelect(objects), SubSelect(roles)));
+            this.CommandTextForLoadAddRoleByRelationType.Add(relationType, Sql(objects.InvocationName, roles.InvocationName));
 
             var definition =
 $@"DROP FUNCTION IF EXISTS {name}({objectsType}, {rolesType});
@@ -837,6 +850,12 @@ $$;";
                 this.commandTextForSetUnitRoleByRelationTypeByClass.Add(@class, commandTextForSetUnitRoleByRelationType);
             }
 
+            if (!this.CommandTextForLoadSetUnitRoleByRelationTypeByClass.TryGetValue(@class, out var commandTextForLoadSetUnitRoleByRelationType))
+            {
+                commandTextForLoadSetUnitRoleByRelationType = new Dictionary<IRelationType, string>();
+                this.CommandTextForLoadSetUnitRoleByRelationTypeByClass.Add(@class, commandTextForLoadSetUnitRoleByRelationType);
+            }
+
             var relationType = roleType.RelationType;
             var unitTypeTag = ((IUnit)relationType.RoleType.ObjectType).Tag;
             var table = this.tableNameForObjectByClass[@class];
@@ -893,6 +912,7 @@ $$;";
     WHERE {ColumnNameForObject} = relations.{ColumnNameForAssociation}";
 
             commandTextForSetUnitRoleByRelationType.Add(relationType, Sql(SubSelect(objects), SubSelect(roles)));
+            commandTextForLoadSetUnitRoleByRelationType.Add(relationType, Sql(objects.InvocationName, roles.InvocationName));
 
             var definition = $@"
 DROP FUNCTION IF EXISTS {name}({objectsType}, {rolesType});
@@ -1110,6 +1130,7 @@ $$;";
     WHERE {ColumnNameForObject} = relations.{ColumnNameForAssociation}";
 
             this.commandTextForSetRoleByRelationType.Add(relationType, Sql(SubSelect(objects), SubSelect(roles)));
+            this.CommandTextForLoadSetRoleByRelationType.Add(relationType, Sql(objects.InvocationName, roles.InvocationName));
 
             var definition = $@"
 DROP FUNCTION IF EXISTS {name}({objectsType}, {rolesType});
@@ -1226,6 +1247,7 @@ $$;";
     FROM relations";
 
             this.commandTextForAddRoleByRelationType.Add(relationType, Sql(SubSelect(objects), SubSelect(roles)));
+            this.CommandTextForLoadAddRoleByRelationType.Add(relationType, Sql(objects.InvocationName, roles.InvocationName));
 
             var definition = $@"
 DROP FUNCTION IF EXISTS {name}({objectsType}, {rolesType});
@@ -1351,6 +1373,7 @@ $$;";
         SET {ColumnNameForRole} = excluded.{ColumnNameForRole}";
 
             this.commandTextForSetRoleByRelationType.Add(relationType, Sql(SubSelect(objects), SubSelect(roles)));
+            this.CommandTextForLoadSetRoleByRelationType.Add(relationType, Sql(objects.InvocationName, roles.InvocationName));
 
             var definition = $@"
 DROP FUNCTION IF EXISTS {name}({objectsType}, {rolesType});
