@@ -77,8 +77,7 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   Server accepts that statement only when the table of the class has no enabled trigger, foreign key
   or check constraint and the objects table no enabled insert trigger; the adapter creates none of
   these. The members `ProcedureNameFor…` of `Mapping` in `Allors.Database.Adapters.Sql` are named
-  `CommandTextFor…`: they hold a statement on SQL Server and the name of a function on PostgreSQL,
-  and the new member `Mapping.CommandType` says which (#366).
+  `CommandTextFor…`, and those of the SqlClient adapter hold statements (#366).
 - The Npgsql adapter prepares its commands. A transaction has 27 commands that are not extents: they
   create, instantiate and delete objects, read and write roles, read associations, read and update
   versions, and prefetch. Each of them is prepared when it is first executed, so that PostgreSQL
@@ -101,8 +100,8 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   several objects in one call, `ITransaction.Create(class, count)`, and the deletion of an object,
   whose functions held more than one statement, each send one statement with a data-modifying
   `WITH`. A load sends the statements for its relations with their arrays as they are: each of
-  them runs once, with all the relations that it sets. `Mapping.CommandType` of the Npgsql adapter
-  is `Text` and its `CommandTextFor…` members hold statements, as in the SqlClient adapter (#378).
+  them runs once, with all the relations that it sets. The `CommandTextFor…` members of the
+  adapter's `Mapping` hold statements, as in the SqlClient adapter (#378).
 
 ### Fixed
 
@@ -371,3 +370,8 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   of the type `StoredProcedure`. Such a command of an application in the same process now calls a
   procedure, as Npgsql does without the switch, and fails for a function with `42809: … is not a
   procedure` unless the application sets the switch itself (#379).
+- `ICommand.CommandType` of `Allors.Database.Adapters.Sql`, and the property `CommandType` of
+  `Command` in the SqlClient and Npgsql adapters. The adapters send every command as a statement,
+  the type `Text` that a command of both drivers has from its creation, so they no longer set the
+  member. A command that an application creates through `IConnection.CreateCommand()` is a
+  statement as well and cannot be given another type (#383).
