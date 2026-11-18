@@ -229,6 +229,11 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   writers wrote an end element to the writer that had just failed (#364).
 - A transaction on the SqlClient and Npgsql adapters keeps the command that sets a unit role, as it
   keeps its other commands. It created that command again for every flush that set the role (#370).
+- On the SqlClient and Npgsql adapters the prefetch of a to-one association with a nested policy
+  returns when its transaction already knows that an object has no such association: from a read,
+  from the removal of the role or, for a one-to-many relation type, from an earlier prefetch of the
+  association. It threw a `NullReferenceException`, for a one-to-one or one-to-many relation type
+  that the adapters keep in a column of a class table (#372, #374).
 - The Memory adapter's extent sort treats two objects without a value for a sort order as equal
   and lets the next sort order decide; the comparer contradicted itself, so short lists kept an
   arbitrary order and longer ones could fail the sort (#309).
