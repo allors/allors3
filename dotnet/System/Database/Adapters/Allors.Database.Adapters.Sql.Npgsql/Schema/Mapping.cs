@@ -7,7 +7,6 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 {
     using System;
     using System.Collections.Generic;
-    using System.Data;
     using System.Linq;
     using Meta;
     using NpgsqlTypes;
@@ -46,8 +45,6 @@ namespace Allors.Database.Adapters.Sql.Npgsql
         public override IDictionary<IClass, string> TableNameForObjectByClass => this.tableNameForObjectByClass;
         public override IDictionary<IRelationType, string> ColumnNameByRelationType => this.columnNameByRelationType;
         public override IDictionary<IRelationType, string> TableNameForRelationByRelationType => this.tableNameForRelationByRelationType;
-
-        public override CommandType CommandType => CommandType.Text;
 
         public override IDictionary<IClass, string> CommandTextForCreateObjectByClass => this.commandTextForCreateObjectByClass;
         public override IDictionary<IClass, string> CommandTextForCreateObjectsByClass => this.commandTextForCreateObjectsByClass;

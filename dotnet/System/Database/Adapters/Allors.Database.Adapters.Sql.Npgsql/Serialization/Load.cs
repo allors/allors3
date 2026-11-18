@@ -377,7 +377,6 @@ where c = '{@class.Id}'";
                     var sql = ((Mapping)this.database.Mapping).CommandTextForLoadSetUnitRoleByRelationTypeByClass[@class][relationType];
                     var command = con.CreateCommand();
                     command.CommandText = sql;
-                    command.CommandType = this.database.Mapping.CommandType;
                     command.UnitTableParameter(relationType.RoleType, unitRelations);
                     command.ExecuteNonQuery();
                 }
@@ -412,7 +411,6 @@ where c = '{@class.Id}'";
 
                 var command = con.CreateCommand();
                 command.CommandText = sql;
-                command.CommandType = this.database.Mapping.CommandType;
                 command.AddCompositeRoleTableParameter(relations.ToArray());
                 command.ExecuteNonQuery();
 

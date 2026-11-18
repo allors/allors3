@@ -7,7 +7,6 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 {
     using System;
     using System.Collections.Generic;
-    using System.Data;
     using System.Linq;
     using Meta;
     using global::Npgsql;
@@ -25,12 +24,6 @@ namespace Allors.Database.Adapters.Sql.Npgsql
         {
             this.mapping = mapping;
             this.command = command;
-        }
-
-        public CommandType CommandType
-        {
-            get => this.command.CommandType;
-            set => this.command.CommandType = value;
         }
 
         public string CommandText

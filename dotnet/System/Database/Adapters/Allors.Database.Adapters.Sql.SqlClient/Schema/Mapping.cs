@@ -27,8 +27,6 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         public override IDictionary<IRoleType, string> ParamInvocationNameByRoleType => this.ParamNameByRoleType;
 
-        public override CommandType CommandType => CommandType.Text;
-
         public override IDictionary<IClass, string> CommandTextForDeleteObjectByClass => this.commandTextForDeleteObjectByClass;
 
         public override IDictionary<IClass, string> CommandTextForCreateObjectsByClass => this.commandTextForCreateObjectsByClass;

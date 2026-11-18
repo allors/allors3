@@ -2,13 +2,10 @@ namespace Allors.Database.Adapters.Sql
 {
     using System;
     using System.Collections.Generic;
-    using System.Data;
     using Meta;
 
     public interface ICommand : IDisposable
     {
-        CommandType CommandType { get; set; }
-
         string CommandText { get; set; }
 
         /// <summary>

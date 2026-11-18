@@ -357,7 +357,6 @@ namespace Allors.Database.Adapters.Sql
                 {
                     using var command = connection.CreateCommand();
                     command.CommandText = statement;
-                    command.CommandType = mapping.CommandType;
                     parameters(command);
 
                     if (returnsRows)
