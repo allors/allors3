@@ -10,6 +10,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
     using Meta;
     using Xunit;
     using C1 = Domain.C1;
+    using C2 = Domain.C2;
 
     public class LifeCycleTest : Adapters.LifeCycleTest, IClassFixture<Fixture<LifeCycleTest>>
     {
@@ -53,6 +54,51 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 
                     Assert.Equal(1L, Count(transaction, "SELECT COUNT(*) FROM allors.c1 WHERE c1allorsstring = 'a' AND c1allorsinteger = 1"));
                     Assert.NotEqual(0L, Count(transaction, "SELECT COUNT(*) FROM pg_prepared_statements WHERE statement LIKE 'UPDATE%c1allorsstring%' AND statement LIKE 'UPDATE%c1allorsinteger%'"));
+                }
+            }
+        }
+
+        // A prefetch leaves out an association that its transaction already knows: once a transaction has
+        // prefetched the associations of an object, the same prefetch executes no command.
+        [Fact]
+        public void PrefetchDoesNotFetchAKnownAssociationAgain()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+                var m = this.Transaction.Database.Context().M;
+
+                var c1 = C1.Create(this.Transaction);
+                var c2 = C2.Create(this.Transaction);
+                c1.C1C2one2one = c2;
+                c1.I12C2one2one = c2;
+                c1.C1C2many2one = c2;
+                c1.AddC1C2many2many(c2);
+                var id = c2.Id;
+                this.Transaction.Commit();
+
+                // An association in each of the four ways in which the SQL adapters store one: to-one and to-many,
+                // in a column of a class table and in a relation table.
+                var prefetchPolicy = new PrefetchPolicyBuilder()
+                    .WithRule(m.C2.C1WhereC1C2one2one)
+                    .WithRule(m.C2.I12WhereI12C2one2one)
+                    .WithRule(m.C2.C1sWhereC1C2many2one)
+                    .WithRule(m.C2.C1sWhereC1C2many2many)
+                    .Build();
+
+                using (var transaction = (Transaction)this.CreateTransaction())
+                {
+                    var role = transaction.Instantiate(id);
+                    transaction.Prefetch(prefetchPolicy, role);
+
+                    // PostgreSQL counts the executions of a prepared statement as the plans that it chose for it.
+                    const string Executions = "SELECT COALESCE(SUM(generic_plans + custom_plans), 0)::bigint FROM pg_prepared_statements WHERE statement NOT LIKE '%pg_prepared_statements%'";
+                    var executions = Count(transaction, Executions);
+                    Assert.NotEqual(0L, executions);
+
+                    transaction.Prefetch(prefetchPolicy, role);
+
+                    Assert.Equal(executions, Count(transaction, Executions));
                 }
             }
         }

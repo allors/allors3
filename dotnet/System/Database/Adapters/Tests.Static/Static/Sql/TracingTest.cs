@@ -148,6 +148,103 @@ namespace Allors.Database.Adapters.Sql
             Assert.Empty(transactionSink.Nodes);
         }
 
+        [Fact]
+        public void PrefetchUsesKnownAssociation()
+        {
+            this.Init();
+            var database = (Database)this.CreateDatabase();
+
+            // An association in each of the four ways in which the SQL adapters store one: to-one and to-many,
+            // in a column of a class table and in a relation table.
+            var associationTypes = new IAssociationType[]
+            {
+                this.M.C2.C1WhereC1C2one2one,
+                this.M.C2.I12WhereI12C2one2one,
+                this.M.C2.C1sWhereC1C2many2one,
+                this.M.C2.C1sWhereC1C2many2many,
+            };
+
+            var c2Ids = new long[associationTypes.Length];
+            using (var setup = database.CreateTransaction())
+            {
+                for (var i = 0; i < associationTypes.Length; i++)
+                {
+                    var setupC1 = C1.Create(setup);
+                    var setupC2 = C2.Create(setup);
+                    var roleType = associationTypes[i].RoleType;
+                    if (roleType.IsOne)
+                    {
+                        setupC1.Strategy.SetCompositeRole(roleType, setupC2);
+                    }
+                    else
+                    {
+                        setupC1.Strategy.AddCompositesRole(roleType, setupC2);
+                    }
+
+                    c2Ids[i] = setupC2.Id;
+                }
+
+                setup.Commit();
+            }
+
+            // An existence check knows the association IDs without instantiating their objects.
+            // A fresh database cache ensures that a flat prefetch must load those references.
+            for (var i = 0; i < associationTypes.Length; i++)
+            {
+                var associationType = associationTypes[i];
+                if (!associationType.IsMany)
+                {
+                    continue;
+                }
+
+                var flatDatabase = (Database)this.CreateDatabase();
+                var flatSink = new Sink();
+                flatDatabase.Sink = flatSink;
+                using var flatTransaction = (Transaction)flatDatabase.CreateTransaction();
+                var c2 = (C2)flatTransaction.Instantiate(c2Ids[i]);
+                Assert.True(c2.Strategy.ExistCompositesAssociation(associationType));
+
+                var prefetchPolicy = new PrefetchPolicyBuilder().WithRule(associationType).Build();
+                flatTransaction.Prefetch(prefetchPolicy, c2);
+
+                var transactionSink = flatSink.TreeByTransaction[flatTransaction];
+                transactionSink.Clear();
+
+                Assert.Single(c2.Strategy.GetCompositesAssociation<C1>(associationType));
+                Assert.Empty(transactionSink.Nodes);
+            }
+
+            var sink = new Sink();
+            database.Sink = sink;
+
+            using var transaction = (Transaction)database.CreateTransaction();
+
+            for (var i = 0; i < associationTypes.Length; i++)
+            {
+                var associationType = associationTypes[i];
+                var c2 = (C2)transaction.Instantiate(c2Ids[i]);
+
+                // The transaction reads the association, and so knows it before the prefetch.
+                var c1 = associationType.IsOne
+                    ? (C1)c2.Strategy.GetCompositeAssociation(associationType)
+                    : c2.Strategy.GetCompositesAssociation<C1>(associationType).Single();
+
+                var prefetchPolicy = new PrefetchPolicyBuilder()
+                    .WithRule(associationType, new IPropertyType[] { this.M.C1.C1AllorsString })
+                    .Build();
+                transaction.Prefetch(prefetchPolicy, c2);
+
+                var transactionSink = sink.TreeByTransaction[transaction];
+                transactionSink.Clear();
+
+                // The nested rule applies to the association that the transaction knew, so reading its unit role
+                // issues no database command.
+                _ = c1.C1AllorsString;
+
+                Assert.Empty(transactionSink.Nodes);
+            }
+        }
+
         protected abstract IDatabase CreateDatabase();
     }
 }
