@@ -306,11 +306,10 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   pages of ASP.NET Core Identity sent a user with a password to "set password" and a user without
   one to "change password".
 - The Npgsql adapter fixes of #80, released on `v3.1` in June 2026. The adapter sets
-  `Npgsql.EnableLegacyTimestampBehavior` and `Npgsql.EnableStoredProcedureCompatMode` itself, in a
-  module initializer; only the fixture of its tests set them, and without them its calls fail with
-  `42809: … is not a procedure`. The adapter connects to the lower-cased database name, the name
-  PostgreSQL gives a database created without quotes, so `Database=AllorsCore` reaches `allorscore`;
-  a database created under a quoted name with capitals has to be renamed.
+  `Npgsql.EnableLegacyTimestampBehavior` itself, in a module initializer; only the fixture of its
+  tests set it. The adapter connects to the lower-cased database name, the name PostgreSQL gives a
+  database created without quotes, so `Database=AllorsCore` reaches `allorscore`; a database created
+  under a quoted name with capitals has to be renamed.
 - The PostgreSQL adapter tests pool their connections, a fix of the archived line of `main` from
   September 2026 (#273). Their connection string set `Pooling=false`, so every transaction opened
   and closed a connection, and every close left a port in `TIME_WAIT`. Against a PostgreSQL in a
