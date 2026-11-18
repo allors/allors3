@@ -332,6 +332,166 @@ namespace Allors.Database.Adapters.Sql
             }
         }
 
+        // The database checks a statement against its tables and columns when a command executes it, and the other
+        // facts do not execute every statement of the test domain. This fact executes each statement that the mapping
+        // holds once, with the parameters that the adapter gives it and with ids that no object has, on a connection
+        // that it rolls back.
+        [Fact]
+        public void EveryStatementOfTheMappingExecutes()
+        {
+            this.Init();
+            var database = (Database)this.CreateDatabase();
+            var mapping = database.Mapping;
+
+            // An id that no object has. Every table parameter gets one row: SqlClient refuses one without rows.
+            const long NoObject = long.MaxValue - 7;
+            var objects = new[] { NoObject };
+            var relations = new[] { new CompositeRelation(NoObject, NoObject - 1) };
+
+            var executed = 0;
+            var connection = database.ConnectionFactory.Create();
+
+            void Execute(string member, string statement, bool returnsRows, Action<ICommand> parameters)
+            {
+                try
+                {
+                    using var command = connection.CreateCommand();
+                    command.CommandText = statement;
+                    command.CommandType = mapping.CommandType;
+                    parameters(command);
+
+                    if (returnsRows)
+                    {
+                        using var reader = command.ExecuteReader();
+                        while (reader.Read())
+                        {
+                        }
+                    }
+                    else
+                    {
+                        command.ExecuteNonQuery();
+                    }
+                }
+                catch (Exception e)
+                {
+                    throw new InvalidOperationException($"The statement {member} of the mapping does not execute: {e.Message}\n{statement}", e);
+                }
+
+                ++executed;
+            }
+
+            try
+            {
+                Execute(nameof(mapping.CommandTextForInstantiate), mapping.CommandTextForInstantiate, true, v => v.ObjectTableParameter(objects));
+                Execute(nameof(mapping.CommandTextForGetVersion), mapping.CommandTextForGetVersion, true, v => v.AddCompositesRoleTableParameter(objects));
+                Execute(nameof(mapping.CommandTextForUpdateVersion), mapping.CommandTextForUpdateVersion, false, v => v.ObjectTableParameter(objects));
+
+                foreach (var (@class, statement) in mapping.CommandTextForCreateObjectByClass)
+                {
+                    Execute($"{nameof(mapping.CommandTextForCreateObjectByClass)}[{@class}]", statement, true, v => v.AddTypeParameter(@class));
+                }
+
+                foreach (var (@class, statement) in mapping.CommandTextForCreateObjectsByClass)
+                {
+                    Execute(
+                        $"{nameof(mapping.CommandTextForCreateObjectsByClass)}[{@class}]",
+                        statement,
+                        true,
+                        v =>
+                        {
+                            v.AddTypeParameter(@class);
+                            v.AddCountParameter(2);
+                        });
+                }
+
+                foreach (var (@class, statement) in mapping.CommandTextForDeleteObjectByClass)
+                {
+                    Execute($"{nameof(mapping.CommandTextForDeleteObjectByClass)}[{@class}]", statement, false, v => v.ObjectParameter(NoObject));
+                }
+
+                foreach (var (@class, statement) in mapping.CommandTextForGetUnitRolesByClass)
+                {
+                    Execute($"{nameof(mapping.CommandTextForGetUnitRolesByClass)}[{@class}]", statement, true, v => v.ObjectParameter(NoObject));
+                }
+
+                foreach (var (@class, statement) in mapping.CommandTextForPrefetchUnitRolesByClass)
+                {
+                    Execute($"{nameof(mapping.CommandTextForPrefetchUnitRolesByClass)}[{@class}]", statement, true, v => v.AddCompositesRoleTableParameter(objects));
+                }
+
+                foreach (var (@class, statementByRelationType) in mapping.CommandTextForSetUnitRoleByRelationTypeByClass)
+                {
+                    foreach (var (relationType, statement) in statementByRelationType)
+                    {
+                        var roleType = relationType.RoleType;
+                        var units = new[] { new UnitRelation(NoObject, UnitFor(roleType)) };
+                        Execute($"{nameof(mapping.CommandTextForSetUnitRoleByRelationTypeByClass)}[{@class}][{relationType}]", statement, false, v => v.UnitTableParameter(roleType, units));
+                    }
+                }
+
+                foreach (var (relationType, statement) in mapping.CommandTextForGetRoleByRelationType)
+                {
+                    Execute($"{nameof(mapping.CommandTextForGetRoleByRelationType)}[{relationType}]", statement, true, v => v.AddAssociationParameter(NoObject));
+                }
+
+                foreach (var (relationType, statement) in mapping.CommandTextForPrefetchRoleByRelationType)
+                {
+                    Execute($"{nameof(mapping.CommandTextForPrefetchRoleByRelationType)}[{relationType}]", statement, true, v => v.AddCompositesRoleTableParameter(objects));
+                }
+
+                foreach (var (relationType, statement) in mapping.CommandTextForSetRoleByRelationType)
+                {
+                    Execute($"{nameof(mapping.CommandTextForSetRoleByRelationType)}[{relationType}]", statement, false, v => v.AddCompositeRoleTableParameter(relations));
+                }
+
+                foreach (var (relationType, statement) in mapping.CommandTextForAddRoleByRelationType)
+                {
+                    Execute($"{nameof(mapping.CommandTextForAddRoleByRelationType)}[{relationType}]", statement, false, v => v.AddCompositeRoleTableParameter(relations));
+                }
+
+                foreach (var (relationType, statement) in mapping.CommandTextForRemoveRoleByRelationType)
+                {
+                    Execute($"{nameof(mapping.CommandTextForRemoveRoleByRelationType)}[{relationType}]", statement, false, v => v.AddCompositeRoleTableParameter(relations));
+                }
+
+                foreach (var (relationType, statement) in mapping.CommandTextForClearRoleByRelationType)
+                {
+                    Execute($"{nameof(mapping.CommandTextForClearRoleByRelationType)}[{relationType}]", statement, false, v => v.ObjectTableParameter(objects));
+                }
+
+                foreach (var (relationType, statement) in mapping.CommandTextForGetAssociationByRelationType)
+                {
+                    Execute($"{nameof(mapping.CommandTextForGetAssociationByRelationType)}[{relationType}]", statement, true, v => v.AddCompositeRoleParameter(NoObject));
+                }
+
+                foreach (var (relationType, statement) in mapping.CommandTextForPrefetchAssociationByRelationType)
+                {
+                    Execute($"{nameof(mapping.CommandTextForPrefetchAssociationByRelationType)}[{relationType}]", statement, true, v => v.ObjectTableParameter(objects));
+                }
+            }
+            finally
+            {
+                connection.Rollback();
+            }
+
+            Assert.NotEqual(0, executed);
+        }
+
         protected abstract IDatabase CreateDatabase();
+
+        // A value that a unit role of the given type takes.
+        private static object UnitFor(IRoleType roleType) =>
+            ((IUnit)roleType.ObjectType).Tag switch
+            {
+                UnitTags.String => "a",
+                UnitTags.Integer => 1,
+                UnitTags.Decimal => 0m,
+                UnitTags.Float => 0d,
+                UnitTags.Boolean => false,
+                UnitTags.DateTime => new System.DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                UnitTags.Unique => Guid.Empty,
+                UnitTags.Binary => new byte[] { 1 },
+                _ => throw new ArgumentException("Unknown unit: " + roleType.ObjectType),
+            };
     }
 }
