@@ -139,23 +139,6 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             }
         }
 
-        public bool ExistProcedure(string procedure)
-        {
-            using (var connection = this.CreateConnection())
-            {
-                connection.Open();
-                using (var command = connection.CreateCommand())
-                {
-                    command.CommandText = @"SELECT ROUTINE_NAME, ROUTINE_DEFINITION
-FROM INFORMATION_SCHEMA.ROUTINES
-WHERE lower(ROUTINE_NAME) = '" + procedure.ToLower() + @"'";
-                    var count = (long)command.ExecuteScalar();
-
-                    return count != 0;
-                }
-            }
-        }
-
         public bool ExistPrimaryKey(string table, string column)
         {
             using (var connection = this.CreateConnection())

@@ -21,7 +21,6 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 
             this.Database = database;
             this.TableByName = new Dictionary<string, SchemaTable>();
-            this.ProcedureByName = new Dictionary<string, SchemaProcedure>();
             this.IndexByIndexNameByTableName = new Dictionary<string, Dictionary<string, SchemaIndex>>();
 
             using (var connection = new NpgsqlConnection(database.ConnectionString))
@@ -98,32 +97,6 @@ AND C.table_schema = @tableSchema";
                         }
                     }
 
-                    // Procedures
-                    cmdText = @"
-SELECT routine_name, routine_definition
-FROM information_schema.routines
-WHERE routine_schema = @routineSchema";
-
-                    using (var command = new NpgsqlCommand(cmdText, connection))
-                    {
-                        command.Parameters.Add("@routineSchema", NpgsqlDbType.Varchar).Value = database.SchemaName;
-                        using (var reader = command.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                var routineNameValue = reader["routine_name"];
-                                var routineDefinitionValue = reader["routine_definition"];
-
-                                var routineName = (string)routineNameValue;
-                                var routineDefinition = routineDefinitionValue != DBNull.Value ? (string)routineDefinitionValue : string.Empty;
-
-                                var lowercaseRoutineName = routineName.Trim().ToLowerInvariant();
-                                var fullyQualifiedName = database.SchemaName + "." + lowercaseRoutineName;
-                                this.ProcedureByName[fullyQualifiedName] = new SchemaProcedure(routineName, routineDefinition);
-                            }
-                        }
-                    }
-
                     // // Indeces
                     //                    cmdText = @"
                     // SELECT	o.name AS table_name,
@@ -182,20 +155,12 @@ WHERE routine_schema = @routineSchema";
 
         public Dictionary<string, SchemaTable> TableByName { get; }
 
-        public Dictionary<string, SchemaProcedure> ProcedureByName { get; }
-
         public Dictionary<string, Dictionary<string, SchemaIndex>> IndexByIndexNameByTableName { get; }
 
         public SchemaTable GetTable(string tableName)
         {
             this.TableByName.TryGetValue(tableName.ToLowerInvariant(), out var table);
             return table;
-        }
-
-        public SchemaProcedure GetProcedure(string procedureName)
-        {
-            this.ProcedureByName.TryGetValue(procedureName, out var procedure);
-            return procedure;
         }
 
         public SchemaIndex GetIndex(string tableName, string indexName)
