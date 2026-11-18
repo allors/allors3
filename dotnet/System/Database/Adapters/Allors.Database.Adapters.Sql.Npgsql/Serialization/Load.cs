@@ -375,10 +375,10 @@ where c = '{@class.Id}'";
                     var @class = kvp.Key;
                     var unitRelations = kvp.Value;
 
-                    var sql = this.database.Mapping.CommandTextForSetUnitRoleByRelationTypeByClass[@class][relationType];
+                    var sql = ((Mapping)this.database.Mapping).CommandTextForLoadSetUnitRoleByRelationTypeByClass[@class][relationType];
                     var command = con.CreateCommand();
                     command.CommandText = sql;
-                    command.CommandType = CommandType.StoredProcedure;
+                    command.CommandType = this.database.Mapping.CommandType;
                     command.UnitTableParameter(relationType.RoleType, unitRelations);
                     command.ExecuteNonQuery();
                 }
@@ -406,13 +406,14 @@ where c = '{@class.Id}'";
                     this.objectsNotLoaded,
                     reader);
 
+                var mapping = (Mapping)this.database.Mapping;
                 var sql = relationType.RoleType.IsOne ?
-                              this.database.Mapping.CommandTextForSetRoleByRelationType[relationType] :
-                              this.database.Mapping.CommandTextForAddRoleByRelationType[relationType];
+                              mapping.CommandTextForLoadSetRoleByRelationType[relationType] :
+                              mapping.CommandTextForLoadAddRoleByRelationType[relationType];
 
                 var command = con.CreateCommand();
                 command.CommandText = sql;
-                command.CommandType = CommandType.StoredProcedure;
+                command.CommandType = this.database.Mapping.CommandType;
                 command.AddCompositeRoleTableParameter(relations.ToArray());
                 command.ExecuteNonQuery();
 

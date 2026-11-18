@@ -93,6 +93,18 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   `Allors.Database.Adapters.Sql` has the new member `Prepare()`, which `Commands` and `Prefetcher`
   call for every command that they create, and which another implementation of `ICommand` has to
   add. The SqlClient adapter does nothing in it (#370).
+- The Npgsql adapter sends its statements itself and calls no function of the schema. The 25
+  commands of a transaction that called a function send the statement that their function holds,
+  with the same parameters and with an array behind a sub-select, `UNNEST((SELECT :p_arr_o))`, so
+  that PostgreSQL plans the statement without the values of the array. The lookup of a to-one role
+  or association sends the `SELECT` of its function. The creation of an object, the creation of
+  several objects in one call, `ITransaction.Create(class, count)`, and the deletion of an object,
+  whose functions hold more than one statement, each send one statement with a data-modifying
+  `WITH`. A load sends the statements for its relations with their arrays as they are: each of
+  them runs once, with all the relations that it sets. `Mapping.CommandType` of the Npgsql adapter
+  is `Text` and its `CommandTextFor…` members hold statements, as in the SqlClient adapter. `Init`
+  still creates the functions and the validation of the schema still asks for them, with the
+  definitions that they had, so a database stays valid (#378).
 
 ### Fixed
 

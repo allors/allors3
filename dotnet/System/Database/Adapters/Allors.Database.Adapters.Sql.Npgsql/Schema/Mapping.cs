@@ -18,20 +18,23 @@ namespace Allors.Database.Adapters.Sql.Npgsql
         private readonly IDictionary<IClass, string> tableNameForObjectByClass;
         private readonly IDictionary<IRelationType, string> columnNameByRelationType;
         private readonly IDictionary<IRelationType, string> tableNameForRelationByRelationType;
-        private readonly IDictionary<IClass, string> procedureNameForCreateObjectByClass;
-        private readonly IDictionary<IClass, string> procedureNameForCreateObjectsByClass;
-        private readonly IDictionary<IClass, string> procedureNameForDeleteObjectByClass;
-        private readonly IDictionary<IClass, string> procedureNameForGetUnitRolesByClass;
-        private readonly IDictionary<IClass, string> procedureNameForPrefetchUnitRolesByClass;
-        private readonly IDictionary<IClass, IDictionary<IRelationType, string>> procedureNameForSetUnitRoleByRelationTypeByClass;
-        private readonly IDictionary<IRelationType, string> procedureNameForGetRoleByRelationType;
-        private readonly IDictionary<IRelationType, string> procedureNameForPrefetchRoleByRelationType;
-        private readonly IDictionary<IRelationType, string> procedureNameForSetRoleByRelationType;
-        private readonly IDictionary<IRelationType, string> procedureNameForAddRoleByRelationType;
-        private readonly IDictionary<IRelationType, string> procedureNameForRemoveRoleByRelationType;
-        private readonly IDictionary<IRelationType, string> procedureNameForClearRoleByRelationType;
-        private readonly IDictionary<IRelationType, string> procedureNameForGetAssociationByRelationType;
-        private readonly IDictionary<IRelationType, string> procedureNameForPrefetchAssociationByRelationType;
+        private readonly IDictionary<IClass, string> commandTextForCreateObjectByClass;
+        private readonly IDictionary<IClass, string> commandTextForCreateObjectsByClass;
+        private readonly IDictionary<IClass, string> commandTextForDeleteObjectByClass;
+        private readonly IDictionary<IClass, string> commandTextForGetUnitRolesByClass;
+        private readonly IDictionary<IClass, string> commandTextForPrefetchUnitRolesByClass;
+        private readonly IDictionary<IClass, IDictionary<IRelationType, string>> commandTextForSetUnitRoleByRelationTypeByClass;
+        private readonly IDictionary<IRelationType, string> commandTextForGetRoleByRelationType;
+        private readonly IDictionary<IRelationType, string> commandTextForPrefetchRoleByRelationType;
+        private readonly IDictionary<IRelationType, string> commandTextForSetRoleByRelationType;
+        private readonly IDictionary<IRelationType, string> commandTextForAddRoleByRelationType;
+        private readonly IDictionary<IRelationType, string> commandTextForRemoveRoleByRelationType;
+        private readonly IDictionary<IRelationType, string> commandTextForClearRoleByRelationType;
+        private readonly IDictionary<IRelationType, string> commandTextForGetAssociationByRelationType;
+        private readonly IDictionary<IRelationType, string> commandTextForPrefetchAssociationByRelationType;
+        private string commandTextForInstantiate;
+        private string commandTextForGetVersion;
+        private string commandTextForUpdateVersion;
 
         public override string ParamInvocationFormat => ParameterInvocationFormat;
         public override string ParamInvocationNameForObject { get; }
@@ -44,30 +47,30 @@ namespace Allors.Database.Adapters.Sql.Npgsql
         public override IDictionary<IRelationType, string> ColumnNameByRelationType => this.columnNameByRelationType;
         public override IDictionary<IRelationType, string> TableNameForRelationByRelationType => this.tableNameForRelationByRelationType;
 
-        public override CommandType CommandType => CommandType.StoredProcedure;
+        public override CommandType CommandType => CommandType.Text;
 
-        public override IDictionary<IClass, string> CommandTextForCreateObjectByClass => this.procedureNameForCreateObjectByClass;
-        public override IDictionary<IClass, string> CommandTextForCreateObjectsByClass => this.procedureNameForCreateObjectsByClass;
-        public override IDictionary<IClass, string> CommandTextForDeleteObjectByClass => this.procedureNameForDeleteObjectByClass;
-        public override IDictionary<IClass, string> CommandTextForGetUnitRolesByClass => this.procedureNameForGetUnitRolesByClass;
-        public override IDictionary<IClass, string> CommandTextForPrefetchUnitRolesByClass => this.procedureNameForPrefetchUnitRolesByClass;
-        public override IDictionary<IClass, IDictionary<IRelationType, string>> CommandTextForSetUnitRoleByRelationTypeByClass => this.procedureNameForSetUnitRoleByRelationTypeByClass;
-        public override IDictionary<IRelationType, string> CommandTextForGetRoleByRelationType => this.procedureNameForGetRoleByRelationType;
-        public override IDictionary<IRelationType, string> CommandTextForPrefetchRoleByRelationType => this.procedureNameForPrefetchRoleByRelationType;
-        public override IDictionary<IRelationType, string> CommandTextForSetRoleByRelationType => this.procedureNameForSetRoleByRelationType;
-        public override IDictionary<IRelationType, string> CommandTextForAddRoleByRelationType => this.procedureNameForAddRoleByRelationType;
-        public override IDictionary<IRelationType, string> CommandTextForRemoveRoleByRelationType => this.procedureNameForRemoveRoleByRelationType;
-        public override IDictionary<IRelationType, string> CommandTextForClearRoleByRelationType => this.procedureNameForClearRoleByRelationType;
-        public override IDictionary<IRelationType, string> CommandTextForGetAssociationByRelationType => this.procedureNameForGetAssociationByRelationType;
-        public override IDictionary<IRelationType, string> CommandTextForPrefetchAssociationByRelationType => this.procedureNameForPrefetchAssociationByRelationType;
+        public override IDictionary<IClass, string> CommandTextForCreateObjectByClass => this.commandTextForCreateObjectByClass;
+        public override IDictionary<IClass, string> CommandTextForCreateObjectsByClass => this.commandTextForCreateObjectsByClass;
+        public override IDictionary<IClass, string> CommandTextForDeleteObjectByClass => this.commandTextForDeleteObjectByClass;
+        public override IDictionary<IClass, string> CommandTextForGetUnitRolesByClass => this.commandTextForGetUnitRolesByClass;
+        public override IDictionary<IClass, string> CommandTextForPrefetchUnitRolesByClass => this.commandTextForPrefetchUnitRolesByClass;
+        public override IDictionary<IClass, IDictionary<IRelationType, string>> CommandTextForSetUnitRoleByRelationTypeByClass => this.commandTextForSetUnitRoleByRelationTypeByClass;
+        public override IDictionary<IRelationType, string> CommandTextForGetRoleByRelationType => this.commandTextForGetRoleByRelationType;
+        public override IDictionary<IRelationType, string> CommandTextForPrefetchRoleByRelationType => this.commandTextForPrefetchRoleByRelationType;
+        public override IDictionary<IRelationType, string> CommandTextForSetRoleByRelationType => this.commandTextForSetRoleByRelationType;
+        public override IDictionary<IRelationType, string> CommandTextForAddRoleByRelationType => this.commandTextForAddRoleByRelationType;
+        public override IDictionary<IRelationType, string> CommandTextForRemoveRoleByRelationType => this.commandTextForRemoveRoleByRelationType;
+        public override IDictionary<IRelationType, string> CommandTextForClearRoleByRelationType => this.commandTextForClearRoleByRelationType;
+        public override IDictionary<IRelationType, string> CommandTextForGetAssociationByRelationType => this.commandTextForGetAssociationByRelationType;
+        public override IDictionary<IRelationType, string> CommandTextForPrefetchAssociationByRelationType => this.commandTextForPrefetchAssociationByRelationType;
 
         public override string StringCollation => string.Empty;
         public override string Ascending => "ASC NULLS FIRST";
         public override string Descending => "DESC NULLS LAST";
 
-        public override string CommandTextForInstantiate { get; }
-        public override string CommandTextForGetVersion { get; }
-        public override string CommandTextForUpdateVersion { get; }
+        public override string CommandTextForInstantiate => this.commandTextForInstantiate;
+        public override string CommandTextForGetVersion => this.commandTextForGetVersion;
+        public override string CommandTextForUpdateVersion => this.commandTextForUpdateVersion;
 
         internal const string SqlTypeForClass = "uuid";
         internal const string SqlTypeForObject = "bigint";
@@ -127,10 +130,6 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 
             this.ParamInvocationNameForObject = string.Format(ParameterInvocationFormat, ColumnNameForObject);
             this.ParamInvocationNameForClass = string.Format(ParameterInvocationFormat, ColumnNameForClass);
-
-            this.CommandTextForInstantiate = this.Database.SchemaName + "." + ProcedurePrefixForInstantiate;
-            this.CommandTextForGetVersion = this.Database.SchemaName + "." + ProcedurePrefixForGetVersion;
-            this.CommandTextForUpdateVersion = this.Database.SchemaName + "." + ProcedurePrefixForUpdateVersion;
 
             this.ParamNameForAssociation = string.Format(ParameterFormat, ColumnNameForAssociation);
             this.ParamNameForCompositeRole = string.Format(ParameterFormat, ColumnNameForRole);
@@ -204,26 +203,34 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                 }
             }
 
-            // Procedures
-            // ----------
+            // Commands and procedures
+            // -----------------------
+            // The text of a command is a statement. The schema still holds a function for every command, which the
+            // adapter does not call. Where a function holds one statement, its generator writes that statement once:
+            // for the command with the parameters as a command passes them, and for the function with the parameters
+            // as the function declares them.
             this.ProcedureDefinitionByName = new Dictionary<string, string>();
 
-            this.procedureNameForCreateObjectByClass = new Dictionary<IClass, string>();
-            this.procedureNameForCreateObjectsByClass = new Dictionary<IClass, string>();
-            this.procedureNameForDeleteObjectByClass = new Dictionary<IClass, string>();
+            this.commandTextForCreateObjectByClass = new Dictionary<IClass, string>();
+            this.commandTextForCreateObjectsByClass = new Dictionary<IClass, string>();
+            this.commandTextForDeleteObjectByClass = new Dictionary<IClass, string>();
 
-            this.procedureNameForGetUnitRolesByClass = new Dictionary<IClass, string>();
-            this.procedureNameForPrefetchUnitRolesByClass = new Dictionary<IClass, string>();
-            this.procedureNameForSetUnitRoleByRelationTypeByClass = new Dictionary<IClass, IDictionary<IRelationType, string>>();
+            this.commandTextForGetUnitRolesByClass = new Dictionary<IClass, string>();
+            this.commandTextForPrefetchUnitRolesByClass = new Dictionary<IClass, string>();
+            this.commandTextForSetUnitRoleByRelationTypeByClass = new Dictionary<IClass, IDictionary<IRelationType, string>>();
 
-            this.procedureNameForGetRoleByRelationType = new Dictionary<IRelationType, string>();
-            this.procedureNameForPrefetchRoleByRelationType = new Dictionary<IRelationType, string>();
-            this.procedureNameForSetRoleByRelationType = new Dictionary<IRelationType, string>();
-            this.procedureNameForAddRoleByRelationType = new Dictionary<IRelationType, string>();
-            this.procedureNameForRemoveRoleByRelationType = new Dictionary<IRelationType, string>();
-            this.procedureNameForClearRoleByRelationType = new Dictionary<IRelationType, string>();
-            this.procedureNameForGetAssociationByRelationType = new Dictionary<IRelationType, string>();
-            this.procedureNameForPrefetchAssociationByRelationType = new Dictionary<IRelationType, string>();
+            this.commandTextForGetRoleByRelationType = new Dictionary<IRelationType, string>();
+            this.commandTextForPrefetchRoleByRelationType = new Dictionary<IRelationType, string>();
+            this.commandTextForSetRoleByRelationType = new Dictionary<IRelationType, string>();
+            this.commandTextForAddRoleByRelationType = new Dictionary<IRelationType, string>();
+            this.commandTextForRemoveRoleByRelationType = new Dictionary<IRelationType, string>();
+            this.commandTextForClearRoleByRelationType = new Dictionary<IRelationType, string>();
+            this.commandTextForGetAssociationByRelationType = new Dictionary<IRelationType, string>();
+            this.commandTextForPrefetchAssociationByRelationType = new Dictionary<IRelationType, string>();
+
+            this.CommandTextForLoadSetUnitRoleByRelationTypeByClass = new Dictionary<IClass, Dictionary<IRelationType, string>>();
+            this.CommandTextForLoadSetRoleByRelationType = new Dictionary<IRelationType, string>();
+            this.CommandTextForLoadAddRoleByRelationType = new Dictionary<IRelationType, string>();
 
             this.Instantiate();
             this.GetVersionIds();
@@ -293,9 +300,6 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             {
                 if (!relationType.RoleType.ObjectType.IsUnit && ((relationType.AssociationType.IsMany && relationType.RoleType.IsMany) || !relationType.ExistExclusiveDatabaseClasses))
                 {
-                    this.procedureNameForPrefetchAssociationByRelationType.Add(relationType, this.Database.SchemaName + "." + ProcedurePrefixForPrefetchAssociation + relationType.RoleType.SingularFullName.ToLowerInvariant());
-                    this.procedureNameForClearRoleByRelationType.Add(relationType, this.Database.SchemaName + "." + ProcedurePrefixForClearRole + relationType.RoleType.SingularFullName.ToLowerInvariant());
-
                     if (relationType.RoleType.IsMany)
                     {
                         this.GetCompositesRoleRelationTable(relationType);
@@ -327,6 +331,15 @@ namespace Allors.Database.Adapters.Sql.Npgsql
         }
 
         internal Dictionary<string, string> ProcedureDefinitionByName { get; }
+
+        // A load sends each of its statements once, with all the relations that the statement sets in its arrays. Its
+        // statements take the arrays as they are, not behind a sub-select, so that PostgreSQL plans a statement for the
+        // arrays that it gets.
+        internal Dictionary<IClass, Dictionary<IRelationType, string>> CommandTextForLoadSetUnitRoleByRelationTypeByClass { get; }
+
+        internal Dictionary<IRelationType, string> CommandTextForLoadSetRoleByRelationType { get; }
+
+        internal Dictionary<IRelationType, string> CommandTextForLoadAddRoleByRelationType { get; }
 
         protected internal Database Database { get; }
 
@@ -414,6 +427,10 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             }
         }
 
+        // In a statement an array sits behind a sub-select: PostgreSQL then plans the statement without the values of
+        // the array. A plan for the values of one execution can scan a whole table when the array is long.
+        private static string SubSelect(MappingArrayParameter array) => "(SELECT " + array.InvocationName + ")";
+
         private void LoadObjects(IClass @class)
         {
             var table = this.tableNameForObjectByClass[@class];
@@ -440,9 +457,20 @@ $$;";
         {
             var table = this.tableNameForObjectByClass[@class];
             var name = this.Database.SchemaName + "." + ProcedurePrefixForCreateObject + @class.Name.ToLowerInvariant();
-            this.procedureNameForCreateObjectByClass.Add(@class, name);
 
             // CreateObject
+            // One statement creates the object: the row of the objects table gives its id to the row of the table
+            // of the class.
+            var sql = $@"WITH created AS (
+    INSERT INTO {this.TableNameForObjects} ({ColumnNameForClass}, {ColumnNameForVersion})
+    VALUES ({this.ParamInvocationNameForClass}, {(long)Allors.Version.DatabaseInitial})
+    RETURNING {ColumnNameForObject})
+INSERT INTO {table} ({ColumnNameForObject}, {ColumnNameForClass})
+SELECT {ColumnNameForObject}, {this.ParamInvocationNameForClass}
+FROM created
+RETURNING {ColumnNameForObject}";
+            this.commandTextForCreateObjectByClass.Add(@class, sql);
+
             var definition = $@"
 DROP FUNCTION IF EXISTS {name}({SqlTypeForClass});
 CREATE FUNCTION {name}({this.ParamNameForClass} {SqlTypeForClass})
@@ -469,9 +497,21 @@ $$;";
         private void CreateObjects(IClass @class)
         {
             var name = this.Database.SchemaName + "." + ProcedurePrefixForCreateObjects + @class.Name.ToLowerInvariant();
-            this.procedureNameForCreateObjectsByClass.Add(@class, name);
 
             // CreateObjects
+            // One statement creates the objects: the rows of the objects table give their ids to the rows of the
+            // table of the class. A count of zero or below creates nothing.
+            var sql = $@"WITH created AS (
+    INSERT INTO {this.TableNameForObjects} ({ColumnNameForClass}, {ColumnNameForVersion})
+    SELECT {this.ParamInvocationNameForClass}, {(long)Allors.Version.DatabaseInitial}
+    FROM generate_series(1, {this.ParamInvocationNameForCount})
+    RETURNING {ColumnNameForObject})
+INSERT INTO {this.tableNameForObjectByClass[@class.ExclusiveDatabaseClass]} ({ColumnNameForObject}, {ColumnNameForClass})
+SELECT {ColumnNameForObject}, {this.ParamInvocationNameForClass}
+FROM created
+RETURNING {ColumnNameForObject}";
+            this.commandTextForCreateObjectsByClass.Add(@class, sql);
+
             var definition = $@"
 DROP FUNCTION IF EXISTS {name}({SqlTypeForClass}, {SqlTypeForCount});
 CREATE FUNCTION {name}({this.ParamNameForClass} {SqlTypeForClass}, {this.ParamNameForCount} {SqlTypeForCount})
@@ -504,7 +544,14 @@ $$;";
         {
             var table = this.tableNameForObjectByClass[@class];
             var name = this.Database.SchemaName + "." + ProcedurePrefixForDeleteObject + @class.Name.ToLowerInvariant();
-            this.procedureNameForDeleteObjectByClass.Add(@class, name);
+
+            // One statement deletes the object from the objects table and from the table of its class.
+            var sql = $@"WITH deleted AS (
+    DELETE FROM {this.TableNameForObjects}
+    WHERE {ColumnNameForObject}={this.ParamInvocationNameForObject})
+DELETE FROM {table}
+WHERE {ColumnNameForObject}={this.ParamInvocationNameForObject}";
+            this.commandTextForDeleteObjectByClass.Add(@class, sql);
 
             var definition = $@"DROP FUNCTION IF EXISTS {name}({SqlTypeForObject});
 CREATE FUNCTION {name}({this.ParamNameForObject} {SqlTypeForObject})
@@ -527,9 +574,14 @@ $$;
         {
             var sortedUnitRoleTypes = this.Database.GetSortedUnitRolesByObjectType(@class);
             var name = this.Database.SchemaName + "." + ProcedurePrefixForGetUnits + @class.Name.ToLowerInvariant();
-            this.procedureNameForGetUnitRolesByClass.Add(@class, name);
 
             // Get Unit Roles
+            string Sql(string @object) => $@"SELECT {string.Join(", ", sortedUnitRoleTypes.Select(v => this.columnNameByRelationType[v.RelationType]))}
+    FROM {this.tableNameForObjectByClass[@class.ExclusiveDatabaseClass]}
+    WHERE {ColumnNameForObject}={@object}";
+
+            this.commandTextForGetUnitRolesByClass.Add(@class, Sql(this.ParamInvocationNameForObject));
+
             var definition = $@"
 DROP FUNCTION IF EXISTS {name}({SqlTypeForObject});
 CREATE FUNCTION {name}({this.ParamNameForObject} {SqlTypeForObject})
@@ -537,9 +589,7 @@ CREATE FUNCTION {name}({this.ParamNameForObject} {SqlTypeForObject})
     ({string.Join(", ", sortedUnitRoleTypes.Select(v => $"{this.columnNameByRelationType[v.RelationType]} {this.GetSqlType(v)}"))})
     LANGUAGE sql
 AS $$
-    SELECT {string.Join(", ", sortedUnitRoleTypes.Select(v => this.columnNameByRelationType[v.RelationType]))}
-    FROM {this.tableNameForObjectByClass[@class.ExclusiveDatabaseClass]}
-    WHERE {ColumnNameForObject}={this.ParamNameForObject};
+    {Sql(this.ParamNameForObject)};
 $$;";
             this.ProcedureDefinitionByName.Add(name, definition);
         }
@@ -551,7 +601,14 @@ $$;";
             var objects = this.ObjectArrayParam;
             var objectsType = objects.TypeName;
             var name = this.Database.SchemaName + "." + ProcedurePrefixForPrefetchUnits + @class.Name.ToLowerInvariant();
-            this.procedureNameForPrefetchUnitRolesByClass.Add(@class, name);
+
+            string Sql(string objectArray) => $@"WITH objects AS (SELECT UNNEST({objectArray}) AS {ColumnNameForObject})
+
+    SELECT {ColumnNameForObject}, {string.Join(", ", sortedUnitRoleTypes.Select(v => this.columnNameByRelationType[v.RelationType]))}
+    FROM {table}
+    WHERE {ColumnNameForObject} IN (SELECT {ColumnNameForObject} FROM objects)";
+
+            this.commandTextForPrefetchUnitRolesByClass.Add(@class, Sql(SubSelect(objects)));
 
             var definition =
 $@"DROP FUNCTION IF EXISTS {name}({objectsType});
@@ -563,11 +620,7 @@ CREATE FUNCTION {name}({objects} {objectsType})
     )
 LANGUAGE sql
 AS $$
-    WITH objects AS (SELECT UNNEST({objects}) AS {ColumnNameForObject})
-
-    SELECT {ColumnNameForObject}, {string.Join(", ", sortedUnitRoleTypes.Select(v => this.columnNameByRelationType[v.RelationType]))}
-    FROM {table}
-    WHERE {ColumnNameForObject} IN (SELECT {ColumnNameForObject} FROM objects);
+    {Sql(objects.Name)};
 $$;";
 
             this.ProcedureDefinitionByName.Add(name, definition);
@@ -578,18 +631,21 @@ $$;";
             var relationType = associationType.RelationType;
             var table = this.tableNameForObjectByClass[@class];
             var name = this.Database.SchemaName + "." + ProcedurePrefixForGetRole + relationType.RoleType.SingularFullName.ToLowerInvariant();
-            this.procedureNameForGetRoleByRelationType.Add(relationType, name);
 
             // Get Composites Role (1-*) [object table]
+            string Sql(string association) => $@"SELECT {ColumnNameForObject}
+    FROM {table}
+    WHERE {this.columnNameByRelationType[relationType]}={association}";
+
+            this.commandTextForGetRoleByRelationType.Add(relationType, Sql(this.ParamInvocationNameForAssociation));
+
             var definition = $@"
 DROP FUNCTION IF EXISTS {name}({SqlTypeForObject});
 CREATE FUNCTION {name}({this.ParamNameForAssociation} {SqlTypeForObject})
     RETURNS SETOF {SqlTypeForObject}
     LANGUAGE sql
 AS $$
-    SELECT {ColumnNameForObject}
-    FROM {table}
-    WHERE {this.columnNameByRelationType[relationType]}={this.ParamNameForAssociation};
+    {Sql(this.ParamNameForAssociation)};
 $$;";
 
             this.ProcedureDefinitionByName.Add(name, definition);
@@ -602,9 +658,16 @@ $$;";
             var objects = this.ObjectArrayParam;
             var objectsType = objects.TypeName;
             var name = this.Database.SchemaName + "." + ProcedurePrefixForPrefetchRole + relationType.RoleType.SingularFullName.ToLowerInvariant();
-            this.procedureNameForPrefetchRoleByRelationType.Add(relationType, name);
 
             // Prefetch Composites Role (1-*) [object table]
+            string Sql(string objectArray) => $@"WITH objects AS (SELECT UNNEST({objectArray}) AS {ColumnNameForObject})
+
+    SELECT {this.columnNameByRelationType[relationType]}, {ColumnNameForObject}
+    FROM {table}
+    WHERE {this.columnNameByRelationType[relationType]} IN (SELECT {ColumnNameForObject} FROM objects)";
+
+            this.commandTextForPrefetchRoleByRelationType.Add(relationType, Sql(SubSelect(objects)));
+
             var definition =
 $@"DROP FUNCTION IF EXISTS {name}({objectsType});
 CREATE FUNCTION {name}({objects} {objectsType})
@@ -615,11 +678,7 @@ CREATE FUNCTION {name}({objects} {objectsType})
     )
     LANGUAGE sql
 AS $$
-    WITH objects AS (SELECT UNNEST({objects}) AS {ColumnNameForObject})
-
-    SELECT {this.columnNameByRelationType[relationType]}, {ColumnNameForObject}
-    FROM {table}
-    WHERE {this.columnNameByRelationType[relationType]} IN (SELECT {ColumnNameForObject} FROM objects);
+    {Sql(objects.Name)};
 $$;";
             this.ProcedureDefinitionByName.Add(name, definition);
         }
@@ -629,9 +688,14 @@ $$;";
             var relationType = associationType.RelationType;
             var name = this.Database.SchemaName + "." + ProcedurePrefixForGetAssociation + @class.Name.ToLowerInvariant() + "_" + relationType.RoleType.SingularFullName.ToLowerInvariant();
             var table = this.tableNameForObjectByClass[@class];
-            this.procedureNameForGetAssociationByRelationType.Add(relationType, name);
 
             // Get Composite Association (1-*) [object table]
+            string Sql(string role) => $@"SELECT {this.columnNameByRelationType[relationType]}
+    FROM {table}
+    WHERE {ColumnNameForObject}={role}";
+
+            this.commandTextForGetAssociationByRelationType.Add(relationType, Sql(this.ParamInvocationNameForCompositeRole));
+
             var definition = $@"
 DROP FUNCTION IF EXISTS {name}({SqlTypeForObject});
 CREATE FUNCTION {name}({this.ParamNameForCompositeRole} {SqlTypeForObject})
@@ -640,9 +704,7 @@ CREATE FUNCTION {name}({this.ParamNameForCompositeRole} {SqlTypeForObject})
 AS $$
 DECLARE {this.ParamNameForAssociation} {SqlTypeForObject};
 BEGIN
-    SELECT {this.columnNameByRelationType[relationType]}
-    FROM {table}
-    WHERE {ColumnNameForObject}={this.ParamNameForCompositeRole}
+    {Sql(this.ParamNameForCompositeRole)}
     INTO {this.ParamNameForAssociation};
 
     RETURN {this.ParamNameForAssociation};
@@ -659,9 +721,16 @@ $$;";
             var objects = this.ObjectArrayParam;
             var objectsType = objects.TypeName;
             var name = this.Database.SchemaName + "." + ProcedurePrefixForPrefetchAssociation + @class.Name.ToLowerInvariant() + "_" + relationType.RoleType.SingularFullName.ToLowerInvariant();
-            this.procedureNameForPrefetchAssociationByRelationType.Add(relationType, name);
 
             // Prefetch Composite Association (1-*) [object table]
+            string Sql(string objectArray) => $@"WITH objects AS (SELECT UNNEST({objectArray}) AS {ColumnNameForObject})
+
+    SELECT {this.columnNameByRelationType[relationType]}, {ColumnNameForObject}
+    FROM {table}
+    WHERE {ColumnNameForObject} IN (SELECT {ColumnNameForObject} FROM objects)";
+
+            this.commandTextForPrefetchAssociationByRelationType.Add(relationType, Sql(SubSelect(objects)));
+
             var definition = $@"
 DROP FUNCTION IF EXISTS {name}({objectsType});
 CREATE FUNCTION {name}({objects} {objectsType})
@@ -672,11 +741,7 @@ CREATE FUNCTION {name}({objects} {objectsType})
     )
     LANGUAGE sql
 AS $$
-    WITH objects AS (SELECT UNNEST({objects}) AS {ColumnNameForObject})
-
-    SELECT {this.columnNameByRelationType[relationType]}, {ColumnNameForObject}
-    FROM {table}
-    WHERE {ColumnNameForObject} IN (SELECT {ColumnNameForObject} FROM objects);
+    {Sql(objects.Name)};
 $$;";
 
             this.ProcedureDefinitionByName.Add(name, definition);
@@ -691,21 +756,25 @@ $$;";
             var roles = this.CompositeRoleArrayParam;
             var rolesType = roles.TypeName;
             var name = this.Database.SchemaName + "." + ProcedurePrefixForAddRole + @class.Name.ToLowerInvariant() + "_" + relationType.RoleType.SingularFullName.ToLowerInvariant();
-            this.procedureNameForAddRoleByRelationType.Add(relationType, name);
 
             // Add Composite Role (1-*) [object table]
+            string Sql(string objectArray, string roleArray) => $@"WITH relations AS (SELECT UNNEST({objectArray}) AS {ColumnNameForAssociation}, UNNEST({roleArray}) AS {ColumnNameForRole})
+
+    UPDATE {table}
+    SET {this.columnNameByRelationType[relationType]} = relations.{ColumnNameForAssociation}
+    FROM relations
+    WHERE {table}.{ColumnNameForObject} = relations.{ColumnNameForRole}";
+
+            this.commandTextForAddRoleByRelationType.Add(relationType, Sql(SubSelect(objects), SubSelect(roles)));
+            this.CommandTextForLoadAddRoleByRelationType.Add(relationType, Sql(objects.InvocationName, roles.InvocationName));
+
             var definition =
 $@"DROP FUNCTION IF EXISTS {name}({objectsType}, {rolesType});
 CREATE FUNCTION {name}({objects} {objectsType}, {roles} {rolesType})
     RETURNS void
     LANGUAGE sql
 AS $$
-    WITH relations AS (SELECT UNNEST({objects}) AS {ColumnNameForAssociation}, UNNEST({roles}) AS {ColumnNameForRole})
-
-    UPDATE {table}
-    SET {this.columnNameByRelationType[relationType]} = relations.{ColumnNameForAssociation}
-    FROM relations
-    WHERE {table}.{ColumnNameForObject} = relations.{ColumnNameForRole}
+    {Sql(objects.Name, roles.Name)}
 $$;";
 
             this.ProcedureDefinitionByName.Add(name, definition);
@@ -720,22 +789,25 @@ $$;";
             var roles = this.CompositeRoleArrayParam;
             var rolesType = roles.TypeName;
             var name = this.Database.SchemaName + "." + ProcedurePrefixForRemoveRole + @class.Name.ToLowerInvariant() + "_" + relationType.RoleType.SingularFullName.ToLowerInvariant();
-            this.procedureNameForRemoveRoleByRelationType.Add(relationType, name);
 
             // Remove Composite Role (1-*) [object table]
+            string Sql(string objectArray, string roleArray) => $@"WITH relations AS (SELECT UNNEST({objectArray}) AS {ColumnNameForAssociation}, UNNEST({roleArray}) AS {ColumnNameForRole})
+
+    UPDATE {table}
+    SET {this.columnNameByRelationType[relationType]} = null
+    FROM relations
+    WHERE {table}.{this.columnNameByRelationType[relationType]} = relations.{ColumnNameForAssociation} AND
+          {table}.{ColumnNameForObject} = relations.{ColumnNameForRole}";
+
+            this.commandTextForRemoveRoleByRelationType.Add(relationType, Sql(SubSelect(objects), SubSelect(roles)));
+
             var definition =
 $@"DROP FUNCTION IF EXISTS {name}({objectsType}, {rolesType});
 CREATE FUNCTION {name}({objects} {objectsType}, {roles} {rolesType})
     RETURNS void
     LANGUAGE sql
 AS $$
-    WITH relations AS (SELECT UNNEST({objects}) AS {ColumnNameForAssociation}, UNNEST({roles}) AS {ColumnNameForRole})
-
-    UPDATE {table}
-    SET {this.columnNameByRelationType[relationType]} = null
-    FROM relations
-    WHERE {table}.{this.columnNameByRelationType[relationType]} = relations.{ColumnNameForAssociation} AND
-          {table}.{ColumnNameForObject} = relations.{ColumnNameForRole}
+    {Sql(objects.Name, roles.Name)}
 $$;";
 
             this.ProcedureDefinitionByName.Add(name, definition);
@@ -748,21 +820,24 @@ $$;";
             var objects = this.ObjectArrayParam;
             var objectsType = objects.TypeName;
             var name = this.Database.SchemaName + "." + ProcedurePrefixForClearRole + @class.Name.ToLowerInvariant() + "_" + relationType.RoleType.SingularFullName.ToLowerInvariant();
-            this.procedureNameForClearRoleByRelationType.Add(relationType, name);
 
             // Clear Composites Role (1-*) [object table]
+            string Sql(string objectArray) => $@"WITH objects AS (SELECT UNNEST({objectArray}) AS {ColumnNameForObject})
+
+    UPDATE {table}
+    SET {this.columnNameByRelationType[relationType]} = null
+    FROM objects
+    WHERE {table}.{this.columnNameByRelationType[relationType]} = objects.{ColumnNameForObject}";
+
+            this.commandTextForClearRoleByRelationType.Add(relationType, Sql(SubSelect(objects)));
+
             var definition =
                 $@"DROP FUNCTION IF EXISTS {name}({objectsType});
 CREATE FUNCTION {name}({objects} {objectsType})
     RETURNS void
     LANGUAGE sql
 AS $$
-    WITH objects AS (SELECT UNNEST({objects}) AS {ColumnNameForObject})
-
-    UPDATE {table}
-    SET {this.columnNameByRelationType[relationType]} = null
-    FROM objects
-    WHERE {table}.{this.columnNameByRelationType[relationType]} = objects.{ColumnNameForObject}
+    {Sql(objects.Name)}
 $$;";
 
             this.ProcedureDefinitionByName.Add(name, definition);
@@ -770,10 +845,16 @@ $$;";
 
         private void SetUnitRoleType(IClass @class, IRoleType roleType)
         {
-            if (!this.procedureNameForSetUnitRoleByRelationTypeByClass.TryGetValue(@class, out var procedureNameForSetUnitRoleByRelationType))
+            if (!this.commandTextForSetUnitRoleByRelationTypeByClass.TryGetValue(@class, out var commandTextForSetUnitRoleByRelationType))
             {
-                procedureNameForSetUnitRoleByRelationType = new Dictionary<IRelationType, string>();
-                this.procedureNameForSetUnitRoleByRelationTypeByClass.Add(@class, procedureNameForSetUnitRoleByRelationType);
+                commandTextForSetUnitRoleByRelationType = new Dictionary<IRelationType, string>();
+                this.commandTextForSetUnitRoleByRelationTypeByClass.Add(@class, commandTextForSetUnitRoleByRelationType);
+            }
+
+            if (!this.CommandTextForLoadSetUnitRoleByRelationTypeByClass.TryGetValue(@class, out var commandTextForLoadSetUnitRoleByRelationType))
+            {
+                commandTextForLoadSetUnitRoleByRelationType = new Dictionary<IRelationType, string>();
+                this.CommandTextForLoadSetUnitRoleByRelationTypeByClass.Add(@class, commandTextForLoadSetUnitRoleByRelationType);
             }
 
             var relationType = roleType.RelationType;
@@ -782,7 +863,6 @@ $$;";
             var objects = this.ObjectArrayParam;
             var objectsType = objects.TypeName;
             var name = this.Database.SchemaName + "." + ProcedurePrefixForSetRole + @class.Name.ToLowerInvariant() + "_" + roleType.SingularFullName.ToLowerInvariant();
-            procedureNameForSetUnitRoleByRelationType.Add(relationType, name);
 
             MappingArrayParameter roles;
             switch (unitTypeTag)
@@ -825,20 +905,25 @@ $$;";
 
             var rolesType = roles.TypeName;
 
+            string Sql(string objectArray, string roleArray) => $@"WITH relations AS (SELECT UNNEST({objectArray}) AS {ColumnNameForAssociation}, UNNEST({roleArray}) AS {ColumnNameForRole})
+
+    UPDATE {table}
+    SET {this.columnNameByRelationType[relationType]} = relations.{ColumnNameForRole}
+    FROM relations
+    WHERE {ColumnNameForObject} = relations.{ColumnNameForAssociation}";
+
+            commandTextForSetUnitRoleByRelationType.Add(relationType, Sql(SubSelect(objects), SubSelect(roles)));
+            commandTextForLoadSetUnitRoleByRelationType.Add(relationType, Sql(objects.InvocationName, roles.InvocationName));
+
             var definition = $@"
 DROP FUNCTION IF EXISTS {name}({objectsType}, {rolesType});
 CREATE FUNCTION {name}({objects} {objectsType}, {roles} {rolesType})
     RETURNS void
     LANGUAGE sql
 AS $$
-    WITH relations AS (SELECT UNNEST({objects}) AS {ColumnNameForAssociation}, UNNEST({roles}) AS {ColumnNameForRole})
-
-    UPDATE {table}
-    SET {this.columnNameByRelationType[relationType]} = relations.{ColumnNameForRole}
-    FROM relations
-    WHERE {ColumnNameForObject} = relations.{ColumnNameForAssociation}
+    {Sql(objects.Name, roles.Name)}
 $$;";
-            this.ProcedureDefinitionByName.Add(procedureNameForSetUnitRoleByRelationType[relationType], definition);
+            this.ProcedureDefinitionByName.Add(name, definition);
         }
 
         private void GetCompositeRoleObjectTable(IClass @class, IRoleType roleType)
@@ -846,9 +931,14 @@ $$;";
             var relationType = roleType.RelationType;
             var table = this.tableNameForObjectByClass[@class];
             var name = this.Database.SchemaName + "." + ProcedurePrefixForGetRole + roleType.SingularFullName.ToLowerInvariant();
-            this.procedureNameForGetRoleByRelationType.Add(relationType, name);
 
             // Get Composite Role (1-1 and *-1) [object table]
+            string Sql(string association) => $@"SELECT {this.columnNameByRelationType[relationType]}
+    FROM {table}
+    WHERE {ColumnNameForObject}={association}";
+
+            this.commandTextForGetRoleByRelationType.Add(relationType, Sql(this.ParamInvocationNameForAssociation));
+
             var definition = $@"
 DROP FUNCTION IF EXISTS {name}({SqlTypeForObject});
 CREATE FUNCTION {name}({this.ParamNameForAssociation} {SqlTypeForObject})
@@ -857,9 +947,7 @@ CREATE FUNCTION {name}({this.ParamNameForAssociation} {SqlTypeForObject})
 AS $$
 DECLARE {this.ParamNameForCompositeRole} {SqlTypeForObject};
 BEGIN
-    SELECT {this.columnNameByRelationType[relationType]}
-    FROM {table}
-    WHERE {ColumnNameForObject}={this.ParamNameForAssociation}
+    {Sql(this.ParamNameForAssociation)}
     INTO {this.ParamNameForCompositeRole};
 
     RETURN {this.ParamNameForCompositeRole};
@@ -876,9 +964,16 @@ $$;";
             var objects = this.ObjectArrayParam;
             var objectsType = objects.TypeName;
             var name = this.Database.SchemaName + "." + ProcedurePrefixForPrefetchRole + roleType.SingularFullName.ToLowerInvariant();
-            this.procedureNameForPrefetchRoleByRelationType.Add(relationType, name);
 
             // Prefetch Composite Role (1-1 and *-1) [object table]
+            string Sql(string objectArray) => $@"WITH objects AS (SELECT UNNEST({objectArray}) AS {ColumnNameForObject})
+
+    SELECT {ColumnNameForObject}, {this.columnNameByRelationType[relationType]}
+    FROM {table}
+    WHERE {ColumnNameForObject} IN (SELECT {ColumnNameForObject} FROM objects)";
+
+            this.commandTextForPrefetchRoleByRelationType.Add(relationType, Sql(SubSelect(objects)));
+
             var definition = $@"
 DROP FUNCTION IF EXISTS {name}({objectsType});
 CREATE FUNCTION {name}({objects} {objectsType})
@@ -889,11 +984,7 @@ CREATE FUNCTION {name}({objects} {objectsType})
     )
     LANGUAGE sql
 AS $$
-    WITH objects AS (SELECT UNNEST({objects}) AS {ColumnNameForObject})
-
-    SELECT {ColumnNameForObject}, {this.columnNameByRelationType[relationType]}
-    FROM {table}
-    WHERE {ColumnNameForObject} IN (SELECT {ColumnNameForObject} FROM objects);
+    {Sql(objects.Name)};
 $$;";
 
             this.ProcedureDefinitionByName.Add(name, definition);
@@ -904,9 +995,14 @@ $$;";
             var relationType = roleType.RelationType;
             var table = this.tableNameForObjectByClass[@class];
             var name = this.Database.SchemaName + "." + ProcedurePrefixForGetAssociation + @class.Name.ToLowerInvariant() + "_" + roleType.SingularFullName.ToLowerInvariant();
-            this.procedureNameForGetAssociationByRelationType.Add(relationType, name);
 
             // Get Composite Association (1-1) [object table]
+            string Sql(string role) => $@"SELECT {ColumnNameForObject}
+    FROM {table}
+    WHERE {this.columnNameByRelationType[relationType]}={role}";
+
+            this.commandTextForGetAssociationByRelationType.Add(relationType, Sql(this.ParamInvocationNameForCompositeRole));
+
             var definition = $@"
 DROP FUNCTION IF EXISTS {name}({SqlTypeForObject});
 CREATE FUNCTION {name}({this.ParamNameForCompositeRole} {SqlTypeForObject})
@@ -915,9 +1011,7 @@ CREATE FUNCTION {name}({this.ParamNameForCompositeRole} {SqlTypeForObject})
 AS $$
 DECLARE {this.ParamNameForAssociation} {SqlTypeForObject};
 BEGIN
-    SELECT {ColumnNameForObject}
-    FROM {table}
-    WHERE {this.columnNameByRelationType[relationType]}={this.ParamNameForCompositeRole}
+    {Sql(this.ParamNameForCompositeRole)}
     INTO {this.ParamNameForAssociation};
 
     RETURN {this.ParamNameForAssociation};
@@ -934,9 +1028,16 @@ $$;";
             var objects = this.ObjectArrayParam;
             var objectsType = objects.TypeName;
             var name = this.Database.SchemaName + "." + ProcedurePrefixForPrefetchAssociation + @class.Name.ToLowerInvariant() + "_" + roleType.SingularFullName.ToLowerInvariant();
-            this.procedureNameForPrefetchAssociationByRelationType.Add(relationType, name);
 
             // Prefetch Composite Association (1-1) [object table]
+            string Sql(string objectArray) => $@"WITH objects AS (SELECT UNNEST({objectArray}) AS {ColumnNameForObject})
+
+    SELECT {ColumnNameForObject}, {this.columnNameByRelationType[relationType]}
+    FROM {table}
+    WHERE {this.columnNameByRelationType[relationType]} IN (SELECT {ColumnNameForObject} FROM objects)";
+
+            this.commandTextForPrefetchAssociationByRelationType.Add(relationType, Sql(SubSelect(objects)));
+
             var definition = $@"
 DROP FUNCTION IF EXISTS {name}({objectsType});
 CREATE FUNCTION {name}({objects} {objectsType})
@@ -947,11 +1048,7 @@ CREATE FUNCTION {name}({objects} {objectsType})
     )
     LANGUAGE sql
 AS $$
-    WITH objects AS (SELECT UNNEST({objects}) AS {ColumnNameForObject})
-
-    SELECT {ColumnNameForObject}, {this.columnNameByRelationType[relationType]}
-    FROM {table}
-    WHERE {this.columnNameByRelationType[relationType]} IN (SELECT {ColumnNameForObject} FROM objects);
+    {Sql(objects.Name)};
 $$;";
 
             this.ProcedureDefinitionByName.Add(name, definition);
@@ -962,18 +1059,21 @@ $$;";
             var relationType = roleType.RelationType;
             var table = this.tableNameForObjectByClass[@class];
             var name = this.Database.SchemaName + "." + ProcedurePrefixForGetAssociation + @class.Name.ToLowerInvariant() + "_" + roleType.SingularFullName.ToLowerInvariant();
-            this.procedureNameForGetAssociationByRelationType.Add(relationType, name);
 
             // Get Composite Association (*-1) [object table]
+            string Sql(string role) => $@"SELECT {ColumnNameForObject}
+    FROM {table}
+    WHERE {this.columnNameByRelationType[relationType]}={role}";
+
+            this.commandTextForGetAssociationByRelationType.Add(relationType, Sql(this.ParamInvocationNameForCompositeRole));
+
             var definition = $@"
 DROP FUNCTION IF EXISTS {name}({SqlTypeForObject});
 CREATE FUNCTION {name}({this.ParamNameForCompositeRole} {SqlTypeForObject})
     RETURNS SETOF {SqlTypeForObject}
     LANGUAGE sql
 AS $$
-    SELECT {ColumnNameForObject}
-    FROM {table}
-    WHERE {this.columnNameByRelationType[relationType]}={this.ParamNameForCompositeRole};
+    {Sql(this.ParamNameForCompositeRole)};
 $$;";
 
             this.ProcedureDefinitionByName.Add(name, definition);
@@ -986,9 +1086,16 @@ $$;";
             var objects = this.ObjectArrayParam;
             var objectsType = objects.TypeName;
             var name = this.Database.SchemaName + "." + ProcedurePrefixForPrefetchAssociation + @class.Name.ToLowerInvariant() + "_" + roleType.SingularFullName.ToLowerInvariant();
-            this.procedureNameForPrefetchAssociationByRelationType.Add(relationType, name);
 
             // Prefetch Composite Association (*-1) [object table]
+            string Sql(string objectArray) => $@"WITH objects AS (SELECT UNNEST({objectArray}) AS {ColumnNameForObject})
+
+    SELECT {ColumnNameForObject}, {this.columnNameByRelationType[relationType]}
+    FROM {table}
+    WHERE {this.columnNameByRelationType[relationType]} IN (SELECT {ColumnNameForObject} FROM objects)";
+
+            this.commandTextForPrefetchAssociationByRelationType.Add(relationType, Sql(SubSelect(objects)));
+
             var definition = $@"
 DROP FUNCTION IF EXISTS {name}({objectsType});
 CREATE FUNCTION {name}({objects} {objectsType})
@@ -999,11 +1106,7 @@ CREATE FUNCTION {name}({objects} {objectsType})
     )
     LANGUAGE sql
 AS $$
-    WITH objects AS (SELECT UNNEST({objects}) AS {ColumnNameForObject})
-
-    SELECT {ColumnNameForObject}, {this.columnNameByRelationType[relationType]}
-    FROM {table}
-    WHERE {this.columnNameByRelationType[relationType]} IN (SELECT {ColumnNameForObject} FROM objects);
+    {Sql(objects.Name)};
 $$;";
 
             this.ProcedureDefinitionByName.Add(name, definition);
@@ -1020,22 +1123,26 @@ $$;";
             var name = this.Database.SchemaName + "." + ProcedurePrefixForSetRole + @class.Name.ToLowerInvariant() + "_" + roleType.SingularFullName.ToLowerInvariant();
 
             // Set Composite Role (1-1 and *-1) [object table]
+            string Sql(string objectArray, string roleArray) => $@"WITH relations AS (SELECT UNNEST({objectArray}) AS {ColumnNameForAssociation}, UNNEST({roleArray}) AS {ColumnNameForRole})
+
+    UPDATE {table}
+    SET {this.columnNameByRelationType[relationType]} = relations.{ColumnNameForRole}
+    FROM relations
+    WHERE {ColumnNameForObject} = relations.{ColumnNameForAssociation}";
+
+            this.commandTextForSetRoleByRelationType.Add(relationType, Sql(SubSelect(objects), SubSelect(roles)));
+            this.CommandTextForLoadSetRoleByRelationType.Add(relationType, Sql(objects.InvocationName, roles.InvocationName));
+
             var definition = $@"
 DROP FUNCTION IF EXISTS {name}({objectsType}, {rolesType});
 CREATE FUNCTION {name}({objects} {objectsType}, {roles} {rolesType})
     RETURNS void
     LANGUAGE sql
 AS $$
-    WITH relations AS (SELECT UNNEST({objects}) AS {ColumnNameForAssociation}, UNNEST({roles}) AS {ColumnNameForRole})
-
-    UPDATE {table}
-    SET {this.columnNameByRelationType[relationType]} = relations.{ColumnNameForRole}
-    FROM relations
-    WHERE {ColumnNameForObject} = relations.{ColumnNameForAssociation}
+    {Sql(objects.Name, roles.Name)}
 $$;";
 
-            this.procedureNameForSetRoleByRelationType.Add(relationType, name);
-            this.ProcedureDefinitionByName.Add(this.procedureNameForSetRoleByRelationType[relationType], definition);
+            this.ProcedureDefinitionByName.Add(name, definition);
         }
 
         private void ClearCompositeRole(IClass @class, IRoleType roleType)
@@ -1047,40 +1154,46 @@ $$;";
             var name = this.Database.SchemaName + "." + ProcedurePrefixForClearRole + @class.Name.ToLowerInvariant() + "_" + roleType.SingularFullName.ToLowerInvariant();
 
             // Clear Composite Role (1-1 and *-1) [object table]
+            string Sql(string objectArray) => $@"WITH objects AS (SELECT UNNEST({objectArray}) AS {ColumnNameForObject})
+
+    UPDATE {table}
+    SET {this.columnNameByRelationType[relationType]} = null
+    FROM objects
+    WHERE {table}.{ColumnNameForObject} = objects.{ColumnNameForObject}";
+
+            this.commandTextForClearRoleByRelationType.Add(relationType, Sql(SubSelect(objects)));
+
             var definition =
 $@"DROP FUNCTION IF EXISTS {name}({objectsType});
 CREATE FUNCTION {name}({objects} {objectsType})
     RETURNS void
     LANGUAGE sql
 AS $$
-    WITH objects AS (SELECT UNNEST({objects}) AS {ColumnNameForObject})
-
-    UPDATE {table}
-    SET {this.columnNameByRelationType[relationType]} = null
-    FROM objects
-    WHERE {table}.{ColumnNameForObject} = objects.{ColumnNameForObject}
+    {Sql(objects.Name)}
 $$;";
 
-            this.procedureNameForClearRoleByRelationType.Add(relationType, name);
-            this.ProcedureDefinitionByName.Add(this.procedureNameForClearRoleByRelationType[relationType], definition);
+            this.ProcedureDefinitionByName.Add(name, definition);
         }
 
         private void GetCompositesRoleRelationTable(IRelationType relationType)
         {
             var table = this.tableNameForRelationByRelationType[relationType];
             var name = this.Database.SchemaName + "." + ProcedurePrefixForGetRole + relationType.RoleType.SingularFullName.ToLowerInvariant();
-            this.procedureNameForGetRoleByRelationType.Add(relationType, name);
 
             // Get Composites Role (1-* and *-*) [relation table]
+            string Sql(string association) => $@"SELECT {ColumnNameForRole}
+    FROM {table}
+    WHERE {ColumnNameForAssociation}={association}";
+
+            this.commandTextForGetRoleByRelationType.Add(relationType, Sql(this.ParamInvocationNameForAssociation));
+
             var definition = $@"
 DROP FUNCTION IF EXISTS {name}({SqlTypeForObject});
 CREATE FUNCTION {name}({this.ParamNameForAssociation} {SqlTypeForObject})
     RETURNS SETOF {SqlTypeForObject}
     LANGUAGE sql
 AS $$
-    SELECT {ColumnNameForRole}
-    FROM {table}
-    WHERE {ColumnNameForAssociation}={this.ParamNameForAssociation};
+    {Sql(this.ParamNameForAssociation)};
 $$;";
 
             this.ProcedureDefinitionByName.Add(name, definition);
@@ -1092,9 +1205,16 @@ $$;";
             var objectsArray = this.ObjectArrayParam;
             var objectsArrayType = objectsArray.TypeName;
             var name = this.Database.SchemaName + "." + ProcedurePrefixForPrefetchRole + relationType.RoleType.SingularFullName.ToLowerInvariant();
-            this.procedureNameForPrefetchRoleByRelationType.Add(relationType, name);
 
             // Prefetch Composites Role (1-* and *-*) [relation table]
+            string Sql(string objectArray) => $@"WITH objects AS (SELECT UNNEST({objectArray}) AS {ColumnNameForObject})
+
+    SELECT {ColumnNameForAssociation}, {ColumnNameForRole}
+    FROM {table}
+    WHERE {ColumnNameForAssociation} IN (SELECT {ColumnNameForObject} FROM objects)";
+
+            this.commandTextForPrefetchRoleByRelationType.Add(relationType, Sql(SubSelect(objectsArray)));
+
             var definition = $@"
 DROP FUNCTION IF EXISTS {name}({objectsArrayType});
 CREATE FUNCTION {name}({objectsArray} {objectsArrayType})
@@ -1105,11 +1225,7 @@ CREATE FUNCTION {name}({objectsArray} {objectsArrayType})
     )
     LANGUAGE sql
 AS $$
-    WITH objects AS (SELECT UNNEST({objectsArray}) AS {ColumnNameForObject})
-
-    SELECT {ColumnNameForAssociation}, {ColumnNameForRole}
-    FROM {table}
-    WHERE {ColumnNameForAssociation} IN (SELECT {ColumnNameForObject} FROM objects);
+    {Sql(objectsArray.Name)};
 $$;";
 
             this.ProcedureDefinitionByName.Add(name, definition);
@@ -1123,20 +1239,24 @@ $$;";
             var roles = this.CompositeRoleArrayParam;
             var rolesType = roles.TypeName;
             var name = this.Database.SchemaName + "." + ProcedurePrefixForAddRole + relationType.RoleType.SingularFullName.ToLowerInvariant();
-            this.procedureNameForAddRoleByRelationType.Add(relationType, name);
 
             // Add Composite Role (1-* and *-*) [relation table]
+            string Sql(string objectArray, string roleArray) => $@"WITH relations AS (SELECT UNNEST({objectArray}) AS {ColumnNameForAssociation}, UNNEST({roleArray}) AS {ColumnNameForRole})
+
+    INSERT INTO {table} ({ColumnNameForAssociation},{ColumnNameForRole})
+    SELECT {ColumnNameForAssociation}, {ColumnNameForRole}
+    FROM relations";
+
+            this.commandTextForAddRoleByRelationType.Add(relationType, Sql(SubSelect(objects), SubSelect(roles)));
+            this.CommandTextForLoadAddRoleByRelationType.Add(relationType, Sql(objects.InvocationName, roles.InvocationName));
+
             var definition = $@"
 DROP FUNCTION IF EXISTS {name}({objectsType}, {rolesType});
 CREATE FUNCTION {name}({objects} {objectsType}, {roles} {rolesType})
     RETURNS void
     LANGUAGE sql
 AS $$
-    WITH relations AS (SELECT UNNEST({objects}) AS {ColumnNameForAssociation}, UNNEST({roles}) AS {ColumnNameForRole})
-
-    INSERT INTO {table} ({ColumnNameForAssociation},{ColumnNameForRole})
-    SELECT {ColumnNameForAssociation}, {ColumnNameForRole}
-    FROM relations
+    {Sql(objects.Name, roles.Name)}
 $$;";
 
             this.ProcedureDefinitionByName.Add(name, definition);
@@ -1150,32 +1270,40 @@ $$;";
             var roles = this.CompositeRoleArrayParam;
             var rolesType = roles.TypeName;
             var name = this.Database.SchemaName + "." + ProcedurePrefixForRemoveRole + relationType.RoleType.SingularFullName.ToLowerInvariant();
-            this.procedureNameForRemoveRoleByRelationType.Add(relationType, name);
 
             // Remove Composite Role (1-* and *-*) [relation table]
+            string Sql(string objectArray, string roleArray) => $@"WITH relations AS (SELECT UNNEST({objectArray}) AS {ColumnNameForAssociation}, UNNEST({roleArray}) AS {ColumnNameForRole})
+
+    DELETE FROM {table}
+    USING relations
+    WHERE {table}.{ColumnNameForAssociation}=relations.{ColumnNameForAssociation} AND {table}.{ColumnNameForRole}=relations.{ColumnNameForRole}";
+
+            this.commandTextForRemoveRoleByRelationType.Add(relationType, Sql(SubSelect(objects), SubSelect(roles)));
+
             var definition = $@"
 DROP FUNCTION IF EXISTS {name}({objectsType}, {rolesType});
 CREATE FUNCTION {name}({objects} {objectsType}, {roles} {rolesType})
     RETURNS void
     LANGUAGE sql
 AS $$
-    WITH relations AS (SELECT UNNEST({objects}) AS {ColumnNameForAssociation}, UNNEST({roles}) AS {ColumnNameForRole})
-
-    DELETE FROM {table}
-    USING relations
-    WHERE {table}.{ColumnNameForAssociation}=relations.{ColumnNameForAssociation} AND {table}.{ColumnNameForRole}=relations.{ColumnNameForRole}
+    {Sql(objects.Name, roles.Name)}
 $$;";
 
-            this.ProcedureDefinitionByName.Add(this.procedureNameForRemoveRoleByRelationType[relationType], definition);
+            this.ProcedureDefinitionByName.Add(name, definition);
         }
 
         private void GetCompositeRoleRelationTable(IRelationType relationType)
         {
             var table = this.tableNameForRelationByRelationType[relationType];
             var name = this.Database.SchemaName + "." + ProcedurePrefixForGetRole + relationType.RoleType.SingularFullName.ToLowerInvariant();
-            this.procedureNameForGetRoleByRelationType.Add(relationType, name);
 
             // Get Composite Role (1-1 and *-1) [relation table]
+            string Sql(string association) => $@"SELECT {ColumnNameForRole}
+    FROM {table}
+    WHERE {ColumnNameForAssociation}={association}";
+
+            this.commandTextForGetRoleByRelationType.Add(relationType, Sql(this.ParamInvocationNameForAssociation));
+
             var definition =
 $@"DROP FUNCTION IF EXISTS {name}({SqlTypeForObject});
 CREATE FUNCTION {name}({this.ParamNameForAssociation} {SqlTypeForObject})
@@ -1184,9 +1312,7 @@ CREATE FUNCTION {name}({this.ParamNameForAssociation} {SqlTypeForObject})
 AS $$
 DECLARE {this.ParamNameForCompositeRole} {SqlTypeForObject};
 BEGIN
-    SELECT {ColumnNameForRole}
-    FROM {table}
-    WHERE {ColumnNameForAssociation}={this.ParamNameForAssociation}
+    {Sql(this.ParamNameForAssociation)}
     INTO {this.ParamNameForCompositeRole};
 
     RETURN {this.ParamNameForCompositeRole};
@@ -1204,6 +1330,14 @@ $$;";
             var name = this.Database.SchemaName + "." + ProcedurePrefixForPrefetchRole + relationType.RoleType.SingularFullName.ToLowerInvariant();
 
             // Prefetch Composite Role (1-1 and *-1) [relation table]
+            string Sql(string objectArray) => $@"WITH objects AS (SELECT UNNEST({objectArray}) AS {ColumnNameForObject})
+
+    SELECT {ColumnNameForAssociation}, {ColumnNameForRole}
+    FROM {table}
+    WHERE {ColumnNameForAssociation} IN (SELECT {ColumnNameForObject} FROM objects)";
+
+            this.commandTextForPrefetchRoleByRelationType.Add(relationType, Sql(SubSelect(objects)));
+
             var definition =
 $@"DROP FUNCTION IF EXISTS {name}({objectsType});
 CREATE FUNCTION {name}({objects} {objectsType})
@@ -1214,15 +1348,10 @@ CREATE FUNCTION {name}({objects} {objectsType})
     )
     LANGUAGE sql
 AS $$
-    WITH objects AS (SELECT UNNEST({objects}) AS {ColumnNameForObject})
-
-    SELECT {ColumnNameForAssociation}, {ColumnNameForRole}
-    FROM {table}
-    WHERE {ColumnNameForAssociation} IN (SELECT {ColumnNameForObject} FROM objects);
+    {Sql(objects.Name)};
 $$;";
 
-            this.procedureNameForPrefetchRoleByRelationType.Add(relationType, name);
-            this.ProcedureDefinitionByName.Add(this.procedureNameForPrefetchRoleByRelationType[relationType], definition);
+            this.ProcedureDefinitionByName.Add(name, definition);
         }
 
         private void SetCompositeRoleRelationType(IRelationType relationType)
@@ -1235,24 +1364,28 @@ $$;";
             var name = this.Database.SchemaName + "." + ProcedurePrefixForSetRole + relationType.RoleType.SingularFullName.ToLowerInvariant();
 
             // Set Composite Role (1-1 and *-1) [relation table]
-            var definition = $@"
-DROP FUNCTION IF EXISTS {name}({objectsType}, {rolesType});
-CREATE FUNCTION {name}({objects} {objectsType}, {roles} {rolesType})
-    RETURNS void
-    LANGUAGE sql
-AS $$
-    WITH relations AS (SELECT UNNEST({objects}) AS {ColumnNameForAssociation}, UNNEST({roles}) AS {ColumnNameForRole})
+            string Sql(string objectArray, string roleArray) => $@"WITH relations AS (SELECT UNNEST({objectArray}) AS {ColumnNameForAssociation}, UNNEST({roleArray}) AS {ColumnNameForRole})
 
     INSERT INTO {table}
     SELECT {ColumnNameForAssociation}, {ColumnNameForRole} from relations
 
     ON CONFLICT ({ColumnNameForAssociation})
     DO UPDATE
-        SET {ColumnNameForRole} = excluded.{ColumnNameForRole};
+        SET {ColumnNameForRole} = excluded.{ColumnNameForRole}";
+
+            this.commandTextForSetRoleByRelationType.Add(relationType, Sql(SubSelect(objects), SubSelect(roles)));
+            this.CommandTextForLoadSetRoleByRelationType.Add(relationType, Sql(objects.InvocationName, roles.InvocationName));
+
+            var definition = $@"
+DROP FUNCTION IF EXISTS {name}({objectsType}, {rolesType});
+CREATE FUNCTION {name}({objects} {objectsType}, {roles} {rolesType})
+    RETURNS void
+    LANGUAGE sql
+AS $$
+    {Sql(objects.Name, roles.Name)};
 $$;";
 
-            this.procedureNameForSetRoleByRelationType.Add(relationType, name);
-            this.ProcedureDefinitionByName.Add(this.procedureNameForSetRoleByRelationType[relationType], definition);
+            this.ProcedureDefinitionByName.Add(name, definition);
         }
 
         private void GetCompositeAssociationRelationTable(IRelationType relationType)
@@ -1261,6 +1394,12 @@ $$;";
             var name = this.Database.SchemaName + "." + ProcedurePrefixForGetAssociation + relationType.RoleType.SingularFullName.ToLowerInvariant();
 
             // Get Composite Association (1-1) [relation table]
+            string Sql(string role) => $@"SELECT {ColumnNameForAssociation}
+    FROM {table}
+    WHERE {ColumnNameForRole}={role}";
+
+            this.commandTextForGetAssociationByRelationType.Add(relationType, Sql(this.ParamInvocationNameForCompositeRole));
+
             var definition =
 $@"DROP FUNCTION IF EXISTS {name}({SqlTypeForObject});
 CREATE FUNCTION {name}({this.ParamNameForCompositeRole} {SqlTypeForObject})
@@ -1269,17 +1408,14 @@ CREATE FUNCTION {name}({this.ParamNameForCompositeRole} {SqlTypeForObject})
 AS $$
 DECLARE {this.ParamNameForAssociation} {SqlTypeForObject};
 BEGIN
-    SELECT {ColumnNameForAssociation}
-    FROM {table}
-    WHERE {ColumnNameForRole}={this.ParamNameForCompositeRole}
+    {Sql(this.ParamNameForCompositeRole)}
     INTO {this.ParamNameForAssociation};
 
     RETURN {this.ParamNameForAssociation};
 END
 $$;";
 
-            this.procedureNameForGetAssociationByRelationType.Add(relationType, name);
-            this.ProcedureDefinitionByName.Add(this.procedureNameForGetAssociationByRelationType[relationType], definition);
+            this.ProcedureDefinitionByName.Add(name, definition);
         }
 
         private void PrefetchCompositeAssociationRelationTable(IRelationType relationType)
@@ -1287,9 +1423,17 @@ $$;";
             var table = this.tableNameForRelationByRelationType[relationType];
             var objects = this.ObjectArrayParam;
             var objectsType = objects.TypeName;
-            var name = this.procedureNameForPrefetchAssociationByRelationType[relationType];
+            var name = this.Database.SchemaName + "." + ProcedurePrefixForPrefetchAssociation + relationType.RoleType.SingularFullName.ToLowerInvariant();
 
             // Prefetch Composite Association (1-1) [relation table]
+            string Sql(string objectArray) => $@"WITH objects AS (SELECT UNNEST({objectArray}) AS {ColumnNameForObject})
+
+    SELECT {ColumnNameForAssociation},{ColumnNameForRole}
+    FROM {table}
+    WHERE {ColumnNameForRole} IN (SELECT {ColumnNameForObject} FROM objects)";
+
+            this.commandTextForPrefetchAssociationByRelationType.Add(relationType, Sql(SubSelect(objects)));
+
             var definition = $@"
 DROP FUNCTION IF EXISTS {name}({objectsType});
 CREATE FUNCTION {name}({objects} {objectsType})
@@ -1300,11 +1444,7 @@ CREATE FUNCTION {name}({objects} {objectsType})
     )
     LANGUAGE sql
 AS $$
-    WITH objects AS (SELECT UNNEST({objects}) AS {ColumnNameForObject})
-
-    SELECT {ColumnNameForAssociation},{ColumnNameForRole}
-    FROM {table}
-    WHERE {ColumnNameForRole} IN (SELECT {ColumnNameForObject} FROM objects);
+    {Sql(objects.Name)};
 $$;";
 
             this.ProcedureDefinitionByName.Add(name, definition);
@@ -1314,18 +1454,21 @@ $$;";
         {
             var table = this.tableNameForRelationByRelationType[relationType];
             var name = this.Database.SchemaName + "." + ProcedurePrefixForGetAssociation + relationType.RoleType.SingularFullName.ToLowerInvariant();
-            this.procedureNameForGetAssociationByRelationType.Add(relationType, name);
 
             // Get Composite Association (*-1) [relation table]
+            string Sql(string role) => $@"SELECT {ColumnNameForAssociation}
+    FROM {table}
+    WHERE {ColumnNameForRole}={role}";
+
+            this.commandTextForGetAssociationByRelationType.Add(relationType, Sql(this.ParamInvocationNameForCompositeRole));
+
             var definition = $@"
 DROP FUNCTION IF EXISTS {name}({SqlTypeForObject});
 CREATE FUNCTION {name}({this.ParamNameForCompositeRole} {SqlTypeForObject})
     RETURNS SETOF {SqlTypeForObject}
     LANGUAGE sql
 AS $$
-    SELECT {ColumnNameForAssociation}
-    FROM {table}
-    WHERE {ColumnNameForRole}={this.ParamNameForCompositeRole}
+    {Sql(this.ParamNameForCompositeRole)}
 $$;";
 
             this.ProcedureDefinitionByName.Add(name, definition);
@@ -1336,9 +1479,17 @@ $$;";
             var table = this.tableNameForRelationByRelationType[relationType];
             var objects = this.ObjectArrayParam;
             var objectsType = objects.TypeName;
-            var name = this.procedureNameForPrefetchAssociationByRelationType[relationType];
+            var name = this.Database.SchemaName + "." + ProcedurePrefixForPrefetchAssociation + relationType.RoleType.SingularFullName.ToLowerInvariant();
 
             // Prefetch Composite Association (*-1) [relation table]
+            string Sql(string objectArray) => $@"WITH objects AS (SELECT UNNEST({objectArray}) AS {ColumnNameForObject})
+
+    SELECT {ColumnNameForAssociation},{ColumnNameForRole}
+    FROM {table}
+    WHERE {ColumnNameForRole} IN (SELECT {ColumnNameForObject} FROM objects)";
+
+            this.commandTextForPrefetchAssociationByRelationType.Add(relationType, Sql(SubSelect(objects)));
+
             var definition = $@"
 DROP FUNCTION IF EXISTS {name}({objectsType});
 CREATE FUNCTION {name}({objects} {objectsType})
@@ -1349,11 +1500,7 @@ CREATE FUNCTION {name}({objects} {objectsType})
     )
     LANGUAGE SQL
 AS $$
-    WITH objects AS (SELECT UNNEST({objects}) AS {ColumnNameForObject})
-
-    SELECT {ColumnNameForAssociation},{ColumnNameForRole}
-    FROM {table}
-    WHERE {ColumnNameForRole} IN (SELECT {ColumnNameForObject} FROM objects);
+    {Sql(objects.Name)};
 $$;";
 
             this.ProcedureDefinitionByName.Add(name, definition);
@@ -1364,9 +1511,16 @@ $$;";
             var table = this.tableNameForRelationByRelationType[relationType];
             var objects = this.ObjectArrayParam;
             var objectsType = objects.TypeName;
-            var name = this.procedureNameForClearRoleByRelationType[relationType];
+            var name = this.Database.SchemaName + "." + ProcedurePrefixForClearRole + relationType.RoleType.SingularFullName.ToLowerInvariant();
 
             // Clear Composite Role (1-1 and *-1) [relation table]
+            string Sql(string objectArray) => $@"WITH objects AS (SELECT UNNEST({objectArray}) AS {ColumnNameForObject})
+
+    DELETE FROM {table}
+    WHERE {ColumnNameForAssociation} IN (SELECT {ColumnNameForObject} FROM objects)";
+
+            this.commandTextForClearRoleByRelationType.Add(relationType, Sql(SubSelect(objects)));
+
             var definition =
                 $@"
 DROP FUNCTION IF EXISTS {name}({objectsType});
@@ -1374,10 +1528,7 @@ CREATE FUNCTION {name}({objects} {objectsType})
     RETURNS void
     LANGUAGE sql
 AS $$
-    WITH objects AS (SELECT UNNEST({objects}) AS {ColumnNameForObject})
-
-    DELETE FROM {table}
-    WHERE {ColumnNameForAssociation} IN (SELECT {ColumnNameForObject} FROM objects)
+    {Sql(objects.Name)}
 $$;";
 
             this.ProcedureDefinitionByName.Add(name, definition);
@@ -1385,30 +1536,45 @@ $$;";
 
         private void UpdateVersionIds()
         {
+            var name = this.Database.SchemaName + "." + ProcedurePrefixForUpdateVersion;
+
             // Update Version Ids
+            string Sql(string objectArray) => $@"UPDATE {this.TableNameForObjects}
+    SET {ColumnNameForVersion} = {ColumnNameForVersion} + 1
+    WHERE {ColumnNameForObject} IN (SELECT {ColumnNameForObject} FROM unnest({objectArray}) as t({ColumnNameForObject}))";
+
+            this.commandTextForUpdateVersion = Sql(SubSelect(this.ObjectArrayParam));
+
             var definition = $@"
-DROP FUNCTION IF EXISTS {this.CommandTextForUpdateVersion}({this.ObjectArrayParam.TypeName});
-CREATE FUNCTION {this.CommandTextForUpdateVersion}({this.ObjectArrayParam} {this.ObjectArrayParam.TypeName})
+DROP FUNCTION IF EXISTS {name}({this.ObjectArrayParam.TypeName});
+CREATE FUNCTION {name}({this.ObjectArrayParam} {this.ObjectArrayParam.TypeName})
     RETURNS void
     LANGUAGE sql
 AS $$
-    UPDATE {this.TableNameForObjects}
-    SET {ColumnNameForVersion} = {ColumnNameForVersion} + 1
-    WHERE {ColumnNameForObject} IN (SELECT {ColumnNameForObject} FROM unnest({this.ObjectArrayParam}) as t({ColumnNameForObject}));
+    {Sql(this.ObjectArrayParam.Name)};
 $$;";
 
-            this.ProcedureDefinitionByName.Add(this.CommandTextForUpdateVersion, definition);
+            this.ProcedureDefinitionByName.Add(name, definition);
         }
 
         private void GetVersionIds()
         {
             var objects = this.ObjectArrayParam;
             var objectsType = objects.TypeName;
+            var name = this.Database.SchemaName + "." + ProcedurePrefixForGetVersion;
 
             // Get Version Ids
+            string Sql(string objectArray) => $@"WITH objects AS (SELECT UNNEST({objectArray}) AS {ColumnNameForObject})
+
+    SELECT {this.TableNameForObjects}.{ColumnNameForObject}, {this.TableNameForObjects}.{ColumnNameForVersion}
+    FROM {this.TableNameForObjects}
+    WHERE {this.TableNameForObjects}.{ColumnNameForObject} IN (SELECT {ColumnNameForObject} FROM objects)";
+
+            this.commandTextForGetVersion = Sql(SubSelect(objects));
+
             var definition =
-$@"DROP FUNCTION IF EXISTS {this.CommandTextForGetVersion}({objectsType});
-CREATE FUNCTION {this.CommandTextForGetVersion}({objects} {objectsType})
+$@"DROP FUNCTION IF EXISTS {name}({objectsType});
+CREATE FUNCTION {name}({objects} {objectsType})
     RETURNS TABLE
     (
          {ColumnNameForObject} {SqlTypeForObject},
@@ -1416,24 +1582,29 @@ CREATE FUNCTION {this.CommandTextForGetVersion}({objects} {objectsType})
     )
     LANGUAGE sql
 AS $$
-    WITH objects AS (SELECT UNNEST({objects}) AS {ColumnNameForObject})
-
-    SELECT {this.TableNameForObjects}.{ColumnNameForObject}, {this.TableNameForObjects}.{ColumnNameForVersion}
-    FROM {this.TableNameForObjects}
-    WHERE {this.TableNameForObjects}.{ColumnNameForObject} IN (SELECT {ColumnNameForObject} FROM objects);
+    {Sql(objects.Name)};
 $$;";
-            this.ProcedureDefinitionByName.Add(this.CommandTextForGetVersion, definition);
+            this.ProcedureDefinitionByName.Add(name, definition);
         }
 
         private void Instantiate()
         {
             var objects = this.ObjectArrayParam;
             var objectsType = objects.TypeName;
+            var name = this.Database.SchemaName + "." + ProcedurePrefixForInstantiate;
 
             // Instantiate
+            string Sql(string objectArray) => $@"WITH objects AS (SELECT UNNEST({objectArray}) AS {ColumnNameForObject})
+
+    SELECT {ColumnNameForObject}, {ColumnNameForClass}, {ColumnNameForVersion}
+    FROM {this.TableNameForObjects}
+    WHERE {this.TableNameForObjects}.{ColumnNameForObject} IN (SELECT {ColumnNameForObject} FROM objects)";
+
+            this.commandTextForInstantiate = Sql(SubSelect(objects));
+
             var definition = $@"
-DROP FUNCTION IF EXISTS {this.CommandTextForInstantiate}({objectsType});
-CREATE FUNCTION {this.CommandTextForInstantiate}({objects} {objectsType})
+DROP FUNCTION IF EXISTS {name}({objectsType});
+CREATE FUNCTION {name}({objects} {objectsType})
     RETURNS TABLE
     (
          {ColumnNameForObject} {SqlTypeForObject},
@@ -1442,14 +1613,10 @@ CREATE FUNCTION {this.CommandTextForInstantiate}({objects} {objectsType})
     )
     LANGUAGE sql
 AS $$
-    WITH objects AS (SELECT UNNEST({objects}) AS {ColumnNameForObject})
-
-    SELECT {ColumnNameForObject}, {ColumnNameForClass}, {ColumnNameForVersion}
-    FROM {this.TableNameForObjects}
-    WHERE {this.TableNameForObjects}.{ColumnNameForObject} IN (SELECT {ColumnNameForObject} FROM objects);
+    {Sql(objects.Name)};
 $$;";
 
-            this.ProcedureDefinitionByName.Add(this.CommandTextForInstantiate, definition);
+            this.ProcedureDefinitionByName.Add(name, definition);
         }
     }
 }
