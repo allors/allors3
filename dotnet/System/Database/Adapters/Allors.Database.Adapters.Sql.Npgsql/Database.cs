@@ -9,7 +9,6 @@ namespace Allors.Database.Adapters.Sql.Npgsql
     using System.Runtime.ExceptionServices;
     using System.Xml;
     using global::Npgsql;
-    using NpgsqlTypes;
 
     public class Database : Sql.Database
     {
@@ -181,22 +180,5 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                 }
             }
         }
-
-        internal string GetSqlType(NpgsqlDbType type) =>
-            type switch
-            {
-                NpgsqlDbType.Varchar => "VARCHAR",
-                NpgsqlDbType.Text => "TEXT",
-                NpgsqlDbType.Integer => "INTEGER",
-                NpgsqlDbType.Bigint => "BIGINT",
-                NpgsqlDbType.Numeric => "NUMERIC",
-                NpgsqlDbType.Double => "DOUBLE PRECISION",
-                NpgsqlDbType.Boolean => "BOOLEAN",
-                NpgsqlDbType.Date => "DATE",
-                NpgsqlDbType.Timestamp => "TIMESTAMP",
-                NpgsqlDbType.Uuid => "UUID",
-                NpgsqlDbType.Bytea => "BYTEA",
-                _ => "!UNKNOWN VALUE TYPE!"
-            };
     }
 }

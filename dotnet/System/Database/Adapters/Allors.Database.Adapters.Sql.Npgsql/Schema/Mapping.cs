@@ -81,22 +81,12 @@ namespace Allors.Database.Adapters.Sql.Npgsql
         internal const NpgsqlDbType NpgsqlDbTypeForCount = NpgsqlDbType.Integer;
 
         internal MappingArrayParameter ObjectArrayParam { get; }
-        private MappingArrayParameter CompositeRoleArrayParam { get; }
-        internal MappingArrayParameter StringRoleArrayParam { get; }
-        private MappingArrayParameter StringMaxRoleArrayParam { get; }
-        private MappingArrayParameter IntegerRoleArrayParam { get; }
-        private MappingArrayParameter DecimalRoleArrayParam { get; }
-        private MappingArrayParameter DoubleRoleArrayParam { get; }
-        private MappingArrayParameter BooleanRoleArrayParam { get; }
-        private MappingArrayParameter DateTimeRoleArrayParam { get; }
-        private MappingArrayParameter UniqueRoleArrayParam { get; }
-        private MappingArrayParameter BinaryRoleArrayParam { get; }
+        internal MappingArrayParameter RoleArrayParam { get; }
 
         internal string ParamInvocationNameForAssociation { get; }
         internal string ParamInvocationNameForCompositeRole { get; }
         internal string ParamInvocationNameForCount { get; }
 
-        internal const string ParameterFormat = "p_{0}";
         private const string ParameterInvocationFormat = ":p_{0}";
 
         public Mapping(Database database)
@@ -110,17 +100,8 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             this.ParamInvocationNameForCompositeRole = string.Format(ParameterInvocationFormat, ColumnNameForRole);
             this.ParamInvocationNameForCount = string.Format(ParameterInvocationFormat, "count");
 
-            this.ObjectArrayParam = new MappingArrayParameter(database, this, "arr_o", NpgsqlDbType.Bigint);
-            this.CompositeRoleArrayParam = new MappingArrayParameter(database, this, "arr_r", NpgsqlDbType.Bigint);
-            this.StringRoleArrayParam = new MappingArrayParameter(database, this, "arr_r", NpgsqlDbType.Varchar);
-            this.StringMaxRoleArrayParam = new MappingArrayParameter(database, this, "arr_r", NpgsqlDbType.Text);
-            this.IntegerRoleArrayParam = new MappingArrayParameter(database, this, "arr_r", NpgsqlDbType.Integer);
-            this.DecimalRoleArrayParam = new MappingArrayParameter(database, this, "arr_r", NpgsqlDbType.Numeric);
-            this.DoubleRoleArrayParam = new MappingArrayParameter(database, this, "arr_r", NpgsqlDbType.Double);
-            this.BooleanRoleArrayParam = new MappingArrayParameter(database, this, "arr_r", NpgsqlDbType.Boolean);
-            this.DateTimeRoleArrayParam = new MappingArrayParameter(database, this, "arr_r", NpgsqlDbType.Timestamp);
-            this.UniqueRoleArrayParam = new MappingArrayParameter(database, this, "arr_r", NpgsqlDbType.Uuid);
-            this.BinaryRoleArrayParam = new MappingArrayParameter(database, this, "arr_r", NpgsqlDbType.Bytea);
+            this.ObjectArrayParam = new MappingArrayParameter(this, "arr_o");
+            this.RoleArrayParam = new MappingArrayParameter(this, "arr_r");
 
             // Tables
             // ------
@@ -523,7 +504,7 @@ WHERE {ColumnNameForObject}={this.ParamInvocationNameForObject}";
             var relationType = associationType.RelationType;
             var table = this.tableNameForObjectByClass[@class];
             var objects = this.ObjectArrayParam;
-            var roles = this.CompositeRoleArrayParam;
+            var roles = this.RoleArrayParam;
 
             // Add Composite Role (1-*) [object table]
             string Sql(string objectArray, string roleArray) => $@"WITH relations AS (SELECT UNNEST({objectArray}) AS {ColumnNameForAssociation}, UNNEST({roleArray}) AS {ColumnNameForRole})
@@ -542,7 +523,7 @@ WHERE {ColumnNameForObject}={this.ParamInvocationNameForObject}";
             var relationType = associationType.RelationType;
             var table = this.tableNameForObjectByClass[@class];
             var objects = this.ObjectArrayParam;
-            var roles = this.CompositeRoleArrayParam;
+            var roles = this.RoleArrayParam;
 
             // Remove Composite Role (1-*) [object table]
             var sql = $@"WITH relations AS (SELECT UNNEST({SubSelect(objects)}) AS {ColumnNameForAssociation}, UNNEST({SubSelect(roles)}) AS {ColumnNameForRole})
@@ -586,48 +567,9 @@ WHERE {ColumnNameForObject}={this.ParamInvocationNameForObject}";
             }
 
             var relationType = roleType.RelationType;
-            var unitTypeTag = ((IUnit)relationType.RoleType.ObjectType).Tag;
             var table = this.tableNameForObjectByClass[@class];
             var objects = this.ObjectArrayParam;
-
-            MappingArrayParameter roles;
-            switch (unitTypeTag)
-            {
-                case UnitTags.String:
-                    roles = this.StringMaxRoleArrayParam;
-                    break;
-
-                case UnitTags.Integer:
-                    roles = this.IntegerRoleArrayParam;
-                    break;
-
-                case UnitTags.Float:
-                    roles = this.DoubleRoleArrayParam;
-                    break;
-
-                case UnitTags.Decimal:
-                    roles = this.DecimalRoleArrayParam;
-                    break;
-
-                case UnitTags.Boolean:
-                    roles = this.BooleanRoleArrayParam;
-                    break;
-
-                case UnitTags.DateTime:
-                    roles = this.DateTimeRoleArrayParam;
-                    break;
-
-                case UnitTags.Unique:
-                    roles = this.UniqueRoleArrayParam;
-                    break;
-
-                case UnitTags.Binary:
-                    roles = this.BinaryRoleArrayParam;
-                    break;
-
-                default:
-                    throw new ArgumentException("Unknown Unit ObjectType: " + roleType.ObjectType.SingularName);
-            }
+            var roles = this.RoleArrayParam;
 
             string Sql(string objectArray, string roleArray) => $@"WITH relations AS (SELECT UNNEST({objectArray}) AS {ColumnNameForAssociation}, UNNEST({roleArray}) AS {ColumnNameForRole})
 
@@ -726,7 +668,7 @@ WHERE {ColumnNameForObject}={this.ParamInvocationNameForObject}";
             var relationType = roleType.RelationType;
             var table = this.tableNameForObjectByClass[@class];
             var objects = this.ObjectArrayParam;
-            var roles = this.CompositeRoleArrayParam;
+            var roles = this.RoleArrayParam;
 
             // Set Composite Role (1-1 and *-1) [object table]
             string Sql(string objectArray, string roleArray) => $@"WITH relations AS (SELECT UNNEST({objectArray}) AS {ColumnNameForAssociation}, UNNEST({roleArray}) AS {ColumnNameForRole})
@@ -785,7 +727,7 @@ WHERE {ColumnNameForObject}={this.ParamInvocationNameForObject}";
         {
             var table = this.tableNameForRelationByRelationType[relationType];
             var objects = this.ObjectArrayParam;
-            var roles = this.CompositeRoleArrayParam;
+            var roles = this.RoleArrayParam;
 
             // Add Composite Role (1-* and *-*) [relation table]
             string Sql(string objectArray, string roleArray) => $@"WITH relations AS (SELECT UNNEST({objectArray}) AS {ColumnNameForAssociation}, UNNEST({roleArray}) AS {ColumnNameForRole})
@@ -802,7 +744,7 @@ WHERE {ColumnNameForObject}={this.ParamInvocationNameForObject}";
         {
             var table = this.tableNameForRelationByRelationType[relationType];
             var objects = this.ObjectArrayParam;
-            var roles = this.CompositeRoleArrayParam;
+            var roles = this.RoleArrayParam;
 
             // Remove Composite Role (1-* and *-*) [relation table]
             var sql = $@"WITH relations AS (SELECT UNNEST({SubSelect(objects)}) AS {ColumnNameForAssociation}, UNNEST({SubSelect(roles)}) AS {ColumnNameForRole})
@@ -842,7 +784,7 @@ WHERE {ColumnNameForObject}={this.ParamInvocationNameForObject}";
         {
             var table = this.tableNameForRelationByRelationType[relationType];
             var objects = this.ObjectArrayParam;
-            var roles = this.CompositeRoleArrayParam;
+            var roles = this.RoleArrayParam;
 
             // Set Composite Role (1-1 and *-1) [relation table]
             string Sql(string objectArray, string roleArray) => $@"WITH relations AS (SELECT UNNEST({objectArray}) AS {ColumnNameForAssociation}, UNNEST({roleArray}) AS {ColumnNameForRole})
