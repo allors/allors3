@@ -100,6 +100,93 @@ namespace Allors.Database.Adapters.Sql
             var c2b = c1b.C1C2one2one;
 
             Assert.Empty(transactionSink.Nodes);
+
+            // A composite role in each of the four ways in which the SQL adapters store one: to-one and to-many,
+            // in a column of a class table and in a relation table.
+            var roleTypes = new IRoleType[]
+            {
+                this.M.C1.C1C2one2one,
+                this.M.C1.I12C2one2one,
+                this.M.C1.C1C2one2manies,
+                this.M.C1.C1C2many2manies,
+            };
+
+            foreach (var roleType in roleTypes)
+            {
+                // The database that creates the objects knows their classes.
+                var creator = (Database)this.CreateDatabase();
+
+                var c1Ids = new long[2];
+                using (var setup = creator.CreateTransaction())
+                {
+                    for (var i = 0; i < c1Ids.Length; i++)
+                    {
+                        var setupC1 = C1.Create(setup);
+                        var setupC2 = C2.Create(setup);
+                        if (roleType.IsOne)
+                        {
+                            setupC1.Strategy.SetCompositeRole(roleType, setupC2);
+                        }
+                        else
+                        {
+                            setupC1.Strategy.AddCompositesRole(roleType, setupC2);
+                        }
+
+                        c1Ids[i] = setupC1.Id;
+                    }
+
+                    setup.Commit();
+                }
+
+                // A database of its own for each role type and each state of its cache, so that no reference is left
+                // of an earlier case: a database that does not know the classes of the role objects, and the one
+                // that does.
+                foreach (var cachedDatabase in new[] { (Database)this.CreateDatabase(), creator })
+                {
+                    var cachedSink = new Sink();
+                    cachedDatabase.Sink = cachedSink;
+
+                    // An earlier transaction asks for the roles, so that the cache of the database holds them.
+                    using (var earlier = cachedDatabase.CreateTransaction())
+                    {
+                        foreach (var c1 in earlier.Instantiate(c1Ids))
+                        {
+                            Assert.True(c1.Strategy.ExistRole(roleType));
+                        }
+                    }
+
+                    using var cachedTransaction = (Transaction)cachedDatabase.CreateTransaction();
+
+                    var c1s = cachedTransaction.Instantiate(c1Ids);
+
+                    var cachedTransactionSink = cachedSink.TreeByTransaction[cachedTransaction];
+                    cachedTransactionSink.Clear();
+
+                    cachedTransaction.Prefetch(new PrefetchPolicyBuilder().WithRule(roleType).Build(), c1s);
+
+                    // The prefetch loads the references of the roles that the cache holds, in one command.
+                    var cachedEvents = cachedTransactionSink.Nodes;
+                    Assert.Equal(2, cachedEvents.Count);
+                    Assert.Equal(typeof(SqlInstantiateReferencesEvent), cachedEvents[1].Event.GetType());
+
+                    cachedTransactionSink.Clear();
+
+                    foreach (var c1 in c1s)
+                    {
+                        if (roleType.IsOne)
+                        {
+                            Assert.NotNull(c1.Strategy.GetCompositeRole(roleType));
+                        }
+                        else
+                        {
+                            Assert.Single(c1.Strategy.GetCompositesRole<C2>(roleType));
+                        }
+                    }
+
+                    // Reading the roles therefore issues no database command.
+                    Assert.Empty(cachedTransactionSink.Nodes);
+                }
+            }
         }
 
         [Fact]

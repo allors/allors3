@@ -241,6 +241,10 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   the prefetch. The policy was applied only to an association that the prefetch fetched, so that
   reading a role that the policy names still went to the database, and a to-many association was
   fetched at every prefetch (#375).
+- On the SqlClient and Npgsql adapters the prefetch of a composite role with a rule without a nested
+  policy loads the references of the role objects in one command, also for a role that the cache of
+  the database already holds. For such a role it loaded none, so that a transaction that did not
+  hold the role objects yet sent a command at the read of the role of each object (#376, #377).
 - The Memory adapter's extent sort treats two objects without a value for a sort order as equal
   and lets the next sort order decide; the comparer contradicted itself, so short lists kept an
   arbitrary order and longer ones could fail the sort (#309).
