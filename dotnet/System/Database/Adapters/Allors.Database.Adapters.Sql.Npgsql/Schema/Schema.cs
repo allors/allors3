@@ -21,7 +21,6 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 
             this.Database = database;
             this.TableByName = new Dictionary<string, SchemaTable>();
-            this.IndexByIndexNameByTableName = new Dictionary<string, Dictionary<string, SchemaIndex>>();
 
             using (var connection = new NpgsqlConnection(database.ConnectionString))
             {
@@ -96,53 +95,6 @@ AND C.table_schema = @tableSchema";
                             }
                         }
                     }
-
-                    // // Indeces
-                    //                    cmdText = @"
-                    // SELECT	o.name AS table_name,
-                    // i.name AS index_name
-                    // FROM
-                    // sys.indexes i
-                    // INNER JOIN sys.objects o ON i.object_id = o.object_id
-                    // INNER JOIN sys.schemas s ON o.schema_id = s.schema_id
-                    // WHERE
-                    // i.name IS NOT NULL
-                    // AND o.type = 'U'
-                    // AND i.type = 2
-                    // AND s.name = @tableSchema";
-
-                    // using (var command = new NpgsqlCommand(cmdText, connection))
-                    //                    {
-                    //                        command.Parameters.Add("@tableSchema", NpgsqlDbType.Varchar).Value = database.SchemaName;
-                    //                        using (var reader = command.ExecuteReader())
-                    //                        {
-                    //                            var tableNameOrdinal = reader.GetOrdinal("table_name");
-                    //                            var indexNameOrdinal = reader.GetOrdinal("index_name");
-
-                    // while (reader.Read())
-                    //                            {
-                    //                                var tableName = reader.GetString(tableNameOrdinal);
-                    //                                var indexName = reader.GetString(indexNameOrdinal);
-
-                    // tableName = tableName.Trim().ToLowerInvariant();
-                    //                                indexName = indexName.Trim().ToLowerInvariant();
-
-                    // Dictionary<string, SchemaIndex> indexByLowercaseIndexName;
-                    //                                if (!this.indexByIndexNameByTableName.TryGetValue(tableName, out indexByLowercaseIndexName))
-                    //                                {
-                    //                                    indexByLowercaseIndexName = new Dictionary<string, SchemaIndex>();
-                    //                                    this.indexByIndexNameByTableName[tableName] = indexByLowercaseIndexName;
-                    //                                }
-
-                    // SchemaIndex index;
-                    //                                if (!indexByLowercaseIndexName.TryGetValue(indexName, out index))
-                    //                                {
-                    //                                    index = new SchemaIndex(this, indexName);
-                    //                                    indexByLowercaseIndexName[indexName] = index;
-                    //                                }
-                    //                            }
-                    //                        }
-                    //                    }
                 }
                 finally
                 {
@@ -155,23 +107,10 @@ AND C.table_schema = @tableSchema";
 
         public Dictionary<string, SchemaTable> TableByName { get; }
 
-        public Dictionary<string, Dictionary<string, SchemaIndex>> IndexByIndexNameByTableName { get; }
-
         public SchemaTable GetTable(string tableName)
         {
             this.TableByName.TryGetValue(tableName.ToLowerInvariant(), out var table);
             return table;
-        }
-
-        public SchemaIndex GetIndex(string tableName, string indexName)
-        {
-            if (this.IndexByIndexNameByTableName.TryGetValue(tableName.ToLowerInvariant(), out var indexByLowercaseIndexName))
-            {
-                indexByLowercaseIndexName.TryGetValue(indexName.ToLowerInvariant(), out var index);
-                return index;
-            }
-
-            return null;
         }
     }
 }

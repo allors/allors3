@@ -14,9 +14,6 @@ namespace Allors.Database.Adapters.Sql.Npgsql
         public HashSet<string> MissingTableNames { get; }
         public HashSet<SchemaTable> InvalidTables { get; }
 
-        public HashSet<string> MissingTableTypeNames { get; }
-        public HashSet<SchemaTableType> InvalidTableTypes { get; }
-
         private readonly Mapping mapping;
 
         public Validation(Database database)
@@ -28,16 +25,11 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             this.MissingTableNames = new HashSet<string>();
             this.InvalidTables = new HashSet<SchemaTable>();
 
-            this.MissingTableTypeNames = new HashSet<string>();
-            this.InvalidTableTypes = new HashSet<SchemaTableType>();
-
             this.Validate();
 
             this.IsValid =
                 this.MissingTableNames.Count == 0 &&
-                this.InvalidTables.Count == 0 &&
-                this.MissingTableTypeNames.Count == 0 &&
-                this.InvalidTableTypes.Count == 0;
+                this.InvalidTables.Count == 0;
         }
 
         public bool IsValid { get; }
@@ -67,24 +59,6 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                     foreach (var invalidTable in this.InvalidTables)
                     {
                         message.Append("- " + invalidTable.Name + ":\n");
-                    }
-                }
-
-                if (this.MissingTableTypeNames.Count > 0)
-                {
-                    message.Append("Missing Table Types:\n");
-                    foreach (var missingTableType in this.MissingTableTypeNames)
-                    {
-                        message.Append("- " + missingTableType + ":\n");
-                    }
-                }
-
-                if (this.InvalidTableTypes.Count > 0)
-                {
-                    message.Append("Invalid Table Types:\n");
-                    foreach (var invalidTableType in this.InvalidTableTypes)
-                    {
-                        message.Append("- " + invalidTableType.Name + ":\n");
                     }
                 }
 
@@ -205,16 +179,6 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             if (objectColumn?.SqlType.Equals(sqlType) != true)
             {
                 this.InvalidTables.Add(table);
-            }
-        }
-
-        private void ValidateColumn(SchemaTableType tableType, string columnName, string sqlType)
-        {
-            var objectColumn = tableType.GetColumn(columnName);
-
-            if (objectColumn?.SqlType.Equals(sqlType) != true)
-            {
-                this.InvalidTableTypes.Add(tableType);
             }
         }
     }
