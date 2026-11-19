@@ -5,6 +5,7 @@
 
 namespace Allors.Database.Adapters.Sql.Npgsql
 {
+    using System;
     using System.Collections.Generic;
     using global::Npgsql;
     using NpgsqlTypes;
@@ -15,8 +16,10 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 
         internal Indexes(Database database) : base(database) => this.mapping = (Mapping)database.Mapping;
 
-        // The name of an index is unique in its schema.
-        protected override bool TakesNameOf(SchemaIndex existing, SchemaIndex index) => existing.HasNameOf(index);
+        protected override StringComparer IndexNameComparer => StringComparer.Ordinal;
+
+        // The name of an index is unique in its schema. Quoted names preserve their case.
+        protected override bool TakesNameOf(SchemaIndex existing, SchemaIndex index) => this.IndexNameComparer.Equals(existing.Name, index.Name);
 
         protected override IReadOnlyList<SchemaIndex> Read()
         {
@@ -52,6 +55,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
         protected override void Drop(IReadOnlyList<SchemaIndex> indexes)
         {
             using (var connection = new NpgsqlConnection(this.Database.ConnectionString))
+            using (var commandBuilder = new NpgsqlCommandBuilder())
             {
                 connection.Open();
                 foreach (var index in indexes)
@@ -60,12 +64,10 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                     {
                         using (var transaction = connection.BeginTransaction())
                         {
-                            this.Lock(connection, transaction);
-
-                            // The drop does not queue behind a long statement on the table, with every other
-                            // statement behind it.
+                            // Both the schema lock and the table lock have a bounded wait for optional cleanup.
                             Execute(connection, transaction, "SET LOCAL lock_timeout = '2s'");
-                            Execute(connection, transaction, $"DROP INDEX IF EXISTS {this.Database.SchemaName}.{index.Name}");
+                            this.Lock(connection, transaction);
+                            Execute(connection, transaction, $"DROP INDEX IF EXISTS {commandBuilder.QuoteIdentifier(this.Database.SchemaName)}.{commandBuilder.QuoteIdentifier(index.Name)}");
                             transaction.Commit();
                         }
                     }

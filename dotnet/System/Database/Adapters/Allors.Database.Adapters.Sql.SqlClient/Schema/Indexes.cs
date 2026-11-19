@@ -68,7 +68,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                     {
                         using (var transaction = connection.BeginTransaction())
                         {
-                            this.Lock(connection, transaction);
+                            this.Lock(connection, transaction, 2000);
                             Execute(connection, transaction, $"DROP INDEX IF EXISTS {index.Name} ON {index.TableName}");
                             transaction.Commit();
                         }
@@ -91,16 +91,17 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         }
 
         // Held until the transaction ends.
-        private void Lock(SqlConnection connection, SqlTransaction transaction)
+        private void Lock(SqlConnection connection, SqlTransaction transaction, int lockTimeout = -1)
         {
             const string Sql = @"
 DECLARE @result int;
-EXEC @result = sp_getapplock @Resource = @name, @LockMode = 'Exclusive', @LockOwner = 'Transaction', @LockTimeout = -1;
+EXEC @result = sp_getapplock @Resource = @name, @LockMode = 'Exclusive', @LockOwner = 'Transaction', @LockTimeout = @lockTimeout;
 IF @result < 0 THROW 50000, 'The lock for the indexes of the schema was not granted.', 1;";
 
             using (var command = new SqlCommand(Sql, connection, transaction) { CommandTimeout = 0 })
             {
                 command.Parameters.Add("@name", SqlDbType.NVarChar, 255).Value = this.LockName;
+                command.Parameters.Add("@lockTimeout", SqlDbType.Int).Value = lockTimeout;
                 command.ExecuteNonQuery();
             }
         }

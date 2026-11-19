@@ -37,6 +37,8 @@ namespace Allors.Database.Adapters.Sql
 
         protected abstract void DropIndex(string table, string name);
 
+        protected abstract void WithIndexLock(Action action);
+
         [Fact]
         public void InitCreatesNoIndexAndTheFirstTransactionCreatesThem()
         {
@@ -114,6 +116,59 @@ namespace Allors.Database.Adapters.Sql
             Assert.False(this.ExistIndex("idx_c1_c1c1allorsstring"));
             Assert.True(this.ExistIndex("made_by_hand"));
             Assert.Equal(1, this.IndexCount("c1", "c1allorsstring"));
+        }
+
+        [Fact]
+        public void AnIndexThatCannotAcquireTheSchemaLockStays()
+        {
+            const string indexName = "idx_c1_c1c1allorsstring";
+            this.Rebuild().EnsureIndexes();
+            this.ExecuteScalar($"CREATE INDEX {indexName} ON allors.c1 (c1allorsstring)");
+
+            var database = (Database)this.CreateDatabase();
+            Assert.True(database.IsValid);
+
+            Exception exception = null;
+            var thread = new Thread(() =>
+            {
+                try
+                {
+                    using (database.CreateTransaction())
+                    {
+                    }
+                }
+                catch (Exception e)
+                {
+                    exception = e;
+                }
+            });
+
+            var started = false;
+            try
+            {
+                this.WithIndexLock(() =>
+                {
+                    thread.Start();
+                    started = true;
+                    Assert.True(thread.Join(TimeSpan.FromSeconds(10)), "Optional index cleanup did not finish while the schema lock was held.");
+                    Assert.Null(exception);
+                    Assert.True(this.ExistIndex(indexName));
+                });
+            }
+            finally
+            {
+                // The helper releases the lock before a blocked worker is joined, even when the assertion fails.
+                if (started)
+                {
+                    thread.Join();
+                }
+            }
+
+            using (this.CreateDatabase().CreateTransaction())
+            {
+            }
+
+            Assert.False(this.ExistIndex(indexName));
         }
 
         [Fact]
@@ -282,7 +337,7 @@ namespace Allors.Database.Adapters.Sql
         }
 
         // A schema that Init has just built: its tables are new, and so are without the indexes of an earlier fact.
-        private Database Rebuild()
+        protected Database Rebuild()
         {
             this.ExecuteScalar("DROP TABLE IF EXISTS allors.c1");
             var database = (Database)this.CreateDatabase();

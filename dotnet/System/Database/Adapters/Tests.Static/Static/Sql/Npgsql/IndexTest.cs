@@ -7,6 +7,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 {
     using System;
     using System.Globalization;
+    using global::Npgsql;
     using Xunit;
 
     public class IndexTest : Sql.IndexTest, IClassFixture<Fixture<IndexTest>>
@@ -17,9 +18,54 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 
         public override void Dispose() => this.profile.Dispose();
 
+        [Theory]
+        [InlineData("idx_c1_c1many2one", "many2one", true)]
+        [InlineData("idx_c1_c1c1allorsstring", "c1allorsstring", false)]
+        public void QuotedIndexNamesAreDistinctFromTheNamesOfTheAdapter(string name, string column, bool wanted)
+        {
+            this.Rebuild().EnsureIndexes();
+
+            if (wanted)
+            {
+                this.DropIndex("c1", name);
+            }
+            else
+            {
+                this.ExecuteScalar($"CREATE INDEX {name} ON allors.c1 (c1allorsdouble)");
+            }
+
+            var quotedName = name.ToUpperInvariant();
+            var quotedColumn = wanted ? "c1allorsdouble" : column;
+            this.ExecuteScalar($"CREATE INDEX \"{quotedName}\" ON allors.c1 ({quotedColumn})");
+
+            using (this.CreateDatabase().CreateTransaction())
+            {
+            }
+
+            Assert.True(this.ExistIndex(name));
+            Assert.True(this.ExistIndex(quotedName));
+            Assert.Equal(1, this.IndexCount("c1", column));
+            Assert.Equal(1, this.IndexCount("c1", "c1allorsdouble"));
+        }
+
         protected override IDatabase CreateDatabase() => this.profile.CreateDatabase();
 
         protected override object ExecuteScalar(string sql) => this.profile.ExecuteScalar(sql);
+
+        protected override void WithIndexLock(Action action)
+        {
+            var database = (Database)this.CreateDatabase();
+            using (var connection = new NpgsqlConnection(database.ConnectionString))
+            {
+                connection.Open();
+                using (var transaction = connection.BeginTransaction())
+                using (var command = new NpgsqlCommand("SELECT pg_advisory_xact_lock(hashtext('allors.indexes.allors'))", connection, transaction))
+                {
+                    command.ExecuteNonQuery();
+                    action();
+                }
+            }
+        }
 
         protected override int IndexCount(string table, string column) => Convert.ToInt32(this.profile.ExecuteScalar($@"
 SELECT COUNT(*)

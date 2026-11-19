@@ -20,6 +20,8 @@ namespace Allors.Database.Adapters.Sql
 
         protected Database Database { get; }
 
+        protected virtual StringComparer IndexNameComparer => StringComparer.OrdinalIgnoreCase;
+
         /// <summary>
         /// The name of the lock that lets one database object at a time change the indexes of the schema.
         /// </summary>
@@ -119,7 +121,7 @@ namespace Allors.Database.Adapters.Sql
         {
             var mapping = this.Database.Mapping;
             wanted = new List<SchemaIndex>();
-            unwantedByName = new Dictionary<string, SchemaIndex>(StringComparer.OrdinalIgnoreCase);
+            unwantedByName = new Dictionary<string, SchemaIndex>(this.IndexNameComparer);
 
             foreach (var @class in this.Database.MetaPopulation.DatabaseClasses)
             {

@@ -7,6 +7,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 {
     using System;
     using System.Globalization;
+    using Microsoft.Data.SqlClient;
     using Xunit;
 
     public class IndexTest : Sql.IndexTest, IClassFixture<Fixture<IndexTest>>
@@ -38,5 +39,18 @@ JOIN sys.schemas s ON s.schema_id = t.schema_id
 WHERE s.name = 'allors' AND i.name = '{name}'"), CultureInfo.InvariantCulture) != 0;
 
         protected override void DropIndex(string table, string name) => this.profile.ExecuteScalar($"DROP INDEX {name} ON allors.{table}");
+
+        protected override void WithIndexLock(Action action)
+        {
+            using var connection = new SqlConnection(((Database)this.CreateDatabase()).ConnectionString);
+            connection.Open();
+            using var transaction = connection.BeginTransaction();
+            using var command = new SqlCommand(@"
+DECLARE @result int;
+EXEC @result = sp_getapplock @Resource = 'allors.indexes.allors', @LockMode = 'Exclusive', @LockOwner = 'Transaction', @LockTimeout = 10000;
+SELECT @result;", connection, transaction);
+            Assert.True((int)command.ExecuteScalar() >= 0, "The test could not acquire the schema lock.");
+            action();
+        }
     }
 }
