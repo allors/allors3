@@ -20,7 +20,6 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
             this.TableByName = new Dictionary<string, SchemaTable>();
             this.TableTypeByName = new Dictionary<string, SchemaTableType>();
-            this.IndexByIndexNameByTableName = new Dictionary<string, Dictionary<string, SchemaIndex>>();
 
             using (var connection = new SqlConnection(database.ConnectionString))
             {
@@ -142,51 +141,6 @@ where tt.schema_id = SCHEMA_ID(@domainSchema)";
                             }
                         }
                     }
-
-                    // Indeces
-                    cmdText = @"
-SELECT	o.name AS table_name,
-		i.name AS index_name
-FROM
-		sys.indexes i
-		INNER JOIN sys.objects o ON i.object_id = o.object_id
-		INNER JOIN sys.schemas s ON o.schema_id = s.schema_id
-WHERE
-	i.name IS NOT NULL
-	AND o.type = 'U'
-	AND i.type = 2
-	AND s.name = @tableSchema";
-
-                    using (var command = new SqlCommand(cmdText, connection))
-                    {
-                        command.Parameters.Add("@tableSchema", SqlDbType.NVarChar).Value = database.SchemaName;
-                        using (var reader = command.ExecuteReader())
-                        {
-                            var tableNameOrdinal = reader.GetOrdinal("table_name");
-                            var indexNameOrdinal = reader.GetOrdinal("index_name");
-
-                            while (reader.Read())
-                            {
-                                var tableName = reader.GetString(tableNameOrdinal);
-                                var indexName = reader.GetString(indexNameOrdinal);
-
-                                tableName = tableName.Trim().ToLowerInvariant();
-                                indexName = indexName.Trim().ToLowerInvariant();
-
-                                if (!this.IndexByIndexNameByTableName.TryGetValue(tableName, out var indexByLowercaseIndexName))
-                                {
-                                    indexByLowercaseIndexName = new Dictionary<string, SchemaIndex>();
-                                    this.IndexByIndexNameByTableName[tableName] = indexByLowercaseIndexName;
-                                }
-
-                                if (!indexByLowercaseIndexName.TryGetValue(indexName, out var index))
-                                {
-                                    index = new SchemaIndex(this, indexName);
-                                    indexByLowercaseIndexName[indexName] = index;
-                                }
-                            }
-                        }
-                    }
                 }
                 finally
                 {
@@ -199,8 +153,6 @@ WHERE
 
         public Dictionary<string, SchemaTableType> TableTypeByName { get; }
 
-        public Dictionary<string, Dictionary<string, SchemaIndex>> IndexByIndexNameByTableName { get; }
-
         public SchemaTable GetTable(string tableName)
         {
             this.TableByName.TryGetValue(tableName.ToLowerInvariant(), out var table);
@@ -211,17 +163,6 @@ WHERE
         {
             this.TableTypeByName.TryGetValue(tableTypeName, out var tableType);
             return tableType;
-        }
-
-        public SchemaIndex GetIndex(string tableName, string indexName)
-        {
-            if (this.IndexByIndexNameByTableName.TryGetValue(tableName.ToLowerInvariant(), out var indexByLowercaseIndexName))
-            {
-                indexByLowercaseIndexName.TryGetValue(indexName.ToLowerInvariant(), out var index);
-                return index;
-            }
-
-            return null;
         }
     }
 }
