@@ -337,10 +337,10 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   local container, whose port forwarder holds a second port per connection, the suite in parallel
   used up the ephemeral ports of the host within seconds (`Can't assign requested address`). It now
   passes in parallel.
-- `Init` of the SqlClient and Npgsql adapters forgets what the database object remembered of
-  the schema. A database object that was refused a transaction, because its schema was missing
-  or invalid, stayed refused after `Init` had built the schema. It now validates the schema
-  again and opens the transaction (#387).
+- `Init` of the SqlClient and Npgsql adapters no longer keeps a refusal. A database object that
+  was refused a transaction, because its schema was missing or invalid, stayed refused after
+  `Init` had built the schema. It now validates the schema again and opens the transaction
+  (#387).
 
 ### Security
 

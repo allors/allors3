@@ -125,10 +125,15 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             }
             finally
             {
-                // What this object knew about the schema no longer holds: the next transaction validates the
-                // schema and ensures its indexes again.
-                this.isValid = null;
-                this.validationMessage = null;
+                // A refusal is not kept: Init may have built the schema that was missing or invalid, and the
+                // next transaction validates it again. The tables may be new, so the next transaction ensures
+                // the indexes again as well.
+                if (this.isValid == false)
+                {
+                    this.isValid = null;
+                    this.validationMessage = null;
+                }
+
                 this.ForgetIndexes();
 
                 this.mapping = null;
