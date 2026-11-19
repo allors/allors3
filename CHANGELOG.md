@@ -380,3 +380,8 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   it never filled: `Validation.MissingTableTypeNames`, `Validation.InvalidTableTypes` and
   `Schema.IndexByIndexNameByTableName`, with `Schema.GetIndex`, which always returned null. The
   validation of a schema reports its missing and invalid tables, as before (#384).
+- The index read of the SqlClient adapter, which nothing used: the validation of a schema read its
+  indexes from `sys.indexes` into `Schema.IndexByIndexNameByTableName` and never looked at them.
+  That query goes, with `SchemaIndex`, `Schema.IndexByIndexNameByTableName` and `Schema.GetIndex`
+  of `Allors.Database.Adapters.Sql.SqlClient`. `Init` still creates the indexes, and the validation
+  of a schema reports its missing and invalid tables and table types, as before (#385).
