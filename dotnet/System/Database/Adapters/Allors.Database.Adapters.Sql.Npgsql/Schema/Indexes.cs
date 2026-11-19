@@ -121,8 +121,8 @@ WHERE n.nspname = @schema";
                     {
                         indexes.Add(new SchemaIndex(
                             reader.GetString(0),
-                            this.Database.SchemaName + "." + this.mapping.NormalizeName(reader.GetString(1)),
-                            reader.IsDBNull(2) ? null : this.mapping.NormalizeName(reader.GetString(2)),
+                            this.Database.SchemaName + "." + this.MappingName(reader.GetString(1)),
+                            reader.IsDBNull(2) ? null : this.MappingName(reader.GetString(2)),
                             reader.GetBoolean(3)));
                     }
                 }
@@ -130,5 +130,12 @@ WHERE n.nspname = @schema";
 
             return indexes;
         }
+
+        // The name of a table or a column of the catalogue as the mapping writes it. The tables and the columns
+        // of the adapter have lower-case names. A quoted name in another case belongs to somebody else: it
+        // keeps its case, in quotes, and so equals no name of the mapping.
+        private string MappingName(string name) => string.Equals(name, name.ToLowerInvariant(), StringComparison.Ordinal)
+            ? this.mapping.NormalizeName(name)
+            : "\"" + name + "\"";
     }
 }

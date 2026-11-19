@@ -48,6 +48,34 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             Assert.Equal(1, this.IndexCount("c1", "c1allorsdouble"));
         }
 
+        [Theory]
+        [InlineData("ALTER TABLE allors.c1 ADD COLUMN \"MANY2ONE\" bigint", "allors.c1 (\"MANY2ONE\")")]
+        [InlineData("CREATE TABLE allors.\"C1\" (o bigint PRIMARY KEY, many2one bigint)", "allors.\"C1\" (many2one)")]
+        public void QuotedTableAndColumnNamesAreDistinctFromTheNamesOfTheAdapter(string create, string on)
+        {
+            this.Rebuild().EnsureIndexes();
+            this.DropIndex("c1", "idx_c1_c1many2one");
+
+            try
+            {
+                // A column or a table whose name differs from the adapter's only by case, with an index of
+                // somebody else.
+                this.ExecuteScalar(create);
+                this.ExecuteScalar($"CREATE INDEX made_by_hand ON {on}");
+
+                using (this.CreateDatabase().CreateTransaction())
+                {
+                }
+
+                Assert.True(this.ExistIndex("idx_c1_c1many2one"));
+                Assert.Equal(1, this.IndexCount("c1", "many2one"));
+            }
+            finally
+            {
+                this.ExecuteScalar("DROP TABLE IF EXISTS allors.\"C1\"");
+            }
+        }
+
         protected override IDatabase CreateDatabase() => this.profile.CreateDatabase();
 
         protected override object ExecuteScalar(string sql) => this.profile.ExecuteScalar(sql);
