@@ -24,6 +24,7 @@ namespace Commands
     [Subcommand(
         typeof(Save),
         typeof(Load),
+        typeof(Index),
         typeof(Upgrade),
         typeof(Populate),
         typeof(Init)

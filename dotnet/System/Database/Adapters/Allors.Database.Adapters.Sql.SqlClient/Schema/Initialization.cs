@@ -8,7 +8,6 @@ namespace Allors.Database.Adapters.Sql.SqlClient
     using Microsoft.Data.SqlClient;
     using System.Text;
 
-    using Meta;
 
     public class Initialization
     {
@@ -55,8 +54,6 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 this.CreateTables();
 
                 this.CreateTableTypes();
-
-                this.CreateIndeces();
             }
         }
 
@@ -298,91 +295,6 @@ CREATE SCHEMA {this.database.SchemaName}";
             }
         }
 
-        private void CreateIndeces()
-        {
-            using var connection = new SqlConnection(this.ConnectionString);
-            connection.Open();
-            try
-            {
-                foreach (var @class in this.mapping.Database.MetaPopulation.DatabaseClasses)
-                {
-                    var tableName = this.mapping.TableNameForObjectByClass[@class];
-                    foreach (var associationType in @class.DatabaseAssociationTypes)
-                    {
-                        var relationType = associationType.RelationType;
-                        if (relationType.IsIndexed)
-                        {
-                            var roleType = relationType.RoleType;
-
-                            if (!(associationType.IsMany && roleType.IsMany) && relationType.ExistExclusiveDatabaseClasses && roleType.IsMany)
-                            {
-                                var indexName =
-                                    $"idx_{@class.Name.ToLowerInvariant()}_{relationType.AssociationType.SingularFullName.ToLowerInvariant()}";
-                                this.CreateIndex(connection, indexName, relationType, tableName);
-                            }
-                        }
-                    }
-
-                    foreach (var roleType in @class.DatabaseRoleTypes)
-                    {
-                        var relationType = roleType.RelationType;
-                        if (relationType.IsIndexed)
-                        {
-                            if (roleType.ObjectType.IsUnit)
-                            {
-                                var unit = (IUnit)roleType.ObjectType;
-                                if (unit.IsString || unit.IsBinary)
-                                {
-                                    if (roleType.Size == -1 || roleType.Size > 4000)
-                                    {
-                                        continue;
-                                    }
-                                }
-                            }
-
-                            var associationType = relationType.AssociationType;
-                            if (roleType.ObjectType.IsUnit)
-                            {
-                                var indexName =
-                                    $"idx_{@class.Name.ToLowerInvariant()}_{relationType.RoleType.SingularFullName.ToLowerInvariant()}";
-                                this.CreateIndex(connection, indexName, relationType, tableName);
-                            }
-                            else if (!(associationType.IsMany && roleType.IsMany) && relationType.ExistExclusiveDatabaseClasses && !roleType.IsMany)
-                            {
-                                var indexName =
-                                    $"idx_{@class.Name.ToLowerInvariant()}_{relationType.RoleType.SingularFullName.ToLowerInvariant()}";
-                                this.CreateIndex(connection, indexName, relationType, tableName);
-                            }
-                        }
-                    }
-                }
-
-                foreach (var relationType in this.mapping.Database.MetaPopulation.DatabaseRelationTypes)
-                {
-                    if (relationType.IsIndexed)
-                    {
-                        var associationType = relationType.AssociationType;
-                        var roleType = relationType.RoleType;
-                        if (!roleType.ObjectType.IsUnit && ((associationType.IsMany && roleType.IsMany) || !relationType.ExistExclusiveDatabaseClasses))
-                        {
-                            var tableName = this.mapping.TableNameForRelationByRelationType[relationType];
-                            var indexName =
-                                $"idx_{relationType.RoleType.SingularFullName.ToLowerInvariant()}_{Sql.Mapping.ColumnNameForRole.ToLowerInvariant()}";
-                            var sql = new StringBuilder();
-                            sql.Append($"CREATE INDEX {indexName}\n");
-                            sql.Append($"ON {tableName} ({Sql.Mapping.ColumnNameForRole})");
-                            using var command = new SqlCommand(sql.ToString(), connection);
-                            command.ExecuteNonQuery();
-                        }
-                    }
-                }
-            }
-            finally
-            {
-                connection.Close();
-            }
-        }
-
         private void TruncateTable(SqlConnection connection, string tableName)
         {
             var cmdText = $"TRUNCATE TABLE {tableName};";
@@ -397,15 +309,6 @@ CREATE SCHEMA {this.database.SchemaName}";
                 using var command = new SqlCommand($"DROP TABLE {tableName}", connection);
                 command.ExecuteNonQuery();
             }
-        }
-
-        private void CreateIndex(SqlConnection connection, string indexName, IRelationType relationType, string tableName)
-        {
-            var sql = new StringBuilder();
-            sql.Append($"CREATE INDEX {indexName}\n");
-            sql.Append($"ON {tableName} ({this.mapping.ColumnNameByRelationType[relationType]})");
-            using var command = new SqlCommand(sql.ToString(), connection);
-            command.ExecuteNonQuery();
         }
     }
 }
