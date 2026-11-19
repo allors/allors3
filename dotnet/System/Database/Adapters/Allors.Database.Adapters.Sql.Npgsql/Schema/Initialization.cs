@@ -6,7 +6,6 @@
 namespace Allors.Database.Adapters.Sql.Npgsql
 {
     using System.Text;
-    using Meta;
     using global::Npgsql;
 
     public class Initialization
@@ -39,8 +38,6 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                     this.DropTables();
 
                     this.CreateTables();
-
-                    this.CreateIndeces();
                 }
                 finally
                 {
@@ -249,91 +246,6 @@ $@"CREATE TABLE {tableName}(
             }
         }
 
-        private void CreateIndeces()
-        {
-            using (var connection = new NpgsqlConnection(this.database.ConnectionString))
-            {
-                connection.Open();
-                try
-                {
-                    foreach (var @class in this.mapping.Database.MetaPopulation.DatabaseClasses)
-                    {
-                        var tableName = this.mapping.TableNameForObjectByClass[@class];
-                        foreach (var associationType in @class.DatabaseAssociationTypes)
-                        {
-                            var relationType = associationType.RelationType;
-                            if (relationType.IsIndexed)
-                            {
-                                var roleType = relationType.RoleType;
-
-                                if (!(associationType.IsMany && roleType.IsMany) && relationType.ExistExclusiveDatabaseClasses && roleType.IsMany)
-                                {
-                                    var indexName = "idx_" + @class.Name.ToLowerInvariant() + "_" + relationType.AssociationType.SingularFullName.ToLowerInvariant();
-                                    this.CreateIndex(connection, indexName, relationType, tableName);
-                                }
-                            }
-                        }
-
-                        foreach (var roleType in @class.DatabaseRoleTypes)
-                        {
-                            var relationType = roleType.RelationType;
-                            if (relationType.IsIndexed)
-                            {
-                                if (roleType.ObjectType.IsUnit)
-                                {
-                                    var unit = (IUnit)roleType.ObjectType;
-                                    if (unit.IsString || unit.IsBinary)
-                                    {
-                                        if (roleType.Size == -1 || roleType.Size > 4000)
-                                        {
-                                            continue;
-                                        }
-                                    }
-                                }
-
-                                var associationType = relationType.AssociationType;
-                                if (roleType.ObjectType.IsUnit)
-                                {
-                                    var indexName = "idx_" + @class.Name.ToLowerInvariant() + "_" + relationType.RoleType.SingularFullName.ToLowerInvariant();
-                                    this.CreateIndex(connection, indexName, relationType, tableName);
-                                }
-                                else if (!(associationType.IsMany && roleType.IsMany) && relationType.ExistExclusiveDatabaseClasses && !roleType.IsMany)
-                                {
-                                    var indexName = "idx_" + @class.Name.ToLowerInvariant() + "_" + relationType.RoleType.SingularFullName.ToLowerInvariant();
-                                    this.CreateIndex(connection, indexName, relationType, tableName);
-                                }
-                            }
-                        }
-                    }
-
-                    foreach (var relationType in this.mapping.Database.MetaPopulation.DatabaseRelationTypes)
-                    {
-                        if (relationType.IsIndexed)
-                        {
-                            var associationType = relationType.AssociationType;
-                            var roleType = relationType.RoleType;
-                            if (!roleType.ObjectType.IsUnit && ((associationType.IsMany && roleType.IsMany) || !relationType.ExistExclusiveDatabaseClasses))
-                            {
-                                var tableName = this.mapping.TableNameForRelationByRelationType[relationType];
-                                var indexName = "idx_" + relationType.RoleType.SingularFullName.ToLowerInvariant() + "_" + Mapping.ColumnNameForRole.ToLowerInvariant();
-                                var sql = new StringBuilder();
-                                sql.Append("CREATE INDEX " + indexName + "\n");
-                                sql.Append("ON " + tableName + " (" + Mapping.ColumnNameForRole + ")");
-                                using (var command = new NpgsqlCommand(sql.ToString(), connection))
-                                {
-                                    command.ExecuteNonQuery();
-                                }
-                            }
-                        }
-                    }
-                }
-                finally
-                {
-                    connection.Close();
-                }
-            }
-        }
-
         private void TruncateTable(NpgsqlConnection connection, string tableName, bool restartIdentity = false)
         {
             var cmdText = @"TRUNCATE TABLE " + tableName + (restartIdentity ? " RESTART IDENTITY" : string.Empty) + @";";
@@ -351,17 +263,6 @@ $@"CREATE TABLE {tableName}(
                 {
                     command.ExecuteNonQuery();
                 }
-            }
-        }
-
-        private void CreateIndex(NpgsqlConnection connection, string indexName, IRelationType relationType, string tableName)
-        {
-            var sql = new StringBuilder();
-            sql.Append("CREATE INDEX " + indexName + "\n");
-            sql.Append("ON " + tableName + " (" + this.mapping.ColumnNameByRelationType[relationType] + ")");
-            using (var command = new NpgsqlCommand(sql.ToString(), connection))
-            {
-                command.ExecuteNonQuery();
             }
         }
     }

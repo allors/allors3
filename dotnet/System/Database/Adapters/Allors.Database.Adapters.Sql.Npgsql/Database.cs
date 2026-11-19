@@ -115,6 +115,8 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 
         public override string ValidationMessage => this.validationMessage;
 
+        protected override Sql.Indexes Indexes => new Indexes(this);
+
         public override void Init()
         {
             try
@@ -123,6 +125,17 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             }
             finally
             {
+                // A refusal is not kept: Init may have built the schema that was missing or invalid, and the
+                // next transaction validates it again. The tables may be new, so the next transaction ensures
+                // the indexes again as well.
+                if (this.isValid == false)
+                {
+                    this.isValid = null;
+                    this.validationMessage = null;
+                }
+
+                this.ForgetIndexes();
+
                 this.mapping = null;
                 this.Cache.Invalidate();
                 this.Services.OnInit(this);
@@ -161,6 +174,9 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                         }
                     }
                 }
+
+                // The indexes are built on the loaded rows. When that fails the rows stay.
+                this.EnsureIndexes();
             }
         }
 
