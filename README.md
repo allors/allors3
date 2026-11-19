@@ -5,110 +5,38 @@
 Allors3 is an actively developed platform for applications built with **domain inheritance**.
 An application declares its own domain that extends Core and inherits its model and behaviour.
 
-## The 3.2 line
+The platform is **System**, the database and workspace engines, adapters, protocols, metadata and
+generators; **Core**, the foundational domain behaviour, authorization, the JSON API and the
+server building blocks; the TypeScript system and core libraries; and the generator templates.
+An application owns its business domains, screens, forms, tables, navigation and component
+libraries.
 
-The 3.2 line starts from `0e907fea68`, the platform state of 8 May 2026 that a downstream
-application inlined and runs in production, and takes over that application's changes to System
-and Core. The scope is the platform: **System**, the database and workspace engines, adapters,
-protocols, metadata and generators; **Core**, the foundational domain behaviour, authorization,
-the JSON API and the server building blocks; the TypeScript system and core libraries; and the
-generator templates.
+`main` is the 3.2 line, which is not released. **Base and Apps** are not part of the platform;
+their code remains on the `v3.1` branch.
 
-**Base and Apps** are not part of the platform. Their code remains on the `v3.1` branch.
-Downstream applications own their business domains, screens, forms, tables, navigation and
-component libraries.
+## Documentation
 
-The previous line of `main`, up to 27 October 2026, is kept on the archive branch
-`archive/main-2026-10`. It holds work that this line does not have yet: the fixes of June 2026
-that `v3.1` also carries, the security hardening of the server, the rename of Core's test domain
-to Test, the Identity and Entra authentication plug-ins, a domain that extends several domains,
-the workspace API changes and the documentation website. Fixes return first, from `v3.1`, one
-pull request at a time; features return when an application needs them.
+The [documentation](docs/src/content/docs/index.md) is written for the developers of applications
+and for the maintainers of the platform. It is published at
+[docs.allors.com/allors3](https://docs.allors.com/allors3/) from `main`; when a published page
+differs from the checkout, the page in the checkout describes the checkout.
 
-See [ARCHITECTURE.md](ARCHITECTURE.md) for the platform boundary and the inheritance rules.
-
-## Development and releases
-
-Pull requests are the default contribution workflow. The retained version branches are `main`,
-`v3.0` and `v3.1`.
-
-[version.json](version.json) specifies `3.2.0-alpha.{height}`: the development version of the
-line, not a completed release. Changes are recorded in [CHANGELOG.md](CHANGELOG.md). Agent
-instructions are in `AGENTS.md`.
-
-## Configuration
-
-A server, the command-line tool and the API tests take their settings from the configuration
-root, the folder that `ALLORS_CONFIG_ROOT` names, and from environment variables. No `appsettings`
-file is read from the folder of a project, and no program defaults the root. The test projects and
-the Nuke build do: when `ALLORS_CONFIG_ROOT` is not set they use the `config/snapshot` template, so
-a test run needs no database server unless the variable, or `--provider` for the build, names
-another template.
-
-Below the root every domain has its folder; Core's is `core`. A server also reads
-`core/<application>`, and the command-line tool `core/commands`. At each of these locations the
-variants are read in this order, each one optional:
-
-```
-appsettings.json
-appsettings.{environment}.json              # Development, Staging, Production; servers only
-appsettings.{platform}.json                 # windows, linux, osx
-appsettings.{environment}.{platform}.json
-```
-
-Environment variables override every file: `adapter=snapshot`, `adapter=sqlclient` or
-`adapter=npgsql`, `ConnectionStrings__DefaultConnection=…`, `JwtToken__Key=…`. Without
-`ALLORS_CONFIG_ROOT` they are the only source. A program stops when a setting that it needs has no
-value; the message names the setting, its environment variable and the folders that were read.
-
-`config/sqlclient`, `config/npgsql`, `config/localdb` and `config/snapshot` are templates for a
-root: SQL Server and PostgreSQL on `localhost` with the login `allors`, SQL Server LocalDB on
-Windows, and the Snapshot adapter, which keeps the population in memory and needs no connection
-string and no database server. Point `ALLORS_CONFIG_ROOT` at one of them, or at a copy that holds
-your own values. With the Snapshot adapter the `init` command has nothing to drop or create, and a
-population that the command-line tool builds ends with the process; the Core test server builds its
-own through `Test/Setup`.
-
-`ALLORS_SQLCLIENT` and `ALLORS_NPGSQL` hold an admin connection to the same server and serve
-database management only; no program runs on them. The `init` command of the command-line tool
-drops and creates the database of the configured connection and makes the login of that
-connection its owner, creating the login when the server does not know it. The adapter suites
-create and open their test databases with the admin connection. On Windows the admin connection
-for SQL Server defaults to LocalDB.
-
-```
-./build.sh DotnetCoreDatabaseTest                        # Snapshot adapter, no database server
-export ALLORS_SQLCLIENT='Server=localhost;User Id=sa;Password=…;TrustServerCertificate=true'
-./build.sh DotnetCoreDatabaseTest --provider sqlclient   # SQL Server through config/sqlclient
-```
-
-## Building and testing
-
-The build is [Nuke](https://nuke.build): `./build.sh <target>` on macOS and Linux,
-`build.cmd <target>` on Windows. A fresh clone does not compile until `./build.sh Generate` has
-run; generated files are not committed and are never edited by hand.
-
-The suites that CI runs are `Ci*` targets in `build/Build.ci.cs`:
-
-| Suite | Needs |
+| Page | Read it to |
 | --- | --- |
-| `CiDotnetSystemAdaptersTestMemory`, `CiDotnetSystemAdaptersTestSnapshot` | nothing |
-| `CiDotnetSystemAdaptersTestNpgsql` | PostgreSQL: the admin connection in `ALLORS_NPGSQL` |
-| `CiDotnetSystemAdaptersTestSqlClient` | SQL Server: the admin connection in `ALLORS_SQLCLIENT`, or LocalDB on Windows |
-| `CiDotnetCore*Test`, `CiTypescriptWorkspace*Test` | a [configuration root](#configuration), `config/snapshot` unless `ALLORS_CONFIG_ROOT` or `--provider` names another template; with a SQL template also the admin connection of its adapter |
+| [Domains](docs/src/content/docs/domains.md) | understand how the domain of an application extends Core and includes its code |
+| [Configuration](docs/src/content/docs/configuration.md) | give a server, the command-line tool and the tests their settings |
+| [Versions and branches](docs/src/content/docs/versions.md) | find the 3.2 line, the version branches and the archive branch |
+| [Architecture](docs/src/content/docs/internals/architecture.md) | know the boundary of the platform and the rules that keep it inheritable |
+| [Build and test](docs/src/content/docs/internals/build-and-test.md) | build the repository, run the suites and read the CI workflows |
 
-CI runs every suite as a job of its own. A pull request, whatever its base branch, and a push to
-`main` run on Linux the four adapter suites, and the Core and TypeScript suites with
-`config/snapshot`, where the domain tests run on the Memory adapter. A push to `main` runs the Core
-and TypeScript suites with `config/sqlclient` and `config/npgsql` as well, the domain tests
-included. The nightly workflow runs every suite on Windows: the adapter suites, and the Core and
-TypeScript suites on the Snapshot adapter, on SQL Server LocalDB and on PostgreSQL.
-`gh workflow run nightly.yml` starts it on demand; `-f os=` takes `windows-latest`, `ubuntu-latest`
-or `both`, and `-f provider=` takes `all`, `snapshot`, `sqlclient` or `npgsql`. A branch runs
-through its pull request, and `gh workflow run ci.yml --ref <branch>` runs CI for a branch that has
-none.
+Changes are recorded in [CHANGELOG.md](CHANGELOG.md). Agent instructions are in `AGENTS.md`.
 
-The TypeScript workspace in `typescript/modules` is an nx workspace. After `npm install` there,
-`npm run system-workspace-meta:test`, `npm run system-workspace-meta-json:test` and
-`npm run system-workspace-adapters:test` run without a server;
-`system-workspace-adapters-json:test` needs the Core test server, which the Nuke target starts.
+## Build
+
+```sh
+./build.sh Generate                 # a fresh clone does not compile until this has run
+./build.sh DotnetCoreDatabaseTest   # the Core database suite on the Snapshot adapter, without a database server
+```
+
+On Windows use `build.cmd`. [Build and test](docs/src/content/docs/internals/build-and-test.md)
+describes the targets, the adapters and what each suite needs.

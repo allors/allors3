@@ -28,6 +28,12 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
 - `Database.EnsureIndexes()` of `Allors.Database.Adapters.Sql`, which brings the indexes of the
   schema to what the adapter wants, and the `index` command of Core's command-line tool, which
   calls it. For an adapter that keeps no indexes the command does nothing (#388).
+- The documentation website of the 3.2 line. `docs/` holds an Astro and Starlight website that
+  documents `main`, with a Markdown export of every page and an agent index, published at
+  `https://docs.allors.com/allors3/` by a manual run of the Documentation workflow. Its pages are
+  the home of the facts that the root of the repository held: `README.md` is an introduction that
+  links to them, and `ARCHITECTURE.md` is gone, replaced by the pages Domains and Architecture. The
+  first website, with the pages of the previous line, stays on `archive/main-2026-10` (#387).
 
 ### Changed
 
@@ -60,9 +66,10 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   PostgreSQL as well. A nightly workflow, which also starts on demand, runs every suite on Windows:
   the adapter suites, and the Core and TypeScript suites on the Snapshot adapter, on SQL Server
   LocalDB and on PostgreSQL. The aggregate check `CI result` stands for the suites of a pull request
-  and of a push; a change to the four Markdown files at the root skips them. A push to a `feature/`
-  or `issue/` branch no longer starts a run of its own: a branch runs through its pull request, or
-  on demand.
+  and of a push; a change that touches only documentation skips them: the files under `docs/`, the
+  documentation workflow, and `AGENTS.md`, `CHANGELOG.md` and `README.md` at the root. A push to a
+  `feature/` or `issue/` branch no longer starts a run of its own: a branch runs through its pull
+  request, or on demand.
 - Nerdbank.GitVersioning versions the line as `3.2.0-alpha.{height}`, with public-release
   versions on `main` and the `v*` branches.
 - The TypeScript workspace runs on nx 23, jest 30 and TypeScript 6 and depends on cross-fetch and
