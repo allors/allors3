@@ -131,6 +131,31 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   because the login does not own the table, no transaction opens and the message names the
   statements to run. A database that lacked an index started before this change, and now refuses
   to until it has the index (#388).
+- `Init` of the SqlClient and Npgsql adapters empties a valid schema in one transaction and
+  truncates only the tables that hold data, where it truncated every table, each in a transaction
+  of its own. An `Init` that fails has changed nothing; before, it left the tables that it had
+  reached empty, the objects table first. The objects table is truncated whatever it holds, so the
+  numbering of the objects starts again as before. On PostgreSQL `Init` locks every table of the
+  adapter, `LOCK TABLE … IN ACCESS EXCLUSIVE MODE`, and then truncates in one statement the tables
+  whose file holds a page, and whatever its size every table that has partitions or children or
+  that uses another access method than `heap`. PostgreSQL gives a truncated table and each of its
+  indexes a new file, so an `Init` of a database that holds little data no longer creates a file
+  for every table and index of the schema. On SQL Server one batch truncates each table that holds
+  a row, and looks for that row under an exclusive lock on the table, `WITH (TABLOCKX)`, so that it
+  waits for a row that another transaction has not committed, also with read committed snapshot
+  on. `Init` keeps its lock on each table until it ends, where it let go of a table after the
+  truncate. A transaction that is in flight, holds one of the tables and then asks for one that
+  `Init` holds ends in a deadlock with it, and the server ends one of the two. The command timeout
+  of the connection string bounds the wait for all tables together, where each table had its own.
+  On PostgreSQL the transaction takes room in the lock table of the server, which all sessions
+  share: a lock for every table of the adapter and for the sequence of the objects table, and for
+  a table that is truncated also for each of its indexes, for its TOAST table and for the index of
+  that table. PostgreSQL has room for `max_locks_per_transaction` × (`max_connections` +
+  `max_prepared_transactions`) locked objects, 6,400 with its defaults; before, `Init` held the
+  locks of one table at a time. When the room runs out PostgreSQL refuses a lock with
+  `out of shared memory`, and `Init` fails: raise `max_locks_per_transaction`, which takes a
+  restart of the server. On SQL Server `Init` asks for the state of snapshot isolation and sends
+  the batch that switches it on only when it is off (#392).
 
 ### Fixed
 

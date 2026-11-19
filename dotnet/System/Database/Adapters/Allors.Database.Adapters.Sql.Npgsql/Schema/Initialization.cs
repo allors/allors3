@@ -5,8 +5,10 @@
 
 namespace Allors.Database.Adapters.Sql.Npgsql
 {
+    using System.Collections.Generic;
     using System.Text;
     using global::Npgsql;
+    using NpgsqlTypes;
 
     public class Initialization
     {
@@ -75,34 +77,81 @@ CREATE SCHEMA " + this.database.SchemaName;
             }
         }
 
+        // Empties the tables in one transaction: when it fails, it has changed nothing. A truncate gives a
+        // table a new file, also when the table is empty, so only the tables that may hold data are truncated.
         private void TruncateTables()
         {
+            // The tables that are not known to be empty. The size of its file says that a table holds no row
+            // only for a table of the heap access method without children: the rows of a partitioned table
+            // and of a table with a child are in the files of other tables, and another access method keeps
+            // its rows where it chooses.
+            const string MayHoldData = @"
+SELECT t.name
+FROM unnest(@names) AS t(name)
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM pg_class c
+    WHERE c.oid = t.name::regclass
+    AND NOT c.relhassubclass
+    AND c.relam = (SELECT oid FROM pg_am WHERE amname = 'heap')
+    AND pg_relation_size(c.oid) = 0)";
+
+            var tableNames = new List<string> { this.mapping.TableNameForObjects };
+
+            foreach (var @class in this.mapping.Database.MetaPopulation.DatabaseClasses)
+            {
+                tableNames.Add(this.mapping.TableNameForObjectByClass[@class]);
+            }
+
+            foreach (var relationType in this.mapping.Database.MetaPopulation.DatabaseRelationTypes)
+            {
+                var associationType = relationType.AssociationType;
+                var roleType = relationType.RoleType;
+
+                if (!roleType.ObjectType.IsUnit && ((associationType.IsMany && roleType.IsMany) || !relationType.ExistExclusiveDatabaseClasses))
+                {
+                    tableNames.Add(this.mapping.TableNameForRelationByRelationType[relationType]);
+                }
+            }
+
             using (var connection = new NpgsqlConnection(this.database.ConnectionString))
             {
                 connection.Open();
                 try
                 {
-                    // The object table numbers the objects. The numbering starts again, as it does when the
-                    // table is created.
-                    this.TruncateTable(connection, this.mapping.TableNameForObjects, restartIdentity: true);
-
-                    foreach (var @class in this.mapping.Database.MetaPopulation.DatabaseClasses)
+                    using (var transaction = connection.BeginTransaction())
                     {
-                        var tableName = this.mapping.TableNameForObjectByClass[@class];
-
-                        this.TruncateTable(connection, tableName);
-                    }
-
-                    foreach (var relationType in this.mapping.Database.MetaPopulation.DatabaseRelationTypes)
-                    {
-                        var associationType = relationType.AssociationType;
-                        var roleType = relationType.RoleType;
-
-                        if (!roleType.ObjectType.IsUnit && ((associationType.IsMany && roleType.IsMany) || !relationType.ExistExclusiveDatabaseClasses))
+                        // Every table is locked before the look at its size: no other transaction then holds a
+                        // row in it that is not committed, or writes to it before the truncate.
+                        var lockText = "LOCK TABLE " + string.Join(", ", tableNames) + " IN ACCESS EXCLUSIVE MODE";
+                        using (var command = new NpgsqlCommand(lockText, connection, transaction))
                         {
-                            var tableName = this.mapping.TableNameForRelationByRelationType[relationType];
-                            this.TruncateTable(connection, tableName);
+                            command.ExecuteNonQuery();
                         }
+
+                        // The objects table numbers the objects. It is truncated whatever it holds: the numbering
+                        // starts again, as it does when the table is created.
+                        var truncate = new List<string> { this.mapping.TableNameForObjects };
+
+                        using (var command = new NpgsqlCommand(MayHoldData, connection, transaction))
+                        {
+                            command.Parameters.Add("@names", NpgsqlDbType.Array | NpgsqlDbType.Text).Value = tableNames.GetRange(1, tableNames.Count - 1).ToArray();
+                            using (var reader = command.ExecuteReader())
+                            {
+                                while (reader.Read())
+                                {
+                                    truncate.Add(reader.GetString(0));
+                                }
+                            }
+                        }
+
+                        var truncateText = "TRUNCATE TABLE " + string.Join(", ", truncate) + " RESTART IDENTITY";
+                        using (var command = new NpgsqlCommand(truncateText, connection, transaction))
+                        {
+                            command.ExecuteNonQuery();
+                        }
+
+                        transaction.Commit();
                     }
                 }
                 finally
@@ -243,15 +292,6 @@ $@"CREATE TABLE {tableName}(
                 {
                     connection.Close();
                 }
-            }
-        }
-
-        private void TruncateTable(NpgsqlConnection connection, string tableName, bool restartIdentity = false)
-        {
-            var cmdText = @"TRUNCATE TABLE " + tableName + (restartIdentity ? " RESTART IDENTITY" : string.Empty) + @";";
-            using (var command = new NpgsqlCommand(cmdText, connection))
-            {
-                command.ExecuteNonQuery();
             }
         }
 
