@@ -63,6 +63,16 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             connection.Open();
             try
             {
+                // Asked first: the batch that alters the database takes many times longer than the question,
+                // also when it finds nothing to alter.
+                using (var ask = new SqlCommand("SELECT snapshot_isolation_state FROM sys.databases WHERE database_id = DB_ID()", connection))
+                {
+                    if (ask.ExecuteScalar() is byte state && state != 0)
+                    {
+                        return;
+                    }
+                }
+
                 var cmdText = $@"
 IF ((SELECT SNAPSHOT_ISOLATION_STATE FROM SYS.DATABASES WHERE NAME = '{connection.Database}') = 0)
 alter Database {connection.Database}
@@ -135,32 +145,45 @@ CREATE SCHEMA {this.database.SchemaName}";
             }
         }
 
+        // Empties the tables in one transaction: when it fails, it has changed nothing. Only the tables that
+        // hold a row are truncated.
         private void TruncateTables()
         {
+            var sql = new StringBuilder();
+
+            // The objects table numbers the objects. It is truncated whatever it holds: the numbering starts
+            // again, as it does when the table is created.
+            sql.Append("TRUNCATE TABLE " + this.mapping.TableNameForObjects + ";\n");
+
+            foreach (var @class in this.mapping.Database.MetaPopulation.DatabaseClasses)
+            {
+                var tableName = this.mapping.TableNameForObjectByClass[@class];
+
+                AppendTruncateTable(sql, tableName);
+            }
+
+            foreach (var relationType in this.mapping.Database.MetaPopulation.DatabaseRelationTypes)
+            {
+                var associationType = relationType.AssociationType;
+                var roleType = relationType.RoleType;
+
+                if (!roleType.ObjectType.IsUnit && ((associationType.IsMany && roleType.IsMany) || !relationType.ExistExclusiveDatabaseClasses))
+                {
+                    var tableName = this.mapping.TableNameForRelationByRelationType[relationType];
+                    AppendTruncateTable(sql, tableName);
+                }
+            }
+
             using var connection = new SqlConnection(this.ConnectionString);
             connection.Open();
             try
             {
-                this.TruncateTable(connection, this.mapping.TableNameForObjects);
-
-                foreach (var @class in this.mapping.Database.MetaPopulation.DatabaseClasses)
-                {
-                    var tableName = this.mapping.TableNameForObjectByClass[@class];
-
-                    this.TruncateTable(connection, tableName);
-                }
-
-                foreach (var relationType in this.mapping.Database.MetaPopulation.DatabaseRelationTypes)
-                {
-                    var associationType = relationType.AssociationType;
-                    var roleType = relationType.RoleType;
-
-                    if (!roleType.ObjectType.IsUnit && ((associationType.IsMany && roleType.IsMany) || !relationType.ExistExclusiveDatabaseClasses))
-                    {
-                        var tableName = this.mapping.TableNameForRelationByRelationType[relationType];
-                        this.TruncateTable(connection, tableName);
-                    }
-                }
+                // One batch. The transaction is committed here, once the batch has ended without an error:
+                // after an error that ends its statement only, SQL Server goes on with the rest of a batch.
+                using var transaction = connection.BeginTransaction();
+                using var command = new SqlCommand(sql.ToString(), connection, transaction);
+                command.ExecuteNonQuery();
+                transaction.Commit();
             }
             finally
             {
@@ -295,12 +318,12 @@ CREATE SCHEMA {this.database.SchemaName}";
             }
         }
 
-        private void TruncateTable(SqlConnection connection, string tableName)
-        {
-            var cmdText = $"TRUNCATE TABLE {tableName};";
-            using var command = new SqlCommand(cmdText, connection);
-            command.ExecuteNonQuery();
-        }
+        // The look takes an exclusive lock on the table, which it keeps until the transaction ends: it waits for
+        // a transaction that holds a row in the table that is not committed, and no other transaction writes
+        // to the table before the truncate. Without the lock, and with read committed snapshot on, the look
+        // does not see such a row and does not wait for it.
+        private static void AppendTruncateTable(StringBuilder sql, string tableName) =>
+            sql.Append("IF EXISTS (SELECT * FROM " + tableName + " WITH (TABLOCKX)) TRUNCATE TABLE " + tableName + ";\n");
 
         private void DropTable(SqlConnection connection, string tableName)
         {
