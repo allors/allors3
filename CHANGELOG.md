@@ -63,9 +63,10 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   PostgreSQL as well. A nightly workflow, which also starts on demand, runs every suite on Windows:
   the adapter suites, and the Core and TypeScript suites on the Snapshot adapter, on SQL Server
   LocalDB and on PostgreSQL. The aggregate check `CI result` stands for the suites of a pull request
-  and of a push; a change to the four Markdown files at the root skips them. A push to a `feature/`
-  or `issue/` branch no longer starts a run of its own: a branch runs through its pull request, or
-  on demand.
+  and of a push; a change that touches only documentation skips them: the files under `docs/`, the
+  documentation workflow, and `AGENTS.md`, `CHANGELOG.md` and `README.md` at the root. A push to a
+  `feature/` or `issue/` branch no longer starts a run of its own: a branch runs through its pull
+  request, or on demand.
 - Nerdbank.GitVersioning versions the line as `3.2.0-alpha.{height}`, with public-release
   versions on `main` and the `v*` branches.
 - The TypeScript workspace runs on nx 23, jest 30 and TypeScript 6 and depends on cross-fetch and

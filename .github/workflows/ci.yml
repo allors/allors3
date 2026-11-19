@@ -59,7 +59,7 @@ jobs:
             if git cat-file -e "$BASE_SHA^{commit}" 2>/dev/null; then
               changed=$(git diff --name-only "$BASE_SHA" "$HEAD_SHA")
               printf '%s\n' "$changed"
-              if [ -n "$changed" ] && ! printf '%s\n' "$changed" | grep -v -E '^(AGENTS|ARCHITECTURE|CHANGELOG|README)\.md$' | grep -q .; then
+              if [ -n "$changed" ] && ! printf '%s\n' "$changed" | grep -v -E '^(docs/|\.github/workflows/documentation\.yml$|(AGENTS|CHANGELOG|README)\.md$)' | grep -q .; then
                 platform=false
               fi
             else
