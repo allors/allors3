@@ -25,6 +25,12 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
 - The Nuke build takes `--provider` with `snapshot`, `sqlclient`, `npgsql` or `localdb`: the
   template under `config/` that is the configuration root of the tests, the command-line tool and
   the server that its targets start. It wins over `ALLORS_CONFIG_ROOT` (#314).
+- The documentation website of the 3.2 line. `docs/` holds an Astro and Starlight website that
+  documents `main`, with a Markdown export of every page and an agent index, published at
+  `https://docs.allors.com/allors3/` by a manual run of the Documentation workflow. Its pages are
+  the home of the facts that the root of the repository held: `README.md` is an introduction that
+  links to them, and `ARCHITECTURE.md` is gone, replaced by the pages Domains and Architecture. The
+  first website, with the pages of the previous line, stays on `archive/main-2026-10` (#387).
 
 ### Changed
 

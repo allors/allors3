@@ -72,7 +72,7 @@ This direction guides explicitly requested work; it does not authorize expanding
   application inlined and runs in production, plus that application's changes to System and
   Core. The platform scope is **System and Core**, the TypeScript system and core libraries, the
   generator templates, and the test infrastructure needed to verify them. See
-  [ARCHITECTURE.md](ARCHITECTURE.md).
+  [Architecture](docs/src/content/docs/internals/architecture.md).
 - Base and Apps are not part of the platform; they continue on the `v3.1` branch. Downstream
   applications own business domains and production UI, including forms, tables, navigation and
   component libraries. Keep platform integration examples small and test-focused.
@@ -80,16 +80,16 @@ This direction guides explicitly requested work; it does not authorize expanding
   `archive/main-2026-10`: the fixes of June 2026 shared with `v3.1`, the security hardening of
   the server, the rename of Core's test domain to Test, the Identity and Entra authentication
   plug-ins, a domain that extends several domains, the workspace API changes and the
-  documentation website. Nothing from it returns wholesale. Fixes come back first, from `v3.1`,
-  each in a pull request of its own that the downstream application validates through a
-  submodule update; features return when an application needs them.
+  documentation pages of that work. Nothing from it returns wholesale. Fixes come back first,
+  from `v3.1`, each in a pull request of its own that the downstream application validates
+  through a submodule update; features return when an application needs them.
 - Configuration comes from the configuration root that `ALLORS_CONFIG_ROOT` names and from
   environment variables, which override every file; without the root only environment variables
   are read, and a program stops when a setting that it needs has no value. No `appsettings` file
   lives next to a project and no program defaults the root. The test projects and the Nuke build
   default to the `config/snapshot` template, and CI sets the root per job to a template under
-  `config/`. `ALLORS_SQLCLIENT` and `ALLORS_NPGSQL` are for database management only. See the
-  [README](README.md#configuration).
+  `config/`. `ALLORS_SQLCLIENT` and `ALLORS_NPGSQL` are for database management only. See
+  [Configuration](docs/src/content/docs/configuration.md).
 - Public documentation, code comments, commit messages, and GitHub text must describe Allors3
   independently. Do not name or link private, unpublished projects.
 
@@ -145,18 +145,22 @@ This direction guides explicitly requested work; it does not authorize expanding
 
 ## Documentation
 
-- The human documentation is [README.md](README.md) and [ARCHITECTURE.md](ARCHITECTURE.md),
-  written for application developers and platform maintainers. This file holds agent
-  instructions; keep technical facts in the human pages rather than maintaining a separate
-  account for agents.
+- `docs/src/content/docs/` is human documentation for application developers and platform
+  maintainers. The [documentation index](docs/src/content/docs/index.md) lists the pages, and
+  [README.md](README.md) introduces the repository. This file holds agent instructions; keep
+  technical facts in the human pages rather than maintaining a separate account for agents.
 - Write documentation, comments and public-facing explanations in Oxford English, in clear
-  practitioner language, and preserve exact identifiers and external names.
+  practitioner language, and preserve exact identifiers and external names. For explicitly
+  requested documentation work, read and apply the
+  [writing guide](docs/src/content/docs/internals/writing-documentation.md) and the
+  [terminology reference](docs/src/content/docs/terminology.md); the
+  [website instructions](docs/README.md) say how to check the website.
 - Do not rename an established concept or substitute a competing term without prior agreement.
   Explain the proposed meaning, reason and affected scope before asking. Existing agreement
   in the current work is sufficient; do not ask again. In particular, retain adapter rather
   than silently substituting codec.
-- For explicitly requested documentation changes, maintain the affected pages and links within
-  that scope. Otherwise, report pages made inaccurate by code changes.
+- For explicitly requested documentation changes, maintain the affected pages, the index,
+  statuses and links within that scope. Otherwise, report pages made inaccurate by code changes.
 - Before completing work, review the changed material for factual accuracy, agreed terminology,
   Oxford spelling and clear practitioner language, including example output, interface text,
   commit messages and pull request descriptions where affected.
@@ -181,4 +185,5 @@ This direction guides explicitly requested work; it does not authorize expanding
 
 Build uses Nuke: `./build.sh <target>` on macOS and Linux, `build.cmd <target>` on Windows.
 `Generate` produces the code a fresh clone needs; the `Ci*` targets in `build/Build.ci.cs` are
-the suites that CI runs. The [README](README.md#building-and-testing) says what each suite needs.
+the suites that CI runs.
+[Build and test](docs/src/content/docs/internals/build-and-test.md) says what each suite needs.
