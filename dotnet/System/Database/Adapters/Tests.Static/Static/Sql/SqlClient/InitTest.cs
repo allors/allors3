@@ -9,6 +9,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
     using System.Threading;
     using Microsoft.Data.SqlClient;
     using Xunit;
+    using C1 = Domain.C1;
 
     public class InitTest : Sql.InitTest, IClassFixture<Fixture<InitTest>>
     {
@@ -17,6 +18,28 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         public InitTest() => this.profile = new Profile(this.GetType().Name);
 
         public override void Dispose() => this.profile.Dispose();
+
+        // Init switches snapshot isolation on in the database of its connection, whatever the name of that
+        // database: a name that needs brackets, and a name that holds a quote or a bracket itself.
+        [Theory]
+        [InlineData("InitTest-Name")]
+        [InlineData("InitTest's")]
+        [InlineData("InitTest]")]
+        public void InitAllowsSnapshotIsolationWhateverTheNameOfTheDatabase(string name)
+        {
+            // A new database, where snapshot isolation is off.
+            Provisioning.DropCreate(name);
+            var database = new Profile(name).CreateDatabase();
+
+            database.Init();
+
+            // A transaction of the adapter is a snapshot transaction.
+            using (var transaction = database.CreateTransaction())
+            {
+                C1.Create(transaction);
+                transaction.Commit();
+            }
+        }
 
         // With read committed snapshot on, a statement that looks at a table neither sees the row that another
         // transaction has not committed nor waits for it. Init looks under a lock on the table: it waits for that
