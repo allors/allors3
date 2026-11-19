@@ -27,7 +27,7 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   the server that its targets start. It wins over `ALLORS_CONFIG_ROOT` (#314).
 - `Database.EnsureIndexes()` of `Allors.Database.Adapters.Sql`, which brings the indexes of the
   schema to what the adapter wants, and the `index` command of Core's command-line tool, which
-  calls it. For an adapter that keeps no indexes the command does nothing (#387).
+  calls it. For an adapter that keeps no indexes the command does nothing (#388).
 
 ### Changed
 
@@ -123,7 +123,7 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   `index` command or a call of `EnsureIndexes()`. When an index can not be created, for example
   because the login does not own the table, no transaction opens and the message names the
   statements to run. A database that lacked an index started before this change, and now refuses
-  to until it has the index (#387).
+  to until it has the index (#388).
 
 ### Fixed
 
@@ -340,7 +340,7 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
 - `Init` of the SqlClient and Npgsql adapters no longer keeps a refusal. A database object that
   was refused a transaction, because its schema was missing or invalid, stayed refused after
   `Init` had built the schema. It now validates the schema again and opens the transaction
-  (#387).
+  (#388).
 
 ### Security
 
