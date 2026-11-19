@@ -375,3 +375,8 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   the type `Text` that a command of both drivers has from its creation, so they no longer set the
   member. A command that an application creates through `IConnection.CreateCommand()` is a
   statement as well and cannot be given another type (#383).
+- The classes `SchemaTableType`, `SchemaTableTypeColumn` and `SchemaIndex` of
+  `Allors.Database.Adapters.Sql.Npgsql`, which the adapter never instantiated, and the members that
+  it never filled: `Validation.MissingTableTypeNames`, `Validation.InvalidTableTypes` and
+  `Schema.IndexByIndexNameByTableName`, with `Schema.GetIndex`, which always returned null. The
+  validation of a schema reports its missing and invalid tables, as before (#384).
