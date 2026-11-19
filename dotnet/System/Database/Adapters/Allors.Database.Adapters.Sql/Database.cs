@@ -21,7 +21,11 @@ namespace Allors.Database.Adapters.Sql
 
         private readonly ConcurrentDictionary<IObjectType, IRoleType[]> sortedUnitRolesByObjectType;
 
+        private readonly object indexesLock = new object();
+
         private ICacheFactory cacheFactory;
+
+        private volatile bool indexesEnsured;
 
         protected Database(IDatabaseServices state, Configuration configuration)
         {
@@ -119,10 +123,50 @@ namespace Allors.Database.Adapters.Sql
                 throw new Exception(this.ValidationMessage);
             }
 
+            this.EnsureIndexes();
+
             return new Transaction(this, connection, this.Services.CreateTransactionServices());
         }
 
         public abstract string ValidationMessage { get; }
+
+        /// <summary>
+        /// The indexes of the schema of this adapter.
+        /// </summary>
+        protected abstract Indexes Indexes { get; }
+
+        /// <summary>
+        /// Ensures that the schema has the indexes that the adapter wants: it creates the ones that are missing
+        /// and drops the ones of the adapter that it no longer wants. A database object does this once, before
+        /// its first transaction and at the end of a load. A deployment calls it to build the indexes ahead of
+        /// the first transaction, with a login that may create an index on the tables.
+        /// </summary>
+        public void EnsureIndexes()
+        {
+            if (this.indexesEnsured)
+            {
+                return;
+            }
+
+            if (!this.IsValid)
+            {
+                throw new Exception(this.ValidationMessage);
+            }
+
+            lock (this.indexesLock)
+            {
+                if (!this.indexesEnsured)
+                {
+                    this.Indexes.Ensure();
+                    this.indexesEnsured = true;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Init has run: what this object knew about the indexes of the schema no longer holds.
+        /// </summary>
+        protected void ForgetIndexes() => this.indexesEnsured = false;
 
         public abstract void Init();
 

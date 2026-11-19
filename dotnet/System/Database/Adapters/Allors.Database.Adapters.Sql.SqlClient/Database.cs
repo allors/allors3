@@ -105,6 +105,8 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         public override string ValidationMessage => this.validationMessage;
 
+        protected override Sql.Indexes Indexes => new Indexes(this);
+
         public override void Init()
         {
             try
@@ -113,6 +115,12 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             }
             finally
             {
+                // What this object knew about the schema no longer holds: the next transaction validates the
+                // schema and ensures its indexes again.
+                this.isValid = null;
+                this.validationMessage = null;
+                this.ForgetIndexes();
+
                 this.mapping = null;
                 this.Cache.Invalidate();
                 this.Services.OnInit(this);
@@ -151,6 +159,9 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                         }
                     }
                 }
+
+                // The indexes are built on the loaded rows. When that fails the rows stay.
+                this.EnsureIndexes();
             }
         }
 
