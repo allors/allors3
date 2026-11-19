@@ -67,11 +67,12 @@ Allors3:
 | --- | --- |
 | `site.mjs` | The title, the description, the repository, the default base path `/allors3/`, and a version label that takes the major and minor number of `version.json`. |
 | `astro.config.mjs` | The sidebar entries. |
-| `integrations/exports.mjs`, `integrations/source-links.mjs`, `integrations/scrollable-content.mjs`, `integrations/focusable-code-blocks.mjs` | Unchanged. |
+| `integrations/source-links.mjs` | A fix: a link to a page in a subfolder gets forward slashes on Windows, where it kept a backslash. Port it to the other copies. |
+| `integrations/exports.mjs`, `integrations/scrollable-content.mjs`, `integrations/focusable-code-blocks.mjs` | Unchanged. |
 | `scripts/check-links.mjs` | The default base path. |
 | `src/content.config.ts`, `src/components/PageTitle.astro`, `src/styles/documentation.css`, `public/favicon.ico`, `tsconfig.json`, `playwright.config.ts`, `.gitignore` | Unchanged. |
 | `package.json`, `package-lock.json` | The package name; the pinned dependency versions are identical. |
-| `tests/exports.test.mjs`, `tests/links.test.mjs`, `tests/source-links.test.mjs`, `tests/fixtures/anchors.md` | Base paths, repository paths, the version label and the pages that the tests name. |
+| `tests/exports.test.mjs`, `tests/links.test.mjs`, `tests/source-links.test.mjs`, `tests/fixtures/anchors.md` | Base paths, repository paths, the version label and the pages that the tests name. `source-links.test.mjs` also checks a link to a page in a subfolder. |
 | `tests/browser/documentation.spec.ts` | The page names, the diagram and the table that it exercises. |
 | `.github/workflows/documentation.yml` | The base path matrix. A pull request runs whatever its base branch, as in `ci.yml`, and a push runs for `main` only. `version.json` is a trigger path, because the version label depends on it. |
 | `.github/workflows/ci.yml` | The detection of documentation-only changes covers `docs/` and the documentation workflow. |
@@ -96,6 +97,10 @@ cover keyboard navigation and search, Mermaid rendering in both themes, focusabl
 tables, and axe WCAG 2 A/AA checks at desktop and narrow widths. The
 [website instructions](../../../../README.md#check-a-change) say how to run the same checks
 locally.
+
+The workflow runs on Linux. The fix in `source-links.mjs` shows only where the path separator is a
+backslash, so its check in `source-links.test.mjs` can fail only when the tooling tests run on
+Windows.
 
 Automated checks do not establish that an explanation is accurate or clear. The writing guide
 requires editorial review of changed pages and of representative exports.
