@@ -6,7 +6,6 @@
 namespace Allors.Database.Adapters.Sql
 {
     using System.Collections.Generic;
-    using System.Data;
     using Meta;
 
     public abstract class Mapping
@@ -26,12 +25,6 @@ namespace Allors.Database.Adapters.Sql
         public abstract string ParamInvocationNameForClass { get; }
         public abstract string ParamInvocationFormat { get; }
         public abstract IDictionary<IRoleType, string> ParamInvocationNameByRoleType { get; }
-
-        /// <summary>
-        /// The type of the commands whose text this mapping holds: <see cref="CommandType.Text"/> when the
-        /// text is a statement, <see cref="CommandType.StoredProcedure"/> when it is the name of a procedure.
-        /// </summary>
-        public abstract CommandType CommandType { get; }
 
         public abstract IDictionary<IClass, string> CommandTextForDeleteObjectByClass { get; }
         public abstract IDictionary<IClass, string> CommandTextForCreateObjectsByClass { get; }

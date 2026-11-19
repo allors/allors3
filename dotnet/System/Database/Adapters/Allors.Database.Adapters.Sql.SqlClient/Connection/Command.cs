@@ -23,13 +23,6 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             this.command = command;
         }
 
-        public CommandType CommandType
-        {
-            get => this.command.CommandType;
-
-            set => this.command.CommandType = value;
-        }
-
         public string CommandText
         {
             get => this.command.CommandText;
