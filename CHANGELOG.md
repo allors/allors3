@@ -386,6 +386,19 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   did not compile for a name that needs brackets or that holds a quote or a bracket, such as
   `allors-core`, and `Init` failed on a database with such a name. `Init` now alters the database
   of its connection, `ALTER DATABASE CURRENT` (#393).
+- A transaction of the SqlClient adapter takes only a rollback after one of its statements has
+  failed. On an update conflict SQL Server ends the database transaction, and what the same
+  transaction sent afterwards was executed outside a transaction: a change was stored at once, no
+  commit covered it and `Rollback()` did not undo it. On a command timeout SQL Server ends the
+  statement only, and a later commit stored what the transaction changed afterwards without the
+  changes that the statement was sending. Now every further statement and the commit throw
+  `TransactionFailedException`, a new `DbException` of `Allors.Database.Adapters.Sql.SqlClient`
+  that carries the failure of the statement as its inner exception, until the transaction is
+  rolled back; they do so as well once SQL Server has ended the database transaction without a
+  statement that failed. A transaction that goes on after an exception from the database, also
+  one that only reads, gets that exception at its next statement or commit: roll back and redo
+  the work. PostgreSQL refuses the statements of such a transaction itself, so the Npgsql adapter
+  is unchanged (#414).
 
 ### Security
 
