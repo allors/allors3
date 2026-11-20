@@ -41,18 +41,17 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
                 using (var transaction = (Transaction)this.Population.CreateTransaction())
                 {
-                    SqlException Fail(string statement, Action<ICommand> execute)
+                    ICommand CreateCommand(string statement)
                     {
-                        using var command = transaction.Connection.CreateCommand();
+                        var command = transaction.Connection.CreateCommand();
                         command.CommandText = statement;
-                        return Assert.Throws<SqlException>(() => execute(command));
+                        return command;
                     }
 
                     // The transaction takes no statement, however it is executed, and no commit, and says why.
                     void AssertRefuses(string message, Exception failure)
                     {
-                        using var command = transaction.Connection.CreateCommand();
-                        command.CommandText = "SELECT 1";
+                        using var command = CreateCommand("SELECT 1");
 
                         foreach (var refused in new Action[] { () => command.ExecuteScalar(), command.ExecuteNonQuery, () => command.ExecuteReader().Dispose(), transaction.Commit })
                         {
@@ -68,25 +67,48 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                     // SQL Server ends only the statement that divides by zero, however it is executed.
                     foreach (var execute in new Action<ICommand>[] { v => v.ExecuteScalar(), v => v.ExecuteNonQuery(), v => v.ExecuteReader().Dispose() })
                     {
-                        var failure = Fail("DECLARE @v int = 1 / 0", execute);
+                        using var command = CreateCommand("DECLARE @v int = 1 / 0");
+                        var failure = Assert.Throws<SqlException>(() => execute(command));
                         AssertRefuses(StatementFailed + failure.Message, failure);
                         transaction.Rollback();
                     }
 
                     // The division fails for the second row, after the first one has been read.
-                    var late = Fail("SELECT 1 / v FROM (VALUES (1), (0)) AS t (v)", v =>
+                    SqlException late;
+                    using (var command = CreateCommand("SELECT 1 / v FROM (VALUES (1), (0)) AS t (v)"))
+                    using (var reader = command.ExecuteReader())
                     {
-                        using var reader = v.ExecuteReader();
                         Assert.True(reader.Read());
-                        reader.Read();
-                    });
+                        late = Assert.Throws<SqlException>(() => reader.Read());
+                    }
                     AssertRefuses(StatementFailed + late.Message, late);
                     transaction.Rollback();
 
-                    // The statement ends the transaction of the server and does not fail.
-                    using (var command = transaction.Connection.CreateCommand())
+                    // SQL Server can return this decimal, but SqlClient cannot fit it into a System.Decimal.
+                    const string WideDecimal = "SELECT CAST(1e30 AS decimal(38, 0))";
+                    using (var command = CreateCommand(WideDecimal))
                     {
-                        command.CommandText = "ROLLBACK TRANSACTION";
+                        var failure = Assert.Throws<OverflowException>(() => command.ExecuteScalar());
+                        AssertRefuses(StatementFailed + failure.Message, failure);
+                    }
+                    transaction.Rollback();
+
+                    foreach (var getValue in new Func<IReader, object>[] { r => r.GetValue(0), r => r.GetDecimal(0), r => r[0] })
+                    {
+                        OverflowException failure;
+                        using (var command = CreateCommand(WideDecimal))
+                        using (var reader = command.ExecuteReader())
+                        {
+                            Assert.True(reader.Read());
+                            failure = Assert.Throws<OverflowException>(() => getValue(reader));
+                        }
+                        AssertRefuses(StatementFailed + failure.Message, failure);
+                        transaction.Rollback();
+                    }
+
+                    // The statement ends the transaction of the server and does not fail.
+                    using (var command = CreateCommand("ROLLBACK TRANSACTION"))
+                    {
                         command.ExecuteNonQuery();
                     }
 
@@ -101,6 +123,37 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 this.Transaction.Rollback();
 
                 Assert.Equal("v1", c1.C1AllorsString);
+            }
+        }
+
+        [Fact]
+        public void FailuresFromAnEarlierCommandOrReaderLeaveTheCurrentTransactionUsable()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+                using var transaction = (Transaction)this.Population.CreateTransaction();
+
+                void AssertFreshWorkCommits(Action useOldHandle)
+                {
+                    var created = C1.Create(transaction);
+                    Assert.Throws<InvalidOperationException>(useOldHandle);
+                    transaction.Commit();
+                    this.Transaction.Rollback();
+                    Assert.NotNull(this.Transaction.Instantiate(created.Id));
+                }
+
+                using var oldCommand = transaction.Connection.CreateCommand();
+                oldCommand.CommandText = "SELECT 1";
+                transaction.Commit();
+                AssertFreshWorkCommits(() => oldCommand.ExecuteScalar());
+
+                using var command = transaction.Connection.CreateCommand();
+                command.CommandText = "SELECT 1";
+                var oldReader = command.ExecuteReader();
+                oldReader.Dispose();
+                transaction.Rollback();
+                AssertFreshWorkCommits(() => oldReader.Read());
             }
         }
 

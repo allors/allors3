@@ -9,10 +9,10 @@ namespace Allors.Database.Adapters.Sql.SqlClient
     using System.Data.Common;
 
     /// <summary>
-    /// Thrown by a statement and by a commit of a transaction after one of its statements has failed, or after
-    /// SQL Server has ended its database transaction: until its rollback the transaction stores nothing more.
-    /// It is a <see cref="DbException"/>, as an error of SQL Server is, so callers treat both alike: roll back
-    /// and redo the work. The inner exception is the failure of the statement, when there is one.
+    /// Thrown by subsequent statements and commits when the driver reports a failure while executing a
+    /// statement, reading a row or reading a column value, or when SQL Server has ended the database
+    /// transaction. The inner exception is the first failure reported by the driver, if any.
+    /// Roll back and redo the work.
     /// </summary>
     public sealed class TransactionFailedException : DbException
     {

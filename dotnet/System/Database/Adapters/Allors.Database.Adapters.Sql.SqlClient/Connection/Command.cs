@@ -15,12 +15,14 @@ namespace Allors.Database.Adapters.Sql.SqlClient
     public class Command : ICommand
     {
         private readonly Connection connection;
+        private readonly SqlTransaction transaction;
         private readonly Mapping mapping;
         private readonly SqlCommand command;
 
-        internal Command(Connection connection, Mapping mapping, SqlCommand command)
+        internal Command(Connection connection, SqlTransaction transaction, Mapping mapping, SqlCommand command)
         {
             this.connection = connection;
+            this.transaction = transaction;
             this.mapping = mapping;
             this.command = command;
         }
@@ -85,11 +87,12 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         public void AddCompositesRoleTableParameter(IEnumerable<long> objectIds) => this.GetOrCreateTableParameter(this.mapping.ParamNameForTableType, this.mapping.TableTypeNameForObject).Value = new CompositesRoleDataRecords(this.mapping, objectIds);
 
-        // The connection refuses a statement when its transaction has failed, and is told of a statement that
-        // fails: here, and by the reader, where a statement can fail while its rows are read.
+        // The reader also reports failures from reading rows and column values to the originating transaction.
+        internal void OnStatementFailed(Exception exception) => this.connection.OnStatementFailed(this.transaction, exception);
+
         public object ExecuteScalar()
         {
-            this.connection.AssertNotFailed();
+            this.connection.AssertNotFailed(this.transaction);
 
             try
             {
@@ -97,14 +100,14 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             }
             catch (Exception e)
             {
-                this.connection.OnStatementFailed(e);
+                this.OnStatementFailed(e);
                 throw;
             }
         }
 
         public void ExecuteNonQuery()
         {
-            this.connection.AssertNotFailed();
+            this.connection.AssertNotFailed(this.transaction);
 
             try
             {
@@ -112,22 +115,22 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             }
             catch (Exception e)
             {
-                this.connection.OnStatementFailed(e);
+                this.OnStatementFailed(e);
                 throw;
             }
         }
 
         public IReader ExecuteReader()
         {
-            this.connection.AssertNotFailed();
+            this.connection.AssertNotFailed(this.transaction);
 
             try
             {
-                return new Reader(this.connection, this.command.ExecuteReader());
+                return new Reader(this, this.command.ExecuteReader());
             }
             catch (Exception e)
             {
-                this.connection.OnStatementFailed(e);
+                this.OnStatementFailed(e);
                 throw;
             }
         }

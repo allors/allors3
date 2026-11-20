@@ -45,7 +45,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         public void Commit()
         {
-            this.AssertNotFailed();
+            this.AssertNotFailed(this.SqlTransaction);
 
             try
             {
@@ -77,8 +77,14 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         /// <summary>
         /// Refuses the statement or the commit that is about to run when the transaction has failed.
         /// </summary>
-        internal void AssertNotFailed()
+        internal void AssertNotFailed(SqlTransaction transaction)
         {
+            // A command retained across a commit or rollback still belongs to its closed connection.
+            if (transaction == null || transaction != this.SqlTransaction)
+            {
+                return;
+            }
+
             if (this.failure != null)
             {
                 throw new TransactionFailedException("A statement of this transaction failed, so the transaction takes no further statement and no commit. Roll back and redo the work. The statement failed with: " + this.failure.Message, this.failure);
@@ -87,7 +93,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             // SQL Server can end the transaction without a failure that reaches this connection: the driver
             // drops an error that arrives while a reader is closed. A SqlTransaction that has ended has no
             // connection.
-            if (this.SqlTransaction != null && this.SqlTransaction.Connection == null)
+            if (transaction.Connection == null)
             {
                 throw new TransactionFailedException("SQL Server has ended the database transaction, so this transaction takes no further statement and no commit. Roll back and redo the work.", null);
             }
@@ -96,8 +102,14 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         /// <summary>
         /// Remembers the failure of a statement until the rollback.
         /// </summary>
-        internal void OnStatementFailed(Exception exception) => this.failure ??= exception;
+        internal void OnStatementFailed(SqlTransaction transaction, Exception exception)
+        {
+            if (transaction != null && transaction == this.SqlTransaction)
+            {
+                this.failure ??= exception;
+            }
+        }
 
-        protected ICommand CreateCommand(Mapping mapping, SqlCommand sqlCommand) => new Command(this, mapping, sqlCommand);
+        protected ICommand CreateCommand(Mapping mapping, SqlCommand sqlCommand) => new Command(this, this.SqlTransaction, mapping, sqlCommand);
     }
 }
