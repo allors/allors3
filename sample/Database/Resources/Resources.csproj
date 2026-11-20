@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Generated holds the messages of Core, which the Merge tool of the platform writes there. The
+         build writes the class DomainErrors for them, so that no designer file is kept by hand. -->
+    <EmbeddedResource Update="Generated\DomainErrors.resx">
+      <LogicalName>Resources.DomainErrors.resources</LogicalName>
+      <Generator>MSBuild:Compile</Generator>
+      <StronglyTypedFileName>$(IntermediateOutputPath)DomainErrors.Designer.cs</StronglyTypedFileName>
+      <StronglyTypedLanguage>CSharp</StronglyTypedLanguage>
+      <StronglyTypedNamespace>Resources</StronglyTypedNamespace>
+      <StronglyTypedClassName>DomainErrors</StronglyTypedClassName>
+      <PublicClass>true</PublicClass>
+    </EmbeddedResource>
+  </ItemGroup>
+</Project>
