@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\dotnet\System\Database\Allors.Database.Meta.Props\Props*\**\*.cs" />
+    <Compile Include="..\..\..\dotnet\Core\Database\Meta\Core*\**\*.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\dotnet\System\Database\Allors.Database.Workspace\Allors.Database.Workspace.csproj" />
+  </ItemGroup>
+</Project>

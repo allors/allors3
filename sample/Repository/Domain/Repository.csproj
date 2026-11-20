@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- The attributes of the platform and the model of Core, next to the model of this application in Custom. -->
+    <Compile Include="..\..\..\dotnet\System\Repository\Attributes\Attributes*\**\*.cs" />
+    <Compile Include="..\..\..\dotnet\Core\Repository\Domain\Core*\**\*.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\dotnet\System\Shared\Allors.Shared.csproj" />
+  </ItemGroup>
+</Project>

@@ -34,6 +34,10 @@ partial class Build
         .DependsOn(Reset)
         .DependsOn(DotnetCoreWorkspaceRemoteJsonNewtonsoftTest);
 
+    private Target CiSampleTest => _ => _
+        .DependsOn(Reset)
+        .DependsOn(SampleTest);
+
     private Target CiTypescriptWorkspaceTest => _ => _
         .DependsOn(Reset)
         .DependsOn(TypescriptInstall)

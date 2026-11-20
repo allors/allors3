@@ -78,12 +78,27 @@ also run `Install` first; run `./build.sh Install` once before you run
 | `CiDotnetCoreWorkspaceRemoteJsonSystemTextTest`, `CiDotnetCoreWorkspaceRemoteJsonNewtonsoftTest` | The .NET workspace on the Remote adapter against the Core test server, with System.Text.Json and with Newtonsoft.Json | A configuration root |
 | `CiTypescriptWorkspaceTest` | The TypeScript workspace libraries that need no server | Nothing |
 | `CiTypescriptWorkspaceAdaptersJsonTest` | The TypeScript workspace against the Core test server | A configuration root |
+| `CiSampleTest` | The tests of the sample application in `sample/`, on the Memory adapter | Nothing |
 
 A suite that needs a configuration root takes it as [Choose the adapter](#choose-the-adapter)
 describes: `config/snapshot` unless you name another template. The adapter suites read no
 configuration root; they create and open their own test databases with the admin connection.
 
 The targets write their results as TRX files to `artifacts/Tests`.
+
+### The sample application
+
+`sample/` holds an application as a user of the platform builds one: its projects include the
+folders named `Core` by path and never the folders named `Custom`, which hold the test domain.
+`Generate` does not touch it, and the platform builds without it. `SampleTest` first runs
+`SampleGenerate`, which merges the messages of Core into the sample, runs the repository generator
+on the sample's model and runs the sample's own generator; then it runs the sample's tests.
+
+The suite is the repository's check on what a change to Core asks of an application. A hook
+that an application has to define, or a class that it has to provide, fails the build of the
+sample. A rule of Core that an application has to add to its list of rules does not: the suite
+notices only when a test of the sample needs that rule. The suite counts for `CI result`, so a
+change to Core that breaks the sample merges together with the change that the sample needs.
 
 ## The TypeScript workspace
 
@@ -103,13 +118,14 @@ npm run system-workspace-domain:test
 ## Continuous integration
 
 Three workflows run the suites. Every suite is a job of its own. A leg, which is the suites of
-one adapter on one operating system, is one call of `.github/workflows/tests.yml`.
+one adapter on one operating system, is one call of `.github/workflows/tests.yml`; the sample
+application is a leg of its own.
 
 | Event | Workflow | Runs |
 | --- | --- | --- |
-| A pull request, whatever its base branch | `ci.yml` | On Linux: the four adapter suites, with SQL Server and PostgreSQL as service containers, and the Core and TypeScript suites with `config/snapshot`. The domain tests then run on the Memory adapter. |
+| A pull request, whatever its base branch | `ci.yml` | On Linux: the four adapter suites, with SQL Server and PostgreSQL as service containers, the Core and TypeScript suites with `config/snapshot`, and the suite of the sample application. The domain tests of Core then run on the Memory adapter. |
 | A push to `main` | `ci.yml` | The same, and the Core and TypeScript suites with `config/sqlclient` and `config/npgsql` as well, the domain tests included. |
-| Every night on `main`, and on demand | `nightly.yml` | Every suite on Windows: the adapter suites, and the Core and TypeScript suites on the Snapshot adapter, on SQL Server LocalDB and on PostgreSQL. |
+| Every night on `main`, and on demand | `nightly.yml` | On Windows: the adapter suites, and the Core and TypeScript suites on the Snapshot adapter, on SQL Server LocalDB and on PostgreSQL. The suite of the sample application is not among them. |
 
 A branch runs through its pull request. Start a run on demand for a branch that has none, or for
 the Windows legs:
