@@ -1,6 +1,6 @@
 ---
 title: "Terminology"
-description: "Agreed names for the platform, domains, relations, adapters, populations and configuration."
+description: "Agreed names for the platform, domains, the model, relations, objects, derivations, adapters, populations and configuration."
 audience: "Users and maintainers"
 kind: "Reference"
 status: "Current"
@@ -33,6 +33,16 @@ spelling and capitalization.
 | Repository project | The C# project that declares the model of the domains, such as `dotnet/Core/Repository/Domain`. Qualify the Git repository as the repository of the platform, or of an application, where the context could be ambiguous. |
 | Part of a method | What one domain contributes to a method, in a member named after the domain and the method; see [The behaviour](domains.md#the-behaviour). |
 
+## The model
+
+| Term | Definition and usage |
+| --- | --- |
+| Model | The classes, interfaces, relations and methods that the repository projects of an application declare; see [The model](model.md). |
+| Class, interface | The two kinds of composite, a type that has relations. An object is an instance of a class; an interface declares relations and methods for the classes that implement it. |
+| Unit | One of the eight types of a value that the platform defines, such as String and Integer; see [Types](model.md#types). |
+| Multiplicity | How many objects stand at each end of a relation: `OneToOne`, `OneToMany`, `ManyToOne` or `ManyToMany`, with the association named first; see [Multiplicity](model.md#multiplicity). |
+| Workspace | The engine in which a client works with objects, in sessions. A workspace has a name, and the model says which classes, relations and methods the workspaces of each name can use: `[Workspace]` on a declaration names them, and `Default` is the name that it uses when it is given none. Qualify the [workspace adapter](#adapters), which is an implementation of the engine. |
+
 ## Relations
 
 An Allors relation is bidirectional. A **role** is the forward, writable end; an **association**
@@ -44,6 +54,32 @@ In prose, use role and association for these specific ends. Preserve identifiers
 relationship; it does not by itself identify the Allors inverse end. Label that distinction when
 a class diagram uses both meanings. A role of Core's authorization, the class `Role`, has a
 different meaning; qualify it where the context could be ambiguous.
+
+A **unit role** holds a value, and a **composite role** holds an object or several objects. Use
+role type, association type and relation type for the metadata of a relation, such as
+`m.Person.LastName`, and role and association for what an object holds.
+
+## Objects in the database
+
+| Term | Definition and usage |
+| --- | --- |
+| Object | An instance of a class of the model, which the platform creates, stores and deletes; see [Objects and relations](objects-and-relations.md). |
+| Transaction | The unit of work of the database, an `ITransaction`. Session is the term of the workspace; do not use it for a transaction of the database. |
+| Builder | The generated class that creates an object of one class and calls its methods `OnBuild` and `OnPostBuild`, such as `PersonBuilder`. |
+| Objects class | The generated class that carries the plural name of a class or an interface, such as `People` for `Person` and `Users` for the interface `User`. It inherits from `ObjectsBase` and gives the extent of its type. |
+| Extent | The set of the objects of a class or an interface, narrowed by a filter; see [Extents](extents.md). Keep the name: an extent is more specific than a query or a collection. |
+| Change set | What changed in a transaction since the previous checkpoint; see [Change sets](objects-and-relations.md#change-sets). |
+
+## Derivations
+
+| Term | Definition and usage |
+| --- | --- |
+| Derivation | One run that brings the objects of a transaction up to date, started with `Derive()`; see [Derivations](derivations.md). |
+| Rule | What an application writes to maintain a derived role or to report an error: patterns and a method `Derive`. |
+| Pattern | The part of a rule that says which change makes which objects match. |
+| Cycle | One round of a derivation, on one change set. |
+| Validation | The errors that a derivation reports, an `IValidation`. |
+| Derived role | A role that is declared with `[Derived]`: clients cannot write it, and code in the database maintains it, usually a rule. |
 
 ## Adapters
 

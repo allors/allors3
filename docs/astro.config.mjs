@@ -30,7 +30,9 @@ export default defineConfig({
         { label: 'Allors documentation', link: home },
         { label: 'Documentation', slug: '' },
         { label: 'For users', items: [
-          { slug: 'domains' }, { slug: 'configuration' }, { slug: 'versions' }, { slug: 'terminology' },
+          { slug: 'getting-started' }, { slug: 'domains' }, { slug: 'model' }, { slug: 'objects-and-relations' },
+          { slug: 'extents' }, { slug: 'derivations' }, { slug: 'write-a-rule' },
+          { slug: 'configuration' }, { slug: 'versions' }, { slug: 'terminology' },
         ] },
         { label: 'For maintainers', items: [{ autogenerate: { directory: 'internals' } }] },
       ],

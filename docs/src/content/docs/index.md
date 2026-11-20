@@ -26,9 +26,12 @@ programs and host the result. Maintainers change the platform.
 [Terminology](terminology.md) records the agreed names. These pages are for humans. Agents use the
 same technical content, following the instructions in `AGENTS.md`.
 
-The pages cover the boundary of the platform, domain inheritance, configuration, the versions, and
-building and testing the repository. They do not yet describe the database and workspace APIs,
-derivations, security or the JSON API: for those, the source and its tests are the reference.
+The pages cover the boundary of the platform, domain inheritance, the model, objects and
+relations in the database, extents, derivations, configuration, the versions, and building and
+testing the repository. They do not yet describe security, the workspace, the JSON API,
+populations and the command-line tool, or the behaviour of each database adapter: for those, the
+source and its tests are the reference. [Getting started](getting-started.md) is the place to
+begin.
 
 Allors3 is licensed under the GNU Lesser General Public License, version 3; the `LICENSE` file of
 the repository holds the text. Ask questions and report problems through the
@@ -40,10 +43,16 @@ The following pages are written for users. Maintainers read them too.
 
 | Page | Kind | Status | Content |
 | --- | --- | --- | --- |
+| [Getting started](getting-started.md) | Tutorial | Current | Clone the platform, run one of its domain tests and write tests of your own on the test domain: objects, a relation, a derived value and an extent, without a database server. |
 | [Domains](domains.md) | Explanation | Current | How the domain of an application extends Core, what it inherits, the order in which the parts of a method run, and how an application includes Core's code. |
+| [The model](model.md) | Reference | Current | What a repository project declares: classes, interfaces, units, relations and their multiplicity, methods, ids, and the attributes with their defaults. |
+| [Objects and relations](objects-and-relations.md) | Explanation | Current | Creating, relating and deleting objects in the database, what the platform maintains at both ends of a relation, transactions and change sets. |
+| [Extents](extents.md) | How-to guide | Current | Query the objects of a class or an interface: filters, relations in a filter, sorting, combining extents and prefetching. |
+| [Derivations](derivations.md) | Explanation | Current | How a derivation runs rules in cycles until nothing changes, what patterns match, errors and required roles, and why to derive before a commit. |
+| [Write a rule](write-a-rule.md) | How-to guide | Current | Declare a derived role, write the rule that maintains it, register the rule and test it. |
 | [Configuration](configuration.md) | Reference | Current | The configuration root, the order of its files, environment variables, the settings, the templates and the admin connections. |
 | [Versions and branches](versions.md) | Reference | Current | The 3.2 line on `main`, the version branches, the archive branch, and where Base and Apps continue. |
-| [Terminology](terminology.md) | Reference | Current | Agreed names for the platform, domains, relations, adapters, populations and configuration. |
+| [Terminology](terminology.md) | Reference | Current | Agreed names for the platform, domains, the model, relations, objects, derivations, adapters, populations and configuration. |
 
 ## For maintainers
 

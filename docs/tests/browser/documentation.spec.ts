@@ -141,7 +141,13 @@ test('Mermaid renders the labelled diagram and responds to theme changes', async
 
 for (const [slug, title] of [
   ['', 'Documentation'],
+  ['getting-started/', 'Getting started'],
   ['domains/', explanationTitle],
+  ['model/', 'The model'],
+  ['objects-and-relations/', 'Objects and relations'],
+  ['extents/', 'Extents'],
+  ['derivations/', 'Derivations'],
+  ['write-a-rule/', 'Write a rule'],
   ['internals/build-and-test/', 'Build and test'],
   ['internals/architecture/', 'Architecture'],
 ]) {
@@ -150,7 +156,7 @@ for (const [slug, title] of [
     page.on('pageerror', (error) => errors.push(error.message));
     await page.goto(slug || './');
     await expect(page.getByRole('heading', { level: 1, name: title, exact: true })).toBeVisible();
-    if (slug === 'domains/' || slug === 'internals/architecture/') await expect(page.locator('pre.mermaid svg')).toBeVisible();
+    if (slug === 'domains/' || slug === 'derivations/' || slug === 'internals/architecture/') await expect(page.locator('pre.mermaid svg')).toBeVisible();
     const unfocusableCodeBlocks = await page.locator('.expressive-code pre').evaluateAll((elements) =>
       elements.filter((element) => element.scrollWidth > element.clientWidth && element.getAttribute('tabindex') !== '0').length);
     expect(unfocusableCodeBlocks, 'A code block that scrolls must be focusable from the start').toBe(0);

@@ -73,6 +73,9 @@ public partial class Person : User
 interface `Object`, so `Person` also has the methods that Core declares there: `OnBuild`,
 `OnPostBuild`, `OnInit` and `OnPostDerive`.
 
+[The model](model.md) lists what a declaration can say, and how a domain adds relations and
+methods to a type of the domain that it extends.
+
 ### The behaviour
 
 A method is declared once, in the repository project, and every domain can add a part to it. A
