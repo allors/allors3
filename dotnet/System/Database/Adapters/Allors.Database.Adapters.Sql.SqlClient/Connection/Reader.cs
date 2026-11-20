@@ -10,34 +10,61 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
     public class Reader : IReader
     {
+        private readonly Command command;
         private readonly SqlDataReader reader;
 
         public Reader(SqlDataReader reader) => this.reader = reader;
 
-        public bool Read() => this.reader.Read();
+        internal Reader(Command command, SqlDataReader reader) : this(reader) => this.command = command;
 
-        public object this[int i] => this.reader[i];
+        public bool Read()
+        {
+            try
+            {
+                return this.reader.Read();
+            }
+            catch (Exception e)
+            {
+                this.command?.OnStatementFailed(e);
+                throw;
+            }
+        }
 
-        public object GetValue(int i) => this.reader.GetValue(i);
+        public object this[int i] => this.ReadColumn(i, static (reader, ordinal) => reader[ordinal]);
 
-        public bool GetBoolean(int i) => this.reader.GetBoolean(i);
+        public object GetValue(int i) => this.ReadColumn(i, static (reader, ordinal) => reader.GetValue(ordinal));
 
-        public DateTime GetDateTime(int i) => this.reader.GetDateTime(i);
+        public bool GetBoolean(int i) => this.ReadColumn(i, static (reader, ordinal) => reader.GetBoolean(ordinal));
 
-        public decimal GetDecimal(int i) => this.reader.GetDecimal(i);
+        public DateTime GetDateTime(int i) => this.ReadColumn(i, static (reader, ordinal) => reader.GetDateTime(ordinal));
 
-        public double GetDouble(int i) => this.reader.GetDouble(i);
+        public decimal GetDecimal(int i) => this.ReadColumn(i, static (reader, ordinal) => reader.GetDecimal(ordinal));
 
-        public int GetInt32(int i) => this.reader.GetInt32(i);
+        public double GetDouble(int i) => this.ReadColumn(i, static (reader, ordinal) => reader.GetDouble(ordinal));
 
-        public long GetInt64(int i) => this.reader.GetInt64(i);
+        public int GetInt32(int i) => this.ReadColumn(i, static (reader, ordinal) => reader.GetInt32(ordinal));
 
-        public string GetString(int i) => this.reader.GetString(i);
+        public long GetInt64(int i) => this.ReadColumn(i, static (reader, ordinal) => reader.GetInt64(ordinal));
 
-        public Guid GetGuid(int i) => this.reader.GetGuid(i);
+        public string GetString(int i) => this.ReadColumn(i, static (reader, ordinal) => reader.GetString(ordinal));
 
-        public bool IsDBNull(int i) => this.reader.IsDBNull(i);
+        public Guid GetGuid(int i) => this.ReadColumn(i, static (reader, ordinal) => reader.GetGuid(ordinal));
+
+        public bool IsDBNull(int i) => this.ReadColumn(i, static (reader, ordinal) => reader.IsDBNull(ordinal));
 
         public void Dispose() => this.reader.Dispose();
+
+        private T ReadColumn<T>(int ordinal, Func<SqlDataReader, int, T> read)
+        {
+            try
+            {
+                return read(this.reader, ordinal);
+            }
+            catch (Exception e)
+            {
+                this.command?.OnStatementFailed(e);
+                throw;
+            }
+        }
     }
 }

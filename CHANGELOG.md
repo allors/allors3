@@ -386,6 +386,16 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   did not compile for a name that needs brackets or that holds a quote or a bracket, such as
   `allors-core`, and `Init` failed on a database with such a name. `Init` now alters the database
   of its connection, `ALTER DATABASE CURRENT` (#393).
+- The SqlClient adapter refuses further statements and `Commit()` when the driver reports a
+  failure while executing a command or reading its rows or column values. It also refuses them
+  when SQL Server has ended the database transaction. Both throw `TransactionFailedException`,
+  a new `DbException` in `Allors.Database.Adapters.Sql.SqlClient`, until `Rollback()` is called.
+  Its inner exception is the first failure the driver reported for that transaction, if any.
+  Previously, writes after an update conflict could commit immediately, and a commit after a
+  command timeout could omit the changes that timed out. Roll back and redo the work after a
+  reported failure. If the driver suppresses an error when a reader closes and SQL Server
+  keeps the transaction open, the transaction can still commit. PostgreSQL already refuses
+  further statements after a server-side statement error (#414).
 
 ### Security
 

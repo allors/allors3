@@ -36,7 +36,8 @@ with `CreateTransaction()`. A transaction sees its own changes at once.
   meantime. Once the view is taken, later commits by other transactions remain invisible until
   this transaction commits or rolls back.
 - On those adapters a commit fails with a `DbException` when another transaction committed a
-  change to an object that this transaction changed as well. Roll back and do the work again.
+  change to an object that this transaction changed as well. The transaction then stores nothing
+  more until it is rolled back. Roll back and do the work again.
 - The Memory adapter has one transaction: `CreateTransaction()` returns the same one every time.
 
 ## Objects

@@ -58,7 +58,9 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 
         protected string ConnectionString => Provisioning.ConnectionString(this.database);
 
-        public override IDatabase CreateDatabase()
+        public override IDatabase CreateDatabase() => this.CreateDatabase(null);
+
+        public IDatabase CreateDatabase(int? commandTimeout)
         {
             var metaPopulation = new MetaBuilder().Build();
             var scope = new DefaultDomainDatabaseServices();
@@ -68,6 +70,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                 ConnectionString = this.ConnectionString,
                 ConnectionFactory = this.connectionFactory,
                 CacheFactory = this.cacheFactory,
+                CommandTimeout = commandTimeout,
             });
         }
 
