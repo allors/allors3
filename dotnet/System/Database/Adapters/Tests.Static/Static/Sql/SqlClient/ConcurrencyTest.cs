@@ -93,14 +93,33 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                     }
                     transaction.Rollback();
 
-                    foreach (var getValue in new Func<IReader, object>[] { r => r.GetValue(0), r => r.GetDecimal(0), r => r[0] })
+                    // The other reads of a column value fail on a column of another type, and IsDBNull on a column
+                    // that is not there.
+                    const string Text = "SELECT N'x'";
+                    const string Number = "SELECT 1";
+                    var reads = new (string Statement, Type Failure, Func<IReader, object> GetValue)[]
                     {
-                        OverflowException failure;
-                        using (var command = CreateCommand(WideDecimal))
+                        (WideDecimal, typeof(OverflowException), r => r.GetValue(0)),
+                        (WideDecimal, typeof(OverflowException), r => r.GetDecimal(0)),
+                        (WideDecimal, typeof(OverflowException), r => r[0]),
+                        (Text, typeof(InvalidCastException), r => r.GetBoolean(0)),
+                        (Text, typeof(InvalidCastException), r => r.GetDateTime(0)),
+                        (Text, typeof(InvalidCastException), r => r.GetDouble(0)),
+                        (Text, typeof(InvalidCastException), r => r.GetInt32(0)),
+                        (Text, typeof(InvalidCastException), r => r.GetInt64(0)),
+                        (Number, typeof(InvalidCastException), r => r.GetString(0)),
+                        (Number, typeof(InvalidCastException), r => r.GetGuid(0)),
+                        (Number, typeof(IndexOutOfRangeException), r => r.IsDBNull(1)),
+                    };
+
+                    foreach (var (statement, expected, getValue) in reads)
+                    {
+                        Exception failure;
+                        using (var command = CreateCommand(statement))
                         using (var reader = command.ExecuteReader())
                         {
                             Assert.True(reader.Read());
-                            failure = Assert.Throws<OverflowException>(() => getValue(reader));
+                            failure = Assert.Throws(expected, () => getValue(reader));
                         }
                         AssertRefuses(StatementFailed + failure.Message, failure);
                         transaction.Rollback();
