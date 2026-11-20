@@ -77,6 +77,16 @@ Allors3:
 | `.github/workflows/documentation.yml` | The base path matrix. A pull request runs whatever its base branch, as in `ci.yml`, and a push runs for `main` only. `version.json` is a trigger path, because the version label depends on it. |
 | `.github/workflows/ci.yml` | The detection of documentation-only changes covers `docs/` and the documentation workflow. |
 
+Since [#413](https://github.com/allors/allors3/pull/413) the values that differed between the
+copies of the tooling are in `site.mjs`: the audiences, which the content schema and `exports.mjs`
+read, the root of the repository, which `source-links.mjs` reads, and the base path, from which
+`check-links.mjs` takes its default. The link checker leaves two kinds of link to the build that
+publishes their target: the link to the documentation home, and links into the documentation
+areas, which the copy of the home needs. With the same change in the other four copies, ten files
+are the same, byte for byte, in all five: the four integrations, the link checker, the content
+schema, the page title component, the stylesheet and the Playwright and TypeScript configuration.
+A copy differs in `site.mjs`, `astro.config.mjs`, its tests, its workflow and its content.
+
 Not carried over from the first Allors3 website: its pages on the kinds of domains,
 authentication, Microsoft Entra ID, logging, the internals of domain inheritance and workspace
 session state, which describe the previous line, and the guided example of workspace session
