@@ -1,9 +1,10 @@
 name: CI
 
 # Every pull request, and every push to main and the version branches, runs on Linux: one job per
-# adapter suite, and the Core and TypeScript suites on the Snapshot adapter, where the domain tests run
-# on Memory. A push to main also runs the Core and TypeScript suites on SQL Server and PostgreSQL, the
-# domain tests included. The Windows legs run in nightly.yml. Every leg is one call of tests.yml.
+# adapter suite, the Core and TypeScript suites on the Snapshot adapter, where the domain tests run
+# on Memory, and the sample application. A push to main also runs the Core and TypeScript suites on
+# SQL Server and PostgreSQL, the domain tests included. The Windows legs run in nightly.yml. Every leg
+# is one call of tests.yml.
 
 # A branch runs through its pull request, whatever the base branch: the pull_request trigger has no
 # branch filter, so a pull request stacked on another branch runs too. A push trigger for branches would
@@ -140,12 +141,24 @@ jobs:
       provider: npgsql
       targets: '["CiDotnetCoreDatabaseTest", "CiDotnetCoreWorkspaceLocalTest", "CiDotnetCoreWorkspaceRemoteJsonSystemTextTest", "CiDotnetCoreWorkspaceRemoteJsonNewtonsoftTest", "CiTypescriptWorkspaceTest", "CiTypescriptWorkspaceAdaptersJsonTest"]'
 
+  # The sample application in sample/: an application that includes the folders Core of the platform by
+  # path and never the folders Custom. The leg merges the resources, generates, builds and runs the
+  # sample's tests on the Memory adapter, so it needs no database server and reads no configuration.
+  sample:
+    needs: changes
+    if: ${{ !cancelled() && needs.changes.outputs.platform != 'false' }}
+    uses: ./.github/workflows/tests.yml
+    with:
+      os: ubuntu-latest
+      provider: memory
+      targets: '["CiSampleTest"]'
+
   # The one required status check: the legs of this run passed, or all were skipped for a
   # documentation-only change. The SQL Server and PostgreSQL Core legs count on a push to main.
   result:
     name: CI result
     runs-on: ubuntu-latest
-    needs: [changes, adapters-memory, adapters-snapshot, adapters-sqlclient, adapters-npgsql, core-snapshot, core-sqlclient, core-npgsql]
+    needs: [changes, adapters-memory, adapters-snapshot, adapters-sqlclient, adapters-npgsql, core-snapshot, core-sqlclient, core-npgsql, sample]
     if: ${{ always() }}
     timeout-minutes: 5
     env:
@@ -164,10 +177,12 @@ jobs:
           CORE_SNAPSHOT: ${{ needs.core-snapshot.result }}
           CORE_SQLCLIENT: ${{ needs.core-sqlclient.result }}
           CORE_NPGSQL: ${{ needs.core-npgsql.result }}
+          SAMPLE: ${{ needs.sample.result }}
         run: |
           echo "changes=$CHANGES platform=$PLATFORM main=$MAIN"
           echo "adapters: memory=$ADAPTERS_MEMORY snapshot=$ADAPTERS_SNAPSHOT sqlclient=$ADAPTERS_SQLCLIENT npgsql=$ADAPTERS_NPGSQL"
           echo "core: snapshot=$CORE_SNAPSHOT sqlclient=$CORE_SQLCLIENT npgsql=$CORE_NPGSQL"
+          echo "sample: $SAMPLE"
           if [ "$CHANGES" != "success" ]; then
             echo "The change detection did not succeed; every leg must have passed."
             PLATFORM=true
@@ -192,6 +207,7 @@ jobs:
           check adapters-sqlclient "$ADAPTERS_SQLCLIENT"
           check adapters-npgsql "$ADAPTERS_NPGSQL"
           check core-snapshot "$CORE_SNAPSHOT"
+          check sample "$SAMPLE"
           if [ "$MAIN" = "true" ]; then
             check core-sqlclient "$CORE_SQLCLIENT"
             check core-npgsql "$CORE_NPGSQL"
