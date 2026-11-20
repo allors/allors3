@@ -29,9 +29,12 @@ with `CreateTransaction()`. A transaction sees its own changes at once.
 - Disposing a transaction rolls back what it did not commit.
 - A commit stores the changes as they are. It runs no rules: call `Derive()` first, as
   [Derivations](derivations.md#derive-before-you-commit) explains.
-- A transaction does not see the uncommitted work of another one. On the Snapshot, SqlClient and
-  Npgsql adapters it reads the database as it was when the transaction started, or last committed
-  or rolled back: what another transaction commits shows after its own next commit or rollback.
+- A transaction does not see the uncommitted work of another one. The Snapshot adapter takes its
+  view when the transaction is created and after each commit or rollback. SqlClient and Npgsql
+  take theirs at the transaction's first database operation after creation, commit or rollback;
+  it can include changes committed by another transaction in the meantime. Once the view is
+  taken, later commits by other transactions remain invisible until this transaction commits or
+  rolls back.
 - On those adapters a commit fails with a `DbException` when another transaction committed a
   change to an object that this transaction changed as well. Roll back and do the work again.
 - The Memory adapter has one transaction: `CreateTransaction()` returns the same one every time.
