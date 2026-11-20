@@ -116,8 +116,8 @@ published pages can lag behind `main`.
 
 ## Remaining work
 
-- Describe the database and workspace APIs, derivations, security and the JSON API, which the
-  [documentation index](../index.md) names as not yet covered.
+- Describe security, the workspace, the JSON API, populations and the command-line tool, and the
+  database adapters, which the [documentation index](../index.md) names as not yet covered.
 - [Domains](../domains.md#the-behaviour) tells readers not to rely on the order among the parts
   of interfaces that do not inherit from each other, because the comparison in `MethodCompiler`
   does not define one. Replace that caution with the rule once the order is defined and a test
