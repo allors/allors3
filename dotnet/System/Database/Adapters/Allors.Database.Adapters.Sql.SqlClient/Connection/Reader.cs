@@ -10,11 +10,29 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
     public class Reader : IReader
     {
+        private readonly Connection connection;
         private readonly SqlDataReader reader;
 
         public Reader(SqlDataReader reader) => this.reader = reader;
 
-        public bool Read() => this.reader.Read();
+        internal Reader(Connection connection, SqlDataReader reader)
+        {
+            this.connection = connection;
+            this.reader = reader;
+        }
+
+        public bool Read()
+        {
+            try
+            {
+                return this.reader.Read();
+            }
+            catch (Exception e)
+            {
+                this.connection?.OnStatementFailed(e);
+                throw;
+            }
+        }
 
         public object this[int i] => this.reader[i];
 

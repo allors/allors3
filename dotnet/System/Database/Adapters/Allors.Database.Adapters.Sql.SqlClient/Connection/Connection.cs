@@ -5,10 +5,17 @@
 
 namespace Allors.Database.Adapters.Sql.SqlClient
 {
+    using System;
     using Microsoft.Data.SqlClient;
 
     public class Connection : IConnection
     {
+        // The failure of the first statement of the transaction that failed. On some errors SQL Server ends the
+        // transaction, and then executes what follows outside a transaction. On others it ends the statement
+        // only, and a flush has forgotten the changes that it handed to that statement. Either way only a
+        // rollback is left.
+        private Exception failure;
+
         internal Database Database { get; }
 
         internal Connection(Database database) => this.Database = database;
@@ -38,6 +45,8 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         public void Commit()
         {
+            this.AssertNotFailed();
+
             try
             {
                 this.SqlTransaction?.Commit();
@@ -61,9 +70,34 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 this.SqlTransaction = null;
                 this.SqlConnection?.Close();
                 this.SqlConnection = null;
+                this.failure = null;
             }
         }
 
-        protected ICommand CreateCommand(Mapping mapping, SqlCommand sqlCommand) => new Command(mapping, sqlCommand);
+        /// <summary>
+        /// Refuses the statement or the commit that is about to run when the transaction has failed.
+        /// </summary>
+        internal void AssertNotFailed()
+        {
+            if (this.failure != null)
+            {
+                throw new TransactionFailedException("A statement of this transaction failed, so the transaction takes no further statement and no commit. Roll back and redo the work. The statement failed with: " + this.failure.Message, this.failure);
+            }
+
+            // SQL Server can end the transaction without a failure that reaches this connection: the driver
+            // drops an error that arrives while a reader is closed. A SqlTransaction that has ended has no
+            // connection.
+            if (this.SqlTransaction != null && this.SqlTransaction.Connection == null)
+            {
+                throw new TransactionFailedException("SQL Server has ended the database transaction, so this transaction takes no further statement and no commit. Roll back and redo the work.", null);
+            }
+        }
+
+        /// <summary>
+        /// Remembers the failure of a statement until the rollback.
+        /// </summary>
+        internal void OnStatementFailed(Exception exception) => this.failure ??= exception;
+
+        protected ICommand CreateCommand(Mapping mapping, SqlCommand sqlCommand) => new Command(this, mapping, sqlCommand);
     }
 }

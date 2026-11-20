@@ -14,11 +14,13 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
     public class Command : ICommand
     {
+        private readonly Connection connection;
         private readonly Mapping mapping;
         private readonly SqlCommand command;
 
-        internal Command(Mapping mapping, SqlCommand command)
+        internal Command(Connection connection, Mapping mapping, SqlCommand command)
         {
+            this.connection = connection;
             this.mapping = mapping;
             this.command = command;
         }
@@ -83,11 +85,52 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         public void AddCompositesRoleTableParameter(IEnumerable<long> objectIds) => this.GetOrCreateTableParameter(this.mapping.ParamNameForTableType, this.mapping.TableTypeNameForObject).Value = new CompositesRoleDataRecords(this.mapping, objectIds);
 
-        public object ExecuteScalar() => this.command.ExecuteScalar();
+        // The connection refuses a statement when its transaction has failed, and is told of a statement that
+        // fails: here, and by the reader, where a statement can fail while its rows are read.
+        public object ExecuteScalar()
+        {
+            this.connection.AssertNotFailed();
 
-        public void ExecuteNonQuery() => this.command.ExecuteNonQuery();
+            try
+            {
+                return this.command.ExecuteScalar();
+            }
+            catch (Exception e)
+            {
+                this.connection.OnStatementFailed(e);
+                throw;
+            }
+        }
 
-        public IReader ExecuteReader() => new Reader(this.command.ExecuteReader());
+        public void ExecuteNonQuery()
+        {
+            this.connection.AssertNotFailed();
+
+            try
+            {
+                this.command.ExecuteNonQuery();
+            }
+            catch (Exception e)
+            {
+                this.connection.OnStatementFailed(e);
+                throw;
+            }
+        }
+
+        public IReader ExecuteReader()
+        {
+            this.connection.AssertNotFailed();
+
+            try
+            {
+                return new Reader(this.connection, this.command.ExecuteReader());
+            }
+            catch (Exception e)
+            {
+                this.connection.OnStatementFailed(e);
+                throw;
+            }
+        }
 
         public object GetValue(IReader reader, string tag, int i) =>
             tag switch

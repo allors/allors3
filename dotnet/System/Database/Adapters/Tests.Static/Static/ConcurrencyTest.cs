@@ -124,6 +124,8 @@ namespace Allors.Database.Adapters
 
                 var c1 = C1.Create(this.Transaction);
                 c1.C1AllorsString = "v0";
+                var other = C1.Create(this.Transaction);
+                other.C1AllorsString = "v0";
                 this.Transaction.Commit();
                 var version0 = c1.Strategy.ObjectVersion;
 
@@ -136,6 +138,9 @@ namespace Allors.Database.Adapters
                     Assert.Equal("v0", c1First.C1AllorsString);
                     Assert.Equal("v0", c1Second.C1AllorsString);
 
+                    var otherSecond = (C1)second.Instantiate(other);
+                    Assert.Equal("v0", otherSecond.C1AllorsString);
+
                     c1First.C1AllorsString = "first";
                     c1Second.C1AllorsString = "second";
 
@@ -144,6 +149,17 @@ namespace Allors.Database.Adapters
 
                     // The database reports the conflict the way a database server does.
                     Assert.ThrowsAny<DbException>(() => second.Commit());
+
+                    // Until its rollback the second transaction stores nothing more: a change to another object
+                    // fails as well, and no other transaction sees it.
+                    Assert.ThrowsAny<DbException>(() =>
+                    {
+                        otherSecond.C1AllorsString = "second";
+                        second.Commit();
+                    });
+
+                    this.Transaction.Rollback();
+                    Assert.Equal("v0", other.C1AllorsString);
 
                     // After a rollback the second transaction sees the first one's work and can redo its own.
                     second.Rollback();

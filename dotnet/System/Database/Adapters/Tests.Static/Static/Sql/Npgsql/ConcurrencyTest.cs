@@ -8,14 +8,16 @@ namespace Allors.Database.Adapters.Sql.Npgsql
     using Adapters;
     using Xunit;
 
-    public class ConcurrencyTest : Adapters.ConcurrencyTest, IClassFixture<Fixture<ConcurrencyTest>>
+    public class ConcurrencyTest : Sql.ConcurrencyTest, IClassFixture<Fixture<ConcurrencyTest>>
     {
-        private readonly Adapters.Profile profile;
+        private readonly Profile profile;
 
         public ConcurrencyTest() => this.profile = new Profile(this.GetType().Name);
 
         protected override IProfile Profile => this.profile;
 
         public override void Dispose() => this.profile.Dispose();
+
+        protected override IDatabase CreateDatabase(int commandTimeout) => this.profile.CreateDatabase(commandTimeout);
     }
 }
