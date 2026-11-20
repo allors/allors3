@@ -63,8 +63,8 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             connection.Open();
             try
             {
-                // Asked first: the batch that alters the database takes many times longer than the question,
-                // also when it finds nothing to alter.
+                // Asked first, and altered only when snapshot isolation is off: SQL Server refuses the statement
+                // below to a login that may not alter the database, also when it has nothing to alter.
                 using (var ask = new SqlCommand("SELECT snapshot_isolation_state FROM sys.databases WHERE database_id = DB_ID()", connection))
                 {
                     if (ask.ExecuteScalar() is byte state && state != 0)
@@ -73,11 +73,9 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                     }
                 }
 
-                var cmdText = $@"
-IF ((SELECT SNAPSHOT_ISOLATION_STATE FROM SYS.DATABASES WHERE NAME = '{connection.Database}') = 0)
-alter Database {connection.Database}
-set allow_snapshot_isolation on";
-                using var command = new SqlCommand(cmdText, connection);
+                // The database of the connection, without its name: a name can need brackets, and can hold a
+                // quote or a bracket itself.
+                using var command = new SqlCommand("ALTER DATABASE CURRENT SET ALLOW_SNAPSHOT_ISOLATION ON", connection);
                 command.ExecuteNonQuery();
             }
             finally

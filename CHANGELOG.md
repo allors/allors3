@@ -373,6 +373,11 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   was refused a transaction, because its schema was missing or invalid, stayed refused after
   `Init` had built the schema. It now validates the schema again and opens the transaction
   (#388).
+- `Init` of the SqlClient adapter switches snapshot isolation on whatever the name of the
+  database. Its statement named the database, without brackets and inside a string literal, so it
+  did not compile for a name that needs brackets or that holds a quote or a bracket, such as
+  `allors-core`, and `Init` failed on a database with such a name. `Init` now alters the database
+  of its connection, `ALTER DATABASE CURRENT` (#393).
 
 ### Security
 
