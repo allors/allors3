@@ -13,10 +13,12 @@ In this tutorial you run the platform on your own machine and write four small t
 objects, relate them, let a rule derive a value and query the result: the things that the code of
 an application does in the database. You need no database server.
 
-The 3.2 line has no sample application. The tutorial therefore uses the
-[test domain](domains.md#custom-in-the-platforms-repository) that the platform's own tests use,
-with its classes `Person` and `Organisation`. The projects of an application of your own are a
-different subject, which [Domains](domains.md#how-an-application-includes-core) introduces.
+The tutorial uses the [test domain](domains.md#custom-in-the-platforms-repository) that the
+platform's own tests use, with its classes `Person` and `Organisation`. The projects of an
+application of your own are a different subject, which
+[Domains](domains.md#how-an-application-includes-core) introduces. The
+[sample application](../../../../sample/) of the repository shows those projects for the database:
+a domain that extends Core, with two classes, a rule and its tests.
 
 ## Before you start
 
