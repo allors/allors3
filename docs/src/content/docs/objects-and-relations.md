@@ -30,11 +30,11 @@ with `CreateTransaction()`. A transaction sees its own changes at once.
 - A commit stores the changes as they are. It runs no rules: call `Derive()` first, as
   [Derivations](derivations.md#derive-before-you-commit) explains.
 - A transaction does not see the uncommitted work of another one. The Snapshot adapter takes its
-  view when the transaction is created and after each commit or rollback. SqlClient and Npgsql
-  take theirs at the transaction's first database operation after creation, commit or rollback;
-  it can include changes committed by another transaction in the meantime. Once the view is
-  taken, later commits by other transactions remain invisible until this transaction commits or
-  rolls back.
+  view of the database when the transaction is created and after each commit or rollback. The
+  SqlClient and Npgsql adapters take theirs at the transaction's first database operation after
+  creation, commit or rollback; it can include changes committed by another transaction in the
+  meantime. Once the view is taken, later commits by other transactions remain invisible until
+  this transaction commits or rolls back.
 - On those adapters a commit fails with a `DbException` when another transaction committed a
   change to an object that this transaction changed as well. Roll back and do the work again.
 - The Memory adapter has one transaction: `CreateTransaction()` returns the same one every time.
@@ -198,6 +198,11 @@ checkpoint and matches the changes against the rules.
   `dotnet/System/Database/Adapters` implement the database, the transaction, the strategy and
   the change set; the typed classes implement `IObject`. `RoleTypeExtensions`, in
   `Allors.Database.Adapters` among the adapters, checks the values of unit roles.
+- A transaction takes its view of the database in two places. `Transaction` of
+  `Allors.Database.Adapters.Snapshot` keeps the snapshot that is current when it is created,
+  commits or rolls back. `Connection` of `Allors.Database.Adapters.Sql.SqlClient` and of
+  `Allors.Database.Adapters.Sql.Npgsql` opens its connection and the snapshot transaction of the
+  server for its first command, and closes both on a commit and on a rollback.
 - The template `dotnet/Core/Database/Templates/domain.cs.stg` writes the typed classes, the
   builders and the objects classes. `ObjectBuilder`, in `dotnet/Core/Database/Domain/Core`,
   and `ITransactionExtensions`, in its folder `Extensions`, hold `Build`; `ObjectExtensions`, in
@@ -207,8 +212,9 @@ checkpoint and matches the changes against the rules.
   every database adapter. `One2OneTest`, `One2ManyTest`, `Many2OneTest` and `Many2ManyTest`
   check what a multiplicity maintains, `UnitTest` the unit roles, their limits and the dates,
   `LifeCycleTest` creation, deletion, commit and rollback, `ChangesTest` the change sets, and
-  `ConcurrencyTest` what transactions see of each other and the commit that fails. The Memory
-  adapter takes no part in `ConcurrencyTest`.
+  `ConcurrencyTest` what transactions see of each other and the commit that fails. In that test
+  the reader reads before the writer commits, so it does not check when each adapter takes the
+  view. The Memory adapter takes no part in `ConcurrencyTest`.
 - `RequiredTest` and `BuilderTest`, in `dotnet/Core/Database/Domain.Tests`, check the defaults
   of `OnPostBuild` and the builders. `DeletingTest`, next to them, runs `Delete()` on a
   `Cascader`; it does not assert that the `Cascaded` is deleted.
