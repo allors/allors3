@@ -12,6 +12,12 @@ export const description = 'Documentation for developers who build applications 
 export const version = `main · v${release} (unreleased)`;
 export const repository = 'https://github.com/allors/allors3';
 export const branch = 'main';
+// The root of the repository, which holds this website in docs/. A link from a page to a file that is not
+// a page becomes a link to that file on GitHub, by its path from this root.
+export const repositoryRoot = new URL('../', import.meta.url);
+// The audiences that a page can name, in the order in which the agent index lists them. The content
+// schema accepts these names and no others.
+export const audiences = ['Users and maintainers', 'Users', 'Maintainers'];
 export const site = process.env.DOCS_SITE || 'https://docs.allors.com';
 const trimmed = (process.env.DOCS_BASE || '/allors3/').split('/').filter(Boolean).join('/');
 export const base = trimmed ? `/${trimmed}/` : '/';
