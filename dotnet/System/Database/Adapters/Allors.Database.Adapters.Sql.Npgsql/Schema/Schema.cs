@@ -27,11 +27,17 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                 connection.Open();
                 try
                 {
-                    // Schema
+                    // The schema is read from the catalogue of PostgreSQL, under the conditions of the views
+                    // schemata, tables and columns of information_schema: what is read is what those views
+                    // show. A query that joins the views can take PostgreSQL through the columns of the whole
+                    // schema once for every table.
+
+                    // Schema: one that the login owns or may use.
                     var cmdText = @"
-SELECT  count(schema_name)
-FROM    information_schema.schemata
-WHERE   schema_name = @schemaName";
+SELECT  count(*)
+FROM    pg_catalog.pg_namespace n
+WHERE   n.nspname = @schemaName
+AND     (pg_has_role(n.nspowner, 'USAGE') OR has_schema_privilege(n.oid, 'CREATE, USAGE'))";
                     using (var command = new NpgsqlCommand(cmdText, connection))
                     {
                         command.Parameters.Add("@schemaName", NpgsqlDbType.Varchar).Value = database.SchemaName;
@@ -39,20 +45,59 @@ WHERE   schema_name = @schemaName";
                         this.Exists = schemaCount != 0;
                     }
 
-                    // Tables
+                    // Tables: the base tables with their columns, where the login owns the table or may touch
+                    // the column. In tm are the type of a column and its modifier, and for a column of a domain
+                    // those of the type that the domain is made of: such a column shows that type. An array
+                    // and a type outside pg_catalog show their kind only. The numbers are the ids of the types
+                    // that have a length, a precision or a scale: 1042 char, 1043 varchar, 1560 bit, 1562
+                    // varbit, 21 smallint, 23 integer, 20 bigint, 1700 numeric, 700 real, 701 double precision.
                     cmdText = @"
-SELECT T.table_name,
-       C.column_name,
-       C.data_type,
-       C.character_maximum_length,
-       C.numeric_precision,
-       C.numeric_scale
-FROM information_schema.tables AS T
-FULL OUTER JOIN information_schema.columns AS C
-ON T.table_name = C.table_name
-WHERE T.table_type = 'BASE TABLE'
-AND T.table_schema = @tableSchema
-AND C.table_schema = @tableSchema";
+SELECT c.relname AS table_name,
+       a.attname AS column_name,
+       CASE WHEN t.typtype = 'd' THEN
+                CASE WHEN bt.typelem <> 0 AND bt.typlen = -1 THEN 'ARRAY'
+                     WHEN nbt.nspname = 'pg_catalog' THEN format_type(t.typbasetype, NULL)
+                     ELSE 'USER-DEFINED' END
+            ELSE
+                CASE WHEN t.typelem <> 0 AND t.typlen = -1 THEN 'ARRAY'
+                     WHEN nt.nspname = 'pg_catalog' THEN format_type(a.atttypid, NULL)
+                     ELSE 'USER-DEFINED' END
+       END AS data_type,
+       CASE WHEN tm.typmod = -1 THEN NULL
+            WHEN tm.typid IN (1042, 1043) THEN tm.typmod - 4
+            WHEN tm.typid IN (1560, 1562) THEN tm.typmod
+       END AS character_maximum_length,
+       CASE tm.typid
+            WHEN 21 THEN 16
+            WHEN 23 THEN 32
+            WHEN 20 THEN 64
+            WHEN 1700 THEN CASE WHEN tm.typmod = -1 THEN NULL ELSE ((tm.typmod - 4) >> 16) & 65535 END
+            WHEN 700 THEN 24
+            WHEN 701 THEN 53
+       END AS numeric_precision,
+       CASE WHEN tm.typid IN (21, 23, 20) THEN 0
+            WHEN tm.typid = 1700 THEN CASE WHEN tm.typmod = -1 THEN NULL ELSE (tm.typmod - 4) & 65535 END
+       END AS numeric_scale
+FROM pg_catalog.pg_namespace nc
+JOIN pg_catalog.pg_class c ON c.relnamespace = nc.oid
+JOIN pg_catalog.pg_attribute a ON a.attrelid = c.oid
+JOIN pg_catalog.pg_type t ON t.oid = a.atttypid
+JOIN pg_catalog.pg_namespace nt ON nt.oid = t.typnamespace
+LEFT JOIN (pg_catalog.pg_type bt JOIN pg_catalog.pg_namespace nbt ON nbt.oid = bt.typnamespace)
+    ON t.typtype = 'd' AND t.typbasetype = bt.oid
+CROSS JOIN LATERAL (SELECT CASE WHEN t.typtype = 'd' THEN t.typbasetype ELSE a.atttypid END AS typid,
+                           CASE WHEN t.typtype = 'd' THEN t.typtypmod ELSE a.atttypmod END AS typmod) tm
+WHERE nc.nspname = @tableSchema
+AND c.relkind IN ('r', 'p')
+AND nc.oid <> pg_my_temp_schema()
+AND NOT pg_is_other_temp_schema(nc.oid)
+AND (pg_has_role(c.relowner, 'USAGE')
+     OR has_table_privilege(c.oid, 'SELECT, INSERT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER')
+     OR has_any_column_privilege(c.oid, 'SELECT, INSERT, UPDATE, REFERENCES'))
+AND a.attnum > 0
+AND NOT a.attisdropped
+AND (pg_has_role(c.relowner, 'USAGE')
+     OR has_column_privilege(c.oid, a.attnum, 'SELECT, INSERT, UPDATE, REFERENCES'))";
 
                     using (var command = new NpgsqlCommand(cmdText, connection))
                     {

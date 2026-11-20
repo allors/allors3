@@ -156,6 +156,14 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   `out of shared memory`, and `Init` fails: raise `max_locks_per_transaction`, which takes a
   restart of the server. On SQL Server `Init` asks for the state of snapshot isolation and sends
   the batch that switches it on only when it is off (#392).
+- The Npgsql adapter reads its schema from the catalogue of PostgreSQL, `pg_namespace`, `pg_class`,
+  `pg_attribute` and `pg_type`, where it read the views `schemata`, `tables` and `columns` of
+  `information_schema`. It is the read of the validation, which `Init` starts with and which a
+  database object does before its first transaction. The read keeps the conditions of the views, so
+  the validation sees what it saw: a schema that the login owns or may use, the base tables and the
+  columns that the login owns or may touch, and for a column of a domain the type that the domain
+  is made of. The query on the views joined `tables` and `columns` on the name of the table, which
+  can take PostgreSQL through the columns of the whole schema once for every table (#394).
 
 ### Fixed
 
