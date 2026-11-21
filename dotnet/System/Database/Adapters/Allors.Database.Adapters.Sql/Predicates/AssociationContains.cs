@@ -36,7 +36,7 @@ namespace Allors.Database.Adapters.Sql
             }
             else
             {
-                statement.Append(" " + this.association.SingularFullName + "_A." + Mapping.ColumnNameForObject + " = " + this.allorsObject.Strategy.ObjectId);
+                statement.Append(" " + statement.GetAlias(this.association) + "." + Mapping.ColumnNameForObject + " = " + this.allorsObject.Strategy.ObjectId);
             }
 
             return this.Include;

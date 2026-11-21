@@ -40,16 +40,16 @@ namespace Allors.Database.Adapters.Sql
 
             if ((this.role.IsMany && this.role.RelationType.AssociationType.IsMany) || !this.role.RelationType.ExistExclusiveDatabaseClasses)
             {
-                statement.Append(" (" + this.role.SingularFullName + "_R." + Mapping.ColumnNameForRole + " IS NULL OR ");
-                statement.Append(" NOT " + this.role.SingularFullName + "_R." + Mapping.ColumnNameForAssociation + " IN (");
+                statement.Append(" (" + statement.GetAlias(this.role) + "." + Mapping.ColumnNameForRole + " IS NULL OR ");
+                statement.Append(" NOT " + statement.GetAlias(this.role) + "." + Mapping.ColumnNameForAssociation + " IN (");
                 statement.Append(" SELECT " + Mapping.ColumnNameForAssociation + " FROM " + schema.TableNameForRelationByRelationType[this.role.RelationType] + " WHERE " + Mapping.ColumnNameForRole + " IN (");
                 statement.Append(inStatement.ToString());
                 statement.Append(" )))");
             }
             else if (this.role.IsMany)
             {
-                statement.Append(" (" + this.role.SingularFullName + "_R." + Mapping.ColumnNameForObject + " IS NULL OR ");
-                statement.Append(" NOT " + this.role.SingularFullName + "_R." + Mapping.ColumnNameForObject + " IN (");
+                statement.Append(" (" + statement.GetAlias(this.role) + "." + Mapping.ColumnNameForObject + " IS NULL OR ");
+                statement.Append(" NOT " + statement.GetAlias(this.role) + "." + Mapping.ColumnNameForObject + " IN (");
                 statement.Append(inStatement.ToString());
                 statement.Append(" ))");
             }
