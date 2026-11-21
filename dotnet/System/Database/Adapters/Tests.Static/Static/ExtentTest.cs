@@ -17,6 +17,7 @@ namespace Allors.Database.Adapters
     using C4 = Domain.C4;
     using Company = Domain.Company;
     using DateTime = System.DateTime;
+    using Job = Domain.Job;
     using Person = Domain.Person;
 
     public enum Zero2Four
@@ -2699,6 +2700,17 @@ namespace Allors.Database.Adapters
                 Assert.False(extent.Contains(this.c4B));
                 Assert.False(extent.Contains(this.c4C));
                 Assert.False(extent.Contains(this.c4D));
+
+                // An association of a role with a full name of 61 characters
+                var personOfJob = Person.Create(this.Transaction);
+                Job.Create(this.Transaction).NamedWithARoleNameThatGivesThisRoleAFullNameOf61Characters = personOfJob;
+                Person.Create(this.Transaction);
+
+                extent = this.Transaction.Extent(m.Person);
+                extent.Filter.AddInstanceof(m.Person.JobWhereNamedWithARoleNameThatGivesThisRoleAFullNameOf61Characters, m.Job);
+
+                Assert.Single(extent);
+                Assert.True(extent.Contains(personOfJob));
 
                 // TODO: wrong relation
             }
@@ -14934,6 +14946,24 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, true, false);
                 this.AssertC4(extent, false, false, false, false);
 
+                // Two roles whose full names differ only in case
+                var withBoth = Job.Create(this.Transaction);
+                withBoth.AddFlowPart(Job.Create(this.Transaction));
+                withBoth.AddPart(Job.Create(this.Transaction));
+
+                var withFlowPart = Job.Create(this.Transaction);
+                withFlowPart.AddFlowPart(Job.Create(this.Transaction));
+
+                var withPart = Job.Create(this.Transaction);
+                withPart.AddPart(Job.Create(this.Transaction));
+
+                extent = this.Transaction.Extent(m.Job);
+                extent.Filter.AddExists(m.Job.FlowParts);
+                extent.Filter.AddExists(m.Job.Parts);
+
+                Assert.Single(extent);
+                Assert.True(extent.Contains(withBoth));
+
                 // Class - Wrong RelationType
                 extent = this.Transaction.Extent(m.C1);
 
@@ -15670,6 +15700,19 @@ namespace Allors.Database.Adapters
                 this.AssertC2(extent, false, true, true, true);
                 this.AssertC3(extent, false, true, true, true);
                 this.AssertC4(extent, false, false, false, false);
+
+                // A role with a full name of 61 characters
+                var jobOfPerson = Job.Create(this.Transaction);
+                jobOfPerson.NamedWithARoleNameThatGivesThisRoleAFullNameOf61Characters = Person.Create(this.Transaction);
+
+                var jobOfCompany = Job.Create(this.Transaction);
+                jobOfCompany.NamedWithARoleNameThatGivesThisRoleAFullNameOf61Characters = Company.Create(this.Transaction);
+
+                extent = this.Transaction.Extent(m.Job);
+                extent.Filter.AddInstanceof(m.Job.NamedWithARoleNameThatGivesThisRoleAFullNameOf61Characters, m.Person);
+
+                Assert.Single(extent);
+                Assert.True(extent.Contains(jobOfPerson));
 
                 // TODO: wrong relation
             }
