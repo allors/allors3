@@ -10,4 +10,5 @@ public partial class Paths
     public AbsolutePath SampleDatabaseResourcesGenerated => SampleDatabase / "Resources/Generated";
     public AbsolutePath SampleDatabaseGenerate => SampleDatabase / "Generate/Generate.csproj";
     public AbsolutePath SampleDatabaseDomainTests => SampleDatabase / "Domain.Tests/Domain.Tests.csproj";
+    public AbsolutePath SampleDatabaseCommandsTests => SampleDatabase / "Commands.Tests/Commands.Tests.csproj";
 }
