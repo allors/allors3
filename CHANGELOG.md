@@ -417,7 +417,7 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   each keep their own value. When both were set before one flush, both columns received the value
   of one of them, without an error: the adapters named the parameter of a unit role after the full
   name of the role, and the statement that sets several unit roles of an object took the parameter
-  of the one for the other. The parameter now carries the id of the relation type (#422).
+  of the one for the other. The parameter now carries the id of the relation type (#422, #423).
 - The statement of an extent on the SqlClient and Npgsql adapters hands out the aliases of its
   joins itself, as it does for its tables. The alias of a join was the full name of its role or of
   its association with a suffix, and an extent failed when the server took two of them for one
@@ -425,7 +425,7 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   PostgreSQL and with error 1011 on a SQL Server database whose collation ignores case. PostgreSQL
   keeps 63 bytes of an alias: there `AddInstanceof` failed with `42712` for a role with a full name
   of 61 characters or more whose relation has a table of its own, and for the association of such
-  a role (#418, #422).
+  a role (#418, #422, #423).
 
 ### Security
 
