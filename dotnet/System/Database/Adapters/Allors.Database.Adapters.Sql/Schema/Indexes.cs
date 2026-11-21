@@ -115,8 +115,9 @@ namespace Allors.Database.Adapters.Sql
             return wanted.Where(v => !present.Contains((v.TableName, v.ColumnName))).ToArray();
         }
 
-        // An index for every relation type that the domain marks as indexed. A unit role that gets no index is
-        // unwanted: an index with the name of the adapter on its column is a leftover.
+        // An index for every composite relation, on its column in the table of a class or on the role column of
+        // its own table, and for every unit role that the domain marks as indexed. A unit role that gets no index
+        // is unwanted: an index with the name of the adapter on its column is a leftover.
         private void Derive(out List<SchemaIndex> wanted, out Dictionary<string, SchemaIndex> unwantedByName)
         {
             var mapping = this.Database.Mapping;
@@ -132,7 +133,7 @@ namespace Allors.Database.Adapters.Sql
                 {
                     var relationType = associationType.RelationType;
                     var roleType = relationType.RoleType;
-                    if (relationType.IsIndexed && !(associationType.IsMany && roleType.IsMany) && relationType.ExistExclusiveDatabaseClasses && roleType.IsMany)
+                    if (!(associationType.IsMany && roleType.IsMany) && relationType.ExistExclusiveDatabaseClasses && roleType.IsMany)
                     {
                         wanted.Add(new SchemaIndex($"idx_{className}_{associationType.SingularFullName.ToLowerInvariant()}", tableName, mapping.ColumnNameByRelationType[relationType]));
                     }
@@ -160,7 +161,7 @@ namespace Allors.Database.Adapters.Sql
                             unwantedByName[name] = index;
                         }
                     }
-                    else if (relationType.IsIndexed && !(associationType.IsMany && roleType.IsMany) && relationType.ExistExclusiveDatabaseClasses && !roleType.IsMany)
+                    else if (!(associationType.IsMany && roleType.IsMany) && relationType.ExistExclusiveDatabaseClasses && !roleType.IsMany)
                     {
                         wanted.Add(new SchemaIndex(name, tableName, mapping.ColumnNameByRelationType[relationType]));
                     }
@@ -171,7 +172,7 @@ namespace Allors.Database.Adapters.Sql
             {
                 var associationType = relationType.AssociationType;
                 var roleType = relationType.RoleType;
-                if (relationType.IsIndexed && !roleType.ObjectType.IsUnit && ((associationType.IsMany && roleType.IsMany) || !relationType.ExistExclusiveDatabaseClasses))
+                if (!roleType.ObjectType.IsUnit && ((associationType.IsMany && roleType.IsMany) || !relationType.ExistExclusiveDatabaseClasses))
                 {
                     wanted.Add(new SchemaIndex($"idx_{roleType.SingularFullName.ToLowerInvariant()}_{Mapping.ColumnNameForRole}", mapping.TableNameForRelationByRelationType[relationType], Mapping.ColumnNameForRole));
                 }

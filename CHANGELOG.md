@@ -164,6 +164,22 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   columns that the login owns or may touch, and for a column of a domain the type that the domain
   is made of. The query on the views joined `tables` and `columns` on the name of the table, which
   can take PostgreSQL through the columns of the whole schema once for every table (#394).
+- The SqlClient and Npgsql adapters give every composite relation an index, where they gave one
+  only to a composite relation that the domain marks as indexed. The index is on the column of the
+  relation in the table of a class, or on the role column of the table of the relation. The
+  adapters look rows up by these columns themselves: to read an association or a one-to-many role,
+  to delete an object, and to find the object that has a role before they set a one-to-one role or
+  add to a one-to-many role. `[Indexed]` stays the hint of the modeller for a unit role, which gets
+  an index only when it is marked; on a composite relation the mark no longer changes anything in
+  these adapters. A database that was created before this change gets the indexes that it lacks
+  before the first transaction of the next database object that starts on it (#388): give a
+  database that is in use its indexes at deployment, with the `index` command or a call of
+  `EnsureIndexes()`, and with a login that may create an index on the tables, because no
+  transaction opens until the indexes exist. A database whose domain marks every composite relation
+  as indexed has these indexes already. Creating an object and writing a relation now maintain
+  these indexes as well, and the indexes take room in the database. On PostgreSQL two index names
+  that are equal in their first 63 bytes refuse every transaction (#407), which held for the
+  relation types that are marked and now holds for every composite relation (#417).
 
 ### Fixed
 

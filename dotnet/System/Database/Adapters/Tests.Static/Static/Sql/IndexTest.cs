@@ -15,8 +15,10 @@ namespace Allors.Database.Adapters.Sql
     using Xunit;
 
     // The adapter ensures the indexes of its schema before the first transaction of a database object, when it is
-    // asked to, and at the end of a load. The test domain marks C1.C1AllorsInteger, C1.Many2One and
-    // Company.IndexedMany2ManyPersons as indexed, and not C1.C1AllorsString, C1.C1AllorsDouble and C1.C1C2one2one.
+    // asked to, and at the end of a load. Every composite relation gets an index, and a unit role gets one when
+    // the domain marks it as indexed. The test domain marks C1.C1AllorsInteger, C1.Many2One and
+    // Company.IndexedMany2ManyPersons, and not C1.C1AllorsString, C1.C1AllorsDouble, C1.C1C2one2one,
+    // C1.C1C2one2manies and C1.C1C2many2manies.
     public abstract class IndexTest : IDisposable
     {
         private const string UnitColumn = "c1allorsinteger";
@@ -172,18 +174,21 @@ namespace Allors.Database.Adapters.Sql
         }
 
         [Fact]
-        public void AnIndexOnACompositeRelationThatIsNotMarkedStays()
+        public void ACompositeRelationThatIsNotMarkedGetsAnIndex()
         {
-            this.Rebuild().EnsureIndexes();
-
-            // The name that the adapter gives to an index for C1.C1C2one2one.
-            this.ExecuteScalar("CREATE INDEX idx_c1_c1c1c2one2one ON allors.c1 (c1c2one2one)");
+            this.Rebuild();
 
             using (this.CreateDatabase().CreateTransaction())
             {
             }
 
+            // C1.C1C2one2one is a column of the table of C1, and its index has the name of the adapter.
             Assert.True(this.ExistIndex("idx_c1_c1c1c2one2one"));
+            Assert.Equal(1, this.IndexCount("c1", "c1c2one2one"));
+
+            // C1.C1C2one2manies is a column of the table of C2, and C1.C1C2many2manies has a table of its own.
+            Assert.Equal(1, this.IndexCount("c2", "c1wherec1c2one2many"));
+            Assert.Equal(1, this.IndexCount("c1c1c2many2many", "r"));
         }
 
         [Fact]
