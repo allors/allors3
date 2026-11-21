@@ -73,14 +73,29 @@ namespace Commands.Tests
         }
 
         [Fact]
-        public void UpgradeLoadsAPopulationThatSaveWroteAndCreatesThePermissions()
+        public void UpgradeCreatesThePermissionsAndTheWorkerSetupThatAPopulationOfAnEarlierVersionLacks()
         {
             var earlier = new Program();
             Assert.Equal(ExitCode.Success, new Populate { Parent = earlier }.OnExecute(null));
+
+            int readPermissionCount;
             using (var transaction = earlier.Database.CreateTransaction())
             {
+                readPermissionCount = new ReadPermissions(transaction).Extent().Count;
+
                 var jane = new PersonBuilder(transaction).WithFirstName("Jane").WithUserName("jane@example.com").Build();
                 new WorkItemBuilder(transaction).WithTitle("Write the rule").WithAssignee(jane).Build();
+
+                // An earlier version of the sample had no permissions, and neither the security role Worker, the
+                // user group Workers nor their grant on the default security token.
+                new Grants(transaction).Workers.Strategy.Delete();
+                new UserGroups(transaction).Workers.Strategy.Delete();
+                new Roles(transaction).Worker.Strategy.Delete();
+                foreach (var permission in transaction.Extent<Permission>().ToArray())
+                {
+                    permission.Strategy.Delete();
+                }
+
                 transaction.Derive();
                 transaction.Commit();
             }
@@ -90,16 +105,64 @@ namespace Commands.Tests
             var later = new Program();
             Assert.Equal(ExitCode.Success, new Commands.Upgrade { Parent = later }.OnExecute(null));
 
+            long janeId, workItemId;
             using (var transaction = later.Database.CreateTransaction())
             {
                 var workItem = Assert.Single(new WorkItems(transaction).Extent().ToArray());
                 Assert.Equal("Write the rule", workItem.Title);
                 Assert.Equal("Jane", workItem.Assignee.FirstName);
                 Assert.Equal(1, workItem.Assignee.OpenWorkItemCount);
-                Assert.NotEmpty(new ReadPermissions(transaction).Extent().ToArray());
+                Assert.Equal(readPermissionCount, new ReadPermissions(transaction).Extent().Count);
+
+                var worker = new Roles(transaction).Worker;
+                var workers = new UserGroups(transaction).Workers;
+                var grant = new Grants(transaction).Workers;
+                Assert.NotNull(worker);
+                Assert.NotNull(workers);
+                Assert.NotNull(grant);
+                Assert.Equal(worker.Id, grant.Role?.Id);
+                Assert.Equal(new[] { workers.Id }, grant.SubjectGroups.Select(v => v.Id));
+                Assert.Contains(grant.Id, new SecurityTokens(transaction).DefaultSecurityToken.Grants.Select(v => v.Id));
+
+                workers.AddMember(workItem.Assignee);
+                transaction.Derive();
+                transaction.Commit();
+
+                (janeId, workItemId) = (workItem.Assignee.Id, workItem.Id);
             }
 
-            Assert.NotNull(later.Database.Services.Get<ISecurity>());
+            AssertAWorkerCanMarkTheWorkItemDoneAndNotChangeItsTitle(later.Database, janeId, workItemId);
+        }
+
+        [Fact]
+        public void UpgradeKeepsTheMembersOfTheUserGroupWorkers()
+        {
+            var earlier = new Program();
+            Assert.Equal(ExitCode.Success, new Populate { Parent = earlier }.OnExecute(null));
+
+            long janeId, workItemId;
+            using (var transaction = earlier.Database.CreateTransaction())
+            {
+                var jane = new PersonBuilder(transaction).WithFirstName("Jane").WithUserName("jane@example.com").Build();
+                var workItem = new WorkItemBuilder(transaction).WithTitle("Write the rule").WithAssignee(jane).Build();
+                new UserGroups(transaction).Workers.AddMember(jane);
+                transaction.Derive();
+                transaction.Commit();
+
+                (janeId, workItemId) = (jane.Id, workItem.Id);
+            }
+
+            Assert.Equal(ExitCode.Success, new Save { Parent = earlier }.OnExecute(null));
+
+            var later = new Program();
+            Assert.Equal(ExitCode.Success, new Commands.Upgrade { Parent = later }.OnExecute(null));
+
+            using (var transaction = later.Database.CreateTransaction())
+            {
+                Assert.Equal(new[] { janeId }, new UserGroups(transaction).Workers.Members.Select(v => v.Id));
+            }
+
+            AssertAWorkerCanMarkTheWorkItemDoneAndNotChangeItsTitle(later.Database, janeId, workItemId);
         }
 
         [Fact]
@@ -241,6 +304,19 @@ namespace Commands.Tests
 
             Assert.Equal(objectIds.Length, moved.Count);
             Objects(population).Add(new XElement("ot", new XAttribute("i", classId), string.Join(",", moved)));
+        }
+
+        // The setup gives the security role Worker the permission to mark a work item done, and not to change its title.
+        private static void AssertAWorkerCanMarkTheWorkItemDoneAndNotChangeItsTitle(IDatabase database, long workerId, long workItemId)
+        {
+            var m = database.Services.Get<MetaPopulation>();
+            using (var transaction = database.CreateTransaction())
+            {
+                var accessControl = new DatabaseAccessControl(database.Services.Get<ISecurity>(), (User)transaction.Instantiate(workerId));
+                var onTheWorkItem = accessControl[transaction.Instantiate(workItemId)];
+                Assert.True(onTheWorkItem.CanWrite(m.WorkItem.Done));
+                Assert.False(onTheWorkItem.CanWrite(m.WorkItem.Title));
+            }
         }
 
         // As Init leaves a database: without objects, and with the first id for a new object.

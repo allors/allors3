@@ -13,11 +13,9 @@ namespace Allors.Database.Domain
 
         public UserGroup Workers => this.Cache[WorkersId];
 
-        protected override void CustomSetup(Setup setup)
-        {
-            var merge = this.Cache.Merger().Action();
+        // The merge leaves the members of a user group that the database has as they are.
+        public UserGroup MergeWorkers() => this.Cache.Merger().Action()(WorkersId, v => v.Name = "Workers");
 
-            merge(WorkersId, v => v.Name = "Workers");
-        }
+        protected override void CustomSetup(Setup setup) => this.MergeWorkers();
     }
 }

@@ -13,18 +13,19 @@ namespace Allors.Database.Domain
 
         public Grant Workers => this.Cache[WorkersId];
 
+        // The security role and the user group of the grant have to exist before the merge.
+        public Grant MergeWorkers() => this.Cache.Merger().Action()(WorkersId, v =>
+        {
+            v.Role = new Roles(this.Transaction).Worker;
+            v.AddSubjectGroup(new UserGroups(this.Transaction).Workers);
+        });
+
         // Core makes the setup of grants run after the setup of security roles and user groups.
         protected override void CustomSetup(Setup setup)
         {
             if (setup.Config.SetupSecurity)
             {
-                var merge = this.Cache.Merger().Action();
-
-                merge(WorkersId, v =>
-                {
-                    v.Role = new Roles(this.Transaction).Worker;
-                    v.AddSubjectGroup(new UserGroups(this.Transaction).Workers);
-                });
+                this.MergeWorkers();
             }
         }
     }
