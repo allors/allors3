@@ -23,13 +23,25 @@ namespace Allors.Repository
 
         #endregion
 
-        // The full name of this role, the name of its class followed by its own, has 61 characters, and Named has
-        // two classes, so the relation has a table of its own.
+        #region Allors
+        [Id("bdf83fb6-4b5b-4721-8032-3b95421e914e")]
+        [Multiplicity(Multiplicity.OneToMany)]
+        #endregion
+        public Alias2[] Items { get; set; }
+
+        // Named has two classes, so each relation has its own table. The 61-byte table names differ at byte 59.
+        // Inserting Where after Job makes the association names equal through byte 63.
         #region Allors
         [Id("9c5f03ac-e410-47a7-a307-65a9f57f5594")]
         [Multiplicity(Multiplicity.OneToOne)]
         #endregion
-        public Named NamedWithARoleNameThatGivesThisRoleAFullNameOf61Characters { get; set; }
+        public Named NamedWithALongRoleNameWhoseAssociationNameEndsInTheWordOne { get; set; }
+
+        #region Allors
+        [Id("749aa645-38f4-4167-b45b-8fca8d846fbe")]
+        [Multiplicity(Multiplicity.OneToOne)]
+        #endregion
+        public Named NamedWithALongRoleNameWhoseAssociationNameEndsInTheWordTwo { get; set; }
 
         #region inherited methods
         #endregion

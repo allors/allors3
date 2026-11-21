@@ -26,12 +26,11 @@ namespace Allors.Database.Adapters.Sql
             var schema = statement.Mapping;
             if ((this.association.IsMany && this.association.RoleType.IsMany) || !this.association.RelationType.ExistExclusiveDatabaseClasses)
             {
-                statement.Append("\n");
-                statement.Append("EXISTS(\n");
-                statement.Append("SELECT " + alias + "." + Mapping.ColumnNameForObject + "\n");
-                statement.Append("FROM " + schema.TableNameForRelationByRelationType[this.association.RelationType] + "\n");
-                statement.Append("WHERE " + Mapping.ColumnNameForAssociation + "=" + this.allorsObject.Strategy.ObjectId + "\n");
-                statement.Append("AND " + Mapping.ColumnNameForRole + "=" + alias + "." + Mapping.ColumnNameForObject + "\n");
+                var innerAlias = statement.CreateAlias();
+                statement.Append("\nEXISTS(\nSELECT 1\n");
+                statement.Append($"FROM {schema.TableNameForRelationByRelationType[this.association.RelationType]} {innerAlias}\n");
+                statement.Append($"WHERE {innerAlias}.{Mapping.ColumnNameForAssociation}={this.allorsObject.Strategy.ObjectId}\n");
+                statement.Append($"AND {innerAlias}.{Mapping.ColumnNameForRole}={alias}.{Mapping.ColumnNameForObject}\n");
                 statement.Append(")");
             }
             else

@@ -11,6 +11,7 @@ namespace Allors.Database.Adapters
     using Allors;
     using Meta;
     using Xunit;
+    using Alias2 = Domain.Alias2;
     using C1 = Domain.C1;
     using C2 = Domain.C2;
     using C3 = Domain.C3;
@@ -2701,13 +2702,19 @@ namespace Allors.Database.Adapters
                 Assert.False(extent.Contains(this.c4C));
                 Assert.False(extent.Contains(this.c4D));
 
-                // An association of a role with a full name of 61 characters
+                // Two association names with the same first 63 bytes
                 var personOfJob = Person.Create(this.Transaction);
-                Job.Create(this.Transaction).NamedWithARoleNameThatGivesThisRoleAFullNameOf61Characters = personOfJob;
-                Person.Create(this.Transaction);
+                var job = Job.Create(this.Transaction);
+                job.NamedWithALongRoleNameWhoseAssociationNameEndsInTheWordOne = personOfJob;
+                job.NamedWithALongRoleNameWhoseAssociationNameEndsInTheWordTwo = personOfJob;
+
+                var otherJob = Job.Create(this.Transaction);
+                otherJob.NamedWithALongRoleNameWhoseAssociationNameEndsInTheWordOne = Person.Create(this.Transaction);
+                otherJob.NamedWithALongRoleNameWhoseAssociationNameEndsInTheWordTwo = Person.Create(this.Transaction);
 
                 extent = this.Transaction.Extent(m.Person);
-                extent.Filter.AddInstanceof(m.Person.JobWhereNamedWithARoleNameThatGivesThisRoleAFullNameOf61Characters, m.Job);
+                extent.Filter.AddInstanceof(m.Person.JobWhereNamedWithALongRoleNameWhoseAssociationNameEndsInTheWordOne, m.Job);
+                extent.Filter.AddInstanceof(m.Person.JobWhereNamedWithALongRoleNameWhoseAssociationNameEndsInTheWordTwo, m.Job);
 
                 Assert.Single(extent);
                 Assert.True(extent.Contains(personOfJob));
@@ -15703,13 +15710,13 @@ namespace Allors.Database.Adapters
 
                 // A role with a full name of 61 characters
                 var jobOfPerson = Job.Create(this.Transaction);
-                jobOfPerson.NamedWithARoleNameThatGivesThisRoleAFullNameOf61Characters = Person.Create(this.Transaction);
+                jobOfPerson.NamedWithALongRoleNameWhoseAssociationNameEndsInTheWordOne = Person.Create(this.Transaction);
 
                 var jobOfCompany = Job.Create(this.Transaction);
-                jobOfCompany.NamedWithARoleNameThatGivesThisRoleAFullNameOf61Characters = Company.Create(this.Transaction);
+                jobOfCompany.NamedWithALongRoleNameWhoseAssociationNameEndsInTheWordOne = Company.Create(this.Transaction);
 
                 extent = this.Transaction.Extent(m.Job);
-                extent.Filter.AddInstanceof(m.Job.NamedWithARoleNameThatGivesThisRoleAFullNameOf61Characters, m.Person);
+                extent.Filter.AddInstanceof(m.Job.NamedWithALongRoleNameWhoseAssociationNameEndsInTheWordOne, m.Person);
 
                 Assert.Single(extent);
                 Assert.True(extent.Contains(jobOfPerson));
@@ -17276,6 +17283,22 @@ namespace Allors.Database.Adapters
 
                 Assert.Single(c2s);
                 Assert.Equal(c2, c2s[0]);
+
+                // The item table and the containing extent's SQL alias can have the same name.
+                var item = Alias2.Create(this.Transaction);
+                var child = Job.Create(this.Transaction);
+                child.AddItem(item);
+                var parent = Job.Create(this.Transaction);
+                parent.AddFlowPart(child);
+                Job.Create(this.Transaction).AddFlowPart(Job.Create(this.Transaction));
+
+                var children = this.Transaction.Extent(m.Job);
+                children.Filter.AddContains(m.Job.Items, item);
+                Extent<Job> parents = this.Transaction.Extent(m.Job);
+                parents.Filter.AddContainedIn(m.Job.FlowParts, children);
+
+                Assert.Single(parents);
+                Assert.Equal(parent, parents[0]);
             }
         }
 
