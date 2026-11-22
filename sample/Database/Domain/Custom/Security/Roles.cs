@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
 
         public Role Worker => this.Cache[WorkerId];
 
-        // A merge finds the security role by its unique id, or creates it when the database has none. The setup
+        // A merge finds the Role by its unique id, or creates it when the database has none. The setup
         // runs it, and so does the upgrade, for a population that an earlier version saved.
         public Role MergeWorker() => this.Cache.Merger().Action()(WorkerId, v => v.Name = "Worker");
 

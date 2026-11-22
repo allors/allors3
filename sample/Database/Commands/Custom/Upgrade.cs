@@ -118,7 +118,7 @@ namespace Commands
                 transaction.Derive();
                 transaction.Commit();
 
-                // The security roles get their permissions again, the new ones included.
+                // The Roles get their permissions again, the new ones included.
                 new Security(transaction).Apply();
                 transaction.Commit();
             }

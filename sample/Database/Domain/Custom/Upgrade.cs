@@ -16,7 +16,7 @@ namespace Allors.Database.Domain
 
         public void Execute()
         {
-            // A population that an earlier version saved can lack the security role Worker, the user group Workers
+            // A population that an earlier version saved can lack the Role Worker, the user group Workers
             // and their grant on the default security token, which the setup creates. The merges of the setup create
             // what is missing, and leave the members of the user group as they are.
             new Roles(this.Transaction).MergeWorker();
