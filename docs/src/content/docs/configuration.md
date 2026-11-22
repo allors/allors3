@@ -117,10 +117,12 @@ database: SQL Server for `sqlclient`, PostgreSQL for `npgsql`. They serve databa
 only; no program runs on them.
 
 - The `init` command of Core's command-line tool drops and creates the database of the
-  configured connection and makes the login of that connection its owner. It creates the login
-  when the server does not know it. With the Snapshot adapter `init` has nothing to drop or
-  create. The command calls `DatabaseProvisioning.DropCreate`, which the command-line tool of an
-  application can call as well.
+  configured connection. When that connection names a user, and on SQL Server does not use
+  integrated security, `init` makes the login of that user the owner of the database, and creates
+  the login when the server does not know it. Otherwise the database belongs to the user of the
+  admin connection. With the Snapshot adapter `init` has nothing to drop or create. The command
+  calls `DatabaseProvisioning.DropCreate`, which the command-line tool of an application can call
+  as well.
 - The adapter test suites create and open their test databases with the admin connection.
 - On Windows the admin connection for SQL Server defaults to LocalDB.
 - `ALLORS_TEST_SQLCLIENT_CONNECTION` and `ALLORS_TEST_NPGSQL_CONNECTION` are accepted as other

@@ -121,8 +121,12 @@ when `Config.SetupSecurity` is true. Core's part of the hook `OnPreSetup` clears
 and `Revocations` on every `Role` object. The methods `Grant` of `Security` can give permissions
 again in the parts of the other domains in `OnPreSetup`, in `CoreSecure` or `CustomSecure` of an
 objects class, or in the hook `OnPostSetup`. If the application uses revocations to restrict
-access to a `Role` object itself, it must also put them back after Core's hook. The sample's
-upgrade runs this security setup on the loaded population.
+access to a `Role` object itself, it must also put them back after Core's hook.
+
+The sample's upgrade runs this security setup on the loaded population, so an upgrade resets the
+permissions of every `Role`. Permissions that a `Role` got in any other way, such as from a user
+at run time, are gone afterwards, and a `Role` that a user created at run time has none, because
+no code grants it any.
 
 ## What Core's setup creates
 
@@ -198,6 +202,10 @@ access control list, as the [test of Grant access](grant-access.md#6-test-the-ac
   access in `dotnet/System/Database/Allors.Database.Workspace.Json`. The checks of a select and an
   include are in `dotnet/System/Database/Allors.Database.Workspace/Data`. The Local workspace
   adapter is in `dotnet/System/Workspace/Adapters/Allors.Workspace.Adapters.Local`.
+- The `Strategy` of a session, in
+  `dotnet/System/Workspace/Adapters/Allors.Workspace.Adapters/Session` and in
+  `typescript/modules/libs/system/workspace/adapters/src/lib/session`, reads and writes a role
+  with `Origin.Session` without a permission.
 - In `dotnet/Core/Database/Domain.Tests/Domain/Security`, `DatabaseAccessControlListsTests`,
   `WorkspaceAccessControlListsTests`, `WorkspaceMaskTests`, `DelegateAccessGrantTests` and
   `DelegateAccessRevocationTests` check the access control lists of the platform's test domain;

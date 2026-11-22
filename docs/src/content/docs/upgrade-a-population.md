@@ -62,7 +62,7 @@ public void Execute()
 | The new version | What to do |
 | --- | --- |
 | adds a class, a method type or a role that can start empty | No data change is needed in `Execute`. `Sync` creates the permissions. |
-| adds a derived role whose value depends on existing data | Compute its value for each affected object in `Upgrade.Execute()`. The load finishes before the upgrade transaction starts, so unchanged inputs in the saved population do not trigger the rule. |
+| adds a derived role whose value depends on existing data, or changes how a rule derives one | Compute its value for each affected object in `Execute`. The load finishes before the upgrade transaction starts, so unchanged inputs in the saved population do not trigger the rule. |
 | requires a role that existing objects have no value for | Give every existing object a value in `Execute`. The derivation checks the required roles only of the objects that the upgrade changes. |
 | creates an object in its setup | Merge the object in `Execute`, with the merge of the setup; [Grant access](grant-access.md#2-create-the-role-and-the-user-group) shows such merges. |
 | gives a `Role` other permissions | Nothing: the command runs the security setup. |
@@ -94,9 +94,9 @@ Before the final save, stop accepting writes and let active transactions finish.
 programs that write to the database stopped until the upgrade succeeds. Any change committed
 after the save will be lost when the upgrade loads the file.
 
-Use the command-line tool of the deployed version. For the sample on SQL Server or PostgreSQL,
-generate that version in its own clone and save to a new file outside the clone. This example
-uses PostgreSQL.
+Use the command-line tool of the deployed version. The population has to outlive the process, so
+use SQL Server or PostgreSQL. For the sample, generate that version in its own clone and save to
+a new file outside the clone, here on PostgreSQL:
 
 ```sh
 ./build.sh SampleGenerate
@@ -106,13 +106,13 @@ dotnet run --project sample/Database/Commands -- save -f ~/population.xml
 ```
 
 Check that `save` exits with code 0 before running `upgrade`. A failed save can leave a partial
-file, and the upgrade empties the database before reading it. Keep the successful export until
-the upgraded application runs.
+file, and the upgrade empties the database before reading it. Keep the file until the upgraded
+application runs.
 
 ## 4. Upgrade with the new version
 
 Stop any remaining programs that read the database. In a clone at the new version, generate the
-sample again and run `upgrade` with the same settings on the saved file.
+sample again and run `upgrade` with the same settings on the saved file:
 
 ```sh
 ./build.sh SampleGenerate

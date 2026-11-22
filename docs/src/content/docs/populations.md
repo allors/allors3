@@ -23,10 +23,10 @@ that the adapter requires. If these checks pass, `Init()` empties the model's ta
 table or table type is missing or invalid, it drops and recreates the model's tables. Tables that
 the model no longer has are left as they are.
 
-On SQL Server the rebuild first drops every user-defined table type in the configured schema,
-including any that the application created. If a stored procedure uses one of these types, SQL
-Server refuses to drop it and the rebuild stops before it reaches the tables. After rebuilding the
-tables, the adapter creates only the table types it requires.
+On SQL Server the rebuild first drops every user-defined table type in the adapter's schema,
+`allors` by default, including any that the application created. If a stored procedure uses one
+of these types, SQL Server refuses to drop it and the rebuild stops before it reaches the tables.
+After rebuilding the tables, the adapter creates only the table types it requires.
 
 ## A new population
 
@@ -166,7 +166,9 @@ the sample's domain tests create a database on the Memory adapter themselves.
 - `Init`, `Save` and `Load` are declared on `IDatabase`, in
   `dotnet/System/Database/Allors.Database`, with `ObjectNotLoadedEventArgs` and
   `RelationNotLoadedEventArgs`. Each adapter implements them in
-  `dotnet/System/Database/Adapters`.
+  `dotnet/System/Database/Adapters`. In the folder `Schema` of the SqlClient and Npgsql adapters,
+  `Validation` checks the tables, and on SQL Server the table types, and `Initialization` empties
+  or rebuilds them.
 - `SerializationTest`, in `dotnet/System/Database/Adapters/Tests.Static`, holds the facts of save
   and load: `SchemaChanges` for files that a change of the model explains, and `CorruptFiles` for
   files that a load refuses.
