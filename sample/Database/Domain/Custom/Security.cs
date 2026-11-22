@@ -5,14 +5,30 @@
 
 namespace Allors.Database.Domain
 {
+    using Meta;
+
     public partial class Security
     {
         private void CustomOnPreSetup()
         {
         }
 
+        // Core grants no permissions: an application gives each security role what its members may do.
         private void CustomOnPostSetup()
         {
+            var m = this.transaction.Database.Services.Get<MetaPopulation>();
+
+            var full = new[] { Operations.Read, Operations.Write, Operations.Execute };
+            foreach (ObjectType @class in m.DatabaseClasses)
+            {
+                this.GrantAdministrator(@class, full);
+            }
+
+            // A worker reads work items and marks them done, and reads the names of people.
+            this.Grant(Roles.WorkerId, m.WorkItem, Operations.Read);
+            this.Grant(Roles.WorkerId, m.WorkItem, m.WorkItem.Done, Operations.Write);
+            this.Grant(Roles.WorkerId, m.Person, m.Person.FirstName, Operations.Read);
+            this.Grant(Roles.WorkerId, m.Person, m.Person.LastName, Operations.Read);
         }
     }
 }
