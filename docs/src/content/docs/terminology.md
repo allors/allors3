@@ -10,7 +10,9 @@ status: "Current"
 
 Use these names consistently when discussing Allors3. This page records the shared vocabulary and
 links to the pages that own the detailed definitions. Exact API identifiers keep their declared
-spelling and capitalization.
+spelling and capitalization. A name that the model declares, such as a class, a unit or a role,
+is written in code formatting; the
+[writing guide](internals/writing-documentation.md#use-oxford-english) gives the rule.
 
 ## The platform
 
@@ -39,7 +41,7 @@ spelling and capitalization.
 | --- | --- |
 | Model | The classes, interfaces, relations and methods that the repository projects of an application declare; see [The model](model.md). |
 | Class, interface | The two kinds of composite, a type that has relations. An object is an instance of a class; an interface declares relations and methods for the classes that implement it. |
-| Unit | One of the eight types of a value that the platform defines, such as String and Integer; see [Types](model.md#types). |
+| Unit | One of the eight types of a value that the platform defines, such as `String` and `Integer`; see [Types](model.md#types). |
 | Multiplicity | How many objects stand at each end of a relation: `OneToOne`, `OneToMany`, `ManyToOne` or `ManyToMany`, with the association named first; see [Multiplicity](model.md#multiplicity). |
 | Workspace | The engine in which a client works with objects, in sessions. A workspace has a name, and the model says which classes, relations and methods the workspaces of each name can use: `[Workspace]` on a declaration names them, and `Default` is the name that it uses when it is given none. Qualify the [workspace adapter](#adapters), which is an implementation of the engine. |
 
