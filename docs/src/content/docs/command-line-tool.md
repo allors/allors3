@@ -49,19 +49,19 @@ root the message is:
 The configuration has no value for 'adapter'. ALLORS_CONFIG_ROOT is not set, so only environment variables are read: set 'adapter' in the environment, or point ALLORS_CONFIG_ROOT at a folder that holds 'custom/appsettings.json'.
 ```
 
-`init` also needs the admin connection of the server, in `ALLORS_SQLCLIENT` or `ALLORS_NPGSQL`;
-[Admin connections](configuration.md#admin-connections) describes them.
+`init` also uses the admin connection of the server;
+[Admin connections](configuration.md#admin-connections) describes it.
 
 ## Commands
 
 | Command | From | What it does | Option |
 | --- | --- | --- | --- |
-| `init` | The application | Drops and creates the database of the connection string and makes its login the owner, through the admin connection. With the Snapshot adapter it logs that there is nothing to drop or create. | |
+| `init` | The application | Drops and creates the database of the connection string, through the admin connection; [Admin connections](configuration.md#admin-connections) says what it does with the login of the connection string. With the Snapshot adapter it logs that there is nothing to drop or create. | |
 | `populate` | The application | Empties the database with `Init()` and runs the [setup](populations.md#a-new-population), which builds a new population. | |
 | `save` | Core | Writes the population to a file. | `-f` the file |
 | `load` | Core | Replaces the population with the one in a file. | `-f` the file |
 | `upgrade` | The application | Loads a population that an earlier version saved and brings it up to date; [Upgrade a population](upgrade-a-population.md) describes its steps. | `-f` the file |
-| `index` | Core | Ensures the indexes that the model asks for, on SQL Server and PostgreSQL. The SQL adapters also ensure them before their first transaction and after a load. Other adapters keep no indexes, and the command logs so. | |
+| `index` | Core | On SQL Server and PostgreSQL, creates the indexes that the adapter derives from the model, and drops the adapter's indexes that the model no longer needs. The SQL adapters also do this before their first transaction and after a load. Other adapters keep no indexes, and the command logs so. | |
 
 A relative file name is relative to the working directory, and the tool logs the full path of the
 file that it saves or loads.
@@ -72,14 +72,14 @@ The tool logs to the console, from the level `Info` up, one line per message:
 
 ```text
 13:19:57 INFO Begin
-13:19:57 INFO Saving /home/user/sample/population.xml
+13:19:57 INFO Saving /home/user/allors3/population.xml
 13:19:57 INFO End
 ```
 
 | Exit code | Meaning |
 | --- | --- |
 | 0 | The command succeeded. |
-| 1 | The command failed, or no command was given. The tool logs the message of an error at the level `Error`. |
+| 1 | The command failed, its arguments were not recognized, or no command was given. The tool logs the message at the level `Error`, except when no command was given: then it shows its help. |
 
 ## Adapters
 
@@ -100,7 +100,8 @@ include Core. The application writes the rest:
   the database with the application's rules. Core's commands ask it for `Configuration` and
   `Database`.
 - **`ExitCode`**, with `Success` and `Error`, which Core's commands return.
-- **`init`, `populate` and `upgrade`**, which depend on the application's setup and model.
+- **`populate` and `upgrade`**, which depend on the application's setup and model, and
+  **`init`**, which Core keeps in its folder `Custom`; the sample's is a copy of it.
 - **`nlog.config`**, which the build copies next to the tool.
 
 ## Where this is implemented

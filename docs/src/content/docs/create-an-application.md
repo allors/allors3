@@ -15,9 +15,10 @@ Use this guide to start an application in a repository of its own. It assumes
 The starting point is the [sample application](../../../../sample/) in the platform's
 repository. Its projects are those of an application: the model, the database layers, a
 command-line tool and their tests. The platform's CI generates, builds and tests the sample for
-every pull request, so the sample follows the platform.
+every pull request that changes more than the documentation, so the sample follows the platform.
 
-You need Git and the .NET SDK, version 10.
+You need Git, the .NET SDK, version 10, and a POSIX shell with Perl, as on Linux and macOS: the
+commands below are written for one.
 
 ## 1. Create the repository and add the platform
 
@@ -87,10 +88,13 @@ the root of the application's repository:
 
 ```sh
 mkdir -p Database/Resources/Generated
-dotnet run --project allors/dotnet/Core/Database/Merge -- allors/dotnet/Core/Database/Resources/Core Database/Resources/Generated
-dotnet run --project allors/dotnet/System/Repository/Generate -- Repository/Domain/Repository.csproj allors/dotnet/System/Repository/Templates/meta.cs.stg Database/Meta/Generated
+dotnet run --no-launch-profile --project allors/dotnet/Core/Database/Merge -- allors/dotnet/Core/Database/Resources/Core Database/Resources/Generated
+dotnet run --no-launch-profile --project allors/dotnet/System/Repository/Generate -- Repository/Domain/Repository.csproj allors/dotnet/System/Repository/Templates/meta.cs.stg Database/Meta/Generated
 dotnet run --project Database/Generate
 ```
+
+`--no-launch-profile` keeps `dotnet run` from reading the launch settings that the two projects of
+the platform hold for their own development.
 
 1. **Merge** writes Core's messages to `Database/Resources/Generated`. The folder has to exist:
    without it, Merge exits with code 1 and prints nothing. An application with messages of its
@@ -134,19 +138,21 @@ each change:
 
 ## Files that follow the platform
 
-Core's code needs classes and members that the platform keeps in the folders of its test domain,
-which an application does not include. The sample holds copies of them, and an application keeps
-them:
+Core's code needs classes and members that the platform keeps outside its folders `Core`, most of
+them in the folders of its test domain, so an application does not include them. The sample has
+its own versions of them, and an application keeps these:
 
 | Files | What the application does with them |
 | --- | --- |
-| `DatabaseServices.cs`, `DefaultDatabaseServices.cs`, `PreparedFetches/PreparedSelects.cs` and `Transaction/TransactionServices.cs`, below `Database/Configuration/Custom` | Keeps them as the platform has them. |
+| `Database/DatabaseServices.cs`, `Database/DefaultDatabaseServices.cs`, `Database/PreparedFetches/PreparedSelects.cs` and `Transaction/TransactionServices.cs`, below `Database/Configuration/Custom` | Keeps them as the platform has them. |
 | The three files in `Database/Domain/Virtual`, and `Database/Domain/Custom/ObjectsBase.cs` | Keeps them as the platform has them while its domain extends Core directly. With domains in between, the files in `Virtual` call the part of each domain, as [Domains](domains.md#setup-and-security) explains. |
-| `PreparedExtents.cs` and `WorkspaceMask.cs`, below `Database/Configuration/Custom` | Adds entries of its own; the sample's are empty. |
+| `Database/PreparedExtents/PreparedExtents.cs` and `Database/WorkspaceMask/WorkspaceMask.cs`, below `Database/Configuration/Custom` | Adds entries of its own; the sample's are empty. |
 | `Database/Meta/Custom/MetaBuilder.cs` | Keeps the method `BuildCustom`, which the generated metadata calls, and changes the metadata of its domain there when it needs to. |
-| `Database/Generate/Program.cs` | Keeps the path of the template and of the output. |
+| `Database/Domain/Rules.cs` | Lists Core's six rules next to its own. |
+| `Database/Generate/Program.cs` | Holds the paths of the template and of the output, relative to the folder from which the generator runs; step 3 points the template at the submodule. |
 
-Issue [#408](https://github.com/allors/allors3/issues/408) records why these files are copies.
+Issue [#408](https://github.com/allors/allors3/issues/408) records why an application needs these
+files.
 
 ## Update the platform
 
@@ -167,8 +173,9 @@ Commit the new commit of the submodule together with the changes that it asks fo
 
 ## Where this is implemented
 
-- The sample application is in `sample/`. The targets `SampleMerge`, `SampleGenerate` and
-  `SampleTest` of the Nuke build, in `build/Sample/Build.cs`, run the platform's tools on it.
+- The sample application is in `sample/`. The targets `SampleMerge` and `SampleGenerate` of the
+  Nuke build, in `build/Sample/Build.cs`, run the platform's tools on it, and `SampleTest` runs its
+  tests.
 - Merge is in `dotnet/Core/Database/Merge`, the repository generator in
   `dotnet/System/Repository/Generate`, with its template
   `dotnet/System/Repository/Templates/meta.cs.stg`, and the generator of Core's domain, which the

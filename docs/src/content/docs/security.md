@@ -18,7 +18,7 @@ Core's setup creates and where the platform checks access.
 ## The objects that decide access
 
 ```mermaid
-flowchart LR
+flowchart TD
     accTitle: The objects that decide access
     accDescr: An object refers to security tokens in its role SecurityTokens and to revocations in its role Revocations. A security token holds grants in its role Grants. A grant holds one Role in its role Role, users in its role Subjects and user groups in its role SubjectGroups. A user group holds users in its role Members. A Role holds permissions in its role Permissions, and a revocation holds the permissions that it denies in its role DeniedPermissions.
     O["Object"] -- SecurityTokens --> T["SecurityToken"]
@@ -49,19 +49,22 @@ role `Role`. An arrow shows the role, the forward end of the relation; the
 
 Core declares the roles `SecurityTokens` and `Revocations` on its interface `Object`, so every
 class that implements `Object`, directly or through another interface, has them. `Revocations`
-is a [derived role](derivations.md): a rule of the application gives an object its revocations.
+is a [derived role](derivations.md). Core derives nothing into it: the application gives an object
+its revocations, normally in a rule.
 
 ## How access is decided
 
 For one user and one object, Core builds an access control list, an `IAccessControlList`:
 
-1. **The security tokens.** These are the security tokens in the object's role `SecurityTokens`.
-   An object without any uses the default `SecurityToken` of the database. While the object is
-   new in its transaction, it uses the initial `SecurityToken` instead.
+1. **The security tokens.** These are the security tokens in the object's role `SecurityTokens`,
+   with those of the object that it delegates its access to, if any. An object without any uses
+   the default `SecurityToken` of the database. While the object is new in its transaction, it
+   uses the initial `SecurityToken` instead.
 2. **The grants.** These are the grants of those security tokens that count the user among their
    effective users: the user is one of their `Subjects`, or a member of one of their
    `SubjectGroups`.
-3. **The revocations.** These are the revocations in the object's role `Revocations`.
+3. **The revocations.** These are the revocations in the object's role `Revocations`, with those
+   of the object that it delegates its access to, if any.
 4. **The decision.** The user has a permission when one of the grants gives it, through its
    `Role`, and none of the revocations denies it.
 
@@ -71,22 +74,32 @@ for a method type. `CanWrite` is false for a derived role, whatever the grants g
 Several consequences follow from these steps:
 
 - **Security tokens of its own replace the defaults.** An object whose role `SecurityTokens` holds
-  a security token does not use the default `SecurityToken`. Add the default one as well when its
-  grants should keep applying.
-- **A new object uses the initial security token.** Until the transaction that created the object
-  commits, the grants of the initial `SecurityToken` decide; afterwards those of the default one.
-  Code that asks for the access control list of an object that it has just created, in the same
-  transaction, gets the answer for a new object.
+  a security token does not use the default `SecurityToken`, nor does an object whose delegate
+  has one. Add the default one as well when its grants should keep applying.
+- **A new object without security tokens of its own uses the initial security token.** Until the
+  transaction that created the object commits, the grants of the initial `SecurityToken` decide;
+  afterwards those of the default one. Code that asks for the access control list of such an
+  object in the transaction that created it gets the answer for a new object.
 - **A grant applies through a security token.** A `Grant` that no security token holds gives
   nothing.
 - **A revocation applies to every user,** the members of Administrators included.
-- **Two rules keep a grant up to date.** `GrantEffectiveUsersRule` derives the effective users of
-  a `Grant` from its `Subjects` and the `Members` of its `SubjectGroups`, and
-  `GrantEffectivePermissionsRule` takes the permissions of its `Role`. An application lists both
-  among its rules, with Core's other rules; [Write a rule](write-a-rule.md#3-register-the-rule)
-  says why a rule that is not listed never runs.
-- **Delegated access.** An object of a class that implements `DelegatedAccessObject` also uses
-  the security tokens and the revocations of the object in its role `DelegatedAccess`.
+- **Changes count once they are committed.** The security service of the database, `ISecurity`,
+  caches grants, security tokens and revocations by the version of their objects, and a version
+  changes when a transaction commits. A change to a grant, a user group or a security token that
+  is not committed yet can go unseen. An access control list also keeps what it found for each
+  object: build a new one after a change.
+- **Three rules keep access up to date.** `GrantEffectiveUsersRule` derives the effective users of
+  a `Grant` from its `Subjects` and the `Members` of its `SubjectGroups`.
+  `GrantEffectivePermissionsRule` takes the permissions of its `Role`.
+  `SecurityTokenSecurityStampRule` gives a security token a new `SecurityStamp` when one of its
+  grants changes, so that the security service reads the security token again. An application
+  lists the three among its rules, with Core's other rules;
+  [Write a rule](write-a-rule.md#3-register-the-rule) says why a rule that is not listed never
+  runs.
+- **Delegated access.** An object of a class that implements `DelegatedAccessObject` uses the
+  security tokens of the object in its role `DelegatedAccess` together with its own, and falls
+  back to the default or the initial security token only when neither has any. It also takes the
+  revocations of that object.
 
 ## Permissions
 
@@ -101,10 +114,11 @@ An application calls `Sync` in its own setup;
 [Grant access](grant-access.md#1-create-the-permissions) shows where.
 
 A `Role` gets its permissions from the security setup, `Security.Apply()`, which the setup runs
-when `Config.SetupSecurity` is true. The security setup first removes the permissions of every
-`Role`. Then the objects classes and the security hooks of the domains grant them again, through
-the methods `Grant` of `Security`. A permission that code gives a `Role` anywhere else is gone
-after the next `Security.Apply()`.
+when `Config.SetupSecurity` is true. Core's part of the hook `OnPreSetup` removes the permissions
+of every `Role`. Everything that runs after it can grant them again, through the methods `Grant`
+of `Security`: the parts of the other domains in `OnPreSetup`, the parts `CoreSecure` and
+`CustomSecure` of the objects classes, and the hook `OnPostSetup`. A permission that code gives a
+`Role` anywhere else is gone after the next `Security.Apply()`.
 
 ## What Core's setup creates
 
@@ -140,19 +154,22 @@ on it.
 
 Every class has a `CreatePermission`, but this version checks none: an access control list has no
 `CanCreate`, and a push to the JSON API builds an object of any class that its workspace includes.
-What the user may then write on the new object follows from the grants of the initial
-`SecurityToken`, because the object is new in the transaction of the push. In Core's setup those
-are the grants of Administrators, Creators and Guests.
+When the new object has no security tokens of its own, what the user may then write on it follows
+from the grants of the initial `SecurityToken`, because the object is new in the transaction of
+the push. In Core's setup those are the grants of Administrators, Creators and Guests.
 
 ## Where access is checked
 
 The platform checks access where a user works through a workspace:
 
-- **The JSON API of a server** checks it for the workspace of the request. A sync sends only the
-  roles that the user can read. A push writes a role only when the user can write it, and an
-  invoke runs a method only when the user can execute it.
+- **The JSON API of a server** checks it for the workspace of the request. A pull follows a role
+  in a select or an include only when the user can read it, and a sync sends only the roles that
+  the user can read. A push writes a role only when the user can write it, and an invoke runs a
+  method only when the user can execute it.
 - **The Local workspace adapter,** which runs a workspace in the process of the database, checks
-  the writes of a push and the methods of an invoke in the same way.
+  the roles that a pull follows, the writes of a push and the methods of an invoke in the same
+  way. Its records hold every role of the workspace; the session of the workspace hides the
+  roles that the user cannot read.
 - **A mask hides an object.** The configuration's `WorkspaceMask` can name a role type for a
   class. A pull leaves out an object of that class when the user cannot read that role, and so
   does a sync of the JSON API.
@@ -171,11 +188,15 @@ access control list, as the [test of Grant access](grant-access.md#6-test-the-ac
   them, gives a user its `OwnerGrant` and `OwnerSecurityToken`.
 - `Permissions`, which implements `IPermissions`, and the security service `Security` are in
   `dotnet/Core/Database/Configuration/Core/Database`.
-- The three rules of security are in `dotnet/Core/Database/Domain/Core/Rules`.
+- `GrantEffectiveUsersRule`, `GrantEffectivePermissionsRule` and `SecurityTokenSecurityStampRule`
+  are in `dotnet/Core/Database/Domain/Core/Rules`.
 - The JSON API is in `dotnet/Core/Database/Server/Core/Api/Json`, and the responses that check
-  access in `dotnet/System/Database/Allors.Database.Workspace.Json`. The Local workspace adapter
-  is in `dotnet/System/Workspace/Adapters/Allors.Workspace.Adapters.Local`.
-- `AccessControlTests`, `PermissionTests`, `DelegateAccessGrantTests` and
-  `DelegateAccessRevocationTests`, in `dotnet/Core/Database/Domain.Tests/Domain/Security`, check
-  the access control lists of the platform's test domain. `SecurityTests`, in
-  `sample/Database/Domain.Tests`, checks those of the sample application.
+  access in `dotnet/System/Database/Allors.Database.Workspace.Json`. The checks of a select and an
+  include are in `dotnet/System/Database/Allors.Database.Workspace/Data`. The Local workspace
+  adapter is in `dotnet/System/Workspace/Adapters/Allors.Workspace.Adapters.Local`.
+- In `dotnet/Core/Database/Domain.Tests/Domain/Security`, `DatabaseAccessControlListsTests`,
+  `WorkspaceAccessControlListsTests`, `WorkspaceMaskTests`, `DelegateAccessGrantTests` and
+  `DelegateAccessRevocationTests` check the access control lists of the platform's test domain;
+  `PermissionTests` checks `Sync`, and `AccessControlTests` the errors of a `Grant` without a
+  `Role` or without users. `SecurityTests`, in `sample/Database/Domain.Tests`, checks the access
+  control lists of the sample application.

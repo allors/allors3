@@ -1,6 +1,6 @@
 ---
 title: "Grant access"
-description: "Create the permissions, a Role, a user group and a grant in the setup, put the grant on a security token, give the Role its permissions and test what a user may do."
+description: "Create the permissions in the setup, give a user group a set of permissions through a grant on a security token, and test what a user may do."
 audience: "Users"
 kind: "How-to guide"
 status: "Current"
@@ -20,8 +20,8 @@ domain project.
 ## 1. Create the permissions
 
 Core's setup creates no permissions, and the security setup can only grant permissions that
-exist. Call `Sync` of `IPermissions` in the hook that ends the setup, `CustomOnPostSetup` of
-`Setup`, which runs before the security setup. The sample does this in
+exist. Call `Sync` of `IPermissions` in the hook that follows the setup of the objects classes,
+`CustomOnPostSetup` of `Setup`, which runs before the security setup. The sample does this in
 `sample/Database/Domain/Custom/Setup.cs`:
 
 ```csharp
@@ -38,7 +38,7 @@ private void CustomOnPostSetup(Config config)
 
 `IPermissions` is in the namespace `Allors.Database.Services`; the file has `using Services;`.
 
-## 2. Create the Role and the user group
+## 2. Create the `Role` and the user group
 
 Give each object that the setup creates a unique id of its own, and merge it in the setup of its
 objects class. A merge finds the object by its `UniqueId` and creates it when the database does
@@ -139,7 +139,7 @@ and add the security token to the role `SecurityTokens` of those objects. Those 
 longer use the default security token; add it to them as well when its grants should keep
 applying.
 
-## 5. Give the Role its permissions
+## 5. Give the `Role` its permissions
 
 Grant the permissions in the security hook `CustomOnPostSetup` of `Security`.
 `sample/Database/Domain/Custom/Security.cs`:
@@ -172,11 +172,13 @@ private void CustomOnPostSetup()
 | `GrantAdministrator`, `GrantCreator`, `GrantGuest`, `GrantGuestCreator` and `GrantOwner` | The first form, for the `Role` of Core with that name. |
 
 - **Name the operations.** A call without operations grants nothing. The operations are `Read`,
-  `Write` and `Execute`; `Operations.Create` throws an exception.
+  `Write` and `Execute`; for an existing `Role`, `Operations.Create` throws an exception.
 - **Check the id of the `Role`.** A call with the id of a `Role` that the database does not have
   does nothing and reports nothing.
-- **Grant in the security hook only.** The security setup removes the permissions of every
-  `Role` before it runs the hooks; a permission given elsewhere does not last.
+- **Grant during the security setup.** Grant in a security hook, such as `CustomOnPostSetup` of
+  `Security`, or in `CustomSecure` of an objects class. The security setup starts by removing the
+  permissions of every `Role`, so a permission given anywhere else is gone after the next
+  `Security.Apply()`.
 - **A derived role stays read-only.** The access control list never allows writing it, whatever
   the `Role` has, as the sample's Administrator shows for `OpenWorkItemCount`.
 
@@ -208,12 +210,15 @@ public void AWorkerCanReadAWorkItemAndMarkItDone()
 private DatabaseAccessControl AccessControl(User user) => new DatabaseAccessControl(this.Transaction.Database.Services.Get<ISecurity>(), user);
 ```
 
-The commit matters: before it, the work item is new in the transaction and takes its grants from
-the initial security token, which does not hold the grant of Workers. The test class inherits from
-`DomainTest`, whose setup runs with `new Config()`, so with security. Run the tests from the root
-of the platform's repository:
+The commit matters for two reasons. Before it, the work item is new in the transaction and takes
+its grants from the initial security token, which does not hold the grant of Workers. And the
+security service sees changes to grants, user groups and security tokens reliably only once they
+are committed, as [Security](security.md#how-access-is-decided) explains. The test class inherits
+from `DomainTest`, whose setup runs with `new Config()`, so with security. Run the tests from the
+root of the platform's repository; the sample's generated code comes first:
 
 ```sh
+./build.sh SampleGenerate
 dotnet test sample/Database/Domain.Tests --filter "FullyQualifiedName~SecurityTests"
 ```
 
@@ -228,10 +233,11 @@ populated does not have the new `Role`, user group and grant, nor the permission
 | Check | Why |
 | --- | --- |
 | The setup calls `Sync` before the security setup. | Without permissions the security setup grants nothing, and the security service cannot be created. |
-| The rules list has `GrantEffectiveUsersRule` and `GrantEffectivePermissionsRule`. | They derive the users and the permissions of a `Grant`; a rule outside the list never runs. |
+| The rules list has `GrantEffectiveUsersRule`, `GrantEffectivePermissionsRule` and `SecurityTokenSecurityStampRule`. | They derive the users and the permissions of a `Grant` and renew its security tokens; a rule outside the list never runs. |
+| The changes to grants, user groups and security tokens are committed, and the access control list was built after them. | The security service caches them by the version of their objects, which changes at a commit, and a list keeps what it found. |
 | A security token that the object uses holds the grant. | A `Grant` applies only through a security token. |
 | The object has no security tokens of its own, or they include the default one. | Security tokens of its own replace the default security token. |
-| The object is not new in the transaction. | A new object uses the initial security token until the transaction commits. |
+| The object is not new in the transaction. | A new object without security tokens of its own uses the initial security token until the transaction commits. |
 | The `Grant` call names the operations and an existing `Role`. | Without operations, or with an unknown id, it grants nothing and reports nothing. |
 | No revocation of the object denies the permission. | A revocation applies to every user. |
 | The role is not derived. | A derived role is never writable. |

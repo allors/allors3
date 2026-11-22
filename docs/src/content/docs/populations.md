@@ -19,8 +19,9 @@ with the one in a file. This page explains these steps and what an application c
 
 `IDatabase.Init()` empties a database: afterwards it holds no objects, and the numbering of the
 objects starts again. On SQL Server and PostgreSQL it also checks the tables against the model.
-Tables that fit the model are emptied; otherwise the adapter creates the tables of the model
-again.
+When every table of the model is there and fits it, `Init()` empties them. Otherwise it drops the
+tables of the model and creates them again. Tables that the model no longer has are left as they
+are.
 
 ## A new population
 
@@ -56,7 +57,7 @@ creates, and [Grant access](grant-access.md) shows the setup of an application.
 
 | Member | Meaning |
 | --- | --- |
-| `SetupSecurity` | Whether the setup creates grants and runs the security setup. True by default; Core's own domain tests set it to false. |
+| `SetupSecurity` | Whether the setup creates grants and runs the security setup. True by default; the base class of Core's domain tests sets it to false, and Core's tests of security set it back to true. |
 | `DataPath` | A folder for the setup of an application to read. Core's setup does not read it. |
 | `SetupAccounting` | Read by nothing in this version. |
 
@@ -65,7 +66,8 @@ creates, and [Grant access](grant-access.md) shows the setup of an application.
 The setup creates the objects that the application refers to by name, such as the `Role`
 Administrator, with a merge on their `UniqueId`. A merge finds the object with that id, or
 creates it when the database has none, and then applies its action in both cases. The objects
-class keeps the id as a constant and gives access to the object, as `Roles.Administrator` does.
+class keeps the id in a static field, such as `Roles.AdministratorId`, and gives access to the
+object, as the property `Administrator` of `Roles` does.
 Because a merge finds what exists, the code that creates such objects in the setup can bring a
 population of an earlier version up to date as well.
 
@@ -73,32 +75,54 @@ population of an earlier version up to date as well.
 
 `IDatabase.Save(XmlWriter)` writes the population to XML, and `IDatabase.Load(XmlReader)` replaces
 the population with the one in the XML. The commands `save` and `load` of the
-[command-line tool](command-line-tool.md) call them. A file starts like this, here shortened:
+[command-line tool](command-line-tool.md) call them. A file is written as one line. This is a
+file of the sample application with one work item, indented and shortened:
 
 ```xml
+<?xml version="1.0" encoding="utf-8"?>
 <allors>
   <population version="1">
     <objects>
       <database>
+        <!-- … -->
         <ot i="60065f5d-a3c2-4418-880d-1026ab607319">7:3,8:3,9:3,10:3</ot>
         <ot i="8e78ae27-8c39-4bb9-89c5-e5b4f27507c1">240:3</ot>
+        <!-- … -->
+      </database>
+    </objects>
+    <relations>
+      <database>
+        <rtc i="0dbbff5c-3dca-4257-b2da-442d263dcd86"><r a="11">8</r><!-- … --></rtc>
+        <!-- … -->
+        <rtu i="6992a861-6b69-4715-973a-366273674bfa"><r a="240">V3JpdGUgdGhlIHJ1bGU=</r></rtu>
+        <!-- … -->
+      </database>
+    </relations>
+  </population>
+</allors>
 ```
 
-The objects are grouped by the id of their class, as pairs of an object id and its version. The
-relations follow in the element `relations`, grouped by the id of their relation type.
+The objects are grouped by the id of their class, as pairs of an object id and its version: here
+the four `UserGroup` objects and the `WorkItem`. The relations are grouped by the id of their
+relation type, in `rtc` for a composite role and `rtu` for a unit role. Each `r` gives the id of
+the association and the role: the `Grant` 11 holds the `UserGroup` 8 in its role `SubjectGroups`,
+and the title of the work item is the Base64 of the UTF-8 of "Write the rule".
 
 - **A load starts with `Init()`.** The database loses its population before the load reads the
   file.
 - **A load keeps the ids.** The objects keep the ids that the file gives them, and the next new
-  object gets an id above the highest one.
-- **A load is all or nothing.** When a load fails, the adapter calls `Init()` again, and the
-  database is empty.
+  object gets an id above the highest one that the load loaded.
+- **A load that throws leaves the database empty.** The adapter calls `Init()` again. On SQL
+  Server and PostgreSQL a load commits as it goes, and builds the indexes after the rows: a
+  process that ends during a load leaves part of the file, and a failure to build the indexes
+  leaves the rows.
 - **The adapters share the format.** A file that one adapter saved loads into another.
 
-A load into the same model reproduces the saved population. The known limits of save and load,
-such as files that no save writes, are recorded in issues
+A load into the same model reproduces the saved population, with the exceptions that issues
 [#339](https://github.com/allors/allors3/issues/339) and
-[#341](https://github.com/allors/allors3/issues/341), and wait for a redesign.
+[#341](https://github.com/allors/allors3/issues/341) record, such as a role that two
+transactions gave to two associations where the model allows one. Issue #339 also lists files
+that the adapters load differently, and its findings wait for a redesign of save and load.
 
 ## A file of an earlier model
 
@@ -109,7 +133,7 @@ of the database:
 | Event | Raised for |
 | --- | --- |
 | `ObjectNotLoaded` | An object that the load cannot load, such as one of a class that the model does not have. Its arguments give the id of the class and the id of the object. |
-| `RelationNotLoaded` | A relation that the load cannot load, such as one of a relation type that the model does not have. Its arguments give the id of the relation type, the id of the association and the contents of the role. |
+| `RelationNotLoaded` | A relation that the load cannot load, such as one of a relation type that the model does not have. Its arguments give the id of the relation type, the id of the association and the contents of the role. For a composite role the load raises one event for each object of the role, with the id of that object. |
 
 Without a handler for these events the load fails, with an exception such as `Object not loaded:`
 followed by the id of the class and the id of the object, and leaves the database empty. With
@@ -117,13 +141,17 @@ handlers attached, the load leaves those objects and relations out and loads the
 command `upgrade` of an application decides with such handlers which omissions it accepts;
 [Upgrade a population](upgrade-a-population.md) shows how.
 
+A load does not report every change. Issue [#339](https://github.com/allors/allors3/issues/339)
+lists what it lets pass without an event, such as a role with two associations where a changed
+multiplicity allows one; which associations keep the role then differs between the adapters.
+
 ## Where a population lives
 
 The Memory and the Snapshot adapters keep the population in the memory of the process: it ends
 with the process. Each run of a command-line tool on the Snapshot adapter starts with an empty
 database. SQL Server and PostgreSQL keep the population between runs. The setting `adapter` of
 the [configuration](configuration.md#settings) selects the Snapshot, SqlClient or Npgsql adapter;
-tests create a database on the Memory adapter themselves.
+the sample's domain tests create a database on the Memory adapter themselves.
 
 ## Where this is implemented
 

@@ -95,7 +95,7 @@ objects.
 | `User` | Core's interface for someone who signs in. An application declares a class that implements it. A user in plain text is the person. |
 | `UserGroup` | A named group of users. |
 | `Role` | A named set of permissions. Write it in code formatting: a role in plain text is the end of a relation. |
-| `Permission` | The permission for one operation on the objects of one class: create, read, write or execute. |
+| `Permission` | The permission for one operation on the objects of one class: to create them, to read or write one of their roles, or to execute one of their methods. |
 | `Grant` | Gives the permissions of one `Role` to users and user groups. |
 | `SecurityToken` | A set of grants for the objects that refer to it. |
 | `Revocation` | A set of permissions that it denies to every user, for the objects that refer to it. |

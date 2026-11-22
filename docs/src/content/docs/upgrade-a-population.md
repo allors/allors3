@@ -13,9 +13,10 @@ Use this guide when a new version of an application changes its model or its set
 database that an earlier version populated has to follow. It assumes
 [Populations](populations.md), which explains saving, loading and the setup.
 
-The example is the [sample application](../../../../sample/). An earlier version of the sample
-had no permissions and no `Role` Worker; its command `upgrade` loads a population of that version
-and adds what the setup of the current version creates.
+The example is the [sample application](../../../../sample/). Its setup creates permissions and
+the `Role` Worker, which an earlier version of the sample did not; its command `upgrade` adds them
+to a population without them. The sample's test of the command builds such a population by
+deleting them before it saves.
 
 ## How the command works
 
@@ -25,13 +26,14 @@ The command `upgrade` of the sample's [command-line tool](command-line-tool.md),
 1. **Load.** It loads the file that the option `-f` names, or else the file of the setting
    `populationFile`, or else `population.xml`. The load [starts with `Init()`](populations.md#saving-and-loading):
    the database loses its population first.
-2. **Leave out what the new version removed.** The load leaves out the objects of the classes in
-   `ExcludedObjectTypes`, the relations of the relation types in `ExcludedRelationTypes`, the
-   relations of the objects that it left out, and those objects in the roles of the objects that
-   it loads.
-3. **Stop at anything else.** When the load leaves out anything else, the command logs the ids of
-   the classes and the relation types concerned, empties the database with `Init()` and exits
-   with code 1.
+2. **Accept what the new version removed.** The load leaves out the objects of the classes, and
+   the relations of the relation types, that the new model does not have, and reports them. The
+   command accepts the omissions that concern the classes in `ExcludedObjectTypes` and the
+   relation types in `ExcludedRelationTypes`: the objects of those classes, their relations, and
+   those objects in the roles of the objects that the load keeps. A class or a relation type that
+   the new model still has loads as usual, whether it is in these sets or not.
+3. **Stop at any other omission that the load reports.** The command logs the ids of the classes
+   and the relation types concerned, empties the database with `Init()` and exits with code 1.
 4. **Change the data.** In one transaction it creates the permissions of the new model with
    `Sync`, runs `Upgrade.Execute()` of the domain, derives and commits.
 5. **Grant again.** It runs the [security setup](security.md#permissions), so that every `Role`
@@ -81,19 +83,22 @@ public HashSet<Guid> ExcludedRelationTypes { get; } = new HashSet<Guid>
 ```
 
 The ids are those of the `[Id]` attributes that the earlier model declared. The command stops at
-an object or a relation that the load leaves out for any other reason, so a mistake in the new
-model does not pass for an upgrade.
+any other omission that the load reports, so a class or a relation type that the new model lost
+by mistake does not pass for an upgrade. The load does not report every change, though:
+[Populations](populations.md#a-file-of-an-earlier-model) says what it lets pass.
 
 ## 3. Save the population with the running version
 
 Run `save` with the command-line tool of the version that the database runs now. The population
 has to outlive the process, so use SQL Server or PostgreSQL. In a clone of the platform's
-repository at that version:
+repository at that version, generate the sample and save the population to a file outside the
+clone:
 
 ```sh
+./build.sh SampleGenerate
 export adapter=npgsql
 export ConnectionStrings__DefaultConnection='Host=localhost;Database=sample;Username=…;Password=…'
-dotnet run --project sample/Database/Commands -- save -f population.xml
+dotnet run --project sample/Database/Commands -- save -f ~/population.xml
 ```
 
 The file is the only copy of the population from here on: the upgrade empties the database
@@ -101,11 +106,12 @@ before it loads the file. Keep it until the upgraded application runs.
 
 ## 4. Upgrade with the new version
 
-Stop the programs that use the database, and run `upgrade` with the command-line tool of the new
-version, with the same settings, on the saved file:
+Stop the programs that use the database. In a clone at the new version, generate the sample
+again, and run `upgrade` with the same settings on the saved file:
 
 ```sh
-dotnet run --project sample/Database/Commands -- upgrade -f population.xml
+./build.sh SampleGenerate
+dotnet run --project sample/Database/Commands -- upgrade -f ~/population.xml
 ```
 
 The load gives the database the tables of the new model. The command logs `Begin`, the file that
@@ -113,30 +119,38 @@ it loads and `End`, and exits with code 0. Then start the new version.
 
 ## 5. When the upgrade stops
 
-The command exits with code 1 in two cases:
+The command exits with code 1 whenever it fails, and logs the message of the error. What the
+database then holds depends on where the command stopped:
 
-- **The load left out something that is not declared.** The command logs which classes or
-  relation types the file holds that the new version could not load, and leaves the database
-  empty. Declare what the new version removed on purpose, or correct the model, and upgrade
-  again from the same file.
-- **The derivation after `Execute` reported an error.** `Derive()` throws, and nothing of the
-  transaction of step 4 of [How the command works](#how-the-command-works) is committed: the
+- **Before the load,** at a missing file or a missing setting: the database is unchanged.
+- **During the load,** at a file that the load refuses: the database is empty. On SQL Server and
+  PostgreSQL a failure to build the indexes after the load leaves the loaded rows.
+- **At an omission that is not declared:** the command logs which classes or relation types the
+  file holds that the new version could not load, and leaves the database empty. Declare what the
+  new version removed on purpose, or correct the model.
+- **At an error of the derivation after `Execute`:** `Derive()` throws, and nothing of the
+  transaction of step 4 of [How the command works](#how-the-command-works) is committed. The
   database holds the population as the load left it, without the changes of the upgrade, the new
-  permissions or the security setup. Correct `Execute` and upgrade again from the same file.
+  permissions or the security setup. Correct `Execute`.
+- **In the security setup:** the changes of `Execute` and the new permissions are committed, and
+  the security setup is not.
 
-Start the application only after an upgrade that exits with code 0.
+In each case, correct the cause and upgrade again from the same file: the upgrade starts by
+emptying the database. Start the application only after an upgrade that exits with code 0.
 
 ## 6. Test the upgrade
 
-The sample tests its command in `sample/Database/Commands.Tests/UpgradeTests.cs`. A test runs the
-tool's commands in one process, on the Snapshot adapter, which it sets in the environment: it
-populates a database with one `Program`, removes what an earlier version did not have, saves,
-and upgrades with a second `Program`. Then it checks the objects, the setup that the upgrade
-added and what a worker may do. Other tests change the saved file: they check that the upgrade
-leaves out the objects of a declared class, and that it stops, leaving the database as `Init()`
-leaves it, at each kind of omission that is not declared.
+The sample tests its command in `sample/Database/Commands.Tests/UpgradeTests.cs`. The tests run
+the tool's commands in one process, on the Snapshot adapter, which they set in the environment.
+One populates a database with one `Program`, removes what an earlier version did not have, saves,
+and upgrades with a second `Program`; then it checks the objects, the setup that the upgrade
+added and what a worker may do. Another checks that the upgrade keeps the members of Workers. The
+others change the saved file: they check that the upgrade leaves out the objects of a declared
+class, and that it stops, leaving the database as `Init()` leaves it, at four kinds of omission
+that are not declared.
 
 ```sh
+./build.sh SampleGenerate
 dotnet test sample/Database/Commands.Tests
 ```
 
@@ -148,5 +162,7 @@ dotnet test sample/Database/Commands.Tests
 - Core's command-line tool for its test domain has an `upgrade` of its own, in
   `dotnet/Core/Database/Commands/Custom/Upgrade.cs`. An application does not include it, and it
   differs from the sample's: issues [#424](https://github.com/allors/allors3/issues/424) and
-  [#425](https://github.com/allors/allors3/issues/425) record how.
+  [#425](https://github.com/allors/allors3/issues/425) record two of the differences. It also
+  commits the changes of its `Upgrade` without deriving them, and does not read the setting
+  `populationFile`.
 - The events of the load are described in [Populations](populations.md#a-file-of-an-earlier-model).
