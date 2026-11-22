@@ -1,6 +1,6 @@
 ---
 title: "Terminology"
-description: "Agreed names for the platform, domains, the model, relations, objects, derivations, adapters, populations and configuration."
+description: "Agreed names for the platform, domains, the model, relations, objects, derivations, security, adapters, populations and configuration."
 audience: "Users and maintainers"
 kind: "Reference"
 status: "Current"
@@ -54,8 +54,9 @@ platform can maintain both ends.
 In prose, use role and association for these specific ends. Preserve identifiers such as
 `IRoleType` and `IAssociationType` when referring to code. A generic UML association describes a
 relationship; it does not by itself identify the Allors inverse end. Label that distinction when
-a class diagram uses both meanings. A role of Core's authorization, the class `Role`, has a
-different meaning; qualify it where the context could be ambiguous.
+a class diagram uses both meanings. Core's authorization has a class named `Role`, which is a set
+of permissions: in code formatting `Role` is always that class, and a role in plain text is the
+end of a relation. [Security](#security) lists the names of authorization.
 
 A **unit role** holds a value, and a **composite role** holds an object or several objects. Use
 role type, association type and relation type for the metadata of a relation, such as
@@ -82,6 +83,23 @@ role type, association type and relation type for the metadata of a relation, su
 | Cycle | One round of a derivation, on one change set. |
 | Validation | The errors that a derivation reports, an `IValidation`. |
 | Derived role | A role that is declared with `[Derived]`: clients cannot write it, and code in the database maintains it, usually a rule. |
+
+## Security
+
+The names of Core's authorization are the names of its types; [Security](security.md) explains
+how they decide access. Write them in code formatting when the text means the type or its
+objects.
+
+| Term | Definition and usage |
+| --- | --- |
+| `User` | Core's interface for someone who signs in. An application declares a class that implements it. A user in plain text is the person. |
+| `UserGroup` | A named group of users. |
+| `Role` | A named set of permissions. Write it in code formatting: a role in plain text is the end of a relation. |
+| `Permission` | The permission for one operation on the objects of one class: create, read, write or execute. |
+| `Grant` | Gives the permissions of one `Role` to users and user groups. |
+| `SecurityToken` | A set of grants for the objects that refer to it. |
+| `Revocation` | A set of permissions that it denies to every user, for the objects that refer to it. |
+| Access control list | What one user may do with one object, an `IAccessControlList`. |
 
 ## Adapters
 
