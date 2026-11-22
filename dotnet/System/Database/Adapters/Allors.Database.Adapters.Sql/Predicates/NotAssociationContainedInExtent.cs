@@ -33,8 +33,8 @@ namespace Allors.Database.Adapters.Sql
 
             if ((this.association.IsMany && this.association.RoleType.IsMany) || !this.association.RelationType.ExistExclusiveDatabaseClasses)
             {
-                statement.Append(" (" + this.association.SingularFullName + "_A." + Mapping.ColumnNameForRole + " IS NULL OR");
-                statement.Append(" NOT " + this.association.SingularFullName + "_A." + Mapping.ColumnNameForRole + " IN (\n");
+                statement.Append(" (" + statement.GetAlias(this.association) + "." + Mapping.ColumnNameForRole + " IS NULL OR");
+                statement.Append(" NOT " + statement.GetAlias(this.association) + "." + Mapping.ColumnNameForRole + " IN (\n");
                 statement.Append(" SELECT " + Mapping.ColumnNameForRole + " FROM " + schema.TableNameForRelationByRelationType[this.association.RelationType] + " WHERE " + Mapping.ColumnNameForAssociation + " IN (");
                 this.inExtent.BuildSql(inStatement);
                 statement.Append(" )))\n");
@@ -48,8 +48,8 @@ namespace Allors.Database.Adapters.Sql
             }
             else
             {
-                statement.Append(" (" + this.association.SingularFullName + "_A." + Mapping.ColumnNameForObject + " IS NULL OR ");
-                statement.Append(" NOT " + this.association.SingularFullName + "_A." + Mapping.ColumnNameForObject + " IN (\n");
+                statement.Append(" (" + statement.GetAlias(this.association) + "." + Mapping.ColumnNameForObject + " IS NULL OR ");
+                statement.Append(" NOT " + statement.GetAlias(this.association) + "." + Mapping.ColumnNameForObject + " IN (\n");
                 this.inExtent.BuildSql(inStatement);
                 statement.Append(" ))\n");
             }

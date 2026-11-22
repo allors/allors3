@@ -15,6 +15,14 @@ namespace Allors.Database.Adapters.Sql
         private readonly List<IRoleType> referenceRoleInstances;
         private readonly List<IRoleType> referenceRoles;
 
+        // The aliases of the joins of this statement. The statement hands them out, as it does for its tables: an
+        // alias built from the name of a role or of an association can equal another one, where the server
+        // compares names without case or keeps only the start of a long name.
+        private Dictionary<IAssociationType, string> aliasByAssociation;
+        private Dictionary<IAssociationType, string> aliasByAssociationInstance;
+        private Dictionary<IRoleType, string> aliasByRole;
+        private Dictionary<IRoleType, string> aliasByRoleInstance;
+
         protected ExtentStatement(SqlExtent extent)
         {
             this.Extent = extent;
@@ -49,13 +57,13 @@ namespace Allors.Database.Adapters.Sql
                 {
                     if ((association.IsMany && role.IsMany) || !relationType.ExistExclusiveDatabaseClasses)
                     {
-                        this.Append(" LEFT OUTER JOIN " + this.Mapping.TableNameForRelationByRelationType[relationType] + " " + role.SingularFullName + "_R");
-                        this.Append(" ON " + alias + "." + Mapping.ColumnNameForObject + "=" + role.SingularFullName + "_R." + Mapping.ColumnNameForAssociation);
+                        this.Append(" LEFT OUTER JOIN " + this.Mapping.TableNameForRelationByRelationType[relationType] + " " + this.GetAlias(role));
+                        this.Append(" ON " + alias + "." + Mapping.ColumnNameForObject + "=" + this.GetAlias(role) + "." + Mapping.ColumnNameForAssociation);
                     }
                     else if (role.IsMany)
                     {
-                        this.Append(" LEFT OUTER JOIN " + this.Mapping.TableNameForObjectByClass[((IComposite)role.ObjectType).ExclusiveDatabaseClass] + " " + role.SingularFullName + "_R");
-                        this.Append(" ON " + alias + "." + Mapping.ColumnNameForObject + "=" + role.SingularFullName + "_R." + this.Mapping.ColumnNameByRelationType[relationType]);
+                        this.Append(" LEFT OUTER JOIN " + this.Mapping.TableNameForObjectByClass[((IComposite)role.ObjectType).ExclusiveDatabaseClass] + " " + this.GetAlias(role));
+                        this.Append(" ON " + alias + "." + Mapping.ColumnNameForObject + "=" + this.GetAlias(role) + "." + this.Mapping.ColumnNameByRelationType[relationType]);
                     }
                 }
             }
@@ -69,7 +77,7 @@ namespace Allors.Database.Adapters.Sql
                     if (!relationType.ExistExclusiveDatabaseClasses)
                     {
                         this.Append(" LEFT OUTER JOIN " + this.Mapping.TableNameForObjects + " " + this.GetJoinName(role));
-                        this.Append(" ON " + this.GetJoinName(role) + "." + Mapping.ColumnNameForObject + "=" + role.SingularFullName + "_R." + Mapping.ColumnNameForRole + " ");
+                        this.Append(" ON " + this.GetJoinName(role) + "." + Mapping.ColumnNameForObject + "=" + this.GetAlias(role) + "." + Mapping.ColumnNameForRole + " ");
                     }
                     else
                     {
@@ -86,13 +94,13 @@ namespace Allors.Database.Adapters.Sql
 
                 if ((association.IsMany && role.IsMany) || !relationType.ExistExclusiveDatabaseClasses)
                 {
-                    this.Append(" LEFT OUTER JOIN " + this.Mapping.TableNameForRelationByRelationType[relationType] + " " + association.SingularFullName + "_A");
-                    this.Append(" ON " + alias + "." + Mapping.ColumnNameForObject + "=" + association.SingularFullName + "_A." + Mapping.ColumnNameForRole);
+                    this.Append(" LEFT OUTER JOIN " + this.Mapping.TableNameForRelationByRelationType[relationType] + " " + this.GetAlias(association));
+                    this.Append(" ON " + alias + "." + Mapping.ColumnNameForObject + "=" + this.GetAlias(association) + "." + Mapping.ColumnNameForRole);
                 }
                 else if (!role.IsMany)
                 {
-                    this.Append(" LEFT OUTER JOIN " + this.Mapping.TableNameForObjectByClass[association.ObjectType.ExclusiveDatabaseClass] + " " + association.SingularFullName + "_A");
-                    this.Append(" ON " + alias + "." + Mapping.ColumnNameForObject + "=" + association.SingularFullName + "_A." + this.Mapping.ColumnNameByRelationType[relationType]);
+                    this.Append(" LEFT OUTER JOIN " + this.Mapping.TableNameForObjectByClass[association.ObjectType.ExclusiveDatabaseClass] + " " + this.GetAlias(association));
+                    this.Append(" ON " + alias + "." + Mapping.ColumnNameForObject + "=" + this.GetAlias(association) + "." + this.Mapping.ColumnNameByRelationType[relationType]);
                 }
             }
 
@@ -106,12 +114,12 @@ namespace Allors.Database.Adapters.Sql
                     if (!relationType.ExistExclusiveDatabaseClasses)
                     {
                         this.Append(" LEFT OUTER JOIN " + this.Mapping.TableNameForObjects + " " + this.GetJoinName(association));
-                        this.Append(" ON " + this.GetJoinName(association) + "." + Mapping.ColumnNameForObject + "=" + association.SingularFullName + "_A." + Mapping.ColumnNameForAssociation + " ");
+                        this.Append(" ON " + this.GetJoinName(association) + "." + Mapping.ColumnNameForObject + "=" + this.GetAlias(association) + "." + Mapping.ColumnNameForAssociation + " ");
                     }
                     else if (role.IsOne)
                     {
                         this.Append(" LEFT OUTER JOIN " + this.Mapping.TableNameForObjects + " " + this.GetJoinName(association));
-                        this.Append(" ON " + this.GetJoinName(association) + "." + Mapping.ColumnNameForObject + "=" + association.SingularFullName + "_A." + Mapping.ColumnNameForObject + " ");
+                        this.Append(" ON " + this.GetJoinName(association) + "." + Mapping.ColumnNameForObject + "=" + this.GetAlias(association) + "." + Mapping.ColumnNameForObject + " ");
                     }
                     else
                     {
@@ -167,9 +175,17 @@ namespace Allors.Database.Adapters.Sql
 
         internal abstract ExtentStatement CreateChild(SqlExtent extent, IRoleType role);
 
-        internal string GetJoinName(IAssociationType association) => association.SingularFullName + "_AC";
+        // The alias of the join that gives the associations of the objects of this statement.
+        internal string GetAlias(IAssociationType association) => this.GetOrCreateAlias(ref this.aliasByAssociation, association);
 
-        internal string GetJoinName(IRoleType role) => role.SingularFullName + "_RC";
+        // The alias of the join that gives the roles of the objects of this statement.
+        internal string GetAlias(IRoleType role) => this.GetOrCreateAlias(ref this.aliasByRole, role);
+
+        // The alias of the join that gives the class of the association.
+        internal string GetJoinName(IAssociationType association) => this.GetOrCreateAlias(ref this.aliasByAssociationInstance, association);
+
+        // The alias of the join that gives the class of the role.
+        internal string GetJoinName(IRoleType role) => this.GetOrCreateAlias(ref this.aliasByRoleInstance, role);
 
         internal void UseAssociation(IAssociationType association)
         {
@@ -201,6 +217,18 @@ namespace Allors.Database.Adapters.Sql
             {
                 this.referenceRoleInstances.Add(role);
             }
+        }
+
+        private string GetOrCreateAlias<T>(ref Dictionary<T, string> aliasByType, T type)
+        {
+            aliasByType ??= new Dictionary<T, string>();
+            if (!aliasByType.TryGetValue(type, out var alias))
+            {
+                alias = this.CreateAlias();
+                aliasByType.Add(type, alias);
+            }
+
+            return alias;
         }
     }
 }
