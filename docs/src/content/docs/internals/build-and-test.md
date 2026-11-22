@@ -78,7 +78,7 @@ also run `Install` first; run `./build.sh Install` once before you run
 | `CiDotnetCoreWorkspaceRemoteJsonSystemTextTest`, `CiDotnetCoreWorkspaceRemoteJsonNewtonsoftTest` | The .NET workspace on the Remote adapter against the Core test server, with System.Text.Json and with Newtonsoft.Json | A configuration root |
 | `CiTypescriptWorkspaceTest` | The TypeScript workspace libraries that need no server | Nothing |
 | `CiTypescriptWorkspaceAdaptersJsonTest` | The TypeScript workspace against the Core test server | A configuration root |
-| `CiSampleTest` | The tests of the sample application in `sample/`, on the Memory adapter | Nothing |
+| `CiSampleTest` | The tests of the sample application in `sample/`: those of its domain on the Memory adapter, and those of its command-line tool on the Snapshot adapter | Nothing |
 
 A suite that needs a configuration root takes it as [Choose the adapter](#choose-the-adapter)
 describes: `config/snapshot` unless you name another template. The adapter suites read no
