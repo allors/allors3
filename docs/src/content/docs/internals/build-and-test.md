@@ -99,6 +99,9 @@ that an application has to define, or a class that it has to provide, fails the 
 sample. A rule of Core that an application has to add to its list of rules does not: the suite
 notices only when a test of the sample needs that rule. The suite counts for `CI result`, so a
 change to Core that breaks the sample merges together with the change that the sample needs.
+[Create an application](../create-an-application.md) tells users how to start from the sample, so
+a change to the sample's projects or to the files that it copies from Core can change that guide
+as well.
 
 ## The TypeScript workspace
 

@@ -126,6 +126,8 @@ Setup and security have hooks with the same kind of name, such as `CoreOnPreSetu
 `CustomOnPreSetup`. They are not methods of the model, and they run the other way round. In the
 platform's repository the files in `dotnet/Core/Database/Domain/Virtual` call them one after the
 other, the hook of Core first. An application writes such files for its own chain of domains.
+[Populations](populations.md#a-new-population) describes the steps of the setup, and
+[Security](security.md#permissions) the security setup.
 
 ## How an application includes Core
 
@@ -150,6 +152,8 @@ repository, the meta, the domain, the configuration, the commands and the server
 them includes the folder `Core` of the matching Core project. A domain between Core and the
 application's own domain follows the same rule: its inheritable code lives in folders named after
 it, and the projects of the application include those folders as well.
+[Create an application](create-an-application.md) sets up such projects from the sample
+application.
 
 ## Custom in the platform's repository
 

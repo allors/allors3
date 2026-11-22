@@ -119,7 +119,10 @@ of serializer does not by itself establish a new name for the surrounding adapte
 
 | Term | Definition and usage |
 | --- | --- |
-| Population | The objects and relations that a database holds. `save` writes a population to a file and `load` reads one. |
+| Population | The objects and relations that a database holds. `save` writes a population to a file and `load` reads one; see [Populations](populations.md). |
+| Setup | The run that builds a new population, `Setup.Apply()`; see [A new population](populations.md#a-new-population). |
+| Upgrade | Loading a population that an earlier version saved and bringing it up to date with the new version; see [Upgrade a population](upgrade-a-population.md). |
+| Command-line tool | The program of an application that creates, fills, saves, loads and upgrades its database; see [The command-line tool](command-line-tool.md). |
 | Configuration root | The folder that `ALLORS_CONFIG_ROOT` names; see [Configuration](configuration.md#the-configuration-root). |
 | Template | A configuration root that the repository provides under `config/`, for development and testing. |
 | Admin connection | A connection in `ALLORS_SQLCLIENT` or `ALLORS_NPGSQL` that serves database management only; see [Configuration](configuration.md#admin-connections). |
