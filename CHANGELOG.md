@@ -426,6 +426,10 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   keeps 63 bytes of an alias: there `AddInstanceof` failed with `42712` for a role with a full name
   of 61 characters or more whose relation has a table of its own, and for the association of such
   a role (#418, #422, #423).
+- On the SqlClient and Npgsql adapters `AddContains` gives the table in its `EXISTS` an alias of its
+  own. A table with the name of an alias of the statement, such as the table `alias2` of a class
+  `Alias2`, was read in the place of the extent that had that alias, and the filter matched no
+  object, without an error (#423).
 
 ### Security
 
