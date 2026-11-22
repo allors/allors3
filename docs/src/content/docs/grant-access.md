@@ -134,10 +134,13 @@ public partial class SecurityTokens
 }
 ```
 
-To give access to some objects only, create a `SecurityToken` of your own, add the grant to it
-and add the security token to the role `SecurityTokens` of those objects. Those objects then no
-longer use the default security token; add it to them as well when its grants should keep
-applying.
+To restrict the Workers grant to selected objects, create a `SecurityToken` and put the grant
+only on that token. Use it in both `CustomSetup` and `Upgrade.Execute()`, where the sample adds
+the grant to the default security token. If the default security token already holds the grant
+in an existing population, call `RemoveGrant(workers)` on that token during the upgrade.
+
+Add the new token to the role `SecurityTokens` of the selected objects. Add the default security
+token to those objects too if they should keep its other grants.
 
 ## 5. Give the `Role` its permissions
 
@@ -166,8 +169,8 @@ private void CustomOnPostSetup()
 
 | Method | Adds to the `Role` |
 | --- | --- |
-| `Grant(roleId, class, operations)` | For each operation, the permissions of every relation type of the roles of the class, or of every method type for `Execute`. |
-| `Grant(roleId, class, roleType or methodType, operations)` | The permission of that one role type or method type. |
+| `Grant(roleId, class, operations)` | For `Read` or `Write`, the permissions for every role of the class with `Origin.Database`. For `Execute`, the permissions for every method type of the class. |
+| `Grant(roleId, class, roleType or methodType, operations)` | The permission for that role type or method type when the permission exists. |
 | `GrantExcept(roleId, class, excepts, operations)` | The permissions of the first form, without those of the role types and method types in `excepts`. |
 | `GrantAdministrator`, `GrantCreator`, `GrantGuest`, `GrantGuestCreator` and `GrantOwner` | The first form, for the `Role` of Core with that name. |
 

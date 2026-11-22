@@ -17,11 +17,16 @@ with the one in a file. This page explains these steps and what an application c
 
 ## Initialization
 
-`IDatabase.Init()` empties a database: afterwards it holds no objects, and the numbering of the
-objects starts again. On SQL Server and PostgreSQL it also checks the tables against the model.
-When every table of the model is there and fits it, `Init()` empties them. Otherwise it drops the
-tables of the model and creates them again. Tables that the model no longer has are left as they
-are.
+`IDatabase.Init()` empties a database and restarts object numbering. On SQL Server and PostgreSQL
+it checks the tables against the model. On SQL Server it also checks the user-defined table types
+that the adapter requires. If these checks pass, `Init()` empties the model's tables. If a required
+table or table type is missing or invalid, it drops and recreates the model's tables. Tables that
+the model no longer has are left as they are.
+
+On SQL Server the rebuild first drops every user-defined table type in the configured schema,
+including any that the application created. If a stored procedure uses one of these types, SQL
+Server refuses to drop it and the rebuild stops before it reaches the tables. After rebuilding the
+tables, the adapter creates only the table types it requires.
 
 ## A new population
 

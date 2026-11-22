@@ -41,7 +41,7 @@ role `Role`. An arrow shows the role, the forward end of the relation; the
 | --- | --- |
 | `User` | An interface for someone who signs in. An application declares a class that implements it; in the sample application that is `Person`. |
 | `UserGroup` | A named group of users, in its role `Members`. |
-| `Permission` | The permission for one operation on the objects of one class. The interface has four classes: a `CreatePermission` for each class, a `ReadPermission` and a `WritePermission` for each relation type of the roles of a class, and an `ExecutePermission` for each method type of a class. |
+| `Permission` | The permission for one operation on the objects of one class. Each class has one `CreatePermission`. For that class, each role with `Origin.Database` has a `ReadPermission` and a `WritePermission`, and each method has an `ExecutePermission`. |
 | `Role` | A named set of permissions, in its role `Permissions`. |
 | `Grant` | Gives the permissions of its `Role` to the users in its role `Subjects` and to the members of the user groups in its role `SubjectGroups`. |
 | `SecurityToken` | A set of grants, in its role `Grants`, for the objects that refer to it. |
@@ -107,6 +107,9 @@ The `Permission` objects are data in the database. Core's service `IPermissions`
 its method `Sync` creates the permissions that the model calls for and deletes those whose class,
 relation type or method type the model no longer has.
 
+A role with `Origin.Session` exists only in a workspace session. The session reads and writes
+it without consulting a database permission.
+
 Core's setup does not call `Sync`. After Core's setup a database therefore has no permissions,
 and the security service of the database, `ISecurity`, cannot be created: asking for it throws
 `KeyNotFoundException`. Issue [#419](https://github.com/allors/allors3/issues/419) records this.
@@ -114,11 +117,12 @@ An application calls `Sync` in its own setup;
 [Grant access](grant-access.md#1-create-the-permissions) shows where.
 
 A `Role` gets its permissions from the security setup, `Security.Apply()`, which the setup runs
-when `Config.SetupSecurity` is true. Core's part of the hook `OnPreSetup` removes the permissions
-of every `Role`. Everything that runs after it can grant them again, through the methods `Grant`
-of `Security`: the parts of the other domains in `OnPreSetup`, the parts `CoreSecure` and
-`CustomSecure` of the objects classes, and the hook `OnPostSetup`. A permission that code gives a
-`Role` anywhere else is gone after the next `Security.Apply()`.
+when `Config.SetupSecurity` is true. Core's part of the hook `OnPreSetup` clears `Permissions`
+and `Revocations` on every `Role` object. The methods `Grant` of `Security` can give permissions
+again in the parts of the other domains in `OnPreSetup`, in `CoreSecure` or `CustomSecure` of an
+objects class, or in the hook `OnPostSetup`. If the application uses revocations to restrict
+access to a `Role` object itself, it must also put them back after Core's hook. The sample's
+upgrade runs this security setup on the loaded population.
 
 ## What Core's setup creates
 
