@@ -378,6 +378,16 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   workspace meta of every workspace of the test domain; `AllorsUserStore.CreateAsync` no longer fails
   for a user created with a password hash, the store logs the exceptions it turns into failed
   results, and the generated builder guard spells its message "One multiplicity".
+- The workspace fixes of the archived line of `main` from June and October 2026 (#87, #89, #90, #92
+  and #282), with its corrections of two tests (#93, #94). In the TypeScript workspace, removing an
+  object from a composites role with `Origin.Session`, or an item from such a one-to-many role,
+  removes it instead of adding it, and adding an item to such a one-to-many role records the
+  association as the item's association instead of the item itself. A `Binary` unit from a pull
+  keeps the base64 value that the server sent instead of being encoded a second time. A pull
+  compares the unit values of a locally edited object by value, the contents of a .NET binary and
+  the time of a TypeScript date, so an unchanged value that arrives as a new instance no longer
+  counts as a remote change that refuses the merge. The tests `pushShouldUpdateId` and
+  `deniedPermissions` now assert the id before and after the push and the write access.
 - `AllorsUserStore.HasPasswordAsync` answers whether the user has a password hash, a fix from the
   security hardening of the archived line of `main` (#255). It returned the inverse, so the account
   pages of ASP.NET Core Identity sent a user with a password to "set password" and a user without
