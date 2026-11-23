@@ -34,7 +34,6 @@ namespace Allors.Database.Protocol.Json
 
         [HttpPost]
         [Authorize]
-        [AllowAnonymous]
         public ActionResult<InvokeResponse> Post(InvokeRequest invokeRequest, CancellationToken cancellationToken) =>
             this.PolicyService.InvokePolicy.Execute(
                 () =>

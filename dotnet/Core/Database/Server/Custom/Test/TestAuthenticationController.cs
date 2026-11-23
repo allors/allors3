@@ -8,25 +8,24 @@ namespace Allors.Server
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
     using Protocol.Json.Auth;
     using Security;
 
     public class TestAuthenticationController : Controller
     {
-        public TestAuthenticationController(UserManager<IdentityUser> userManager, ILogger<AuthenticationController> logger, IConfiguration config)
+        public TestAuthenticationController(UserManager<IdentityUser> userManager, ILogger<AuthenticationController> logger, JwtTokens tokens)
         {
             this.UserManager = userManager;
             this.Logger = logger;
-            this.Configuration = config;
+            this.Tokens = tokens;
         }
 
         public UserManager<IdentityUser> UserManager { get; }
 
         public ILogger Logger { get; }
 
-        public IConfiguration Configuration { get; }
+        private JwtTokens Tokens { get; }
 
         [HttpPost]
         public async Task<IActionResult> Token([FromBody]AuthenticationTokenRequest request)
@@ -37,7 +36,7 @@ namespace Allors.Server
 
                 if (user != null)
                 {
-                    var token = user.CreateToken(this.Configuration);
+                    var token = this.Tokens.CreateToken(user);
                     var response = new AuthenticationTokenResponse
                     {
                         a = true,

@@ -143,8 +143,9 @@ jobs:
 
   # The sample application in sample/: an application that includes the folders Core of the platform by
   # path and never the folders Custom. The leg merges the resources, generates, builds and runs the
-  # sample's tests: the domain tests on the Memory adapter, and the tests of its command-line tool on the
-  # Snapshot adapter, which they set in the environment. It needs no database server.
+  # sample's tests: the domain tests on the Memory adapter, the tests of its command-line tool on the
+  # Snapshot adapter, which they set in the environment, and the tests of its server, which run the server
+  # in their own process on the Snapshot adapter. It needs no database server.
   sample:
     needs: changes
     if: ${{ !cancelled() && needs.changes.outputs.platform != 'false' }}

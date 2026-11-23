@@ -32,7 +32,8 @@ partial class Build
         });
 
     // The domain tests run on the Memory adapter. The tests of the command-line tool set the adapter Snapshot
-    // in the environment, so neither needs a database server.
+    // in the environment, and the tests of the server give it to the server in its settings, so none needs a
+    // database server.
     private Target SampleTest => _ => _
         .DependsOn(SampleGenerate)
         .Executes(() =>
@@ -44,6 +45,10 @@ partial class Build
             DotNetTest(s => s
                 .SetProjectFile(Paths.SampleDatabaseCommandsTests)
                 .AddLoggers("trx;LogFileName=SampleCommands.trx")
+                .SetResultsDirectory(Paths.ArtifactsTests));
+            DotNetTest(s => s
+                .SetProjectFile(Paths.SampleDatabaseServerTests)
+                .AddLoggers("trx;LogFileName=SampleServer.trx")
                 .SetResultsDirectory(Paths.ArtifactsTests));
         });
 }

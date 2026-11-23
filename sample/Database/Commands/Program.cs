@@ -6,6 +6,7 @@
 namespace Commands
 {
     using System;
+    using System.Linq;
     using Allors.Database;
     using Allors.Database.Adapters;
     using Allors.Database.Configuration;
@@ -19,11 +20,12 @@ namespace Commands
     using User = Allors.Database.Domain.User;
 
     // The commands save, load and index are Core's, and ask this class for the configuration and the
-    // database. The commands init, populate and upgrade are the sample's own, in Custom.
+    // database. The commands init, populate, user and upgrade are the sample's own, in Custom.
     [Command(Description = "The commands of the sample application")]
     [Subcommand(
         typeof(Init),
         typeof(Populate),
+        typeof(AddUser),
         typeof(Save),
         typeof(Load),
         typeof(Upgrade),
@@ -84,6 +86,14 @@ namespace Commands
                 var app = new CommandLineApplication<Program>();
                 app.Conventions.UseDefaultConventions();
                 return app.Execute(args);
+            }
+            catch (CommandParsingException) when (args.Contains("user"))
+            {
+                // The parser includes the rejected argument in its message, which can expose a password. An
+                // argument before the command user is rejected by the root command, so the check is on the
+                // arguments rather than on the command that rejected one.
+                LogManager.GetCurrentClassLogger().Error("Invalid user command arguments. See 'user --help' for the available options. Enter the password at the prompt or use --password-stdin.");
+                return ExitCode.Error;
             }
             catch (Exception e)
             {

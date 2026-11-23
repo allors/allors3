@@ -39,6 +39,14 @@ namespace Allors.Database.Domain
             return passwordService.VerifyHashedPassword(@this.UserName, @this.UserPasswordHash, clearTextPassword);
         }
 
+        public static void CoreOnBuild(this User @this, ObjectOnBuild method)
+        {
+            if (!@this.ExistUserLockoutEnabled)
+            {
+                @this.UserLockoutEnabled = true;
+            }
+        }
+
         public static void CoreOnPostBuild(this User @this, ObjectOnPostBuild method)
         {
             if (!@this.ExistOwnerGrant)

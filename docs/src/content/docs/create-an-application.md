@@ -1,6 +1,6 @@
 ---
 title: "Create an application"
-description: "Start an application in a repository of its own from the sample application: add the platform as a submodule, copy and point the projects, generate, test, and make the domain your own."
+description: "Start an application from the sample, generate and test its projects, sign in to the server, and make the domain your own."
 audience: "Users"
 kind: "How-to guide"
 status: "Current"
@@ -13,12 +13,12 @@ Use this guide to start an application in a repository of its own. It assumes
 [Domains](domains.md), which explains how an application extends Core and includes its source.
 
 The starting point is the [sample application](../../../../sample/) in the platform's
-repository. Its projects are those of an application: the model, the database layers, a
-command-line tool and their tests. The platform's CI generates, builds and tests the sample for
+repository. It includes the model, the database layers, a command-line tool, a server and
+their tests. The platform's CI generates, builds and tests the sample for
 every pull request that changes more than the documentation, so the sample follows the platform.
 
-You need Git, the .NET SDK, version 10, and a POSIX shell with Perl, as on Linux and macOS: the
-commands below are written for one.
+To copy, generate and test the application, you need Git, the .NET 10 SDK and a POSIX shell with
+Perl. The optional sign-in walkthrough uses PowerShell and SQL Server LocalDB on Windows.
 
 ## 1. Create the repository and add the platform
 
@@ -52,7 +52,8 @@ cp -R allors/sample/Repository allors/sample/Database .
 | `Database/Configuration` | The services of the database. |
 | `Database/Generate` | The generator of the classes of the domain. |
 | `Database/Commands` | The [command-line tool](command-line-tool.md). |
-| `Database/Domain.Tests` and `Database/Commands.Tests` | The tests. |
+| `Database/Server` | The HTTP server that hosts Core's sign-in endpoint and JSON API for the application's domain. |
+| `Database/Domain.Tests`, `Database/Commands.Tests` and `Database/Server.Tests` | The tests of the domain, the tool and the HTTP API. |
 
 ## 3. Point the projects at the submodule
 
@@ -112,11 +113,70 @@ Generate again after every change to the model. In the platform's repository the
 ```sh
 dotnet test Database/Domain.Tests
 dotnet test Database/Commands.Tests
+dotnet test Database/Server.Tests
 ```
 
-The tests of the domain run on the Memory adapter, and those of the command-line tool on the
-Snapshot adapter, which they set themselves, so neither needs a database server. All 8 tests of
-the domain and all 7 of the command-line tool pass.
+The domain tests use the Memory adapter. The command-line and server tests use Snapshot. The
+server tests start the application in the test process and send HTTP requests to it. All three
+suites run without a database server.
+
+### Run the server and sign in
+
+The tool that creates the user and the server that signs the user in must share a database.
+This example uses PowerShell 7.2 or later and SQL Server LocalDB on Windows. Run it from the
+application root after generating the model. For SQL Server or PostgreSQL elsewhere, set the
+adapter, application connection and admin connection for that server as described in
+[Configuration](configuration.md#admin-connections).
+
+Choose a fresh database for this walkthrough. `init` drops and recreates the named database,
+and `populate` replaces its contents. The following commands choose a new name, populate the
+sample's user groups and create a member of `Workers`. Enter a password when the tool prompts.
+
+```powershell
+$database = "allors_sample_" + [guid]::NewGuid().ToString("N")
+$instance = 'Server=(localdb)\MSSQLLocalDB;Integrated Security=true;TrustServerCertificate=true'
+$env:adapter = 'sqlclient'
+$env:ALLORS_SQLCLIENT = "$instance;Database=master"
+$env:ConnectionStrings__DefaultConnection = "$instance;Database=$database"
+
+dotnet run --project Database/Commands -- init
+dotnet run --project Database/Commands -- populate
+dotnet run --project Database/Commands -- user --name worker@example.com --group Workers
+```
+
+In the same terminal, generate a signing key for this local run and start the server. Leave it
+running while you use the second terminal.
+
+```powershell
+$env:JwtToken__Key = [Convert]::ToHexString([Security.Cryptography.RandomNumberGenerator]::GetBytes(32))
+dotnet run --no-launch-profile --project Database/Server -- --urls http://localhost:5080
+```
+
+Open a second PowerShell terminal. Sign in with the password you entered for the worker, then
+use the returned bearer token to sync the worker's own `Person`. The sign-in response holds
+the id of the user in `u` and the token in `t`. The sync request takes a list of numeric object
+ids.
+
+```powershell
+$api = 'http://localhost:5080/allors'
+$credentials = @{
+    l = 'worker@example.com'
+    p = Read-Host 'Worker password' -MaskInput
+}
+$login = Invoke-RestMethod -Method Post -Uri "$api/Authentication/Token" `
+    -ContentType 'application/json' -Body ($credentials | ConvertTo-Json)
+if (-not $login.a) { throw 'Sign-in failed. Check the worker name and password.' }
+
+$headers = @{ Authorization = "Bearer $($login.t)" }
+$body = @{ o = @([long]$login.u) } | ConvertTo-Json
+$sync = Invoke-RestMethod -Method Post -Uri "$api/sync" -Headers $headers `
+    -ContentType 'application/json' -Body $body
+$sync.o | Select-Object -ExpandProperty i
+```
+
+The printed id should match `$login.u`. A missing or invalid bearer token on `/allors/sync`
+returns HTTP 401. Stop the server with Ctrl+C in its terminal. To accept another host name,
+include it in the server's [`AllowedHosts` setting](configuration.md#settings).
 
 ## 7. Make the domain your own
 

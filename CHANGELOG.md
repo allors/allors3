@@ -455,6 +455,18 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   so recording a failed sign-in cannot undo an intervening password change.
 - A production error response carries a generic message instead of the exception's message; the
   development environment keeps the message and the stack trace (#60).
+- The JSON API requires a signed-in user. A request to `access`, `invoke`, `permission`, `pull`,
+  `push` or `sync` without a valid bearer token receives HTTP 401, where a missing or expired token
+  ended in HTTP 500 before. The sign-in endpoint stays open (#434).
+- `AddAllorsJwtBearer`, which the Core test server and the sample server call after
+  `AddAllorsStores`, validates a bearer token with the settings with which the sign-in endpoint
+  signs it: the UTF-8 bytes of `JwtToken:Key`, the issuer of `JwtToken:Issuer`, and the audience of
+  `JwtToken:Audience` or, without it, the issuer, each when it has a value. The Core test server
+  validated with the ASCII bytes of the key and checked neither the issuer nor the audience. A
+  server stops at startup when the key has fewer than 32 UTF-8 bytes, the minimum for HS256 (#434).
+- A user that is built without a value for `UserLockoutEnabled` gets lockout enabled, so the lockout
+  of a failed sign-in also applies to the users that an application builds itself. Before, it
+  applied only to users that Identity created or whose role was set (#434).
 
 ### Removed
 

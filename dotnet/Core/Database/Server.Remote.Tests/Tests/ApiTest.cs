@@ -60,12 +60,11 @@ namespace Allors.Server.Tests
         }
 
         /// <summary>
-        /// Creates a user on the server: a person with the user name, with the password when one is given,
-        /// and with lockout enabled when asked.
+        /// Creates a person on the server with the given user name and optional password.
         /// </summary>
-        protected void CreateUser(string userName, string password = null, bool lockoutEnabled = false)
+        protected void CreateUser(string userName, string password = null)
         {
-            var query = $"{CreateUserUrl}?userName={Uri.EscapeDataString(userName)}&lockoutEnabled={lockoutEnabled}";
+            var query = $"{CreateUserUrl}?userName={Uri.EscapeDataString(userName)}";
             if (password != null)
             {
                 query += $"&password={Uri.EscapeDataString(password)}";

@@ -45,7 +45,7 @@ The following pages are written for users. Maintainers read them too.
 | --- | --- | --- | --- |
 | [Getting started](getting-started.md) | Tutorial | Current | Clone the platform, run one of its domain tests and write tests of your own on the test domain: objects, a relation, a derived value and an extent, without a database server. |
 | [Domains](domains.md) | Explanation | Current | How the domain of an application extends Core, what it inherits, the order in which the parts of a method run, and how an application includes Core's code. |
-| [Create an application](create-an-application.md) | How-to guide | Current | Start an application in a repository of its own from the sample application: the platform as a submodule, the projects, generating, testing, and the files that follow the platform. |
+| [Create an application](create-an-application.md) | How-to guide | Current | Start an application from the sample, generate and test its projects, and sign in to its server. |
 | [The model](model.md) | Reference | Current | What a repository project declares: classes, interfaces, units, relations and their multiplicity, methods, ids, and the attributes with their defaults. |
 | [Objects and relations](objects-and-relations.md) | Explanation | Current | Creating, relating and deleting objects in the database, what the platform maintains at both ends of a relation, transactions and change sets. |
 | [Extents](extents.md) | How-to guide | Current | Query the objects of a class or an interface: filters, relations in a filter, sorting, combining extents and prefetching. |

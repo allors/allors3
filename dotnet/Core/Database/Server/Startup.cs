@@ -7,14 +7,12 @@ namespace Allors.Server
 {
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
     using Database.Adapters;
     using Database.Configuration;
     using Database.Configuration.Derivations.Default;
     using Database.Domain;
     using Database.Meta;
     using JSNLog;
-    using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
@@ -23,7 +21,6 @@ namespace Allors.Server
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
-    using Microsoft.IdentityModel.Tokens;
     using Security;
     using Services;
     using ObjectFactory = Database.ObjectFactory;
@@ -69,17 +66,8 @@ namespace Allors.Server
                           .AllowCredentials()));
 
             services.AddDefaultIdentity<IdentityUser>()
-                .AddAllorsStores();
-
-            services.AddAuthentication(option => option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(this.Configuration.GetSection("JwtToken:Key").Value)),
-                        ValidateIssuer = false,
-                        ValidateAudience = false,
-                    });
+                .AddAllorsStores()
+                .AddAllorsJwtBearer(this.Configuration);
 
             services.AddResponseCaching();
             services.AddControllersWithViews();

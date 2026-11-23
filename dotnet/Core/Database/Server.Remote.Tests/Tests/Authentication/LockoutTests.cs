@@ -12,7 +12,7 @@ namespace Allors.Server.Tests
     [Collection("Api")]
     public class LockoutTests : ApiTest
     {
-        public LockoutTests() => this.CreateUser("Jane", "p@ssw0rd", lockoutEnabled: true);
+        public LockoutTests() => this.CreateUser("Jane", "p@ssw0rd");
 
         [Fact]
         public async void LockedOutAfterFailedAttempts()
