@@ -19,11 +19,12 @@ namespace Commands
     using User = Allors.Database.Domain.User;
 
     // The commands save, load and index are Core's, and ask this class for the configuration and the
-    // database. The commands init, populate and upgrade are the sample's own, in Custom.
+    // database. The commands init, populate, user and upgrade are the sample's own, in Custom.
     [Command(Description = "The commands of the sample application")]
     [Subcommand(
         typeof(Init),
         typeof(Populate),
+        typeof(AddUser),
         typeof(Save),
         typeof(Load),
         typeof(Upgrade),
