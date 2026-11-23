@@ -170,3 +170,20 @@ test('addCompositesRoleSessionOne2ManyReassigns', async () => {
   expect(c1d.SessionC1One2Manies).toEqual([c1b]);
   expect(c1b.C1WhereSessionC1One2Many).toBe(c1d);
 });
+
+test('setUnitRoleSessionToNullWithoutValueIsNoChange', async () => {
+  const { workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const c1a = session.create<C1>(m.C1);
+  session.checkpoint();
+
+  c1a.strategy.setUnitRole(m.C1.SessionAllorsString, null);
+
+  // A session role without a value stays without one, so the next checkpoint
+  // must not report it as changed.
+  const changes = session.checkpoint();
+  expect(changes.associationsByRoleType.has(m.C1.SessionAllorsString)).toBe(
+    false
+  );
+});
