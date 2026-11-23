@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
         {
         }
 
-        // Core grants no permissions: an application gives each security role what its members may do.
+        // Core grants no permissions: an application gives each Role what its members may do.
         private void CustomOnPostSetup()
         {
             var m = this.transaction.Database.Services.Get<MetaPopulation>();

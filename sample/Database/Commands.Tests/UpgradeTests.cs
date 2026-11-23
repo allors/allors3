@@ -86,7 +86,7 @@ namespace Commands.Tests
                 var jane = new PersonBuilder(transaction).WithFirstName("Jane").WithUserName("jane@example.com").Build();
                 new WorkItemBuilder(transaction).WithTitle("Write the rule").WithAssignee(jane).Build();
 
-                // An earlier version of the sample had no permissions, and neither the security role Worker, the
+                // An earlier version of the sample had no permissions, and neither the Role Worker, the
                 // user group Workers nor their grant on the default security token.
                 new Grants(transaction).Workers.Strategy.Delete();
                 new UserGroups(transaction).Workers.Strategy.Delete();
@@ -306,7 +306,7 @@ namespace Commands.Tests
             Objects(population).Add(new XElement("ot", new XAttribute("i", classId), string.Join(",", moved)));
         }
 
-        // The setup gives the security role Worker the permission to mark a work item done, and not to change its title.
+        // The setup gives the Role Worker the permission to mark a work item done, and not to change its title.
         private static void AssertAWorkerCanMarkTheWorkItemDoneAndNotChangeItsTitle(IDatabase database, long workerId, long workItemId)
         {
             var m = database.Services.Get<MetaPopulation>();

@@ -42,14 +42,14 @@ A class or an interface is a **composite**: a type with relations. The eight uni
 
 | Unit | C# type in a declaration |
 | --- | --- |
-| Binary | `byte[]` |
-| Boolean | `bool` |
-| DateTime | `DateTime` |
-| Decimal | `decimal` |
-| Float | `double` |
-| Integer | `int` |
-| String | `string` |
-| Unique | `Guid` |
+| `Binary` | `byte[]` |
+| `Boolean` | `bool` |
+| `DateTime` | `DateTime` |
+| `Decimal` | `decimal` |
+| `Float` | `double` |
+| `Integer` | `int` |
+| `String` | `string` |
+| `Unique` | `Guid` |
 
 C# requires a class to implement the members of its interfaces. A class therefore states the
 properties and the methods of its interfaces again, by convention in regions named

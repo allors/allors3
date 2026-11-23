@@ -1,6 +1,6 @@
 ---
 title: "Terminology"
-description: "Agreed names for the platform, domains, the model, relations, objects, derivations, adapters, populations and configuration."
+description: "Agreed names for the platform, domains, the model, relations, objects, derivations, security, adapters, populations and configuration."
 audience: "Users and maintainers"
 kind: "Reference"
 status: "Current"
@@ -10,7 +10,9 @@ status: "Current"
 
 Use these names consistently when discussing Allors3. This page records the shared vocabulary and
 links to the pages that own the detailed definitions. Exact API identifiers keep their declared
-spelling and capitalization.
+spelling and capitalization. A name that the model declares, such as a class, a unit or a role,
+is written in code formatting; the
+[writing guide](internals/writing-documentation.md#use-oxford-english) gives the rule.
 
 ## The platform
 
@@ -39,7 +41,7 @@ spelling and capitalization.
 | --- | --- |
 | Model | The classes, interfaces, relations and methods that the repository projects of an application declare; see [The model](model.md). |
 | Class, interface | The two kinds of composite, a type that has relations. An object is an instance of a class; an interface declares relations and methods for the classes that implement it. |
-| Unit | One of the eight types of a value that the platform defines, such as String and Integer; see [Types](model.md#types). |
+| Unit | One of the eight types of a value that the platform defines, such as `String` and `Integer`; see [Types](model.md#types). |
 | Multiplicity | How many objects stand at each end of a relation: `OneToOne`, `OneToMany`, `ManyToOne` or `ManyToMany`, with the association named first; see [Multiplicity](model.md#multiplicity). |
 | Workspace | The engine in which a client works with objects, in sessions. A workspace has a name, and the model says which classes, relations and methods the workspaces of each name can use: `[Workspace]` on a declaration names them, and `Default` is the name that it uses when it is given none. Qualify the [workspace adapter](#adapters), which is an implementation of the engine. |
 
@@ -52,8 +54,9 @@ platform can maintain both ends.
 In prose, use role and association for these specific ends. Preserve identifiers such as
 `IRoleType` and `IAssociationType` when referring to code. A generic UML association describes a
 relationship; it does not by itself identify the Allors inverse end. Label that distinction when
-a class diagram uses both meanings. A role of Core's authorization, the class `Role`, has a
-different meaning; qualify it where the context could be ambiguous.
+a class diagram uses both meanings. Core's authorization has a class named `Role`, which is a set
+of permissions: in code formatting `Role` is always that class, and a role in plain text is the
+end of a relation. [Security](#security) lists the names of authorization.
 
 A **unit role** holds a value, and a **composite role** holds an object or several objects. Use
 role type, association type and relation type for the metadata of a relation, such as
@@ -81,6 +84,23 @@ role type, association type and relation type for the metadata of a relation, su
 | Validation | The errors that a derivation reports, an `IValidation`. |
 | Derived role | A role that is declared with `[Derived]`: clients cannot write it, and code in the database maintains it, usually a rule. |
 
+## Security
+
+The names of Core's authorization are the names of its types; [Security](security.md) explains
+how they decide access. Write them in code formatting when the text means the type or its
+objects.
+
+| Term | Definition and usage |
+| --- | --- |
+| `User` | Core's interface for someone who signs in. An application declares a class that implements it. A user in plain text is the person. |
+| `UserGroup` | A named group of users. |
+| `Role` | A named set of permissions. Write it in code formatting: a role in plain text is the end of a relation. |
+| `Permission` | The permission for one operation on the objects of one class: to create them, to read or write one of their roles, or to execute one of their methods. |
+| `Grant` | Gives the permissions of one `Role` to users and user groups. |
+| `SecurityToken` | A set of grants for the objects that refer to it. |
+| `Revocation` | A set of permissions that it denies to every user, for the objects that refer to it. |
+| Access control list | What one user may do with one object, an `IAccessControlList`. |
+
 ## Adapters
 
 **Adapter** is the established project term. Qualify it as a database adapter or a workspace
@@ -99,7 +119,10 @@ of serializer does not by itself establish a new name for the surrounding adapte
 
 | Term | Definition and usage |
 | --- | --- |
-| Population | The objects and relations that a database holds. `save` writes a population to a file and `load` reads one. |
+| Population | The objects and relations that a database holds. `save` writes a population to a file and `load` reads one; see [Populations](populations.md). |
+| Setup | The run that builds a new population, `Setup.Apply()`; see [A new population](populations.md#a-new-population). |
+| Upgrade | Loading a population that an earlier version saved and bringing it up to date with the new version; see [Upgrade a population](upgrade-a-population.md). |
+| Command-line tool | The program of an application that creates, fills, saves, loads and upgrades its database; see [The command-line tool](command-line-tool.md). |
 | Configuration root | The folder that `ALLORS_CONFIG_ROOT` names; see [Configuration](configuration.md#the-configuration-root). |
 | Template | A configuration root that the repository provides under `config/`, for development and testing. |
 | Admin connection | A connection in `ALLORS_SQLCLIENT` or `ALLORS_NPGSQL` that serves database management only; see [Configuration](configuration.md#admin-connections). |

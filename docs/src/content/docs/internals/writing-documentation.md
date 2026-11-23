@@ -92,6 +92,16 @@ Preserve exact code identifiers, configuration keys, commands, paths, product na
 quotations. Put identifiers in code formatting so readers can distinguish a name in the API
 from explanatory prose. A spelling correction is not permission to rename an API.
 
+Write a name that the model declares in code formatting, as declared: a class, an interface or a
+unit, such as `Person`, `User` or `String`, and a role or an association, such as the role
+`Employees` or `Organisation.Employees`. Keep a plural out of the code formatting, because the
+plural of a type can name another type or a role: `Grants` is an objects class and a role of
+`SecurityToken`. Write `Grant` objects, or each `Grant`, instead, and keep articles outside: a
+`Grant`. Ordinary words for what the objects stand for stay plain, as in "a person is an employee
+of one organization", and so do the names of objects, which are data, as in "the `Role` Worker".
+In particular, `Role` in code formatting is Core's class of authorization, and a role in plain
+text is the end of a relation.
+
 ## Keep terminology stable
 
 Use the agreed term for a concept throughout prose, code, diagrams and examples. Ordinary

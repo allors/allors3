@@ -26,12 +26,12 @@ programs and host the result. Maintainers change the platform.
 [Terminology](terminology.md) records the agreed names. These pages are for humans. Agents use the
 same technical content, following the instructions in `AGENTS.md`.
 
-The pages cover the boundary of the platform, domain inheritance, the model, objects and
-relations in the database, extents, derivations, configuration, the versions, and building and
-testing the repository. They do not yet describe security, the workspace, the JSON API,
-populations and the command-line tool, or the behaviour of each database adapter: for those, the
-source and its tests are the reference. [Getting started](getting-started.md) is the place to
-begin.
+The pages cover the boundary of the platform, domain inheritance, creating an application, the
+model, objects and relations in the database, extents, derivations, populations and their
+upgrade, security, the command-line tool, configuration, the versions, and building and testing
+the repository. They do not yet describe the workspace, the JSON API or the behaviour of each
+database adapter: for those, the source and its tests are the reference.
+[Getting started](getting-started.md) is the place to begin.
 
 Allors3 is licensed under the GNU Lesser General Public License, version 3; the `LICENSE` file of
 the repository holds the text. Ask questions and report problems through the
@@ -45,14 +45,20 @@ The following pages are written for users. Maintainers read them too.
 | --- | --- | --- | --- |
 | [Getting started](getting-started.md) | Tutorial | Current | Clone the platform, run one of its domain tests and write tests of your own on the test domain: objects, a relation, a derived value and an extent, without a database server. |
 | [Domains](domains.md) | Explanation | Current | How the domain of an application extends Core, what it inherits, the order in which the parts of a method run, and how an application includes Core's code. |
+| [Create an application](create-an-application.md) | How-to guide | Current | Start an application in a repository of its own from the sample application: the platform as a submodule, the projects, generating, testing, and the files that follow the platform. |
 | [The model](model.md) | Reference | Current | What a repository project declares: classes, interfaces, units, relations and their multiplicity, methods, ids, and the attributes with their defaults. |
 | [Objects and relations](objects-and-relations.md) | Explanation | Current | Creating, relating and deleting objects in the database, what the platform maintains at both ends of a relation, transactions and change sets. |
 | [Extents](extents.md) | How-to guide | Current | Query the objects of a class or an interface: filters, relations in a filter, sorting, combining extents and prefetching. |
 | [Derivations](derivations.md) | Explanation | Current | How a derivation runs rules in cycles until nothing changes, what patterns match, errors and required roles, and why to derive before a commit. |
 | [Write a rule](write-a-rule.md) | How-to guide | Current | Declare a derived role, write the rule that maintains it, register the rule and test it. |
+| [Populations](populations.md) | Explanation | Current | How a database gets its population: initialization, the setup and its hooks, saving and loading, and what a load does with a file of an earlier model. |
+| [Security](security.md) | Explanation | Current | How Core decides what a user may do with an object: users, user groups, permissions, grants, security tokens and revocations, what Core's setup creates, and where access is checked. |
+| [Grant access](grant-access.md) | How-to guide | Current | Create the permissions, a `Role`, a user group and a grant in the setup, give the `Role` its permissions and test what a user may do. |
+| [Upgrade a population](upgrade-a-population.md) | How-to guide | Current | Bring the population of an earlier version up to date: write the changes, declare what the new version removed, save, upgrade and test. |
+| [The command-line tool](command-line-tool.md) | Reference | Current | The commands of an application's command-line tool, with the sample's as the example: settings, commands, options, output, exit codes and adapters. |
 | [Configuration](configuration.md) | Reference | Current | The configuration root, the order of its files, environment variables, the settings, the templates and the admin connections. |
 | [Versions and branches](versions.md) | Reference | Current | The 3.2 line on `main`, the version branches, the archive branch, and where Base and Apps continue. |
-| [Terminology](terminology.md) | Reference | Current | Agreed names for the platform, domains, the model, relations, objects, derivations, adapters, populations and configuration. |
+| [Terminology](terminology.md) | Reference | Current | Agreed names for the platform, domains, the model, relations, objects, derivations, security, adapters, populations and configuration. |
 
 ## For maintainers
 

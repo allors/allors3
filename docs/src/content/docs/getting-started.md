@@ -18,7 +18,8 @@ platform's own tests use, with its classes `Person` and `Organisation`. The proj
 application of your own are a different subject, which
 [Domains](domains.md#how-an-application-includes-core) introduces. The
 [sample application](../../../../sample/) of the repository shows those projects for the database:
-a domain that extends Core, with two classes, a rule and its tests.
+a domain that extends Core, with two classes, a rule, its security, a command-line tool and their
+tests. [Create an application](create-an-application.md) starts an application from it.
 
 ## Before you start
 
@@ -211,4 +212,5 @@ Read on:
   and for transactions.
 - [Extents](extents.md) for queries.
 - [Derivations](derivations.md) and [Write a rule](write-a-rule.md) for rules.
-- [Domains](domains.md) for the way an application builds on Core.
+- [Domains](domains.md) for the way an application builds on Core, and
+  [Create an application](create-an-application.md) to start one.
