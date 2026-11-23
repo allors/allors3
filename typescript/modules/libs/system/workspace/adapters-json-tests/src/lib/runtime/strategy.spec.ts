@@ -120,3 +120,21 @@ test('removeCompositesRoleSession', async () => {
   // the bug routes it to sessionOriginState.addCompositesRole, leaving c1b in place.
   expect(c1a.SessionC1Many2Manies).toEqual([c1c]);
 });
+
+test('removeCompositesRoleSessionOne2Many', async () => {
+  const { workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const c1a = session.create<C1>(m.C1);
+  const c1b = session.create<C1>(m.C1);
+  const c1c = session.create<C1>(m.C1);
+
+  c1a.addSessionC1One2Many(c1b);
+  c1a.addSessionC1One2Many(c1c);
+
+  c1a.removeSessionC1One2Many(c1b);
+
+  // removeCompositesRoleOne2Many must remove the role from the association:
+  // the bug used ranges.add, leaving c1b in place.
+  expect(c1a.SessionC1One2Manies).toEqual([c1c]);
+});
