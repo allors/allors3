@@ -169,7 +169,7 @@ namespace Allors.Database.Adapters.Sql
                     var inIRelationType = inRole.RelationType;
                     if (inIRelationType.Multiplicity == Multiplicity.ManyToMany || !inIRelationType.ExistExclusiveDatabaseClasses)
                     {
-                        statement.Append("SELECT " + inRole.AssociationType.SingularFullName + "_A." + Mapping.ColumnNameForAssociation);
+                        statement.Append("SELECT " + statement.GetAlias(inRole.AssociationType) + "." + Mapping.ColumnNameForAssociation);
                     }
                     else if (inRole.IsMany)
                     {
@@ -177,7 +177,7 @@ namespace Allors.Database.Adapters.Sql
                     }
                     else
                     {
-                        statement.Append("SELECT " + inRole.AssociationType.SingularFullName + "_A." + this.Mapping.ColumnNameByRelationType[inRole.RelationType]);
+                        statement.Append("SELECT " + statement.GetAlias(inRole.AssociationType) + "." + this.Mapping.ColumnNameByRelationType[inRole.RelationType]);
                     }
 
                     statement.Append(" FROM " + this.Mapping.TableNameForObjectByClass[rootClass] + " " + alias);
@@ -201,7 +201,7 @@ namespace Allors.Database.Adapters.Sql
 
                     if (inIRelationType.Multiplicity == Multiplicity.ManyToMany || !inIRelationType.ExistExclusiveDatabaseClasses)
                     {
-                        statement.Append(inRole.AssociationType.SingularFullName + "_A." + Mapping.ColumnNameForAssociation + " IS NOT NULL ");
+                        statement.Append(statement.GetAlias(inRole.AssociationType) + "." + Mapping.ColumnNameForAssociation + " IS NOT NULL ");
                     }
                     else if (inRole.IsMany)
                     {
@@ -209,7 +209,7 @@ namespace Allors.Database.Adapters.Sql
                     }
                     else
                     {
-                        statement.Append(inRole.AssociationType.SingularFullName + "_A." + this.Mapping.ColumnNameByRelationType[inRole.RelationType] + " IS NOT NULL ");
+                        statement.Append(statement.GetAlias(inRole.AssociationType) + "." + this.Mapping.ColumnNameByRelationType[inRole.RelationType] + " IS NOT NULL ");
                     }
                 }
                 else
@@ -303,7 +303,7 @@ namespace Allors.Database.Adapters.Sql
 
                         if (inIRelationType.Multiplicity == Multiplicity.ManyToMany || !inIRelationType.ExistExclusiveDatabaseClasses)
                         {
-                            statement.Append("SELECT " + inRole.AssociationType.SingularFullName + "_A." + Mapping.ColumnNameForAssociation);
+                            statement.Append("SELECT " + statement.GetAlias(inRole.AssociationType) + "." + Mapping.ColumnNameForAssociation);
                         }
                         else if (inRole.IsMany)
                         {
@@ -311,7 +311,7 @@ namespace Allors.Database.Adapters.Sql
                         }
                         else
                         {
-                            statement.Append("SELECT " + inRole.AssociationType.SingularFullName + "_A." + this.Mapping.ColumnNameByRelationType[inRole.RelationType]);
+                            statement.Append("SELECT " + statement.GetAlias(inRole.AssociationType) + "." + this.Mapping.ColumnNameByRelationType[inRole.RelationType]);
                         }
 
                         statement.Append(" FROM " + this.Mapping.TableNameForObjectByClass[rootClass] + " " + alias);
@@ -336,7 +336,7 @@ namespace Allors.Database.Adapters.Sql
 
                         if (inIRelationType.Multiplicity == Multiplicity.ManyToMany || !inIRelationType.ExistExclusiveDatabaseClasses)
                         {
-                            statement.Append(inRole.AssociationType.SingularFullName + "_A." + Mapping.ColumnNameForAssociation + " IS NOT NULL ");
+                            statement.Append(statement.GetAlias(inRole.AssociationType) + "." + Mapping.ColumnNameForAssociation + " IS NOT NULL ");
                         }
                         else if (inRole.IsMany)
                         {
@@ -344,7 +344,7 @@ namespace Allors.Database.Adapters.Sql
                         }
                         else
                         {
-                            statement.Append(inRole.AssociationType.SingularFullName + "_A." + this.Mapping.ColumnNameByRelationType[inRole.RelationType] + " IS NOT NULL ");
+                            statement.Append(statement.GetAlias(inRole.AssociationType) + "." + this.Mapping.ColumnNameByRelationType[inRole.RelationType] + " IS NOT NULL ");
                         }
                     }
                 }

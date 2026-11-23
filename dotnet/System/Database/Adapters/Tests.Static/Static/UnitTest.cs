@@ -1845,6 +1845,23 @@ namespace Allors.Database.Adapters
                         Assert.Equal("b", values.I1AllorsString);
                         Assert.Equal("c", values.S1AllorsString);
                     }
+
+                    {
+                        // Two roles of one class whose full names differ only in case, set together
+                        var first = Job.Create(this.Transaction);
+                        first.FlowOwner = "a";
+                        first.Owner = "b";
+
+                        var second = Job.Create(this.Transaction);
+                        second.FlowOwner = "c";
+                        second.Owner = "d";
+
+                        mark();
+                        Assert.Equal("a", first.FlowOwner);
+                        Assert.Equal("b", first.Owner);
+                        Assert.Equal("c", second.FlowOwner);
+                        Assert.Equal("d", second.Owner);
+                    }
                 }
             }
         }

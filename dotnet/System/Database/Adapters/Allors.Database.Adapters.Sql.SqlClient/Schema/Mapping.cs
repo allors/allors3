@@ -296,7 +296,11 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                     if (roleType.ObjectType.IsUnit)
                     {
                         this.columnNameByRelationType[relationType] = this.NormalizeName(roleType.SingularName);
-                        this.ParamNameByRoleType[roleType] = string.Format(ParamFormat, roleType.SingularFullName);
+
+                        // The parameter carries the id of the relation type. The full names of two roles of one
+                        // class can differ only in case, and a parameter is found by its name without case: one
+                        // statement that sets both roles then gave both columns one value.
+                        this.ParamNameByRoleType[roleType] = string.Format(ParamFormat, "p_" + ModelId.Encode(relationType.Id));
                     }
                     else if (!(associationType3.IsMany && roleType.IsMany) && relationType.ExistExclusiveDatabaseClasses && !roleType.IsMany)
                     {

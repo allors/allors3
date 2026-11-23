@@ -27,32 +27,24 @@ namespace Allors.Database.Adapters.Sql
         internal override bool BuildWhere(ExtentStatement statement, string alias)
         {
             var schema = statement.Mapping;
+            var innerAlias = statement.CreateAlias();
+            statement.Append("\nEXISTS(\nSELECT 1\n");
             if ((this.role.IsMany && this.role.RelationType.AssociationType.IsMany) || !this.role.RelationType.ExistExclusiveDatabaseClasses)
             {
-                statement.Append("\n");
-                statement.Append("EXISTS(\n");
-                statement.Append("SELECT " + alias + "." + Mapping.ColumnNameForObject + "\n");
-                statement.Append("FROM " + schema.TableNameForRelationByRelationType[this.role.RelationType] + "\n");
-                statement.Append("WHERE   " + Mapping.ColumnNameForAssociation + "=" + alias + "." + Mapping.ColumnNameForObject + "\n");
-                statement.Append("AND " + Mapping.ColumnNameForRole + "=" + this.allorsObject.Strategy.ObjectId + "\n");
-                statement.Append(")\n");
+                statement.Append($"FROM {schema.TableNameForRelationByRelationType[this.role.RelationType]} {innerAlias}\n");
+                statement.Append($"WHERE {innerAlias}.{Mapping.ColumnNameForAssociation}={alias}.{Mapping.ColumnNameForObject}\n");
+                statement.Append($"AND {innerAlias}.{Mapping.ColumnNameForRole}={this.allorsObject.Strategy.ObjectId}\n");
             }
             else
             {
-                // This join is not possible because of the 3VL (Three Valued Logic).
-                // It should work for normal queries, but it fails when wrapped in a NOT( ... ) predicate.
-                // The rows with NULL values should then return TRUE and not UNKNOWN.
-                //
-                // statement.sql.Append(" " + role.SingularFullName + "_R." + schema.O + " = " + allorsObject.ObjectId);
-                statement.Append("\n");
-                statement.Append("EXISTS(\n");
-                statement.Append("SELECT " + Mapping.ColumnNameForObject + "\n");
-                statement.Append("FROM " + schema.TableNameForObjectByClass[((IComposite)this.role.ObjectType).ExclusiveDatabaseClass] + "\n");
-                statement.Append("WHERE " + Mapping.ColumnNameForObject + "=" + this.allorsObject.Strategy.ObjectId + "\n");
-                statement.Append("AND " + schema.ColumnNameByRelationType[this.role.RelationType] + "=" + alias + ".O\n");
-                statement.Append(")\n");
+                // NOT EXISTS also matches objects that have no related row.
+                var roleClass = ((IComposite)this.role.ObjectType).ExclusiveDatabaseClass;
+                statement.Append($"FROM {schema.TableNameForObjectByClass[roleClass]} {innerAlias}\n");
+                statement.Append($"WHERE {innerAlias}.{Mapping.ColumnNameForObject}={this.allorsObject.Strategy.ObjectId}\n");
+                statement.Append($"AND {innerAlias}.{schema.ColumnNameByRelationType[this.role.RelationType]}={alias}.{Mapping.ColumnNameForObject}\n");
             }
 
+            statement.Append(")\n");
             return this.Include;
         }
 

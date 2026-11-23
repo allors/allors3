@@ -476,6 +476,21 @@ namespace Allors.Database.Adapters.Sql
             Assert.NotEqual(0, executed);
         }
 
+        // The parameter of a unit role carries the id of its relation type: the sixteen bytes of the id in network
+        // byte order, in the base32hex alphabet of RFC 4648 in lower case and without padding. The full names of
+        // these two roles, WorkFlowOwner and WorkflowOwner, differ only in case.
+        [Fact]
+        public void TheParameterOfAUnitRoleCarriesTheIdOfItsRelationType()
+        {
+            var database = (Database)this.CreateDatabase();
+            var m = (MetaPopulation)database.MetaPopulation;
+            var mapping = database.Mapping;
+
+            // ed9cb638-553c-4018-a01e-ff73821a8e26 and 70aec4b0-86ad-4b92-bd5f-cda40fb55776
+            Assert.Matches("^[:@]p_tmebce2l7h01h80uvtpo46ke4o$", mapping.ParamInvocationNameByRoleType[m.Work.FlowOwner]);
+            Assert.Matches("^[:@]p_e2nc9c46ll5p5favpmi0vdaneo$", mapping.ParamInvocationNameByRoleType[m.Workflow.Owner]);
+        }
+
         protected abstract IDatabase CreateDatabase();
 
         // A value that a unit role of the given type takes.
