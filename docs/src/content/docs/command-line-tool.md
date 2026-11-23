@@ -58,6 +58,7 @@ The configuration has no value for 'adapter'. ALLORS_CONFIG_ROOT is not set, so 
 | --- | --- | --- | --- |
 | `init` | The application | Drops and creates the database of the connection string, through the admin connection; [Admin connections](configuration.md#admin-connections) says what it does with the login of the connection string. With the Snapshot adapter it logs that there is nothing to drop or create. | |
 | `populate` | The application | Empties the database with `Init()` and runs the [setup](populations.md#a-new-population), which builds a new population. | |
+| `user` | The application | Creates a person who can sign in and adds that person to a user group. | `--name` (`-n`), either `--group` (`-g`) or `--group-id`, and optionally `--password-stdin`. |
 | `save` | Core | Writes the population to a file. | `-f` the file |
 | `load` | Core | Replaces the population with the one in a file. | `-f` the file |
 | `upgrade` | The application | Loads a population that an earlier version saved and brings it up to date; [Upgrade a population](upgrade-a-population.md) describes its steps. | `-f` the file |
@@ -65,6 +66,24 @@ The configuration has no value for 'adapter'. ALLORS_CONFIG_ROOT is not set, so 
 
 A relative file name is relative to the working directory, and the tool logs the full path of the
 file that it saves or loads.
+
+### Create a user
+
+After populating the database, run the command and enter the password at the masked prompt.
+Core's password rule requires at least 12 characters with at least four distinct characters.
+
+```sh
+dotnet run --project sample/Database/Commands -- user --name worker@example.com --group Workers
+```
+
+Supply exactly one group selector. If several groups have the same name, the error lists their
+`UniqueId` values. Repeat the command with `--group-id <UniqueId>`. An existing user name
+(including a case variant), an invalid group selection or a rejected password leaves the
+population unchanged.
+
+For automation, pipe the password into the command and add `--password-stdin`. It reads one
+line, preserving leading and trailing spaces. To sign in as the new user, follow
+[Run the server and sign in](create-an-application.md#run-the-server-and-sign-in).
 
 ## Output and exit codes
 
@@ -100,7 +119,7 @@ include Core. The application writes the rest:
   the database with the application's rules. Core's commands ask it for `Configuration` and
   `Database`.
 - **`ExitCode`**, with `Success` and `Error`, which Core's commands return.
-- **`populate` and `upgrade`**, which depend on the application's setup and model, and
+- **`populate`, `user` and `upgrade`**, which depend on the application's setup and model, and
   **`init`**, which Core keeps in its folder `Custom`; the sample's is a copy of it.
 - **`nlog.config`**, which the build copies next to the tool.
 
