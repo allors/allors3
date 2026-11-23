@@ -28,6 +28,7 @@ namespace Allors.Repository
         #endregion
         [Size(256)]
         [Derived]
+        [Unique]
         string NormalizedUserName { get; set; }
 
         #region Allors
