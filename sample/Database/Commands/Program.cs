@@ -86,6 +86,12 @@ namespace Commands
                 app.Conventions.UseDefaultConventions();
                 return app.Execute(args);
             }
+            catch (CommandParsingException e) when (e.Command.Name == "user")
+            {
+                // The parser includes the rejected argument in its message, which can expose a password.
+                LogManager.GetCurrentClassLogger().Error("Invalid user command arguments. See 'user --help' for the available options. Enter the password at the prompt or use --password-stdin.");
+                return ExitCode.Error;
+            }
             catch (Exception e)
             {
                 var logger = LogManager.GetCurrentClassLogger();

@@ -17,6 +17,16 @@ namespace Allors.Database.Domain.Tests
         public override Config Config => new Config { SetupSecurity = true };
 
         [Fact]
+        public void NewUsersHaveLockoutEnabledUnlessExplicitlyDisabled()
+        {
+            var user = new PersonBuilder(this.Transaction).Build();
+            var exemptUser = new PersonBuilder(this.Transaction).WithUserLockoutEnabled(false).Build();
+
+            Assert.True(user.UserLockoutEnabled);
+            Assert.False(exemptUser.UserLockoutEnabled);
+        }
+
+        [Fact]
         public void WhenDeletingUserThenLoginShouldAlsoBeDeleted()
         {
             var person = new PersonBuilder(this.Transaction).WithUserName("user").Build();
