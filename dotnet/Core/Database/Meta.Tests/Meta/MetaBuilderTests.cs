@@ -20,7 +20,9 @@ namespace Allors.Database.Domain.Tests
         public void Build()
         {
             var metaBuilder = new MetaBuilder();
-            metaBuilder.Build();
+            var meta = metaBuilder.Build();
+
+            Assert.True(meta.User.NormalizedUserName.IsUnique);
         }
 
         // A dictionary or a set with types of the model as its keys asks a key at every lookup whether it
