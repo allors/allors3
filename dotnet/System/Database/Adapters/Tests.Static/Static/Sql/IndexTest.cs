@@ -14,9 +14,10 @@ namespace Allors.Database.Adapters.Sql
     using Meta;
     using Xunit;
 
-    // The adapter ensures the indexes of its schema before the first transaction of a database object, when it is
-    // asked to, and at the end of a load. Every composite relation gets an index, and a unit role gets one when
-    // the domain marks it as indexed. The test domain marks C1.C1AllorsInteger, C1.Many2One and
+    // The adapter ensures the indexes of its schema when it is asked to, at the end of Init and at the end of a
+    // load. A transaction creates and drops no index: the first transaction of a database object reads the indexes
+    // of the schema, and none opens while one is missing. Every composite relation gets an index, and a unit role
+    // gets one when the domain marks it as indexed. The test domain marks C1.C1AllorsInteger, C1.Many2One and
     // Company.IndexedMany2ManyPersons, and not C1.C1AllorsString, C1.C1AllorsDouble, C1.C1C2one2one,
     // C1.C1C2one2manies and C1.C1C2many2manies.
     public abstract class IndexTest : IDisposable
@@ -39,20 +40,15 @@ namespace Allors.Database.Adapters.Sql
 
         protected abstract void DropIndex(string table, string name);
 
+        // Drops every index of the schema that is not the primary key of its table.
+        protected abstract void DropIndexes();
+
         protected abstract void WithIndexLock(Action action);
 
         [Fact]
-        public void InitCreatesNoIndexAndTheFirstTransactionCreatesThem()
+        public void InitCreatesTheIndexes()
         {
-            var database = this.Rebuild();
-
-            Assert.Equal(0, this.IndexCount("c1", UnitColumn));
-            Assert.Equal(0, this.IndexCount("c1", RoleColumn));
-            Assert.Equal(0, this.IndexCount(RelationTable, "r"));
-
-            using (database.CreateTransaction())
-            {
-            }
+            this.Rebuild();
 
             Assert.Equal(1, this.IndexCount("c1", UnitColumn));
             Assert.Equal(1, this.IndexCount("c1", RoleColumn));
@@ -62,7 +58,11 @@ namespace Allors.Database.Adapters.Sql
         [Fact]
         public void EnsureIndexesCreatesThemWithoutATransaction()
         {
-            var database = this.Rebuild();
+            var database = this.RebuildWithoutIndexes();
+
+            Assert.Equal(0, this.IndexCount("c1", UnitColumn));
+            Assert.Equal(0, this.IndexCount("c1", RoleColumn));
+            Assert.Equal(0, this.IndexCount(RelationTable, "r"));
 
             database.EnsureIndexes();
 
@@ -72,13 +72,26 @@ namespace Allors.Database.Adapters.Sql
         }
 
         [Fact]
-        public void AMissingIndexIsCreatedBeforeTheFirstTransaction()
+        public void AMissingIndexRefusesTheTransactionUntilItIsCreated()
         {
-            this.Rebuild().EnsureIndexes();
+            this.Rebuild();
             this.DropIndex("c1", RoleIndex);
+
+            // The transaction creates nothing. Its message names the statement for the index and how to ensure
+            // the indexes.
+            var database = (Database)this.CreateDatabase();
+            var exception = Assert.ThrowsAny<Exception>(() => database.CreateTransaction());
+            Assert.Contains($"CREATE INDEX {RoleIndex} ON allors.c1 ({RoleColumn})", exception.Message);
+            Assert.Contains("EnsureIndexes()", exception.Message);
             Assert.Equal(0, this.IndexCount("c1", RoleColumn));
 
-            using (this.CreateDatabase().CreateTransaction())
+            // The next transaction is refused as well.
+            Assert.ThrowsAny<Exception>(() => database.CreateTransaction());
+
+            // Another database object ensures the indexes, as a deployment does. The refusal is not kept.
+            ((Database)this.CreateDatabase()).EnsureIndexes();
+
+            using (database.CreateTransaction())
             {
             }
 
@@ -89,13 +102,16 @@ namespace Allors.Database.Adapters.Sql
         [Fact]
         public void AnIndexOfAnotherNameCounts()
         {
-            this.Rebuild().EnsureIndexes();
+            this.Rebuild();
             this.DropIndex("c1", RoleIndex);
             this.ExecuteScalar($"CREATE INDEX made_by_hand ON allors.c1 ({RoleColumn})");
 
-            using (this.CreateDatabase().CreateTransaction())
+            var database = (Database)this.CreateDatabase();
+            using (database.CreateTransaction())
             {
             }
+
+            database.EnsureIndexes();
 
             Assert.False(this.ExistIndex(RoleIndex));
             Assert.Equal(1, this.IndexCount("c1", RoleColumn));
@@ -104,16 +120,22 @@ namespace Allors.Database.Adapters.Sql
         [Fact]
         public void AnIndexOfTheAdapterForAUnitRoleThatIsNotMarkedIsDropped()
         {
-            this.Rebuild().EnsureIndexes();
+            this.Rebuild();
 
             // The name that the adapter gives to an index for C1.C1AllorsString, and an index of somebody else
             // on the same column.
             this.ExecuteScalar("CREATE INDEX idx_c1_c1c1allorsstring ON allors.c1 (c1allorsstring)");
             this.ExecuteScalar("CREATE INDEX made_by_hand ON allors.c1 (c1allorsstring)");
 
-            using (this.CreateDatabase().CreateTransaction())
+            // A transaction drops nothing.
+            var database = (Database)this.CreateDatabase();
+            using (database.CreateTransaction())
             {
             }
+
+            Assert.True(this.ExistIndex("idx_c1_c1c1allorsstring"));
+
+            database.EnsureIndexes();
 
             Assert.False(this.ExistIndex("idx_c1_c1c1allorsstring"));
             Assert.True(this.ExistIndex("made_by_hand"));
@@ -124,7 +146,7 @@ namespace Allors.Database.Adapters.Sql
         public void AnIndexThatCannotAcquireTheSchemaLockStays()
         {
             const string indexName = "idx_c1_c1c1allorsstring";
-            this.Rebuild().EnsureIndexes();
+            this.Rebuild();
             this.ExecuteScalar($"CREATE INDEX {indexName} ON allors.c1 (c1allorsstring)");
 
             var database = (Database)this.CreateDatabase();
@@ -135,9 +157,7 @@ namespace Allors.Database.Adapters.Sql
             {
                 try
                 {
-                    using (database.CreateTransaction())
-                    {
-                    }
+                    database.EnsureIndexes();
                 }
                 catch (Exception e)
                 {
@@ -166,9 +186,7 @@ namespace Allors.Database.Adapters.Sql
                 }
             }
 
-            using (this.CreateDatabase().CreateTransaction())
-            {
-            }
+            ((Database)this.CreateDatabase()).EnsureIndexes();
 
             Assert.False(this.ExistIndex(indexName));
         }
@@ -177,10 +195,6 @@ namespace Allors.Database.Adapters.Sql
         public void ACompositeRelationThatIsNotMarkedGetsAnIndex()
         {
             this.Rebuild();
-
-            using (this.CreateDatabase().CreateTransaction())
-            {
-            }
 
             // C1.C1C2one2one is a column of the table of C1, and its index has the name of the adapter.
             Assert.True(this.ExistIndex("idx_c1_c1c1c2one2one"));
@@ -194,7 +208,8 @@ namespace Allors.Database.Adapters.Sql
         [Fact]
         public void ANameThatIsTakenRefusesTheTransaction()
         {
-            this.Rebuild();
+            var database = this.Rebuild();
+            this.DropIndex("c1", RoleIndex);
 
             // The name of the index for C1.Many2One, on another column.
             this.ExecuteScalar($"CREATE INDEX {RoleIndex} ON allors.c1 (c1allorsdouble)");
@@ -205,7 +220,20 @@ namespace Allors.Database.Adapters.Sql
             Assert.Contains(RoleColumn, exception.Message);
             Assert.Contains("c1allorsdouble", exception.Message);
 
+            // Ensuring the indexes says the same.
+            exception = Assert.ThrowsAny<Exception>(() => ((Database)this.CreateDatabase()).EnsureIndexes());
+            Assert.Contains(RoleIndex, exception.Message);
+            Assert.Contains(RoleColumn, exception.Message);
+            Assert.Contains("c1allorsdouble", exception.Message);
+
+            // So does Init, which ensures the indexes. The object that had the indexes before that Init is
+            // refused a transaction as well.
+            exception = Assert.ThrowsAny<Exception>(() => database.Init());
+            Assert.Contains("c1allorsdouble", exception.Message);
+            Assert.ThrowsAny<Exception>(() => database.CreateTransaction());
+
             this.DropIndex("c1", RoleIndex);
+            ((Database)this.CreateDatabase()).EnsureIndexes();
 
             using (this.CreateDatabase().CreateTransaction())
             {
@@ -231,25 +259,24 @@ namespace Allors.Database.Adapters.Sql
         }
 
         [Fact]
-        public void TheFirstTransactionAfterInitEnsuresTheIndexesAgain()
+        public void InitEnsuresTheIndexesAgain()
         {
             var database = this.Rebuild();
-            using (database.CreateTransaction())
-            {
-            }
-
             Assert.Equal(1, this.IndexCount("c1", RoleColumn));
 
             // Init builds the schema again, and with it tables without indexes.
             this.ExecuteScalar("DROP TABLE allors.c1");
             database.Init();
-            Assert.Equal(0, this.IndexCount("c1", RoleColumn));
+            Assert.Equal(1, this.IndexCount("c1", RoleColumn));
+
+            // Init of a valid schema only empties its tables. It brings back an index that the schema has lost.
+            this.DropIndex("c1", RoleIndex);
+            database.Init();
+            Assert.Equal(1, this.IndexCount("c1", RoleColumn));
 
             using (database.CreateTransaction())
             {
             }
-
-            Assert.Equal(1, this.IndexCount("c1", RoleColumn));
         }
 
         [Fact]
@@ -288,10 +315,34 @@ namespace Allors.Database.Adapters.Sql
             }
         }
 
+        // A load that fails initializes the database again, which ensures the indexes: a transaction opens.
+        [Fact]
+        public void ALoadThatFailsLeavesTheIndexes()
+        {
+            this.Rebuild();
+
+            // A schema that the load has to build again, and a file that is no population.
+            this.ExecuteScalar("DROP TABLE allors.c1");
+
+            var database = this.CreateDatabase();
+            using (var reader = XmlReader.Create(new StringReader("<allors/>")))
+            {
+                Assert.Throws<ArgumentException>(() => database.Load(reader));
+            }
+
+            Assert.Equal(1, this.IndexCount("c1", UnitColumn));
+            Assert.Equal(1, this.IndexCount("c1", RoleColumn));
+            Assert.Equal(1, this.IndexCount(RelationTable, "r"));
+
+            using (database.CreateTransaction())
+            {
+            }
+        }
+
         [Fact]
         public void DatabaseObjectsEnsureTheIndexesAtTheSameTime()
         {
-            this.Rebuild();
+            this.RebuildWithoutIndexes();
 
             var databases = Enumerable.Range(0, 4).Select(v => (Database)this.CreateDatabase()).ToArray();
 
@@ -341,12 +392,20 @@ namespace Allors.Database.Adapters.Sql
             return exceptions.ToArray();
         }
 
-        // A schema that Init has just built: its tables are new, and so are without the indexes of an earlier fact.
+        // A schema that Init has just built: its tables are new, and have the indexes of the adapter and no other.
         protected Database Rebuild()
         {
             this.ExecuteScalar("DROP TABLE IF EXISTS allors.c1");
             var database = (Database)this.CreateDatabase();
             database.Init();
+            return database;
+        }
+
+        // A schema that Init has just built, whose indexes were then dropped behind the adapter.
+        private Database RebuildWithoutIndexes()
+        {
+            var database = this.Rebuild();
+            this.DropIndexes();
             return database;
         }
     }

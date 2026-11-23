@@ -23,7 +23,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
         [InlineData("idx_c1_c1c1allorsstring", "c1allorsstring", false)]
         public void QuotedIndexNamesAreDistinctFromTheNamesOfTheAdapter(string name, string column, bool wanted)
         {
-            this.Rebuild().EnsureIndexes();
+            this.Rebuild();
 
             if (wanted)
             {
@@ -38,9 +38,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             var quotedColumn = wanted ? "c1allorsdouble" : column;
             this.ExecuteScalar($"CREATE INDEX \"{quotedName}\" ON allors.c1 ({quotedColumn})");
 
-            using (this.CreateDatabase().CreateTransaction())
-            {
-            }
+            ((Database)this.CreateDatabase()).EnsureIndexes();
 
             Assert.True(this.ExistIndex(name));
             Assert.True(this.ExistIndex(quotedName));
@@ -53,7 +51,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
         [InlineData("CREATE TABLE allors.\"C1\" (o bigint PRIMARY KEY, many2one bigint)", "allors.\"C1\" (many2one)")]
         public void QuotedTableAndColumnNamesAreDistinctFromTheNamesOfTheAdapter(string create, string on)
         {
-            this.Rebuild().EnsureIndexes();
+            this.Rebuild();
             this.DropIndex("c1", "idx_c1_c1many2one");
 
             try
@@ -63,9 +61,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                 this.ExecuteScalar(create);
                 this.ExecuteScalar($"CREATE INDEX made_by_hand ON {on}");
 
-                using (this.CreateDatabase().CreateTransaction())
-                {
-                }
+                ((Database)this.CreateDatabase()).EnsureIndexes();
 
                 Assert.True(this.ExistIndex("idx_c1_c1many2one"));
                 Assert.Equal(1, this.IndexCount("c1", "many2one"));
@@ -106,5 +102,19 @@ WHERE n.nspname = 'allors' AND t.relname = '{table}' AND a.attname = '{column}'"
         protected override bool ExistIndex(string name) => Convert.ToInt32(this.profile.ExecuteScalar($"SELECT COUNT(*) FROM pg_indexes WHERE schemaname = 'allors' AND indexname = '{name}'"), CultureInfo.InvariantCulture) != 0;
 
         protected override void DropIndex(string table, string name) => this.profile.ExecuteScalar($"DROP INDEX allors.{name}");
+
+        protected override void DropIndexes()
+        {
+            if (this.profile.ExecuteScalar(@"
+SELECT string_agg(format('DROP INDEX %I.%I', n.nspname, c.relname), '; ')
+FROM pg_index i
+JOIN pg_class c ON c.oid = i.indexrelid
+JOIN pg_class t ON t.oid = i.indrelid
+JOIN pg_namespace n ON n.oid = t.relnamespace
+WHERE n.nspname = 'allors' AND NOT i.indisprimary") is string statements)
+            {
+                this.profile.ExecuteScalar(statements);
+            }
+        }
     }
 }

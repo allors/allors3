@@ -109,15 +109,24 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         public override void Init()
         {
+            this.Initialize();
+
+            // The tables are empty: they get the indexes that they lack here, and no transaction waits for one.
+            this.EnsureIndexes();
+        }
+
+        // Builds the schema, or empties its tables. The indexes are not ensured here.
+        private void Initialize()
+        {
             try
             {
                 new Initialization(this).Execute();
             }
             finally
             {
-                // A refusal is not kept: Init may have built the schema that was missing or invalid, and the
-                // next transaction validates it again. The tables may be new, so the next transaction ensures
-                // the indexes again as well.
+                // A refusal is not kept: the schema that was missing or invalid may have been built, and it is
+                // validated again. The tables may be new, so what this object knew of the indexes no longer
+                // holds.
                 if (this.isValid == false)
                 {
                     this.isValid = null;
@@ -136,7 +145,8 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         {
             lock (this)
             {
-                this.Init();
+                // Without the indexes: a table that is built here gets them once it holds its rows.
+                this.Initialize();
 
                 using (var connection = new SqlConnection(this.ConnectionString))
                 {
