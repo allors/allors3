@@ -478,9 +478,12 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   no procedures, so an earlier version does not accept it. A database that was initialized before
   this change keeps its procedures and stays valid, and an `Init` that only empties its tables
   works. `Init` no longer drops the procedures, though, and SQL Server does not drop a table type
-  that a procedure uses: an `Init` that has to recreate the schema of such a database fails, before
-  it has touched a table. Drop and create the database between the save and the load of an upgrade,
-  which `DatabaseProvisioning.DropCreate` of `Allors.Database.Builder` does (#368).
+  that a procedure uses: an `Init` that has to recreate the schema of such a database fails with
+  error 3732, `Cannot drop type … because it is being referenced by object …`, before it has
+  touched a table. Drop and create the database between the save and the load of an upgrade,
+  which `DatabaseProvisioning.DropCreate` of `Allors.Database.Builder` does. Where the database
+  has to stay, drop the procedures of the schema by hand, each row of `sys.procedures` in it, and
+  `Init` recreates the schema (#368).
 - The table type `_t_vo` of the SqlClient adapter and its class `VersionedObjectDataRecord`, which
   nothing used. A database that was initialized before this change keeps the table type and stays
   valid (#369).
