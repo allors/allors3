@@ -100,15 +100,11 @@ test('deniedPermissions', async () => {
   const result = await session.pull(pull);
 
   const denieds = result.collection<Denied>(m.Denied);
+  expect(denieds.length).toBeGreaterThan(0);
   for (const denied of denieds) {
-    for (const roleType of denied.strategy.cls.roleTypes) {
-      if (roleType.relationType.origin === Origin.Database) {
-        expect(denied.strategy.canRead(roleType)).toBeTruthy();
-        expect(denied.strategy.canWrite(roleType)).toBeFalsy();
-      } else {
-        expect(denied.strategy.canRead(roleType)).toBeTruthy();
-        expect(denied.strategy.canWrite(roleType)).toBeTruthy();
-      }
+    for (const roleType of denied.strategy.cls.databaseOriginRoleTypes) {
+      expect(denied.strategy.canRead(roleType)).toBeTruthy();
+      expect(denied.strategy.canWrite(roleType)).toBeFalsy();
     }
   }
 });
@@ -294,6 +290,10 @@ test('knownRevocationIsNotRequestedAgain', async () => {
   expect(client.accessRequests).toBe(0);
   expect(organisation2.strategy.canRead(m.Organisation.Name)).toBeTruthy();
   expect(organisation2.strategy.canWrite(m.Organisation.Name)).toBeFalsy();
+  const sessionRole = m.Organisation.DisplayName;
+  expect(sessionRole.origin).toBe(Origin.Session);
+  expect(organisation2.strategy.canRead(sessionRole)).toBeTruthy();
+  expect(organisation2.strategy.canWrite(sessionRole)).toBeTruthy();
 });
 
 test('concurrentPullsOfAnObjectWithANewRevocation', async () => {
