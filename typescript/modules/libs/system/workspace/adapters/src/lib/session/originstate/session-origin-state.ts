@@ -282,7 +282,7 @@ export class SessionOriginState {
     }
 
     // A <---- R
-    this.propertyByObjectByPropertyType.set(role, associationType, role);
+    this.propertyByObjectByPropertyType.set(role, associationType, association);
 
     // A ----> R
     let roleIds = this.getCompositesRole(association, roleType);
