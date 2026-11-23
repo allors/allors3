@@ -218,7 +218,13 @@ test.each(['dateTime', 'binary'])(
   }
 );
 
-test.each([
+const lastMillisecond = new Date('9999-12-31T23:59:59.999Z');
+const maxDateTimeJson = '9999-12-31T23:59:59.9999999Z';
+const maxDateTime = new Date(maxDateTimeJson);
+// Send the exact value that a .NET writer can put on the wire.
+maxDateTime.toJSON = () => maxDateTimeJson;
+
+test.each<[string, string, Date?, Date?]>([
   ['dateTime', 'unchanged-null'],
   ['binary', 'unchanged-null'],
   ['dateTime', 'null-to-value'],
@@ -230,14 +236,20 @@ test.each([
   ['dateTime', 'local-removal'],
   ['binary', 'local-removal'],
   ['binary', 'different-length'],
-])('databaseUnitValueEqualityDuringPull: %s, %s', async (kind, remoteEdit) => {
+  ['dateTime to maximum', 'different-value', lastMillisecond, maxDateTime],
+  ['dateTime from maximum', 'different-value', maxDateTime, lastMillisecond],
+  ['dateTime at maximum', 'local-removal', maxDateTime],
+])('databaseUnitValueEqualityDuringPull: %s, %s', async (...args) => {
+  const [kind, remoteEdit, initialDateTime, remoteDateTime] = args;
   const { workspace, m } = fixture;
   const remote = workspace.createSession();
   const editing = workspace.createSession();
   const source = await fixture.pullC1(remote, name_c1A);
   const binary = kind === 'binary';
   const roleType = binary ? m.C1.C1AllorsBinary : m.C1.C1AllorsDateTime;
-  const initialValue = binary ? 'AQI=' : new Date('2020-01-02T03:04:05Z');
+  const initialValue = binary
+    ? 'AQI='
+    : initialDateTime ?? new Date('2020-01-02T03:04:05Z');
   const baseline =
     remoteEdit === 'unchanged-null' || remoteEdit === 'null-to-value'
       ? null
@@ -252,7 +264,7 @@ test.each([
     remoteEdit === 'different-value'
       ? binary
         ? 'AQM='
-        : new Date('2022-01-02T03:04:05Z')
+        : remoteDateTime ?? new Date('2022-01-02T03:04:05Z')
       : remoteEdit === 'different-length'
       ? 'AQID'
       : remoteEdit === 'value-to-null'

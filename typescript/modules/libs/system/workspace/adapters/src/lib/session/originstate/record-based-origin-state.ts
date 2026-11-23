@@ -396,8 +396,8 @@ export abstract class RecordBasedOriginState {
 
     for (const [relationType] of this.changedRoleByRelationType) {
       const roleType = relationType.roleType;
-      const original = this.record?.getRole(roleType);
-      const newOriginal = newRecord?.getRole(roleType);
+      const original = this.record?.getRole(roleType, true);
+      const newOriginal = newRecord?.getRole(roleType, true);
 
       if (roleType.objectType.isUnit) {
         const equal =
