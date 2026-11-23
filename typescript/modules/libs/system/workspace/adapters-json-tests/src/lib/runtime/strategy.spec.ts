@@ -171,6 +171,25 @@ test('addCompositesRoleSessionOne2ManyReassigns', async () => {
   expect(c1b.C1WhereSessionC1One2Many).toBe(c1d);
 });
 
+test('setCompositeRoleSessionMany2OneReassigns', async () => {
+  const { workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const c1a = session.create<C1>(m.C1);
+  const c1b = session.create<C1>(m.C1);
+  const c1c = session.create<C1>(m.C1);
+
+  c1a.SessionC1Many2One = c1b;
+  session.checkpoint();
+  c1a.SessionC1Many2One = c1c;
+
+  // Many2One: setting the role to another object must detach the association from
+  // the previous role. The bug detached it from the new role, so c1b kept c1a.
+  expect(c1a.SessionC1Many2One).toBe(c1c);
+  expect(c1b.C1sWhereSessionC1Many2One).toEqual([]);
+  expect(c1c.C1sWhereSessionC1Many2One).toEqual([c1a]);
+});
+
 test('setUnitRoleSessionToNullWithoutValueIsNoChange', async () => {
   const { workspace, m } = fixture;
   const session = workspace.createSession();
