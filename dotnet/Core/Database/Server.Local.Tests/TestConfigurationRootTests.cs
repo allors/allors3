@@ -39,6 +39,24 @@ namespace Tests
             Assert.Equal("snapshot", template.RootElement.GetProperty("adapter").GetString());
         }
 
+        [Theory]
+        [InlineData("snapshot")]
+        [InlineData("sqlclient")]
+        [InlineData("npgsql")]
+        [InlineData("localdb")]
+        public void TheTokenLifetimeOfATemplateIsATimeSpan(string name)
+        {
+            var root = TestConfigurationRoot.FindTemplate(name, AppContext.BaseDirectory);
+
+            // The server reads JwtToken:Expiration as a TimeSpan, and gives a token the default lifetime when
+            // the value is not one.
+            using var template = JsonDocument.Parse(File.ReadAllBytes(Path.Combine(root, "core", "appsettings.json")));
+            var expiration = template.RootElement.GetProperty("JwtToken").GetProperty("Expiration").GetString();
+
+            Assert.True(TimeSpan.TryParse(expiration, out var lifetime), $"JwtToken:Expiration of config/{name} is '{expiration}', which is not a TimeSpan.");
+            Assert.Equal(TimeSpan.FromDays(30), lifetime);
+        }
+
         [Fact]
         public void AConfigRootThatIsSetIsKept()
         {
