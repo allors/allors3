@@ -5,6 +5,8 @@
 
 namespace Server.Tests
 {
+    using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using Allors.Database.Domain;
@@ -23,7 +25,10 @@ namespace Server.Tests
         private readonly long workItemId;
         private readonly long janeId;
 
-        public WorkItemTests()
+        public WorkItemTests() : base(new Dictionary<string, string>
+        {
+            ["AllowedHosts"] = "localhost;sample.example",
+        })
         {
             using var transaction = this.Database.CreateTransaction();
             var john = new PersonBuilder(transaction).WithUserName("john@example.com").WithInUserPassword(Password).Build();
@@ -37,9 +42,13 @@ namespace Server.Tests
             this.janeId = jane.Id;
         }
 
-        [Fact]
-        public async Task AWorkerPullsTheWorkItemsAndSyncsTheRolesThatAWorkerCanRead()
+        [Theory]
+        [InlineData("localhost:5000")]
+        [InlineData("localhost:6182")]
+        [InlineData("sample.example:6182")]
+        public async Task AWorkerPullsTheWorkItemsAndSyncsTheRolesThatAWorkerCanRead(string authority)
         {
+            this.HttpClient.BaseAddress = new Uri($"http://{authority}/allors/");
             await this.SignIn("john@example.com", Password);
 
             var pullResponse = await this.Pull(new PullRequest

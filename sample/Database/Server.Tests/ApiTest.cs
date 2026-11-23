@@ -24,8 +24,7 @@ namespace Server.Tests
     using MetaPopulation = Allors.Database.Meta.MetaPopulation;
 
     // A test of the server over HTTP, in the process of the test. Every test starts a server of its own on the
-    // Snapshot adapter and gives its database the population of the sample's setup. The requests name the host
-    // localhost:5000, which the Startup maps to the workspace Default.
+    // Snapshot adapter and gives its database the population of the sample's setup.
     public abstract class ApiTest : IDisposable
     {
         // The last character takes two UTF-8 bytes, bringing the key to the 32 bytes HS256 requires.

@@ -5,7 +5,7 @@
 
 namespace Server
 {
-    using System.Collections.Generic;
+    using System;
     using Allors.Database.Adapters;
     using Allors.Database.Configuration;
     using Allors.Database.Configuration.Derivations.Default;
@@ -16,7 +16,7 @@ namespace Server
     using Allors.Services;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
-    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.HostFiltering;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
@@ -39,20 +39,18 @@ namespace Server
                 this.Configuration.Require("ConnectionStrings:DefaultConnection");
             }
 
-            // The workspace of a request is the one of the host that the request names. A client that reaches
-            // the server through another host name or port needs an entry of its own.
-            var workspaceConfig = new WorkspaceConfig(new Dictionary<HostString, string>
+            services.Configure<HostFilteringOptions>(options =>
             {
-                { new HostString("localhost", 5000), "Default" },
+                var hosts = this.Configuration["AllowedHosts"]?.Split(';', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+                options.AllowedHosts = hosts is { Length: > 0 } ? hosts : new[] { "localhost" };
+                options.AllowEmptyHosts = false;
             });
 
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<IPolicyService, PolicyService>();
             services.AddSingleton<IDatabaseService, DatabaseService>();
-            services.AddSingleton(workspaceConfig);
+            services.AddSingleton<IWorkspaceService, DefaultWorkspaceService>();
             services.AddScoped<IClaimsPrincipalService, ClaimsPrincipalService>();
             services.AddScoped<ITransactionService, TransactionService>();
-            services.AddScoped<IWorkspaceService, WorkspaceService>();
 
             services.AddDefaultIdentity<IdentityUser>()
                 .AddAllorsStores()
@@ -90,6 +88,11 @@ namespace Server
                 endpoints.MapControllerRoute(name: "default", pattern: "allors/{controller}/{action}/{id?}");
                 endpoints.MapControllers();
             });
+        }
+
+        private sealed class DefaultWorkspaceService : IWorkspaceService
+        {
+            public string Name => "Default";
         }
     }
 }
