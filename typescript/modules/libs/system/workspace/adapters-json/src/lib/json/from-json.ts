@@ -20,7 +20,7 @@ export function unitFromJson(tag: string, value: unknown): IUnit {
 
     case UnitTags.Binary:
       if (typeof value === 'string') {
-        return btoa(value);
+        return value;
       }
       break;
 
