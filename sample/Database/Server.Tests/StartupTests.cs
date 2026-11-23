@@ -11,14 +11,15 @@ namespace Server.Tests
 
     public class StartupTests
     {
-        [Fact]
-        public void TheServerDoesNotStartWithoutTheKeyOfTheTokens()
+        [Theory]
+        [InlineData("")]
+        [InlineData("0123456789012345678901234567890")]
+        public void TheServerDoesNotStartWithAMissingOrShortSigningKey(string key)
         {
-            // An empty value overrides a key that the configuration root or the environment may hold.
             using var factory = new ServerFactory(new Dictionary<string, string>
             {
                 ["adapter"] = "snapshot",
-                ["JwtToken:Key"] = string.Empty,
+                ["JwtToken:Key"] = key,
             });
 
             var exception = Assert.Throws<InvalidOperationException>(() => factory.CreateClient());

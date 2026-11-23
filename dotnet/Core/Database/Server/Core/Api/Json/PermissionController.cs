@@ -34,7 +34,6 @@ namespace Allors.Database.Protocol.Json
 
         [HttpPost]
         [Authorize]
-        [AllowAnonymous]
         public ActionResult<PermissionResponse> Post([FromBody] PermissionRequest permissionRequest, CancellationToken cancellationToken) =>
             this.PolicyService.SyncPolicy.Execute(
                 () =>

@@ -33,7 +33,6 @@ namespace Allors.Database.Protocol.Json
 
         [HttpPost]
         [Authorize]
-        [AllowAnonymous]
         public ActionResult<SyncResponse> Post([FromBody]SyncRequest syncRequest, CancellationToken cancellationToken) =>
             this.PolicyService.SyncPolicy.Execute(
                 () =>

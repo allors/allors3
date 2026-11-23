@@ -6,7 +6,6 @@
 namespace Server
 {
     using System.Collections.Generic;
-    using System.Text;
     using Allors.Database.Adapters;
     using Allors.Database.Configuration;
     using Allors.Database.Configuration.Derivations.Default;
@@ -15,14 +14,12 @@ namespace Server
     using Allors.Security;
     using Allors.Server;
     using Allors.Services;
-    using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.IdentityModel.Tokens;
     using ObjectFactory = Allors.Database.ObjectFactory;
     using User = Allors.Database.Domain.User;
 
@@ -57,20 +54,9 @@ namespace Server
             services.AddScoped<ITransactionService, TransactionService>();
             services.AddScoped<IWorkspaceService, WorkspaceService>();
 
-            // ASP.NET Core Identity finds and checks the users in the database.
             services.AddDefaultIdentity<IdentityUser>()
-                .AddAllorsStores();
-
-            // A request authenticates with the bearer token of the sign-in endpoint, which signs it with the
-            // UTF-8 bytes of the setting JwtToken:Key.
-            services.AddAuthentication(options => options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options => options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(this.Configuration["JwtToken:Key"])),
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                });
+                .AddAllorsStores()
+                .AddAllorsJwtBearer(this.Configuration);
 
             services.AddControllers();
         }

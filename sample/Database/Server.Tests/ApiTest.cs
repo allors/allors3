@@ -28,9 +28,8 @@ namespace Server.Tests
     // localhost:5000, which the Startup maps to the workspace Default.
     public abstract class ApiTest : IDisposable
     {
-        // The key has a character outside ASCII, so a server that validated the tokens with other bytes of the
-        // key than those that sign them would refuse them.
-        public const string Key = "The key that signs the bearer tokens of the tests, naïvely long";
+        // The last character takes two UTF-8 bytes, bringing the key to the 32 bytes HS256 requires.
+        public const string Key = "012345678901234567890123456789é";
 
         protected ApiTest(IDictionary<string, string> settings = null)
         {

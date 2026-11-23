@@ -34,7 +34,6 @@ namespace Allors.Database.Protocol.Json
 
         [HttpPost]
         [Authorize]
-        [AllowAnonymous]
         public ActionResult<PushResponse> Post([FromBody] PushRequest pushRequest, CancellationToken cancellationToken) =>
             this.PolicyService.PushPolicy.Execute(
                 () =>

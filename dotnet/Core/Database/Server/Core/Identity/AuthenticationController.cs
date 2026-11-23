@@ -17,12 +17,15 @@ namespace Allors.Server
 
     public class AuthenticationController : Controller
     {
-        public AuthenticationController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IConfiguration config, ITransactionService transactionService)
+        private readonly JwtTokens tokens;
+
+        public AuthenticationController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IConfiguration config, ITransactionService transactionService, JwtTokens tokens = null)
         {
             this.UserManager = userManager;
             this.SignInManager = signInManager;
             this.Configuration = config;
             this.TransactionService = transactionService;
+            this.tokens = tokens ?? new JwtTokens(config);
         }
 
         public UserManager<IdentityUser> UserManager { get; }
@@ -58,7 +61,7 @@ namespace Allors.Server
                     var result = await this.SignInManager.CheckPasswordSignInAsync(user, request.p, lockoutOnFailure: true);
                     if (result.Succeeded)
                     {
-                        var token = user.CreateToken(this.Configuration);
+                        var token = this.tokens.CreateToken(user);
                         var response = new AuthenticationTokenResponse
                         {
                             a = true,

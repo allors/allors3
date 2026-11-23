@@ -5,7 +5,9 @@
 
 namespace Allors.Security
 {
+    using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Identity;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
 
     public static class IdentityBuilderExtensions
@@ -14,6 +16,19 @@ namespace Allors.Security
             => builder
                 .AddAllorsUserStore()
                 .AddAllorsRoleStore();
+
+        public static IdentityBuilder AddAllorsJwtBearer(this IdentityBuilder builder, IConfiguration configuration)
+        {
+            var tokens = new JwtTokens(configuration);
+            builder.Services.AddSingleton(tokens);
+            builder.Services.AddAuthentication(options =>
+                {
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(options => options.TokenValidationParameters = tokens.CreateValidationParameters());
+            return builder;
+        }
 
         private static IdentityBuilder AddAllorsUserStore(this IdentityBuilder builder)
         {
