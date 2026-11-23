@@ -61,7 +61,7 @@ The configuration has no value for 'adapter'. ALLORS_CONFIG_ROOT is not set, so 
 | `save` | Core | Writes the population to a file. | `-f` the file |
 | `load` | Core | Replaces the population with the one in a file. | `-f` the file |
 | `upgrade` | The application | Loads a population that an earlier version saved and brings it up to date; [Upgrade a population](upgrade-a-population.md) describes its steps. | `-f` the file |
-| `index` | Core | On SQL Server and PostgreSQL, creates the indexes that the adapter derives from the model, and drops the adapter's indexes that the model no longer needs. The SQL adapters also do this before their first transaction and after a load. Other adapters keep no indexes, and the command logs so. | |
+| `index` | Core | On SQL Server and PostgreSQL, creates the indexes that the adapter derives from the model, and drops the adapter's indexes that the model no longer needs. The SQL adapters also do this at the end of `Init()` and after a load. A transaction creates no index, and none opens while the database lacks one: when these indexes change and the database stays, run `index` at deployment. Other adapters keep no indexes, and the command logs so. | |
 
 A relative file name is relative to the working directory, and the tool logs the full path of the
 file that it saves or loads.
