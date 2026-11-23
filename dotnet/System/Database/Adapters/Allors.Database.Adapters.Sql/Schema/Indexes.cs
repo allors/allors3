@@ -36,13 +36,22 @@ namespace Allors.Database.Adapters.Sql
         /// </summary>
         public void Ensure()
         {
+            var leftovers = this.EnsureRequired(this.Read(), this.Create, atomic: false);
+            if (leftovers.Length > 0)
+            {
+                this.Drop(leftovers);
+            }
+        }
+
+        // Init already holds the schema lock. A failed create rolls back every index built by this transaction.
+        protected SchemaIndex[] EnsureRequiredInTransaction(IReadOnlyList<SchemaIndex> existing, Action<SchemaIndex> create) =>
+            this.EnsureRequired(existing, indexes => Array.ForEach(indexes, create), atomic: true);
+
+        private SchemaIndex[] EnsureRequired(IReadOnlyList<SchemaIndex> existing, Action<SchemaIndex[]> create, bool atomic)
+        {
             this.Derive(out var wanted, out var unwantedByName);
 
-            var existing = this.Read();
             var missing = Missing(wanted, existing);
-            var leftovers = existing
-                .Where(v => unwantedByName.TryGetValue(v.Name, out var unwanted) && v.LeadsWithColumnOf(unwanted))
-                .ToArray();
 
             if (missing.Length > 0)
             {
@@ -50,28 +59,18 @@ namespace Allors.Database.Adapters.Sql
 
                 try
                 {
-                    this.Create(missing);
+                    create(missing);
                 }
                 catch (DbException e)
                 {
-                    IReadOnlyList<SchemaIndex> remaining;
-                    try
-                    {
-                        remaining = Missing(wanted, this.Read());
-                    }
-                    catch (DbException)
-                    {
-                        remaining = missing;
-                    }
-
-                    throw new Exception($"The schema lacks {remaining.Count} of its indexes and the adapter could not create them: {e.Message} Run these statements with a login that may create an index on the tables: {string.Join("; ", remaining.Select(this.CreateStatement))}", e);
+                    var remaining = atomic ? missing : this.StillMissing(wanted, missing);
+                    throw new Exception($"The schema lacks {remaining.Length} of its indexes and the adapter could not create them: {e.Message} Run these statements with a login that may create an index on the tables: {string.Join("; ", remaining.Select(this.CreateStatement))}", e);
                 }
             }
 
-            if (leftovers.Length > 0)
-            {
-                this.Drop(leftovers);
-            }
+            return existing
+                .Where(v => unwantedByName.TryGetValue(v.Name, out var unwanted) && v.LeadsWithColumnOf(unwanted))
+                .ToArray();
         }
 
         /// <summary>
@@ -138,6 +137,19 @@ namespace Allors.Database.Adapters.Sql
         {
             var present = new HashSet<(string, string)>(existing.Where(v => v.IsComplete && v.ColumnName != null).Select(v => (v.TableName, v.ColumnName)));
             return wanted.Where(v => !present.Contains((v.TableName, v.ColumnName))).ToArray();
+        }
+
+        // Standalone maintenance commits each index separately. Report only the work that remains.
+        private SchemaIndex[] StillMissing(IReadOnlyList<SchemaIndex> wanted, SchemaIndex[] missing)
+        {
+            try
+            {
+                return Missing(wanted, this.Read());
+            }
+            catch (DbException)
+            {
+                return missing;
+            }
         }
 
         // An index for every composite relation, on its column in the table of a class or on the role column of

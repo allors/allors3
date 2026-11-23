@@ -31,7 +31,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             }
         }
 
-        internal void Execute()
+        internal bool Execute(bool ensureIndexes)
         {
             this.validation = new Validation(this.database);
 
@@ -39,22 +39,22 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
             if (this.validation.IsValid)
             {
-                this.TruncateTables();
+                this.TruncateTables(ensureIndexes);
+                return false;
             }
-            else
-            {
-                this.CreateSchema();
 
-                // The table types go first. SQL Server does not drop a table type that another object of the
-                // schema uses, and then Init stops before it has touched a table.
-                this.DropTableTypes();
+            this.CreateSchema();
 
-                this.DropTables();
+            // The table types go first. SQL Server does not drop a table type that another object of the
+            // schema uses, and then Init stops before it has touched a table.
+            this.DropTableTypes();
 
-                this.CreateTables();
+            this.DropTables();
 
-                this.CreateTableTypes();
-            }
+            this.CreateTables();
+
+            this.CreateTableTypes();
+            return true;
         }
 
         private void AllowSnapshotIsolation()
@@ -145,7 +145,7 @@ CREATE SCHEMA {this.database.SchemaName}";
 
         // Empties the tables in one transaction: when it fails, it has changed nothing. Only the tables that
         // hold a row are truncated.
-        private void TruncateTables()
+        private void TruncateTables(bool ensureIndexes)
         {
             var sql = new StringBuilder();
 
@@ -179,9 +179,18 @@ CREATE SCHEMA {this.database.SchemaName}";
                 // One batch. The transaction is committed here, once the batch has ended without an error:
                 // after an error that ends its statement only, SQL Server goes on with the rest of a batch.
                 using var transaction = connection.BeginTransaction();
+                // Index maintenance also takes the schema lock before it locks a table.
+                var indexes = ensureIndexes ? new Indexes(this.database) : null;
                 using var command = new SqlCommand(sql.ToString(), connection, transaction);
+                indexes?.Lock(connection, transaction, commandTimeout: command.CommandTimeout);
                 command.ExecuteNonQuery();
+                var leftovers = indexes?.CreateMissing(connection, transaction);
                 transaction.Commit();
+
+                if (leftovers is { Length: > 0 })
+                {
+                    indexes.Drop(connection, leftovers);
+                }
             }
             finally
             {

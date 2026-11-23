@@ -6,7 +6,6 @@
 namespace Allors.Database.Adapters.Sql.SqlClient
 {
     using System;
-    using System.Runtime.ExceptionServices;
     using System.Xml;
     using Microsoft.Data.SqlClient;
 
@@ -107,20 +106,14 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         protected override Sql.Indexes Indexes => new Indexes(this);
 
-        public override void Init()
-        {
-            this.Initialize();
+        public override void Init() => this.EnsureIndexes(() => this.Initialize(ensureIndexes: true));
 
-            // The tables are empty: they get the indexes that they lack here, and no transaction waits for one.
-            this.EnsureIndexes();
-        }
-
-        // Builds the schema, or empties its tables. The indexes are not ensured here.
-        private void Initialize()
+        // Returns true when the schema had to be rebuilt.
+        private bool Initialize(bool ensureIndexes)
         {
             try
             {
-                new Initialization(this).Execute();
+                return new Initialization(this).Execute(ensureIndexes);
             }
             finally
             {
@@ -146,7 +139,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             lock (this)
             {
                 // Without the indexes: a table that is built here gets them once it holds its rows.
-                this.Initialize();
+                this.Initialize(ensureIndexes: false);
 
                 using (var connection = new SqlConnection(this.ConnectionString))
                 {
@@ -167,10 +160,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                         }
                         finally
                         {
-                            this.Init();
-
-                            // The exception of the load keeps the stack trace of where it was thrown.
-                            ExceptionDispatchInfo.Capture(e).Throw();
+                            this.RecoverFromFailedLoad(e, () => this.Initialize(ensureIndexes: false));
                         }
                     }
                 }

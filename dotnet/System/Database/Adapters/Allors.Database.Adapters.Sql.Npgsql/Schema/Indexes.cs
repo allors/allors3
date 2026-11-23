@@ -7,6 +7,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 {
     using System;
     using System.Collections.Generic;
+    using System.Data;
     using global::Npgsql;
     using NpgsqlTypes;
 
@@ -20,6 +21,11 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 
         // The name of an index is unique in its schema. Quoted names preserve their case.
         protected override bool TakesNameOf(SchemaIndex existing, SchemaIndex index) => this.IndexNameComparer.Equals(existing.Name, index.Name);
+
+        internal SchemaIndex[] CreateMissing(NpgsqlConnection connection, NpgsqlTransaction transaction) =>
+            this.EnsureRequiredInTransaction(
+                this.Read(connection, transaction),
+                index => Execute(connection, transaction, this.CreateStatement(index)));
 
         protected override IReadOnlyList<SchemaIndex> Read()
         {
@@ -55,9 +61,16 @@ namespace Allors.Database.Adapters.Sql.Npgsql
         protected override void Drop(IReadOnlyList<SchemaIndex> indexes)
         {
             using (var connection = new NpgsqlConnection(this.Database.ConnectionString))
-            using (var commandBuilder = new NpgsqlCommandBuilder())
             {
                 connection.Open();
+                this.Drop(connection, indexes);
+            }
+        }
+
+        internal void Drop(NpgsqlConnection connection, IReadOnlyList<SchemaIndex> indexes)
+        {
+            using (var commandBuilder = new NpgsqlCommandBuilder())
+            {
                 foreach (var index in indexes)
                 {
                     try
@@ -67,13 +80,21 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                             // Both the schema lock and the table lock have a bounded wait for optional cleanup.
                             Execute(connection, transaction, "SET LOCAL lock_timeout = '2s'");
                             this.Lock(connection, transaction);
-                            Execute(connection, transaction, $"DROP INDEX IF EXISTS {commandBuilder.QuoteIdentifier(this.Database.SchemaName)}.{commandBuilder.QuoteIdentifier(index.Name)}");
+                            if (this.Read(connection, transaction).Exists(v => this.TakesNameOf(v, index) && v.LeadsWithColumnOf(index)))
+                            {
+                                Execute(connection, transaction, $"DROP INDEX IF EXISTS {commandBuilder.QuoteIdentifier(this.Database.SchemaName)}.{commandBuilder.QuoteIdentifier(index.Name)}");
+                            }
+
                             transaction.Commit();
                         }
                     }
-                    catch (PostgresException)
+                    catch (Exception e) when (e is NpgsqlException or TimeoutException || (e is InvalidOperationException && connection.State != ConnectionState.Open))
                     {
-                        // The index stays. The next database object tries again.
+                        // Cleanup is optional. A broken connection cannot drop the remaining indexes either.
+                        if (connection.State != ConnectionState.Open)
+                        {
+                            return;
+                        }
                     }
                 }
             }
@@ -89,9 +110,9 @@ namespace Allors.Database.Adapters.Sql.Npgsql
         }
 
         // Held until the transaction ends. A lock of the transaction also works behind a connection pooler.
-        private void Lock(NpgsqlConnection connection, NpgsqlTransaction transaction)
+        internal void Lock(NpgsqlConnection connection, NpgsqlTransaction transaction, int commandTimeout = 0)
         {
-            using (var command = new NpgsqlCommand("SELECT pg_advisory_xact_lock(hashtext(@name))", connection, transaction) { CommandTimeout = 0 })
+            using (var command = new NpgsqlCommand("SELECT pg_advisory_xact_lock(hashtext(@name))", connection, transaction) { CommandTimeout = commandTimeout })
             {
                 command.Parameters.Add("@name", NpgsqlDbType.Text).Value = this.LockName;
                 command.ExecuteNonQuery();

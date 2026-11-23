@@ -143,6 +143,38 @@ namespace Allors.Database.Adapters.Sql
         }
 
         [Fact]
+        public void InitEmptiesTheTablesWhenAnOptionalIndexCannotBeDropped()
+        {
+            const string name = "idx_c1_c1c1allorsdouble";
+            var database = this.Rebuild();
+            var m = (MetaPopulation)database.MetaPopulation;
+            using (var transaction = database.CreateTransaction())
+            {
+                transaction.Create(m.C1);
+                transaction.Commit();
+            }
+
+            // A unique constraint owns its index, so the server refuses to drop the index directly.
+            this.ExecuteScalar($"ALTER TABLE allors.c1 ADD CONSTRAINT {name} UNIQUE (c1allorsdouble)");
+            try
+            {
+                this.DropIndex("c1", RoleIndex);
+                database.Init();
+
+                Assert.True(this.ExistIndex(name));
+                Assert.Equal(1, this.IndexCount("c1", RoleColumn));
+                using (var transaction = database.CreateTransaction())
+                {
+                    Assert.Empty(transaction.Extent(m.C1));
+                }
+            }
+            finally
+            {
+                this.ExecuteScalar($"ALTER TABLE allors.c1 DROP CONSTRAINT {name}");
+            }
+        }
+
+        [Fact]
         public void AnIndexThatCannotAcquireTheSchemaLockStays()
         {
             const string indexName = "idx_c1_c1c1allorsstring";
@@ -205,10 +237,19 @@ namespace Allors.Database.Adapters.Sql
             Assert.Equal(1, this.IndexCount("c1c1c2many2many", "r"));
         }
 
-        [Fact]
-        public void ANameThatIsTakenRefusesTheTransaction()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void ANameThatIsTakenRefusesTheTransaction(bool initialize)
         {
             var database = this.Rebuild();
+            var m = (MetaPopulation)database.MetaPopulation;
+            using (var transaction = database.CreateTransaction())
+            {
+                transaction.Create(m.C1);
+                transaction.Commit();
+            }
+
             this.DropIndex("c1", RoleIndex);
 
             // The name of the index for C1.Many2One, on another column.
@@ -220,23 +261,20 @@ namespace Allors.Database.Adapters.Sql
             Assert.Contains(RoleColumn, exception.Message);
             Assert.Contains("c1allorsdouble", exception.Message);
 
-            // Ensuring the indexes says the same.
-            exception = Assert.ThrowsAny<Exception>(() => ((Database)this.CreateDatabase()).EnsureIndexes());
+            // Both operations report the conflict and invalidate the earlier check on this database object.
+            Action ensure = initialize ? database.Init : database.EnsureIndexes;
+            exception = Assert.ThrowsAny<Exception>(ensure);
             Assert.Contains(RoleIndex, exception.Message);
             Assert.Contains(RoleColumn, exception.Message);
-            Assert.Contains("c1allorsdouble", exception.Message);
-
-            // So does Init, which ensures the indexes. The object that had the indexes before that Init is
-            // refused a transaction as well.
-            exception = Assert.ThrowsAny<Exception>(() => database.Init());
             Assert.Contains("c1allorsdouble", exception.Message);
             Assert.ThrowsAny<Exception>(() => database.CreateTransaction());
 
             this.DropIndex("c1", RoleIndex);
             ((Database)this.CreateDatabase()).EnsureIndexes();
 
-            using (this.CreateDatabase().CreateTransaction())
+            using (var transaction = database.CreateTransaction())
             {
+                Assert.Single(transaction.Extent(m.C1));
             }
 
             Assert.Equal(1, this.IndexCount("c1", RoleColumn));
@@ -336,6 +374,34 @@ namespace Allors.Database.Adapters.Sql
 
             using (database.CreateTransaction())
             {
+            }
+        }
+
+        [Fact]
+        public void ALoadThatFailsReportsTheInputErrorAndTheRecoveryError()
+        {
+            var database = this.Rebuild();
+            this.DropIndex("c1", RoleIndex);
+            this.ExecuteScalar($"CREATE INDEX {RoleIndex} ON allors.c1 (c1allorsdouble)");
+
+            // The objects have been loaded when the mismatched closing tag stops the reader.
+            var m = (MetaPopulation)database.MetaPopulation;
+            var file = $"<population version=\"1\"><objects><database><ot i=\"{m.C1.Id:N}\">1:1</ot></database></objects><relations></population>";
+            using (var reader = XmlReader.Create(new StringReader(file)))
+            {
+                var exception = Assert.Throws<AggregateException>(() => database.Load(reader));
+                Assert.Collection(
+                    exception.InnerExceptions,
+                    input => Assert.IsType<XmlException>(input),
+                    recovery => Assert.Contains(RoleIndex, recovery.Message));
+            }
+
+            this.DropIndex("c1", RoleIndex);
+            database.EnsureIndexes();
+            using (var transaction = database.CreateTransaction())
+            {
+                Assert.Empty(transaction.Extent(m.C1));
+                Assert.Equal(1, transaction.Create(m.C1).Id);
             }
         }
 

@@ -115,9 +115,10 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
 - The SqlClient and Npgsql adapters ensure the indexes of their schema, where they created them
   only when `Init` built the tables. `EnsureIndexes()` reads the indexes of the schema, creates
   the ones that are missing and drops the ones of the adapter that it no longer wants. `Init`
-  calls it at its end, also when it only empties the tables, and `Load` calls it after the rows,
-  so that the indexes are built on the loaded rows. A transaction creates and drops no index: a
-  database object reads the indexes of the schema before its first transaction, and while one is
+  ensures the indexes after building the schema. When it empties a valid schema, it creates the
+  missing indexes in the same transaction so an index failure rolls back the truncation. It drops
+  leftover indexes after the commit. `Load` ensures the indexes after loading the rows. A database
+  object reads the indexes of the schema before its first transaction, and while one is
   missing no transaction opens and the message names the `index` command, `EnsureIndexes()` and
   the statements to run. So an index that the schema lacks, because its relation type was marked
   as indexed after the tables were created or because somebody dropped it, is reported at the
@@ -125,12 +126,12 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   index counts as present by its table and the column that it leads with, so an index that
   somebody else created is accepted. An index is dropped only when it has the name that the
   adapter gives to an index for a unit role and that role is not marked as indexed; an index on a
-  composite relation is never dropped. Each index is built on a connection of its own, in a
-  transaction of its own under a lock for the schema, `pg_advisory_xact_lock` or `sp_getapplock`,
-  and without a command timeout. While an index is built, writes to its table wait, and on SQL
-  Server a snapshot transaction that was open fails when it next uses that table, so a deployment
-  chooses the moment: it gives a database that it keeps its indexes with the `index` command or a
-  call of `EnsureIndexes()`. When `EnsureIndexes()` can not create an index, for example because
+  composite relation is never dropped. `EnsureIndexes()` builds each missing index in its own
+  transaction. Both it and `Init` use a schema lock (`pg_advisory_xact_lock` or `sp_getapplock`)
+  and build indexes without a command timeout. While an index is built, writes to its table wait,
+  and on SQL Server a snapshot transaction that was open fails when it next uses that table.
+  A deployment can schedule this work with the `index` command or a call of `EnsureIndexes()`.
+  When `EnsureIndexes()` can not create an index, for example because
   the login does not own the table, it throws and the message names the statements to run, and
   an `Init` or a `Load` that called it fails with that exception. A database that lacked an index
   started before this change, and now refuses to until it has the index (#388, #437).
