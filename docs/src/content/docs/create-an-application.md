@@ -154,7 +154,8 @@ dotnet run --no-launch-profile --project Database/Server -- --urls http://localh
 
 Open a second PowerShell terminal. Sign in with the password you entered for the worker, then
 use the returned bearer token to sync the worker's own `Person`. The sign-in response holds
-the user ID in `u` and the token in `t`. The sync request takes a list of numeric object IDs.
+the id of the user in `u` and the token in `t`. The sync request takes a list of numeric object
+ids.
 
 ```powershell
 $api = 'http://localhost:5080/allors'
@@ -173,7 +174,7 @@ $sync = Invoke-RestMethod -Method Post -Uri "$api/sync" -Headers $headers `
 $sync.o | Select-Object -ExpandProperty i
 ```
 
-The printed ID should match `$login.u`. A missing or invalid bearer token on `/allors/sync`
+The printed id should match `$login.u`. A missing or invalid bearer token on `/allors/sync`
 returns HTTP 401. Stop the server with Ctrl+C in its terminal. To accept another host name,
 include it in the server's [`AllowedHosts` setting](configuration.md#settings).
 

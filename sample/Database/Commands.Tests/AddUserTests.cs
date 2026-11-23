@@ -127,6 +127,31 @@ namespace Commands.Tests
         {
             const string password = "example-password-value";
             var arguments = separator == null ? new[] { "user", option, password } : new[] { "user", option + separator + password };
+
+            var (code, message) = RunMain(arguments);
+
+            Assert.Equal(ExitCode.Error, code);
+            Assert.DoesNotContain(password, message);
+            Assert.Contains("user --help", message);
+            Assert.Contains("--password-stdin", message);
+        }
+
+        // The root command rejects an argument that comes before the command user.
+        [Theory]
+        [InlineData("--password=example-password-value")]
+        [InlineData("-p:example-password-value")]
+        [InlineData("example-password-value")]
+        public void UserRejectsAPasswordBeforeTheCommand(string argument)
+        {
+            var (code, message) = RunMain(argument, "user", "-n", "jane@example.com", "-g", "Workers");
+
+            Assert.Equal(ExitCode.Error, code);
+            Assert.DoesNotContain("example-password-value", message);
+            Assert.Contains("user --help", message);
+        }
+
+        private static (int Code, string Output) RunMain(params string[] arguments)
+        {
             var originalOutput = Console.Out;
             var originalError = Console.Error;
             using var output = new StringWriter();
@@ -134,18 +159,14 @@ namespace Commands.Tests
             {
                 Console.SetOut(output);
                 Console.SetError(output);
-                Assert.Equal(ExitCode.Error, Program.Main(arguments));
+                var code = Program.Main(arguments);
+                return (code, output.ToString());
             }
             finally
             {
                 Console.SetOut(originalOutput);
                 Console.SetError(originalError);
             }
-
-            var message = output.ToString();
-            Assert.DoesNotContain(password, message);
-            Assert.Contains("user --help", message);
-            Assert.Contains("--password-stdin", message);
         }
 
         private static int RunUser(Program program, string input, params string[] arguments)

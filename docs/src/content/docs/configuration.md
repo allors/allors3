@@ -41,8 +41,8 @@ tool and server both read `custom`, followed by `custom/commands` for the tool a
 for the server. Put their shared database settings in `custom` and the signing key in the server
 settings or the environment. See [Run the server and sign in](create-an-application.md#run-the-server-and-sign-in).
 
-The Core test server and the sample server accept `--urls` on the command line to set their
-listening addresses.
+The Core test server and the sample server read no setting from the command line except `--urls`,
+which sets their listening addresses.
 
 ## The order of the files
 
@@ -77,8 +77,8 @@ JwtToken__Key=…
 | `adapter` | Every program | The database adapter: `snapshot`, `sqlclient` or `npgsql`. Upper and lower case are equal. |
 | `ConnectionStrings:DefaultConnection` | Every program | The connection string of the database. Required with `sqlclient` and `npgsql`; the Snapshot adapter keeps its population in memory and needs none. |
 | `JwtToken:Key` | A server | The key that signs and validates bearer tokens. The server requires at least 32 UTF-8 bytes at startup. |
-| `JwtToken:Issuer` | A server | The issuer of a bearer token. |
-| `JwtToken:Audience` | A server | The audience of a bearer token. Without the setting it is the issuer. |
+| `JwtToken:Issuer` | A server | The issuer of a bearer token. When the setting has a value, a request with a token from another issuer receives HTTP 401. |
+| `JwtToken:Audience` | A server | The audience of a bearer token. Without the setting it is the issuer. When the audience has a value, a request with a token for another audience receives HTTP 401. |
 | `JwtToken:Expiration` | A server | The lifetime of a bearer token, as a .NET `TimeSpan` such as `7.00:00:00` for seven days. Without a value that is a `TimeSpan`, the lifetime is 30 days. |
 | `AllowedHosts` | The sample server | A semicolon-separated list of host names without ports. An explicit list replaces the default, `localhost`. Every accepted host uses the `Default` workspace. An unlisted host receives HTTP 400 before authentication. |
 | `populationFile` | The command-line tool | The file that `load` reads and `save` writes, and that the `upgrade` of the sample application reads, when the `-f` option is absent. Without the setting the file is `population.xml`. |
