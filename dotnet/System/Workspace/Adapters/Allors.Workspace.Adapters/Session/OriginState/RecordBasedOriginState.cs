@@ -335,7 +335,10 @@ namespace Allors.Workspace.Adapters
 
                 if (roleType.ObjectType.IsUnit)
                 {
-                    if (!Equals(original, newOriginal))
+                    var same = original is byte[] originalBinary && newOriginal is byte[] newOriginalBinary
+                        ? originalBinary.SequenceEqual(newOriginalBinary)
+                        : Equals(original, newOriginal);
+                    if (!same)
                     {
                         return false;
                     }
