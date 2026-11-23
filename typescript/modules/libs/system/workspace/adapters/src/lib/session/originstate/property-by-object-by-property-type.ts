@@ -40,16 +40,23 @@ export class PropertyByObjectByPropertyType {
 
     if (
       propertyType.isOne
-        ? newValue === originalValue
+        ? (newValue ?? undefined) === originalValue
         : this.ranges.equals(newValue as IObject[], originalValue)
     ) {
-      this.changedPropertyByObjectByPropertyType.remove(propertyType, object);
-    } else {
       this.changedPropertyByObjectByPropertyType.set(
         propertyType,
         object,
-        newValue
+        undefined
       );
+    } else {
+      // Retain empty values until the checkpoint applies the removals.
+      const changes = this.changedPropertyByObjectByPropertyType.mapMap;
+      let changedByObject = changes.get(propertyType);
+      if (changedByObject == null) {
+        changedByObject = new Map();
+        changes.set(propertyType, changedByObject);
+      }
+      changedByObject.set(object, newValue);
     }
   }
 

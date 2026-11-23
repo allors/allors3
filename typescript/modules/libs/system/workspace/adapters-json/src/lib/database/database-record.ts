@@ -11,12 +11,15 @@ import { DatabaseConnection } from './database-connection';
 import { ResponseContext } from './security/response-context';
 import { unitFromJson } from '../json/from-json';
 
+const maxDateTime = '9999-12-31T23:59:59.9999999Z';
+
 export class DatabaseRecord extends SystemDatabaseRecord {
   grants: IRange<number>;
   revocations: IRange<number>;
 
   private _roleByRelationType?: Map<RelationType, unknown>;
   private syncResponseRoles?: SyncResponseRole[];
+  private maxDateTimeRoles?: Set<RelationType>;
 
   constructor(
     public readonly database: DatabaseConnection,
@@ -69,6 +72,11 @@ export class DatabaseRecord extends SystemDatabaseRecord {
 
           if (objectType.isUnit) {
             role = unitFromJson(objectType.tag, v.v);
+            // DateTime.MaxValue retains ticks beyond JavaScript's last millisecond of year 9999.
+            if (v.v === maxDateTime && role instanceof Date) {
+              this.maxDateTimeRoles ??= new Set();
+              this.maxDateTimeRoles.add(relationType);
+            }
           } else {
             if (roleType.isOne) {
               role = v.o;
@@ -87,8 +95,12 @@ export class DatabaseRecord extends SystemDatabaseRecord {
     return this._roleByRelationType;
   }
 
-  getRole(roleType: RoleType): unknown {
-    return this.roleByRelationType?.get(roleType.relationType);
+  getRole(roleType: RoleType, forComparison = false): unknown {
+    const relationType = roleType.relationType;
+    const role = this.roleByRelationType?.get(relationType);
+    return forComparison && this.maxDateTimeRoles?.has(relationType)
+      ? maxDateTime
+      : role;
   }
 
   isPermitted(permission: number): boolean {

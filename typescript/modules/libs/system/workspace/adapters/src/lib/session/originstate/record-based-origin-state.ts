@@ -396,11 +396,15 @@ export abstract class RecordBasedOriginState {
 
     for (const [relationType] of this.changedRoleByRelationType) {
       const roleType = relationType.roleType;
-      const original = this.record?.getRole(roleType);
-      const newOriginal = newRecord?.getRole(roleType);
+      const original = this.record?.getRole(roleType, true);
+      const newOriginal = newRecord?.getRole(roleType, true);
 
       if (roleType.objectType.isUnit) {
-        if (original !== newOriginal) {
+        const equal =
+          original instanceof Date && newOriginal instanceof Date
+            ? original.getTime() === newOriginal.getTime()
+            : original === newOriginal;
+        if (!equal) {
           return false;
         }
       } else if (roleType.isOne) {

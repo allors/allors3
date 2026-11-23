@@ -1,3 +1,4 @@
+import { C1 } from '@allors/default/workspace/domain';
 import { Fixture, name_c1A, name_c2A } from '../fixture';
 import '../matchers';
 
@@ -100,4 +101,89 @@ test('addCompositesRoleWrongRoleType', async () => {
   }
 
   expect(hasErrors).toBeTruthy();
+});
+
+test('removeCompositesRoleSession', async () => {
+  const { workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const c1a = session.create<C1>(m.C1);
+  const c1b = session.create<C1>(m.C1);
+  const c1c = session.create<C1>(m.C1);
+
+  c1a.addSessionC1Many2Many(c1b);
+  c1a.addSessionC1Many2Many(c1c);
+  session.checkpoint();
+
+  c1a.removeSessionC1Many2Many(c1b);
+
+  // removeCompositesRole on a session-origin role must remove, not add:
+  // the bug routes it to sessionOriginState.addCompositesRole, leaving c1b in place.
+  expect(c1a.SessionC1Many2Manies).toEqual([c1c]);
+  expect(c1b.C1sWhereSessionC1Many2Many).toEqual([]);
+});
+
+test('removeCompositesRoleSessionOne2Many', async () => {
+  const { workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const c1a = session.create<C1>(m.C1);
+  const c1b = session.create<C1>(m.C1);
+  const c1c = session.create<C1>(m.C1);
+
+  c1a.addSessionC1One2Many(c1b);
+  c1a.addSessionC1One2Many(c1c);
+  session.checkpoint();
+
+  c1a.removeSessionC1One2Many(c1b);
+
+  // removeCompositesRoleOne2Many must remove the role from the association:
+  // the bug used ranges.add, leaving c1b in place.
+  expect(c1a.SessionC1One2Manies).toEqual([c1c]);
+  expect(c1b.C1WhereSessionC1One2Many).toBeNull();
+
+  const changes = session.checkpoint();
+  const roleType = m.C1.SessionC1One2Manies;
+  expect(changes.associationsByRoleType.get(roleType)).toEqual(new Set([c1a]));
+  expect(changes.rolesByAssociationType.get(roleType.associationType)).toEqual(
+    new Set([c1b])
+  );
+  expect(c1b.C1WhereSessionC1One2Many).toBeNull();
+});
+
+test('addCompositesRoleSessionOne2ManyReassigns', async () => {
+  const { workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const c1a = session.create<C1>(m.C1);
+  const c1d = session.create<C1>(m.C1);
+  const c1b = session.create<C1>(m.C1);
+
+  c1a.addSessionC1One2Many(c1b);
+  session.checkpoint();
+  c1d.addSessionC1One2Many(c1b);
+
+  // One2Many: reassigning the role to a new association must detach it from the
+  // old one. The bug set the role's association to itself, so the detach targeted
+  // the wrong object and c1b stayed in c1a.
+  expect(c1a.SessionC1One2Manies).toEqual([]);
+  expect(c1d.SessionC1One2Manies).toEqual([c1b]);
+  expect(c1b.C1WhereSessionC1One2Many).toBe(c1d);
+});
+
+test('setUnitRoleSessionToNullWithoutValueIsNoChange', async () => {
+  const { workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const c1a = session.create<C1>(m.C1);
+  session.checkpoint();
+
+  c1a.strategy.setUnitRole(m.C1.SessionAllorsString, null);
+
+  // A session role without a value stays without one, so the next checkpoint
+  // must not report it as changed.
+  const changes = session.checkpoint();
+  expect(changes.associationsByRoleType.has(m.C1.SessionAllorsString)).toBe(
+    false
+  );
 });
