@@ -212,8 +212,8 @@ namespace Allors.Database.Adapters
         /// <returns>The unit.</returns>
         /// <exception cref="ArgumentException">
         /// The role type cannot hold the unit as it is: a string or a binary that is longer than its size, a decimal
-        /// with more digits than its precision or more decimals than its scale, a date with more than milliseconds
-        /// that is not the largest date, a float that is NaN or an infinity, or a string with the character U+0000.
+        /// with more digits than its precision or more decimals than its scale, a float that is NaN or an infinity,
+        /// or a string with the character U+0000.
         /// </exception>
         /// <exception cref="FormatException">
         /// The XML value is not the text that a save writes for a unit of the unit type of the role type.
@@ -230,10 +230,12 @@ namespace Allors.Database.Adapters
                 case decimal @decimal when !roleType.Fits(@decimal):
                     throw new ArgumentException($"The decimal {XmlConvert.ToString(@decimal)} has more digits than the precision {roleType.Precision} or more decimals than the scale {roleType.Scale} of {roleType}.");
 
-                // A role holds a date to the millisecond, to which a date is cut when it is set. A load does not cut
-                // the date of a file. The largest date is the only date with more than milliseconds.
+                // A role holds a date to the millisecond, to which a date is cut when it is set, and the largest date
+                // is the only date with more. A file can hold a date with more: the SqlClient and Npgsql adapters
+                // saved a date as their database held it. A load cuts it as a role does.
                 case DateTime dateTime when dateTime.Ticks % TimeSpan.TicksPerMillisecond != 0 && dateTime != DateTime.MaxValue:
-                    throw new ArgumentException($"The date {value} has a fraction of a second beyond milliseconds, which {roleType} does not hold: a date role holds a date to the millisecond, or the largest date.");
+                    unit = roleType.Normalize(unit);
+                    break;
             }
 
             roleType.AssertValue(unit);

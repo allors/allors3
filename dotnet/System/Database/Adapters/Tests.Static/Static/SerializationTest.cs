@@ -27,10 +27,10 @@ namespace Allors.Database.Adapters
         protected static readonly bool[] TrueFalse = { true, false };
         private static readonly string GuidString = Guid.NewGuid().ToString();
 
-        // The forms in which the XML of a saved population can reach Load. Every form holds the same population. Three
+        // The forms in which the XML of a saved population can reach Load. Every form holds the same population. Four
         // of them are the forms in which an adapter saved before every adapter wrote the same file: type ids without
-        // hyphens, decimals without the zeros of their scale, and the roles of a to-many relation in another order
-        // than the order of their ids.
+        // hyphens, decimals without the zeros of their scale, the roles of a to-many relation in another order than
+        // the order of their ids, and dates with a fraction of a second beyond milliseconds.
         private static readonly (string Name, Action<XmlDocument, IMetaPopulation> Change)[] Forms =
         {
             ("as saved", null),
@@ -46,6 +46,7 @@ namespace Allors.Database.Adapters
             ("values in CDATA sections", ValuesInCDataSections),
             ("decimals without the zeros of their scale", DecimalsWithoutZeros),
             ("roles of a to-many relation in another order", RolesInAnotherOrder),
+            ("dates with a fraction of a second beyond milliseconds", DatesBeyondMilliseconds),
             (
                 "all forms together",
                 (document, meta) =>
@@ -256,6 +257,11 @@ namespace Allors.Database.Adapters
                                     var str = x.C1AllorsString;
 
                                     this.AssertPopulation(transaction);
+
+                                    // The adapter holds a date as a role returns it: an extent finds the object by it.
+                                    var byDate = transaction.Extent(m.C1);
+                                    byDate.Filter.AddEquals(m.C1.C1AllorsDateTime, new DateTime(1973, 3, 27, 12, 1, 2, 3, DateTimeKind.Utc));
+                                    Assert.Single(byDate);
                                 }
 
                                 var difference = Difference(saved, Digest(this.Population));
@@ -1403,6 +1409,42 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
             }
         }
 
+        // A role holds a date to the millisecond, to which a date is cut when it is set, and the largest date is the
+        // only date with more. A load reads the date of a file as a role holds it: a date with more than
+        // milliseconds, which the SqlClient and Npgsql adapters once saved, is cut and not rounded.
+        [Fact]
+        public void ReadDate()
+        {
+            var roleType = new MetaBuilder().Build().C1.C1AllorsDateTime;
+            var second = new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            var lastMillisecond = new DateTime(9999, 12, 31, 23, 59, 59, 999, DateTimeKind.Utc);
+
+            foreach (var (value, expected) in new[]
+            {
+                ("2000-01-01T00:00:00Z", second),
+                ("2000-01-01T00:00:00.123Z", second.AddMilliseconds(123)),
+                ("2000-01-01T00:00:00.1234Z", second.AddMilliseconds(123)),
+                ("2000-01-01T00:00:00.123456Z", second.AddMilliseconds(123)),
+                ("2000-01-01T00:00:00.1234567Z", second.AddMilliseconds(123)),
+                ("2000-01-01T00:00:00.1239999Z", second.AddMilliseconds(123)),
+                ("2000-01-01T00:00:00.9999999Z", second.AddMilliseconds(999)),
+                ("2000-01-01T00:00:00.0000001Z", second),
+                ("9999-12-31T23:59:59.999Z", lastMillisecond),
+                ("9999-12-31T23:59:59.9999998Z", lastMillisecond),
+                ("9999-12-31T23:59:59.9999999Z", DateTime.MaxValue),
+                ("0001-01-01T00:00:00.0000001Z", DateTime.MinValue),
+            })
+            {
+                var read = (DateTime)Serialization.ReadUnit(roleType, value);
+
+                Assert.Equal(expected.Ticks, read.Ticks);
+                Assert.Equal(DateTimeKind.Utc, read.Kind);
+
+                // What a role holds when the date of the file is set.
+                Assert.Equal(read, roleType.NormalizeRole(Serialization.ReadString(value, UnitTags.DateTime)));
+            }
+        }
+
         [Fact]
         public void ReadValues()
         {
@@ -2205,6 +2247,30 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
             }
         }
 
+        // The dates as the SqlClient and Npgsql adapters saved them from a database that held more than a role holds:
+        // with the fraction of a second that the database held, here to a tenth of a microsecond. A role returned
+        // such a date cut to milliseconds. The largest date is the only date of a role with more.
+        private static void DatesBeyondMilliseconds(XmlDocument document, IMetaPopulation meta)
+        {
+            foreach (XmlElement relationType in document.SelectNodes("//" + Serialization.RelationTypeUnit))
+            {
+                var roleType = ((IRelationType)meta.FindById(Guid.Parse(relationType.GetAttribute(Serialization.Id)))).RoleType;
+                if (((IUnit)roleType.ObjectType).Tag != UnitTags.DateTime)
+                {
+                    continue;
+                }
+
+                foreach (var text in relationType.SelectNodes(Serialization.Relation + "/text()").OfType<XmlText>())
+                {
+                    var date = (DateTime)Serialization.ReadString(text.Value, UnitTags.DateTime);
+                    if (date != DateTime.MaxValue)
+                    {
+                        text.Value = Serialization.WriteString(UnitTags.DateTime, date.AddTicks(4567));
+                    }
+                }
+            }
+        }
+
         // The roles of a to-many relation as the Memory adapter saved them: in the order of its collection, which is
         // not the order of their ids. Here they are descending by id.
         private static void RolesInAnotherOrder(XmlDocument document, IMetaPopulation meta)
@@ -2842,18 +2908,6 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
                     UnitsOf(Id(m.C1.C1AllorsDecimal), (2, mostDecimals), (4, mostDecimals + "0")),
                     Relation(m.C1.C1AllorsDecimal, 1, tooManyDecimals),
                     Relation(m.C1.C1AllorsDecimal, 3, "-" + tooManyDecimals)),
-
-                // A role holds a date to the millisecond, to which a date is cut when it is set. The largest date is
-                // the only date with more.
-                Change(
-                    "dates with more than milliseconds",
-                    string.Empty,
-                    UnitsOf(Id(m.C1.C1AllorsDateTime), (1, "2000-01-01T00:00:00.1234567Z"), (2, "2000-01-01T00:00:00.123Z"), (3, "2000-01-01T00:00:00.1234Z"), (4, "9999-12-31T23:59:59.9999999Z"))
-                    + UnitsOf(Id(m.I1.I1AllorsDateTime), (1, "9999-12-31T23:59:59.9999998Z")),
-                    UnitsOf(Id(m.C1.C1AllorsDateTime), (2, "2000-01-01T00:00:00.123Z"), (4, "9999-12-31T23:59:59.9999999Z")),
-                    Relation(m.C1.C1AllorsDateTime, 1, "2000-01-01T00:00:00.1234567Z"),
-                    Relation(m.C1.C1AllorsDateTime, 3, "2000-01-01T00:00:00.1234Z"),
-                    Relation(m.I1.I1AllorsDateTime, 1, "9999-12-31T23:59:59.9999998Z")),
             };
         }
 
