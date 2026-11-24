@@ -394,8 +394,8 @@ permission, gets HTTP 500.
   in the folders `Pull`, `Sync`, `Push`, `Invoke`, `Security` and `Tracing`. `PolicyServiceTests`
   and `PullRetryTests` check the retries of a pull, a push and an invoke, and
   `ExceptionHandlerTests` the body of an error. In `sample/Database/Server.Tests`, `WorkItemTests`
-  pulls, syncs and pushes over HTTP, and `SignInTests` checks the bearer token at the permission
-  endpoint.
+  pulls, syncs and pushes over HTTP. `SignInTests` checks that every endpoint refuses a missing or
+  an invalid token, and that the permission endpoint refuses a token of another issuer or audience.
 - The TypeScript workspace tests in
   `typescript/modules/libs/system/workspace/adapters-json-tests/src/lib/runtime/security.spec.ts`
   exercise permission requests during concurrent pulls. The server tests do not check the fields

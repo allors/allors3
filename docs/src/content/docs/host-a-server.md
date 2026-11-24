@@ -103,7 +103,8 @@ host and port, or the same SQL Server instance, as the application.
 For PostgreSQL its form is `Host=localhost;Username=postgres;Password=…`.
 For SQL Server it is `Server=localhost;User Id=sa;Password=…;TrustServerCertificate=true`. The
 prompt hides the connection string and keeps it out of bash history. Use a terminal without
-exported admin connections so only `init` receives the credential.
+exported admin connections so only `init` receives the credential, and run the block in the
+terminal of step 1, whose block set `admin_setting`.
 
 ```sh
 (
@@ -113,7 +114,7 @@ exported admin connections so only `init` receives the credential.
     echo 'Enter an admin connection string.' >&2
     exit 1
   fi
-  export "$admin_setting=$admin_connection"
+  export "${admin_setting:?run a block of step 1 in this terminal first}=$admin_connection"
   dotnet run --project Database/Commands -- init
 ) &&
   dotnet run --project Database/Commands -- populate &&
@@ -195,6 +196,9 @@ Stop the server with Ctrl+C in its terminal.
 - **Publish the server.** `dotnet publish Database/Server -c Release -o <folder>` writes the
   server, with its `nlog.config`, to a folder of its own. Start it there with
   `dotnet <folder>/Server.dll --urls http://localhost:5080`, with the same configuration root.
+- **Give the server's account access.** The `umask 077` of step 1 stays in effect in its terminal,
+  so the configuration root, and the folder of a publish from that terminal, can be read only by
+  your account. A server that runs under another account needs read access to both.
 - **Keep the environment `Production`.** Unless `ASPNETCORE_ENVIRONMENT`, `DOTNET_ENVIRONMENT` or
   the option `--environment` names another environment, the server runs as `Production`, and the
   body of a response with HTTP 500 says only `"An internal server error has occurred."`. With
@@ -224,8 +228,8 @@ Stop the server with Ctrl+C in its terminal.
   their tests in `sample/Database/Commands.Tests`. `DatabaseProvisioning`, in
   `dotnet/System/Database/Adapters/Allors.Database.Builder`, and the `Provisioning` classes of the
   SqlClient and Npgsql adapters create the database and its login.
-- Its tests, in `sample/Database/Server.Tests`, start the server in the test process on the
-  Snapshot adapter. `StartupTests` checks the host names and the signing key, `SignInTests` the
+- The server's tests, in `sample/Database/Server.Tests`, start the server in the test process on
+  the Snapshot adapter. `StartupTests` checks the host names and the signing key, `SignInTests` the
   sign-in and the tokens, and `WorkItemTests` a pull, a sync and a push.
 - Core's part of the server, which the project includes through the glob `Core*`, is in
   `dotnet/Core/Database/Server/Core`; `ExceptionHandler.cs` writes the response of an error.
