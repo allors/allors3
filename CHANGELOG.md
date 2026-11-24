@@ -285,9 +285,9 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   a decimal with more than 28 decimals, rounded; and in a string bytes that are not UTF-8, as
   U+FFFD. A float is read by the form of its text, so that a file with the digits that the .NET
   Framework wrote for a float still loads. A date with a fraction of a second beyond milliseconds is
-  reported as well, unless it is the largest date: every adapter returned it cut to milliseconds,
-  and a later save wrote it cut to milliseconds on the Memory and Snapshot adapters, cut to
-  microseconds on the Npgsql adapter and as it was on the SqlClient adapter.
+  loaded cut to milliseconds, unless it is the largest date: every adapter returned it cut to
+  milliseconds, and a later save wrote it cut to milliseconds on the Memory and Snapshot adapters,
+  cut to microseconds on the Npgsql adapter and as it was on the SqlClient adapter (#439).
   `Serialization.ReadString` refuses a text that no save writes with a `FormatException` (#352).
 - `Save` writes the same file for one population on every adapter: the file of the population as its
   roles return it. The Memory and Snapshot adapters wrote the id of an object type and of a relation
@@ -297,8 +297,8 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   Both now write the ids with hyphens, and the Memory adapter writes the roles ascending by id. The
   SqlClient and Npgsql adapters wrote a date as the database holds it, also a date with a fraction
   of a second beyond milliseconds, which a role does not write. They now write a date as a role
-  returns it, cut to milliseconds unless it is the largest date, so that a load of the file does
-  not report it. A load reads the earlier forms as before (#353).
+  returns it, cut to milliseconds unless it is the largest date. A load reads the earlier forms as
+  before (#353).
 - Setting a unique role or a binary role to a unit of another type is refused with a message that
   names the unit: `RoleType is not a Unique.` and `RoleType is not a Binary.` Both said
   `RoleType is not a Boolean.` (#358).
