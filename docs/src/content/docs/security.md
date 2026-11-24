@@ -39,7 +39,7 @@ role `Role`. An arrow shows the role, the forward end of the relation; the
 
 | Type | What its objects are |
 | --- | --- |
-| `User` | An interface for someone who signs in. An application declares a class that implements it; in the sample application that is `Person`. |
+| `User` | An interface for someone who [signs in](authentication.md). An application declares a class that implements it; in the sample application that is `Person`. |
 | `UserGroup` | A named group of users, in its role `Members`. |
 | `Permission` | The permission for one operation on the objects of one class. Each class has one `CreatePermission`. For that class, each role with `Origin.Database` has a `ReadPermission` and a `WritePermission`, and each method has an `ExecutePermission`. |
 | `Role` | A named set of permissions, in its role `Permissions`. |
@@ -161,7 +161,8 @@ on it.
 ## Creating objects
 
 Every class has a `CreatePermission`, but this version checks none: an access control list has no
-`CanCreate`, and a push to the JSON API builds an object of any class that its workspace includes.
+`CanCreate`, and a [push](json-api.md#push) to the JSON API builds an object of any class that its
+workspace includes.
 When the new object has no security tokens of its own, what the user may then write on it follows
 from the grants of the initial `SecurityToken`, because the object is new in the transaction of
 the push. In Core's setup those are the grants of Administrators, Creators and Guests.
@@ -170,10 +171,11 @@ the push. In Core's setup those are the grants of Administrators, Creators and G
 
 The platform checks access where a user works through a workspace:
 
-- **The JSON API of a server** checks it for the workspace of the request. A pull follows a role
-  in a select or an include only when the user can read it, and a sync sends only the roles that
-  the user can read. A push writes a role only when the user can write it, and an invoke runs a
-  method only when the user can execute it.
+- **[The JSON API](json-api.md) of a server** checks it for the user whom the token of the request
+  [identifies](authentication.md), and for the workspace of the request. A pull follows a role in
+  a select or an include only when the user can read it, and a sync sends only the roles that the
+  user can read. A push writes a role only when the user can write it, and an invoke runs a method
+  only when the user can execute it.
 - **The Local workspace adapter,** which runs a workspace in the process of the database, checks
   the roles that a pull follows, the writes of a push and the methods of an invoke in the same
   way. Its records hold every role of the workspace; the session of the workspace hides the
