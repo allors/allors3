@@ -76,7 +76,7 @@ JwtToken__Key=…
 | --- | --- | --- |
 | `adapter` | Every program | The database adapter: `snapshot`, `sqlclient` or `npgsql`. Upper and lower case are equal. |
 | `ConnectionStrings:DefaultConnection` | Every program | The connection string of the database. Required with `sqlclient` and `npgsql`; the Snapshot adapter keeps its population in memory and needs none. |
-| `JwtToken:Key` | A server | The key that signs and validates bearer tokens. The server requires at least 32 UTF-8 bytes at startup. |
+| `JwtToken:Key` | A server | The key that signs and validates bearer tokens. The server requires at least 32 UTF-8 bytes at startup. [The token](authentication.md#the-token) describes the tokens and these settings. |
 | `JwtToken:Issuer` | A server | The issuer of a bearer token. When the setting has a value, a request with a token from another issuer receives HTTP 401. |
 | `JwtToken:Audience` | A server | The audience of a bearer token. Without the setting it is the issuer. When the audience has a value, a request with a token for another audience receives HTTP 401. |
 | `JwtToken:Expiration` | A server | The lifetime of a bearer token, as a .NET `TimeSpan` such as `7.00:00:00` for seven days. Without a value that is a `TimeSpan`, the lifetime is 30 days. |
