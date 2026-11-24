@@ -10,20 +10,20 @@ status: "Current"
 > the tests.
 
 A client signs in to the server with a user name and a password, and receives a bearer token: a
-JSON Web Token that the server signed. The client sends the token with every request to the
+JSON Web Token that the server signed. The client sends the token with every other request to the
 [JSON API](json-api.md). Authentication establishes which user sends a request;
-[Security](security.md) then decides what that user may do with each object. Core holds the
-sign-in endpoint, the tokens and the store of users in its server folder, and an application's
-server adds them in its `Startup`, as the sample's does. [Host a server](host-a-server.md) shows
-the steps.
+[Security](security.md) then decides what that user may do with each object. Core's server folder
+holds the sign-in endpoint, the tokens and the store of users, and an application's server adds
+them in its `Startup`, as the sample's does. [Host a server](host-a-server.md) shows how to run
+such a server and sign in.
 
 ## A request, step by step
 
 ```mermaid
 flowchart TD
-    accTitle: How the server handles a request to the JSON API
-    accDescr: A request first meets the host filter, which answers HTTP 400 when the host name is not in AllowedHosts. Then the bearer scheme checks the token, and a request without a valid token gets HTTP 401. A request with a valid token runs in a transaction that takes its user from the token, and the JSON API checks access for that user.
-    R["A request to the JSON API"] --> H["Is the host name<br>in AllowedHosts?"]
+    accTitle: How the server handles a request to the JSON API that needs a token
+    accDescr: A request to the JSON API, other than the sign-in, first meets the host filter, which answers HTTP 400 when the host name is not in AllowedHosts. Then the bearer scheme checks the token, and a request without a valid token gets HTTP 401. A request with a valid token runs in a transaction that takes its user from the token, and the JSON API checks access for that user.
+    R["A request to the<br>JSON API, other<br>than the sign-in"] --> H["Is the host name<br>in AllowedHosts?"]
     H -- yes --> T["Does it carry<br>a valid token?"]
     T -- yes --> U["The transaction<br>takes the user<br>of the token"]
     U --> A["The JSON API<br>checks access<br>for that user"]
@@ -31,12 +31,12 @@ flowchart TD
     T -- no --> E2["HTTP 401"]
 ```
 
-1. **The host.** The server compares the `Host` header with the setting `AllowedHosts` before
-   anything else, and answers a request for another host with HTTP 400, whatever its token.
-2. **The token.** Every endpoint of the JSON API requires a valid token. A request without one, or
-   with one that fails a check, gets HTTP 401 with the header `WWW-Authenticate: Bearer`, which
-   adds `error="invalid_token"` for a token that failed. The sign-in endpoint is the only one that
-   takes no token.
+1. **The host.** Before anything else, the sample's server compares the `Host` header with its
+   setting `AllowedHosts`, or with `localhost` without the setting, and answers a request for
+   another host with HTTP 400, whatever its token.
+2. **The token.** Every endpoint of the JSON API but the sign-in requires a valid token. A request
+   without one, or with one that fails a check, gets HTTP 401 with the header
+   `WWW-Authenticate: Bearer`, which adds `error="invalid_token"` for a token that failed.
 3. **The user.** The token holds the id of the user. The request runs in a transaction of its own,
    which takes the user object with that id as its user.
 4. **Access.** The JSON API decides what the request may read, write and execute for that user, as
@@ -47,9 +47,9 @@ flowchart TD
 A user is an object of a class that implements Core's interface `User`; in the sample that is
 `Person`. The sign-in uses ASP.NET Core Identity, with Core's `AllorsUserStore` in place of
 Identity's own storage, so the name, the password hash and the lockout state of a user are roles
-of the user object, such as `UserName`, `UserPasswordHash` and `UserLockoutEnd`. When Identity
-creates a user, the store builds a `Person`, so the server needs a class `Person` that implements
-`User`, as the sample's does.
+of the user object, such as `UserName`, `UserPasswordHash` and `UserLockoutEnd`. The store builds a
+`Person` when Identity creates a user, so Core's server code compiles only in a domain with a
+class `Person` that implements `User`, as the sample's does.
 
 The sign-in finds a user by `NormalizedUserName`, which `UserNormalizedUserNameRule` derives from
 `UserName` in upper case, so a user signs in with the name in any case. The model declares
@@ -60,11 +60,13 @@ that another user has in any case; other code that creates users has to check it
 Code sets a password by writing it to `InUserPassword`. The next derivation checks it with
 `UserInUserPasswordRule`: a password needs at least 12 characters, with at least four different
 ones. The rule hashes the password into `UserPasswordHash` with the password hasher of ASP.NET Core
-Identity, gives the user a new `UserSecurityStamp` and clears `InUserPassword`. When the user of
-the transaction sets their own password, the rule also requires the current one in
-`InExistingUserPassword`, and reports `Invalid password.` without it. Another user, such as an
-administrator, sets a password without it. Through the JSON API this takes the permission to write
-these roles; in the sample only the `Role` Administrator has it.
+Identity, gives the user a new `UserSecurityStamp` and clears `InUserPassword`. When users who
+already have a password set their own, the rule also requires the current one in
+`InExistingUserPassword`, and reports `Invalid password.` without it or with a wrong one. Another
+user, such as an administrator, sets a password without it. Through the JSON API this takes the
+permission to write these roles; in the sample only the `Role` Administrator has it.
+`SetPassword`, which the rule calls, hashes a password without any of these checks: code that calls
+it directly skips them.
 
 ## Signing in
 
@@ -104,37 +106,46 @@ the token expires, in seconds since 1 January 1970, UTC.
 
 - **The lifetime.** `JwtToken:Expiration` sets it, as a .NET `TimeSpan` such as `7.00:00:00` for
   seven days. Without a value that is a `TimeSpan`, a token lasts 30 days. The server accepts a
-  token until five minutes after it expires, the tolerance for clocks that differ that the token
-  validation of .NET allows by default. After that a request gets HTTP 401, and the header says
-  that the token expired.
+  token until five minutes after it expires: Microsoft.IdentityModel, which validates the token,
+  allows that much for clocks that differ by default, and `JwtTokens` keeps the default. After that
+  a request gets HTTP 401, and the header says that the token expired.
 - **The issuer and the audience.** `JwtToken:Issuer` puts an issuer in every token, in `iss`, and
   `JwtToken:Audience` an audience, in `aud`, which is the issuer when that setting is absent. The
   server refuses a token that does not carry the issuer or the audience that it is configured
-  with. Without either setting, it accepts every token that its key signed.
+  with. Without either setting, it accepts every token that its key signed and that has not
+  expired.
 
 [Settings](configuration.md#settings) lists the settings of a server.
 
 ## What a token outlives
 
 The server keeps no record of the tokens that it issued. It checks a token by its signature and its
-claims alone, so a token stays valid until it expires:
+claims alone, so a token stays valid for its whole lifetime:
 
 - **A new password ends no token.** It gives the user a new `UserSecurityStamp`, which no token
   holds and the bearer scheme does not check.
 - **Nothing withdraws a token.** There is no endpoint to sign out or to renew one; a client signs
-  in again for a new token. Changing the key ends every token at once, and so signs every user out.
+  in again for a new token. A server that restarts with another key refuses every earlier token,
+  and so signs every user out.
 - **Access does not travel in the token.** The server decides access on every request, from the
-  database as it is then. A user who leaves a user group loses its grants with the next request.
+  database as it is then. A user who leaves a user group loses the grants of that group with the
+  first request after the change is committed.
 - **A deleted user keeps a valid token.** A request with it fails with HTTP 500 as soon as the
-  server checks access for that user, as a pull that finds objects, a sync and a push do.
+  server checks access for that user, as a pull or a sync that names objects, a push that writes a
+  role, an invoke of a method and an access request for grants do. A request that checks no
+  access, such as a permission request, still succeeds.
 
 ## Where this is implemented
 
 - Core's server folder, `dotnet/Core/Database/Server/Core`, holds the parts. In `Identity`:
   `JwtTokens` creates the tokens and the parameters that check them, and refuses a short key;
-  `IdentityBuilderExtensions.AddAllorsJwtBearer` makes the bearer scheme the default;
-  `AuthenticationController` is the sign-in endpoint; `AllorsUserStore` stores the users. In
-  `Services`, `TransactionService` gives the transaction of a request the user of the token.
+  `IdentityBuilderExtensions.AddAllorsJwtBearer` makes the bearer scheme the default scheme to
+  authenticate and to challenge a request; `AuthenticationController` is the sign-in endpoint;
+  `AllorsUserStore` stores the users. In `Services`, `ClaimsPrincipalServiceMiddleware` passes the
+  claims of the token on, and `TransactionService` gives the transaction of a request the user
+  whose id they hold.
+- The sample's `Startup`, in `sample/Database/Server`, filters the host names and adds Identity
+  with Core's stores, the bearer scheme and that middleware.
 - `UserNormalizedUserNameRule` and `UserInUserPasswordRule` are in
   `dotnet/Core/Database/Domain/Core/Rules/User`, and `User.CoreOnBuild` and `SetPassword` in
   `UserExtensions`, in `dotnet/Core/Database/Domain/Core/Security`. `PasswordHasher`, in
@@ -147,5 +158,7 @@ claims alone, so a token stays valid until it expires:
 - In `sample/Database/Server.Tests`, `SignInTests` checks the sign-in, the lifetime and the refusal
   of a missing, invalid or foreign token, and `StartupTests` the signing key and the host names.
   `AddUserTests`, in `sample/Database/Commands.Tests`, checks that the `user` command refuses a
-  short password and a name that another user has in another case. No test checks that a user who
-  sets their own password has to give the current one.
+  short password and a name that another user has in another case.
+- No test checks the tolerance for an expired token, the duration of a lockout and the reset of its
+  count, the four different characters of a password, that a user who sets their own password has
+  to give the current one, or what a token outlives.

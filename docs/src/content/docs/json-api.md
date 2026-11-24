@@ -10,9 +10,9 @@ status: "Current"
 > the tests.
 
 Core's JSON API is how a client reads and changes the objects of the database over HTTP. The
-Remote workspace adapters, of .NET and of TypeScript, call it, and so can any HTTP client. This page
-lists its endpoints and the fields of their requests and responses. The data of a pull, its
-extents, predicates, selects and includes, follows the classes in
+Remote workspace adapter of .NET and the TypeScript workspace call it, and so can any HTTP client.
+This page lists its endpoints and the fields of their requests and responses. The data of a pull,
+its extents, predicates, selects and includes, follows the classes in
 `dotnet/System/Protocol/Allors.Protocol.Json/Data`; [Extents](extents.md) explains what an extent
 means. [Authentication](authentication.md) explains the tokens.
 
@@ -25,11 +25,11 @@ A workspace reads in four steps, and asks each step only for what it does not ho
 2. **Sync** sends the roles of the objects whose version, grants or revocations the workspace does
    not hold.
 3. **Access** sends the permissions of the grants and the revocations that the workspace does not
-   hold at their version.
+   hold yet.
 4. **Permission** says what each permission that the workspace does not know allows.
 
-**Push** writes the changes of a session, and **invoke** runs methods. The workspace then pulls
-again to see the result.
+**Push** writes the changes of a session, and **invoke** runs methods. To see their result, such
+as the roles that a derivation changed, a client pulls again.
 
 ## Conventions
 
@@ -39,23 +39,23 @@ again to see the result.
 | `/allors/pull` | [Finds objects](#pull). | Required | No |
 | `/allors/sync` | [Sends the roles of objects](#sync). | Required | No |
 | `/allors/push` | [Creates and changes objects](#push). | Required | When nothing failed |
-| `/allors/invoke` | [Runs methods](#invoke). | Required | When nothing failed |
+| `/allors/invoke` | [Runs methods](#invoke). | Required | When nothing failed; with the option `i`, each invocation that succeeds |
 | `/allors/access` | [Sends the permissions of grants and revocations](#access). | Required | No |
 | `/allors/permission` | [Describes permissions](#permission). | Required | No |
 
 Every endpoint takes `POST` with a JSON body and the header `Content-Type: application/json`, and
-answers with JSON. The fields have names of one or two letters. A field that a request leaves out
+answers with JSON. Most fields have names of one or two letters. A field that a request leaves out
 counts as having no value, a field that the server does not know is ignored, and a response writes
 a field without a value as `null`. A pull, a sync, a push and an invoke also take `x`, a text that
 the server passes on to the tracing of the database, if it has one.
 
 ### The workspace
 
-A request works in one workspace, by name. The workspace decides which classes, roles and methods
-the request reaches: those that [`[Workspace]`](model.md#attributes) makes available to a workspace
-of that name. A response leaves out an object of a class that the workspace does not include, and
-a push or an invoke reports an access error for it. The sample's server uses the workspace
-`Default` for every request.
+The server chooses the workspace of a request; the sample's server uses the workspace `Default` for
+every request. The workspace decides which classes, roles and methods the request reaches: those
+that [`[Workspace]`](model.md#attributes) makes available to a workspace of that name. A pull or a
+sync leaves out an object of a class that the workspace does not include, and a push or an invoke
+reports an access error for it.
 
 ### Ids, versions and tags
 
@@ -64,9 +64,10 @@ a push or an invoke reports an access error for it. The sample's server uses the
 - **Versions.** Every object has a version, a number that changes when a transaction commits a
   change to the object. A push and an invoke send the version that the client knows, and fail for
   an object whose version has changed since.
-- **Tags.** The API names a class, a relation type or a method type by its tag, a string of 22
-  characters that follows from the id in the model. In the generated metadata it is `Tag`, as in
-  `m.WorkItem.Tag`. A role is named by the tag of its relation type. These are tags of the sample:
+- **Tags.** The API names a class, an interface, a relation type or a method type by its tag, a
+  string of 22 characters that follows from the id in the model. In the generated metadata it is
+  `Tag`, as in `m.WorkItem.Tag`. A role is named by the tag of its relation type. These are tags of
+  the sample:
 
 | Type or role | Tag |
 | --- | --- |
@@ -93,7 +94,7 @@ A unit role is sent as a JSON value of its unit:
 | `Unique` | A string with the GUID. |
 | `Binary` | A string in Base64. |
 
-A role without a value is `null`.
+In a push, `null` clears a unit role.
 
 ### Errors
 
@@ -106,13 +107,13 @@ one of them has a value:
 | `_v` | The ids of objects whose version has changed. |
 | `_a` | The ids of objects that the request may not reach or change: of a class outside the workspace, or a role or a method that the user lacks the permission for. A new object is named by its workspace id. |
 | `_m` | The ids of objects that do not exist. |
-| `_d` | The errors of the derivation, each with its message in `m` and in `r` the relations that it concerns: the object's id in `i` and the tag of the relation type in `r`. |
+| `_d` | The errors of the derivation, each with its message in `m` and in `r` the relations that it concerns: the object's id in `i` and the tag of the relation type in `r`. For a new object, `i` is an id that the push gave it and then discarded, not its workspace id. |
 
 The server answers with an HTTP status in these cases:
 
 | Status | When |
 | --- | --- |
-| 400 | The host name is not in `AllowedHosts`, or the body is not valid JSON or has a value of the wrong type in a field. |
+| 400 | The host name is not in `AllowedHosts`, or, at an endpoint that needs a token, the body is not valid JSON or a value does not fit its field. |
 | 401 | The request has no valid token; see [Authentication](authentication.md#a-request-step-by-step). |
 | 405, 415 | The method is not `POST`, or the content type is not JSON. |
 | 500 | An exception. The body is a JSON string: `"An internal server error has occurred."`, or, in the environment `Development`, the message and the stack trace. The log holds the exception. |
@@ -140,9 +141,10 @@ apply the changes twice.
 | `u` | The id of the user, as a string. |
 | `t` | The token. |
 
-When the sign-in fails the response is `{"authenticated":false}`, with HTTP 200. A body without
-`l`, or without `p` for a user who exists, gets HTTP 500. [Signing in](authentication.md#signing-in) explains the check and the
-lockout.
+When the sign-in fails the response is `{"authenticated":false}`, with HTTP 200, and so it is for a
+body that is not valid JSON. A body without `l`, or without `p` for a user who has a password, gets
+HTTP 500.
+[Signing in](authentication.md#signing-in) explains the check and the lockout.
 
 ## Pull
 
@@ -152,7 +154,7 @@ lockout.
 | --- | --- |
 | `l` | The pulls, each of which finds objects. |
 | `p` | A procedure to run first: `n` its name, and its input in `c`, `o`, `v` and `p`. |
-| `d` | Dependencies: for a type, by its tag in `o`, the role (`r`) or the association (`a`) along which the pull adds objects to the response. |
+| `d` | Dependencies: for a type, by its tag in `o`, the role (`r`) or the association (`a`) along which the pull adds objects to the response. The pull follows a dependency whether or not the user may read the role, and follows it again from the objects that it adds. |
 
 A pull in `l` finds the objects of an extent or one object:
 
@@ -170,7 +172,7 @@ A pull in `l` finds the objects of an extent or one object:
 | `c` | The collections, by name: the ids of the objects of each. |
 | `o` | The objects, by name: an id each. |
 | `v` | The values, by name, that a procedure returns. |
-| `p` | Every object of the response, with `i` its id, `v` its version, `g` its grants and `r` its revocations. |
+| `p` | Every object of the response, with `i` its id, `v` its version, `g` its grants that apply to the user and `r` its revocations. |
 | `g` | The grants of those objects, each as a pair of its id and its version. |
 | `r` | The revocations of those objects, in the same form. |
 
@@ -178,7 +180,8 @@ A result without a name takes the plural name of its type, such as `WorkItems`, 
 the association that its select ends with; one object takes the singular name. A pull leaves out
 the objects of a class outside the workspace and the objects that a mask hides; it names every
 other object that it finds, even when the user may read none of its roles. A select and an include
-follow a role only when the user may read it. An id in `o` that does not exist gets HTTP 500.
+follow a role only when the user may read it, and follow an association without a check. An id in
+`o` that does not exist gets HTTP 500.
 
 A procedure runs an `IProcedure` of the database by its name, after checking the versions of the
 objects that it names in `p`; an unknown name gives `Missing procedure <name>` in `_e`.
@@ -208,12 +211,13 @@ A worker pulls the objects of `WorkItem`:
 
 | Response | Holds |
 | --- | --- |
-| `o` | The objects, each with `i` its id, `v` its version, `c` the tag of its class, `g` its grants, `r` its revocations and `ro` its roles. |
+| `o` | The objects, each with `i` its id, `v` its version, `c` the tag of its class, `g` its grants that apply to the user, `r` its revocations and `ro` its roles. |
 
 A role in `ro` holds `t`, the tag of its relation type, and its value: a unit in `v`, the id of an
 object in `o`, or the ids of objects in `c`. A sync sends the roles that the user may read and
-that have a value. It leaves out an id that does not exist, an object of a class outside the
-workspace and an object that a mask hides, and does not mention them in a role either.
+that hold a value in the database. It leaves out an id that does not exist, an object of a class
+outside the workspace and an object that a mask hides, and does not name them in a role either: a
+role that holds only such an object comes without a value.
 
 ```json
 { "o": [248] }
@@ -248,7 +252,7 @@ A role holds `t`, the tag of its relation type, and one of these:
 | Field | Holds |
 | --- | --- |
 | `u` | The value of a unit role. |
-| `c` | The id of the object of a composite role that holds one object. Without a value it removes the object. |
+| `c` | The id of the object of a composite role that holds one object. Without a value it clears the role. |
 | `a`, `r` | The ids of the objects to add to, and to remove from, a composite role that holds several objects. |
 
 A role can name a new object of the same push by its workspace id.
@@ -259,15 +263,19 @@ A role can name a new object of the same push by its workspace id.
 
 The push checks in this order, and reports what fails in the [error fields](#errors):
 
-1. **The new objects.** A tag that names no class of the workspace is an access error, and the
-   push stops. No permission to create is checked: a push creates an object of every class that
-   the workspace includes; issue [#430](https://github.com/allors/allors3/issues/430) records this.
+1. **The new objects.** A tag that names no type, or a class outside the workspace, is an access
+   error, and the push stops. The tag of an interface or of a relation type, and a workspace id
+   that two new objects share, get HTTP 500. No permission to create is checked: a push creates an
+   object of every class that the workspace includes; issue
+   [#430](https://github.com/allors/allors3/issues/430) records this.
 2. **The objects that change.** An id that does not exist is a missing error. A version that has
    changed is a version error, and an object of a class outside the workspace is an access error.
 3. **The roles.** A role that the user may not write is an access error for its object. A new
-   object without security tokens of its own takes the grants of the initial security token, as
-   [Creating objects](security.md#creating-objects) explains.
-4. **The derivation.** The push derives, and reports the errors of the derivation.
+   object without security tokens of its own takes the grants of the initial `SecurityToken`, as
+   [Creating objects](security.md#creating-objects) explains. After an error with an object that
+   changes, or with one of its roles, the push writes no role of the new objects.
+4. **The derivation.** The push derives, and reports the errors of the derivation. After an error
+   in step 2 or 3 these can include a required role that the request sets on a new object.
 5. **The commit.** When nothing failed, the push commits and returns the ids of the new objects.
    Otherwise it stores nothing.
 
@@ -292,7 +300,10 @@ An administrator creates a work item and assigns it to the person with id 240:
 ```
 
 ```json
-{ "n": [ { "w": -1, "d": 248 } ], "hasErrors": false, "_e": null, "_v": null, "_a": null, "_m": null, "_d": null }
+{
+  "n": [ { "w": -1, "d": 248 } ],
+  "hasErrors": false, "_e": null, "_v": null, "_a": null, "_m": null, "_d": null
+}
 ```
 
 A worker marks it done, with the version from a sync:
@@ -319,9 +330,10 @@ exception that the method throws goes to `_e`, and the errors of the derivation 
 
 Without `i`, the invocations share one transaction: the invoke stops at the first that fails and
 rolls back all of them, or commits them together. With `i`, each invocation commits or rolls back
-on its own, and the invoke stops at the first that fails unless `c` is true. An invocation without
-an id, a version or a method, or with the tag of a method that the class does not have in the
-workspace, gets HTTP 500.
+on its own, and the invoke stops at the first that fails unless `c` is true. A method of the class
+that only another workspace includes is an access error. An invocation without an id, a version
+or a method, or with a tag that names no method that a workspace includes for the class, gets
+HTTP 500.
 
 ## Access
 
@@ -338,7 +350,8 @@ workspace, gets HTTP 500.
 | `r` | The revocations, each with `i` its id, `v` its version and `p` the permissions in the workspace that it denies. |
 
 A grant whose users do not include the user, and an id that does not exist, are left out. An id
-of an object that is not a grant or not a revocation gets HTTP 500.
+in `g` of an object that is not a grant, or in `r` of an object that is not a revocation, gets
+HTTP 500.
 
 ## Permission
 
@@ -358,9 +371,10 @@ permission, gets HTTP 500.
 ## Where this is implemented
 
 - The endpoints are in `dotnet/Core/Database/Server/Core/Api/Json`: one controller for each, with
-  its route and the requirement of a token, and `Api.cs`, which builds the response. `PolicyService`,
-  in `Services/Policy`, holds the retries; `AuthenticationController`, in `Identity`, is the
-  sign-in endpoint; and `ExceptionHandler.cs` writes the response of an error.
+  its route and the requirement of a token, and `Api.cs`, which hands a request to the builder of
+  its response.
+  `PolicyService`, in `Services/Policy`, holds the retries; `AuthenticationController`, in
+  `Identity`, is the sign-in endpoint; and `ExceptionHandler.cs` writes the response of an error.
 - The responses are built in `dotnet/System/Database/Allors.Database.Workspace.Json`, in a folder
   for each endpoint. The requests and the responses are classes of
   `dotnet/System/Protocol/Allors.Protocol.Json`, in `Api`, `Auth` and `Data`;
@@ -369,7 +383,10 @@ permission, gets HTTP 500.
 - The Remote workspace adapter of .NET is in
   `dotnet/System/Workspace/Adapters/Allors.Workspace.Adapters.Remote`; its `Session.OnPull` takes
   the steps of a read.
-- `dotnet/Core/Database/Server.Local.Tests/Json` holds tests for each endpoint, in the folders
-  `Pull`, `Sync`, `Push`, `Invoke`, `Security` and `Tracing`. `PolicyServiceTests` and
-  `PullRetryTests` check the retries, and `ExceptionHandlerTests` the body of an error. In
-  `sample/Database/Server.Tests`, `WorkItemTests` pulls, syncs and pushes over HTTP.
+- `dotnet/Core/Database/Server.Local.Tests/Json` holds tests of pull, sync, push, invoke and access,
+  in the folders `Pull`, `Sync`, `Push`, `Invoke`, `Security` and `Tracing`. `PolicyServiceTests`
+  and `PullRetryTests` check the retries of a pull, a push and an invoke, and
+  `ExceptionHandlerTests` the body of an error. In `sample/Database/Server.Tests`, `WorkItemTests`
+  pulls, syncs and pushes over HTTP, and `SignInTests` signs in.
+- No test calls the permission endpoint, checks the retries of a sync, an access or a permission
+  request, or checks the requests that end with HTTP 500.
