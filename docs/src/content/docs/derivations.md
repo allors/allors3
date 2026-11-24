@@ -175,7 +175,8 @@ the next derivation.
 The platform derives where it changes objects for someone else, among others in these places:
 
 - The setup of a population derives what it creates.
-- The JSON API derives every push and every method that a client invokes, and returns the errors.
+- The JSON API derives every [push](json-api.md#push) and every method that a client
+  [invokes](json-api.md#invoke), and returns the errors.
   It commits a push that has no error of any kind. It commits an invoked method when the
   derivation has no errors, and rolls it back otherwise.
 

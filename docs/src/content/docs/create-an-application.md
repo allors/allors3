@@ -126,7 +126,8 @@ The tool that creates the user and the server that signs the user in must share 
 This example uses PowerShell 7.2 or later and SQL Server LocalDB on Windows. Run it from the
 application root after generating the model. For SQL Server or PostgreSQL elsewhere, set the
 adapter, application connection and admin connection for that server as described in
-[Configuration](configuration.md#admin-connections).
+[Configuration](configuration.md#admin-connections); [Host a server](host-a-server.md) gives the
+steps from bash.
 
 Choose a fresh database for this walkthrough. `init` drops and recreates the named database,
 and `populate` replaces its contents. The following commands choose a new name, populate the

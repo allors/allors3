@@ -83,7 +83,8 @@ population unchanged.
 
 For automation, pipe the password into the command and add `--password-stdin`. It reads one
 line, preserving leading and trailing spaces. To sign in as the new user, follow
-[Run the server and sign in](create-an-application.md#run-the-server-and-sign-in).
+[Run the server and sign in](create-an-application.md#run-the-server-and-sign-in) on Windows, or
+[Host a server](host-a-server.md) from bash.
 
 ## Output and exit codes
 
