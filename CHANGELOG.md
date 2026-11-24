@@ -113,24 +113,31 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   them runs once, with all the relations that it sets. The `CommandTextFor…` members of the
   adapter's `Mapping` hold statements, as in the SqlClient adapter (#378).
 - The SqlClient and Npgsql adapters ensure the indexes of their schema, where they created them
-  only when `Init` built the tables. A database object reads the indexes of the schema once, before
-  its first transaction: it creates the ones that are missing and drops the ones of the adapter
-  that it no longer wants. `EnsureIndexes()` does the same on request, and `Load` calls it at its
-  end, so that the indexes are built on the loaded rows. `Init` creates no index any more. So an
-  index that the schema lacks, because its relation type was marked as indexed after the tables
-  were created or because somebody dropped it, appears at the next start; before, the schema
-  counted as valid without it and `Init` did not bring it back. An index counts as present by its
-  table and the column that it leads with, so an index that somebody else created is accepted. An
-  index is dropped only when it has the name that the adapter gives to an index for a unit role
-  and that role is not marked as indexed; an index on a composite relation is never dropped. Each
-  index is built on a connection of its own, in a transaction of its own under a lock for the
-  schema, `pg_advisory_xact_lock` or `sp_getapplock`, and without a command timeout. While an index
-  is built, writes to its table wait, and on SQL Server a snapshot transaction that was open fails
-  when it next uses that table: give a database that is in use its indexes at deployment, with the
-  `index` command or a call of `EnsureIndexes()`. When an index can not be created, for example
-  because the login does not own the table, no transaction opens and the message names the
-  statements to run. A database that lacked an index started before this change, and now refuses
-  to until it has the index (#388).
+  only when `Init` built the tables. `EnsureIndexes()` reads the indexes of the schema, creates
+  the ones that are missing and drops the ones of the adapter that it no longer wants. `Init`
+  ensures the indexes after building the schema. When it empties a valid schema, it creates the
+  missing indexes in the same transaction so an index failure rolls back the truncation. It drops
+  leftover indexes after the commit. `Load` ensures the indexes after loading the rows. When a
+  load fails, the database is emptied again and its indexes are ensured, and the error of the
+  load is thrown; when that recovery fails as well, an `AggregateException` holds both errors,
+  the error of the load first. A database
+  object reads the indexes of the schema before its first transaction, and while one is
+  missing no transaction opens and the message names the `index` command, `EnsureIndexes()` and
+  the statements to run. So an index that the schema lacks, because its relation type was marked
+  as indexed after the tables were created or because somebody dropped it, is reported at the
+  next start; before, the schema counted as valid without it and `Init` did not bring it back. An
+  index counts as present by its table and the column that it leads with, so an index that
+  somebody else created is accepted. An index is dropped only when it has the name that the
+  adapter gives to an index for a unit role and that role is not marked as indexed; an index on a
+  composite relation is never dropped. `EnsureIndexes()` builds each missing index in its own
+  transaction. Both it and `Init` use a schema lock (`pg_advisory_xact_lock` or `sp_getapplock`)
+  and build indexes without a command timeout. While an index is built, writes to its table wait,
+  and on SQL Server a snapshot transaction that was open fails when it next uses that table.
+  A deployment can schedule this work with the `index` command or a call of `EnsureIndexes()`.
+  When `EnsureIndexes()` can not create an index, for example because
+  the login does not own the table, it throws and the message names the statements to run, and
+  an `Init` or a `Load` that called it fails with that exception. A database that lacked an index
+  started before this change, and now refuses to until it has the index (#388, #437).
 - `Init` of the SqlClient and Npgsql adapters empties a valid schema in one transaction and
   truncates only the tables that hold data, where it truncated every table, each in a transaction
   of its own. An `Init` that fails has changed nothing; before, it left the tables that it had
@@ -171,15 +178,14 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   to delete an object, and to find the object that has a role before they set a one-to-one role or
   add to a one-to-many role. `[Indexed]` stays the hint of the modeller for a unit role, which gets
   an index only when it is marked; on a composite relation the mark no longer changes anything in
-  these adapters. A database that was created before this change gets the indexes that it lacks
-  before the first transaction of the next database object that starts on it (#388): give a
-  database that is in use its indexes at deployment, with the `index` command or a call of
-  `EnsureIndexes()`, and with a login that may create an index on the tables, because no
-  transaction opens until the indexes exist. A database whose domain marks every composite relation
-  as indexed has these indexes already. Creating an object and writing a relation now maintain
-  these indexes as well, and the indexes take room in the database. On PostgreSQL two index names
-  that are equal in their first 63 bytes refuse every transaction (#407), which held for the
-  relation types that are marked and now holds for every composite relation (#417).
+  these adapters. A database that was created before this change lacks these indexes, and no
+  transaction opens until it has them (#388, #437): give it its indexes at deployment, with the
+  `index` command or a call of `EnsureIndexes()`, and with a login that may create an index on the
+  tables. A database whose domain marks every composite relation as indexed has these indexes
+  already. Creating an object and writing a relation now maintain these indexes as well, and the
+  indexes take room in the database. On PostgreSQL two index names that are equal in their first
+  63 bytes refuse every transaction (#407), which held for the relation types that are marked and
+  now holds for every composite relation (#417).
 
 ### Fixed
 

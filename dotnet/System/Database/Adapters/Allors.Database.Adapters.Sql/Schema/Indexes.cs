@@ -12,7 +12,8 @@ namespace Allors.Database.Adapters.Sql
     using Meta;
 
     /// <summary>
-    /// The indexes of the schema: the ones that the adapter wants, and the step that brings the schema to them.
+    /// The indexes of the schema: the ones that the adapter wants, the step that brings the schema to them and
+    /// the check that the schema has them.
     /// </summary>
     public abstract class Indexes
     {
@@ -35,48 +36,58 @@ namespace Allors.Database.Adapters.Sql
         /// </summary>
         public void Ensure()
         {
-            this.Derive(out var wanted, out var unwantedByName);
-
-            var existing = this.Read();
-            var missing = Missing(wanted, existing);
-            var leftovers = existing
-                .Where(v => unwantedByName.TryGetValue(v.Name, out var unwanted) && v.LeadsWithColumnOf(unwanted))
-                .ToArray();
-
-            if (missing.Length > 0)
-            {
-                foreach (var index in missing)
-                {
-                    var taken = existing.FirstOrDefault(v => this.TakesNameOf(v, index));
-                    if (taken != null)
-                    {
-                        throw new Exception($"The schema needs the index {index.Name} on {index.TableName} ({index.ColumnName}), and that name belongs to an index on {taken.TableName} ({taken.ColumnName ?? "an expression"}). Drop or rename that index.");
-                    }
-                }
-
-                try
-                {
-                    this.Create(missing);
-                }
-                catch (DbException e)
-                {
-                    IReadOnlyList<SchemaIndex> remaining;
-                    try
-                    {
-                        remaining = Missing(wanted, this.Read());
-                    }
-                    catch (DbException)
-                    {
-                        remaining = missing;
-                    }
-
-                    throw new Exception($"The schema lacks {remaining.Count} of its indexes and the adapter could not create them: {e.Message} Run these statements with a login that may create an index on the tables: {string.Join("; ", remaining.Select(this.CreateStatement))}", e);
-                }
-            }
-
+            var leftovers = this.EnsureRequired(this.Read(), this.Create, atomic: false);
             if (leftovers.Length > 0)
             {
                 this.Drop(leftovers);
+            }
+        }
+
+        // Init already holds the schema lock. A failed create rolls back every index built by this transaction.
+        protected SchemaIndex[] EnsureRequiredInTransaction(IReadOnlyList<SchemaIndex> existing, Action<SchemaIndex> create) =>
+            this.EnsureRequired(existing, indexes => Array.ForEach(indexes, create), atomic: true);
+
+        private SchemaIndex[] EnsureRequired(IReadOnlyList<SchemaIndex> existing, Action<SchemaIndex[]> create, bool atomic)
+        {
+            this.Derive(out var wanted, out var unwantedByName);
+
+            var missing = Missing(wanted, existing);
+
+            if (missing.Length > 0)
+            {
+                this.RefuseATakenName(missing, existing);
+
+                try
+                {
+                    create(missing);
+                }
+                catch (DbException e)
+                {
+                    var remaining = atomic ? missing : this.StillMissing(wanted, missing);
+                    throw new Exception($"The schema lacks {remaining.Length} of its indexes and the adapter could not create them: {e.Message} Run these statements with a login that may create an index on the tables: {string.Join("; ", remaining.Select(this.CreateStatement))}", e);
+                }
+            }
+
+            return existing
+                .Where(v => unwantedByName.TryGetValue(v.Name, out var unwanted) && v.LeadsWithColumnOf(unwanted))
+                .ToArray();
+        }
+
+        /// <summary>
+        /// Refuses a schema that lacks an index that the adapter wants. It reads the indexes of the schema and
+        /// changes nothing: an index of the adapter that it no longer wants stays.
+        /// </summary>
+        public void Check()
+        {
+            this.Derive(out var wanted, out _);
+
+            var existing = this.Read();
+            var missing = Missing(wanted, existing);
+            if (missing.Length > 0)
+            {
+                this.RefuseATakenName(missing, existing);
+
+                throw new Exception($"The schema lacks {missing.Length} of its indexes, and a transaction creates none. Run the index command of the command-line tool or call EnsureIndexes() on the database, with a login that may create an index on the tables, or run these statements: {string.Join("; ", missing.Select(this.CreateStatement))}");
             }
         }
 
@@ -104,15 +115,41 @@ namespace Allors.Database.Adapters.Sql
         protected abstract void Create(IReadOnlyList<SchemaIndex> indexes);
 
         /// <summary>
-        /// Drops the indexes. An index that can not be dropped now stays, and the next database object tries
-        /// again.
+        /// Drops the indexes. An index that can not be dropped now stays, and a later call that ensures the
+        /// indexes tries again.
         /// </summary>
         protected abstract void Drop(IReadOnlyList<SchemaIndex> indexes);
+
+        // An index that is missing can not be created while another index has its name.
+        private void RefuseATakenName(IReadOnlyList<SchemaIndex> missing, IReadOnlyList<SchemaIndex> existing)
+        {
+            foreach (var index in missing)
+            {
+                var taken = existing.FirstOrDefault(v => this.TakesNameOf(v, index));
+                if (taken != null)
+                {
+                    throw new Exception($"The schema needs the index {index.Name} on {index.TableName} ({index.ColumnName}), and that name belongs to an index on {taken.TableName} ({taken.ColumnName ?? "an expression"}). Drop or rename that index.");
+                }
+            }
+        }
 
         private static SchemaIndex[] Missing(IEnumerable<SchemaIndex> wanted, IReadOnlyList<SchemaIndex> existing)
         {
             var present = new HashSet<(string, string)>(existing.Where(v => v.IsComplete && v.ColumnName != null).Select(v => (v.TableName, v.ColumnName)));
             return wanted.Where(v => !present.Contains((v.TableName, v.ColumnName))).ToArray();
+        }
+
+        // Standalone maintenance commits each index separately. Report only the work that remains.
+        private SchemaIndex[] StillMissing(IReadOnlyList<SchemaIndex> wanted, SchemaIndex[] missing)
+        {
+            try
+            {
+                return Missing(wanted, this.Read());
+            }
+            catch (DbException)
+            {
+                return missing;
+            }
         }
 
         // An index for every composite relation, on its column in the table of a class or on the role column of

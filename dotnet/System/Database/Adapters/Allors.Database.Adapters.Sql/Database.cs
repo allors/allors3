@@ -9,6 +9,7 @@ namespace Allors.Database.Adapters.Sql
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Runtime.ExceptionServices;
     using System.Xml;
     using Allors.Database.Tracing;
     using Caching;
@@ -25,7 +26,7 @@ namespace Allors.Database.Adapters.Sql
 
         private ICacheFactory cacheFactory;
 
-        private volatile bool indexesEnsured;
+        private volatile bool indexesPresent;
 
         protected Database(IDatabaseServices state, Configuration configuration)
         {
@@ -123,7 +124,7 @@ namespace Allors.Database.Adapters.Sql
                 throw new Exception(this.ValidationMessage);
             }
 
-            this.EnsureIndexes();
+            this.CheckIndexes();
 
             return new Transaction(this, connection, this.Services.CreateTransactionServices());
         }
@@ -137,36 +138,74 @@ namespace Allors.Database.Adapters.Sql
 
         /// <summary>
         /// Ensures that the schema has the indexes that the adapter wants: it creates the ones that are missing
-        /// and drops the ones of the adapter that it no longer wants. A database object does this once, before
-        /// its first transaction and at the end of a load. A deployment calls it to build the indexes ahead of
-        /// the first transaction, with a login that may create an index on the tables.
+        /// and drops the ones of the adapter that it no longer wants. Init ensures the indexes when it empties
+        /// or rebuilds the tables, and a load ensures them after its rows. A database object refuses its first
+        /// transaction while an index is missing. A deployment calls this for a database that it keeps, with
+        /// a login that may create an index on the tables.
         /// </summary>
-        public void EnsureIndexes()
+        public void EnsureIndexes() => this.EnsureIndexes(null);
+
+        // When Init empties a valid schema, it ensures the indexes in the transaction that truncates the
+        // tables. A schema that it has rebuilt still needs its indexes.
+        protected void EnsureIndexes(Func<bool> initialize)
         {
-            if (this.indexesEnsured)
-            {
-                return;
-            }
-
-            if (!this.IsValid)
-            {
-                throw new Exception(this.ValidationMessage);
-            }
-
             lock (this.indexesLock)
             {
-                if (!this.indexesEnsured)
+                this.ForgetIndexes();
+                if (initialize == null || initialize())
                 {
+                    if (!this.IsValid)
+                    {
+                        throw new Exception(this.ValidationMessage);
+                    }
+
                     this.Indexes.Ensure();
-                    this.indexesEnsured = true;
                 }
+
+                this.indexesPresent = true;
             }
         }
 
         /// <summary>
-        /// Init has run: what this object knew about the indexes of the schema no longer holds.
+        /// Clears the result of an earlier index check.
         /// </summary>
-        protected void ForgetIndexes() => this.indexesEnsured = false;
+        protected void ForgetIndexes() => this.indexesPresent = false;
+
+        // A load can commit rows before the reader fails. Empty the tables before repairing the indexes,
+        // so that an index error during recovery still leaves the population empty.
+        protected void RecoverFromFailedLoad(Exception loadError, Action emptyDatabase)
+        {
+            try
+            {
+                emptyDatabase();
+                this.EnsureIndexes();
+            }
+            catch (Exception recoveryError)
+            {
+                throw new AggregateException("Loading the population failed and recovery also failed. Correct both errors before retrying the load.", loadError, recoveryError);
+            }
+
+            ExceptionDispatchInfo.Capture(loadError).Throw();
+        }
+
+        // A database object reads the indexes of the schema once, before its first transaction, and changes
+        // nothing. While the schema lacks an index, every transaction reads them again and is refused.
+        private void CheckIndexes()
+        {
+            if (this.indexesPresent)
+            {
+                return;
+            }
+
+            lock (this.indexesLock)
+            {
+                if (!this.indexesPresent)
+                {
+                    this.Indexes.Check();
+                    this.indexesPresent = true;
+                }
+            }
+        }
 
         public abstract void Init();
 

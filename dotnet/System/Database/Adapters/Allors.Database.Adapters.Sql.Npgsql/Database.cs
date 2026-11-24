@@ -6,7 +6,6 @@
 namespace Allors.Database.Adapters.Sql.Npgsql
 {
     using System;
-    using System.Runtime.ExceptionServices;
     using System.Xml;
     using global::Npgsql;
 
@@ -117,17 +116,20 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 
         protected override Sql.Indexes Indexes => new Indexes(this);
 
-        public override void Init()
+        public override void Init() => this.EnsureIndexes(() => this.Initialize(ensureIndexes: true));
+
+        // Returns true when the schema had to be rebuilt.
+        private bool Initialize(bool ensureIndexes)
         {
             try
             {
-                new Initialization(this).Execute();
+                return new Initialization(this).Execute(ensureIndexes);
             }
             finally
             {
-                // A refusal is not kept: Init may have built the schema that was missing or invalid, and the
-                // next transaction validates it again. The tables may be new, so the next transaction ensures
-                // the indexes again as well.
+                // A refusal is not kept: the schema that was missing or invalid may have been built, and it is
+                // validated again. The tables may be new, so what this object knew of the indexes no longer
+                // holds.
                 if (this.isValid == false)
                 {
                     this.isValid = null;
@@ -146,7 +148,8 @@ namespace Allors.Database.Adapters.Sql.Npgsql
         {
             lock (this)
             {
-                this.Init();
+                // Without the indexes: a table that is built here gets them once it holds its rows.
+                this.Initialize(ensureIndexes: false);
 
                 using (var connection = new NpgsqlConnection(this.ConnectionString))
                 {
@@ -167,10 +170,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                         }
                         finally
                         {
-                            this.Init();
-
-                            // The exception of the load keeps the stack trace of where it was thrown.
-                            ExceptionDispatchInfo.Capture(e).Throw();
+                            this.RecoverFromFailedLoad(e, () => this.Initialize(ensureIndexes: false));
                         }
                     }
                 }

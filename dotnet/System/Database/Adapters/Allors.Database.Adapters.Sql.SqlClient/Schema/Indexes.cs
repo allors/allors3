@@ -5,6 +5,7 @@
 
 namespace Allors.Database.Adapters.Sql.SqlClient
 {
+    using System;
     using System.Collections.Generic;
     using System.Data;
     using Microsoft.Data.SqlClient;
@@ -20,6 +21,11 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         // The name of an index is unique in its table.
         protected override bool TakesNameOf(SchemaIndex existing, SchemaIndex index) => existing.HasNameOf(index) && existing.IsOnTableOf(index);
+
+        internal SchemaIndex[] CreateMissing(SqlConnection connection, SqlTransaction transaction) =>
+            this.EnsureRequiredInTransaction(
+                this.Read(connection, transaction),
+                index => Execute(connection, transaction, this.CreateStatement(index)));
 
         protected override IReadOnlyList<SchemaIndex> Read()
         {
@@ -54,29 +60,35 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         protected override void Drop(IReadOnlyList<SchemaIndex> indexes)
         {
-            using (var connection = new SqlConnection(this.ConnectionString))
+            using var connection = new SqlConnection(this.ConnectionString);
+            connection.Open();
+            this.Drop(connection, indexes);
+        }
+
+        internal void Drop(SqlConnection connection, IReadOnlyList<SchemaIndex> indexes)
+        {
+            foreach (var index in indexes)
             {
-                connection.Open();
-
-                // A drop does not queue behind a long statement on the table, with every other statement
-                // behind it.
-                Execute(connection, null, "SET LOCK_TIMEOUT 2000");
-
-                foreach (var index in indexes)
+                try
                 {
-                    try
+                    using var transaction = connection.BeginTransaction();
+                    // An optional drop has a bounded wait for both the schema lock and the table.
+                    Execute(connection, transaction, "SET LOCK_TIMEOUT 2000");
+                    this.Lock(connection, transaction, 2000);
+                    if (this.Read(connection, transaction).Exists(current => this.TakesNameOf(current, index) && current.LeadsWithColumnOf(index)))
                     {
-                        using (var transaction = connection.BeginTransaction())
-                        {
-                            this.Lock(connection, transaction, 2000);
-                            Execute(connection, transaction, $"DROP INDEX IF EXISTS {index.Name} ON {index.TableName}");
-                            transaction.Commit();
-                        }
+                        Execute(connection, transaction, $"DROP INDEX IF EXISTS {index.Name} ON {index.TableName}");
                     }
-                    catch (SqlException)
-                    {
-                        // The index stays. The next database object tries again.
-                    }
+
+                    transaction.Commit();
+                }
+                catch (SqlException)
+                {
+                    // The index stays. A later maintenance call can try again.
+                }
+                catch (InvalidOperationException) when (connection.State != ConnectionState.Open)
+                {
+                    return;
                 }
             }
         }
@@ -91,14 +103,14 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         }
 
         // Held until the transaction ends.
-        private void Lock(SqlConnection connection, SqlTransaction transaction, int lockTimeout = -1)
+        internal void Lock(SqlConnection connection, SqlTransaction transaction, int lockTimeout = -1, int commandTimeout = 0)
         {
             const string Sql = @"
 DECLARE @result int;
 EXEC @result = sp_getapplock @Resource = @name, @LockMode = 'Exclusive', @LockOwner = 'Transaction', @LockTimeout = @lockTimeout;
 IF @result < 0 THROW 50000, 'The lock for the indexes of the schema was not granted.', 1;";
 
-            using (var command = new SqlCommand(Sql, connection, transaction) { CommandTimeout = 0 })
+            using (var command = new SqlCommand(Sql, connection, transaction) { CommandTimeout = commandTimeout })
             {
                 command.Parameters.Add("@name", SqlDbType.NVarChar, 255).Value = this.LockName;
                 command.Parameters.Add("@lockTimeout", SqlDbType.Int).Value = lockTimeout;

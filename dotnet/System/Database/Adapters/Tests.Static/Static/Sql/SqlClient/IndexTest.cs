@@ -40,6 +40,19 @@ WHERE s.name = 'allors' AND i.name = '{name}'"), CultureInfo.InvariantCulture) !
 
         protected override void DropIndex(string table, string name) => this.profile.ExecuteScalar($"DROP INDEX {name} ON allors.{table}");
 
+        protected override void DropIndexes()
+        {
+            if (this.profile.ExecuteScalar(@"
+SELECT STRING_AGG(CAST(N'DROP INDEX ' + QUOTENAME(i.name) + N' ON ' + QUOTENAME(s.name) + N'.' + QUOTENAME(t.name) AS nvarchar(max)), N'; ')
+FROM sys.indexes i
+JOIN sys.tables t ON t.object_id = i.object_id
+JOIN sys.schemas s ON s.schema_id = t.schema_id
+WHERE s.name = 'allors' AND i.type = 2 AND i.is_primary_key = 0") is string statements)
+            {
+                this.profile.ExecuteScalar(statements);
+            }
+        }
+
         protected override void WithIndexLock(Action action)
         {
             using var connection = new SqlConnection(((Database)this.CreateDatabase()).ConnectionString);
@@ -52,5 +65,10 @@ SELECT @result;", connection, transaction);
             Assert.True((int)command.ExecuteScalar() >= 0, "The test could not acquire the schema lock.");
             action();
         }
+
+        protected override bool IsIndexLockAwaited() => Convert.ToInt32(this.profile.ExecuteScalar(@"
+SELECT COUNT(*)
+FROM sys.dm_tran_locks
+WHERE resource_database_id = DB_ID() AND resource_type = 'APPLICATION' AND request_status = 'WAIT'"), CultureInfo.InvariantCulture) != 0;
     }
 }

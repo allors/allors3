@@ -23,13 +23,13 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             this.mapping = (Mapping)database.Mapping;
         }
 
-        internal void Execute()
+        internal bool Execute(bool ensureIndexes)
         {
             this.validation = new Validation(this.database);
 
             if (this.validation.IsValid)
             {
-                this.TruncateTables();
+                this.TruncateTables(ensureIndexes);
             }
             else
             {
@@ -50,6 +50,8 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                     }
                 }
             }
+
+            return !this.validation.IsValid;
         }
 
         private void CreateSchema()
@@ -79,7 +81,7 @@ CREATE SCHEMA " + this.database.SchemaName;
 
         // Empties the tables in one transaction: when it fails, it has changed nothing. A truncate gives a
         // table a new file, also when the table is empty, so only the tables that may hold data are truncated.
-        private void TruncateTables()
+        private void TruncateTables(bool ensureIndexes)
         {
             // The tables that are not known to be empty. The size of its file says that a table holds no row
             // only for a table of the heap access method without children: the rows of a partitioned table
@@ -119,6 +121,8 @@ WHERE NOT EXISTS (
                 connection.Open();
                 try
                 {
+                    var indexes = ensureIndexes ? new Indexes(this.database) : null;
+                    SchemaIndex[] leftovers;
                     using (var transaction = connection.BeginTransaction())
                     {
                         // Every table is locked before the look at its size: no other transaction then holds a
@@ -126,6 +130,7 @@ WHERE NOT EXISTS (
                         var lockText = "LOCK TABLE " + string.Join(", ", tableNames) + " IN ACCESS EXCLUSIVE MODE";
                         using (var command = new NpgsqlCommand(lockText, connection, transaction))
                         {
+                            indexes?.Lock(connection, transaction, commandTimeout: command.CommandTimeout);
                             command.ExecuteNonQuery();
                         }
 
@@ -151,7 +156,13 @@ WHERE NOT EXISTS (
                             command.ExecuteNonQuery();
                         }
 
+                        leftovers = indexes?.CreateMissing(connection, transaction);
                         transaction.Commit();
+                    }
+
+                    if (leftovers is { Length: > 0 })
+                    {
+                        indexes.Drop(connection, leftovers);
                     }
                 }
                 finally
