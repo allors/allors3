@@ -117,7 +117,10 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   the ones that are missing and drops the ones of the adapter that it no longer wants. `Init`
   ensures the indexes after building the schema. When it empties a valid schema, it creates the
   missing indexes in the same transaction so an index failure rolls back the truncation. It drops
-  leftover indexes after the commit. `Load` ensures the indexes after loading the rows. A database
+  leftover indexes after the commit. `Load` ensures the indexes after loading the rows. When a
+  load fails, the database is emptied again and its indexes are ensured, and the error of the
+  load is thrown; when that recovery fails as well, an `AggregateException` holds both errors,
+  the error of the load first. A database
   object reads the indexes of the schema before its first transaction, and while one is
   missing no transaction opens and the message names the `index` command, `EnsureIndexes()` and
   the statements to run. So an index that the schema lacks, because its relation type was marked

@@ -115,8 +115,8 @@ namespace Allors.Database.Adapters.Sql
         protected abstract void Create(IReadOnlyList<SchemaIndex> indexes);
 
         /// <summary>
-        /// Drops the indexes. An index that can not be dropped now stays, and the next database object tries
-        /// again.
+        /// Drops the indexes. An index that can not be dropped now stays, and a later call that ensures the
+        /// indexes tries again.
         /// </summary>
         protected abstract void Drop(IReadOnlyList<SchemaIndex> indexes);
 
