@@ -194,7 +194,7 @@ export class SessionOriginState {
 
     // A --x-- PR
     if (previousRoleId != null) {
-      this.removeCompositeRoleMany2One(association, roleType, roleId);
+      this.removeCompositeRoleMany2One(association, roleType, previousRoleId);
     }
 
     // A <---- R

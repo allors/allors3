@@ -394,6 +394,10 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   push, `deniedPermissions` fails when the pull returns no denied object, and
   `knownRevocationIsNotRequestedAgain` checks that a role with `Origin.Session` stays readable and
   writable next to a revoked write.
+- In the TypeScript workspace, setting a many-to-one role with `Origin.Session` to another object
+  takes the association out of the associations of the previous role. The previous role kept it:
+  `SessionOriginState.setCompositeRoleMany2One` removed the association from the associations of
+  the new role, which did not hold it yet (#440).
 - `AllorsUserStore.HasPasswordAsync` answers whether the user has a password hash, a fix from the
   security hardening of the archived line of `main` (#255). It returned the inverse, so the account
   pages of ASP.NET Core Identity sent a user with a password to "set password" and a user without
