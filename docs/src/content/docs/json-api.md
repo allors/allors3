@@ -113,10 +113,10 @@ The server answers with an HTTP status in these cases:
 
 | Status | When |
 | --- | --- |
-| 400 | The host name is not in `AllowedHosts`, or, at an endpoint that needs a token, the body is not valid JSON or a value does not fit its field. |
+| 400 | The host name is not in `AllowedHosts`, or an endpoint that needs a token cannot deserialize the JSON body into its request type. |
 | 401 | The request has no valid token; see [Authentication](authentication.md#a-request-step-by-step). |
 | 405, 415 | The method is not `POST`, or the content type is not JSON. |
-| 500 | An exception. The body is a JSON string: `"An internal server error has occurred."`, or, in the environment `Development`, the message and the stack trace. The log holds the exception. |
+| 500 | An exception, including a failure to convert a unit value in a push, such as an invalid `DateTime` string in `u`. The body is a JSON string: `"An internal server error has occurred."`, or, in the environment `Development`, the message and the stack trace. The log holds the exception. |
 
 ### Transactions and retries
 
@@ -164,15 +164,18 @@ A pull in `l` finds the objects of an extent or one object:
 | `er` | The id of a prepared extent, instead of `e`. |
 | `o` | The id of an object, instead of an extent. |
 | `t` | With `o`: the tag of a type. The pull finds nothing when the object is not of that type. |
-| `r` | The results: each with a name in `n`, a select in `s` or the id of a prepared select in `r`, an include in `i`, and `k` and `t` to skip and take objects. |
+| `r` | The results, each with an optional name in `n`, a select in `s` or the id of a prepared select in `r`. On an extent, `k` skips and `t` takes objects before selection. A pull by object id ignores both. |
 | `a` | The arguments of the predicates, by the names of their parameters. |
+
+Without a select, put the include in the result's `i`. With a select, put it in `i` on the
+select's final node. A prepared select uses its own include.
 
 | Response | Holds |
 | --- | --- |
 | `c` | The collections, by name: the ids of the objects of each. |
 | `o` | The objects, by name: an id each. |
 | `v` | The values, by name, that a procedure returns. |
-| `p` | Every object of the response, with `i` its id, `v` its version, `g` its grants that apply to the user and `r` its revocations. |
+| `p` | The objects to check for sync, each with `i` its id, `v` its version, `g` its grants that apply to the user and `r` its revocations. |
 | `g` | The grants of those objects, each as a pair of its id and its version. |
 | `r` | The revocations of those objects, in the same form. |
 
@@ -182,6 +185,10 @@ the objects of a class outside the workspace and the objects that a mask hides; 
 other object that it finds, even when the user may read none of its roles. A select and an include
 follow a role only when the user may read it, and follow an association without a check. An id in
 `o` that does not exist gets HTTP 500.
+
+Give collection results distinct names when batching pulls. If a later result appends to an
+existing collection without an include, its additional ids appear in `c` but can be absent from
+`p`. A workspace that uses `p` to sync then misses those objects.
 
 A procedure runs an `IProcedure` of the database by its name, after checking the versions of the
 objects that it names in `p`; an unknown name gives `Missing procedure <name>` in `_e`.
@@ -387,6 +394,10 @@ permission, gets HTTP 500.
   in the folders `Pull`, `Sync`, `Push`, `Invoke`, `Security` and `Tracing`. `PolicyServiceTests`
   and `PullRetryTests` check the retries of a pull, a push and an invoke, and
   `ExceptionHandlerTests` the body of an error. In `sample/Database/Server.Tests`, `WorkItemTests`
-  pulls, syncs and pushes over HTTP, and `SignInTests` signs in.
-- No test calls the permission endpoint, checks the retries of a sync, an access or a permission
-  request, or checks the requests that end with HTTP 500.
+  pulls, syncs and pushes over HTTP, and `SignInTests` checks the bearer token at the permission
+  endpoint.
+- The TypeScript workspace tests in
+  `typescript/modules/libs/system/workspace/adapters-json-tests/src/lib/runtime/security.spec.ts`
+  exercise permission requests during concurrent pulls. The server tests do not check the fields
+  of a permission response, the retries of a sync, an access or a permission request, or the
+  requests described above that end with HTTP 500.

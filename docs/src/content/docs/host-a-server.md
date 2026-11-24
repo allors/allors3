@@ -25,23 +25,27 @@ with PowerShell and SQL Server LocalDB on Windows.
 
 The command-line tool and the server of the sample read the folder `custom` of the
 [configuration root](configuration.md#the-configuration-root); then the tool reads
-`custom/commands` and the server `custom/server`. Keep the root outside the repository, because it
-holds a password and the signing key:
+`custom/commands` and the server `custom/server`. In a bash terminal, create a fresh configuration
+root outside the repository. The root and the files you write in it will be accessible only to
+your account. If the directory already exists, choose an unused path before continuing.
 
 ```sh
 export ALLORS_CONFIG_ROOT="$HOME/my-app-config"
-mkdir -p "$ALLORS_CONFIG_ROOT/custom/server"
+umask 077
+mkdir -m 700 "$ALLORS_CONFIG_ROOT" && mkdir -p "$ALLORS_CONFIG_ROOT/custom/server"
 ```
 
-The tool and the server share the database settings, in `custom/appsettings.json`. Choose the
-name of the database and of its login; `init` creates both in the next step. On PostgreSQL:
+The tool and the server share the database settings in `custom/appsettings.json`. Choose one of
+the following blocks. Each uses `my_app` for the database and its login and generates the login's
+password. Choose an unused database and login name on your server. On PostgreSQL:
 
 ```sh
-cat > "$ALLORS_CONFIG_ROOT/custom/appsettings.json" <<'EOF'
+admin_setting=ALLORS_NPGSQL
+cat > "$ALLORS_CONFIG_ROOT/custom/appsettings.json" <<EOF
 {
   "adapter": "npgsql",
   "ConnectionStrings": {
-    "DefaultConnection": "Host=localhost;Database=my_app;Username=my_app;Password=…"
+    "DefaultConnection": "Host=localhost;Database=my_app;Username=my_app;Password=$(openssl rand -hex 32)"
   }
 }
 EOF
@@ -50,19 +54,19 @@ EOF
 On SQL Server:
 
 ```sh
-cat > "$ALLORS_CONFIG_ROOT/custom/appsettings.json" <<'EOF'
+admin_setting=ALLORS_SQLCLIENT
+cat > "$ALLORS_CONFIG_ROOT/custom/appsettings.json" <<EOF
 {
   "adapter": "sqlclient",
   "ConnectionStrings": {
-    "DefaultConnection": "Server=localhost;Database=my_app;User Id=my_app;Password=…;TrustServerCertificate=true"
+    "DefaultConnection": "Server=localhost;Database=my_app;User Id=my_app;Password=$(openssl rand -hex 32);TrustServerCertificate=true"
   }
 }
 EOF
 ```
 
-Replace `…` with the password of the login. `TrustServerCertificate=true` accepts a certificate
-of SQL Server that the client cannot validate, such as the one that a development server makes for
-itself.
+`TrustServerCertificate=true` accepts a certificate of SQL Server that the client cannot
+validate, such as the one that a development server makes for itself.
 
 Only the server needs the key that signs its tokens. Generate it once, into
 `custom/server/appsettings.json`:
@@ -87,35 +91,39 @@ with its password, and the key as `ConnectionStrings__DefaultConnection` and `Jw
 
 ## 2. Create the database and a user
 
-`init` drops and creates the database through an
-[admin connection](configuration.md#admin-connections) to the database server, which an
-environment variable holds. On PostgreSQL:
+`init` drops and recreates the named database. `populate` empties it before building the sample's
+population. Before running either command, check that no environment variable overrides the
+adapter or the default connection in step 1, and that the database name is unused on the target
+server (`my_app` on `localhost` in these examples).
+
+The application connection supplies the database name. The
+[admin connection](configuration.md#admin-connections) supplies the server on which `init`
+drops and creates it. At the first prompt, enter an admin connection for the same PostgreSQL
+host and port, or the same SQL Server instance, as the application.
+For PostgreSQL its form is `Host=localhost;Username=postgres;Password=…`.
+For SQL Server it is `Server=localhost;User Id=sa;Password=…;TrustServerCertificate=true`. The
+prompt hides the connection string and keeps it out of bash history. Use a terminal without
+exported admin connections so only `init` receives the credential.
 
 ```sh
-export ALLORS_NPGSQL='Host=localhost;Username=postgres;Password=…'
+(
+  IFS= read -rsp 'Admin connection string: ' admin_connection || exit 1
+  printf '\n'
+  if [[ ! $admin_connection =~ [^[:space:]] ]]; then
+    echo 'Enter an admin connection string.' >&2
+    exit 1
+  fi
+  export "$admin_setting=$admin_connection"
+  dotnet run --project Database/Commands -- init
+) &&
+  dotnet run --project Database/Commands -- populate &&
+  dotnet run --project Database/Commands -- user --name worker@example.com --group Workers
 ```
 
-On SQL Server:
-
-```sh
-export ALLORS_SQLCLIENT='Server=localhost;User Id=sa;Password=…;TrustServerCertificate=true'
-```
-
-Then create the database, populate it and create a user:
-
-```sh
-dotnet run --project Database/Commands -- init
-dotnet run --project Database/Commands -- populate
-dotnet run --project Database/Commands -- user --name worker@example.com --group Workers
-```
-
-`init` drops the database of the connection string and creates it again, owned by the login of
-the connection string. It creates that login, with the password of the connection string, when the
-server does not know it, and leaves an existing login as it is. Never run `init` or `populate` on
-a database that you want to keep: `populate` empties the database as well, before it builds the
-population of the sample, with the user group Workers. `user` asks for the password of the new
-user, at least 12 characters with at least four different ones, and makes the user a member of
-Workers;
+`init` makes the application login the owner of the database. It creates a missing login with
+the password from the connection string and keeps the password of an existing login. `populate`
+builds the Workers user group. `user` asks for the password of the new user, at least 12
+characters with at least four different ones, and makes the user a member of Workers.
 [Create a user](command-line-tool.md#create-a-user) describes its options.
 
 ## 3. Start the server
@@ -143,20 +151,21 @@ and a bearer token in `t`:
 
 ```sh
 api=http://localhost:5080/allors
-read -rsp 'Password: ' password; echo
-login=$(jq -n --arg l worker@example.com --arg p "$password" '{l: $l, p: $p}' |
-  curl -s "$api/Authentication/Token" -H 'Content-Type: application/json' -d @-)
-token=$(jq -r .t <<<"$login")
-user=$(jq -r .u <<<"$login")
+IFS= read -rsp 'Password: ' password; echo
+login=$(printf '%s' "$password" | jq -Rs '{l: "worker@example.com", p: .}' |
+  curl -fsS "$api/Authentication/Token" -H 'Content-Type: application/json' -d @-)
+unset password
+token=$(jq -er '.t // error("Sign-in failed")' <<<"$login") &&
+  user=$(jq -r .u <<<"$login")
 ```
 
 When the name or the password is wrong, or the user is locked out after five wrong passwords, the
-response is `{"authenticated":false}`. Send the token with a request of the JSON API, here a sync
-of the user's own object:
+response is `{"authenticated":false}` and jq reports `Sign-in failed`. After signing in, send the
+token with a request of the JSON API to sync the user's own object:
 
 ```sh
-curl -s "$api/sync" -H "Authorization: Bearer $token" -H 'Content-Type: application/json' \
-  -d "{\"o\": [$user]}"
+printf 'Authorization: Bearer %s\n' "$token" |
+  curl -fsS "$api/sync" -H @- -H 'Content-Type: application/json' -d "{\"o\": [$user]}"
 ```
 
 ```text
