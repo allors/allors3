@@ -2,6 +2,9 @@ using Nuke.Common;
 
 partial class Build
 {
+    private Target CiDotnetSystemSharedTest => _ => _
+        .DependsOn(DotnetSystemSharedTest);
+
     private Target CiDotnetSystemAdaptersTestMemory => _ => _
         .DependsOn(Reset)
         .DependsOn(DotnetSystemAdaptersTestMemory);

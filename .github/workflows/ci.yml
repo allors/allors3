@@ -1,10 +1,10 @@
 name: CI
 
 # Every pull request, and every push to main and the version branches, runs on Linux: one job per
-# adapter suite, the Core and TypeScript suites on the Snapshot adapter, where the domain tests run
-# on Memory, and the sample application. A push to main also runs the Core and TypeScript suites on
-# SQL Server and PostgreSQL, the domain tests included. The Windows legs run in nightly.yml. Every leg
-# is one call of tests.yml.
+# adapter suite, the tests of Allors.Shared, the Core and TypeScript suites on the Snapshot adapter,
+# where the domain tests run on Memory, and the sample application. A push to main also runs the Core
+# and TypeScript suites on SQL Server and PostgreSQL, the domain tests included. The Windows legs run
+# in nightly.yml. Every leg is one call of tests.yml.
 
 # A branch runs through its pull request, whatever the base branch: the pull_request trigger has no
 # branch filter, so a pull request stacked on another branch runs too. A push trigger for branches would
@@ -71,7 +71,8 @@ jobs:
           echo "Run the platform suites: $platform"
 
   # The adapter suites, one job per adapter. The SQL Server and PostgreSQL suites create their own
-  # databases with the admin connection of their service container.
+  # databases with the admin connection of their service container. The Memory leg, which needs no
+  # database server, also runs the tests of Allors.Shared.
   adapters-memory:
     needs: changes
     if: ${{ !cancelled() && needs.changes.outputs.platform != 'false' }}
@@ -79,7 +80,7 @@ jobs:
     with:
       os: ubuntu-latest
       provider: memory
-      targets: '["CiDotnetSystemAdaptersTestMemory"]'
+      targets: '["CiDotnetSystemAdaptersTestMemory", "CiDotnetSystemSharedTest"]'
 
   adapters-snapshot:
     needs: changes
