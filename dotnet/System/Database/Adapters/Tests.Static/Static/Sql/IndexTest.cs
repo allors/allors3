@@ -45,6 +45,9 @@ namespace Allors.Database.Adapters.Sql
 
         protected abstract void WithIndexLock(Action action);
 
+        // Whether a session waits for the lock of the indexes of the schema.
+        protected abstract bool IsIndexLockAwaited();
+
         [Fact]
         public void InitCreatesTheIndexes()
         {
@@ -117,8 +120,10 @@ namespace Allors.Database.Adapters.Sql
             Assert.Equal(1, this.IndexCount("c1", RoleColumn));
         }
 
-        [Fact]
-        public void AnIndexOfTheAdapterForAUnitRoleThatIsNotMarkedIsDropped()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void AnIndexOfTheAdapterForAUnitRoleThatIsNotMarkedIsDropped(bool initialize)
         {
             this.Rebuild();
 
@@ -135,7 +140,9 @@ namespace Allors.Database.Adapters.Sql
 
             Assert.True(this.ExistIndex("idx_c1_c1c1allorsstring"));
 
-            database.EnsureIndexes();
+            // Both operations drop it. Init does so after it has emptied a valid schema.
+            Action ensure = initialize ? database.Init : database.EnsureIndexes;
+            ensure();
 
             Assert.False(this.ExistIndex("idx_c1_c1c1allorsstring"));
             Assert.True(this.ExistIndex("made_by_hand"));
@@ -221,6 +228,61 @@ namespace Allors.Database.Adapters.Sql
             ((Database)this.CreateDatabase()).EnsureIndexes();
 
             Assert.False(this.ExistIndex(indexName));
+        }
+
+        [Fact]
+        public void AnIndexThatTakesTheNameOfALeftoverBeforeItsDropStays()
+        {
+            const string indexName = "idx_c1_c1c1allorsstring";
+            var database = this.Rebuild();
+            this.ExecuteScalar($"CREATE INDEX {indexName} ON allors.c1 (c1allorsstring)");
+
+            Exception exception = null;
+            var thread = new Thread(() =>
+            {
+                try
+                {
+                    database.EnsureIndexes();
+                }
+                catch (Exception e)
+                {
+                    exception = e;
+                }
+            });
+
+            var started = false;
+            try
+            {
+                this.WithIndexLock(() =>
+                {
+                    thread.Start();
+                    started = true;
+
+                    // The step has read the leftover and waits for the lock to drop it, two seconds at most.
+                    // Meanwhile somebody drops that index and gives its name to an index on another column.
+                    var until = Environment.TickCount64 + 1500;
+                    while (!this.IsIndexLockAwaited() && Environment.TickCount64 < until)
+                    {
+                        Thread.Sleep(25);
+                    }
+
+                    this.DropIndex("c1", indexName);
+                    this.ExecuteScalar($"CREATE INDEX {indexName} ON allors.c1 (c1allorsdouble)");
+                });
+            }
+            finally
+            {
+                // The helper releases the lock before a blocked worker is joined, even when a statement fails.
+                if (started)
+                {
+                    thread.Join();
+                }
+            }
+
+            // The drop looks again once it holds the lock, and the index of that name is no longer the leftover.
+            Assert.Null(exception);
+            Assert.True(this.ExistIndex(indexName));
+            Assert.Equal(1, this.IndexCount("c1", "c1allorsdouble"));
         }
 
         [Fact]

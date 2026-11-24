@@ -91,6 +91,12 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             }
         }
 
+        protected override bool IsIndexLockAwaited() => Convert.ToInt32(this.profile.ExecuteScalar(@"
+SELECT COUNT(*)
+FROM pg_locks l
+JOIN pg_database d ON d.oid = l.database
+WHERE d.datname = current_database() AND l.locktype = 'advisory' AND NOT l.granted"), CultureInfo.InvariantCulture) != 0;
+
         protected override int IndexCount(string table, string column) => Convert.ToInt32(this.profile.ExecuteScalar($@"
 SELECT COUNT(*)
 FROM pg_index i

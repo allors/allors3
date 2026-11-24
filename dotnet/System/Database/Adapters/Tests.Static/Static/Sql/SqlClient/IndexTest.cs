@@ -65,5 +65,10 @@ SELECT @result;", connection, transaction);
             Assert.True((int)command.ExecuteScalar() >= 0, "The test could not acquire the schema lock.");
             action();
         }
+
+        protected override bool IsIndexLockAwaited() => Convert.ToInt32(this.profile.ExecuteScalar(@"
+SELECT COUNT(*)
+FROM sys.dm_tran_locks
+WHERE resource_database_id = DB_ID() AND resource_type = 'APPLICATION' AND request_status = 'WAIT'"), CultureInfo.InvariantCulture) != 0;
     }
 }
