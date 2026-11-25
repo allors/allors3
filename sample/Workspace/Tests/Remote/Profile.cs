@@ -31,6 +31,9 @@ namespace Workspace.Tests.Remote
         // The last character takes two UTF-8 bytes, bringing the key to the 32 bytes HS256 requires.
         private const string Key = "012345678901234567890123456789é";
 
+        // Use a host outside the server's default allow-list so the tests exercise the profile's host setting.
+        private static readonly Uri ServerAddress = new Uri("http://workspace.example:5000/allors/");
+
         private readonly ServerFactory factory;
         private readonly List<HttpClient> httpClients = new List<HttpClient>();
         private readonly Configuration configuration;
@@ -40,6 +43,7 @@ namespace Workspace.Tests.Remote
             this.factory = new ServerFactory(new Dictionary<string, string>
             {
                 ["adapter"] = "snapshot",
+                ["AllowedHosts"] = ServerAddress.Host,
                 ["JwtToken:Key"] = Key,
             });
 
@@ -60,7 +64,7 @@ namespace Workspace.Tests.Remote
         {
             var httpClient = this.factory.CreateClient(new WebApplicationFactoryClientOptions
             {
-                BaseAddress = new Uri("http://localhost:5000/allors/"),
+                BaseAddress = ServerAddress,
             });
             this.httpClients.Add(httpClient);
 
