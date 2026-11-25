@@ -228,7 +228,7 @@ asks for its own response:
 | `DerivationErrors` | The derivation of the push found errors, such as a required role without a value. Each error has a `Message` and `Roles`; the object of a role is `null` when the session does not hold it, as for a new object. | Correct the roles and push again. |
 | `VersionErrors` | Another transaction changed the object after the pull. | Pull the object. When the pull reports it in `MergeErrors`, call `Reset()` on its `Strategy`, pull it again and make the change again before you push. |
 | `AccessErrors` | The user may not write a role of the object, or its class is outside the workspace. An object can appear once for each role that it refuses. | Leave the change out. `CanWrite…` was false after the last pull, or the access changed since. |
-| `MissingErrors` | An object that the session changed has been deleted. On Remote this can also mean that a role refers to a deleted object. | For a deleted changed object, start a fresh session and reapply the changes to the surviving objects. For a missing object in a role, clear or replace that value and push again. |
+| `MissingErrors` | An object that the session changed has been deleted. On the Remote adapter this can also mean that a role refers to a deleted object. | For a deleted changed object, start a fresh session and reapply the changes to the surviving objects. For a missing object in a role, clear or replace that value and push again. |
 
 A failed push keeps every changed object listed for the next push, even after a reset. If a
 work item's chosen assignee has been deleted, the Remote adapter reports the missing assignee.

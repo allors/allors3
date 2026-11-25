@@ -182,8 +182,9 @@ The platform checks access where a user works through a workspace:
 - **A session of a workspace** answers `CanRead`, `CanWrite` and `CanExecute` from the records
   that its pulls brought. A derived role with an active workspace rule returns the value the rule
   computes even when `CanRead` is false. Otherwise, the session treats an unreadable role as empty.
-  It leaves out a write when `CanWrite` is false. [The workspace](workspace.md#what-the-user-may-read-and-write)
-  explains how the typed properties behave.
+  It leaves out a write when `CanWrite` is false.
+  [The workspace](workspace.md#what-the-user-may-read-and-write) explains how the typed properties
+  behave.
 - **A mask hides an object.** The configuration's `WorkspaceMask` can name a role type for a
   class. A pull leaves out an object of that class when the user cannot read that role, and so
   does a sync of the JSON API.

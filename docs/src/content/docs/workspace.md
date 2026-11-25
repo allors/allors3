@@ -91,10 +91,10 @@ an object for each:
 
 ## What the user may read and write
 
-The generated classes have `CanRead…` and `CanWrite…` properties for roles with `Origin.Database`,
-and `CanExecute…` for methods with that origin. The session answers from the object's state
-and its last pulled record. Code that holds an object through a generated interface can check a
-role with `Strategy.CanRead(roleType)` or `Strategy.CanWrite(roleType)`.
+The generated classes have `CanRead…` and `CanWrite…` properties for roles with
+`Origin.Database`, and `CanExecute…` for methods with that origin. The session answers from the
+object's state and its last pulled record. Code that holds an object through a generated interface
+can check a role with `Strategy.CanRead(roleType)` or `Strategy.CanWrite(roleType)`.
 [Security](security.md) explains how the database decides.
 
 - **An unreadable role reads as empty from the record** (`null`, or no objects). The typed
@@ -131,12 +131,13 @@ the object has another edit to a database role.
 
 `session.PushAsync()` sends the new objects and the changed database roles. The database checks
 versions and access, derives, and commits when nothing failed, as [Push](json-api.md#push)
-describes for the server. The Local adapter takes similar steps in the process. The result reports what failed in
-`VersionErrors`, `AccessErrors`, `MissingErrors`, `DerivationErrors` and `ErrorMessage`, and
-`HasErrors` is true when one of them holds something.
+describes for the server. The Local adapter takes similar steps in the process. The result reports
+what failed in `VersionErrors`, `AccessErrors`, `MissingErrors`, `DerivationErrors` and
+`ErrorMessage`, and `HasErrors` is true when one of them holds something.
 
 - **A push that reports errors stores nothing,** and the session keeps its changes. See
-  [Handle the errors of a push](use-a-workspace.md#8-handle-the-errors-of-a-push) for how to recover.
+  [Handle the errors of a push](use-a-workspace.md#8-handle-the-errors-of-a-push) for how to
+  recover.
 - **A push that succeeds gives each new object its id** in the database, and the object keeps it.
 - **After a push the session waits for a pull.** The objects keep the values that were pushed,
   and `HasChanges` keeps its value. On each pushed object, `CanWrite…` is false for roles with

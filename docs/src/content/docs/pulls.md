@@ -29,7 +29,7 @@ session. The examples use the sample's metadata `m`.
 | `ExtentRef` | The id of a [prepared extent](#prepared-extents-and-selects), instead of `Extent`. |
 | `Object`, `ObjectId` | An object of the session, or the id of an object, instead of an extent. |
 | `ObjectType` | With an object: a class or an interface. The pull finds nothing when the object is not of that type. |
-| `Results` | What the pull returns. Leave it `null` to return the objects that the pull finds. With `Array.Empty<Result>()`, Local returns no objects and Remote returns the matches. See [Results](#results). |
+| `Results` | What the pull returns. Leave it `null` to return the objects that the pull finds. With `Array.Empty<Result>()`, the Local adapter returns no objects and the Remote adapter returns the matches. See [Results](#results). |
 | `Arguments` | The values of the [parameters](#parameters) of its predicates, by name. |
 
 A pull of a new object of the session, which has a negative id, throws an `ArgumentException`
@@ -80,9 +80,9 @@ var result = await session.PullAsync(new Pull
 zero operands, or a `Not` without an operand, also adds no condition. If any of these is the
 filter's only predicate, the filter matches every object of its type. An `Instanceof` without
 `ObjectType` matches nothing. For `Like`, `GreaterThan`, `LessThan`, `Between`, `Contains` and
-`ContainedIn`, omitting the value, object, extent or path that the predicate takes makes Local
-throw an `ArgumentException` or a `NullReferenceException` and Remote throw an
-`HttpRequestException` for HTTP 500.
+`ContainedIn`, omitting the value, object, extent or path that the predicate takes makes the Local
+adapter throw an `ArgumentException` or a `NullReferenceException` and the Remote adapter throw
+an `HttpRequestException` for HTTP 500.
 [Filter](extents.md#filter) states the rules of the predicates and of their patterns.
 
 ### Parameters
@@ -95,8 +95,9 @@ adapters differ:
 - **Local.** The arguments apply, in the form that the database takes: an object by its id, a
   `long`, several objects as a `long[]`, a class or an interface by its tag, and a unit by its
   value. To compare the object itself, use `new Equals { Object = person }`. With no role type or
-  association type, `new Equals { Parameter = "person" }` checks that the id resolves but compares
-  against its unset `Object`. Even a valid id then gives no matches on Memory or Snapshot.
+  association type, `new Equals { Parameter = "person" }` is left out when the id does not resolve;
+  otherwise it compares against its unset `Object`, so even a valid id gives no matches on Memory
+  or Snapshot.
   A pull whose `Arguments` is `null` throws a `NullReferenceException` for a predicate with a
   `Parameter` or with `Dependencies`.
 - **Remote.** The .NET adapter does not send `Arguments`, so the server leaves out a predicate with
@@ -125,11 +126,12 @@ when the workspace supplies the select in `Result.Select`.
 The position of a step that holds several objects matters when each step finds objects.
 
 - **Local.** A select can follow a step that holds several objects if its last step holds one
-  object. If the last step holds several, Local throws an `Exception` that wraps an
+  object. If the last step holds several, the Local adapter throws an `Exception` that wraps an
   `InvalidCastException`, even if an earlier step also holds several.
 - **Remote.** A pull of one object can follow a step that holds several objects anywhere in the
   path. In a pull of an extent, only the last step can hold several. An earlier such step gives
-  HTTP 500. The two-step example above works on Remote because only its last step holds several.
+  HTTP 500. The two-step example above works on the Remote adapter because only its last step
+  holds several.
 
 ### Include
 
@@ -149,8 +151,8 @@ the assignee of each work item and the work items of that assignee.
 
 On a result with a select, put the include on the last step, `select.End.Include`, and leave
 earlier steps without one. Both adapters apply the include to the objects at the end of the
-select. Local uses the first step's `Include` if set and otherwise uses the last step's.
-Remote uses only the last step's. Both ignore `Include` on the result itself.
+select. The Local adapter uses the first step's `Include` if set and otherwise uses the last
+step's. The Remote adapter uses only the last step's. Both ignore `Include` on the result itself.
 
 ### Names
 
