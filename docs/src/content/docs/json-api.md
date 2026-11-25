@@ -156,7 +156,7 @@ HTTP 500.
 | --- | --- |
 | `l` | The pulls, each of which finds objects. |
 | `p` | A procedure to run first: `n` its name, and its input in `c`, `o`, `v` and `p`. |
-| `d` | Dependencies: for a type, by its tag in `o`, the role (`r`) or the association (`a`) along which the pull adds objects to the response. The pull follows a dependency whether or not the user may read the role, and follows it again from the objects that it adds. |
+| `d` | Dependencies: for a type, by its tag in `o`, the role (`r`) or the association (`a`) along which the pull adds objects to the response. The pull follows a dependency again from the objects that it adds. |
 
 A pull in `l` finds the objects of an extent or one object:
 
@@ -183,10 +183,9 @@ select's final node. A prepared select uses its own include.
 
 A result without a name takes the plural name of its type, such as `WorkItems`, or of the role or
 the association that its select ends with; one object takes the singular name. A pull leaves out
-the objects of a class outside the workspace and the objects that a mask hides; it names every
-other object that it finds, even when the user may read none of its roles. A select and an include
-follow a role only when the user may read it, and follow an association without a check. An id in
-`o` that does not exist gets HTTP 500.
+the objects of a class outside the workspace and the objects that a mask hides;
+[Where access is checked](security.md#where-access-is-checked) describes the access checks of the
+server. An id in `o` that does not exist gets HTTP 500.
 
 Give collection results distinct names when batching pulls. If a later result appends to an
 existing collection without an include, its additional ids appear in `c` but can be absent from

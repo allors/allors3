@@ -131,7 +131,7 @@ include brings the `Assignee` of each one into the session, so that the code can
 collection that carries the plural name of the class, `WorkItems`.
 
 A predicate narrows the filter. The sample's tests find Jane this way in a workspace of the
-administrator, `admin@example.com`, who may read user names:
+administrator, `admin@example.com`:
 
 ```csharp
 var result = await session.PullAsync(new Pull

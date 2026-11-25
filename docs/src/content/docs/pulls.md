@@ -15,7 +15,7 @@ pull finds; a result with a select holds only the objects at the end of the sele
 `session.PullAsync(params Pull[] pulls)` sends several pulls together and returns one
 `IPullResult`. The classes of a pull are in the namespace `Allors.Workspace.Data`.
 
-[Extents](extents.md) explains the predicates, which mean the same in a pull as in the database.
+[Extents](extents.md) explains the predicates.
 [Pull](json-api.md#pull) gives the form that the Remote adapter sends, and
 [The workspace](workspace.md#what-a-pull-brings-into-a-session) explains what a pull brings into a
 session. The examples use the sample's metadata `m`.
@@ -121,9 +121,6 @@ A step that holds several objects limits a select, differently on each adapter:
   example above throws there; the Remote adapter returns the work items.
 - **A step before the last.** In a pull of an extent, the Remote adapter answers such a select with
   HTTP 500; the Local adapter returns the objects. In a pull of an object, both return them.
-
-A select and an include follow a role only when the user may read it, as [Pull](json-api.md#pull)
-describes.
 
 ### Include
 
@@ -274,14 +271,13 @@ pulls give the same objects on both, apart from these:
   `OfType`, with its arguments in `Arguments.cs` next to it, and runs it in
   `dotnet/System/Workspace/Adapters/Allors.Workspace.Adapters.Local/Database/Pull`: `PullExtent`,
   `PullInstantiate` and `Procedure`.
-- Both run the predicates of `dotnet/System/Database/Allors.Database/Data`, which leave out a
-  predicate whose argument is missing. `SelectExtension.cs`, in
-  `dotnet/System/Database/Allors.Database.Workspace/Data`, takes the steps of a select and checks
-  that the user may read a role.
+- The predicates of `dotnet/System/Database/Allors.Database/Data` leave out a predicate whose
+  argument is missing. `SelectExtension.cs`, in
+  `dotnet/System/Database/Allors.Database.Workspace/Data`, takes the steps of a select.
 - `IProcedure` is in `dotnet/System/Database/Allors.Database.Workspace/Procedure`, and `Procedures`,
   which finds a procedure by name, in `dotnet/Core/Database/Configuration/Core/Database/Procedures`.
 - `PullTests` and `ProcedureTests`, in `dotnet/Core/Workspace/Tests/Tests`, check the predicates,
   the operators, the sorting, a named result, an include on a select without a role type
   (`PullWithInclude`) and the procedures on each adapter; `PagingTests` checks `Take`, and the
-  sample's `WorkItemTests` an include on a result. No test of the .NET workspace selects along a
-  role or an association, or uses a parameter or a custom route.
+  sample's `WorkItemTests` an include on a result. No test of the .NET workspace has a select
+  with a step, a parameter or a custom route.
