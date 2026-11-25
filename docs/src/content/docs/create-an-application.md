@@ -13,8 +13,8 @@ Use this guide to start an application in a repository of its own. It assumes
 [Domains](domains.md), which explains how an application extends Core and includes its source.
 
 The starting point is the [sample application](../../../../sample/) in the platform's
-repository. It includes the model, the database layers, a command-line tool, a server and
-their tests. The platform's CI generates, builds and tests the sample for
+repository. It includes the model, the database layers, a command-line tool, a server, a .NET
+workspace and their tests. The platform's CI generates, builds and tests the sample for
 every pull request that changes more than the documentation, so the sample follows the platform.
 
 To copy, generate and test the application, you need Git, the .NET 10 SDK and a POSIX shell with
@@ -40,7 +40,7 @@ stops in a shallow one. Give CI the full history as well: with GitHub's checkout
 ## 2. Copy the sample's projects
 
 ```sh
-cp -R allors/sample/Repository allors/sample/Database .
+cp -R allors/sample/Repository allors/sample/Database allors/sample/Workspace .
 ```
 
 | Project | What it holds |
@@ -54,16 +54,20 @@ cp -R allors/sample/Repository allors/sample/Database .
 | `Database/Commands` | The [command-line tool](command-line-tool.md). |
 | `Database/Server` | The HTTP server that hosts Core's sign-in endpoint and JSON API for the application's domain. |
 | `Database/Domain.Tests`, `Database/Commands.Tests` and `Database/Server.Tests` | The tests of the domain, the tool and the HTTP API. |
+| `Workspace/Meta` and `Workspace/Meta.Lazy` | The metadata of the [workspace](workspace.md) `Default`, which the generator writes from the model. |
+| `Workspace/Domain` | The typed classes of the workspace, which the generator writes, and Core's code for the workspace. |
+| `Workspace/Configuration` | The services of the workspace and of its sessions. |
+| `Workspace/Tests` | The tests of the workspace, on the Local and the Remote adapter. |
 
 ## 3. Point the projects at the submodule
 
 In the platform's repository the projects of the sample reach the platform's source with paths
 that start with `..\..\..\dotnet\`. Next to the submodule those paths start with
-`..\..\allors\dotnet\`. The generator of the domain also names its template with a path that
-starts with `../dotnet/`, relative to the folder from which it runs. These commands change both:
+`..\..\allors\dotnet\`. The generator of the domain also names its templates with paths that
+start with `../dotnet/`, relative to the folder from which it runs. These commands change both:
 
 ```sh
-grep -rl --include='*.csproj' '\.\.\\\.\.\\\.\.\\dotnet\\' Repository Database | xargs perl -pi -e 's/\.\.\\\.\.\\\.\.\\dotnet\\/..\\..\\allors\\dotnet\\/g'
+grep -rl --include='*.csproj' '\.\.\\\.\.\\\.\.\\dotnet\\' Repository Database Workspace | xargs perl -pi -e 's/\.\.\\\.\.\\\.\.\\dotnet\\/..\\..\\allors\\dotnet\\/g'
 perl -pi -e 's#"\.\./dotnet/#"allors/dotnet/#' Database/Generate/Program.cs
 ```
 
@@ -103,7 +107,9 @@ the platform hold for their own development.
 2. **The repository generator** reads the model and writes the metadata to
    `Database/Meta/Generated`.
 3. **The application's generator** writes the classes of the domain to
-   `Database/Domain/Generated`.
+   `Database/Domain/Generated`, and the metadata and the typed classes of the workspace `Default`
+   to `Workspace/Meta/Generated`, `Workspace/Meta.Lazy/Generated` and
+   `Workspace/Domain/Generated`.
 
 Generate again after every change to the model. In the platform's repository the targets
 `SampleMerge` and `SampleGenerate` of the build run the same tools on the sample.
@@ -114,11 +120,14 @@ Generate again after every change to the model. In the platform's repository the
 dotnet test Database/Domain.Tests
 dotnet test Database/Commands.Tests
 dotnet test Database/Server.Tests
+dotnet test Workspace/Tests
 ```
 
 The domain tests use the Memory adapter. The command-line and server tests use Snapshot. The
-server tests start the application in the test process and send HTTP requests to it. All three
-suites run without a database server.
+server tests start the application in the test process and send HTTP requests to it. The
+workspace tests run each test on the Local and on the Remote adapter, with the database on
+Snapshot and, for the Remote adapter, the server in the test process. All four suites run without a
+database server.
 
 ### Run the server and sign in
 
@@ -195,6 +204,9 @@ each change:
 - **The setup and the security.** The folder `Database/Domain/Custom` holds the sample's setup,
   security and upgrade. [Grant access](grant-access.md) and
   [Upgrade a population](upgrade-a-population.md) explain them.
+- **The workspace.** `[Workspace]` on the declarations of the model decides which classes, roles
+  and methods a client can use; [Use a workspace](use-a-workspace.md) shows how to connect, pull
+  and push.
 - **The tests.** Replace the tests of the sample with the application's.
 
 ## Files that follow the platform
@@ -210,7 +222,8 @@ its own versions of them, and an application keeps these:
 | `Database/PreparedExtents/PreparedExtents.cs` and `Database/WorkspaceMask/WorkspaceMask.cs`, below `Database/Configuration/Custom` | Adds entries of its own; the sample's are empty. |
 | `Database/Meta/Custom/MetaBuilder.cs` | Keeps the method `BuildCustom`, which the generated metadata calls, and changes the metadata of its domain there when it needs to. |
 | `Database/Domain/Rules.cs` | Lists Core's six rules next to its own. |
-| `Database/Generate/Program.cs` | Holds the paths of the template and of the output, relative to the folder from which the generator runs; step 3 points the template at the submodule. |
+| `Database/Generate/Program.cs` | Holds the paths of the templates and of their output, for the domain and for the workspace, relative to the folder from which the generator runs; step 3 points the templates at the submodule. |
+| `Workspace/WorkspaceServices.cs` and `Session/SessionServices.cs`, below `Workspace/Configuration/Custom` | Keeps them as the platform has them. |
 
 Issue [#408](https://github.com/allors/allors3/issues/408) records why an application needs these
 files.
@@ -241,4 +254,8 @@ Commit the new commit of the submodule together with the changes that it asks fo
   `dotnet/System/Repository/Generate`, with its template
   `dotnet/System/Repository/Templates/meta.cs.stg`, and the generator of Core's domain, which the
   sample's generator includes, in `dotnet/Core/Database/Generate`, with the template
-  `dotnet/Core/Database/Templates/domain.cs.stg`.
+  `dotnet/Core/Database/Templates/domain.cs.stg`. The sample's generator also renders the templates
+  `meta.cs.stg`, `meta.lazy.cs.stg` and `domain.cs.stg` of `dotnet/Core/Workspace/Templates`.
+- The projects of the workspace include `dotnet/Core/Workspace/Domain/Core*` and
+  `dotnet/Core/Workspace/Configuration/Core*`. `SampleTest` runs the tests of `sample/Workspace/Tests`
+  as well.
