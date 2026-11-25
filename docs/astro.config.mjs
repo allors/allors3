@@ -34,6 +34,7 @@ export default defineConfig({
           { slug: 'objects-and-relations' }, { slug: 'extents' }, { slug: 'derivations' }, { slug: 'write-a-rule' },
           { slug: 'populations' }, { slug: 'security' }, { slug: 'grant-access' }, { slug: 'upgrade-a-population' },
           { slug: 'command-line-tool' }, { slug: 'host-a-server' }, { slug: 'authentication' }, { slug: 'json-api' },
+          { slug: 'workspace' }, { slug: 'use-a-workspace' }, { slug: 'pulls' }, { slug: 'typescript-workspace' },
           { slug: 'configuration' }, { slug: 'versions' }, { slug: 'terminology' },
         ] },
         { label: 'For maintainers', items: [{ autogenerate: { directory: 'internals' } }] },

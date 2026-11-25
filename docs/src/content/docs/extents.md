@@ -11,7 +11,8 @@ status: "Current"
 
 An extent is the set of objects of one class or interface, narrowed by a filter. Use an extent to
 find objects that you cannot reach by following a relation from an object that you already hold.
-This guide assumes [Objects and relations](objects-and-relations.md).
+This guide assumes [Objects and relations](objects-and-relations.md). A workspace finds objects
+with a pull; [Pulls](pulls.md) describes it.
 
 The examples use `Person` and `Organisation` of the platform's test domain, a `transaction`, and
 `m`, the metadata of the model. Every typed object and every objects class has it as `M`; a

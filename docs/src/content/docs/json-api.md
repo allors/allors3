@@ -10,11 +10,13 @@ status: "Current"
 > the tests.
 
 Core's JSON API is how a client reads and changes the objects of the database over HTTP. The
-Remote workspace adapter of .NET and the TypeScript workspace call it, and so can any HTTP client.
-This page lists its endpoints and the fields of their requests and responses. The data of a pull,
-its extents, predicates, selects and includes, follows the classes in
+Remote workspace adapter of .NET and [the TypeScript workspace](typescript-workspace.md) call it,
+and so can any HTTP client; [The workspace](workspace.md) explains the workspaces. This page lists
+its endpoints and the fields of their requests and responses. The data of a pull, its extents,
+predicates, selects and includes, follows the classes in
 `dotnet/System/Protocol/Allors.Protocol.Json/Data`; [Extents](extents.md) explains what an extent
-means. [Authentication](authentication.md) explains the tokens.
+means, and [Pulls](pulls.md) describes a pull of the .NET workspace. [Authentication](authentication.md)
+explains the tokens.
 
 ## How a workspace uses the endpoints
 
@@ -154,7 +156,7 @@ HTTP 500.
 | --- | --- |
 | `l` | The pulls, each of which finds objects. |
 | `p` | A procedure to run first: `n` its name, and its input in `c`, `o`, `v` and `p`. |
-| `d` | Dependencies: for a type, by its tag in `o`, the role (`r`) or the association (`a`) along which the pull adds objects to the response. The pull follows a dependency whether or not the user may read the role, and follows it again from the objects that it adds. |
+| `d` | Dependencies: for a type, by its tag in `o`, the role (`r`) or the association (`a`) along which the pull adds objects to the response. The pull follows a dependency again from the objects that it adds. |
 
 A pull in `l` finds the objects of an extent or one object:
 
@@ -181,10 +183,9 @@ select's final node. A prepared select uses its own include.
 
 A result without a name takes the plural name of its type, such as `WorkItems`, or of the role or
 the association that its select ends with; one object takes the singular name. A pull leaves out
-the objects of a class outside the workspace and the objects that a mask hides; it names every
-other object that it finds, even when the user may read none of its roles. A select and an include
-follow a role only when the user may read it, and follow an association without a check. An id in
-`o` that does not exist gets HTTP 500.
+the objects of a class outside the workspace and the objects that a mask hides;
+[Where access is checked](security.md#where-access-is-checked) describes the access checks of the
+server. An id in `o` that does not exist gets HTTP 500.
 
 Give collection results distinct names when batching pulls. If a later result appends to an
 existing collection without an include, its additional ids appear in `c` but can be absent from

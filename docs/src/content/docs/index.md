@@ -28,10 +28,10 @@ same technical content, following the instructions in `AGENTS.md`.
 
 The pages cover the boundary of the platform, domain inheritance, creating an application, the
 model, objects and relations in the database, extents, derivations, populations and their
-upgrade, security, the command-line tool, hosting a server, authentication, the JSON API,
-configuration, the versions, and building and testing the repository. They do not yet describe
-the workspace or the behaviour of each database adapter: for those, the source and its tests are
-the reference.
+upgrade, security, the command-line tool, hosting a server, authentication, the JSON API, the
+workspace in .NET and in TypeScript with its pulls, configuration, the versions, and building and
+testing the repository. They do not yet describe the behaviour of each database adapter: for that,
+the source and its tests are the reference.
 [Getting started](getting-started.md) is the place to begin.
 
 Allors3 is licensed under the GNU Lesser General Public License, version 3; the `LICENSE` file of
@@ -60,9 +60,13 @@ The following pages are written for users. Maintainers read them too.
 | [Host a server](host-a-server.md) | How-to guide | Current | Run the server of an application on PostgreSQL or SQL Server: write its settings, create the database and a user, start the server, sign in with curl and prepare a deployment. |
 | [Authentication](authentication.md) | Explanation | Current | How a user signs in to the server, what the bearer token holds and how long it lasts, how the server checks it on every request, and what a token outlives. |
 | [The JSON API](json-api.md) | Reference | Current | The endpoints of the server: sign-in, pull, sync, push, invoke, access and permission, with their requests, responses, errors and checks. |
+| [The workspace](workspace.md) | Explanation | Current | How a client works with the objects of the database through a workspace: connections, workspaces and sessions, the Local and Remote adapters, what a pull brings into a session, what the user may read and write there, and what a push stores. |
+| [Use a workspace](use-a-workspace.md) | How-to guide | Current | Connect a .NET workspace to the database in the same process or to a server, pull objects with a filter and an include, read and change them as the user may, push, handle the errors and test on both adapters. |
+| [Pulls](pulls.md) | Reference | Current | What a pull of the .NET workspace can ask for: an object or an extent, predicates and sorting, results with a select, an include, paging and a name, arguments, prepared extents and selects, procedures and custom routes, and where the adapters differ. |
+| [The TypeScript workspace](typescript-workspace.md) | Reference | Current | The TypeScript libraries of the workspace, the code that the generator writes for them, the connection with a JSON client of the application's own, and where the TypeScript API differs from the .NET workspace. |
 | [Configuration](configuration.md) | Reference | Current | The configuration root, the order of its files, environment variables, the settings, the templates and the admin connections. |
 | [Versions and branches](versions.md) | Reference | Current | The 3.2 line on `main`, the version branches, the archive branch, and where Base and Apps continue. |
-| [Terminology](terminology.md) | Reference | Current | Agreed names for the platform, domains, the model, relations, objects, derivations, security, adapters, populations and configuration. |
+| [Terminology](terminology.md) | Reference | Current | Agreed names for the platform, domains, the model, relations, objects, derivations, security, the workspace, adapters, populations and configuration. |
 
 ## For maintainers
 

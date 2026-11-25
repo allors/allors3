@@ -119,8 +119,8 @@ settings from the configuration root and from environment variables, as
 default to the template `config/snapshot` instead, so that a test run needs no database server.
 
 An application's server compiles Core's server folder through the glob `Core*`;
-[Host a server](../host-a-server.md) shows how to run one, and [The JSON API](../json-api.md)
-describes what it serves. [Authentication](../authentication.md) lives in Core's server folder in
+[Host a server](../host-a-server.md) shows how to run one, [The JSON API](../json-api.md)
+describes what it serves, and [The workspace](../workspace.md) explains the clients that use it. [Authentication](../authentication.md) lives in Core's server folder in
 the 3.2 line: ASP.NET Core Identity user and role stores over Allors users, a JWT bearer scheme and
 the sign-in endpoint. Moving authentication into plug-ins, with cookie sessions and Microsoft Entra
 ID, is part of the archived previous line and returns when an application needs it.
