@@ -28,15 +28,18 @@ sample application has no TypeScript client.
 | `@allors/system/workspace/domain` | The interfaces of the workspace, such as `IWorkspace`, `ISession`, `IObject` and `IStrategy`, and the pulls, with their extents, predicates and results. |
 | `@allors/system/workspace/adapters` | What the adapter builds on: the session, the strategy, the records and `PrototypeObjectFactory`. |
 | `@allors/system/workspace/adapters-json` | The adapter over the JSON API: `DatabaseConnection` and the interface `IDatabaseJsonClient`. |
-| `@allors/core/workspace/meta`, `@allors/core/workspace/meta-json`, `@allors/core/workspace/domain` | The generated code of Core's test domain. |
+| `@allors/core/workspace/meta`, `@allors/core/workspace/meta-json`, `@allors/core/workspace/domain` | The generated code of Core's test domain. The tests import it as `@allors/default/workspace/meta`, `meta-json` and `domain`. |
 | `@allors/core/workspace/derivations-custom` | The workspace rules of Core's test domain. |
 | `@allors/core/workspace/derivations` | Only an import of `@allors/system/workspace/derivations`, a library that the repository no longer has. |
 
 The libraries whose names end in `-tests` hold the tests. The platform publishes no package of
 these libraries, and `typescript/modules/package.json` is private. The platform's tests compile
-the source of each library through the paths in `typescript/modules/tsconfig.base.json`; an
-application's TypeScript build compiles it from the application's copy of the platform in the same
-way.
+the source of each library: `typescript/modules/tsconfig.base.json` maps the import paths of the
+table to it, and a library that uses the generated code maps them again in its own
+`tsconfig.json`, together with the paths `@allors/default/workspace/meta`, `meta-json` and
+`domain`, which lead to Core's generated code. The platform has no application with a TypeScript
+client to test this with; an application maps the same paths to the libraries in its copy of the
+platform.
 
 ## The generated code
 
@@ -46,18 +49,19 @@ The templates are in `typescript/modules/templates`:
 | --- | --- |
 | `workspace.meta.ts.stg` | The typed metadata, `M`, with builders of pulls, results, selects and includes. |
 | `workspace.meta.json.ts.stg` | The metadata as data, `data`, which `LazyMetaPopulation` reads. |
-| `workspace.domain.ts.stg` | An interface for each class and each interface of the workspace, with a property for each role and association, `canRead…` and `canWrite…` for each role with `Origin.Database`, and `canExecute…` and a `Method` for each method. |
+| `workspace.domain.ts.stg` | An interface for each class and each interface of the workspace, with a property for each role and association, `canRead…` for each role with `Origin.Database` and `canWrite…` for each of those that is not derived, and `canExecute…` and a `Method` for each method. |
 
 Core's generator, in `dotnet/Core/Database/Generate`, renders them for the workspace `Default` of
-Core's test domain, into the folders `generated` of `libs/core/workspace/meta`, `meta-json` and
-`domain`. The target `Generate` of the build runs it. The sample's generator renders the templates
-of the .NET workspace only; an application that wants the TypeScript workspace adds the three
-templates to its generator, with folders of its own. The generated domain imports its metadata from
-`@allors/default/workspace/meta`, so the application maps that path to its generated metadata, as
-the platform's tests map it to Core's.
+Core's test domain, into `libs/core/workspace/meta/src/lib/generated`, and the same folder of
+`meta-json` and of `domain`, which Git ignores. The target `Generate` of the build runs it. The
+sample's generator renders the templates of the .NET workspace only. An application that wants the
+TypeScript workspace adds the three templates to its generator, with folders of its own. The
+generated domain imports its metadata from `@allors/default/workspace/meta`, so the application
+maps that path to its generated metadata, as the platform's tests map it to Core's.
 
-A property of a unit role is typed with `| null`, so a role that the user may not read reads as
-`null` without an error.
+A role that the user may not read reads as `null`, or as an empty array when it holds several
+objects, without an error. The properties of unit roles, and of roles that hold one object, are
+typed with `| null`.
 
 ## Create a connection
 
@@ -77,8 +81,10 @@ export interface IDatabaseJsonClient {
 
 Each method posts its request as JSON to the endpoint of the same name, such as `/allors/pull`,
 with the bearer token of the user, and returns the JSON of the answer. The interface has no
-sign-in: the client signs in at the sign-in endpoint, as [Sign in](json-api.md#sign-in) describes,
-and keeps the token. `FetchClient`, in the tests, is such a client.
+sign-in: the client signs in at `/allors/Authentication/Token`, as [Sign in](json-api.md#sign-in)
+describes, and keeps the token. `FetchClient`, in the tests, is such a client, with one difference:
+it signs in at `TestAuthentication/Token` of the Core test server, which gives a token for any user
+name without checking the password.
 
 The test fixture builds the metadata with `new LazyMetaPopulation(data)` and then the connection:
 
@@ -96,8 +102,9 @@ return new DatabaseConnection(configuration, this.jsonClient);
 ```
 
 `idGenerator` gives the negative ids of new objects, and `rules` the workspace rules, which a
-session turns on with `activate`. `connection.createWorkspace()` creates the workspace, and
-`workspace.createSession()` a session.
+session turns on with `activate`. Pass an empty array when there are none: the type declares
+`rules` optional, but `createWorkspace()` throws a `TypeError` without it.
+`connection.createWorkspace()` creates the workspace, and `workspace.createSession()` a session.
 
 ## Pull, push and invoke
 
@@ -121,8 +128,8 @@ return result.collection<C1>(m.C1)[0];
 
 - `session.pull` takes a pull or a list of pulls. `result.collection` takes a name, a class, an
   interface, a role type or an association type, ignores the case of a name, and returns an empty
-  list when the result has no such collection; `result.object` and `result.value` take one object
-  and one value.
+  list when the result has no such collection. `result.object` returns one object, by a name or a
+  type, and `result.value` one value, by a name.
 - `session.push()` sends the changes, and `session.invoke` runs a method or a list of methods, with
   `isolated` and `continueOnError` in its options.
 - `session.call(procedure, ...pulls)` runs a procedure and pulls, as
@@ -141,7 +148,7 @@ return result.collection<C1>(m.C1)[0];
 | A text for the tracing of the database | None | `session.context`, sent with each pull, sync, push and invoke |
 | A role that holds an object that is not in the session | Throws | Takes the object from the connection's records when another session pulled it; otherwise throws an `Error` with the message `Object is not present in session.` |
 | Deleting an object | Not available | `strategy.delete()`, for a new object only; an object of the database throws |
-| The roles of a derivation error | Each has an object and a relation type | `roles` reads each relation as a pair, `r[0]` and `r[1]`, while the JSON API sends an object with `i` and `r`, so each role has no object and no relation type |
+| The roles of a derivation error | Each has a relation type, and the object when the session holds it; for a new object the object is `null` | `roles` reads each relation as a pair, `r[0]` and `r[1]`, while the JSON API sends an object with `i` and `r`, so each role has no object and no relation type |
 
 ## Where this is implemented
 

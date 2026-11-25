@@ -9,9 +9,11 @@ status: "Current"
 > **Status: Current.** [Where this is implemented](#where-this-is-implemented) names the code and
 > the tests.
 
-A pull finds objects in the database and brings them into a session, with the objects that its
-selects and includes reach. `session.PullAsync(params Pull[] pulls)` sends several pulls together
-and returns one `IPullResult`. The classes of a pull are in the namespace `Allors.Workspace.Data`.
+A pull finds objects in the database and brings into a session the objects that its results hold,
+with the objects that their includes reach. A result without a select holds the objects that the
+pull finds; a result with a select holds only the objects at the end of the select.
+`session.PullAsync(params Pull[] pulls)` sends several pulls together and returns one
+`IPullResult`. The classes of a pull are in the namespace `Allors.Workspace.Data`.
 
 [Extents](extents.md) explains the predicates, which mean the same in a pull as in the database.
 [Pull](json-api.md#pull) gives the form that the Remote adapter sends, and
@@ -48,8 +50,10 @@ unless its `SortDirection` is `Descending`. The first sort comes first.
 
 ## Predicates
 
-The `Predicate` of a filter holds one predicate; `And`, `Or` and `Not` combine others. A predicate
-takes the role type or the association type of the extent's type as its first argument.
+The `Predicate` of a filter holds one predicate; `And`, `Or` and `Not` combine others. The first
+argument of a predicate is a role type or an association type of the extent's type. `Like`,
+`GreaterThan`, `LessThan` and `Between` take a role type only, and `Equals` and `Instanceof` can do
+without either.
 
 | Predicate | Takes | An object matches when |
 | --- | --- | --- |
@@ -71,8 +75,11 @@ var result = await session.PullAsync(new Pull
 });
 ```
 
-A predicate without a value adds no condition: `Equals` with a `Value` of `null` matches every
-object. [Filter](extents.md#filter) states the rules of the predicates and of their patterns.
+`Equals` without a `Value`, an `Object` or a `Path` adds no condition, so it matches every object.
+The other predicates need what they take: without it, the Local adapter throws an
+`ArgumentException` or a `NullReferenceException`, the Remote adapter throws an
+`HttpRequestException` for HTTP 500, and `Instanceof` without `ObjectType` matches nothing.
+[Filter](extents.md#filter) states the rules of the predicates and of their patterns.
 
 ### Parameters
 
@@ -81,10 +88,14 @@ the value by that name, and a predicate whose argument is missing from them is l
 `Dependencies` names further arguments; the predicate is left out when one of them is missing. The
 adapters differ:
 
-- **Local.** The arguments apply. A pull whose `Arguments` is `null` throws a
-  `NullReferenceException` for a predicate with a `Parameter` or with `Dependencies`.
-- **Remote.** The .NET adapter does not send `Arguments`, so the server leaves out every predicate
-  with a `Parameter` or with `Dependencies`. The TypeScript workspace sends them.
+- **Local.** The arguments apply, in the form that the database takes: an object by its id, a
+  `long`, several objects as a `long[]`, a class or an interface by its tag, and a unit by its
+  value. A pull whose `Arguments` is `null` throws a `NullReferenceException` for a predicate with
+  a `Parameter` or with `Dependencies`.
+- **Remote.** The .NET adapter does not send `Arguments`, so the server leaves out a predicate with
+  a `Parameter` or with `Dependencies`. It does not send the `Parameter` of an `Instanceof`
+  either, so that predicate stays, without a type, and matches nothing. The TypeScript workspace
+  sends the arguments.
 
 ## Results
 
@@ -101,7 +112,15 @@ adapters differ:
 `new Select(m.WorkItem.Assignee)` holds the assignee of each work item that the pull finds; the
 result holds each object once. `new Select(m.WorkItem.Assignee, m.Person.WorkItemsWhereAssignee)`
 takes two steps, each in a `Select` of its own, linked through `Next`; `End` is the last step.
-`OfType` on a step keeps the objects of one class or interface.
+`OfType` on a step keeps the objects of one class or interface; the Local adapter ignores it.
+
+A step that holds several objects limits a select, differently on each adapter:
+
+- **The last step.** On the Local adapter a select whose last step holds several objects, and no
+  step before it does, throws an `Exception` that wraps an `InvalidCastException`. The two-step
+  example above throws there; the Remote adapter returns the work items.
+- **A step before the last.** In a pull of an extent, the Remote adapter answers such a select with
+  HTTP 500; the Local adapter returns the objects. In a pull of an object, both return them.
 
 A select and an include follow a role only when the user may read it, as [Pull](json-api.md#pull)
 describes.
@@ -123,7 +142,8 @@ var result = await session.PullAsync(new Pull
 the assignee of each work item and the work items of that assignee.
 
 On a result with a select, set the include on the last step, `select.End.Include`: both adapters
-ignore the result's own `Include` when it has a select.
+ignore the result's own `Include` when it has a select, and the Remote adapter ignores an include
+on an earlier step.
 
 ### Names
 
@@ -133,31 +153,47 @@ A result without a name is named after what it holds:
 | --- | --- |
 | A pull of an extent | The plural name of the extent's type, such as `WorkItems`. |
 | A pull of an object | `ObjectType`, or else the singular name of the object's class, such as `Person`. |
-| A select | On the Remote adapter, the plural name of the role or the association at its end, such as `Assignees`, or its singular name on a pull of an object when the select leads to one object. On the Local adapter, the full name instead, such as `WorkItemAssignees` or `WorkItemAssignee`. |
+| A select | On the Remote adapter, the plural name of the role or the association at its end, such as `Assignees`, or its singular name on a pull of an object when the select leads to one object. On the Local adapter, a select that ends in a role takes the full name of the role instead, such as `WorkItemAssignees` or `WorkItemAssignee`. |
 
 Name every result that has a select. `result.GetCollection<WorkItem>()` takes the collection with
 the plural name of the type, and `GetCollection<Person>("Assignees")` a collection by name;
 `GetObject<Person>()` and `GetObject<Person>(name)` do the same for one object, and both return
-`null` when the result has no such name. `GetValue(name)` reads a value that a procedure returned.
-`Collections`, `Objects` and `Values` hold them all. The Remote adapter ignores the case of a name;
-the Local adapter does not.
+`null` when the result has no such name. The Remote adapter ignores the case of a name in these
+methods; the Local adapter does not. `Collections`, `Objects` and `Values` hold them all, by name;
+on the Remote adapter their names are in upper case, such as `WORKITEMS`.
+
+Read a value that a procedure returned with `GetValue<T>(name)` and the type of its unit. The Local
+adapter casts the value that the procedure added. The Remote adapter converts the JSON of the
+answer, and its `GetValue<T>` takes the types of the units only.
 
 ### Paging
 
-`Skip` and `Take` apply to the objects of an extent. On the Remote adapter they apply before the
-select, so `Take = 1` with a select gives the objects that the select reaches from the first
-object. On the Local adapter they apply to the objects that the select reaches.
+`Skip` and `Take` apply to the objects of an extent:
+
+- **With a select.** The Remote adapter pages before the select, so `Take = 1` gives the objects
+  that the select reaches from the first object. The Local adapter pages the objects that the
+  select reaches.
+- **Before or after leaving objects out.** The Remote adapter pages the objects that it may return.
+  The Local adapter pages first and then leaves out the objects of a class outside the workspace
+  and the objects that a mask hides, so it can return fewer than `Take`.
+
+### Several results
+
+A pull can have several results. In a pull of an extent, each result starts from the objects that
+the pull finds on the Remote adapter; on the Local adapter, a result after a result with a select
+starts from the objects of that select. In a pull of an object, a result after a select that leads
+to one object starts from that object, on both adapters.
 
 ## Prepared extents and selects
 
-A prepared extent or select is defined in the database, and a pull names it by its id in
-`ExtentRef` or `SelectRef`. The application's configuration registers them, by id, in the
-classes `PreparedExtents` and `PreparedSelects` of `Database/Configuration/Custom`. The sample
-registers none.
+A prepared extent or select is defined on the side of the database, in the configuration of the
+application, and a pull names it by its id in `ExtentRef` or `SelectRef`. The configuration
+registers them, by id, in the classes `PreparedExtents` and `PreparedSelects` of
+`Database/Configuration/Custom`. The sample registers none.
 
 ## Procedures
 
-`session.CallAsync(procedure, pulls)` runs a procedure of the database, and then the pulls, in one
+`session.CallAsync(procedure, pulls)` runs a procedure of the database and the pulls, in one
 request:
 
 ```csharp
@@ -177,9 +213,13 @@ Assert.True(result.GetValue<bool>("allorsBoolean"));
   objects whose versions the database checks first. A version that has changed is a version error,
   and the procedure does not run.
 - **The output.** The procedure adds collections, objects and values by name; the pull result holds
-  them. A procedure runs in the transaction of the pull, which the database never commits, so
-  what the procedure changes is not stored.
+  them. A procedure runs in the transaction of the pull, which the platform does not commit, so
+  what the procedure changes is not stored unless the procedure commits it.
 - **A missing procedure** gives `Missing procedure <name>` in `ErrorMessage`.
+- **When the procedure fails,** with a version error, a missing procedure or an error that it
+  adds, the adapters differ. The Remote adapter runs none of the pulls, and its result then has no
+  collections, objects or values: `GetCollection` and the others throw. The Local adapter runs the
+  pulls anyway, and brings their objects into the session.
 
 `TestValues` is a procedure of Core's test domain; the sample has none.
 
@@ -189,8 +229,9 @@ Assert.True(result.GetValue<bool>("allorsBoolean"));
 the base address of the Remote adapter, and reads the answer as the answer of a pull. The
 application's server answers with a controller of its own: the server's route
 `allors/{controller}/{action}` sends `People/pull` to the action `Pull` of a `PeopleController`,
-which builds the answer with the pull response builder of Core's `Api`. A name without a controller
-gets HTTP 404, which throws an `HttpRequestException`. Core's test server has such controllers in
+which builds the answer with Core's `Api.CreatePullResponseBuilder()`. The code marks that method
+for deletion, and its builder adds no dependencies. A name without a controller gets HTTP 404,
+which throws an `HttpRequestException`. Core's test server has such controllers in
 `dotnet/Core/Database/Server/Custom`; the sample's server has none.
 
 The Local adapter has no custom routes: `CallAsync(args, name)` throws a
@@ -203,12 +244,19 @@ pulls give the same objects on both, apart from these:
 
 | Pull | Local | Remote |
 | --- | --- | --- |
-| The name of a result with a select and without `Name` | The full name of the role, such as `WorkItemAssignees` | The name of the role, such as `Assignees` |
-| The case of a name in `GetCollection` | Must match | Ignored |
+| The name of a result whose select ends in a role, without `Name` | The full name of the role, such as `WorkItemAssignees` | The name of the role, such as `Assignees` |
+| The case of a name in `GetCollection` and `GetObject` | Must match | Ignored |
+| The names in `Collections`, `Objects` and `Values` | As the result names them | In upper case |
+| `GetValue` | The value that the procedure added | The JSON of the answer; `GetValue<T>` takes the types of the units only |
 | `Skip` and `Take` with a select | Applied to the selected objects | Applied before the select |
-| A result after a result with a select, in one pull | Starts from the objects of that select | Starts from the objects of the extent |
-| A select that ends in an association that holds several objects | Throws an `Exception` that wraps an `InvalidCastException` | Returns the objects |
-| `Parameter` and `Dependencies` | Apply; `null` arguments throw | Left out, because the arguments are not sent |
+| `Skip` and `Take` and the objects that are left out | Applied before objects are left out | Applied to the objects that may be returned |
+| In a pull of an extent, a result after a result with a select | Starts from the objects of that select | Starts from the objects of the extent |
+| `OfType` on a step of a select | Ignored | Applied |
+| A select whose last step holds several objects | Throws an `Exception` that wraps an `InvalidCastException` | Returns the objects |
+| In a pull of an extent, a select with a step before the last that holds several objects | Returns the objects | `HttpRequestException`, HTTP 500 |
+| An include on an earlier step of a select | Applied | Ignored |
+| `Parameter` and `Dependencies` | Apply; `null` arguments throw | Left out, because the arguments are not sent; an `Instanceof` with a `Parameter` matches nothing |
+| A procedure that fails | The pulls run | The pulls do not run, and the result has no collections, objects or values |
 | An id that does not exist | `Exception` | `HttpRequestException`, HTTP 500 |
 | A pull to a custom route | `NotImplementedException` | Sent to the server |
 
@@ -221,14 +269,19 @@ pulls give the same objects on both, apart from these:
   `dotnet/System/Workspace/Allors.Workspace.Protocol.Json/Data/ToJsonVisitor.cs`; `VisitPull`
   copies no arguments. The server answers in
   `dotnet/System/Database/Allors.Database.Workspace.Json/Pull`.
-- The Local adapter runs a pull in
+- The Local adapter turns a pull into the database's in
+  `dotnet/System/Workspace/Allors.Workspace.Protocol.Direct/ToDatabaseVisitor.cs`, which copies no
+  `OfType`, with its arguments in `Arguments.cs` next to it, and runs it in
   `dotnet/System/Workspace/Adapters/Allors.Workspace.Adapters.Local/Database/Pull`: `PullExtent`,
-  `PullInstantiate` and `Procedure`. Both run the predicates of
-  `dotnet/System/Database/Allors.Database/Data`, which leave out a predicate whose argument is
-  missing.
+  `PullInstantiate` and `Procedure`.
+- Both run the predicates of `dotnet/System/Database/Allors.Database/Data`, which leave out a
+  predicate whose argument is missing. `SelectExtension.cs`, in
+  `dotnet/System/Database/Allors.Database.Workspace/Data`, takes the steps of a select and checks
+  that the user may read a role.
 - `IProcedure` is in `dotnet/System/Database/Allors.Database.Workspace/Procedure`, and `Procedures`,
   which finds a procedure by name, in `dotnet/Core/Database/Configuration/Core/Database/Procedures`.
 - `PullTests` and `ProcedureTests`, in `dotnet/Core/Workspace/Tests/Tests`, check the predicates,
-  the operators, the sorting, a named result, an include and the procedures on each adapter;
-  `PagingTests` checks `Take`. No test of the workspace selects along a role or an association, or
-  uses a parameter or a custom route.
+  the operators, the sorting, a named result, an include on a select without a role type
+  (`PullWithInclude`) and the procedures on each adapter; `PagingTests` checks `Take`, and the
+  sample's `WorkItemTests` an include on a result. No test of the .NET workspace selects along a
+  role or an association, or uses a parameter or a custom route.

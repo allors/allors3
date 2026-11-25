@@ -50,7 +50,7 @@ cp -R allors/sample/Repository allors/sample/Database allors/sample/Workspace .
 | `Database/Resources` | The messages of the domain, merged from Core's. |
 | `Database/Domain` | The domain: Core's code, the calls to the hooks in `Virtual`, the application's code in `Custom`, and the list of rules in `Rules.cs`. |
 | `Database/Configuration` | The services of the database. |
-| `Database/Generate` | The generator of the classes of the domain. |
+| `Database/Generate` | The generator of the classes of the domain and of the workspace. |
 | `Database/Commands` | The [command-line tool](command-line-tool.md). |
 | `Database/Server` | The HTTP server that hosts Core's sign-in endpoint and JSON API for the application's domain. |
 | `Database/Domain.Tests`, `Database/Commands.Tests` and `Database/Server.Tests` | The tests of the domain, the tool and the HTTP API. |
@@ -63,8 +63,8 @@ cp -R allors/sample/Repository allors/sample/Database allors/sample/Workspace .
 
 In the platform's repository the projects of the sample reach the platform's source with paths
 that start with `..\..\..\dotnet\`. Next to the submodule those paths start with
-`..\..\allors\dotnet\`. The generator of the domain also names its templates with paths that
-start with `../dotnet/`, relative to the folder from which it runs. These commands change both:
+`..\..\allors\dotnet\`. The generator in `Database/Generate` also names its templates with paths
+that start with `../dotnet/`, relative to the folder from which it runs. These commands change both:
 
 ```sh
 grep -rl --include='*.csproj' '\.\.\\\.\.\\\.\.\\dotnet\\' Repository Database Workspace | xargs perl -pi -e 's/\.\.\\\.\.\\\.\.\\dotnet\\/..\\..\\allors\\dotnet\\/g'

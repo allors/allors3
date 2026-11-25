@@ -53,7 +53,8 @@ this.configuration = new Configuration("Default", metaPopulation, objectFactory,
 
 ## 3. Connect
 
-A connection acts for one user. Create one for each user.
+A connection acts for one user. Create one for each user, and give each one of the Remote adapter
+an `HttpClient` of its own.
 
 ### In the process of the database
 
@@ -96,14 +97,17 @@ return connection.CreateWorkspace();
 - **The host.** The sample's server answers only the hosts in its setting `AllowedHosts`, which is
   `localhost` by default, and answers any other host with HTTP 400. List the host name that the
   client uses; [Settings](configuration.md#settings) describes the setting.
-- **The sign-in.** `Login` returns `false` when the user name or the password is wrong, and sets
-  the bearer token on the `HttpClient` when it succeeds. Every request then carries the token. A
-  request that the server refuses, such as one with an expired token, throws an
-  `HttpRequestException` with the status, here HTTP 401: sign in again.
-  [Authentication](authentication.md) explains the tokens.
-- **Retries.** The connection's `Policy` sends a request again when it fails without an answer
-  from the server, up to five times, after 2, 4, 8, 16 and 32 seconds. An answer with an error
-  status is not sent again.
+- **The sign-in.** `Login` returns `false` when the user name or the password is wrong, or while
+  the user is locked out, and sets the bearer token on the `HttpClient` when it succeeds. Every
+  request through that `HttpClient` then carries the token, so connections that share one act for
+  the user who signed in last. A request that the server refuses, such as one with an expired
+  token, throws an `HttpRequestException` with the status, here HTTP 401: sign in again.
+  [Authentication](authentication.md) explains the tokens and the lockout.
+- **Retries.** The connection's `Policy` sends a request again when the `HttpClient` throws an
+  `HttpRequestException`, as it does when it cannot reach the server, up to five times, after 2, 4,
+  8, 16 and 32 seconds. It sends a push or an invoke again as well, which can apply its changes
+  twice when only the answer was lost. An answer with an error status, and a request that times
+  out, are not sent again. Give `Policy` another Polly policy to change this.
 
 ## 4. Pull
 
@@ -126,7 +130,8 @@ include brings the `Assignee` of each one into the session, so that the code can
 `workItem.Assignee`; without it, reading the role throws. `GetCollection<WorkItem>()` takes the
 collection that carries the plural name of the class, `WorkItems`.
 
-A predicate narrows the filter:
+A predicate narrows the filter. The sample's tests find Jane this way in a workspace of the
+administrator, `admin@example.com`, who may read user names:
 
 ```csharp
 var result = await session.PullAsync(new Pull
@@ -150,10 +155,10 @@ Assert.False(workItem.Assignee.CanReadUserName);
 Assert.Null(workItem.Assignee.UserName);
 ```
 
-A role whose `CanRead…` property is false reads as empty. The property of a required unit role is
-not nullable and throws a `NullReferenceException` instead: for a worker, reading
-`OpenWorkItemCount` of a person throws. Read such a role only when its `CanRead…` property, here
-`CanReadOpenWorkItemCount`, is true.
+A role whose `CanRead…` property is false reads as empty. The property of a required unit role of a
+value type, such as an `int`, is not nullable and throws a `NullReferenceException` instead: for a
+worker, reading `OpenWorkItemCount` of a person throws. Read such a role only when its `CanRead…`
+property, here `CanReadOpenWorkItemCount`, is true.
 
 ## 6. Change an object and push
 
@@ -174,6 +179,11 @@ stays false for the object until a pull brings its new record. Pull the object b
 it again.
 
 ## 7. Create an object
+
+A worker's push of a new work item fails with access errors: the roles of a new object follow the
+grants of the initial `SecurityToken`, as [Creating objects](security.md#creating-objects) explains,
+and none of those is the workers'. The sample's tests create work items as the administrator, in
+the session that found `jane` in step 4:
 
 ```csharp
 var workItem = session.Create<WorkItem>();
@@ -212,14 +222,17 @@ asks for its own response:
 
 | Result | What it means | What to do |
 | --- | --- | --- |
-| `DerivationErrors` | The derivation of the push found errors, such as a required role without a value. Each error has a `Message` and `Roles`; the object of a role of a new object is `null`. | Correct the roles and push again. |
-| `VersionErrors` | Another transaction changed the object after the pull. | Pull the object. When the pull reports it in `MergeErrors`, call `session.Reset()`, pull again and make the change again. |
-| `AccessErrors` | The user may not write a role of the object, or its class is outside the workspace. | Leave the change out. `CanWrite…` was false after the last pull, or the access changed since. |
-| `MissingErrors` | The object no longer exists in the database. | Leave the object out. |
+| `DerivationErrors` | The derivation of the push found errors, such as a required role without a value. Each error has a `Message` and `Roles`; the object of a role is `null` when the session does not hold it, as for a new object. | Correct the roles and push again. |
+| `VersionErrors` | Another transaction changed the object after the pull. | Pull the object. When the pull reports it in `MergeErrors`, call `Reset()` on its `Strategy`, pull it again and make the change again before you push. |
+| `AccessErrors` | The user may not write a role of the object, or its class is outside the workspace. An object can appear once for each role that it refuses. | Leave the change out. `CanWrite…` was false after the last pull, or the access changed since. |
+| `MissingErrors` | The object, or an object that one of its roles names, no longer exists in the database. | Leave the object out. |
 
 [The workspace](workspace.md#versions-and-merges) explains versions and merges. With the Remote
 adapter, an answer of the server with an error status, such as HTTP 500, throws an
-`HttpRequestException` instead of returning a result.
+`HttpRequestException` instead of returning a result. In particular, a push that creates no object
+and writes a role that the user may no longer write, on an object of the database, gets HTTP 500
+instead of an access error; issue [#441](https://github.com/allors/allors3/issues/441) records
+this.
 
 ## 9. Test on both adapters
 
