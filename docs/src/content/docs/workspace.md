@@ -91,15 +91,19 @@ an object for each:
 
 ## What the user may read and write
 
-The session answers `CanRead…` and `CanWrite…` for each role of an object, and `CanExecute…` for
-each method, from the record that the last pull brought. It does not ask the database.
+The generated classes have `CanRead…` and `CanWrite…` properties for roles with `Origin.Database`,
+and `CanExecute…` for methods with that origin. The session answers from the object's state
+and its last pulled record. Code that holds an object through a generated interface can check a
+role with `Strategy.CanRead(roleType)` or `Strategy.CanWrite(roleType)`.
 [Security](security.md) explains how the database decides.
 
-- **A role reads as empty when `CanRead…` is false for it:** `null`, or no objects. The typed
+- **An unreadable role reads as empty from the record** (`null`, or no objects). The typed
   property of a required unit role of a value type, such as `Done` of `WorkItem`, a `bool`, is not
   nullable, so reading it then throws a `NullReferenceException`. Ask `CanRead…` first, as
   `CanReadDone`. The property throws as well on a new object whose role has no value yet. A
-  required `String` or `Binary` reads as `null`.
+  required `String` or `Binary` reads as `null`. When a derived database role has an active
+  [workspace rule](#rules-in-a-session), the getter returns the value of the rule before checking
+  permission to read the record. Check `CanRead…` before displaying that value.
 - **Writing a role does nothing when `CanWrite…` is false for it.** The setter throws nothing, the
   role keeps its value and the session records no change. Ask `CanWrite…` first.
 - **A new object** has every role readable and writable in the session until it is pushed. The
@@ -113,31 +117,31 @@ each method, from the record that the last pull brought. It does not ask the dat
 
 ## Changes and the push
 
-The session records every change to a role. `session.Create<WorkItem>()` creates a new object,
-which has a negative id. `session.HasChanges` is true while an object of the session has a changed
-role, so a new object counts once one of its roles is set; the next push sends a new object even
-when none of its roles is set.
+Only edits to roles with `Origin.Database` set `session.HasChanges`. A session with edits only
+to roles with `Origin.Session` therefore reports `false`. `session.Create<WorkItem>()` gives
+the new object a negative id. Creating an object alone leaves `HasChanges` false, but the next
+push still sends the object.
 
-To take changes back, `object.Strategy.Reset()` resets one object, and `session.Reset()` the objects
-that changed since the last `session.Checkpoint()`, or since the session began. A reset leaves the
-new objects in the session, and the next push still sends them. It leaves a reset object of the
-database listed for the next push as well: over the Remote adapter, that push fails with HTTP 500
-unless one of the object's roles has changed again.
+`object.Strategy.Reset()` discards all edits to database roles on one object. `session.Reset()`
+does the same for the objects in the change set since the last `session.Checkpoint()`, or since the
+session began. Both forms of reset preserve the values of session roles. New objects stay in the
+session and the next push still sends them. A changed object of the database also stays listed
+for the next push after a reset. Over the Remote adapter that push fails with HTTP 500 unless
+the object has another edit to a database role.
 
-`session.PushAsync()` sends the new objects and the changed roles. The database checks versions and
-access, derives, and commits when nothing failed, as [Push](json-api.md#push) describes for the
-server; the Local adapter takes similar steps in the process. The result reports what failed in
+`session.PushAsync()` sends the new objects and the changed database roles. The database checks
+versions and access, derives, and commits when nothing failed, as [Push](json-api.md#push)
+describes for the server. The Local adapter takes similar steps in the process. The result reports what failed in
 `VersionErrors`, `AccessErrors`, `MissingErrors`, `DerivationErrors` and `ErrorMessage`, and
 `HasErrors` is true when one of them holds something.
 
-- **A push that fails stores nothing,** and the session keeps its changes: correct them and push
-  again.
+- **A push that reports errors stores nothing,** and the session keeps its changes. See
+  [Handle the errors of a push](use-a-workspace.md#8-handle-the-errors-of-a-push) for how to recover.
 - **A push that succeeds gives each new object its id** in the database, and the object keeps it.
-- **After a push the session waits for a pull.** The objects that it pushed keep the values that
-  it sent, `HasChanges` stays true, and `CanWrite…` is false for each of their roles with
-  `Origin.Database`, so a write does nothing. A pull of those objects brings their new records:
-  the new version, and what the derivation of the push changed, such as a derived role. Pull after
-  every push.
+- **After a push the session waits for a pull.** The objects keep the values that were pushed,
+  and `HasChanges` keeps its value. On each pushed object, `CanWrite…` is false for roles with
+  `Origin.Database`, so a write does nothing. Pull those objects after every push to get their
+  new versions and any values that the database derived.
 - **A derivation error** has its message and the roles that it concerns, each with an object and a
   relation type. The object is `null` when the session does not hold it, as for a new object: the
   database gave the new object an id for the derivation and discarded it with the failed push.
@@ -159,7 +163,7 @@ the object. A push sends the version of the record:
 
 ## Methods
 
-A method that `[Workspace]` makes available gives the typed class a property that returns a
+A database method that `[Workspace]` makes available gives the typed class a property that returns a
 `Method`, such as `person.Delete`, and a property `CanExecute…`, such as `CanExecuteDelete`.
 `session.InvokeAsync(person.Delete)` runs the method in the database for the user. The database
 checks the version and the permission, runs the method, derives, and commits when nothing failed.
@@ -182,8 +186,8 @@ test domain has `PersonSessionFullNameRule`, which derives `SessionFullName`, a 
 - `dotnet/System/Workspace/Allors.Workspace.Domain` holds `IWorkspace`, `ISession`, `IObject`,
   `IStrategy`, the results in `Api`, and the pulls in `Data`.
 - `dotnet/System/Workspace/Adapters/Allors.Workspace.Adapters` holds what the adapters share. Its
-  `Strategy`, in `Session`, answers `CanRead`, `CanWrite` and `CanExecute`, reads an unreadable role
-  as empty and leaves out a write without permission. `Session/OriginState` holds the records of an
+  `Strategy`, in `Session`, answers `CanRead`, `CanWrite` and `CanExecute`, reads the roles and
+  leaves out a write without permission. `Session/OriginState` holds the records of an
   object, its changes and the merge. The Local adapter, the Remote adapter and its two variants
   are in the folders next to it.
 - The templates of the workspace are in `dotnet/Core/Workspace/Templates`; `domain.cs.stg` writes
@@ -192,7 +196,8 @@ test domain has `PersonSessionFullNameRule`, which derives `SessionFullName`, a 
   `Tests.Remote.Json.Newtonsoft` run on each adapter against Core's test domain, among them
   `SecurityTests`, `PushTests` (`PushShouldUpdateId`), `MergeTests`, `MethodTests` and
   `DerivationTests`. `ManyToManyTests.SetRoleOld` checks that `CanWrite…` is false after the push
-  of a new object, and that a write then does nothing. `WorkItemTests`, in `sample/Workspace/Tests`,
-  runs the sample's workspace on both adapters. No test reads a role whose object is not in the
-  session or an unreadable required role, writes a role that the grants of the user do not allow,
-  calls `session.Reset()`, or pushes after a reset.
+  of a new object, and that a write then does nothing. `WorkspaceResetTests.ResetOne2OneWithoutPush`
+  checks that reading a role after a reset throws when its object was never pulled.
+  `WorkItemTests`, in `sample/Workspace/Tests`, runs the sample's workspace on both adapters.
+  No test reads an unreadable required role, writes a role that the grants of the user do not
+  allow, calls `session.Reset()`, or pushes after a reset.

@@ -13,7 +13,8 @@ A pull finds objects in the database and brings into a session the objects that 
 with the objects that their includes reach. A result without a select holds the objects that the
 pull finds; a result with a select holds only the objects at the end of the select.
 `session.PullAsync(params Pull[] pulls)` sends several pulls together and returns one
-`IPullResult`. The classes of a pull are in the namespace `Allors.Workspace.Data`.
+`IPullResult`. Give collections in the same call [distinct names](#names). The classes of a pull
+are in the namespace `Allors.Workspace.Data`.
 
 [Extents](extents.md) explains the predicates.
 [Pull](json-api.md#pull) gives the form that the Remote adapter sends, and
@@ -28,7 +29,7 @@ session. The examples use the sample's metadata `m`.
 | `ExtentRef` | The id of a [prepared extent](#prepared-extents-and-selects), instead of `Extent`. |
 | `Object`, `ObjectId` | An object of the session, or the id of an object, instead of an extent. |
 | `ObjectType` | With an object: a class or an interface. The pull finds nothing when the object is not of that type. |
-| `Results` | What the pull returns; see [Results](#results). Without results, a pull returns the objects that it finds. |
+| `Results` | What the pull returns. Leave it `null` to return the objects that the pull finds. With `Array.Empty<Result>()`, Local returns no objects and Remote returns the matches. See [Results](#results). |
 | `Arguments` | The values of the [parameters](#parameters) of its predicates, by name. |
 
 A pull of a new object of the session, which has a negative id, throws an `ArgumentException`
@@ -75,10 +76,13 @@ var result = await session.PullAsync(new Pull
 });
 ```
 
-`Equals` without a `Value`, an `Object` or a `Path` adds no condition, so it matches every object.
-The other predicates need what they take: without it, the Local adapter throws an
-`ArgumentException` or a `NullReferenceException`, the Remote adapter throws an
-`HttpRequestException` for HTTP 500, and `Instanceof` without `ObjectType` matches nothing.
+`Equals` without a `Value`, an `Object` or a `Path` adds no condition. An `And` or an `Or` with
+zero operands, or a `Not` without an operand, also adds no condition. If any of these is the
+filter's only predicate, the filter matches every object of its type. An `Instanceof` without
+`ObjectType` matches nothing. For `Like`, `GreaterThan`, `LessThan`, `Between`, `Contains` and
+`ContainedIn`, omitting the value, object, extent or path that the predicate takes makes Local
+throw an `ArgumentException` or a `NullReferenceException` and Remote throw an
+`HttpRequestException` for HTTP 500.
 [Filter](extents.md#filter) states the rules of the predicates and of their patterns.
 
 ### Parameters
@@ -90,12 +94,15 @@ adapters differ:
 
 - **Local.** The arguments apply, in the form that the database takes: an object by its id, a
   `long`, several objects as a `long[]`, a class or an interface by its tag, and a unit by its
-  value. A pull whose `Arguments` is `null` throws a `NullReferenceException` for a predicate with
-  a `Parameter` or with `Dependencies`.
+  value. To compare the object itself, use `new Equals { Object = person }`. With no role type or
+  association type, `new Equals { Parameter = "person" }` checks that the id resolves but compares
+  against its unset `Object`. Even a valid id then gives no matches on Memory or Snapshot.
+  A pull whose `Arguments` is `null` throws a `NullReferenceException` for a predicate with a
+  `Parameter` or with `Dependencies`.
 - **Remote.** The .NET adapter does not send `Arguments`, so the server leaves out a predicate with
-  a `Parameter` or with `Dependencies`. It does not send the `Parameter` of an `Instanceof`
-  either, so that predicate stays, without a type, and matches nothing. The TypeScript workspace
-  sends the arguments.
+  a `Parameter` or with `Dependencies`. It omits the `Parameter` of an `Instanceof` as well.
+  With no explicit `ObjectType` or dependencies, that predicate stays and matches nothing.
+  The TypeScript workspace sends the arguments.
 
 ## Results
 
@@ -112,15 +119,17 @@ adapters differ:
 `new Select(m.WorkItem.Assignee)` holds the assignee of each work item that the pull finds; the
 result holds each object once. `new Select(m.WorkItem.Assignee, m.Person.WorkItemsWhereAssignee)`
 takes two steps, each in a `Select` of its own, linked through `Next`; `End` is the last step.
-`OfType` on a step keeps the objects of one class or interface; the Local adapter ignores it.
+`OfType` on a step keeps the objects of one class or interface. The Local adapter ignores it
+when the workspace supplies the select in `Result.Select`.
 
-A step that holds several objects limits a select, differently on each adapter:
+The position of a step that holds several objects matters when each step finds objects.
 
-- **The last step.** On the Local adapter a select whose last step holds several objects, and no
-  step before it does, throws an `Exception` that wraps an `InvalidCastException`. The two-step
-  example above throws there; the Remote adapter returns the work items.
-- **A step before the last.** In a pull of an extent, the Remote adapter answers such a select with
-  HTTP 500; the Local adapter returns the objects. In a pull of an object, both return them.
+- **Local.** A select can follow a step that holds several objects if its last step holds one
+  object. If the last step holds several, Local throws an `Exception` that wraps an
+  `InvalidCastException`, even if an earlier step also holds several.
+- **Remote.** A pull of one object can follow a step that holds several objects anywhere in the
+  path. In a pull of an extent, only the last step can hold several. An earlier such step gives
+  HTTP 500. The two-step example above works on Remote because only its last step holds several.
 
 ### Include
 
@@ -138,9 +147,10 @@ var result = await session.PullAsync(new Pull
 `m.WorkItem.Nodes(v => v.Assignee.Node(w => w.ObjectType.WorkItemsWhereAssignee.Node()))` brings
 the assignee of each work item and the work items of that assignee.
 
-On a result with a select, set the include on the last step, `select.End.Include`: both adapters
-ignore the result's own `Include` when it has a select, and the Remote adapter ignores an include
-on an earlier step.
+On a result with a select, put the include on the last step, `select.End.Include`, and leave
+earlier steps without one. Both adapters apply the include to the objects at the end of the
+select. Local uses the first step's `Include` if set and otherwise uses the last step's.
+Remote uses only the last step's. Both ignore `Include` on the result itself.
 
 ### Names
 
@@ -152,8 +162,13 @@ A result without a name is named after what it holds:
 | A pull of an object | `ObjectType`, or else the singular name of the object's class, such as `Person`. |
 | A select | On the Remote adapter, the plural name of the role or the association at its end, such as `Assignees`, or its singular name on a pull of an object when the select leads to one object. On the Local adapter, a select that ends in a role takes the full name of the role instead, such as `WorkItemAssignees` or `WorkItemAssignee`. |
 
-Name every result that has a select. `result.GetCollection<WorkItem>()` takes the collection with
-the plural name of the type, and `GetCollection<Person>("Assignees")` a collection by name;
+Name every result that has a select. Give collections in the same call distinct names, even across
+pulls. For example, two pulls of `WorkItem` extents both default to `WorkItems`. If both find
+matches and the second collection has no include, both adapters add its ids to the existing
+collection but skip loading the additional objects. In a fresh session those entries read as `null`.
+
+`result.GetCollection<WorkItem>()` takes the collection with the plural name of the type, and
+`GetCollection<Person>("Assignees")` a collection by name;
 `GetObject<Person>()` and `GetObject<Person>(name)` do the same for one object, and both return
 `null` when the result has no such name. The Remote adapter ignores the case of a name in these
 methods; the Local adapter does not. `Collections`, `Objects` and `Values` hold them all, by name;
@@ -241,6 +256,7 @@ pulls give the same objects on both, apart from these:
 
 | Pull | Local | Remote |
 | --- | --- | --- |
+| `Results = Array.Empty<Result>()` | Returns no objects | Returns the matches |
 | The name of a result whose select ends in a role, without `Name` | The full name of the role, such as `WorkItemAssignees` | The name of the role, such as `Assignees` |
 | The case of a name in `GetCollection` and `GetObject` | Must match | Ignored |
 | The names in `Collections`, `Objects` and `Values` | As the result names them | In upper case |
@@ -248,11 +264,11 @@ pulls give the same objects on both, apart from these:
 | `Skip` and `Take` with a select | Applied to the selected objects | Applied before the select |
 | `Skip` and `Take` and the objects that are left out | Applied before objects are left out | Applied to the objects that may be returned |
 | In a pull of an extent, a result after a result with a select | Starts from the objects of that select | Starts from the objects of the extent |
-| `OfType` on a step of a select | Ignored | Applied |
-| A select whose last step holds several objects | Throws an `Exception` that wraps an `InvalidCastException` | Returns the objects |
-| In a pull of an extent, a select with a step before the last that holds several objects | Returns the objects | `HttpRequestException`, HTTP 500 |
-| An include on an earlier step of a select | Applied | Ignored |
-| `Parameter` and `Dependencies` | Apply; `null` arguments throw | Left out, because the arguments are not sent; an `Instanceof` with a `Parameter` matches nothing |
+| `OfType` on a step in `Result.Select` | Ignored | Applied |
+| A select that reaches a last step holding several objects | Throws an `Exception` that wraps an `InvalidCastException` | Returns the objects. In a pull of an extent, an earlier step that also holds several gives HTTP 500. |
+| An extent with a select whose earlier step holds several objects and whose last step reaches one object per path | Returns the objects | `HttpRequestException`, HTTP 500 |
+| An include on the first step of a select with several steps | Used in preference to the last step's include | Ignored |
+| `Parameter` and `Dependencies` | Apply with the [exception for object equality](#parameters). A `null` arguments dictionary throws. | The server leaves the predicate out when an argument is missing. For `Instanceof` the adapter omits `Parameter` itself. See [Parameters](#parameters). |
 | A procedure that fails | The pulls run | The pulls do not run, and the result has no collections, objects or values |
 | An id that does not exist | `Exception` | `HttpRequestException`, HTTP 500 |
 | A pull to a custom route | `NotImplementedException` | Sent to the server |

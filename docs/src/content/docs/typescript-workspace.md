@@ -59,9 +59,10 @@ TypeScript workspace adds the three templates to its generator, with folders of 
 generated domain imports its metadata from `@allors/default/workspace/meta`, so the application
 maps that path to its generated metadata, as the platform's tests map it to Core's.
 
-A role that the user may not read reads as `null`, or as an empty array when it holds several
-objects, without an error. The properties of unit roles, and of roles that hold one object, are
-typed with `| null`.
+When a derived role has an active workspace rule, reading it returns the value the rule computes,
+even when `canRead…` is false. Otherwise, a role that the user may not read returns `null`, or an
+empty array when it holds several objects. The properties of unit roles and of roles that hold one
+object are typed with `| null`.
 
 ## Create a connection
 
@@ -83,8 +84,8 @@ Each method posts its request as JSON to the endpoint of the same name, such as 
 with the bearer token of the user, and returns the JSON of the answer. The interface has no
 sign-in: the client signs in at `/allors/Authentication/Token`, as [Sign in](json-api.md#sign-in)
 describes, and keeps the token. `FetchClient`, in the tests, is such a client, with one difference:
-it signs in at `TestAuthentication/Token` of the Core test server, which gives a token for any user
-name without checking the password.
+it signs in at `TestAuthentication/Token` of the Core test server, which issues a token for an
+existing user name without checking the password.
 
 The test fixture builds the metadata with `new LazyMetaPopulation(data)` and then the connection:
 
