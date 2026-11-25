@@ -155,10 +155,12 @@ Assert.False(workItem.Assignee.CanReadUserName);
 Assert.Null(workItem.Assignee.UserName);
 ```
 
-A role whose `CanRead…` property is false reads as empty. The property of a required unit role of a
-value type, such as an `int`, is not nullable and throws a `NullReferenceException` instead: for a
-worker, reading `OpenWorkItemCount` of a person throws. Read such a role only when its `CanRead…`
-property, here `CanReadOpenWorkItemCount`, is true.
+Check `CanRead…` before displaying a database role. In the sample an unreadable role reads as
+empty. The property of a required unit role of a value type, such as an `int`, cannot hold
+`null`. Reading `OpenWorkItemCount` therefore throws a `NullReferenceException` for a worker.
+Check `CanReadOpenWorkItemCount` first. This check also applies when an active workspace rule
+computes a value in the getter, as [The workspace](workspace.md#what-the-user-may-read-and-write)
+explains.
 
 ## 6. Change an object and push
 
@@ -182,8 +184,7 @@ it again.
 
 A worker's push of a new work item fails with access errors: the roles of a new object follow the
 grants of the initial `SecurityToken`, as [Creating objects](security.md#creating-objects) explains,
-and none of those is the workers'. The sample's tests create work items as the administrator, in
-the session that found `jane` in step 4:
+and none of those is the workers'. Use the administrator session that found `jane` in step 4.
 
 ```csharp
 var workItem = session.Create<WorkItem>();
@@ -197,13 +198,15 @@ Assert.False(pushResult.HasErrors);
 // The push stored the work item, and the database derived the number of open work items of its
 // assignee.
 await session.PullAsync(new Pull { Object = jane });
-Assert.Equal(2, jane.OpenWorkItemCount);
 ```
+
+Read `jane.OpenWorkItemCount` after the pull. If you followed step 6, Jane's first item is
+already done and the count is one. The sample's administrator test starts with a fresh population
+in which Jane's first item is open, so its count is two.
 
 `jane` comes from a pull of the same session; an object of another session cannot go in a role.
 Until the push the new work item has a negative id, and a pull of it throws an `ArgumentException`.
-After a push without errors it has its id in the database. The derived role `OpenWorkItemCount`
-changes in the database, and the pull of `jane` brings it into the session.
+After a push without errors it has its id in the database.
 
 ## 8. Handle the errors of a push
 
@@ -225,7 +228,11 @@ asks for its own response:
 | `DerivationErrors` | The derivation of the push found errors, such as a required role without a value. Each error has a `Message` and `Roles`; the object of a role is `null` when the session does not hold it, as for a new object. | Correct the roles and push again. |
 | `VersionErrors` | Another transaction changed the object after the pull. | Pull the object. When the pull reports it in `MergeErrors`, call `Reset()` on its `Strategy`, pull it again and make the change again before you push. |
 | `AccessErrors` | The user may not write a role of the object, or its class is outside the workspace. An object can appear once for each role that it refuses. | Leave the change out. `CanWrite…` was false after the last pull, or the access changed since. |
-| `MissingErrors` | The object, or an object that one of its roles names, no longer exists in the database. | Leave the object out. |
+| `MissingErrors` | An object that the session changed has been deleted. On the Remote adapter this can also mean that a role refers to a deleted object. | For a deleted changed object, start a fresh session and reapply the changes to the surviving objects. For a missing object in a role, clear or replace that value and push again. |
+
+A failed push keeps every changed object listed for the next push, even after a reset. If a
+work item's chosen assignee has been deleted, the Remote adapter reports the missing assignee.
+On the Local adapter the push can succeed with the optional `Assignee` role empty.
 
 [The workspace](workspace.md#versions-and-merges) explains versions and merges. With the Remote
 adapter, an answer of the server with an error status, such as HTTP 500, throws an

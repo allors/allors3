@@ -111,7 +111,7 @@ objects.
 | Session | The unit of work of a workspace, an `ISession`, which holds objects and their changes. Transaction is the term of the database; do not use it for a session. |
 | Record | What a connection holds of an object of the database: its version, its roles and what the user may do with it. |
 | Pull | A request that finds objects in the database and brings them into a session; see [Pulls](pulls.md). |
-| Push | Sends the new objects and the changed roles of a session to the database, which derives and commits them. |
+| Push | Sends the new objects and the changes to roles with `Origin.Database` from a session to the database, which derives and commits them. |
 | Invoke | Runs a method of an object in the database, for the user of the workspace. |
 | Select, include | The path along roles and associations whose objects a result of a pull holds, and the tree of roles and associations along which a pull brings more objects into the session. |
 | Procedure | An `IProcedure` of the database that a pull runs by its name; see [Procedures](pulls.md#procedures). |

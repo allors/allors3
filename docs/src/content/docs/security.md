@@ -176,14 +176,15 @@ The platform checks access where a user works through a workspace:
   a select or an include only when the user can read it, and a sync sends only the roles that the
   user can read. A push writes a role only when the user can write it, and an invoke runs a method
   only when the user can execute it.
-- **The Local workspace adapter,** which runs a workspace in the process of the database, checks
-  the roles that a pull follows, the writes of a push and the methods of an invoke in the same
-  way. Its records hold every role of the workspace; the session of the workspace hides the
-  roles that the user cannot read.
+- **The Local workspace adapter,** which runs a workspace in the process of the database, makes
+  the same access checks on a select or an include, the writes of a push and the methods of an
+  invoke. Its records hold every role of the workspace.
 - **A session of a workspace** answers `CanRead`, `CanWrite` and `CanExecute` from the records
-  that its pulls brought. It reads a role as empty when `CanRead` is false for it, and leaves out
-  a write when `CanWrite` is false;
-  [The workspace](workspace.md#what-the-user-may-read-and-write) explains it.
+  that its pulls brought. A derived role with an active workspace rule returns the value the rule
+  computes even when `CanRead` is false. Otherwise, the session treats an unreadable role as empty.
+  It leaves out a write when `CanWrite` is false.
+  [The workspace](workspace.md#what-the-user-may-read-and-write) explains how the typed properties
+  behave.
 - **A mask hides an object.** The configuration's `WorkspaceMask` can name a role type for a
   class. A pull leaves out an object of that class when the user cannot read that role, and so
   does a sync of the JSON API.
