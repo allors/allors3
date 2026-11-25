@@ -157,6 +157,10 @@ for (const [slug, title] of [
   ['host-a-server/', 'Host a server'],
   ['authentication/', 'Authentication'],
   ['json-api/', 'The JSON API'],
+  ['workspace/', 'The workspace'],
+  ['use-a-workspace/', 'Use a workspace'],
+  ['pulls/', 'Pulls'],
+  ['typescript-workspace/', 'The TypeScript workspace'],
   ['internals/build-and-test/', 'Build and test'],
   ['internals/architecture/', 'Architecture'],
 ]) {
@@ -165,7 +169,7 @@ for (const [slug, title] of [
     page.on('pageerror', (error) => errors.push(error.message));
     await page.goto(slug || './');
     await expect(page.getByRole('heading', { level: 1, name: title, exact: true })).toBeVisible();
-    if (slug === 'domains/' || slug === 'derivations/' || slug === 'security/' || slug === 'authentication/' || slug === 'internals/architecture/') await expect(page.locator('pre.mermaid svg')).toBeVisible();
+    if (slug === 'domains/' || slug === 'derivations/' || slug === 'security/' || slug === 'authentication/' || slug === 'workspace/' || slug === 'internals/architecture/') await expect(page.locator('pre.mermaid svg')).toBeVisible();
     const unfocusableCodeBlocks = await page.locator('.expressive-code pre').evaluateAll((elements) =>
       elements.filter((element) => element.scrollWidth > element.clientWidth && element.getAttribute('tabindex') !== '0').length);
     expect(unfocusableCodeBlocks, 'A code block that scrolls must be focusable from the start').toBe(0);

@@ -10,11 +10,13 @@ status: "Current"
 > the tests.
 
 Core's JSON API is how a client reads and changes the objects of the database over HTTP. The
-Remote workspace adapter of .NET and the TypeScript workspace call it, and so can any HTTP client.
-This page lists its endpoints and the fields of their requests and responses. The data of a pull,
-its extents, predicates, selects and includes, follows the classes in
+Remote workspace adapter of .NET and [the TypeScript workspace](typescript-workspace.md) call it,
+and so can any HTTP client; [The workspace](workspace.md) explains the workspaces. This page lists
+its endpoints and the fields of their requests and responses. The data of a pull, its extents,
+predicates, selects and includes, follows the classes in
 `dotnet/System/Protocol/Allors.Protocol.Json/Data`; [Extents](extents.md) explains what an extent
-means. [Authentication](authentication.md) explains the tokens.
+means, and [Pulls](pulls.md) describes a pull of the .NET workspace. [Authentication](authentication.md)
+explains the tokens.
 
 ## How a workspace uses the endpoints
 

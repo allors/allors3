@@ -13,7 +13,8 @@ The platform owns the objects of an application and the relations between them. 
 allocates an object of the model with `new`, and never keeps a relation in a field of its own: it
 asks the platform, which stores the change and keeps the other end of the relation in step. This
 page describes that behaviour for code that runs in the database, such as rules, methods and the
-setup of a population. [The model](model.md) lists what the declarations behind it can say.
+setup of a population. [The model](model.md) lists what the declarations behind it can say, and
+[The workspace](workspace.md) explains how a client works with the objects.
 
 The examples use `Person` and `Organisation` of the platform's test domain, and a `transaction`
 of its database. [Getting started](getting-started.md) shows how to run such code.

@@ -1,6 +1,6 @@
 ---
 title: "Terminology"
-description: "Agreed names for the platform, domains, the model, relations, objects, derivations, security, adapters, populations and configuration."
+description: "Agreed names for the platform, domains, the model, relations, objects, derivations, security, the workspace, adapters, populations and configuration."
 audience: "Users and maintainers"
 kind: "Reference"
 status: "Current"
@@ -43,7 +43,7 @@ is written in code formatting; the
 | Class, interface | The two kinds of composite, a type that has relations. An object is an instance of a class; an interface declares relations and methods for the classes that implement it. |
 | Unit | One of the eight types of a value that the platform defines, such as `String` and `Integer`; see [Types](model.md#types). |
 | Multiplicity | How many objects stand at each end of a relation: `OneToOne`, `OneToMany`, `ManyToOne` or `ManyToMany`, with the association named first; see [Multiplicity](model.md#multiplicity). |
-| Workspace | The engine in which a client works with objects, in sessions. A workspace has a name, and the model says which classes, relations and methods the workspaces of each name can use: `[Workspace]` on a declaration names them, and `Default` is the name that it uses when it is given none. Qualify the [workspace adapter](#adapters), which is an implementation of the engine. |
+| Workspace | The engine in which a client works with objects, in sessions; see [The workspace](workspace.md). A workspace has a name, and the model says which classes, relations and methods the workspaces of each name can use: `[Workspace]` on a declaration names them, and `Default` is the name that it uses when it is given none. Qualify the [workspace adapter](#adapters), which is an implementation of the engine. |
 
 ## Relations
 
@@ -101,6 +101,22 @@ objects.
 | `Revocation` | A set of permissions that it denies to every user, for the objects that refer to it. |
 | Access control list | What one user may do with one object, an `IAccessControlList`. |
 
+## The workspace
+
+[The workspace](workspace.md) explains how these fit together.
+
+| Term | Definition and usage |
+| --- | --- |
+| Connection | The `DatabaseConnection` of a workspace adapter, which acts for one user and holds the records of the objects that its sessions pulled. |
+| Session | The unit of work of a workspace, an `ISession`, which holds objects and their changes. Transaction is the term of the database; do not use it for a session. |
+| Record | What a connection holds of an object of the database: its version, its roles and what the user may do with it. |
+| Pull | A request that finds objects in the database and brings them into a session; see [Pulls](pulls.md). |
+| Push | Sends the new objects and the changed roles of a session to the database, which derives and commits them. |
+| Invoke | Runs a method of an object in the database, for the user of the workspace. |
+| Select, include | The path along roles and associations whose objects a result of a pull holds, and the tree of roles and associations along which a pull brings more objects into the session. |
+| Procedure | An `IProcedure` of the database that a pull runs by its name; see [Procedures](pulls.md#procedures). |
+| Merge error | What a pull reports when the session changed a role that the database changed as well; see [Versions and merges](workspace.md#versions-and-merges). |
+
 ## Adapters
 
 **Adapter** is the established project term. Qualify it as a database adapter or a workspace
@@ -109,7 +125,7 @@ adapter when the context could be ambiguous.
 | Term | Definition and usage |
 | --- | --- |
 | Database adapter | An implementation of the database: the Memory, Snapshot, SqlClient and Npgsql adapters. The setting `adapter` selects the Snapshot, SqlClient or Npgsql adapter; see [Configuration](configuration.md#settings). |
-| Workspace adapter | An implementation of the workspace: the Local adapter, and the Remote adapter with its System.Text.Json and Newtonsoft.Json variants. |
+| Workspace adapter | An implementation of the workspace: the Local adapter, and the Remote adapter with its System.Text.Json and Newtonsoft.Json variants; see [The adapters](workspace.md#the-adapters). |
 
 Do not substitute **codec** for an existing adapter. If a separate encoding and decoding
 responsibility needs a name, discuss that distinction and its scope before adopting one. A choice
