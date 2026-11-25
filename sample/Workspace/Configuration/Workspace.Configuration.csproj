@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- The time service of Core's workspace, next to the services of this application in Custom. -->
+    <Compile Include="..\..\..\dotnet\Core\Workspace\Configuration\Core*\**\*.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Domain\Workspace.Domain.csproj" />
+  </ItemGroup>
+</Project>

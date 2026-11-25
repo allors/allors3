@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- The extensions of Core's workspace domain and the base class of its rules, next to the classes that
+         the sample's generator writes to Generated. -->
+    <Compile Include="..\..\..\dotnet\Core\Workspace\Domain\Core*\**\*.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\dotnet\System\Workspace\Allors.Workspace.Domain\Allors.Workspace.Domain.csproj" />
+    <ProjectReference Include="..\Meta\Workspace.Meta.csproj" />
+  </ItemGroup>
+</Project>

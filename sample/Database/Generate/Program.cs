@@ -14,13 +14,22 @@ namespace Allors.Meta.Generation
     {
         private static readonly MetaBuilder MetaBuilder = new MetaBuilder();
 
-        // Run from the folder of the application: both paths are relative to it. The template is the one
-        // that the platform generates its own domain classes with.
+        // Run from the folder of the application: all paths are relative to it. The templates are the ones
+        // that the platform generates its own code with.
         private static int Main()
         {
             string[,] database =
                 {
                     { "../dotnet/Core/Database/Templates/domain.cs.stg", "Database/Domain/Generated" },
+                };
+
+            // The code of the workspace Default: its metadata, the lazy implementation of that metadata that a
+            // workspace builds at run time, and its domain classes.
+            string[,] workspace =
+                {
+                    { "../dotnet/Core/Workspace/Templates/meta.cs.stg", "Workspace/Meta/Generated" },
+                    { "../dotnet/Core/Workspace/Templates/meta.lazy.cs.stg", "Workspace/Meta.Lazy/Generated" },
+                    { "../dotnet/Core/Workspace/Templates/domain.cs.stg", "Workspace/Domain/Generated" },
                 };
 
             var metaPopulation = MetaBuilder.Build();
@@ -36,6 +45,22 @@ namespace Allors.Meta.Generation
                 RemoveDirectory(output);
 
                 var log = Generate.Execute(model, template, output);
+                if (log.ErrorOccured)
+                {
+                    return 1;
+                }
+            }
+
+            for (var i = 0; i < workspace.GetLength(0); i++)
+            {
+                var template = workspace[i, 0];
+                var output = workspace[i, 1];
+
+                Console.WriteLine("-> " + output);
+
+                RemoveDirectory(output);
+
+                var log = Generate.Execute(model, template, output, "Default");
                 if (log.ErrorOccured)
                 {
                     return 1;
