@@ -12,4 +12,7 @@ public partial class Paths
     public AbsolutePath SampleDatabaseDomainTests => SampleDatabase / "Domain.Tests/Domain.Tests.csproj";
     public AbsolutePath SampleDatabaseCommandsTests => SampleDatabase / "Commands.Tests/Commands.Tests.csproj";
     public AbsolutePath SampleDatabaseServerTests => SampleDatabase / "Server.Tests/Server.Tests.csproj";
+
+    public AbsolutePath SampleWorkspace => Sample / "Workspace";
+    public AbsolutePath SampleWorkspaceTests => SampleWorkspace / "Tests/Workspace.Tests.csproj";
 }

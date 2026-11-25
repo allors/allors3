@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.7" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.5.1" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The workspace and the two adapters that connect it to the database: Local, in the process of the
+         database, and Remote, over the JSON API of the sample's server. -->
+    <ProjectReference Include="..\..\..\dotnet\System\Database\Adapters\Allors.Database.Builder\Allors.Database.Builder.csproj" />
+    <ProjectReference Include="..\..\..\dotnet\System\Workspace\Adapters\Allors.Workspace.Adapters.Local\Allors.Workspace.Adapters.Local.csproj" />
+    <ProjectReference Include="..\..\..\dotnet\System\Workspace\Adapters\Allors.Workspace.Adapters.Remote.SystemText\Allors.Workspace.Adapters.Remote.SystemText.csproj" />
+    <ProjectReference Include="..\..\Database\Configuration\Configuration.csproj" />
+    <ProjectReference Include="..\..\Database\Server\Server.csproj" />
+    <ProjectReference Include="..\Configuration\Workspace.Configuration.csproj" />
+    <ProjectReference Include="..\Meta.Lazy\Workspace.Meta.Lazy.csproj" />
+  </ItemGroup>
+
+</Project>
