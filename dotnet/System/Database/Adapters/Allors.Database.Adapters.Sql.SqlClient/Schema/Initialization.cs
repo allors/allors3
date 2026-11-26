@@ -241,7 +241,7 @@ CREATE SCHEMA {this.database.SchemaName}";
                     var sql = new StringBuilder();
                     sql.Append($"CREATE TABLE {this.mapping.TableNameForObjects}\n");
                     sql.Append("(\n");
-                    sql.Append($"{Sql.Mapping.ColumnNameForObject} {Mapping.SqlTypeForObject} IDENTITY(1,1) PRIMARY KEY,\n");
+                    sql.Append($"{Sql.Mapping.ColumnNameForObject} {Mapping.SqlTypeForObject} IDENTITY(1,1) CONSTRAINT {Sql.Mapping.PrimaryKeyNameForObjects} PRIMARY KEY,\n");
                     sql.Append($"{Sql.Mapping.ColumnNameForClass} {Mapping.SqlTypeForClass},\n");
                     sql.Append($"{Sql.Mapping.ColumnNameForVersion} {Mapping.SqlTypeForVersion}\n");
                     sql.Append(")\n");
@@ -257,7 +257,7 @@ CREATE SCHEMA {this.database.SchemaName}";
                     var sql = new StringBuilder();
                     sql.Append($"CREATE TABLE {tableName}\n");
                     sql.Append("(\n");
-                    sql.Append($"{Sql.Mapping.ColumnNameForObject} {Mapping.SqlTypeForObject} PRIMARY KEY,\n");
+                    sql.Append($"{Sql.Mapping.ColumnNameForObject} {Mapping.SqlTypeForObject} CONSTRAINT {Sql.Mapping.PrimaryKeyNameFor(@class)} PRIMARY KEY,\n");
                     sql.Append($"{Sql.Mapping.ColumnNameForClass} {Mapping.SqlTypeForClass}");
 
                     foreach (var associationType in @class.DatabaseAssociationTypes)
@@ -302,7 +302,7 @@ CREATE SCHEMA {this.database.SchemaName}";
                     {
                         var tableName = this.mapping.TableNameForRelationByRelationType[relationType];
 
-                        var primaryKeyName = $"pk_{relationType.RoleType.SingularFullName.ToLowerInvariant()}";
+                        var primaryKeyName = Sql.Mapping.PrimaryKeyNameFor(relationType);
 
                         var sql =
                             $@"CREATE TABLE {tableName}(

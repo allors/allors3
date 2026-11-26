@@ -57,7 +57,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                     message.Append("Missing Tables:\n");
                     foreach (var missingTable in this.MissingTableNames)
                     {
-                        message.Append($"- {missingTable}:\n");
+                        message.Append($"- {missingTable}: {this.mapping.Describe(missingTable)}\n");
                     }
                 }
 
@@ -66,7 +66,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                     message.Append("Invalid Tables:\n");
                     foreach (var invalidTable in this.InvalidTables)
                     {
-                        message.Append($"- {invalidTable.Name}:\n");
+                        message.Append($"- {invalidTable.Name}: {this.mapping.Describe(invalidTable.Name)}\n");
                     }
                 }
 

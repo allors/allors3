@@ -109,7 +109,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 
             foreach (var @class in this.Database.MetaPopulation.DatabaseClasses)
             {
-                this.tableNameForObjectByClass.Add(@class, this.Database.SchemaName + "." + this.NormalizeName(@class.SingularName));
+                this.tableNameForObjectByClass.Add(@class, this.Database.SchemaName + "." + TableNameFor(@class));
 
                 foreach (var associationType in @class.DatabaseAssociationTypes)
                 {
@@ -117,7 +117,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                     var roleType = relationType.RoleType;
                     if (!(associationType.IsMany && roleType.IsMany) && relationType.ExistExclusiveDatabaseClasses && roleType.IsMany)
                     {
-                        this.columnNameByRelationType[relationType] = this.NormalizeName(associationType.SingularName);
+                        this.columnNameByRelationType[relationType] = ColumnNameFor(relationType);
                     }
                 }
 
@@ -127,7 +127,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                     var associationType3 = relationType.AssociationType;
                     if (roleType.ObjectType.IsUnit)
                     {
-                        this.columnNameByRelationType[relationType] = this.NormalizeName(roleType.SingularName);
+                        this.columnNameByRelationType[relationType] = ColumnNameFor(relationType);
 
                         // The parameter carries the id of the relation type. The full names of two roles of one
                         // class can differ only in case, and a parameter is found by its name without case: one
@@ -136,7 +136,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                     }
                     else if (!(associationType3.IsMany && roleType.IsMany) && relationType.ExistExclusiveDatabaseClasses && !roleType.IsMany)
                     {
-                        this.columnNameByRelationType[relationType] = this.NormalizeName(roleType.SingularName);
+                        this.columnNameByRelationType[relationType] = ColumnNameFor(relationType);
                     }
                 }
             }
@@ -150,7 +150,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 
                 if (!roleType.ObjectType.IsUnit && ((associationType.IsMany && roleType.IsMany) || !relationType.ExistExclusiveDatabaseClasses))
                 {
-                    this.tableNameForRelationByRelationType.Add(relationType, this.Database.SchemaName + "." + this.NormalizeName(relationType.RoleType.SingularFullName));
+                    this.tableNameForRelationByRelationType.Add(relationType, this.Database.SchemaName + "." + TableNameFor(relationType));
                 }
             }
 

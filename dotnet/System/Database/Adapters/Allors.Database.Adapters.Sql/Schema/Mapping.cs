@@ -5,6 +5,7 @@
 
 namespace Allors.Database.Adapters.Sql
 {
+    using System;
     using System.Collections.Generic;
     using Meta;
 
@@ -15,6 +16,35 @@ namespace Allors.Database.Adapters.Sql
         public const string ColumnNameForVersion = "v";
         public const string ColumnNameForAssociation = "a";
         public const string ColumnNameForRole = "r";
+
+        // The names of the schema that belong to a class or to a relation type carry its id, as ModelId writes
+        // it, and no name of the model. A name of the model can be longer than a server allows, and two of them
+        // can differ only in case or only beyond what a server keeps of a name: the ids differ in every name,
+        // and the longest name, that of an index in the table of a class, has 57 characters.
+        public const string PrimaryKeyNameForObjects = "pk__o";
+
+        public static string TableNameFor(IClass @class) => "c_" + ModelId.Encode(@class.Id);
+
+        public static string TableNameFor(IRelationType relationType) => "r_" + ModelId.Encode(relationType.Id);
+
+        public static string ColumnNameFor(IRelationType relationType) => "col_" + ModelId.Encode(relationType.Id);
+
+        public static string PrimaryKeyNameFor(IClass @class) => "pk_" + ModelId.Encode(@class.Id);
+
+        public static string PrimaryKeyNameFor(IRelationType relationType) => "pk_" + ModelId.Encode(relationType.Id);
+
+        /// <summary>
+        /// The name of the index on the column of a relation type in the table of a class. The class is the one
+        /// whose table holds the column: a unit role that an interface declares has a column, and so an index, in
+        /// the table of each of its classes.
+        /// </summary>
+        public static string IndexNameFor(IClass @class, IRelationType relationType) => "idx_" + ModelId.Encode(@class.Id) + "_" + ModelId.Encode(relationType.Id);
+
+        /// <summary>
+        /// The name of the index on the role column of the table of a relation type.
+        /// </summary>
+        public static string IndexNameFor(IRelationType relationType) => "idx_" + ModelId.Encode(relationType.Id) + "_" + ColumnNameForRole;
+
         public abstract IDictionary<IRelationType, string> ColumnNameByRelationType { get; }
 
         public abstract string TableNameForObjects { get; }
@@ -47,6 +77,49 @@ namespace Allors.Database.Adapters.Sql
         public abstract string StringCollation { get; }
         public abstract string Ascending { get; }
         public abstract string Descending { get; }
+
+        /// <summary>
+        /// What a table of the schema is in the model, for a message: the objects table, the table of a class or
+        /// the table of a relation type, and with a column of the table of a class the relation type of that
+        /// column. The tables and the columns carry ids, so a message names the class and the relation type next
+        /// to them. Null for a table that is not of the model.
+        /// </summary>
+        public string Describe(string tableName, string columnName = null)
+        {
+            if (string.Equals(tableName, this.TableNameForObjects, StringComparison.Ordinal))
+            {
+                return "the objects table";
+            }
+
+            foreach (var (@class, name) in this.TableNameForObjectByClass)
+            {
+                if (string.Equals(tableName, name, StringComparison.Ordinal))
+                {
+                    var table = "the table of the class " + @class.Name;
+                    foreach (var (relationType, column) in this.ColumnNameByRelationType)
+                    {
+                        if (string.Equals(columnName, column, StringComparison.Ordinal))
+                        {
+                            return "the relation type " + Name(relationType) + " in " + table;
+                        }
+                    }
+
+                    return table;
+                }
+            }
+
+            foreach (var (relationType, name) in this.TableNameForRelationByRelationType)
+            {
+                if (string.Equals(tableName, name, StringComparison.Ordinal))
+                {
+                    return "the table of the relation type " + Name(relationType);
+                }
+            }
+
+            return null;
+        }
+
+        private static string Name(IRelationType relationType) => relationType.AssociationType.ObjectType.Name + "." + relationType.RoleType.Name;
 
         /// <summary>
         /// Escapes a SQL <c>LIKE</c> pattern so only <c>%</c> and <c>_</c> are wildcards (ANSI semantics). The
