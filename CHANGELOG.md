@@ -185,33 +185,32 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   already. Creating an object and writing a relation now maintain these indexes as well, and the
   indexes take room in the database (#417).
 - The SqlClient and Npgsql adapters name the tables, the columns, the primary keys and the indexes
-  of their schema by the ids of the model, where they built each name from the names of the
-  classes and the roles. A name carries the id of its class or of its relation type: the sixteen
-  bytes of the id in network byte order, in the base32hex alphabet of RFC 4648, in lower case and
-  without padding, which takes 26 characters. The table of a class is `c_<class>` and its key
-  `pk_<class>`. The table of a relation type is `r_<relation type>` and its key
-  `pk_<relation type>`. The column of a relation type in the table of a class is
-  `col_<relation type>`, and the index on that column `idx_<class>_<relation type>`, with the
-  class of the table. The index on the role column of the table of a relation type is
-  `idx_<relation type>_r`. The objects table `_o`, the columns `o`, `c`, `v`, `a` and `r` and the
-  table types of SQL Server keep their names, and the key of the objects table is `pk__o`. The
-  longest name has 57 characters. The names of the model no longer reach the server, which ends
-  three failures. Two relation types whose full names differ only in case got one table or one
-  index name, and `Init` failed (#422). PostgreSQL keeps 63 bytes of a name: a longer name of a
-  table, a column or a key was cut, after which no transaction opened or `Init` failed, and two
-  index names that were equal in their first 63 bytes made `Init` fail; SQL Server refused a name
-  above 128 characters (#407, #416). A table or a column no longer says what it is, so a message
-  names the class or the relation type next to it: the lines of `Missing Tables` and
-  `Invalid Tables`, the statements for the indexes that a schema lacks, and the message for an
-  index name that is taken. A database that an earlier version built has its tables under the
-  earlier names. This version finds only the objects table there: no transaction opens, and the
-  message lists its other tables as missing. Save the population with the earlier version, create
-  a new database and load the file there with this version; the page Upgrade a population has the
-  steps. Do not load into the database of the earlier version: `Init` and a load build the tables
-  of this version next to the earlier ones, which keep their rows, and replace the objects table,
-  which both versions use. Each version then finds its tables in that database, and the earlier
-  version would read its own rows with the object versions of this one. SQL that reads the tables
-  of the adapter directly has to follow the new names (#418, #470).
+  of their schema by the ids of the model, where they built each name from the names of the classes
+  and the roles. A name carries the id of its class or of its relation type: the sixteen bytes of
+  the id in network byte order, in the base32hex alphabet of RFC 4648, in lower case and without
+  padding, which takes 26 characters. The table of a class is `c_<class>` and its key `pk_<class>`.
+  The table of a relation type is `r_<relation type>` and its key `pk_<relation type>`. The column
+  of a relation type in the table of a class is `col_<relation type>`, and the index on that column
+  `idx_<class>_<relation type>`, with the class of the table. The index on the role column of the
+  table of a relation type is `idx_<relation type>_r`. The objects table `_o`, the columns `o`, `c`,
+  `v`, `a` and `r` and the table types of SQL Server keep their names, and the key of the objects
+  table is `pk__o`. The longest name has 57 characters. The names of the model no longer reach the
+  server, which ends three failures. Two relation types whose full names differ only in case got one
+  table or one index name, and `Init` failed (#422). PostgreSQL keeps 63 bytes of a name: a table or
+  a column with a longer name was created under the cut name, after which no transaction opened, and
+  two names of tables, columns, keys or indexes that were equal in their first 63 bytes made `Init`
+  fail. SQL Server refused a name above 128 characters, and `Init` failed (#407, #416). A table or a
+  column no longer says what it is, so a message names the class or the relation type next to it:
+  the lines of `Missing Tables` and `Invalid Tables`, the statements for the indexes that a schema
+  lacks, and the message for an index name that is taken. A database that an earlier version built
+  has its tables under the earlier names. This version finds only the objects table there: no
+  transaction opens, and the message lists its other tables as missing. Save the population with the
+  earlier version, create a new database and load the file there with this version; the page Upgrade
+  a population has the steps. Do not load into the database of the earlier version: `Init` and a
+  load build the tables of this version next to the earlier ones, which keep their rows, and replace
+  the objects table, which both versions use. Each version then finds its tables in that database,
+  and the earlier version would read its own rows with the object versions of this one. SQL that
+  reads the tables of the adapter directly has to follow the new names (#418, #470).
 
 ### Fixed
 
