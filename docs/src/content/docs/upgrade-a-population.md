@@ -111,16 +111,29 @@ application runs.
 
 ## 4. Upgrade with the new version
 
-Stop any remaining programs that read the database. In a clone at the new version, generate the
-sample again and run `upgrade` with the same settings on the saved file:
+Stop any remaining programs that read the database. Before running `upgrade`, choose the
+database that will receive the saved population.
+
+If the earlier SQL Server or PostgreSQL adapter named tables after classes and roles, such as
+`person`, and the new adapter names them by id, **create a new, empty database**. Loading into
+the source database would replace the objects table that both versions use. If both versions
+use the same naming scheme, you can reuse the source database. The upgrade will replace its
+population with the one in the saved file.
+
+In a clone at the new version, generate the sample and set `ConnectionStrings__DefaultConnection`
+to the chosen database. This PostgreSQL example loads the population saved from `sample` in
+step 3 into a new database named `sample_upgraded`.
 
 ```sh
 ./build.sh SampleGenerate
+export adapter=npgsql
+export ConnectionStrings__DefaultConnection='Host=localhost;Database=sample_upgraded;Username=…;Password=…'
 dotnet run --project sample/Database/Commands -- upgrade -f ~/population.xml
 ```
 
 The load gives the database the tables of the new model. The command logs `Begin`, the file that
-it loads and `End`, and exits with code 0. Then start the new version.
+it loads and `End`, and exits with code 0. After it succeeds, point the new application at the
+database you upgraded (`sample_upgraded` in the example), then start it.
 
 ### A database with the table names of an earlier version
 
@@ -133,15 +146,7 @@ names of the classes and the roles, such as `person`.
 The new version does not use those tables. Of its own tables it finds only the objects table in
 such a database, which both versions name `_o`, and a program that opens a transaction fails with
 `Missing Tables:`, followed by the other tables that it looks for, each with its class or its
-relation type. Upgrade into a new database instead:
-
-1. Save the population with the running version, as
-   [step 3](#3-save-the-population-with-the-running-version) describes.
-2. Create a new, empty database on the server.
-3. Set `ConnectionStrings__DefaultConnection` to the new database and run `upgrade` with the new
-   version on the saved file.
-
-The database of the earlier version stays as it was, so the earlier version can still use it.
+relation type.
 
 Do not run `upgrade` on the database of the earlier version. The load succeeds there, and leaves
 the database with the tables of both versions: `Init()` builds the tables of the new version next
