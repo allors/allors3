@@ -122,6 +122,32 @@ dotnet run --project sample/Database/Commands -- upgrade -f ~/population.xml
 The load gives the database the tables of the new model. The command logs `Begin`, the file that
 it loads and `End`, and exits with code 0. Then start the new version.
 
+### A database with the table names of an earlier version
+
+On SQL Server and PostgreSQL the adapter names its tables, columns, keys and indexes by the ids of
+the model: the table of a class is `c_` followed by the id of the class, the table of a relation
+type is `r_` followed by the id of the relation type, and a column is `col_` followed by the id of
+its relation type. A version of the platform from before this naming built its tables under the
+names of the classes and the roles, such as `person`.
+
+The new version does not use those tables. It finds none of its own in such a database, and a
+program that opens a transaction fails with `Missing Tables:`, followed by the tables that it
+looks for, each with its class or its relation type. Upgrade into a new database instead:
+
+1. Save the population with the running version, as
+   [step 3](#3-save-the-population-with-the-running-version) describes.
+2. Create a new, empty database on the server.
+3. Set `ConnectionStrings__DefaultConnection` to the new database and run `upgrade` with the new
+   version on the saved file.
+
+The database of the earlier version stays as it was, so the earlier version can still use it.
+
+Do not run `upgrade` on the database of the earlier version. The load succeeds there, and leaves
+the database with the tables of both versions: `Init()` builds the tables of the new version next
+to the earlier ones, which keep their rows, and it drops and creates the objects table `_o`, which
+both versions use. Each version then finds its tables in that database, and the earlier version
+would read the rows of its own tables with the object versions that the new version writes.
+
 ## 5. When the upgrade stops
 
 The command exits with code 1 whenever it fails, and logs the message of the error. What the
@@ -171,3 +197,7 @@ dotnet test sample/Database/Commands.Tests
   commits the changes of its `Upgrade` without deriving them, and does not read the setting
   `populationFile`.
 - The events of the load are described in [Populations](populations.md#a-file-of-an-earlier-model).
+- The SQL adapters take the names of their tables, columns, keys and indexes from `Mapping`, in
+  `dotnet/System/Database/Adapters/Allors.Database.Adapters.Sql/Schema`. The fact
+  `TheNamesOfTheSchemaCarryTheIdsOfTheModel` of `IndexTest`, in
+  `dotnet/System/Database/Adapters/Tests.Static`, writes the names out.
