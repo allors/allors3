@@ -8,6 +8,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
     using System;
     using System.Globalization;
     using global::Npgsql;
+    using Meta;
     using Xunit;
 
     public class IndexTest : Sql.IndexTest, IClassFixture<Fixture<IndexTest>>
@@ -87,7 +88,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             }
         }
 
-        protected override IDatabase CreateDatabase() => this.profile.CreateDatabase();
+        protected override IDatabase CreateDatabase(MetaPopulation metaPopulation = null) => this.profile.CreateDatabase(metaPopulation: metaPopulation);
 
         protected override object ExecuteScalar(string sql) => this.profile.ExecuteScalar(sql);
 

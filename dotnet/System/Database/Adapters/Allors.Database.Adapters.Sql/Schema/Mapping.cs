@@ -100,7 +100,12 @@ namespace Allors.Database.Adapters.Sql
                     {
                         if (string.Equals(columnName, column, StringComparison.Ordinal))
                         {
-                            return "the relation type " + Name(relationType) + " in " + table;
+                            // A one-to-many relation stores its association in the class table. The other
+                            // relations with a mapped column store their role there.
+                            var holdsColumn = relationType.RoleType.IsMany
+                                ? @class.ExistAssociationType(relationType.AssociationType)
+                                : @class.ExistRoleType(relationType.RoleType);
+                            return holdsColumn ? "the relation type " + Name(relationType) + " in " + table : table;
                         }
                     }
 

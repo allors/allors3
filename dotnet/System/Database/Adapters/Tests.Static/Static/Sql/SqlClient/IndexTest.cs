@@ -8,6 +8,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
     using System;
     using System.Globalization;
     using Microsoft.Data.SqlClient;
+    using Meta;
     using Xunit;
 
     public class IndexTest : Sql.IndexTest, IClassFixture<Fixture<IndexTest>>
@@ -18,7 +19,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         public override void Dispose() => this.profile.Dispose();
 
-        protected override IDatabase CreateDatabase() => this.profile.CreateDatabase();
+        protected override IDatabase CreateDatabase(MetaPopulation metaPopulation = null) => this.profile.CreateDatabase(metaPopulation: metaPopulation);
 
         protected override object ExecuteScalar(string sql) => this.profile.ExecuteScalar(sql);
 

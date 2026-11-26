@@ -52,7 +52,7 @@ namespace Allors.Database.Adapters.Sql
 
         public abstract void Dispose();
 
-        protected abstract IDatabase CreateDatabase();
+        protected abstract IDatabase CreateDatabase(MetaPopulation metaPopulation = null);
 
         protected abstract object ExecuteScalar(string sql);
 
@@ -168,6 +168,14 @@ namespace Allors.Database.Adapters.Sql
 
             // The next transaction is refused as well.
             Assert.ThrowsAny<Exception>(() => database.CreateTransaction());
+
+            // A role name can contain overlapping comment delimiters. Its description must stay inside
+            // the comment when the operator copies the suggested statement.
+            var meta = new MetaBuilder().Build();
+            meta.C1.Many2One.SingularName = "Many/*/To*/*One";
+            var renamed = this.CreateDatabase(meta);
+            var renamedException = Assert.ThrowsAny<Exception>(() => renamed.CreateTransaction());
+            Assert.Contains($"CREATE INDEX {this.RoleIndex} ON allors.{this.TableOfC1} ({this.RoleColumn}) /* the relation type C1.Many/ * /To* / *One in the table of the class C1 */", renamedException.Message);
 
             // Another database object ensures the indexes, as a deployment does. The refusal is not kept.
             ((Database)this.CreateDatabase()).EnsureIndexes();
@@ -413,7 +421,18 @@ namespace Allors.Database.Adapters.Sql
             Assert.Contains(this.DoubleColumn, exception.Message);
             Assert.ThrowsAny<Exception>(() => database.CreateTransaction());
 
+            // C1 declares this one-to-many role, but C2 stores its association. A column of that name
+            // added to C1 by hand has no relation type in C1's table.
+            var extraColumn = this.Column(m.C1.C1C2one2manies);
             this.DropIndex(this.TableOfC1, RoleIndex);
+            this.ExecuteScalar($"ALTER TABLE allors.{this.TableOfC1} ADD {extraColumn} BIGINT NULL");
+            this.ExecuteScalar($"CREATE INDEX {this.RoleIndex} ON allors.{this.TableOfC1} ({extraColumn})");
+
+            exception = Assert.ThrowsAny<Exception>(() => this.CreateDatabase().CreateTransaction());
+            Assert.Contains($"an index on allors.{this.TableOfC1} ({extraColumn}), which is the table of the class C1.", exception.Message);
+
+            this.DropIndex(this.TableOfC1, RoleIndex);
+            this.ExecuteScalar($"ALTER TABLE allors.{this.TableOfC1} DROP COLUMN {extraColumn}");
             ((Database)this.CreateDatabase()).EnsureIndexes();
 
             using (var transaction = database.CreateTransaction())

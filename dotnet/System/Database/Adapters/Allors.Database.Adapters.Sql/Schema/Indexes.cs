@@ -100,7 +100,13 @@ namespace Allors.Database.Adapters.Sql
 
         // The statement as a message shows it: the names of the index, of its table and of its column carry
         // ids, so a comment names the relation type and the class.
-        private string CreateStatementWithItsRelationType(SchemaIndex index) => $"{this.CreateStatement(index)} /* {this.Database.Mapping.Describe(index.TableName, index.ColumnName)} */";
+        private string CreateStatementWithItsRelationType(SchemaIndex index)
+        {
+            var description = this.Database.Mapping.Describe(index.TableName, index.ColumnName);
+            // Keep a delimiter in a model name from opening or closing a SQL comment.
+            var comment = description.Replace("/*", "/ *").Replace("*/", "* /");
+            return $"{this.CreateStatement(index)} /* {comment} */";
+        }
 
         /// <summary>
         /// Whether an index that exists prevents the creation of an index, because it has its name.
