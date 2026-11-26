@@ -430,14 +430,17 @@ namespace Allors.Database.Adapters.Sql
             this.Rebuild();
             var m = this.M;
 
-            // The table of a class and the table of a relation are missing, and a table lacks a column.
+            // The objects table, the table of a class and the table of a relation are missing, and a table lacks a
+            // column.
+            this.ExecuteScalar("DROP TABLE allors._o");
             this.ExecuteScalar($"DROP TABLE allors.{this.TableOfC1}");
             this.ExecuteScalar($"DROP TABLE allors.{this.RelationTable}");
             this.ExecuteScalar($"ALTER TABLE allors.{this.Table(m.C2)} DROP COLUMN {this.Column(m.C2.C2AllorsString)}");
 
-            // The message names the class or the relation type of each table.
+            // The message says what each table is: it names the class or the relation type.
             var database = this.CreateDatabase();
             var exception = Assert.ThrowsAny<Exception>(() => database.CreateTransaction());
+            Assert.Contains("- allors._o: the objects table\n", exception.Message);
             Assert.Contains($"- allors.{this.TableOfC1}: the table of the class C1\n", exception.Message);
             Assert.Contains($"- allors.{this.RelationTable}: the table of the relation type Company.IndexedMany2ManyPersons\n", exception.Message);
             Assert.Contains($"- allors.{this.Table(m.C2)}: the table of the class C2\n", exception.Message);
