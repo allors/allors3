@@ -27,18 +27,21 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             var database = this.CreateDatabase();
             database.Init();
 
+            var many2many = this.Table(this.M.C1.C1C2many2manies);
+            var c2 = this.Table(this.M.C2);
+
             try
             {
                 // The relation table of C1.C1C2many2manies as a partitioned table, and a child of the table of C2.
-                this.ExecuteScalar("DROP TABLE allors.c1c1c2many2many");
-                this.ExecuteScalar("CREATE TABLE allors.c1c1c2many2many (a bigint, r bigint, CONSTRAINT pk_c1c1c2many2many PRIMARY KEY (a, r)) PARTITION BY HASH (a)");
-                this.ExecuteScalar("CREATE TABLE allors.c1c1c2many2many_0 PARTITION OF allors.c1c1c2many2many FOR VALUES WITH (MODULUS 1, REMAINDER 0)");
-                this.ExecuteScalar("INSERT INTO allors.c1c1c2many2many (a, r) VALUES (1, 2)");
+                this.ExecuteScalar($"DROP TABLE {many2many}");
+                this.ExecuteScalar($"CREATE TABLE {many2many} (a bigint, r bigint, CONSTRAINT pk_partitioned PRIMARY KEY (a, r)) PARTITION BY HASH (a)");
+                this.ExecuteScalar($"CREATE TABLE allors.partitioned_0 PARTITION OF {many2many} FOR VALUES WITH (MODULUS 1, REMAINDER 0)");
+                this.ExecuteScalar($"INSERT INTO {many2many} (a, r) VALUES (1, 2)");
 
-                this.ExecuteScalar("CREATE TABLE allors.c2_child () INHERITS (allors.c2)");
+                this.ExecuteScalar($"CREATE TABLE allors.c2_child () INHERITS ({c2})");
                 this.ExecuteScalar("INSERT INTO allors.c2_child (o) VALUES (1)");
 
-                foreach (var table in new[] { "allors.c1c1c2many2many", "allors.c2" })
+                foreach (var table in new[] { many2many, c2 })
                 {
                     Assert.Equal(0L, this.ExecuteScalar($"SELECT pg_relation_size('{table}')"));
                     Assert.Equal(1L, this.ExecuteScalar($"SELECT COUNT(*) FROM {table}"));
@@ -46,18 +49,18 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 
                 database.Init();
 
-                Assert.Equal(0L, this.ExecuteScalar("SELECT COUNT(*) FROM allors.c1c1c2many2many"));
-                Assert.Equal(0L, this.ExecuteScalar("SELECT COUNT(*) FROM allors.c2"));
+                Assert.Equal(0L, this.ExecuteScalar($"SELECT COUNT(*) FROM {many2many}"));
+                Assert.Equal(0L, this.ExecuteScalar($"SELECT COUNT(*) FROM {c2}"));
 
                 // Init has emptied the tables, not built them again.
-                Assert.Equal("p", this.ExecuteScalar("SELECT relkind::text FROM pg_class WHERE oid = 'allors.c1c1c2many2many'::regclass"));
-                Assert.Equal(1L, this.ExecuteScalar("SELECT COUNT(*) FROM pg_inherits WHERE inhparent = 'allors.c2'::regclass"));
+                Assert.Equal("p", this.ExecuteScalar($"SELECT relkind::text FROM pg_class WHERE oid = '{many2many}'::regclass"));
+                Assert.Equal(1L, this.ExecuteScalar($"SELECT COUNT(*) FROM pg_inherits WHERE inhparent = '{c2}'::regclass"));
             }
             finally
             {
                 // The next Init builds the schema again.
                 this.ExecuteScalar("DROP TABLE IF EXISTS allors.c2_child");
-                this.ExecuteScalar("DROP TABLE IF EXISTS allors.c1c1c2many2many");
+                this.ExecuteScalar($"DROP TABLE IF EXISTS {many2many}");
             }
         }
 
@@ -77,8 +80,8 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             }
 
             // Emptied by hand, which leaves the sequence where it is.
-            this.ExecuteScalar("TRUNCATE TABLE allors._o, allors.c1");
-            Assert.Equal(0L, this.ExecuteScalar("SELECT pg_relation_size('allors._o')"));
+            this.ExecuteScalar($"TRUNCATE TABLE {this.TableOfObjects}, {this.Table(this.M.C1)}");
+            Assert.Equal(0L, this.ExecuteScalar($"SELECT pg_relation_size('{this.TableOfObjects}')"));
 
             database.Init();
 
@@ -95,6 +98,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
         {
             var database = (Database)this.CreateDatabase();
             database.Init();
+            var c2 = this.Table(this.M.C2);
 
             Exception exception = null;
             var thread = new Thread(() =>
@@ -117,7 +121,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                     connection.Open();
                     using (var transaction = connection.BeginTransaction())
                     {
-                        using (var command = new NpgsqlCommand("SELECT COUNT(*) FROM allors.c2", connection, transaction))
+                        using (var command = new NpgsqlCommand($"SELECT COUNT(*) FROM {c2}", connection, transaction))
                         {
                             Assert.Equal(0L, command.ExecuteScalar());
                         }
@@ -126,7 +130,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                         started = true;
                         Assert.False(thread.Join(TimeSpan.FromSeconds(2)), "Init did not wait for the transaction that has read the table.");
 
-                        using (var command = new NpgsqlCommand("INSERT INTO allors.c2 (o) VALUES (1)", connection, transaction))
+                        using (var command = new NpgsqlCommand($"INSERT INTO {c2} (o) VALUES (1)", connection, transaction))
                         {
                             command.ExecuteNonQuery();
                         }
@@ -145,7 +149,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             }
 
             Assert.Null(exception);
-            Assert.Equal(0L, this.ExecuteScalar("SELECT COUNT(*) FROM allors.c2"));
+            Assert.Equal(0L, this.ExecuteScalar($"SELECT COUNT(*) FROM {c2}"));
         }
 
         protected override IDatabase CreateDatabase() => this.profile.CreateDatabase();

@@ -55,6 +55,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
             var database = (Database)snapshotProfile.CreateDatabase();
             database.Init();
+            var c2 = this.Table(this.M.C2);
 
             Exception exception = null;
             var thread = new Thread(() =>
@@ -77,7 +78,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                     connection.Open();
                     using (var transaction = connection.BeginTransaction())
                     {
-                        using (var command = new SqlCommand("INSERT INTO allors.c2 (o) VALUES (1)", connection, transaction))
+                        using (var command = new SqlCommand($"INSERT INTO {c2} (o) VALUES (1)", connection, transaction))
                         {
                             command.ExecuteNonQuery();
                         }
@@ -100,7 +101,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             }
 
             Assert.Null(exception);
-            Assert.Equal(0, snapshotProfile.ExecuteScalar("SELECT COUNT(*) FROM allors.c2"));
+            Assert.Equal(0, snapshotProfile.ExecuteScalar($"SELECT COUNT(*) FROM {c2}"));
         }
 
         protected override IDatabase CreateDatabase() => this.profile.CreateDatabase();

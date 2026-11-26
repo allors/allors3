@@ -673,6 +673,21 @@ namespace Allors.Database.Adapters
                         mark();
                         Assert.Single(from.C1C1one2manies.ToArray());
                         Assert.Equal(to1, from.C1C1one2manies.ElementAt(0));
+
+                        // Two roles of one class whose names are equal in their first 128 characters
+                        var job = Job.Create(this.Transaction);
+                        var firstPart = Job.Create(this.Transaction);
+                        var secondPart = Job.Create(this.Transaction);
+                        job.AddWithANameBeyondTheSixtyThreeBytesThatPostgreSqlKeepsAndBeyondTheOneHundredAndTwentyEightCharactersThatSqlServerAllowsWhichEndsInFirstPart(firstPart);
+                        job.AddWithANameBeyondTheSixtyThreeBytesThatPostgreSqlKeepsAndBeyondTheOneHundredAndTwentyEightCharactersThatSqlServerAllowsWhichEndsInSecondPart(secondPart);
+
+                        mark();
+                        Assert.Equal(firstPart, Assert.Single(job.WithANameBeyondTheSixtyThreeBytesThatPostgreSqlKeepsAndBeyondTheOneHundredAndTwentyEightCharactersThatSqlServerAllowsWhichEndsInFirstParts));
+                        Assert.Equal(secondPart, Assert.Single(job.WithANameBeyondTheSixtyThreeBytesThatPostgreSqlKeepsAndBeyondTheOneHundredAndTwentyEightCharactersThatSqlServerAllowsWhichEndsInSecondParts));
+                        Assert.Equal(job, firstPart.JobWhereWithANameBeyondTheSixtyThreeBytesThatPostgreSqlKeepsAndBeyondTheOneHundredAndTwentyEightCharactersThatSqlServerAllowsWhichEndsInFirstPart);
+                        Assert.Null(firstPart.JobWhereWithANameBeyondTheSixtyThreeBytesThatPostgreSqlKeepsAndBeyondTheOneHundredAndTwentyEightCharactersThatSqlServerAllowsWhichEndsInSecondPart);
+                        Assert.Equal(job, secondPart.JobWhereWithANameBeyondTheSixtyThreeBytesThatPostgreSqlKeepsAndBeyondTheOneHundredAndTwentyEightCharactersThatSqlServerAllowsWhichEndsInSecondPart);
+                        Assert.Null(secondPart.JobWhereWithANameBeyondTheSixtyThreeBytesThatPostgreSqlKeepsAndBeyondTheOneHundredAndTwentyEightCharactersThatSqlServerAllowsWhichEndsInFirstPart);
                     }
                 }
             }

@@ -8,7 +8,7 @@ namespace Allors.Repository
     using Attributes;
 
     // The full names of the roles of Work and of Workflow differ only in case: WorkFlowOwner and WorkflowOwner,
-    // WorkFlowPart and WorkflowPart.
+    // WorkFlowPart and WorkflowPart, WorkFlowLead and WorkflowLead, WorkFlowMember and WorkflowMember.
     #region Allors
     [Id("30d45658-7ce4-4733-b965-63897562cec2")]
     #endregion
@@ -25,5 +25,17 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.OneToMany)]
         #endregion
         Job[] FlowParts { get; set; }
+
+        #region Allors
+        [Id("174f146d-789d-4428-a632-1acd3ad93537")]
+        [Multiplicity(Multiplicity.ManyToOne)]
+        #endregion
+        Job FlowLead { get; set; }
+
+        #region Allors
+        [Id("c4c2e174-b03c-40a1-9bf0-5c84a4be82f4")]
+        [Multiplicity(Multiplicity.ManyToMany)]
+        #endregion
+        Person[] FlowMembers { get; set; }
     }
 }

@@ -52,8 +52,15 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                     c1.C1AllorsInteger = 1;
                     transaction.State.Flush();
 
-                    Assert.Equal(1L, Count(transaction, "SELECT COUNT(*) FROM allors.c1 WHERE c1allorsstring = 'a' AND c1allorsinteger = 1"));
-                    Assert.NotEqual(0L, Count(transaction, "SELECT COUNT(*) FROM pg_prepared_statements WHERE statement LIKE 'UPDATE%c1allorsstring%' AND statement LIKE 'UPDATE%c1allorsinteger%'"));
+                    // The table of C1 and the columns of the two roles, as the mapping names them.
+                    var m = transaction.Database.Context().M;
+                    var mapping = transaction.Database.Mapping;
+                    var table = mapping.TableNameForObjectByClass[m.C1];
+                    var stringColumn = mapping.ColumnNameByRelationType[m.C1.C1AllorsString.RelationType];
+                    var integerColumn = mapping.ColumnNameByRelationType[m.C1.C1AllorsInteger.RelationType];
+
+                    Assert.Equal(1L, Count(transaction, $"SELECT COUNT(*) FROM {table} WHERE {stringColumn} = 'a' AND {integerColumn} = 1"));
+                    Assert.NotEqual(0L, Count(transaction, $"SELECT COUNT(*) FROM pg_prepared_statements WHERE statement LIKE 'UPDATE%{stringColumn}%' AND statement LIKE 'UPDATE%{integerColumn}%'"));
                 }
             }
         }

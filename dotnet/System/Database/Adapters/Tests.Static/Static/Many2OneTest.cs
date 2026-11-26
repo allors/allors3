@@ -1788,6 +1788,21 @@ namespace Allors.Database.Adapters
                         mark();
                         Assert.False(from1.ExistC1C1many2one);
                         mark();
+
+                        // Two roles of one class whose full names differ only in case
+                        var job = Job.Create(this.Transaction);
+                        var flowLead = Job.Create(this.Transaction);
+                        var lead = Job.Create(this.Transaction);
+                        job.FlowLead = flowLead;
+                        job.Lead = lead;
+
+                        mark();
+                        Assert.Equal(flowLead, job.FlowLead);
+                        Assert.Equal(lead, job.Lead);
+                        Assert.Equal(job, Assert.Single(flowLead.WorksWhereFlowLead));
+                        Assert.Empty(flowLead.WorkflowsWhereLead);
+                        Assert.Equal(job, Assert.Single(lead.WorkflowsWhereLead));
+                        Assert.Empty(lead.WorksWhereFlowLead);
                     }
                 }
             }

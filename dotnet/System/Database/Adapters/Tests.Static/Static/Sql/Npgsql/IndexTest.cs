@@ -18,41 +18,56 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 
         public override void Dispose() => this.profile.Dispose();
 
+        // The index for C1.Many2One, which the adapter wants, and the name that it gives to an index for
+        // C1.C1AllorsString, which it does not want.
         [Theory]
-        [InlineData("idx_c1_c1many2one", "many2one", true)]
-        [InlineData("idx_c1_c1c1allorsstring", "c1allorsstring", false)]
-        public void QuotedIndexNamesAreDistinctFromTheNamesOfTheAdapter(string name, string column, bool wanted)
+        [InlineData(true)]
+        [InlineData(false)]
+        public void QuotedIndexNamesAreDistinctFromTheNamesOfTheAdapter(bool wanted)
         {
             this.Rebuild();
 
+            var name = wanted ? this.RoleIndex : this.StringIndex;
+            var column = wanted ? this.RoleColumn : this.StringColumn;
+
             if (wanted)
             {
-                this.DropIndex("c1", name);
+                this.DropIndex(this.TableOfC1, name);
             }
             else
             {
-                this.ExecuteScalar($"CREATE INDEX {name} ON allors.c1 (c1allorsdouble)");
+                this.ExecuteScalar($"CREATE INDEX {name} ON allors.{this.TableOfC1} ({this.DoubleColumn})");
             }
 
             var quotedName = name.ToUpperInvariant();
-            var quotedColumn = wanted ? "c1allorsdouble" : column;
-            this.ExecuteScalar($"CREATE INDEX \"{quotedName}\" ON allors.c1 ({quotedColumn})");
+            var quotedColumn = wanted ? this.DoubleColumn : column;
+            this.ExecuteScalar($"CREATE INDEX \"{quotedName}\" ON allors.{this.TableOfC1} ({quotedColumn})");
 
             ((Database)this.CreateDatabase()).EnsureIndexes();
 
             Assert.True(this.ExistIndex(name));
             Assert.True(this.ExistIndex(quotedName));
-            Assert.Equal(1, this.IndexCount("c1", column));
-            Assert.Equal(1, this.IndexCount("c1", "c1allorsdouble"));
+            Assert.Equal(1, this.IndexCount(this.TableOfC1, column));
+            Assert.Equal(1, this.IndexCount(this.TableOfC1, this.DoubleColumn));
         }
 
+        // The column of C1.Many2One and the table of C1, in upper case.
         [Theory]
-        [InlineData("ALTER TABLE allors.c1 ADD COLUMN \"MANY2ONE\" bigint", "allors.c1 (\"MANY2ONE\")")]
-        [InlineData("CREATE TABLE allors.\"C1\" (o bigint PRIMARY KEY, many2one bigint)", "allors.\"C1\" (many2one)")]
-        public void QuotedTableAndColumnNamesAreDistinctFromTheNamesOfTheAdapter(string create, string on)
+        [InlineData(true)]
+        [InlineData(false)]
+        public void QuotedTableAndColumnNamesAreDistinctFromTheNamesOfTheAdapter(bool column)
         {
             this.Rebuild();
-            this.DropIndex("c1", "idx_c1_c1many2one");
+            this.DropIndex(this.TableOfC1, this.RoleIndex);
+
+            var quotedTable = this.TableOfC1.ToUpperInvariant();
+            var quotedColumn = this.RoleColumn.ToUpperInvariant();
+            var create = column
+                ? $"ALTER TABLE allors.{this.TableOfC1} ADD COLUMN \"{quotedColumn}\" bigint"
+                : $"CREATE TABLE allors.\"{quotedTable}\" (o bigint PRIMARY KEY, {this.RoleColumn} bigint)";
+            var on = column
+                ? $"allors.{this.TableOfC1} (\"{quotedColumn}\")"
+                : $"allors.\"{quotedTable}\" ({this.RoleColumn})";
 
             try
             {
@@ -63,12 +78,12 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 
                 ((Database)this.CreateDatabase()).EnsureIndexes();
 
-                Assert.True(this.ExistIndex("idx_c1_c1many2one"));
-                Assert.Equal(1, this.IndexCount("c1", "many2one"));
+                Assert.True(this.ExistIndex(this.RoleIndex));
+                Assert.Equal(1, this.IndexCount(this.TableOfC1, this.RoleColumn));
             }
             finally
             {
-                this.ExecuteScalar("DROP TABLE IF EXISTS allors.\"C1\"");
+                this.ExecuteScalar($"DROP TABLE IF EXISTS allors.\"{quotedTable}\"");
             }
         }
 
