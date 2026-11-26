@@ -13,8 +13,9 @@ namespace Allors.Database.Domain.Tests
     {
         private static readonly MetaBuilder MetaBuilder = new MetaBuilder();
 
-        public Fixture()
+        public Fixture(DatabaseFixture database)
         {
+            this.Database = database;
             this.MetaPopulation = MetaBuilder.Build();
             var rules = Rules.Create(this.MetaPopulation);
             this.Engine = new Engine(rules);
@@ -23,6 +24,8 @@ namespace Allors.Database.Domain.Tests
         public MetaPopulation MetaPopulation { get; set; }
 
         public Engine Engine { get; set; }
+
+        internal DatabaseFixture Database { get; }
 
         public void Dispose() => this.MetaPopulation = null;
     }
