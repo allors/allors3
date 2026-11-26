@@ -184,12 +184,12 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   tables. A database whose domain marks every composite relation as indexed has these indexes
   already. Creating an object and writing a relation now maintain these indexes as well, and the
   indexes take room in the database (#417).
-- **Breaking:** the SqlClient and Npgsql adapters name the tables, the columns, the primary keys
-  and the indexes of their schema by the ids of the model, where they built each name from the
-  names of the classes and the roles. A name carries the id of its class or of its relation type:
-  the sixteen bytes of the id in network byte order, in the base32hex alphabet of RFC 4648, in
-  lower case and without padding, which takes 26 characters. The table of a class is `c_<class>`
-  and its key `pk_<class>`. The table of a relation type is `r_<relation type>` and its key
+- The SqlClient and Npgsql adapters name the tables, the columns, the primary keys and the indexes
+  of their schema by the ids of the model, where they built each name from the names of the
+  classes and the roles. A name carries the id of its class or of its relation type: the sixteen
+  bytes of the id in network byte order, in the base32hex alphabet of RFC 4648, in lower case and
+  without padding, which takes 26 characters. The table of a class is `c_<class>` and its key
+  `pk_<class>`. The table of a relation type is `r_<relation type>` and its key
   `pk_<relation type>`. The column of a relation type in the table of a class is
   `col_<relation type>`, and the index on that column `idx_<class>_<relation type>`, with the
   class of the table. The index on the role column of the table of a relation type is
@@ -204,9 +204,9 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   names the class or the relation type next to it: the lines of `Missing Tables` and
   `Invalid Tables`, the statements for the indexes that a schema lacks, and the message for an
   index name that is taken. A database that an earlier version built has its tables under the
-  earlier names. This version finds none of its tables there: no transaction opens, and the
-  message lists the tables as missing. Save the population with the earlier version, create a new
-  database and load the file there with this version; the page Upgrade a population has the
+  earlier names. This version finds only the objects table there: no transaction opens, and the
+  message lists its other tables as missing. Save the population with the earlier version, create
+  a new database and load the file there with this version; the page Upgrade a population has the
   steps. Do not load into the database of the earlier version: `Init` and a load build the tables
   of this version next to the earlier ones, which keep their rows, and replace the objects table,
   which both versions use. Each version then finds its tables in that database, and the earlier

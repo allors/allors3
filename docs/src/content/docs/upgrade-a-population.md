@@ -130,9 +130,10 @@ type is `r_` followed by the id of the relation type, and a column is `col_` fol
 its relation type. A version of the platform from before this naming built its tables under the
 names of the classes and the roles, such as `person`.
 
-The new version does not use those tables. It finds none of its own in such a database, and a
-program that opens a transaction fails with `Missing Tables:`, followed by the tables that it
-looks for, each with its class or its relation type. Upgrade into a new database instead:
+The new version does not use those tables. Of its own tables it finds only the objects table in
+such a database, which both versions name `_o`, and a program that opens a transaction fails with
+`Missing Tables:`, followed by the other tables that it looks for, each with its class or its
+relation type. Upgrade into a new database instead:
 
 1. Save the population with the running version, as
    [step 3](#3-save-the-population-with-the-running-version) describes.
@@ -144,7 +145,7 @@ The database of the earlier version stays as it was, so the earlier version can 
 
 Do not run `upgrade` on the database of the earlier version. The load succeeds there, and leaves
 the database with the tables of both versions: `Init()` builds the tables of the new version next
-to the earlier ones, which keep their rows, and it drops and creates the objects table `_o`, which
+to the earlier ones, which keep their rows, and it drops and creates the objects table, which
 both versions use. Each version then finds its tables in that database, and the earlier version
 would read the rows of its own tables with the object versions that the new version writes.
 
