@@ -38,8 +38,8 @@ namespace Allors.Database.Adapters.Sql
 
             if ((this.association.IsMany && this.association.RelationType.RoleType.IsMany) || !this.association.RelationType.ExistExclusiveDatabaseClasses)
             {
-                statement.Append(" (" + statement.GetAlias(this.association) + "." + Mapping.ColumnNameForAssociation + " IS NOT NULL AND ");
-                statement.Append(" " + statement.GetAlias(this.association) + "." + Mapping.ColumnNameForAssociation + " IN (\n");
+                statement.Append(" (" + statement.GetAlias(this.association) + "." + Mapping.RelationTableAssociationColumnNameFor(this.association.RelationType) + " IS NOT NULL AND ");
+                statement.Append(" " + statement.GetAlias(this.association) + "." + Mapping.RelationTableAssociationColumnNameFor(this.association.RelationType) + " IN (\n");
                 statement.Append(inStatement.ToString());
                 statement.Append(" ))\n");
             }

@@ -54,8 +54,8 @@ namespace Allors.Database.Adapters.Sql
                 }
                 else
                 {
-                    statement.Append(" (" + statement.GetAlias(this.roleType) + "." + Mapping.ColumnNameForRole + " IS NOT NULL AND ");
-                    statement.Append(" " + statement.GetAlias(this.roleType) + "." + Mapping.ColumnNameForRole + "=" + allorsObject.Strategy.ObjectId + ")");
+                    statement.Append(" (" + statement.GetAlias(this.roleType) + "." + Mapping.RelationTableRoleColumnNameFor(this.roleType.RelationType) + " IS NOT NULL AND ");
+                    statement.Append(" " + statement.GetAlias(this.roleType) + "." + Mapping.RelationTableRoleColumnNameFor(this.roleType.RelationType) + "=" + allorsObject.Strategy.ObjectId + ")");
                 }
             }
 

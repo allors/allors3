@@ -222,7 +222,7 @@ namespace Allors.Database.Adapters.Sql
                 var roleType = relationType.RoleType;
                 if (!roleType.ObjectType.IsUnit && ((associationType.IsMany && roleType.IsMany) || !relationType.ExistExclusiveDatabaseClasses))
                 {
-                    wanted.Add(new SchemaIndex(Mapping.IndexNameFor(relationType), mapping.TableNameForRelationByRelationType[relationType], Mapping.ColumnNameForRole));
+                    wanted.Add(new SchemaIndex(Mapping.IndexNameFor(relationType), mapping.TableNameForRelationByRelationType[relationType], Mapping.RelationTableRoleColumnNameFor(relationType)));
                 }
             }
         }

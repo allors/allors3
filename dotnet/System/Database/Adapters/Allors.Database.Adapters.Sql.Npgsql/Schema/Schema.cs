@@ -21,6 +21,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 
             this.Database = database;
             this.TableByName = new Dictionary<string, SchemaTable>();
+            this.StoredTableNames = new HashSet<string>(StringComparer.Ordinal);
 
             using (var connection = new NpgsqlConnection(database.ConnectionString))
             {
@@ -120,6 +121,7 @@ AND (pg_has_role(c.relowner, 'USAGE')
                             while (reader.Read())
                             {
                                 var tableName = reader.GetString(tableNameOrdinal);
+                                this.StoredTableNames.Add(tableName);
                                 var columnName = reader.GetString(columnNameOrdinal);
                                 var dataType = reader.GetString(dataTypeOrdinal).Trim().ToLowerInvariant();
                                 var characterMaximumLength = reader.IsDBNull(characterMaximumLengthOrdinal) ? (int?)null : Convert.ToInt32(reader.GetValue(characterMaximumLengthOrdinal));
@@ -163,6 +165,12 @@ AND (pg_has_role(c.relowner, 'USAGE')
         public Database Database { get; }
 
         public Dictionary<string, SchemaTable> TableByName { get; }
+
+        /// <summary>
+        /// The names of the tables as PostgreSQL stores them, without the schema. TableByName has them in lower case:
+        /// a table whose name starts with the prefix of the adapter is one of its tables by the name as it is stored.
+        /// </summary>
+        public HashSet<string> StoredTableNames { get; }
 
         public SchemaTable GetTable(string tableName)
         {

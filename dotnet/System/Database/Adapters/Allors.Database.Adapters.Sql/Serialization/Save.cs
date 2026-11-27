@@ -155,36 +155,36 @@ namespace Allors.Database.Adapters.Sql
                                 sql += "UNION\n";
                             }
 
-                            sql += "SELECT " + Mapping.ColumnNameForObject + " As " + Mapping.ColumnNameForAssociation + ", " + this.database.Mapping.ColumnNameByRelationType[roleType.RelationType] + " As " + Mapping.ColumnNameForRole + "\n";
+                            sql += "SELECT " + Mapping.ColumnNameForObject + " As " + Mapping.AliasForAssociation + ", " + this.database.Mapping.ColumnNameByRelationType[roleType.RelationType] + " As " + Mapping.AliasForRole + "\n";
                             sql += "FROM " + this.database.Mapping.TableNameForObjectByClass[(IClass)exclusiveRootClass] + "\n";
                             sql += "WHERE " + this.database.Mapping.ColumnNameByRelationType[roleType.RelationType] + " IS NOT NULL\n";
                         }
 
-                        sql += "ORDER BY " + Mapping.ColumnNameForAssociation;
+                        sql += "ORDER BY " + Mapping.AliasForAssociation;
                     }
                     else if ((roleType.IsMany && associationType.IsMany) || !relation.ExistExclusiveDatabaseClasses)
                     {
-                        sql += "SELECT " + Mapping.ColumnNameForAssociation + "," + Mapping.ColumnNameForRole + "\n";
+                        sql += "SELECT " + Mapping.RelationTableAssociationColumnNameFor(relation) + " As " + Mapping.AliasForAssociation + ", " + Mapping.RelationTableRoleColumnNameFor(relation) + " As " + Mapping.AliasForRole + "\n";
                         sql += "FROM " + this.database.Mapping.TableNameForRelationByRelationType[relation] + "\n";
-                        sql += "ORDER BY " + Mapping.ColumnNameForAssociation + "," + Mapping.ColumnNameForRole;
+                        sql += "ORDER BY " + Mapping.AliasForAssociation + "," + Mapping.AliasForRole;
                     }
                     else
                     {
                         // use foreign keys
                         if (roleType.IsOne)
                         {
-                            sql += "SELECT " + Mapping.ColumnNameForObject + " As " + Mapping.ColumnNameForAssociation + ", " + this.database.Mapping.ColumnNameByRelationType[roleType.RelationType] + " As " + Mapping.ColumnNameForRole + "\n";
+                            sql += "SELECT " + Mapping.ColumnNameForObject + " As " + Mapping.AliasForAssociation + ", " + this.database.Mapping.ColumnNameByRelationType[roleType.RelationType] + " As " + Mapping.AliasForRole + "\n";
                             sql += "FROM " + this.database.Mapping.TableNameForObjectByClass[associationType.ObjectType.ExclusiveDatabaseClass] + "\n";
                             sql += "WHERE " + this.database.Mapping.ColumnNameByRelationType[roleType.RelationType] + " IS NOT NULL\n";
-                            sql += "ORDER BY " + Mapping.ColumnNameForAssociation;
+                            sql += "ORDER BY " + Mapping.AliasForAssociation;
                         }
                         else
                         {
                             // role.Many
-                            sql += "SELECT " + this.database.Mapping.ColumnNameByRelationType[associationType.RelationType] + " As " + Mapping.ColumnNameForAssociation + ", " + Mapping.ColumnNameForObject + " As " + Mapping.ColumnNameForRole + "\n";
+                            sql += "SELECT " + this.database.Mapping.ColumnNameByRelationType[associationType.RelationType] + " As " + Mapping.AliasForAssociation + ", " + Mapping.ColumnNameForObject + " As " + Mapping.AliasForRole + "\n";
                             sql += "FROM " + this.database.Mapping.TableNameForObjectByClass[((IComposite)roleType.ObjectType).ExclusiveDatabaseClass] + "\n";
                             sql += "WHERE " + this.database.Mapping.ColumnNameByRelationType[associationType.RelationType] + " IS NOT NULL\n";
-                            sql += "ORDER BY " + Mapping.ColumnNameForAssociation + "," + Mapping.ColumnNameForRole;
+                            sql += "ORDER BY " + Mapping.AliasForAssociation + "," + Mapping.AliasForRole;
                         }
                     }
 

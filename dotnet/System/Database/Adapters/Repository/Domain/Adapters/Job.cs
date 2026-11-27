@@ -37,8 +37,8 @@ namespace Allors.Repository
         #endregion
         public Alias2[] Items { get; set; }
 
-        // Named has two classes, so each relation has its own table. The 61-byte table names differ at byte 59.
-        // Inserting Where after Job makes the association names equal through byte 63.
+        // Named has two classes, so each relation has its own table. The full names of the roles have 61 bytes and
+        // differ at byte 59. Inserting Where after Job makes the association names equal through byte 63.
         #region Allors
         [Id("9c5f03ac-e410-47a7-a307-65a9f57f5594")]
         [Multiplicity(Multiplicity.OneToOne)]

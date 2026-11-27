@@ -24,7 +24,7 @@ namespace Allors.Database.Adapters.Sql
             var schema = statement.Mapping;
             if ((this.association.IsMany && this.association.RelationType.RoleType.IsMany) || !this.association.RelationType.ExistExclusiveDatabaseClasses)
             {
-                statement.Append(" " + statement.GetAlias(this.association) + "." + Mapping.ColumnNameForAssociation + " IS NOT NULL");
+                statement.Append(" " + statement.GetAlias(this.association) + "." + Mapping.RelationTableAssociationColumnNameFor(this.association.RelationType) + " IS NOT NULL");
             }
             else if (this.association.RelationType.RoleType.IsMany)
             {

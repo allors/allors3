@@ -169,7 +169,7 @@ namespace Allors.Database.Adapters.Sql
                     var inIRelationType = inRole.RelationType;
                     if (inIRelationType.Multiplicity == Multiplicity.ManyToMany || !inIRelationType.ExistExclusiveDatabaseClasses)
                     {
-                        statement.Append("SELECT " + statement.GetAlias(inRole.AssociationType) + "." + Mapping.ColumnNameForAssociation);
+                        statement.Append("SELECT " + statement.GetAlias(inRole.AssociationType) + "." + Mapping.RelationTableAssociationColumnNameFor(inIRelationType));
                     }
                     else if (inRole.IsMany)
                     {
@@ -201,7 +201,7 @@ namespace Allors.Database.Adapters.Sql
 
                     if (inIRelationType.Multiplicity == Multiplicity.ManyToMany || !inIRelationType.ExistExclusiveDatabaseClasses)
                     {
-                        statement.Append(statement.GetAlias(inRole.AssociationType) + "." + Mapping.ColumnNameForAssociation + " IS NOT NULL ");
+                        statement.Append(statement.GetAlias(inRole.AssociationType) + "." + Mapping.RelationTableAssociationColumnNameFor(inIRelationType) + " IS NOT NULL ");
                     }
                     else if (inRole.IsMany)
                     {
@@ -303,7 +303,7 @@ namespace Allors.Database.Adapters.Sql
 
                         if (inIRelationType.Multiplicity == Multiplicity.ManyToMany || !inIRelationType.ExistExclusiveDatabaseClasses)
                         {
-                            statement.Append("SELECT " + statement.GetAlias(inRole.AssociationType) + "." + Mapping.ColumnNameForAssociation);
+                            statement.Append("SELECT " + statement.GetAlias(inRole.AssociationType) + "." + Mapping.RelationTableAssociationColumnNameFor(inIRelationType));
                         }
                         else if (inRole.IsMany)
                         {
@@ -336,7 +336,7 @@ namespace Allors.Database.Adapters.Sql
 
                         if (inIRelationType.Multiplicity == Multiplicity.ManyToMany || !inIRelationType.ExistExclusiveDatabaseClasses)
                         {
-                            statement.Append(statement.GetAlias(inRole.AssociationType) + "." + Mapping.ColumnNameForAssociation + " IS NOT NULL ");
+                            statement.Append(statement.GetAlias(inRole.AssociationType) + "." + Mapping.RelationTableAssociationColumnNameFor(inIRelationType) + " IS NOT NULL ");
                         }
                         else if (inRole.IsMany)
                         {
