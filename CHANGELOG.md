@@ -189,8 +189,10 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   and the roles. A name carries the id of its class or of its relation type: the sixteen bytes of
   the id in network byte order, in the base32hex alphabet of RFC 4648, in lower case and without
   padding, which takes 26 characters. The table of a class is `c_<class>` and its key `pk_<class>`.
-  The table of a relation type is `r_<relation type>` and its key `pk_<relation type>`. The column
-  of a relation type in the table of a class is `col_<relation type>`, and the index on that column
+  The table of a relation type is `r_<relation type>` and its key `pk_<relation type>`. A column of
+  the table of a class holds one end of its relation type, and its name says which:
+  `r_<relation type>` the role, as for a unit role or a many-to-one or one-to-one relation, and
+  `a_<relation type>` the association of a one-to-many relation. The index on such a column is
   `idx_<class>_<relation type>`, with the class of the table. The index on the role column of the
   table of a relation type is `idx_<relation type>_r`. The objects table `_o`, the columns `o`, `c`,
   `v`, `a` and `r` and the table types of SQL Server keep their names, and the key of the objects
