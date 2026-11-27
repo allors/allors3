@@ -5,6 +5,6 @@
 
 using Xunit;
 
-// On SQL Server or PostgreSQL every test initializes the one test database, so the test classes cannot run side
-// by side; on the Memory and Snapshot adapters the suite is fast either way.
+// The domain tests share one collection, so they run one at a time. DatabaseFixtureTests changes environment
+// variables that DatabaseFixture reads, so no two collections may run side by side either.
 [assembly: CollectionBehavior(DisableTestParallelization = true)]

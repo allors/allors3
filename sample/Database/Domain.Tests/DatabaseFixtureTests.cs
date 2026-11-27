@@ -25,7 +25,8 @@ namespace Allors.Database.Domain.Tests
                 Environment.SetEnvironmentVariable(adminVariable, null);
                 Environment.SetEnvironmentVariable(legacyVariable, "invalid connection string");
 
-                var error = Assert.Throws<InvalidOperationException>(() => new DatabaseFixture());
+                // Dispose a fixture created by mistake, so that its lock cannot keep the domain tests waiting.
+                var error = Assert.Throws<InvalidOperationException>(() => new DatabaseFixture().Dispose());
                 Assert.Contains(adminVariable, error.Message);
             }
             finally
