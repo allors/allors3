@@ -83,8 +83,9 @@ namespace Allors.Database.Adapters.Sql
 
         // A name carries an id of the model: its sixteen bytes in network byte order, in the base32hex alphabet
         // of RFC 4648 in lower case and without padding. A table has the id of its class or of its relation type,
-        // a column the id of its relation type, a key the id of its table, and the index on a column of the table
-        // of a class the id of that class and the id of the relation type. No name holds a name of the model.
+        // a column the id of its relation type after the end of the relation that it holds, a key the id of its
+        // table, and the index on a column of the table of a class the id of that class and the id of the
+        // relation type. No name holds a name of the model.
         [Fact]
         public void TheNamesOfTheSchemaCarryTheIdsOfTheModel()
         {
@@ -94,23 +95,24 @@ namespace Allors.Database.Adapters.Sql
             Assert.True(this.ExistPrimaryKey("_o", "pk__o"));
 
             // C1 is 7041c691-d896-4628-8f50-1c24f5d03414, and its unit role C1AllorsInteger, which is marked as
-            // indexed, f4920d94-8cd0-45b6-be00-f18d377368fd.
+            // indexed, f4920d94-8cd0-45b6-be00-f18d377368fd. The column holds the role.
             Assert.True(this.ExistPrimaryKey("c_e10sd4eoip32h3qg3gifbk1k2g", "pk_e10sd4eoip32h3qg3gifbk1k2g"));
-            Assert.True(this.ExistColumn("c_e10sd4eoip32h3qg3gifbk1k2g", "col_ui90r54cq12rdfg0u66jesr8vk"));
+            Assert.True(this.ExistColumn("c_e10sd4eoip32h3qg3gifbk1k2g", "r_ui90r54cq12rdfg0u66jesr8vk"));
             Assert.True(this.ExistIndex("idx_e10sd4eoip32h3qg3gifbk1k2g_ui90r54cq12rdfg0u66jesr8vk"));
-            Assert.Equal(1, this.IndexCount("c_e10sd4eoip32h3qg3gifbk1k2g", "col_ui90r54cq12rdfg0u66jesr8vk"));
+            Assert.Equal(1, this.IndexCount("c_e10sd4eoip32h3qg3gifbk1k2g", "r_ui90r54cq12rdfg0u66jesr8vk"));
 
             // The one-to-many role C1.C1C2one2manies, f39739d2-e8fc-406e-be6a-c92acee07686, is a column of the
-            // table of C2, 72c07e8a-03f5-4da8-ab37-236333d4f74e: its index has the id of C2.
-            Assert.True(this.ExistColumn("c_eb07t2g3ul6qhapn4dhj7l7n9o", "col_uebjjkn8vh06tfjap4lcto3mgo"));
+            // table of C2, 72c07e8a-03f5-4da8-ab37-236333d4f74e, that holds the association: its index has the id
+            // of C2.
+            Assert.True(this.ExistColumn("c_eb07t2g3ul6qhapn4dhj7l7n9o", "a_uebjjkn8vh06tfjap4lcto3mgo"));
             Assert.True(this.ExistIndex("idx_eb07t2g3ul6qhapn4dhj7l7n9o_uebjjkn8vh06tfjap4lcto3mgo"));
-            Assert.Equal(1, this.IndexCount("c_eb07t2g3ul6qhapn4dhj7l7n9o", "col_uebjjkn8vh06tfjap4lcto3mgo"));
+            Assert.Equal(1, this.IndexCount("c_eb07t2g3ul6qhapn4dhj7l7n9o", "a_uebjjkn8vh06tfjap4lcto3mgo"));
 
             // The many-to-one role Work.FlowLead, 174f146d-789d-4428-a632-1acd3ad93537, which an interface
-            // declares, is a column of the table of Job, 31a7013d-b29c-4cd3-b286-d623b58d300b.
-            Assert.True(this.ExistColumn("c_66jg2fdijh6d7ck6qohrb39g1c", "col_2t7h8rbojl22h9hi3b6jlm9l6s"));
+            // declares, is a column of the table of Job, 31a7013d-b29c-4cd3-b286-d623b58d300b, that holds the role.
+            Assert.True(this.ExistColumn("c_66jg2fdijh6d7ck6qohrb39g1c", "r_2t7h8rbojl22h9hi3b6jlm9l6s"));
             Assert.True(this.ExistIndex("idx_66jg2fdijh6d7ck6qohrb39g1c_2t7h8rbojl22h9hi3b6jlm9l6s"));
-            Assert.Equal(1, this.IndexCount("c_66jg2fdijh6d7ck6qohrb39g1c", "col_2t7h8rbojl22h9hi3b6jlm9l6s"));
+            Assert.Equal(1, this.IndexCount("c_66jg2fdijh6d7ck6qohrb39g1c", "r_2t7h8rbojl22h9hi3b6jlm9l6s"));
 
             // The many-to-many role C1.C1C2many2manies, 71abe169-dea4-4834-8d37-34cbcffa6cee, has a table of its
             // own.
@@ -123,17 +125,38 @@ namespace Allors.Database.Adapters.Sql
             // The mapping gives the same names.
             var m = this.M;
             Assert.Equal("c_e10sd4eoip32h3qg3gifbk1k2g", this.TableOfC1);
-            Assert.Equal("col_ui90r54cq12rdfg0u66jesr8vk", this.UnitColumn);
+            Assert.Equal("r_ui90r54cq12rdfg0u66jesr8vk", this.UnitColumn);
             Assert.Equal("c_eb07t2g3ul6qhapn4dhj7l7n9o", this.Table(m.C2));
-            Assert.Equal("col_uebjjkn8vh06tfjap4lcto3mgo", this.Column(m.C1.C1C2one2manies));
-            Assert.Equal("col_2t7h8rbojl22h9hi3b6jlm9l6s", this.Column(m.Work.FlowLead));
+            Assert.Equal("a_uebjjkn8vh06tfjap4lcto3mgo", this.Column(m.C1.C1C2one2manies));
+            Assert.Equal("r_2t7h8rbojl22h9hi3b6jlm9l6s", this.Column(m.Work.FlowLead));
             Assert.Equal("r_e6lu2qeukh43939n6j5svujcto", this.Table(m.C1.C1C2many2manies));
 
-            // Every table and every column of a relation, whatever the length of the names of the model.
+            // Every table and every column of a relation, whatever the length of the names of the model. Only a
+            // one-to-many relation holds its association in the table of a class.
             var mapping = this.Names.Mapping;
             Assert.All(mapping.TableNameForObjectByClass.Values, v => Assert.Matches("^allors[.]c_[0-9a-v]{26}$", v));
             Assert.All(mapping.TableNameForRelationByRelationType.Values, v => Assert.Matches("^allors[.]r_[0-9a-v]{26}$", v));
-            Assert.All(mapping.ColumnNameByRelationType.Values, v => Assert.Matches("^col_[0-9a-v]{26}$", v));
+            Assert.All(mapping.ColumnNameByRelationType, v => Assert.Matches(v.Key.RoleType.IsMany ? "^a_[0-9a-v]{26}$" : "^r_[0-9a-v]{26}$", v.Value));
+        }
+
+        // A relation of C1 with itself has its column in the table of C1, whichever end the column holds: a
+        // one-to-many relation holds its association there, and a many-to-one relation its role. A relation type
+        // that keeps its id and changes between the two finds no column of its own in that table, and no
+        // transaction opens. With one name for both ends, the column of the earlier multiplicity would pass, and
+        // the adapter would read the one end as the other.
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void ARelationTypeWhoseColumnHoldsTheOtherEndRefusesTheTransaction(bool oneToMany)
+        {
+            this.Rebuild();
+
+            var meta = new MetaBuilder().Build();
+            IRoleType roleType = oneToMany ? meta.C1.C1C1one2manies : meta.C1.C1C1many2one;
+            ((RelationType)roleType.RelationType).AssignedMultiplicity = oneToMany ? Multiplicity.ManyToOne : Multiplicity.OneToMany;
+
+            var exception = Assert.ThrowsAny<Exception>(() => this.CreateDatabase(meta).CreateTransaction());
+            Assert.Contains($"Invalid Tables:\n- allors.{this.TableOfC1}: the table of the class C1\n", exception.Message);
         }
 
         [Fact]
