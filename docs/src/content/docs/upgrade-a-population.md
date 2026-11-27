@@ -138,10 +138,11 @@ database you upgraded (`sample_upgraded` in the example), then start it.
 ### A database with the table names of an earlier version
 
 On SQL Server and PostgreSQL the adapter names its tables, columns, keys and indexes by the ids of
-the model: the table of a class is `c_` followed by the id of the class, the table of a relation
-type is `r_` followed by the id of the relation type, and a column is `r_` or `a_` followed by the
-id of its relation type, as it holds the role or the association. A version of the platform from
-before this naming built its tables under the names of the classes and the roles, such as `person`.
+the model. A class table is named `c_<class id>` and a relation table `r_<relation type id>`.
+In a class table, a column that holds a role is named `r_<relation type id>` and a column that
+holds an association is named `a_<relation type id>`. In a relation table the columns are `a`
+for the association and `r` for the role. Earlier versions used class and role names for their
+tables, such as `person`.
 
 The new version does not use those tables. Of its own tables it finds only the objects table in
 such a database, which both versions name `_o`, and a program that opens a transaction fails with
