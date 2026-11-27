@@ -27,7 +27,15 @@ namespace Allors.Database.Adapters.Sql
 
         public static string TableNameFor(IRelationType relationType) => "r_" + ModelId.Encode(relationType.Id);
 
-        public static string ColumnNameFor(IRelationType relationType) => "col_" + ModelId.Encode(relationType.Id);
+        // A column of the table of a class holds one end of its relation type, and its name says which: a_ for the
+        // association, which a one-to-many relation keeps in the table of the class of its role, and r_ for the
+        // role, which the other relations with a column keep in the table of the class of their association. A
+        // relation type that keeps its id and changes which end such a column holds, as a relation of a class with
+        // itself that changes between one-to-many and many-to-one, then lacks its column, and the schema is
+        // invalid; under one name for both ends the adapter would read the one end as the other.
+        public static string AssociationColumnNameFor(IRelationType relationType) => "a_" + ModelId.Encode(relationType.Id);
+
+        public static string RoleColumnNameFor(IRelationType relationType) => "r_" + ModelId.Encode(relationType.Id);
 
         public static string PrimaryKeyNameFor(IClass @class) => "pk_" + ModelId.Encode(@class.Id);
 

@@ -117,7 +117,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                     var roleType = relationType.RoleType;
                     if (!(associationType.IsMany && roleType.IsMany) && relationType.ExistExclusiveDatabaseClasses && roleType.IsMany)
                     {
-                        this.columnNameByRelationType[relationType] = ColumnNameFor(relationType);
+                        this.columnNameByRelationType[relationType] = AssociationColumnNameFor(relationType);
                     }
                 }
 
@@ -127,7 +127,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                     var associationType3 = relationType.AssociationType;
                     if (roleType.ObjectType.IsUnit)
                     {
-                        this.columnNameByRelationType[relationType] = ColumnNameFor(relationType);
+                        this.columnNameByRelationType[relationType] = RoleColumnNameFor(relationType);
 
                         // The parameter carries the id of the relation type. The full names of two roles of one
                         // class can differ only in case, and a parameter is found by its name without case: one
@@ -136,7 +136,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                     }
                     else if (!(associationType3.IsMany && roleType.IsMany) && relationType.ExistExclusiveDatabaseClasses && !roleType.IsMany)
                     {
-                        this.columnNameByRelationType[relationType] = ColumnNameFor(relationType);
+                        this.columnNameByRelationType[relationType] = RoleColumnNameFor(relationType);
                     }
                 }
             }
