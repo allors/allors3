@@ -6,18 +6,19 @@
 namespace Allors.Database.Domain.Tests
 {
     using System;
-    using Adapters.Memory;
     using Configuration;
     using Meta;
+    using Xunit;
     using User = Domain.User;
 
+    [Collection(nameof(DatabaseFixture))]
     public class DomainTest : IDisposable
     {
         public DomainTest(Fixture fixture)
         {
             var services = new DefaultDatabaseServices(fixture.Engine);
             var objectFactory = new ObjectFactory(fixture.MetaPopulation, typeof(User));
-            var database = new Database(services, new Configuration { ObjectFactory = objectFactory });
+            var database = fixture.Database.CreateDatabase(services, objectFactory);
 
             this.M = database.Services.Get<MetaPopulation>();
 

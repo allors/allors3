@@ -31,10 +31,10 @@ partial class Build
                 .SetProjectFile(Paths.SampleDatabaseGenerate));
         });
 
-    // The domain tests run on the Memory adapter. The tests of the command-line tool set the adapter Snapshot
-    // in the environment, and the tests of the server give it to the server in its settings. The tests of the
-    // workspace run on the Local and the Remote adapter, against a database on Snapshot that they configure
-    // themselves, so none needs a database server.
+    // The domain tests run on the Memory adapter unless ALLORS_TEST_ADAPTER names another one, which CI does not
+    // set. The tests of the command-line tool set the adapter Snapshot in the environment, and the tests of the
+    // server give it to the server in its settings. The tests of the workspace run on the Local and the Remote
+    // adapter, against a database on Snapshot that they configure themselves, so none needs a database server.
     private Target SampleTest => _ => _
         .DependsOn(SampleGenerate)
         .Executes(() =>
