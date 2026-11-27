@@ -19,6 +19,8 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         public string Name { get; }
 
+        internal int PrimaryKeyColumnCount { get; set; }
+
         public Dictionary<string, SchemaTableColumn> ColumnByLowercaseColumnName { get; }
 
         public Schema Schema { get; }

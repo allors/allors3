@@ -26,6 +26,8 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         public string LowercaseName { get; }
 
+        internal int PrimaryKeyOrdinal { get; set; }
+
         public string DataType { get; }
 
         public string SqlType

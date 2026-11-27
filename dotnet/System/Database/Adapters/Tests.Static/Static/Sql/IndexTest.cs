@@ -159,6 +159,65 @@ namespace Allors.Database.Adapters.Sql
             Assert.Contains($"Invalid Tables:\n- allors.{this.TableOfC1}: the table of the class C1\n", exception.Message);
         }
 
+        // Both multiplicities store this relation to I12 in the same table. A role that holds one object
+        // needs a key on a, and a role that holds many needs a key on (a, r).
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void ARelationTableWhosePrimaryKeyHasChangedIsRebuiltOnLoad(bool toMany)
+        {
+            var original = this.Rebuild();
+            var originalMeta = (MetaPopulation)original.MetaPopulation;
+            IRoleType originalRole = toMany ? originalMeta.C1.C1I12many2one : originalMeta.C1.C1I12many2manies;
+            long associationId;
+            long memberId;
+            using (var transaction = original.CreateTransaction())
+            {
+                var association = transaction.Create(originalMeta.C1);
+                var member = transaction.Create(originalMeta.C2);
+                association.Strategy.SetRole(originalRole, toMany ? member : new[] { member });
+                transaction.Commit();
+                associationId = association.Id;
+                memberId = member.Id;
+            }
+
+            var saved = new StringWriter();
+            using (var writer = XmlWriter.Create(saved))
+            {
+                original.Save(writer);
+            }
+
+            var meta = new MetaBuilder().Build();
+            RoleType role = toMany ? meta.C1.C1I12many2one : meta.C1.C1I12many2manies;
+            role.SingularName = "RevisedMember";
+            role.PluralName = "RevisedMembers";
+            ((RelationType)role.RelationType).AssignedMultiplicity = toMany ? Multiplicity.ManyToMany : Multiplicity.ManyToOne;
+
+            var changed = this.CreateDatabase(meta);
+            var exception = Assert.ThrowsAny<Exception>(() => changed.CreateTransaction());
+            Assert.Contains($"Invalid Tables:\n- allors.{this.Table(originalRole)}: the table of the relation type C1.{role.Name}\n", exception.Message);
+
+            using (var reader = XmlReader.Create(new StringReader(saved.ToString())))
+            {
+                changed.Load(reader);
+            }
+
+            using (var transaction = this.CreateDatabase(meta).CreateTransaction())
+            {
+                var association = transaction.Instantiate(associationId);
+                if (toMany)
+                {
+                    Assert.Equal(memberId, Assert.Single(association.Strategy.GetCompositesRole<IObject>(role)).Id);
+                    association.Strategy.AddCompositesRole(role, transaction.Create(meta.C2));
+                    transaction.Commit();
+                }
+                else
+                {
+                    Assert.Equal(memberId, association.Strategy.GetCompositeRole(role).Id);
+                }
+            }
+        }
+
         [Fact]
         public void EnsureIndexesCreatesThemWithoutATransaction()
         {

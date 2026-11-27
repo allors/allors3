@@ -9,7 +9,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
     using System.Text;
     using static Mapping;
 
-    public class Validation
+    public class Validation : Sql.Validation
     {
         public HashSet<string> MissingTableNames { get; }
         public HashSet<SchemaTable> InvalidTables { get; }
@@ -32,13 +32,13 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                 this.InvalidTables.Count == 0;
         }
 
-        public bool IsValid { get; }
+        public override bool IsValid { get; }
 
         public Database Database { get; }
 
         public Schema Schema { get; }
 
-        public string Message
+        public override string Message
         {
             get
             {
@@ -155,23 +155,22 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                     }
                     else
                     {
-                        if (table.ColumnByLowercaseColumnName.Count != 2)
+                        var associationColumn = this.ValidateColumn(table, Sql.Mapping.ColumnNameForAssociation, SqlTypeForObject);
+                        var roleSqlType = relationType.RoleType.ObjectType.IsComposite ? SqlTypeForObject : this.mapping.GetSqlType(relationType.RoleType);
+                        var roleColumn = this.ValidateColumn(table, Sql.Mapping.ColumnNameForRole, roleSqlType);
+                        if (table.ColumnByLowercaseColumnName.Count != 2 ||
+                            !HasRelationPrimaryKey(roleType, table.PrimaryKeyColumnCount, associationColumn?.PrimaryKeyOrdinal, roleColumn?.PrimaryKeyOrdinal))
                         {
                             this.InvalidTables.Add(table);
                         }
-
-                        this.ValidateColumn(table, Sql.Mapping.ColumnNameForAssociation, SqlTypeForObject);
-
-                        var roleSqlType = relationType.RoleType.ObjectType.IsComposite ? SqlTypeForObject : this.mapping.GetSqlType(relationType.RoleType);
-                        this.ValidateColumn(table, Sql.Mapping.ColumnNameForRole, roleSqlType);
                     }
                 }
             }
 
-            // TODO: Primary Keys and Indeces
+            // TODO: Validate the primary keys of the objects table and the class tables.
         }
 
-        private void ValidateColumn(SchemaTable table, string columnName, string sqlType)
+        private SchemaTableColumn ValidateColumn(SchemaTable table, string columnName, string sqlType)
         {
             var normalizedColumnName = this.mapping.NormalizeName(columnName);
             var objectColumn = table.GetColumn(normalizedColumnName);
@@ -180,6 +179,8 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             {
                 this.InvalidTables.Add(table);
             }
+
+            return objectColumn;
         }
     }
 }

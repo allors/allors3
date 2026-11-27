@@ -51,9 +51,12 @@ AND     (pg_has_role(n.nspowner, 'USAGE') OR has_schema_privilege(n.oid, 'CREATE
                     // and a type outside pg_catalog show their kind only. The numbers are the ids of the types
                     // that have a length, a precision or a scale: 1042 char, 1043 varchar, 1560 bit, 1562
                     // varbit, 21 smallint, 23 integer, 20 bigint, 1700 numeric, 700 real, 701 double precision.
+                    // The primary key lists its key columns in order. Included columns have no position in it.
                     cmdText = @"
 SELECT c.relname AS table_name,
        a.attname AS column_name,
+       COALESCE(cardinality(pk.conkey), 0) AS primary_key_column_count,
+       COALESCE(array_position(pk.conkey, a.attnum), 0) AS primary_key_ordinal,
        CASE WHEN t.typtype = 'd' THEN
                 CASE WHEN bt.typelem <> 0 AND bt.typlen = -1 THEN 'ARRAY'
                      WHEN nbt.nspname = 'pg_catalog' THEN format_type(t.typbasetype, NULL)
@@ -81,6 +84,7 @@ SELECT c.relname AS table_name,
 FROM pg_catalog.pg_namespace nc
 JOIN pg_catalog.pg_class c ON c.relnamespace = nc.oid
 JOIN pg_catalog.pg_attribute a ON a.attrelid = c.oid
+LEFT JOIN pg_catalog.pg_constraint pk ON pk.conrelid = c.oid AND pk.contype = 'p'
 JOIN pg_catalog.pg_type t ON t.oid = a.atttypid
 JOIN pg_catalog.pg_namespace nt ON nt.oid = t.typnamespace
 LEFT JOIN (pg_catalog.pg_type bt JOIN pg_catalog.pg_namespace nbt ON nbt.oid = bt.typnamespace)
@@ -106,6 +110,8 @@ AND (pg_has_role(c.relowner, 'USAGE')
                         {
                             var tableNameOrdinal = reader.GetOrdinal("table_name");
                             var columnNameOrdinal = reader.GetOrdinal("column_name");
+                            var primaryKeyColumnCountOrdinal = reader.GetOrdinal("primary_key_column_count");
+                            var primaryKeyOrdinal = reader.GetOrdinal("primary_key_ordinal");
                             var dataTypeOrdinal = reader.GetOrdinal("data_type");
                             var characterMaximumLengthOrdinal = reader.GetOrdinal("character_maximum_length");
                             var numericPrecisionOrdinal = reader.GetOrdinal("numeric_precision");
@@ -128,13 +134,19 @@ AND (pg_has_role(c.relowner, 'USAGE')
 
                                 if (!this.TableByName.TryGetValue(fullyQualifiedTableName, out var table))
                                 {
-                                    table = new SchemaTable(this, fullyQualifiedTableName);
+                                    table = new SchemaTable(this, fullyQualifiedTableName)
+                                    {
+                                        PrimaryKeyColumnCount = reader.GetInt32(primaryKeyColumnCountOrdinal),
+                                    };
                                     this.TableByName[fullyQualifiedTableName] = table;
                                 }
 
                                 if (!reader.IsDBNull(columnNameOrdinal))
                                 {
-                                    var column = new SchemaTableColumn(table, columnName, dataType, characterMaximumLength, numericPrecision, numericScale);
+                                    var column = new SchemaTableColumn(table, columnName, dataType, characterMaximumLength, numericPrecision, numericScale)
+                                    {
+                                        PrimaryKeyOrdinal = reader.GetInt32(primaryKeyOrdinal),
+                                    };
                                     table.ColumnByLowercaseColumnName[column.LowercaseName] = column;
                                 }
                             }

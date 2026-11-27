@@ -38,7 +38,8 @@ WHERE   schema_name = @schemaName";
                         this.Exists = schemaCount != 0;
                     }
 
-                    // Tables
+                    // Read columns and primary keys in one round trip. Separate result sets avoid an
+                    // expensive join between the information_schema views and the index catalogue.
                     cmdText = @"
 SELECT T.table_name,
        C.column_name,
@@ -51,7 +52,14 @@ FULL OUTER JOIN information_schema.columns AS C
 ON T.table_name = C.table_name
 WHERE T.table_type = 'BASE TABLE'
 AND T.table_schema = @tableSchema
-AND C.table_schema = @tableSchema";
+AND C.table_schema = @tableSchema;
+
+SELECT T.name, C.name, K.key_ordinal, COUNT(*) OVER (PARTITION BY T.object_id) AS key_column_count
+FROM sys.tables AS T
+JOIN sys.indexes AS I ON I.object_id = T.object_id
+JOIN sys.index_columns AS K ON K.object_id = I.object_id AND K.index_id = I.index_id
+JOIN sys.columns AS C ON C.object_id = K.object_id AND C.column_id = K.column_id
+WHERE T.schema_id = SCHEMA_ID(@tableSchema) AND I.is_primary_key = 1 AND I.is_disabled = 0 AND K.key_ordinal > 0";
 
                     using (var command = new SqlCommand(cmdText, connection))
                     {
@@ -90,6 +98,22 @@ AND C.table_schema = @tableSchema";
                                 {
                                     var column = new SchemaTableColumn(table, columnName, dataType, characterMaximumLength, numericPrecision, numericScale);
                                     table.ColumnByLowercaseColumnName[column.LowercaseName] = column;
+                                }
+                            }
+
+                            reader.NextResult();
+                            while (reader.Read())
+                            {
+                                var tableName = mapping.NormalizeName(reader.GetString(0).Trim());
+                                var table = this.GetTable($"{database.SchemaName}.{tableName}");
+                                if (table != null)
+                                {
+                                    table.PrimaryKeyColumnCount = reader.GetInt32(3);
+                                    var column = table.GetColumn(mapping.NormalizeName(reader.GetString(1)));
+                                    if (column != null)
+                                    {
+                                        column.PrimaryKeyOrdinal = reader.GetByte(2);
+                                    }
                                 }
                             }
                         }

@@ -181,15 +181,14 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                     }
                     else
                     {
-                        if (table.ColumnByLowercaseColumnName.Count != 2)
+                        var associationColumn = this.ValidateColumn(table, Sql.Mapping.ColumnNameForAssociation, SqlTypeForObject);
+                        var roleSqlType = relationType.RoleType.ObjectType.IsComposite ? SqlTypeForObject : this.mapping.GetSqlType(relationType.RoleType);
+                        var roleColumn = this.ValidateColumn(table, Sql.Mapping.ColumnNameForRole, roleSqlType);
+                        if (table.ColumnByLowercaseColumnName.Count != 2 ||
+                            !HasRelationPrimaryKey(roleType, table.PrimaryKeyColumnCount, associationColumn?.PrimaryKeyOrdinal, roleColumn?.PrimaryKeyOrdinal))
                         {
                             this.InvalidTables.Add(table);
                         }
-
-                        this.ValidateColumn(table, Sql.Mapping.ColumnNameForAssociation, SqlTypeForObject);
-
-                        var roleSqlType = relationType.RoleType.ObjectType.IsComposite ? SqlTypeForObject : this.mapping.GetSqlType(relationType.RoleType);
-                        this.ValidateColumn(table, Sql.Mapping.ColumnNameForRole, roleSqlType);
                     }
                 }
             }
@@ -238,7 +237,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 }
             }
 
-            // TODO: Primary Keys and Indeces
+            // TODO: Validate the primary keys of the objects table and the class tables.
         }
 
         private void ValidateTableType(string name, string columnType)
@@ -260,7 +259,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             }
         }
 
-        private void ValidateColumn(SchemaTable table, string columnName, string sqlType)
+        private SchemaTableColumn ValidateColumn(SchemaTable table, string columnName, string sqlType)
         {
             var normalizedColumnName = this.mapping.NormalizeName(columnName);
             var objectColumn = table.GetColumn(normalizedColumnName);
@@ -269,6 +268,8 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             {
                 this.InvalidTables.Add(table);
             }
+
+            return objectColumn;
         }
 
         private void ValidateColumn(SchemaTableType tableType, string columnName, string sqlType)
