@@ -106,6 +106,11 @@ namespace Allors.Database.Adapters.Sql
 
         protected string Table(IRoleType roleType) => this.Names.Mapping.TableNameForRelationByRelationType[roleType.RelationType];
 
+        // The columns of the table of a relation: the association and the role, each with the id of its object type.
+        protected static string AssociationColumnOfRelationTable(IRoleType roleType) => "a_" + ModelId.Encode(roleType.AssociationType.ObjectType.Id);
+
+        protected static string RoleColumnOfRelationTable(IRoleType roleType) => "r_" + ModelId.Encode(roleType.ObjectType.Id);
+
         private int Count(string table) => Convert.ToInt32(this.ExecuteScalar($"SELECT COUNT(*) FROM {table}"), CultureInfo.InvariantCulture);
     }
 }

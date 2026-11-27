@@ -28,15 +28,17 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             database.Init();
 
             var many2many = this.Table(this.M.C1.C1C2many2manies);
+            var a = AssociationColumnOfRelationTable(this.M.C1.C1C2many2manies);
+            var r = RoleColumnOfRelationTable(this.M.C1.C1C2many2manies);
             var c2 = this.Table(this.M.C2);
 
             try
             {
                 // The relation table of C1.C1C2many2manies as a partitioned table, and a child of the table of C2.
                 this.ExecuteScalar($"DROP TABLE {many2many}");
-                this.ExecuteScalar($"CREATE TABLE {many2many} (a bigint, r bigint, CONSTRAINT pk_partitioned PRIMARY KEY (a, r)) PARTITION BY HASH (a)");
+                this.ExecuteScalar($"CREATE TABLE {many2many} ({a} bigint, {r} bigint, CONSTRAINT pk_partitioned PRIMARY KEY ({a}, {r})) PARTITION BY HASH ({a})");
                 this.ExecuteScalar($"CREATE TABLE allors.partitioned_0 PARTITION OF {many2many} FOR VALUES WITH (MODULUS 1, REMAINDER 0)");
-                this.ExecuteScalar($"INSERT INTO {many2many} (a, r) VALUES (1, 2)");
+                this.ExecuteScalar($"INSERT INTO {many2many} ({a}, {r}) VALUES (1, 2)");
 
                 this.ExecuteScalar($"CREATE TABLE allors.c2_child () INHERITS ({c2})");
                 this.ExecuteScalar("INSERT INTO allors.c2_child (o) VALUES (1)");
