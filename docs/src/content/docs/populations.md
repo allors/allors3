@@ -20,13 +20,17 @@ with the one in a file. This page explains these steps and what an application c
 `IDatabase.Init()` empties a database and restarts object numbering. On SQL Server and PostgreSQL
 it checks the tables against the model. On SQL Server it also checks the user-defined table types
 that the adapter requires. If these checks pass, `Init()` empties the model's tables. If a required
-table or table type is missing or invalid, it drops and recreates the model's tables. Tables that
-the model no longer has are left as they are.
+table or table type is missing or invalid, or if a table whose name starts with `allors_` is not
+one of the model, it drops every table whose name starts with `allors_` and creates the model's
+tables. Tables with other names are left as they are.
+[The names of the tables](upgrade-a-population.md#the-names-of-the-tables) lists the names that
+the SqlClient and Npgsql adapters give their tables and what the checks refuse.
 
 On SQL Server the rebuild first drops every user-defined table type in the adapter's schema,
-`allors` by default, including any that the application created. If a stored procedure uses one
-of these types, SQL Server refuses to drop it and the rebuild stops before it reaches the tables.
-After rebuilding the tables, the adapter creates only the table types it requires.
+`allors` by default, whose name starts with `allors_t_`; table types with other names are left
+as they are. If a stored procedure uses one of the types that the rebuild drops, SQL Server
+refuses to drop it and the rebuild stops before it reaches the tables. After rebuilding the
+tables, the adapter creates only the table types it requires.
 
 ## A new population
 

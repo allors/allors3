@@ -167,11 +167,11 @@ or when it leaves the database, and then the names of its table or its columns c
 first transaction a database object compares the tables of the schema with those of the model.
 When a table is missing, when a table whose name starts with `allors_` is not one of the model,
 when a table has columns that the model does not give it, or when the table of a relation type
-has another primary key, no transaction opens. The message lists the tables under `Missing Tables:`, `Obsolete Tables:` and
-`Invalid Tables:`, each with its class or its relation type, and under each invalid table the
-columns that differ: a missing column as the model has it, and an obsolete column with the
-relation type, the multiplicity and the object type that its name carries. Upgrade such a
-database: the load builds the tables of the new model.
+has another primary key, no transaction opens. The message lists the tables under
+`Missing Tables:`, `Obsolete Tables:` and `Invalid Tables:`, each with its class or its relation
+type, and under each invalid table the columns that differ: a missing column as the model has it,
+and an obsolete column with the relation type, the multiplicity and the object type that its name
+carries. Upgrade such a database: the load builds the tables of the new model.
 
 When `Init()` or the load builds the schema again, it drops only tables whose names start with
 `allors_`, and on SQL Server only table types whose names start with `allors_t_`, before it
