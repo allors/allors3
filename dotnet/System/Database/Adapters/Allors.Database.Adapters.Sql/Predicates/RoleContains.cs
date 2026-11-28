@@ -32,8 +32,8 @@ namespace Allors.Database.Adapters.Sql
             if ((this.role.IsMany && this.role.RelationType.AssociationType.IsMany) || !this.role.RelationType.ExistExclusiveDatabaseClasses)
             {
                 statement.Append($"FROM {schema.TableNameForRelationByRelationType[this.role.RelationType]} {innerAlias}\n");
-                statement.Append($"WHERE {innerAlias}.{Mapping.ColumnNameForAssociation}={alias}.{Mapping.ColumnNameForObject}\n");
-                statement.Append($"AND {innerAlias}.{Mapping.ColumnNameForRole}={this.allorsObject.Strategy.ObjectId}\n");
+                statement.Append($"WHERE {innerAlias}.{Mapping.RelationTableAssociationColumnNameFor(this.role.RelationType)}={alias}.{Mapping.ColumnNameForObject}\n");
+                statement.Append($"AND {innerAlias}.{Mapping.RelationTableRoleColumnNameFor(this.role.RelationType)}={this.allorsObject.Strategy.ObjectId}\n");
             }
             else
             {

@@ -1800,6 +1800,32 @@ namespace Allors.Database.Adapters
                         this.Transaction.Rollback();
 
                         Assert.Contains(to1, from1.C1C1many2manies);
+
+                        // Two roles of one class whose full names differ only in case, and two whose names are
+                        // equal in their first 128 characters
+                        var job = Job.Create(this.Transaction);
+                        var flowMember = Person.Create(this.Transaction);
+                        var member = Person.Create(this.Transaction);
+                        var firstMember = Person.Create(this.Transaction);
+                        var secondMember = Person.Create(this.Transaction);
+                        job.AddFlowMember(flowMember);
+                        job.AddMember(member);
+                        job.AddWithANameBeyondTheSixtyThreeBytesThatPostgreSqlKeepsAndBeyondTheOneHundredAndTwentyEightCharactersThatSqlServerAllowsWhichEndsInFirstMember(firstMember);
+                        job.AddWithANameBeyondTheSixtyThreeBytesThatPostgreSqlKeepsAndBeyondTheOneHundredAndTwentyEightCharactersThatSqlServerAllowsWhichEndsInSecondMember(secondMember);
+
+                        mark();
+                        Assert.Equal(flowMember, Assert.Single(job.FlowMembers));
+                        Assert.Equal(member, Assert.Single(job.Members));
+                        Assert.Equal(firstMember, Assert.Single(job.WithANameBeyondTheSixtyThreeBytesThatPostgreSqlKeepsAndBeyondTheOneHundredAndTwentyEightCharactersThatSqlServerAllowsWhichEndsInFirstMembers));
+                        Assert.Equal(secondMember, Assert.Single(job.WithANameBeyondTheSixtyThreeBytesThatPostgreSqlKeepsAndBeyondTheOneHundredAndTwentyEightCharactersThatSqlServerAllowsWhichEndsInSecondMembers));
+                        Assert.Equal(job, Assert.Single(flowMember.WorksWhereFlowMember));
+                        Assert.Empty(flowMember.WorkflowsWhereMember);
+                        Assert.Equal(job, Assert.Single(member.WorkflowsWhereMember));
+                        Assert.Empty(member.WorksWhereFlowMember);
+                        Assert.Equal(job, Assert.Single(firstMember.JobsWhereWithANameBeyondTheSixtyThreeBytesThatPostgreSqlKeepsAndBeyondTheOneHundredAndTwentyEightCharactersThatSqlServerAllowsWhichEndsInFirstMember));
+                        Assert.Empty(firstMember.JobsWhereWithANameBeyondTheSixtyThreeBytesThatPostgreSqlKeepsAndBeyondTheOneHundredAndTwentyEightCharactersThatSqlServerAllowsWhichEndsInSecondMember);
+                        Assert.Equal(job, Assert.Single(secondMember.JobsWhereWithANameBeyondTheSixtyThreeBytesThatPostgreSqlKeepsAndBeyondTheOneHundredAndTwentyEightCharactersThatSqlServerAllowsWhichEndsInSecondMember));
+                        Assert.Empty(secondMember.JobsWhereWithANameBeyondTheSixtyThreeBytesThatPostgreSqlKeepsAndBeyondTheOneHundredAndTwentyEightCharactersThatSqlServerAllowsWhichEndsInFirstMember);
                     }
                 }
             }

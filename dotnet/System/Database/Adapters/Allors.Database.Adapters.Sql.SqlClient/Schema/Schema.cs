@@ -20,6 +20,8 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
             this.TableByName = new Dictionary<string, SchemaTable>();
             this.TableTypeByName = new Dictionary<string, SchemaTableType>();
+            this.StoredTableNames = new HashSet<string>(StringComparer.Ordinal);
+            this.StoredTableTypeNames = new HashSet<string>(StringComparer.Ordinal);
 
             using (var connection = new SqlConnection(database.ConnectionString))
             {
@@ -38,7 +40,8 @@ WHERE   schema_name = @schemaName";
                         this.Exists = schemaCount != 0;
                     }
 
-                    // Tables
+                    // Read columns and primary keys in one round trip. Separate result sets avoid an
+                    // expensive join between the information_schema views and the index catalogue.
                     cmdText = @"
 SELECT T.table_name,
        C.column_name,
@@ -51,7 +54,14 @@ FULL OUTER JOIN information_schema.columns AS C
 ON T.table_name = C.table_name
 WHERE T.table_type = 'BASE TABLE'
 AND T.table_schema = @tableSchema
-AND C.table_schema = @tableSchema";
+AND C.table_schema = @tableSchema;
+
+SELECT T.name, C.name, K.key_ordinal, COUNT(*) OVER (PARTITION BY T.object_id) AS key_column_count
+FROM sys.tables AS T
+JOIN sys.indexes AS I ON I.object_id = T.object_id
+JOIN sys.index_columns AS K ON K.object_id = I.object_id AND K.index_id = I.index_id
+JOIN sys.columns AS C ON C.object_id = K.object_id AND C.column_id = K.column_id
+WHERE T.schema_id = SCHEMA_ID(@tableSchema) AND I.is_primary_key = 1 AND I.is_disabled = 0 AND K.key_ordinal > 0";
 
                     using (var command = new SqlCommand(cmdText, connection))
                     {
@@ -68,6 +78,7 @@ AND C.table_schema = @tableSchema";
                             while (reader.Read())
                             {
                                 var tableName = reader.GetString(tableNameOrdinal);
+                                this.StoredTableNames.Add(tableName);
                                 var columnName = reader.GetString(columnNameOrdinal);
                                 var dataType = reader.GetString(dataTypeOrdinal).Trim().ToLowerInvariant();
                                 var characterMaximumLength = reader.IsDBNull(characterMaximumLengthOrdinal) ? (int?)null : Convert.ToInt32(reader.GetValue(characterMaximumLengthOrdinal));
@@ -90,6 +101,22 @@ AND C.table_schema = @tableSchema";
                                 {
                                     var column = new SchemaTableColumn(table, columnName, dataType, characterMaximumLength, numericPrecision, numericScale);
                                     table.ColumnByLowercaseColumnName[column.LowercaseName] = column;
+                                }
+                            }
+
+                            reader.NextResult();
+                            while (reader.Read())
+                            {
+                                var tableName = mapping.NormalizeName(reader.GetString(0).Trim());
+                                var table = this.GetTable($"{database.SchemaName}.{tableName}");
+                                if (table != null)
+                                {
+                                    table.PrimaryKeyColumnCount = reader.GetInt32(3);
+                                    var column = table.GetColumn(mapping.NormalizeName(reader.GetString(1)));
+                                    if (column != null)
+                                    {
+                                        column.PrimaryKeyOrdinal = reader.GetByte(2);
+                                    }
                                 }
                             }
                         }
@@ -118,6 +145,7 @@ where tt.schema_id = SCHEMA_ID(@domainSchema)";
                             while (reader.Read())
                             {
                                 var tableName = reader.GetString(tableNameOrdinal);
+                                this.StoredTableTypeNames.Add(tableName);
                                 var columnName = reader.GetString(columnNameOrdinal);
                                 var dataType = reader.GetString(dataTypeOrdinal).Trim().ToLowerInvariant();
                                 var maximumLength = reader.IsDBNull(maximumLengthOrdinal) ? (int?)null : Convert.ToInt32(reader.GetValue(maximumLengthOrdinal));
@@ -152,6 +180,17 @@ where tt.schema_id = SCHEMA_ID(@domainSchema)";
         public Dictionary<string, SchemaTable> TableByName { get; }
 
         public Dictionary<string, SchemaTableType> TableTypeByName { get; }
+
+        /// <summary>
+        /// The names of the tables as SQL Server stores them, without the schema. TableByName has them in lower case:
+        /// a table whose name starts with the prefix of the adapter is one of its tables by the name as it is stored.
+        /// </summary>
+        public HashSet<string> StoredTableNames { get; }
+
+        /// <summary>
+        /// The names of the table types as SQL Server stores them, without the schema.
+        /// </summary>
+        public HashSet<string> StoredTableTypeNames { get; }
 
         public SchemaTable GetTable(string tableName)
         {

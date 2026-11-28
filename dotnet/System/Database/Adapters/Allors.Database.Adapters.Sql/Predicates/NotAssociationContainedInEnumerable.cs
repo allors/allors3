@@ -40,9 +40,9 @@ namespace Allors.Database.Adapters.Sql
 
             if ((this.association.IsMany && this.association.RelationType.RoleType.IsMany) || !this.association.RelationType.ExistExclusiveDatabaseClasses)
             {
-                statement.Append(" (" + statement.GetAlias(this.association) + "." + Mapping.ColumnNameForRole + " IS NULL OR ");
-                statement.Append(" NOT " + statement.GetAlias(this.association) + "." + Mapping.ColumnNameForRole + " IN (\n");
-                statement.Append(" SELECT " + Mapping.ColumnNameForRole + " FROM " + schema.TableNameForRelationByRelationType[this.association.RelationType] + " WHERE " + Mapping.ColumnNameForAssociation + " IN (");
+                statement.Append(" (" + statement.GetAlias(this.association) + "." + Mapping.RelationTableRoleColumnNameFor(this.association.RelationType) + " IS NULL OR ");
+                statement.Append(" NOT " + statement.GetAlias(this.association) + "." + Mapping.RelationTableRoleColumnNameFor(this.association.RelationType) + " IN (\n");
+                statement.Append(" SELECT " + Mapping.RelationTableRoleColumnNameFor(this.association.RelationType) + " FROM " + schema.TableNameForRelationByRelationType[this.association.RelationType] + " WHERE " + Mapping.RelationTableAssociationColumnNameFor(this.association.RelationType) + " IN (");
                 statement.Append(inStatement.ToString());
                 statement.Append(" )))\n");
             }

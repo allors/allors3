@@ -178,14 +178,60 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   to delete an object, and to find the object that has a role before they set a one-to-one role or
   add to a one-to-many role. `[Indexed]` stays the hint of the modeller for a unit role, which gets
   an index only when it is marked; on a composite relation the mark no longer changes anything in
-  these adapters. A database that was created before this change lacks these indexes, and no
-  transaction opens until it has them (#388, #437): give it its indexes at deployment, with the
-  `index` command or a call of `EnsureIndexes()`, and with a login that may create an index on the
-  tables. A database whose domain marks every composite relation as indexed has these indexes
-  already. Creating an object and writing a relation now maintain these indexes as well, and the
-  indexes take room in the database. On PostgreSQL two index names that are equal in their first
-  63 bytes refuse every transaction (#407), which held for the relation types that are marked and
-  now holds for every composite relation (#417).
+  these adapters. A database that was created before this change lacks these indexes and has the
+  table names of before #470: it needs the upgrade that #470 describes, whose load creates the
+  indexes. A transaction opens only when the schema has every index that the adapter wants (#388,
+  #437): when these indexes change and the database stays, give it its indexes at deployment, with
+  the `index` command or a call of `EnsureIndexes()`, and with a login that may create an index on
+  the tables. Creating an object and writing a relation now maintain these indexes as well, and the
+  indexes take room in the database (#417).
+- The SqlClient and Npgsql adapters name the tables, the columns and the indexes of their schema by
+  the ids of the model, where they built each name from the names of the classes and the roles. An
+  id in a name is the sixteen bytes of the id in network byte order, in the base32hex alphabet of
+  RFC 4648, in lower case and without padding, which takes 26 characters. The name of every table
+  and index starts with `allors_`, and on SQL Server the name of every table type with `allors_t_`.
+  The objects table is `allors_o` and the table of a class `allors_<class>`. The table of a
+  relation type is `allors_<relation type>_<multiplicity>`, where the multiplicity is one letter
+  for each end, `o` for one and `m` for many, the association first, and its columns are
+  `a_<object type>` and `r_<object type>`, with the object types of the association and of the
+  role, where they were `a` and `r`. A column of the table of a class holds one end of its relation
+  type, and its name says which: `r_<relation type>` a unit role,
+  `r_<relation type>_<object type>_<multiplicity>` a composite role, `oo` or `mo`, and
+  `a_<relation type>_<object type>_om` the association of a one-to-many relation, each with the
+  object type of its end. The index on such a column is `allors_i_<class>_<relation type>`, with
+  the class of the table, and the index on the role column of the table of a relation type
+  `allors_i_<relation type>_r`. The server names the primary keys. The columns `o`, `c` and `v`
+  keep their names, and the longest name has 62 characters. The names of the model no longer reach
+  the server, which ends three failures. Two relation types whose full names differ only in case got
+  one table or one index name, and `Init` failed (#422). PostgreSQL keeps 63 bytes of a name: a
+  table or a column with a longer name was created under the cut name, after which no transaction
+  opened, and two names of tables, columns, keys or indexes that were equal in their first 63 bytes
+  made `Init` fail. SQL Server refused a name above 128 characters, and `Init` failed (#407, #416).
+  A relation type keeps its id when its multiplicity or the object type at one of its ends changes,
+  or when it leaves the database, and the names of its table or its columns change with it. The
+  validation compares the schema with the model in full: besides a missing table or column and a
+  column of another type, it refuses a table whose name starts with `allors_` and that the model
+  lacks, a column that a table should not have, and a key of the table of a relation type that does
+  not fit its multiplicity. A database whose storage no longer fitted the model opened before: a
+  relation type that let a role have one association where it had several, that gave its role
+  another object type, that left the database, or whose table kept its name under another multiplicity,
+  and an earlier model in a database that a later one had loaded in place. A table or a column no
+  longer says what it is, so a message names the class or the relation type next to it: the lines
+  of `Missing Tables`, `Obsolete Tables` and `Invalid Tables`, under an invalid table each column
+  that differs with the relation type, the multiplicity and the object type that it holds, the
+  statements for the indexes that a schema lacks, and the message for an index name that is taken.
+  `Init` drops every table whose name starts with `allors_` before it builds the schema again, where
+  it dropped the tables of the model, and on SQL Server every table type whose name starts with
+  `allors_t_`, where it dropped every table type of the schema. A database that an earlier version
+  built has none of these tables: no transaction opens, and the message lists them as missing. Save
+  the population with the earlier version, create a new database and load the file there with this
+  version; the page Upgrade a population has the steps. A load into the database of the earlier
+  version builds the tables of this version next to the earlier ones, which keep their rows. In
+  `Mapping` of `Allors.Database.Adapters.Sql`, `RelationTableAssociationColumnNameFor` and
+  `RelationTableRoleColumnNameFor` name the columns of the table of a relation type, where the
+  constants `ColumnNameForAssociation` and `ColumnNameForRole` did, and `AliasForAssociation` and
+  `AliasForRole` are the names that a statement gives to the ends of a relation. SQL that reads the
+  tables of the adapter directly has to follow the new names (#418, #470).
 
 ### Fixed
 
@@ -498,19 +544,18 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   `Mapping.ProcedureDefinitionByName` and `Mapping.GetTableTypeNameForIn` of
   `Allors.Database.Adapters.Sql.SqlClient`. A database that is initialized after this change holds
   no procedures, so an earlier version does not accept it. A database that was initialized before
-  this change keeps its procedures and stays valid, and an `Init` that only empties its tables
-  works. `Init` no longer drops the procedures, though, and SQL Server does not drop a table type
-  that a procedure uses: an `Init` that has to recreate the schema of such a database fails with
-  error 3732, `Cannot drop type … because it is being referenced by object …`, before it has
-  touched a table. Drop and create the database between the save and the load of an upgrade,
-  which `DatabaseProvisioning.DropCreate` of `Allors.Database.Builder` does. To keep the database,
-  drop the procedures the old adapter generated for the domain, listed in its
-  `Mapping.ProcedureDefinitionByName`. If an application procedure also uses a table type that
-  `Init` must drop, save its definition and permissions before dropping it, then restore it against
-  the new schema after `Init` (#368).
+  this change keeps its procedures and the table types that they use, and `Init` leaves them: it
+  drops only the table types whose names start with `allors_t_` (#470), which no procedure of an
+  earlier version uses. Drop and create the database between the save and the load of an upgrade,
+  which `DatabaseProvisioning.DropCreate` of `Allors.Database.Builder` does, and it holds none. SQL
+  Server does not drop a table type that a procedure uses: when an application procedure uses a
+  table type of the adapter, an `Init` that has to recreate the schema fails with error 3732,
+  `Cannot drop type … because it is being referenced by object …`, before it has touched a table.
+  Save the definition and the permissions of that procedure before dropping it, then restore it
+  against the new schema after `Init` (#368).
 - The table type `_t_vo` of the SqlClient adapter and its class `VersionedObjectDataRecord`, which
-  nothing used. A database that was initialized before this change keeps the table type and stays
-  valid (#369).
+  nothing used. A database that was initialized before this change keeps the table type, which
+  nothing uses (#369).
 - The functions of the Npgsql adapter. `Init` creates the tables and their indexes, and a
   transaction no longer compares the functions of a schema with those of the mapping. With them go
   `SchemaProcedure`, `Schema.ProcedureByName`, `Schema.GetProcedure`,
@@ -519,9 +564,7 @@ the archive branch `archive/main-2026-10`; the changelog up to v3.1 remains on t
   fields `ElementType`, `TypeName` and `Name` of `MappingArrayParameter`, whose constructor now
   takes the mapping and the name. A database that is initialized after this change holds no
   functions, so an earlier version does not accept it. A database that was initialized before this
-  change keeps its functions and stays valid. `Init` no longer drops them, and PostgreSQL drops a
-  table while a function still names it: an `Init` that has to recreate the schema of such a
-  database works, and leaves the functions, which nothing calls. Drop and create the database
+  change keeps its functions, which `Init` leaves and nothing calls. Drop and create the database
   between the save and the load of an upgrade, which `DatabaseProvisioning.DropCreate` of
   `Allors.Database.Builder` does, and it holds none. The adapter no longer sets the process-wide
   switch `Npgsql.EnableStoredProcedureCompatMode`, with which Npgsql calls a function for a command

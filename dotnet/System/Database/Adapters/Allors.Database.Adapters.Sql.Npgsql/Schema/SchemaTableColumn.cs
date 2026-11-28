@@ -22,6 +22,8 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 
         public string Name { get; }
 
+        internal int PrimaryKeyOrdinal { get; init; }
+
         public string LowercaseName { get; }
 
         public string DataType { get; }

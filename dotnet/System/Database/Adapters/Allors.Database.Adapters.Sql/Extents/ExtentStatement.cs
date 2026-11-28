@@ -58,7 +58,7 @@ namespace Allors.Database.Adapters.Sql
                     if ((association.IsMany && role.IsMany) || !relationType.ExistExclusiveDatabaseClasses)
                     {
                         this.Append(" LEFT OUTER JOIN " + this.Mapping.TableNameForRelationByRelationType[relationType] + " " + this.GetAlias(role));
-                        this.Append(" ON " + alias + "." + Mapping.ColumnNameForObject + "=" + this.GetAlias(role) + "." + Mapping.ColumnNameForAssociation);
+                        this.Append(" ON " + alias + "." + Mapping.ColumnNameForObject + "=" + this.GetAlias(role) + "." + Mapping.RelationTableAssociationColumnNameFor(relationType));
                     }
                     else if (role.IsMany)
                     {
@@ -77,7 +77,7 @@ namespace Allors.Database.Adapters.Sql
                     if (!relationType.ExistExclusiveDatabaseClasses)
                     {
                         this.Append(" LEFT OUTER JOIN " + this.Mapping.TableNameForObjects + " " + this.GetJoinName(role));
-                        this.Append(" ON " + this.GetJoinName(role) + "." + Mapping.ColumnNameForObject + "=" + this.GetAlias(role) + "." + Mapping.ColumnNameForRole + " ");
+                        this.Append(" ON " + this.GetJoinName(role) + "." + Mapping.ColumnNameForObject + "=" + this.GetAlias(role) + "." + Mapping.RelationTableRoleColumnNameFor(relationType) + " ");
                     }
                     else
                     {
@@ -95,7 +95,7 @@ namespace Allors.Database.Adapters.Sql
                 if ((association.IsMany && role.IsMany) || !relationType.ExistExclusiveDatabaseClasses)
                 {
                     this.Append(" LEFT OUTER JOIN " + this.Mapping.TableNameForRelationByRelationType[relationType] + " " + this.GetAlias(association));
-                    this.Append(" ON " + alias + "." + Mapping.ColumnNameForObject + "=" + this.GetAlias(association) + "." + Mapping.ColumnNameForRole);
+                    this.Append(" ON " + alias + "." + Mapping.ColumnNameForObject + "=" + this.GetAlias(association) + "." + Mapping.RelationTableRoleColumnNameFor(relationType));
                 }
                 else if (!role.IsMany)
                 {
@@ -114,7 +114,7 @@ namespace Allors.Database.Adapters.Sql
                     if (!relationType.ExistExclusiveDatabaseClasses)
                     {
                         this.Append(" LEFT OUTER JOIN " + this.Mapping.TableNameForObjects + " " + this.GetJoinName(association));
-                        this.Append(" ON " + this.GetJoinName(association) + "." + Mapping.ColumnNameForObject + "=" + this.GetAlias(association) + "." + Mapping.ColumnNameForAssociation + " ");
+                        this.Append(" ON " + this.GetJoinName(association) + "." + Mapping.ColumnNameForObject + "=" + this.GetAlias(association) + "." + Mapping.RelationTableAssociationColumnNameFor(relationType) + " ");
                     }
                     else if (role.IsOne)
                     {

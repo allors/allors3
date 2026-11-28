@@ -7,18 +7,28 @@ namespace Allors.Database.Adapters.Sql
 {
     using System;
     using System.Globalization;
+    using Meta;
     using Xunit;
     using C1 = Domain.C1;
     using C2 = Domain.C2;
 
     // Init of a valid schema empties the tables in one transaction: the objects table, where the numbering of
-    // the objects starts again, and the tables that hold data. A table without data is left as it is.
+    // the objects starts again, and the tables that hold data. A table without data is left as it is. The facts
+    // take the names of the tables from the mapping.
     public abstract class InitTest : IDisposable
     {
+        private const string DropReferringTable = "DROP TABLE allors.refers_to_c2";
+
+        private Database names;
+
+        protected MetaPopulation M => (MetaPopulation)this.Names.MetaPopulation;
+
         // A table that refers to the table of C2. Neither server truncates a table that a foreign key
         // references: an Init that truncates the table of C2 fails.
-        private const string CreateReferringTable = "CREATE TABLE allors.refers_to_c2 (r bigint REFERENCES allors.c2 (o))";
-        private const string DropReferringTable = "DROP TABLE allors.refers_to_c2";
+        private string CreateReferringTable => $"CREATE TABLE allors.refers_to_c2 (r bigint REFERENCES {this.Table(this.M.C2)} (o))";
+
+        // A database object that is asked for its mapping only.
+        private Database Names => this.names ??= (Database)this.CreateDatabase();
 
         public abstract void Dispose();
 
@@ -38,7 +48,7 @@ namespace Allors.Database.Adapters.Sql
                 transaction.Commit();
             }
 
-            this.ExecuteScalar(CreateReferringTable);
+            this.ExecuteScalar(this.CreateReferringTable);
             try
             {
                 database.Init();
@@ -48,8 +58,8 @@ namespace Allors.Database.Adapters.Sql
                 this.ExecuteScalar(DropReferringTable);
             }
 
-            Assert.Equal(0, this.Count("_o"));
-            Assert.Equal(0, this.Count("c1"));
+            Assert.Equal(0, this.Count(this.TableOfObjects));
+            Assert.Equal(0, this.Count(this.Table(this.M.C1)));
         }
 
         [Fact]
@@ -67,7 +77,7 @@ namespace Allors.Database.Adapters.Sql
             }
 
             // The table of C2 holds a row, so Init truncates it, and fails.
-            this.ExecuteScalar(CreateReferringTable);
+            this.ExecuteScalar(this.CreateReferringTable);
             try
             {
                 Assert.ThrowsAny<Exception>(() => database.Init());
@@ -77,10 +87,10 @@ namespace Allors.Database.Adapters.Sql
                 this.ExecuteScalar(DropReferringTable);
             }
 
-            Assert.Equal(2, this.Count("_o"));
-            Assert.Equal(1, this.Count("c1"));
-            Assert.Equal(1, this.Count("c2"));
-            Assert.Equal(1, this.Count("c1c1c2many2many"));
+            Assert.Equal(2, this.Count(this.TableOfObjects));
+            Assert.Equal(1, this.Count(this.Table(this.M.C1)));
+            Assert.Equal(1, this.Count(this.Table(this.M.C2)));
+            Assert.Equal(1, this.Count(this.Table(this.M.C1.C1C2many2manies)));
 
             // The numbering goes on where it was.
             using (var transaction = database.CreateTransaction())
@@ -89,6 +99,18 @@ namespace Allors.Database.Adapters.Sql
             }
         }
 
-        private int Count(string table) => Convert.ToInt32(this.ExecuteScalar($"SELECT COUNT(*) FROM allors.{table}"), CultureInfo.InvariantCulture);
+        // The objects table, and the table of a class or of a relation, as the mapping names them.
+        protected string TableOfObjects => this.Names.Mapping.TableNameForObjects;
+
+        protected string Table(IClass @class) => this.Names.Mapping.TableNameForObjectByClass[@class];
+
+        protected string Table(IRoleType roleType) => this.Names.Mapping.TableNameForRelationByRelationType[roleType.RelationType];
+
+        // The columns of the table of a relation: the association and the role, each with the id of its object type.
+        protected static string AssociationColumnOfRelationTable(IRoleType roleType) => "a_" + ModelId.Encode(roleType.AssociationType.ObjectType.Id);
+
+        protected static string RoleColumnOfRelationTable(IRoleType roleType) => "r_" + ModelId.Encode(roleType.ObjectType.Id);
+
+        private int Count(string table) => Convert.ToInt32(this.ExecuteScalar($"SELECT COUNT(*) FROM {table}"), CultureInfo.InvariantCulture);
     }
 }

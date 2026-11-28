@@ -55,6 +55,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
             var database = (Database)snapshotProfile.CreateDatabase();
             database.Init();
+            var c2 = this.Table(this.M.C2);
 
             Exception exception = null;
             var thread = new Thread(() =>
@@ -77,7 +78,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                     connection.Open();
                     using (var transaction = connection.BeginTransaction())
                     {
-                        using (var command = new SqlCommand("INSERT INTO allors.c2 (o) VALUES (1)", connection, transaction))
+                        using (var command = new SqlCommand($"INSERT INTO {c2} (o) VALUES (1)", connection, transaction))
                         {
                             command.ExecuteNonQuery();
                         }
@@ -100,7 +101,32 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             }
 
             Assert.Null(exception);
-            Assert.Equal(0, snapshotProfile.ExecuteScalar("SELECT COUNT(*) FROM allors.c2"));
+            Assert.Equal(0, snapshotProfile.ExecuteScalar($"SELECT COUNT(*) FROM {c2}"));
+        }
+
+        // Init builds the schema again after it has dropped the table types whose names start with allors_t_. It
+        // leaves a table type of another name, as it leaves a table.
+        [Fact]
+        public void InitDropsTheTableTypesOfTheAdapterOnly()
+        {
+            var database = this.CreateDatabase();
+            database.Init();
+
+            this.ExecuteScalar("CREATE TYPE allors.allors_t_made_by_hand AS TABLE (o bigint)");
+            this.ExecuteScalar("CREATE TYPE allors.made_by_hand AS TABLE (o bigint)");
+            try
+            {
+                this.ExecuteScalar($"DROP TABLE {this.Table(this.M.C1)}");
+                database.Init();
+
+                Assert.Equal(0, this.ExecuteScalar("SELECT COUNT(*) FROM sys.table_types WHERE schema_id = SCHEMA_ID('allors') AND name = 'allors_t_made_by_hand'"));
+                Assert.Equal(1, this.ExecuteScalar("SELECT COUNT(*) FROM sys.table_types WHERE schema_id = SCHEMA_ID('allors') AND name = 'made_by_hand'"));
+            }
+            finally
+            {
+                this.ExecuteScalar("DROP TYPE IF EXISTS allors.allors_t_made_by_hand");
+                this.ExecuteScalar("DROP TYPE IF EXISTS allors.made_by_hand");
+            }
         }
 
         protected override IDatabase CreateDatabase() => this.profile.CreateDatabase();

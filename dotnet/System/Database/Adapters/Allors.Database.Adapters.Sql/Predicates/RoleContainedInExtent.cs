@@ -31,8 +31,8 @@ namespace Allors.Database.Adapters.Sql
 
             if ((this.role.IsMany && this.role.RelationType.AssociationType.IsMany) || !this.role.RelationType.ExistExclusiveDatabaseClasses)
             {
-                statement.Append(" (" + statement.GetAlias(this.role) + "." + Mapping.ColumnNameForRole + " IS NOT NULL AND ");
-                statement.Append(" " + statement.GetAlias(this.role) + "." + Mapping.ColumnNameForAssociation + " IN (");
+                statement.Append(" (" + statement.GetAlias(this.role) + "." + Mapping.RelationTableRoleColumnNameFor(this.role.RelationType) + " IS NOT NULL AND ");
+                statement.Append(" " + statement.GetAlias(this.role) + "." + Mapping.RelationTableAssociationColumnNameFor(this.role.RelationType) + " IN (");
                 this.inExtent.BuildSql(inStatement);
                 statement.Append(" ))");
             }

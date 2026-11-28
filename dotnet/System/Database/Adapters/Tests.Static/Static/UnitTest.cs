@@ -1847,20 +1847,29 @@ namespace Allors.Database.Adapters
                     }
 
                     {
-                        // Two roles of one class whose full names differ only in case, set together
+                        // Two roles of one class whose full names differ only in case, and two whose names are
+                        // equal in their first 128 characters, set together
                         var first = Job.Create(this.Transaction);
                         first.FlowOwner = "a";
                         first.Owner = "b";
+                        first.WithANameBeyondTheSixtyThreeBytesThatPostgreSqlKeepsAndBeyondTheOneHundredAndTwentyEightCharactersThatSqlServerAllowsWhichEndsInFirstText = "e";
+                        first.WithANameBeyondTheSixtyThreeBytesThatPostgreSqlKeepsAndBeyondTheOneHundredAndTwentyEightCharactersThatSqlServerAllowsWhichEndsInSecondText = "f";
 
                         var second = Job.Create(this.Transaction);
                         second.FlowOwner = "c";
                         second.Owner = "d";
+                        second.WithANameBeyondTheSixtyThreeBytesThatPostgreSqlKeepsAndBeyondTheOneHundredAndTwentyEightCharactersThatSqlServerAllowsWhichEndsInFirstText = "g";
+                        second.WithANameBeyondTheSixtyThreeBytesThatPostgreSqlKeepsAndBeyondTheOneHundredAndTwentyEightCharactersThatSqlServerAllowsWhichEndsInSecondText = "h";
 
                         mark();
                         Assert.Equal("a", first.FlowOwner);
                         Assert.Equal("b", first.Owner);
+                        Assert.Equal("e", first.WithANameBeyondTheSixtyThreeBytesThatPostgreSqlKeepsAndBeyondTheOneHundredAndTwentyEightCharactersThatSqlServerAllowsWhichEndsInFirstText);
+                        Assert.Equal("f", first.WithANameBeyondTheSixtyThreeBytesThatPostgreSqlKeepsAndBeyondTheOneHundredAndTwentyEightCharactersThatSqlServerAllowsWhichEndsInSecondText);
                         Assert.Equal("c", second.FlowOwner);
                         Assert.Equal("d", second.Owner);
+                        Assert.Equal("g", second.WithANameBeyondTheSixtyThreeBytesThatPostgreSqlKeepsAndBeyondTheOneHundredAndTwentyEightCharactersThatSqlServerAllowsWhichEndsInFirstText);
+                        Assert.Equal("h", second.WithANameBeyondTheSixtyThreeBytesThatPostgreSqlKeepsAndBeyondTheOneHundredAndTwentyEightCharactersThatSqlServerAllowsWhichEndsInSecondText);
                     }
                 }
             }

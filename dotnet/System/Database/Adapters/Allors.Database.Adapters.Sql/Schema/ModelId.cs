@@ -48,5 +48,41 @@ namespace Allors.Database.Adapters.Sql
 
             return new string(characters);
         }
+
+        /// <summary>
+        /// The id that Encode wrote as the text, or null when Encode writes no id so.
+        /// </summary>
+        public static Guid? Decode(ReadOnlySpan<char> text)
+        {
+            if (text.Length != CharacterCount)
+            {
+                return null;
+            }
+
+            Span<byte> bytes = stackalloc byte[ByteCount];
+            var buffer = 0;
+            var bits = 0;
+            var index = 0;
+            foreach (var character in text)
+            {
+                var value = Alphabet.IndexOf(character);
+                if (value < 0)
+                {
+                    return null;
+                }
+
+                buffer = (buffer << 5) | value;
+                bits += 5;
+                if (bits >= 8)
+                {
+                    bytes[index++] = (byte)(buffer >> (bits - 8));
+                    bits -= 8;
+                    buffer &= (1 << bits) - 1;
+                }
+            }
+
+            // The last character ends in two zero bits.
+            return buffer == 0 ? new Guid(bytes, true) : null;
+        }
     }
 }

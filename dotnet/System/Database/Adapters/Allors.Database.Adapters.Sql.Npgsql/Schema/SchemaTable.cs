@@ -19,6 +19,8 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 
         public string Name { get; }
 
+        internal int PrimaryKeyColumnCount { get; init; }
+
         public Dictionary<string, SchemaTableColumn> ColumnByLowercaseColumnName { get; }
 
         public Schema Schema { get; }

@@ -93,8 +93,8 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             this.ParamInvocationNameForObject = string.Format(ParameterInvocationFormat, ColumnNameForObject);
             this.ParamInvocationNameForClass = string.Format(ParameterInvocationFormat, ColumnNameForClass);
 
-            this.ParamInvocationNameForAssociation = string.Format(ParameterInvocationFormat, ColumnNameForAssociation);
-            this.ParamInvocationNameForCompositeRole = string.Format(ParameterInvocationFormat, ColumnNameForRole);
+            this.ParamInvocationNameForAssociation = string.Format(ParameterInvocationFormat, AliasForAssociation);
+            this.ParamInvocationNameForCompositeRole = string.Format(ParameterInvocationFormat, AliasForRole);
             this.ParamInvocationNameForCount = string.Format(ParameterInvocationFormat, "count");
 
             this.ObjectArrayParam = new MappingArrayParameter(this, "arr_o");
@@ -102,14 +102,14 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 
             // Tables
             // ------
-            this.TableNameForObjects = database.SchemaName + "._o";
+            this.TableNameForObjects = database.SchemaName + "." + ObjectsTableName;
             this.tableNameForObjectByClass = new Dictionary<IClass, string>();
             this.columnNameByRelationType = new Dictionary<IRelationType, string>();
             this.paramInvocationNameByRoleType = new Dictionary<IRoleType, string>();
 
             foreach (var @class in this.Database.MetaPopulation.DatabaseClasses)
             {
-                this.tableNameForObjectByClass.Add(@class, this.Database.SchemaName + "." + this.NormalizeName(@class.SingularName));
+                this.tableNameForObjectByClass.Add(@class, this.Database.SchemaName + "." + TableNameFor(@class));
 
                 foreach (var associationType in @class.DatabaseAssociationTypes)
                 {
@@ -117,7 +117,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                     var roleType = relationType.RoleType;
                     if (!(associationType.IsMany && roleType.IsMany) && relationType.ExistExclusiveDatabaseClasses && roleType.IsMany)
                     {
-                        this.columnNameByRelationType[relationType] = this.NormalizeName(associationType.SingularName);
+                        this.columnNameByRelationType[relationType] = AssociationColumnNameFor(relationType);
                     }
                 }
 
@@ -127,7 +127,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                     var associationType3 = relationType.AssociationType;
                     if (roleType.ObjectType.IsUnit)
                     {
-                        this.columnNameByRelationType[relationType] = this.NormalizeName(roleType.SingularName);
+                        this.columnNameByRelationType[relationType] = RoleColumnNameFor(relationType);
 
                         // The parameter carries the id of the relation type. The full names of two roles of one
                         // class can differ only in case, and a parameter is found by its name without case: one
@@ -136,7 +136,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                     }
                     else if (!(associationType3.IsMany && roleType.IsMany) && relationType.ExistExclusiveDatabaseClasses && !roleType.IsMany)
                     {
-                        this.columnNameByRelationType[relationType] = this.NormalizeName(roleType.SingularName);
+                        this.columnNameByRelationType[relationType] = RoleColumnNameFor(relationType);
                     }
                 }
             }
@@ -150,7 +150,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 
                 if (!roleType.ObjectType.IsUnit && ((associationType.IsMany && roleType.IsMany) || !relationType.ExistExclusiveDatabaseClasses))
                 {
-                    this.tableNameForRelationByRelationType.Add(relationType, this.Database.SchemaName + "." + this.NormalizeName(relationType.RoleType.SingularFullName));
+                    this.tableNameForRelationByRelationType.Add(relationType, this.Database.SchemaName + "." + TableNameFor(relationType));
                 }
             }
 
@@ -508,12 +508,12 @@ WHERE {ColumnNameForObject}={this.ParamInvocationNameForObject}";
             var roles = this.RoleArrayParam;
 
             // Add Composite Role (1-*) [object table]
-            string Sql(string objectArray, string roleArray) => $@"WITH relations AS (SELECT UNNEST({objectArray}) AS {ColumnNameForAssociation}, UNNEST({roleArray}) AS {ColumnNameForRole})
+            string Sql(string objectArray, string roleArray) => $@"WITH relations AS (SELECT UNNEST({objectArray}) AS {AliasForAssociation}, UNNEST({roleArray}) AS {AliasForRole})
 
     UPDATE {table}
-    SET {this.columnNameByRelationType[relationType]} = relations.{ColumnNameForAssociation}
+    SET {this.columnNameByRelationType[relationType]} = relations.{AliasForAssociation}
     FROM relations
-    WHERE {table}.{ColumnNameForObject} = relations.{ColumnNameForRole}";
+    WHERE {table}.{ColumnNameForObject} = relations.{AliasForRole}";
 
             this.commandTextForAddRoleByRelationType.Add(relationType, Sql(SubSelect(objects), SubSelect(roles)));
             this.CommandTextForLoadAddRoleByRelationType.Add(relationType, Sql(objects.InvocationName, roles.InvocationName));
@@ -527,13 +527,13 @@ WHERE {ColumnNameForObject}={this.ParamInvocationNameForObject}";
             var roles = this.RoleArrayParam;
 
             // Remove Composite Role (1-*) [object table]
-            var sql = $@"WITH relations AS (SELECT UNNEST({SubSelect(objects)}) AS {ColumnNameForAssociation}, UNNEST({SubSelect(roles)}) AS {ColumnNameForRole})
+            var sql = $@"WITH relations AS (SELECT UNNEST({SubSelect(objects)}) AS {AliasForAssociation}, UNNEST({SubSelect(roles)}) AS {AliasForRole})
 
     UPDATE {table}
     SET {this.columnNameByRelationType[relationType]} = null
     FROM relations
-    WHERE {table}.{this.columnNameByRelationType[relationType]} = relations.{ColumnNameForAssociation} AND
-          {table}.{ColumnNameForObject} = relations.{ColumnNameForRole}";
+    WHERE {table}.{this.columnNameByRelationType[relationType]} = relations.{AliasForAssociation} AND
+          {table}.{ColumnNameForObject} = relations.{AliasForRole}";
             this.commandTextForRemoveRoleByRelationType.Add(relationType, sql);
         }
 
@@ -572,12 +572,12 @@ WHERE {ColumnNameForObject}={this.ParamInvocationNameForObject}";
             var objects = this.ObjectArrayParam;
             var roles = this.RoleArrayParam;
 
-            string Sql(string objectArray, string roleArray) => $@"WITH relations AS (SELECT UNNEST({objectArray}) AS {ColumnNameForAssociation}, UNNEST({roleArray}) AS {ColumnNameForRole})
+            string Sql(string objectArray, string roleArray) => $@"WITH relations AS (SELECT UNNEST({objectArray}) AS {AliasForAssociation}, UNNEST({roleArray}) AS {AliasForRole})
 
     UPDATE {table}
-    SET {this.columnNameByRelationType[relationType]} = relations.{ColumnNameForRole}
+    SET {this.columnNameByRelationType[relationType]} = relations.{AliasForRole}
     FROM relations
-    WHERE {ColumnNameForObject} = relations.{ColumnNameForAssociation}";
+    WHERE {ColumnNameForObject} = relations.{AliasForAssociation}";
 
             commandTextForSetUnitRoleByRelationType.Add(relationType, Sql(SubSelect(objects), SubSelect(roles)));
             commandTextForLoadSetUnitRoleByRelationType.Add(relationType, Sql(objects.InvocationName, roles.InvocationName));
@@ -672,12 +672,12 @@ WHERE {ColumnNameForObject}={this.ParamInvocationNameForObject}";
             var roles = this.RoleArrayParam;
 
             // Set Composite Role (1-1 and *-1) [object table]
-            string Sql(string objectArray, string roleArray) => $@"WITH relations AS (SELECT UNNEST({objectArray}) AS {ColumnNameForAssociation}, UNNEST({roleArray}) AS {ColumnNameForRole})
+            string Sql(string objectArray, string roleArray) => $@"WITH relations AS (SELECT UNNEST({objectArray}) AS {AliasForAssociation}, UNNEST({roleArray}) AS {AliasForRole})
 
     UPDATE {table}
-    SET {this.columnNameByRelationType[relationType]} = relations.{ColumnNameForRole}
+    SET {this.columnNameByRelationType[relationType]} = relations.{AliasForRole}
     FROM relations
-    WHERE {ColumnNameForObject} = relations.{ColumnNameForAssociation}";
+    WHERE {ColumnNameForObject} = relations.{AliasForAssociation}";
 
             this.commandTextForSetRoleByRelationType.Add(relationType, Sql(SubSelect(objects), SubSelect(roles)));
             this.CommandTextForLoadSetRoleByRelationType.Add(relationType, Sql(objects.InvocationName, roles.InvocationName));
@@ -702,39 +702,45 @@ WHERE {ColumnNameForObject}={this.ParamInvocationNameForObject}";
         private void GetCompositesRoleRelationTable(IRelationType relationType)
         {
             var table = this.tableNameForRelationByRelationType[relationType];
+            var association = RelationTableAssociationColumnNameFor(relationType);
+            var role = RelationTableRoleColumnNameFor(relationType);
 
             // Get Composites Role (1-* and *-*) [relation table]
-            var sql = $@"SELECT {ColumnNameForRole}
+            var sql = $@"SELECT {role}
     FROM {table}
-    WHERE {ColumnNameForAssociation}={this.ParamInvocationNameForAssociation}";
+    WHERE {association}={this.ParamInvocationNameForAssociation}";
             this.commandTextForGetRoleByRelationType.Add(relationType, sql);
         }
 
         private void PrefetchCompositesRoleRelationTable(IRelationType relationType)
         {
             var table = this.tableNameForRelationByRelationType[relationType];
+            var association = RelationTableAssociationColumnNameFor(relationType);
+            var role = RelationTableRoleColumnNameFor(relationType);
             var objectsArray = this.ObjectArrayParam;
 
             // Prefetch Composites Role (1-* and *-*) [relation table]
             var sql = $@"WITH objects AS (SELECT UNNEST({SubSelect(objectsArray)}) AS {ColumnNameForObject})
 
-    SELECT {ColumnNameForAssociation}, {ColumnNameForRole}
+    SELECT {association}, {role}
     FROM {table}
-    WHERE {ColumnNameForAssociation} IN (SELECT {ColumnNameForObject} FROM objects)";
+    WHERE {association} IN (SELECT {ColumnNameForObject} FROM objects)";
             this.commandTextForPrefetchRoleByRelationType.Add(relationType, sql);
         }
 
         private void AddCompositeRoleRelationTable(IRelationType relationType)
         {
             var table = this.tableNameForRelationByRelationType[relationType];
+            var association = RelationTableAssociationColumnNameFor(relationType);
+            var role = RelationTableRoleColumnNameFor(relationType);
             var objects = this.ObjectArrayParam;
             var roles = this.RoleArrayParam;
 
             // Add Composite Role (1-* and *-*) [relation table]
-            string Sql(string objectArray, string roleArray) => $@"WITH relations AS (SELECT UNNEST({objectArray}) AS {ColumnNameForAssociation}, UNNEST({roleArray}) AS {ColumnNameForRole})
+            string Sql(string objectArray, string roleArray) => $@"WITH relations AS (SELECT UNNEST({objectArray}) AS {AliasForAssociation}, UNNEST({roleArray}) AS {AliasForRole})
 
-    INSERT INTO {table} ({ColumnNameForAssociation},{ColumnNameForRole})
-    SELECT {ColumnNameForAssociation}, {ColumnNameForRole}
+    INSERT INTO {table} ({association},{role})
+    SELECT {AliasForAssociation}, {AliasForRole}
     FROM relations";
 
             this.commandTextForAddRoleByRelationType.Add(relationType, Sql(SubSelect(objects), SubSelect(roles)));
@@ -744,58 +750,66 @@ WHERE {ColumnNameForObject}={this.ParamInvocationNameForObject}";
         private void RemoveCompositeRoleRelationTable(IRelationType relationType)
         {
             var table = this.tableNameForRelationByRelationType[relationType];
+            var association = RelationTableAssociationColumnNameFor(relationType);
+            var role = RelationTableRoleColumnNameFor(relationType);
             var objects = this.ObjectArrayParam;
             var roles = this.RoleArrayParam;
 
             // Remove Composite Role (1-* and *-*) [relation table]
-            var sql = $@"WITH relations AS (SELECT UNNEST({SubSelect(objects)}) AS {ColumnNameForAssociation}, UNNEST({SubSelect(roles)}) AS {ColumnNameForRole})
+            var sql = $@"WITH relations AS (SELECT UNNEST({SubSelect(objects)}) AS {AliasForAssociation}, UNNEST({SubSelect(roles)}) AS {AliasForRole})
 
     DELETE FROM {table}
     USING relations
-    WHERE {table}.{ColumnNameForAssociation}=relations.{ColumnNameForAssociation} AND {table}.{ColumnNameForRole}=relations.{ColumnNameForRole}";
+    WHERE {table}.{association}=relations.{AliasForAssociation} AND {table}.{role}=relations.{AliasForRole}";
             this.commandTextForRemoveRoleByRelationType.Add(relationType, sql);
         }
 
         private void GetCompositeRoleRelationTable(IRelationType relationType)
         {
             var table = this.tableNameForRelationByRelationType[relationType];
+            var association = RelationTableAssociationColumnNameFor(relationType);
+            var role = RelationTableRoleColumnNameFor(relationType);
 
             // Get Composite Role (1-1 and *-1) [relation table]
-            var sql = $@"SELECT {ColumnNameForRole}
+            var sql = $@"SELECT {role}
     FROM {table}
-    WHERE {ColumnNameForAssociation}={this.ParamInvocationNameForAssociation}";
+    WHERE {association}={this.ParamInvocationNameForAssociation}";
             this.commandTextForGetRoleByRelationType.Add(relationType, sql);
         }
 
         private void PrefetchCompositeRoleRelationType(IRelationType relationType)
         {
             var table = this.tableNameForRelationByRelationType[relationType];
+            var association = RelationTableAssociationColumnNameFor(relationType);
+            var role = RelationTableRoleColumnNameFor(relationType);
             var objects = this.ObjectArrayParam;
 
             // Prefetch Composite Role (1-1 and *-1) [relation table]
             var sql = $@"WITH objects AS (SELECT UNNEST({SubSelect(objects)}) AS {ColumnNameForObject})
 
-    SELECT {ColumnNameForAssociation}, {ColumnNameForRole}
+    SELECT {association}, {role}
     FROM {table}
-    WHERE {ColumnNameForAssociation} IN (SELECT {ColumnNameForObject} FROM objects)";
+    WHERE {association} IN (SELECT {ColumnNameForObject} FROM objects)";
             this.commandTextForPrefetchRoleByRelationType.Add(relationType, sql);
         }
 
         private void SetCompositeRoleRelationType(IRelationType relationType)
         {
             var table = this.tableNameForRelationByRelationType[relationType];
+            var association = RelationTableAssociationColumnNameFor(relationType);
+            var role = RelationTableRoleColumnNameFor(relationType);
             var objects = this.ObjectArrayParam;
             var roles = this.RoleArrayParam;
 
             // Set Composite Role (1-1 and *-1) [relation table]
-            string Sql(string objectArray, string roleArray) => $@"WITH relations AS (SELECT UNNEST({objectArray}) AS {ColumnNameForAssociation}, UNNEST({roleArray}) AS {ColumnNameForRole})
+            string Sql(string objectArray, string roleArray) => $@"WITH relations AS (SELECT UNNEST({objectArray}) AS {AliasForAssociation}, UNNEST({roleArray}) AS {AliasForRole})
 
-    INSERT INTO {table}
-    SELECT {ColumnNameForAssociation}, {ColumnNameForRole} from relations
+    INSERT INTO {table} ({association}, {role})
+    SELECT {AliasForAssociation}, {AliasForRole} from relations
 
-    ON CONFLICT ({ColumnNameForAssociation})
+    ON CONFLICT ({association})
     DO UPDATE
-        SET {ColumnNameForRole} = excluded.{ColumnNameForRole}";
+        SET {role} = excluded.{role}";
 
             this.commandTextForSetRoleByRelationType.Add(relationType, Sql(SubSelect(objects), SubSelect(roles)));
             this.CommandTextForLoadSetRoleByRelationType.Add(relationType, Sql(objects.InvocationName, roles.InvocationName));
@@ -804,63 +818,72 @@ WHERE {ColumnNameForObject}={this.ParamInvocationNameForObject}";
         private void GetCompositeAssociationRelationTable(IRelationType relationType)
         {
             var table = this.tableNameForRelationByRelationType[relationType];
+            var association = RelationTableAssociationColumnNameFor(relationType);
+            var role = RelationTableRoleColumnNameFor(relationType);
 
             // Get Composite Association (1-1) [relation table]
-            var sql = $@"SELECT {ColumnNameForAssociation}
+            var sql = $@"SELECT {association}
     FROM {table}
-    WHERE {ColumnNameForRole}={this.ParamInvocationNameForCompositeRole}";
+    WHERE {role}={this.ParamInvocationNameForCompositeRole}";
             this.commandTextForGetAssociationByRelationType.Add(relationType, sql);
         }
 
         private void PrefetchCompositeAssociationRelationTable(IRelationType relationType)
         {
             var table = this.tableNameForRelationByRelationType[relationType];
+            var association = RelationTableAssociationColumnNameFor(relationType);
+            var role = RelationTableRoleColumnNameFor(relationType);
             var objects = this.ObjectArrayParam;
 
             // Prefetch Composite Association (1-1) [relation table]
             var sql = $@"WITH objects AS (SELECT UNNEST({SubSelect(objects)}) AS {ColumnNameForObject})
 
-    SELECT {ColumnNameForAssociation},{ColumnNameForRole}
+    SELECT {association},{role}
     FROM {table}
-    WHERE {ColumnNameForRole} IN (SELECT {ColumnNameForObject} FROM objects)";
+    WHERE {role} IN (SELECT {ColumnNameForObject} FROM objects)";
             this.commandTextForPrefetchAssociationByRelationType.Add(relationType, sql);
         }
 
         private void GetCompositesAssociationRelationTable(IRelationType relationType)
         {
             var table = this.tableNameForRelationByRelationType[relationType];
+            var association = RelationTableAssociationColumnNameFor(relationType);
+            var role = RelationTableRoleColumnNameFor(relationType);
 
             // Get Composite Association (*-1) [relation table]
-            var sql = $@"SELECT {ColumnNameForAssociation}
+            var sql = $@"SELECT {association}
     FROM {table}
-    WHERE {ColumnNameForRole}={this.ParamInvocationNameForCompositeRole}";
+    WHERE {role}={this.ParamInvocationNameForCompositeRole}";
             this.commandTextForGetAssociationByRelationType.Add(relationType, sql);
         }
 
         private void PrefetchCompositesAssociationRelationTable(IRelationType relationType)
         {
             var table = this.tableNameForRelationByRelationType[relationType];
+            var association = RelationTableAssociationColumnNameFor(relationType);
+            var role = RelationTableRoleColumnNameFor(relationType);
             var objects = this.ObjectArrayParam;
 
             // Prefetch Composite Association (*-1) [relation table]
             var sql = $@"WITH objects AS (SELECT UNNEST({SubSelect(objects)}) AS {ColumnNameForObject})
 
-    SELECT {ColumnNameForAssociation},{ColumnNameForRole}
+    SELECT {association},{role}
     FROM {table}
-    WHERE {ColumnNameForRole} IN (SELECT {ColumnNameForObject} FROM objects)";
+    WHERE {role} IN (SELECT {ColumnNameForObject} FROM objects)";
             this.commandTextForPrefetchAssociationByRelationType.Add(relationType, sql);
         }
 
         private void ClearCompositeRoleRelationTable(IRelationType relationType)
         {
             var table = this.tableNameForRelationByRelationType[relationType];
+            var association = RelationTableAssociationColumnNameFor(relationType);
             var objects = this.ObjectArrayParam;
 
             // Clear Composite Role (1-1 and *-1) [relation table]
             var sql = $@"WITH objects AS (SELECT UNNEST({SubSelect(objects)}) AS {ColumnNameForObject})
 
     DELETE FROM {table}
-    WHERE {ColumnNameForAssociation} IN (SELECT {ColumnNameForObject} FROM objects)";
+    WHERE {association} IN (SELECT {ColumnNameForObject} FROM objects)";
             this.commandTextForClearRoleByRelationType.Add(relationType, sql);
         }
 

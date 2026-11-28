@@ -64,7 +64,7 @@ namespace Allors.Database.Adapters.Sql
                 catch (DbException e)
                 {
                     var remaining = atomic ? missing : this.StillMissing(wanted, missing);
-                    throw new Exception($"The schema lacks {remaining.Length} of its indexes and the adapter could not create them: {e.Message} Run these statements with a login that may create an index on the tables: {string.Join("; ", remaining.Select(this.CreateStatement))}", e);
+                    throw new Exception($"The schema lacks {remaining.Length} of its indexes and the adapter could not create them: {e.Message} Run these statements with a login that may create an index on the tables: {string.Join("; ", remaining.Select(this.CreateStatementWithItsRelationType))}", e);
                 }
             }
 
@@ -87,7 +87,7 @@ namespace Allors.Database.Adapters.Sql
             {
                 this.RefuseATakenName(missing, existing);
 
-                throw new Exception($"The schema lacks {missing.Length} of its indexes, and a transaction creates none. Run the index command of the command-line tool or call EnsureIndexes() on the database, with a login that may create an index on the tables, or run these statements: {string.Join("; ", missing.Select(this.CreateStatement))}");
+                throw new Exception($"The schema lacks {missing.Length} of its indexes, and a transaction creates none. Run the index command of the command-line tool or call EnsureIndexes() on the database, with a login that may create an index on the tables, or run these statements: {string.Join("; ", missing.Select(this.CreateStatementWithItsRelationType))}");
             }
         }
 
@@ -97,6 +97,16 @@ namespace Allors.Database.Adapters.Sql
         protected static bool IsMissing(SchemaIndex index, IEnumerable<SchemaIndex> existing) => !existing.Any(v => v.IsComplete && v.LeadsWithColumnOf(index));
 
         protected string CreateStatement(SchemaIndex index) => $"CREATE INDEX {index.Name} ON {index.TableName} ({index.ColumnName})";
+
+        // The statement as a message shows it: the names of the index, of its table and of its column carry
+        // ids, so a comment names the relation type and the class.
+        private string CreateStatementWithItsRelationType(SchemaIndex index)
+        {
+            var description = this.Database.Mapping.Describe(index.TableName, index.ColumnName);
+            // Keep a delimiter in a model name from opening or closing a SQL comment.
+            var comment = description.Replace("/*", "/ *").Replace("*/", "* /");
+            return $"{this.CreateStatement(index)} /* {comment} */";
+        }
 
         /// <summary>
         /// Whether an index that exists prevents the creation of an index, because it has its name.
@@ -128,7 +138,9 @@ namespace Allors.Database.Adapters.Sql
                 var taken = existing.FirstOrDefault(v => this.TakesNameOf(v, index));
                 if (taken != null)
                 {
-                    throw new Exception($"The schema needs the index {index.Name} on {index.TableName} ({index.ColumnName}), and that name belongs to an index on {taken.TableName} ({taken.ColumnName ?? "an expression"}). Drop or rename that index.");
+                    var mapping = this.Database.Mapping;
+                    var takenFor = mapping.Describe(taken.TableName, taken.ColumnName) is { } description ? ", which is " + description : string.Empty;
+                    throw new Exception($"The schema needs the index {index.Name} on {index.TableName} ({index.ColumnName}), which is {mapping.Describe(index.TableName, index.ColumnName)}, and that name belongs to an index on {taken.TableName} ({taken.ColumnName ?? "an expression"}){takenFor}. Drop or rename that index.");
                 }
             }
         }
@@ -164,7 +176,6 @@ namespace Allors.Database.Adapters.Sql
             foreach (var @class in this.Database.MetaPopulation.DatabaseClasses)
             {
                 var tableName = mapping.TableNameForObjectByClass[@class];
-                var className = @class.Name.ToLowerInvariant();
 
                 foreach (var associationType in @class.DatabaseAssociationTypes)
                 {
@@ -172,7 +183,7 @@ namespace Allors.Database.Adapters.Sql
                     var roleType = relationType.RoleType;
                     if (!(associationType.IsMany && roleType.IsMany) && relationType.ExistExclusiveDatabaseClasses && roleType.IsMany)
                     {
-                        wanted.Add(new SchemaIndex($"idx_{className}_{associationType.SingularFullName.ToLowerInvariant()}", tableName, mapping.ColumnNameByRelationType[relationType]));
+                        wanted.Add(new SchemaIndex(Mapping.IndexNameFor(@class, relationType), tableName, mapping.ColumnNameByRelationType[relationType]));
                     }
                 }
 
@@ -180,7 +191,7 @@ namespace Allors.Database.Adapters.Sql
                 {
                     var relationType = roleType.RelationType;
                     var associationType = relationType.AssociationType;
-                    var name = $"idx_{className}_{roleType.SingularFullName.ToLowerInvariant()}";
+                    var name = Mapping.IndexNameFor(@class, relationType);
 
                     if (roleType.ObjectType.IsUnit)
                     {
@@ -211,7 +222,7 @@ namespace Allors.Database.Adapters.Sql
                 var roleType = relationType.RoleType;
                 if (!roleType.ObjectType.IsUnit && ((associationType.IsMany && roleType.IsMany) || !relationType.ExistExclusiveDatabaseClasses))
                 {
-                    wanted.Add(new SchemaIndex($"idx_{roleType.SingularFullName.ToLowerInvariant()}_{Mapping.ColumnNameForRole}", mapping.TableNameForRelationByRelationType[relationType], Mapping.ColumnNameForRole));
+                    wanted.Add(new SchemaIndex(Mapping.IndexNameFor(relationType), mapping.TableNameForRelationByRelationType[relationType], Mapping.RelationTableRoleColumnNameFor(relationType)));
                 }
             }
         }

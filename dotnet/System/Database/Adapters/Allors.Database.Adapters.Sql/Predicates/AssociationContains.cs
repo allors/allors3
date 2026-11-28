@@ -29,8 +29,8 @@ namespace Allors.Database.Adapters.Sql
                 var innerAlias = statement.CreateAlias();
                 statement.Append("\nEXISTS(\nSELECT 1\n");
                 statement.Append($"FROM {schema.TableNameForRelationByRelationType[this.association.RelationType]} {innerAlias}\n");
-                statement.Append($"WHERE {innerAlias}.{Mapping.ColumnNameForAssociation}={this.allorsObject.Strategy.ObjectId}\n");
-                statement.Append($"AND {innerAlias}.{Mapping.ColumnNameForRole}={alias}.{Mapping.ColumnNameForObject}\n");
+                statement.Append($"WHERE {innerAlias}.{Mapping.RelationTableAssociationColumnNameFor(this.association.RelationType)}={this.allorsObject.Strategy.ObjectId}\n");
+                statement.Append($"AND {innerAlias}.{Mapping.RelationTableRoleColumnNameFor(this.association.RelationType)}={alias}.{Mapping.ColumnNameForObject}\n");
                 statement.Append(")");
             }
             else

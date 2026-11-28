@@ -5,8 +5,9 @@
 
 namespace Allors.Database.Adapters.Sql.SqlClient
 {
-    using Microsoft.Data.SqlClient;
+    using System;
     using System.Text;
+    using Microsoft.Data.SqlClient;
 
 
     public class Initialization
@@ -105,16 +106,21 @@ CREATE SCHEMA {this.database.SchemaName}";
             }
         }
 
+        // Drops the table types of the adapter: each table type whose name starts with the prefix of its table types,
+        // as SQL Server stores the name. The other table types of the schema stay.
         private void DropTableTypes()
         {
             using var connection = new SqlConnection(this.ConnectionString);
             connection.Open();
             try
             {
-                foreach (var name in this.validation.Schema.TableTypeByName.Keys)
+                foreach (var name in this.validation.Schema.StoredTableTypeNames)
                 {
-                    using var command = new SqlCommand($"DROP TYPE {name}", connection);
-                    command.ExecuteNonQuery();
+                    if (name.StartsWith(Mapping.TableTypePrefix, StringComparison.Ordinal))
+                    {
+                        using var command = new SqlCommand($"DROP TYPE {this.Quote(name)}", connection);
+                        command.ExecuteNonQuery();
+                    }
                 }
             }
             finally
@@ -198,30 +204,20 @@ CREATE SCHEMA {this.database.SchemaName}";
             }
         }
 
+        // Drops every table of the adapter: each table whose name starts with the prefix, as SQL Server stores the
+        // name, those of the model and those of an earlier model that this one lacks. The other tables stay.
         private void DropTables()
         {
             using var connection = new SqlConnection(this.ConnectionString);
             connection.Open();
             try
             {
-                this.DropTable(connection, this.mapping.TableNameForObjects);
-
-                foreach (var @class in this.mapping.Database.MetaPopulation.DatabaseClasses)
+                foreach (var name in this.validation.Schema.StoredTableNames)
                 {
-                    var tableName = this.mapping.TableNameForObjectByClass[@class];
-
-                    this.DropTable(connection, tableName);
-                }
-
-                foreach (var relationType in this.mapping.Database.MetaPopulation.DatabaseRelationTypes)
-                {
-                    var associationType = relationType.AssociationType;
-                    var roleType = relationType.RoleType;
-
-                    if (!roleType.ObjectType.IsUnit && ((associationType.IsMany && roleType.IsMany) || !relationType.ExistExclusiveDatabaseClasses))
+                    if (name.StartsWith(Sql.Mapping.Prefix, StringComparison.Ordinal))
                     {
-                        var tableName = this.mapping.TableNameForRelationByRelationType[relationType];
-                        this.DropTable(connection, tableName);
+                        using var command = new SqlCommand($"DROP TABLE {this.Quote(name)}", connection);
+                        command.ExecuteNonQuery();
                     }
                 }
             }
@@ -301,16 +297,16 @@ CREATE SCHEMA {this.database.SchemaName}";
                     if (!roleType.ObjectType.IsUnit && ((associationType.IsMany && roleType.IsMany) || !relationType.ExistExclusiveDatabaseClasses))
                     {
                         var tableName = this.mapping.TableNameForRelationByRelationType[relationType];
-
-                        var primaryKeyName = $"pk_{relationType.RoleType.SingularFullName.ToLowerInvariant()}";
+                        var association = Sql.Mapping.RelationTableAssociationColumnNameFor(relationType);
+                        var role = Sql.Mapping.RelationTableRoleColumnNameFor(relationType);
 
                         var sql =
                             $@"CREATE TABLE {tableName}(
-    {Sql.Mapping.ColumnNameForAssociation} {Mapping.SqlTypeForObject},
-    {Sql.Mapping.ColumnNameForRole} {Mapping.SqlTypeForObject},
+    {association} {Mapping.SqlTypeForObject},
+    {role} {Mapping.SqlTypeForObject},
     {(relationType.RoleType.IsOne
-                                ? $"CONSTRAINT {primaryKeyName} PRIMARY KEY ({Sql.Mapping.ColumnNameForAssociation})\n"
-                                : $"CONSTRAINT {primaryKeyName} PRIMARY KEY ({Sql.Mapping.ColumnNameForAssociation}, {Sql.Mapping.ColumnNameForRole})\n")}
+                                ? $"PRIMARY KEY ({association})\n"
+                                : $"PRIMARY KEY ({association}, {role})\n")}
 
 )";
 
@@ -332,13 +328,7 @@ CREATE SCHEMA {this.database.SchemaName}";
         private static void AppendTruncateTable(StringBuilder sql, string tableName) =>
             sql.Append("IF EXISTS (SELECT * FROM " + tableName + " WITH (TABLOCKX)) TRUNCATE TABLE " + tableName + ";\n");
 
-        private void DropTable(SqlConnection connection, string tableName)
-        {
-            if (!this.validation.MissingTableNames.Contains(tableName))
-            {
-                using var command = new SqlCommand($"DROP TABLE {tableName}", connection);
-                command.ExecuteNonQuery();
-            }
-        }
+        // The name of an object of the schema as SQL Server stores it, in brackets.
+        private string Quote(string name) => $"[{this.database.SchemaName.Replace("]", "]]")}].[{name.Replace("]", "]]")}]";
     }
 }

@@ -5,7 +5,9 @@
 
 namespace Allors.Database.Adapters.Sql.SqlClient
 {
+    using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Text;
     using static Mapping;
 
@@ -14,10 +16,19 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         public HashSet<string> MissingTableNames { get; }
         public HashSet<SchemaTable> InvalidTables { get; }
 
+        /// <summary>
+        /// The tables of the schema whose names start with the prefix of the adapter and that the model lacks, by
+        /// their names as SQL Server stores them, without the schema.
+        /// </summary>
+        public HashSet<string> ObsoleteTableNames { get; }
+
         public HashSet<string> MissingTableTypeNames { get; }
         public HashSet<SchemaTableType> InvalidTableTypes { get; }
 
         private readonly Mapping mapping;
+
+        // The lines of the message for each invalid table: its columns, and its primary key.
+        private readonly Dictionary<SchemaTable, List<string>> linesByInvalidTable;
 
         public Validation(Database database)
         {
@@ -27,6 +38,8 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
             this.MissingTableNames = new HashSet<string>();
             this.InvalidTables = new HashSet<SchemaTable>();
+            this.ObsoleteTableNames = new HashSet<string>(StringComparer.Ordinal);
+            this.linesByInvalidTable = new Dictionary<SchemaTable, List<string>>();
 
             this.MissingTableTypeNames = new HashSet<string>();
             this.InvalidTableTypes = new HashSet<SchemaTableType>();
@@ -36,6 +49,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             this.IsValid =
                 this.MissingTableNames.Count == 0 &
                 this.InvalidTables.Count == 0 &
+                this.ObsoleteTableNames.Count == 0 &
                 this.MissingTableTypeNames.Count == 0 &
                 this.InvalidTableTypes.Count == 0;
         }
@@ -52,23 +66,9 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             {
                 var message = new StringBuilder();
 
-                if (this.MissingTableNames.Count > 0)
-                {
-                    message.Append("Missing Tables:\n");
-                    foreach (var missingTable in this.MissingTableNames)
-                    {
-                        message.Append($"- {missingTable}:\n");
-                    }
-                }
-
-                if (this.InvalidTables.Count > 0)
-                {
-                    message.Append("Invalid Tables:\n");
-                    foreach (var invalidTable in this.InvalidTables)
-                    {
-                        message.Append($"- {invalidTable.Name}:\n");
-                    }
-                }
+                Append(message, "Missing Tables", this.MissingTableNames.Select(v => (v, this.mapping.Describe(v), Enumerable.Empty<string>())));
+                Append(message, "Obsolete Tables", this.ObsoleteTableNames.OrderBy(v => v, StringComparer.Ordinal).Select(v => ($"{this.Database.SchemaName}.{v}", DescribeObsoleteTable(this.Database.MetaPopulation, v), Enumerable.Empty<string>())));
+                Append(message, "Invalid Tables", this.InvalidTables.Select(v => (v.Name, this.mapping.Describe(v.Name), (IEnumerable<string>)this.linesByInvalidTable[v])));
 
                 if (this.MissingTableTypeNames.Count > 0)
                 {
@@ -94,6 +94,11 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         private void Validate()
         {
+            var metaPopulation = this.Database.MetaPopulation;
+
+            // The names of the tables of the model, without the schema.
+            var tableNames = new HashSet<string>(StringComparer.Ordinal) { Mapping.ObjectsTableName };
+
             // Objects Table
             var objectsTable = this.Schema.GetTable(this.mapping.TableNameForObjects);
             if (objectsTable == null)
@@ -102,20 +107,22 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             }
             else
             {
-                if (objectsTable.ColumnByLowercaseColumnName.Count != 3)
-                {
-                    this.InvalidTables.Add(objectsTable);
-                }
-
-                this.ValidateColumn(objectsTable, Sql.Mapping.ColumnNameForObject, SqlTypeForObject);
-                this.ValidateColumn(objectsTable, Sql.Mapping.ColumnNameForClass, SqlTypeForClass);
-                this.ValidateColumn(objectsTable, Sql.Mapping.ColumnNameForVersion, SqlTypeForVersion);
+                this.ValidateColumns(
+                    objectsTable,
+                    new[]
+                    {
+                        (Sql.Mapping.ColumnNameForObject, SqlTypeForObject, DescribeObjectsTableColumn(Sql.Mapping.ColumnNameForObject)),
+                        (Sql.Mapping.ColumnNameForClass, SqlTypeForClass, DescribeObjectsTableColumn(Sql.Mapping.ColumnNameForClass)),
+                        (Sql.Mapping.ColumnNameForVersion, SqlTypeForVersion, DescribeObjectsTableColumn(Sql.Mapping.ColumnNameForVersion)),
+                    },
+                    DescribeObjectsTableColumn);
             }
 
             // Object Tables
-            foreach (var @class in this.Database.MetaPopulation.DatabaseClasses)
+            foreach (var @class in metaPopulation.DatabaseClasses)
             {
                 var tableName = this.mapping.TableNameForObjectByClass[@class];
+                tableNames.Add(Mapping.TableNameFor(@class));
                 var table = this.Schema.GetTable(tableName);
 
                 if (table == null)
@@ -124,8 +131,11 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 }
                 else
                 {
-                    this.ValidateColumn(table, Sql.Mapping.ColumnNameForObject, SqlTypeForObject);
-                    this.ValidateColumn(table, Sql.Mapping.ColumnNameForClass, SqlTypeForClass);
+                    var columns = new List<(string, string, string)>
+                    {
+                        (Sql.Mapping.ColumnNameForObject, SqlTypeForObject, DescribeObjectsTableColumn(Sql.Mapping.ColumnNameForObject)),
+                        (Sql.Mapping.ColumnNameForClass, SqlTypeForClass, DescribeObjectsTableColumn(Sql.Mapping.ColumnNameForClass)),
+                    };
 
                     foreach (var associationType in @class.DatabaseAssociationTypes)
                     {
@@ -134,10 +144,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                         if (!(associationType.IsMany && roleType.IsMany) && relationType.ExistExclusiveDatabaseClasses
                             && roleType.IsMany)
                         {
-                            this.ValidateColumn(
-                                table,
-                                this.mapping.ColumnNameByRelationType[relationType],
-                                SqlTypeForObject);
+                            columns.Add((this.mapping.ColumnNameByRelationType[relationType], SqlTypeForObject, DescribeAssociation(relationType)));
                         }
                     }
 
@@ -147,24 +154,20 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                         var associationType = relationType.AssociationType;
                         if (roleType.ObjectType.IsUnit)
                         {
-                            this.ValidateColumn(
-                                table,
-                                this.mapping.ColumnNameByRelationType[relationType],
-                                this.mapping.GetSqlType(relationType.RoleType));
+                            columns.Add((this.mapping.ColumnNameByRelationType[relationType], this.mapping.GetSqlType(relationType.RoleType), DescribeRole(relationType)));
                         }
                         else if (!(associationType.IsMany && roleType.IsMany) && relationType.ExistExclusiveDatabaseClasses && !roleType.IsMany)
                         {
-                            this.ValidateColumn(
-                                table,
-                                this.mapping.ColumnNameByRelationType[relationType],
-                                SqlTypeForObject);
+                            columns.Add((this.mapping.ColumnNameByRelationType[relationType], SqlTypeForObject, DescribeRole(relationType)));
                         }
                     }
+
+                    this.ValidateColumns(table, columns, v => DescribeObsoleteClassTableColumn(metaPopulation, v));
                 }
             }
 
             // Relation Tables
-            foreach (var relationType in this.Database.MetaPopulation.DatabaseRelationTypes)
+            foreach (var relationType in metaPopulation.DatabaseRelationTypes)
             {
                 var associationType = relationType.AssociationType;
                 var roleType = relationType.RoleType;
@@ -173,6 +176,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                     ((associationType.IsMany && roleType.IsMany) || !relationType.ExistExclusiveDatabaseClasses))
                 {
                     var tableName = this.mapping.TableNameForRelationByRelationType[relationType];
+                    tableNames.Add(Mapping.TableNameFor(relationType));
                     var table = this.Schema.GetTable(tableName);
 
                     if (table == null)
@@ -181,16 +185,35 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                     }
                     else
                     {
-                        if (table.ColumnByLowercaseColumnName.Count != 2)
+                        var associationColumnName = this.mapping.NormalizeName(Mapping.RelationTableAssociationColumnNameFor(relationType));
+                        var roleColumnName = this.mapping.NormalizeName(Mapping.RelationTableRoleColumnNameFor(relationType));
+                        this.ValidateColumns(
+                            table,
+                            new[]
+                            {
+                                (associationColumnName, SqlTypeForObject, DescribeRelationTableAssociation(relationType)),
+                                (roleColumnName, SqlTypeForObject, DescribeRelationTableRole(relationType)),
+                            },
+                            v => DescribeObsoleteRelationTableColumn(metaPopulation, v));
+
+                        var associationColumn = table.GetColumn(associationColumnName);
+                        var roleColumn = table.GetColumn(roleColumnName);
+                        if (associationColumn != null && roleColumn != null &&
+                            !HasRelationPrimaryKey(roleType, table.PrimaryKeyColumnCount, associationColumn.PrimaryKeyOrdinal, roleColumn.PrimaryKeyOrdinal))
                         {
-                            this.InvalidTables.Add(table);
+                            this.AddLines(table, new[] { PrimaryKeyLine(roleType, table.ColumnByLowercaseColumnName.Values.Select(v => (v.Name, v.PrimaryKeyOrdinal)), associationColumnName, roleColumnName) });
                         }
-
-                        this.ValidateColumn(table, Sql.Mapping.ColumnNameForAssociation, SqlTypeForObject);
-
-                        var roleSqlType = relationType.RoleType.ObjectType.IsComposite ? SqlTypeForObject : this.mapping.GetSqlType(relationType.RoleType);
-                        this.ValidateColumn(table, Sql.Mapping.ColumnNameForRole, roleSqlType);
                     }
+                }
+            }
+
+            // The tables of the adapter that the model lacks, by the names that SQL Server stores: a table whose
+            // name differs from the prefix only in case is not one of them.
+            foreach (var storedTableName in this.Schema.StoredTableNames)
+            {
+                if (storedTableName.StartsWith(Mapping.Prefix, StringComparison.Ordinal) && !tableNames.Contains(storedTableName))
+                {
+                    this.ObsoleteTableNames.Add(storedTableName);
                 }
             }
 
@@ -238,7 +261,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 }
             }
 
-            // TODO: Primary Keys and Indeces
+            // TODO: Validate the primary keys of the objects table and the class tables.
         }
 
         private void ValidateTableType(string name, string columnType)
@@ -260,15 +283,29 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             }
         }
 
-        private void ValidateColumn(SchemaTable table, string columnName, string sqlType)
+        // The table is invalid when its columns are not those of the model: the full set, with their types.
+        private void ValidateColumns(SchemaTable table, IEnumerable<(string Name, string SqlType, string Description)> columns, Func<string, string> describeObsolete)
         {
-            var normalizedColumnName = this.mapping.NormalizeName(columnName);
-            var objectColumn = table.GetColumn(normalizedColumnName);
+            var sqlTypeByColumn = table.ColumnByLowercaseColumnName.ToDictionary(v => v.Key, v => v.Value.SqlType);
+            var expected = columns.Select(v => (this.mapping.NormalizeName(v.Name), v.SqlType, v.Description));
+            this.AddLines(table, CompareColumns(expected, sqlTypeByColumn, describeObsolete));
+        }
 
-            if (objectColumn == null || !objectColumn.SqlType.Equals(sqlType))
+        private void AddLines(SchemaTable table, IReadOnlyCollection<string> lines)
+        {
+            if (lines.Count == 0)
             {
-                this.InvalidTables.Add(table);
+                return;
             }
+
+            this.InvalidTables.Add(table);
+            if (!this.linesByInvalidTable.TryGetValue(table, out var tableLines))
+            {
+                tableLines = new List<string>();
+                this.linesByInvalidTable.Add(table, tableLines);
+            }
+
+            tableLines.AddRange(lines);
         }
 
         private void ValidateColumn(SchemaTableType tableType, string columnName, string sqlType)

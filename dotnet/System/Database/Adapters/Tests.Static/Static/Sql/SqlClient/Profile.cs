@@ -59,11 +59,11 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         protected string ConnectionString => Provisioning.ConnectionString(this.database);
 
-        public override IDatabase CreateDatabase() => this.CreateDatabase(300);
+        public override IDatabase CreateDatabase() => this.CreateDatabase(metaPopulation: null);
 
-        public IDatabase CreateDatabase(int? commandTimeout)
+        public IDatabase CreateDatabase(int? commandTimeout = 300, MetaPopulation metaPopulation = null)
         {
-            var metaPopulation = new MetaBuilder().Build();
+            metaPopulation ??= new MetaBuilder().Build();
             var scope = new DefaultDomainDatabaseServices();
             return new Database(scope, new Sql.Configuration
             {

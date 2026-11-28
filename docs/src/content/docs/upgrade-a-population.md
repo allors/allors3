@@ -66,6 +66,7 @@ public void Execute()
 | requires a role that existing objects have no value for | Give every existing object a value in `Execute`. The derivation checks the required roles only of the objects that the upgrade changes. |
 | creates an object in its setup | Merge the object in `Execute`, with the merge of the setup; [Grant access](grant-access.md#2-create-the-role-and-the-user-group) shows such merges. |
 | gives a `Role` other permissions | Nothing: the command runs the security setup. |
+| lets an object be the role of one association only, where it could be the role of several: a many-to-one relation type that becomes one-to-one, or a many-to-many relation type that becomes one-to-many | Before the save in step 3, give each such object at most one association with the earlier version. The load does not check it: it keeps both associations of an object, and the association of that object then reads one of them ([#339](https://github.com/allors/allors3/issues/339)). |
 | removes a class or a relation type | Declare it, as the next step shows. |
 
 ## 2. Declare what the new version removed
@@ -111,16 +112,72 @@ application runs.
 
 ## 4. Upgrade with the new version
 
-Stop any remaining programs that read the database. In a clone at the new version, generate the
-sample again and run `upgrade` with the same settings on the saved file:
+Stop any remaining programs that read the database. Before running `upgrade`, choose the
+database that will receive the saved population: a new, empty database, or the database of the
+earlier version. `upgrade` does not create a database.
+
+With the SqlClient and Npgsql adapters, **create a new, empty database** when the earlier version
+names its tables otherwise than the new version, as [The names of the tables](#the-names-of-the-tables)
+describes. The database of the earlier version then stays as it was, for that version. When both
+versions name their tables alike, you can reuse the database of the earlier version: the upgrade
+replaces its population with the one in the saved file.
+
+In a clone at the new version, generate the sample and set `ConnectionStrings__DefaultConnection`
+to the chosen database. In this PostgreSQL example, `init` of the
+[command-line tool](command-line-tool.md) creates a new database named `sample_upgraded`, through
+the [admin connection](configuration.md#admin-connections), and `upgrade` loads the population
+saved from `sample` in step 3 into it. Leave out `init` when you reuse a database: it drops the
+database of the connection string and creates it again.
 
 ```sh
 ./build.sh SampleGenerate
+export adapter=npgsql
+export ConnectionStrings__DefaultConnection='Host=localhost;Database=sample_upgraded;Username=…;Password=…'
+dotnet run --project sample/Database/Commands -- init
 dotnet run --project sample/Database/Commands -- upgrade -f ~/population.xml
 ```
 
 The load gives the database the tables of the new model. The command logs `Begin`, the file that
-it loads and `End`, and exits with code 0. Then start the new version.
+it loads and `End`, and exits with code 0. After it succeeds, point the new application at the
+database you upgraded (`sample_upgraded` in the example), then start it.
+
+### The names of the tables
+
+The SqlClient and Npgsql adapters keep a population in tables: the objects table, which holds the
+id, the class and the version of every object, a table for each class, and a table for each
+relation type whose relations no column of a class table holds, such as a many-to-many relation
+type. They name their tables, columns and indexes by the ids of the model, and the name of every
+table and index starts with `allors_`:
+
+| Name | What it is |
+| --- | --- |
+| `allors_o` | The objects table. |
+| `allors_<class id>` | The table of a class. |
+| `allors_<relation type id>_<multiplicity>` | The table of a relation type. The multiplicity is one letter for each end, `o` for one and `m` for many, the association first: `oo`, `om`, `mo` or `mm`. |
+| `r_<relation type id>` | In the table of a class, the column of a unit role. |
+| `r_<relation type id>_<object type id>_<multiplicity>` | In the table of a class, the column of a composite role, `oo` or `mo`, with the object type of the role. |
+| `a_<relation type id>_<object type id>_om` | In the table of a class, the column of the association of a one-to-many relation type, with the object type of the association. |
+| `a_<object type id>` and `r_<object type id>` | In the table of a relation type, the columns of the association and of the role, each with its object type. |
+
+The server names the primary keys. Earlier versions named their tables after classes and roles,
+such as `person`, and their objects table `_o`.
+
+A relation type keeps its id when its multiplicity or the object type at one of its ends changes,
+or when it leaves the database, and then the names of its table or its columns change. Before its
+first transaction a database object compares the tables of the schema with those of the model.
+When a table is missing, when a table whose name starts with `allors_` is not one of the model,
+when a table has columns that the model does not give it, or when the table of a relation type
+has another primary key, no transaction opens. The message lists the tables under
+`Missing Tables:`, `Obsolete Tables:` and `Invalid Tables:`, each with its class or its relation
+type, and under each invalid table the columns that differ: a missing column as the model has it,
+and an obsolete column with the relation type, the multiplicity and the object type that its name
+carries. Upgrade such a database: the load builds the tables of the new model.
+
+When `Init()` or the load builds the schema again, it drops only tables whose names start with
+`allors_`, and on SQL Server only table types whose names start with `allors_t_`, before it
+creates the tables of the model. In a database whose tables an earlier version named otherwise,
+the new version finds none of its tables, and a load there builds them next to those of the
+earlier version, which keep their rows.
 
 ## 5. When the upgrade stops
 
@@ -171,3 +228,9 @@ dotnet test sample/Database/Commands.Tests
   commits the changes of its `Upgrade` without deriving them, and does not read the setting
   `populationFile`.
 - The events of the load are described in [Populations](populations.md#a-file-of-an-earlier-model).
+- The SQL adapters take the names of their tables, columns and indexes from `Mapping`, in
+  `dotnet/System/Database/Adapters/Allors.Database.Adapters.Sql/Schema`. In `IndexTest`, in
+  `dotnet/System/Database/Adapters/Tests.Static`, the fact `TheNamesOfTheSchemaCarryTheIdsOfTheModel`
+  writes the names out, `ARelationTypeWhoseStorageHasChangedRefusesTheTransaction` shows the
+  message for each change of a relation type, and `InitForgetsThatATransactionWasRefused` shows
+  the message for a schema changed by hand and what `Init()` drops.
