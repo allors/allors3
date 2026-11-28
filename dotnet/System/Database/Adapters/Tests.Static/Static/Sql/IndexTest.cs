@@ -686,11 +686,20 @@ namespace Allors.Database.Adapters.Sql
             var association = AssociationColumnOfRelationTable(m.C1.C1C2many2manies);
             var role = RoleColumnOfRelationTable(m.C1.C1C2many2manies);
             var integerColumn = this.Column(m.C2.C2AllorsInteger);
+            var keyless = this.Table(m.C1.C1C3many2manies);
+            var keylessAssociation = AssociationColumnOfRelationTable(m.C1.C1C3many2manies);
+            var keylessRole = RoleColumnOfRelationTable(m.C1.C1C3many2manies);
+
+            // The table of a class that the model lacks, whose id is f4c8a6e2-3b1d-4e7a-9c5f-2d8b6a1e0c93.
+            const string tableOfAClassThatTheModelLacks = "allors_uj4adohr3l77l72v5m5mk7gcic";
 
             // The objects table, the table of a class and the table of a relation are missing. The table of C2
-            // lacks a column, has one that the model lacks and one of another type, and the table of another
-            // relation has its key on the association only. The schema holds a table whose name starts with
-            // allors_ and that the model lacks, and a table whose name does not start with it.
+            // lacks a column, has one that the model lacks and one of another type, the table of another
+            // relation has its key on the association only, and that of a third has no key. The schema holds
+            // tables whose names start with allors_ and that the model lacks: one made by hand, one whose name
+            // holds a quote and a bracket, and the table of a class. It also holds tables whose names do not
+            // start with allors_: one without the prefix, one that differs from it in case only and one that
+            // lacks its underscore.
             this.ExecuteScalar("DROP TABLE allors.allors_o");
             this.ExecuteScalar($"DROP TABLE allors.{this.TableOfC1}");
             this.ExecuteScalar($"DROP TABLE allors.{this.RelationTable}");
@@ -700,12 +709,19 @@ namespace Allors.Database.Adapters.Sql
             this.ExecuteScalar($"ALTER TABLE allors.{this.Table(m.C2)} ADD {integerColumn} BIGINT");
             this.ExecuteScalar($"DROP TABLE allors.{many2many}");
             this.ExecuteScalar($"CREATE TABLE allors.{many2many} ({association} BIGINT NOT NULL, {role} BIGINT NOT NULL, PRIMARY KEY ({association}))");
+            this.ExecuteScalar($"DROP TABLE allors.{keyless}");
+            this.ExecuteScalar($"CREATE TABLE allors.{keyless} ({keylessAssociation} BIGINT NOT NULL, {keylessRole} BIGINT NOT NULL)");
             this.ExecuteScalar("CREATE TABLE allors.allors_made_by_hand (o BIGINT)");
             this.ExecuteScalar("CREATE TABLE allors.made_by_hand (o BIGINT)");
+            this.ExecuteScalar("CREATE TABLE allors.\"allors_quoted\"\"]by_hand\" (o BIGINT)");
+            this.ExecuteScalar($"CREATE TABLE allors.{tableOfAClassThatTheModelLacks} (o BIGINT)");
+            this.ExecuteScalar("CREATE TABLE allors.\"ALLORS_X_BY_HAND\" (o BIGINT)");
+            this.ExecuteScalar("CREATE TABLE allors.allorsx_by_hand (o BIGINT)");
             try
             {
-                // The message says what each table is: it names the class or the relation type. Under a table that
-                // is invalid it lists the columns, each with its relation type, and the primary key.
+                // The message says what each table is: it names the class or the relation type, and shows the id of
+                // a class that the model lacks. Under a table that is invalid it lists the columns, each with its
+                // relation type, and the primary key.
                 var database = this.CreateDatabase();
                 var exception = Assert.ThrowsAny<Exception>(() => database.CreateTransaction());
                 Assert.Contains("- allors.allors_o: the objects table\n", exception.Message);
@@ -719,9 +735,14 @@ namespace Allors.Database.Adapters.Sql
                 Assert.Contains(": the role of the relation type C2.C2AllorsInteger\n", exception.Message);
                 Assert.Contains("  - made_by_hand is obsolete: a column that is not of the model\n", exception.Message);
                 Assert.Contains($"- allors.{many2many}: the table of the relation type C1.C1C2many2manies, ManyToMany\n  - the primary key is on ({association}) and needs to be on ({association}, {role})\n", exception.Message);
+                Assert.Contains($"- allors.{keyless}: the table of the relation type C1.C1C3many2manies, ManyToMany\n  - the primary key is missing and needs to be on ({keylessAssociation}, {keylessRole})\n", exception.Message);
+                Assert.Contains("- allors.allors_quoted\"]by_hand: a table that is not of the model\n", exception.Message);
+                Assert.Contains($"- allors.{tableOfAClassThatTheModelLacks}: the table of the class f4c8a6e2-3b1d-4e7a-9c5f-2d8b6a1e0c93\n", exception.Message);
+                Assert.DoesNotContain("ALLORS_X_BY_HAND", exception.Message);
+                Assert.DoesNotContain("allorsx_by_hand", exception.Message);
 
-                // Init drops every table whose name starts with allors_ and builds the tables of the model. It
-                // leaves the other tables.
+                // Init drops every table whose name starts with allors_, whatever else the name holds, and builds
+                // the tables of the model. It leaves the other tables.
                 database.Init();
 
                 using (database.CreateTransaction())
@@ -730,11 +751,19 @@ namespace Allors.Database.Adapters.Sql
 
                 Assert.False(this.ExistTable("allors_made_by_hand"));
                 Assert.True(this.ExistTable("made_by_hand"));
+                Assert.False(this.ExistTable("allors_quoted\"]by_hand"));
+                Assert.False(this.ExistTable(tableOfAClassThatTheModelLacks));
+                Assert.True(this.ExistTable("ALLORS_X_BY_HAND"));
+                Assert.True(this.ExistTable("allorsx_by_hand"));
             }
             finally
             {
                 this.ExecuteScalar("DROP TABLE IF EXISTS allors.allors_made_by_hand");
                 this.ExecuteScalar("DROP TABLE allors.made_by_hand");
+                this.ExecuteScalar("DROP TABLE IF EXISTS allors.\"allors_quoted\"\"]by_hand\"");
+                this.ExecuteScalar($"DROP TABLE IF EXISTS allors.{tableOfAClassThatTheModelLacks}");
+                this.ExecuteScalar("DROP TABLE IF EXISTS allors.\"ALLORS_X_BY_HAND\"");
+                this.ExecuteScalar("DROP TABLE IF EXISTS allors.allorsx_by_hand");
             }
         }
 
